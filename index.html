@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A modern blog covering Ad Tech topics including programmatic advertising, RTB, analytics, and privacy compliance.">
+  <meta name="keywords" content="ad tech, programmatic advertising, RTB, real-time bidding, ad analytics, privacy, GDPR, CCPA">
+  <meta name="author" content="Ad Tech Blog">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ad Tech Blog - Insights on Programmatic Advertising">
+  <meta property="og:description" content="Deep dives into ad tech, programmatic advertising, RTB, analytics, and privacy compliance.">
+  <meta property="og:url" content="https://yourusername.github.io/adtech-blog/">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ad Tech Blog">
+  <meta name="twitter:description" content="Deep dives into ad tech, programmatic advertising, RTB, analytics, and privacy compliance.">
+  
+  <title>Ad Tech Blog - Programmatic Advertising & RTB Insights</title>
+  
+  <!-- KaTeX for Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header>
+    <nav>
+      <div class="logo">AdTech Blog</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Contents</h3>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <!-- Dynamically populated by JavaScript -->
+    </nav>
+  </aside>
+
+  <!-- Sidebar Toggle Button (Mobile) -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+    📑
+  </button>
+
+  <!-- Main Content Wrapper -->
+  <div class="with-sidebar" id="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1>Ad Tech Insights</h1>
+        <p>Deep dives into programmatic advertising, real-time bidding, analytics, and the evolving privacy landscape</p>
+      </div>
+    </section>
+
+    <!-- Search and Filter Bar -->
+    <section class="section">
+    <div class="container">
+      <div class="search-filter-bar">
+        <!-- Search Box -->
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search posts by title, content, or keywords..."
+            aria-label="Search posts"
+          >
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filter-section">
+          <h4>Categories</h4>
+          <div id="category-filters" class="filter-tags">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Tag Filters -->
+        <div class="filter-section" style="margin-top: 1.5rem;">
+          <h4>Tags</h4>
+          <div id="tag-filters" class="filter-tags">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Posts Grid -->
+      <div id="posts-grid" class="posts-grid">
+        <!-- Dynamically populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+  </div><!-- End of main content wrapper -->
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="https://github.com/yourusername/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">
+        © 2026 Ad Tech Blog. Built with modern web technologies.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="js/posts.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

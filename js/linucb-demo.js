@@ -288,6 +288,48 @@ function updateVisualization() {
             card.classList.remove('recommended');
         }
     });
+
+    // Render Internals Table
+    if (typeof renderInternals === 'function') {
+        renderInternals(result.details);
+    }
+}
+
+function renderInternals(details) {
+    const container = document.getElementById('model-internals-container');
+    if (!container) return;
+
+    let html = `
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">
+        <thead>
+            <tr style="background: var(--bg-tertiary); color: var(--accent-primary);">
+                <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color);">Ad Name</th>
+                <th style="padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color);">Prediction (Exploit)</th>
+                <th style="padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color);">Uncertainty (Explore)</th>
+                <th style="padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color);">Total Score</th>
+                <th style="padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color);">Learned Weights (θ)</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    details.forEach((d, idx) => {
+        const ad = ads[idx];
+        const thetaStr = d.theta ? d.theta.map(v => v.toFixed(3)).join(', ') : '0.000, 0.000, 0.000';
+        
+        html += `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 0.75rem; color: ${ad.color.replace('0.7', '1')}"><strong>${ad.name}</strong></td>
+                <td style="padding: 0.75rem; text-align: right;">${d.prediction.toFixed(4)}</td>
+                <td style="padding: 0.75rem; text-align: right;">${d.uncertainty.toFixed(4)}</td>
+                <td style="padding: 0.75rem; text-align: right; font-weight: bold;">${d.total.toFixed(4)}</td>
+                <td style="padding: 0.75rem; text-align: right; font-family: 'Fira Code', monospace; color: var(--text-muted);">[${thetaStr}]</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
 }
 
 function handleAdClick(armIdx) {

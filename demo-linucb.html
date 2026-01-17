@@ -157,13 +157,17 @@
 <body>
     <header>
         <nav>
-            <div class="logo">AdTech<span style="color: var(--accent-primary)">.Blog</span></div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="demo-linucb.html" style="color: var(--accent-primary)">LinUCB Demo</a></li>
-            </ul>
-            <button class="theme-toggle" id="theme-toggle">🌙</button>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                </div>
+            </div>
         </nav>
     </header>
 

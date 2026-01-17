@@ -171,7 +171,8 @@ class LinUCB {
             details.push({
                 prediction: prediction,
                 uncertainty: uncertainty,
-                total: ucbScore
+                total: ucbScore,
+                theta: theta // Expose learned weights
             });
 
             if (ucbScore > maxUcb) {

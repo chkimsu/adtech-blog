@@ -22,6 +22,26 @@ const posts = [
     tags: ['auction', 'Linear TS', 'Thompson Sampling', 'Contextual Thompson Sampling'],
     contentUrl: 'posts/TS-linTS.md',
     readTime: '15 min read'
+  },
+  {
+    id: 'mab-summary',
+    title: '[Summary] AdTech MAB Algorithm Collection',
+    excerpt: 'AdTech 엔지니어의 시각에서 정리한 MAB 알고리즘 총정리 (Context-Free, Contextual, Hybrid)',
+    date: '2026-01-17',
+    categories: ['Algorithm', 'Machine Learning', 'Ad Tech'],
+    tags: ['MAB', 'LinUCB', 'Thompson Sampling', 'Contextual Bandit'],
+    contentUrl: 'posts/mab.md',
+    readTime: '10 min read'
+  },
+  {
+    id: 'ucb-vs-ts',
+    title: 'UCB vs Thompson Sampling: 결정적(Deterministic) vs 확률적(Stochastic)',
+    excerpt: 'UCB는 계산기, TS는 주사위? MAB의 두 거대 산맥인 UCB와 Thompson Sampling의 결정적인 차이를 직관적으로 비교합니다.',
+    date: '2026-01-17',
+    categories: ['Algorithm', 'Machine Learning', 'Ad Tech'],
+    tags: ['UCB', 'Thompson Sampling', 'MAB', 'Comparison'],
+    contentUrl: 'posts/ucb_ts.md',
+    readTime: '5 min read'
   }
 ];
 

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thompson Sampling Demo - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .control-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-success,
+        .btn-fail {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-success {
+            background: rgba(75, 192, 192, 0.2);
+            color: #4bc0c0;
+        }
+
+        .btn-success:hover {
+            background: rgba(75, 192, 192, 0.4);
+        }
+
+        .btn-fail {
+            background: rgba(255, 99, 132, 0.2);
+            color: #ff6384;
+        }
+
+        .btn-fail:hover {
+            background: rgba(255, 99, 132, 0.4);
+        }
+
+        .log-panel {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-panel div {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.25rem;
+        }
+
+        .log-panel .time {
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demo-ts.html" class="btn-demo" style="background: var(--accent-primary); color: white;">TS
+                        Demo</a>
+                    <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>Thompson Sampling Simulator</h1>
+            <p class="post-excerpt">
+                Visualize how <strong>Thompson Sampling</strong> uses Probability Distributions (Beta) to balance
+                exploration and exploitation.
+            </p>
+        </div>
+
+        <div class="demo-container">
+            <!-- Left: Chart -->
+            <div class="chart-panel">
+                <canvas id="tsChart"></canvas>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <p><strong>X-Axis (CTR):</strong> The probability that a user clicks.</p>
+                    <p><strong>Y-Axis (Density):</strong> How confident the model is. Taller/Narrower = More Confident.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="control-panel">
+                <div id="controls-container">
+                    <!-- Controls injected by JS -->
+                </div>
+
+                <div
+                    style="background: var(--glass-bg); padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <h3 style="margin-bottom: 0.5rem;">Model State</h3>
+                    <div id="stats-container">
+                        <!-- Stats injected by JS -->
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">Activity Log</h3>
+                    <div id="demo-log" class="log-panel">
+                        <!-- Logs here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-content" style="margin-top: 3rem;">
+            <h2>How it works</h2>
+            <p>
+                This demo uses <strong>Bernoulli Thompson Sampling</strong> with Beta distributions.
+            </p>
+            <ul>
+                <li><strong>Beta Distribution ($\alpha, \beta$):</strong> Represents the probability of success (CTR).
+                </li>
+                <li><strong>$\alpha$ (Alpha):</strong> Number of Clicks (Successes) + 1.</li>
+                <li><strong>$\beta$ (Beta):</strong> Number of Non-Clicks (Failures) + 1.</li>
+            </ul>
+
+            <h3>Interpretation</h3>
+            <ul>
+                <li><strong>Shift Right:</strong> When you click (👍), $\alpha$ increases, moving the curve to the right
+                    (higher estimated CTR).</li>
+                <li><strong>Shift Left:</strong> When you ignore (👎), $\beta$ increases, moving the curve to the left.
+                </li>
+                <li><strong>Get Narrower:</strong> As you provide more feedback (clicks or ignores), the curve becomes
+                    taller and narrower. This means the model is becoming <strong>more certain</strong> about the true
+                    CTR.</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+                <a href="#">RSS</a>
+            </div>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with vanilla HTML/CSS/JS.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/ts-demo.js"></script>
+</body>
+
+</html>

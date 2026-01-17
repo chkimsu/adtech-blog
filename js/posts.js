@@ -53,7 +53,7 @@ const posts = [
     title: 'Standard TS vs Linear TS',
     excerpt: 'Standard TS vs Linear TS',
     date: '2026-01-03',
-    categories: ['AdTech', 'Machine Learning', 'Recommender System'],
+    categories: ['Basics', 'Machine Learning', 'Recommender System'],
     tags: ['Standard TS', 'Linear TS', 'Thompson Sampling', 'Contextual Thompson Sampling'],
     contentUrl: 'posts/TS-linTS.md'
   }

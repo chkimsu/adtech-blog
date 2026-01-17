@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinUCB Interactive Demo - Ad Tech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!-- Chart.js for Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .interaction-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .ad-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .ad-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ad-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+        }
+
+        .ad-card.recommended {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .ad-card.recommended::before {
+            content: "Recommended";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent-secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-bottom-left-radius: 8px;
+        }
+
+        .ad-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ad-card .features {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .ad-card button {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ad-card button:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .log-panel {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-panel div {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.2rem;
+        }
+
+        .log-panel .time {
+            color: var(--accent-primary);
+            margin-right: 0.5rem;
+        }
+
+        .controls {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-reset {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">AdTech<span style="color: var(--accent-primary)">.Blog</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="demo-linucb.html" style="color: var(--accent-primary)">LinUCB Demo</a></li>
+            </ul>
+            <button class="theme-toggle" id="theme-toggle">🌙</button>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-categories">
+                <span class="category-badge">Interactive Demo</span>
+                <span class="category-badge">Algorithm</span>
+            </div>
+            <h1>LinUCB Interactive Simulation</h1>
+            <p style="text-align: center; max-width: 600px; margin: 0 auto; color: var(--text-secondary);">
+                Experience how the Contextual Bandit algorithm learns user preferences in real-time.
+                Click on ads to simulate user engagement and watch the model update its beliefs.
+            </p>
+        </div>
+
+        <div class="demo-container">
+            <div class="controls">
+                <div>
+                    <strong>Status:</strong> <span id="status-text">Ready to learn...</span>
+                </div>
+                <button class="btn-reset" onclick="resetDemo()">Reset Model</button>
+            </div>
+
+            <div class="demo-grid">
+                <!-- Left: Visualization -->
+                <div class="chart-container">
+                    <canvas id="ucbChart"></canvas>
+                    <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <p><strong>Blue Bar (Prediction):</strong> How much the model thinks you'll like this ad.</p>
+                        <p><strong>Grey Bar (Uncertainty):</strong> Exploration bonus for less-tested ads.</p>
+                    </div>
+                </div>
+
+                <!-- Right: Interaction -->
+                <div class="interaction-area">
+                    <h3 style="margin-bottom: 0.5rem;">Simulate User Action</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">Click an ad to "Like" it. The model will learn
+                        from your choice.</p>
+
+                    <div id="ad-cards-container" class="ad-cards">
+                        <!-- Cards will be injected by JS -->
+                    </div>
+
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Activity Log</h3>
+                    <div id="demo-log" class="log-panel">
+                        <!-- Logs here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-content" style="margin-top: 3rem;">
+            <h2>How it works</h2>
+            <p>
+                This demo implements the <strong>LinUCB (Linear Upper Confidence Bound)</strong> algorithm entirely in
+                your browser.
+            </p>
+            <ul>
+                <li><strong>Context ($x$):</strong> Each ad has a fixed feature vector (e.g., [Tech Score, Fashion
+                    Score, etc.]).</li>
+                <li><strong>Model ($\theta$):</strong> The algorithm maintains a belief vector for each ad.</li>
+                <li><strong>Selection:</strong> It calculates a score $s = x^T\theta + \alpha\sqrt{x^T A^{-1} x}$.</li>
+                <li><strong>Update:</strong> When you click, it updates $A$ and $b$ to refine its prediction for next
+                    time.</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+                <a href="#">RSS</a>
+            </div>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with vanilla HTML/CSS/JS.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/linucb-demo.js"></script>
+</body>
+
+</html>

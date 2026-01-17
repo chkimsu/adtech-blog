@@ -393,12 +393,15 @@ function initializeSidebar() {
   const postsByCategory = {};
 
   posts.forEach(post => {
-    post.categories.forEach(category => {
-      if (!postsByCategory[category]) {
-        postsByCategory[category] = [];
+    // Use only the first category as the primary category for the sidebar
+    // to prevent duplicate entries
+    if (post.categories && post.categories.length > 0) {
+      const primaryCategory = post.categories[0];
+      if (!postsByCategory[primaryCategory]) {
+        postsByCategory[primaryCategory] = [];
       }
-      postsByCategory[category].push(post);
-    });
+      postsByCategory[primaryCategory].push(post);
+    }
   });
 
   // Render sidebar categories and posts

@@ -35,7 +35,7 @@ function renderPostCard(post) {
   const card = document.createElement('div');
   card.className = 'post-card';
   card.onclick = () => navigateToPost(post.id);
-  
+
   card.innerHTML = `
     <div class="post-meta">
       <span class="post-date">📅 ${formatDate(post.date)}</span>
@@ -47,7 +47,7 @@ function renderPostCard(post) {
       ${post.tags.map(tag => `<span class="tag" data-tag="${tag}">${tag}</span>`).join('')}
     </div>
   `;
-  
+
   // Add click handlers to tags
   const tagElements = card.querySelectorAll('.tag');
   tagElements.forEach(tagEl => {
@@ -55,19 +55,19 @@ function renderPostCard(post) {
       e.stopPropagation(); // Prevent card click (navigation)
       const tagValue = tagEl.dataset.tag;
       filterByTag(tagValue);
-      
+
       // Scroll to top to see filtered results
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   });
-  
+
   return card;
 }
 
 function renderPosts(postsToRender) {
   const grid = document.getElementById('posts-grid');
   if (!grid) return;
-  
+
   if (postsToRender.length === 0) {
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
@@ -77,7 +77,7 @@ function renderPosts(postsToRender) {
     `;
     return;
   }
-  
+
   grid.innerHTML = '';
   postsToRender.forEach((post, index) => {
     const card = renderPostCard(post);
@@ -112,32 +112,32 @@ function initializeFilters() {
     const categories = getAllCategories();
     categoriesContainer.innerHTML = `
       <div class="filter-tag active" data-category="">All</div>
-      ${categories.map(cat => 
-        `<div class="filter-tag" data-category="${cat}">${cat}</div>`
-      ).join('')}
+      ${categories.map(cat =>
+      `<div class="filter-tag" data-category="${cat}">${cat}</div>`
+    ).join('')}
     `;
-    
+
     categoriesContainer.querySelectorAll('.filter-tag').forEach(tag => {
       tag.addEventListener('click', () => filterByCategory(tag.dataset.category));
     });
   }
-  
+
   // Render tag filters
   const tagsContainer = document.getElementById('tag-filters');
   if (tagsContainer) {
     const tags = getAllTags();
     tagsContainer.innerHTML = `
       <div class="filter-tag active" data-tag="">All</div>
-      ${tags.map(tag => 
-        `<div class="filter-tag" data-tag="${tag}">${tag}</div>`
-      ).join('')}
+      ${tags.map(tag =>
+      `<div class="filter-tag" data-tag="${tag}">${tag}</div>`
+    ).join('')}
     `;
-    
+
     tagsContainer.querySelectorAll('.filter-tag').forEach(tag => {
       tag.addEventListener('click', () => filterByTag(tag.dataset.tag));
     });
   }
-  
+
   // Setup search
   const searchInput = document.getElementById('search-input');
   if (searchInput) {
@@ -150,23 +150,23 @@ function initializeFilters() {
 
 function filterByCategory(category) {
   currentFilters.category = category;
-  
+
   // Update active state
   document.querySelectorAll('#category-filters .filter-tag').forEach(tag => {
     tag.classList.toggle('active', tag.dataset.category === category);
   });
-  
+
   applyFilters();
 }
 
 function filterByTag(tag) {
   currentFilters.tag = tag;
-  
+
   // Update active state
   document.querySelectorAll('#tag-filters .filter-tag').forEach(tagEl => {
     tagEl.classList.toggle('active', tagEl.dataset.tag === tag);
   });
-  
+
   applyFilters();
 }
 
@@ -183,46 +183,46 @@ function applyFilters() {
 // Post Detail Page
 // ========================================
 
-function renderPostDetail() {
+async function renderPostDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get('id');
-  
+
   if (!postId) {
     window.location.href = 'index.html';
     return;
   }
-  
+
   const post = getPostById(postId);
-  
+
   if (!post) {
     window.location.href = 'index.html';
     return;
   }
-  
+
   // Update page title
   document.title = `${post.title} - Ad Tech Blog`;
-  
+
   // Render post header
   const headerContainer = document.getElementById('post-header');
   if (headerContainer) {
     headerContainer.innerHTML = `
       <div class="post-meta">
         <span class="post-date">📅 ${formatDate(post.date)}</span>
-        <span class="post-read-time">⏱️ ${post.readTime}</span>
+        <!-- Read time calculation would need content first, skipping for now or estimating -->
       </div>
       <h1>${post.title}</h1>
       <div class="post-categories">
-        ${post.categories.map(cat => 
-          `<span class="category-badge">${cat}</span>`
-        ).join('')}
+        ${post.categories.map(cat =>
+      `<span class="category-badge">${cat}</span>`
+    ).join('')}
       </div>
       <div class="post-tags" style="margin-top: 1rem;">
-        ${post.tags.map(tag => 
-          `<span class="tag" data-tag="${tag}">${tag}</span>`
-        ).join('')}
+        ${post.tags.map(tag =>
+      `<span class="tag" data-tag="${tag}">${tag}</span>`
+    ).join('')}
       </div>
     `;
-    
+
     // Add click handlers to tags - navigate to index with filter
     const tagElements = headerContainer.querySelectorAll('.tag');
     tagElements.forEach(tagEl => {
@@ -232,42 +232,64 @@ function renderPostDetail() {
       };
     });
   }
-  
-  
+
+
   // Render post content
   const contentContainer = document.getElementById('post-content');
   if (contentContainer) {
-    // Check if content is Markdown and convert if needed
-    if (post.isMarkdown && typeof marked !== 'undefined') {
-      contentContainer.innerHTML = marked.parse(post.content);
-    } else {
-      contentContainer.innerHTML = post.content;
-    }
-    
-    // Render LaTeX math equations with KaTeX
-    // Use setTimeout to ensure KaTeX is loaded (it's loaded with defer)
-    const renderMath = () => {
-      if (typeof renderMathInElement !== 'undefined') {
-        renderMathInElement(contentContainer, {
-          delimiters: [
-            {left: '$$', right: '$$', display: true},
-            {left: '$', right: '$', display: false},
-            {left: '\\[', right: '\\]', display: true},
-            {left: '\\(', right: '\\)', display: false}
-          ],
-          throwOnError: false
-        });
+    contentContainer.innerHTML = '<div class="loading">Loading content...</div>';
+
+    try {
+      let content = '';
+      if (post.contentUrl) {
+        const response = await fetch(post.contentUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to load content: ${response.statusText}`);
+        }
+        content = await response.text();
+      } else if (post.content) {
+        // Fallback for legacy posts if any
+        content = post.content;
+      } else {
+        throw new Error('No content found for this post');
       }
-    };
-    
-    // Try to render immediately, or wait for DOMContentLoaded
-    if (document.readyState === 'complete') {
-      setTimeout(renderMath, 100);
-    } else {
-      window.addEventListener('load', renderMath);
+
+      // Convert Markdown to HTML
+      if (typeof marked !== 'undefined') {
+        contentContainer.innerHTML = marked.parse(content);
+      } else {
+        contentContainer.innerHTML = content;
+      }
+
+      // Render LaTeX math equations with KaTeX
+      const renderMath = () => {
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(contentContainer, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+          });
+        }
+      };
+
+      renderMath();
+
+    } catch (error) {
+      console.error('Error loading post:', error);
+      contentContainer.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+          <h3>Error loading post</h3>
+          <p>${error.message}</p>
+          <p>If you are running this locally, please make sure you are using a local server (e.g., python -m http.server).</p>
+        </div>
+      `;
     }
   }
-  
+
   // Initialize comments
   initializeComments(postId, post.title);
 }
@@ -275,7 +297,7 @@ function renderPostDetail() {
 function initializeComments(postId, postTitle) {
   const commentsContainer = document.getElementById('comments');
   if (!commentsContainer) return;
-  
+
   // Note: Utterances requires a GitHub repo to be set up
   commentsContainer.innerHTML = `
     <h3>Comments</h3>
@@ -326,7 +348,7 @@ commentsContainer.appendChild(script);
 */</code></pre>
     </div>
   `;
-  
+
   // Uncomment the following to enable utterances after setting up your repo:
   /*
   const script = document.createElement('script');
@@ -366,10 +388,10 @@ function initializeSmoothScroll() {
 function initializeSidebar() {
   const sidebarNav = document.getElementById('sidebar-nav');
   if (!sidebarNav) return;
-  
+
   // Group posts by categories
   const postsByCategory = {};
-  
+
   posts.forEach(post => {
     post.categories.forEach(category => {
       if (!postsByCategory[category]) {
@@ -378,7 +400,7 @@ function initializeSidebar() {
       postsByCategory[category].push(post);
     });
   });
-  
+
   // Render sidebar categories and posts
   const categoriesHTML = Object.keys(postsByCategory).sort().map(category => {
     const categoryPosts = postsByCategory[category];
@@ -387,7 +409,7 @@ function initializeSidebar() {
         ${post.title}
       </a>
     `).join('');
-    
+
     return `
       <div class="sidebar-category">
         <div class="category-header">
@@ -400,19 +422,19 @@ function initializeSidebar() {
       </div>
     `;
   }).join('');
-  
+
   sidebarNav.innerHTML = categoriesHTML;
-  
+
   // Add click handlers for collapsible categories
   document.querySelectorAll('.category-header').forEach(header => {
-    header.addEventListener('click', function() {
+    header.addEventListener('click', function () {
       this.parentElement.classList.toggle('collapsed');
     });
   });
-  
+
   // Highlight active post if on post detail page
   highlightActivePost();
-  
+
   // Setup mobile toggle
   setupSidebarToggle();
 }
@@ -420,7 +442,7 @@ function initializeSidebar() {
 function highlightActivePost() {
   const urlParams = new URLSearchParams(window.location.search);
   const currentPostId = urlParams.get('id');
-  
+
   if (currentPostId) {
     const activeLink = document.querySelector(`.sidebar-post-link[data-post-id="${currentPostId}"]`);
     if (activeLink) {
@@ -438,12 +460,12 @@ function setupSidebarToggle() {
   const toggleButton = document.getElementById('sidebar-toggle');
   const sidebar = document.getElementById('sidebar');
   const mainContent = document.getElementById('main-content');
-  
+
   if (!toggleButton || !sidebar) return;
-  
+
   toggleButton.addEventListener('click', () => {
     sidebar.classList.toggle('visible');
-    
+
     // Add overlay for mobile when sidebar is open
     if (window.innerWidth <= 768) {
       if (sidebar.classList.contains('visible')) {
@@ -453,7 +475,7 @@ function setupSidebarToggle() {
       }
     }
   });
-  
+
   // Close sidebar when clicking outside on mobile
   function createOverlay() {
     const overlay = document.createElement('div');
@@ -473,7 +495,7 @@ function setupSidebarToggle() {
     });
     document.body.appendChild(overlay);
   }
-  
+
   function removeOverlay() {
     const overlay = document.getElementById('sidebar-overlay');
     if (overlay) {
@@ -489,20 +511,20 @@ function setupSidebarToggle() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme
   initializeTheme();
-  
+
   // Setup theme toggle button
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
     themeToggle.addEventListener('click', toggleTheme);
   }
-  
+
   // Initialize sidebar navigation
   initializeSidebar();
-  
+
   // Check if we're on the home page or post page
   const postsGrid = document.getElementById('posts-grid');
   const postContent = document.getElementById('post-content');
-  
+
   if (postsGrid) {
     // Home page
     initializeFilters();
@@ -511,10 +533,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Post detail page
     renderPostDetail();
   }
-  
+
   // Initialize smooth scrolling
   initializeSmoothScroll();
-  
+
   // Add animation to elements on scroll
   observeElements();
 });
@@ -534,7 +556,7 @@ function observeElements() {
   }, {
     threshold: 0.1
   });
-  
+
   document.querySelectorAll('.post-card, .about-section').forEach(el => {
     observer.observe(el);
   });
@@ -550,7 +572,7 @@ function applyUrlFilters() {
   const category = urlParams.get('category');
   const tag = urlParams.get('tag');
   const search = urlParams.get('search');
-  
+
   if (category) filterByCategory(category);
   if (tag) filterByTag(tag);
   if (search) {
@@ -560,7 +582,7 @@ function applyUrlFilters() {
       currentFilters.search = search;
     }
   }
-  
+
   if (category || tag || search) {
     applyFilters();
   }

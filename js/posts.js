@@ -10,7 +10,8 @@ const posts = [
     date: '2026-01-10',
     categories: ['Tutorial'],
     tags: ['markdown', 'tutorial'],
-    contentUrl: 'posts/pCVR-modeling.md'
+    contentUrl: 'posts/pCVR-modeling.md',
+    readTime: '10 min read'
   },
   {
     id: 'TS-linTS',
@@ -19,7 +20,8 @@ const posts = [
     date: '2026-01-03',
     categories: ['Basics', 'Machine Learning', 'Recommender System'],
     tags: ['auction', 'Linear TS', 'Thompson Sampling', 'Contextual Thompson Sampling'],
-    contentUrl: 'posts/TS-linTS.md'
+    contentUrl: 'posts/TS-linTS.md',
+    readTime: '15 min read'
   }
 ];
 

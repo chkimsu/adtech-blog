@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Read in-depth articles about ad tech, programmatic advertising, and digital advertising technologies.">
-  
+  <meta name="description"
+    content="Read in-depth articles about ad tech, programmatic advertising, and digital advertising technologies.">
+
   <!-- Dynamic meta tags will be set by JavaScript -->
   <meta property="og:type" content="article">
-  
+
   <title>Post - Ad Tech Blog</title>
-  
+
   <!-- KaTeX for Math Rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  
+
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <!-- Header / Navigation -->
   <header>
     <nav>
-      <div class="logo">AdTech Blog</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button></li>
-      </ul>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -54,21 +62,21 @@
 
     <!-- Post Content -->
     <section class="section">
-    <div class="container">
-      <article class="post-content" id="post-content">
-        <!-- Dynamically populated by JavaScript -->
-      </article>
-    </div>
-  </section>
-
-  <!-- Comments Section -->
-  <section class="comments-section">
-    <div class="container">
-      <div id="comments">
-        <!-- Utterances comments will be loaded here by JavaScript -->
+      <div class="container">
+        <article class="post-content" id="post-content">
+          <!-- Dynamically populated by JavaScript -->
+        </article>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- Comments Section -->
+    <section class="comments-section">
+      <div class="container">
+        <div id="comments">
+          <!-- Utterances comments will be loaded here by JavaScript -->
+        </div>
+      </div>
+    </section>
   </div><!-- End of main content wrapper -->
 
   <!-- Footer -->
@@ -90,4 +98,5 @@
   <script src="js/posts.js"></script>
   <script src="js/main.js"></script>
 </body>
+
 </html>

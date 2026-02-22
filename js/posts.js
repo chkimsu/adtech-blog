@@ -2,24 +2,31 @@
 // All blog posts are stored here as JavaScript objects
 // Content is loaded dynamically from Markdown files in the posts/ directory
 
+// Category taxonomy (ad-tech focused, broad groupings):
+// - Bandits & Personalization  → MAB, exploration/exploitation, contextual bandits
+// - Measurement & Modeling     → pCVR, attribution, conversion modeling
+// - Bidding & Auction          → RTB, auction theory, bid optimization (future)
+// - Privacy & Compliance       → GDPR, CCPA, cookie-less (future)
+// - ML Infrastructure          → feature pipelines, serving, A/B platforms (future)
+
 const posts = [
   {
     id: 'my-markdown-post',
     title: 'pCVR 모델링 학습 시 주요 고려사항 및 중복 전환(Deduplication) 이슈 정리',
-    excerpt: '이 글은 Markdown으로 작성되었습니다',
+    excerpt: 'pCVR 모델 학습에서 발생하는 중복 전환(Deduplication) 이슈와 주요 고려사항을 정리합니다.',
     date: '2026-01-10',
-    categories: ['Tutorial'],
-    tags: ['markdown', 'tutorial'],
+    categories: ['Measurement & Modeling'],
+    tags: ['pCVR', 'Conversion Modeling'],
     contentUrl: 'posts/pCVR-modeling.md',
     readTime: '10 min read'
   },
   {
     id: 'TS-linTS',
     title: 'Standard TS vs Linear TS',
-    excerpt: 'Standard TS vs Linear TS',
+    excerpt: '개별 광고 ID를 학습하는 Standard TS와 Feature 가중치를 학습하는 Linear TS의 핵심 차이를 비교합니다.',
     date: '2026-01-03',
-    categories: ['Basics', 'Machine Learning', 'Recommender System'],
-    tags: ['auction', 'Linear TS', 'Thompson Sampling', 'Contextual Thompson Sampling'],
+    categories: ['Bandits & Personalization'],
+    tags: ['Thompson Sampling', 'Linear TS', 'Contextual Bandit'],
     contentUrl: 'posts/TS-linTS.md',
     readTime: '15 min read'
   },
@@ -28,8 +35,8 @@ const posts = [
     title: '[Summary] AdTech MAB Algorithm Collection',
     excerpt: 'AdTech 엔지니어의 시각에서 정리한 MAB 알고리즘 총정리 (Context-Free, Contextual, Hybrid)',
     date: '2026-01-17',
-    categories: ['Algorithm', 'Machine Learning', 'Ad Tech'],
-    tags: ['MAB', 'LinUCB', 'Thompson Sampling', 'Contextual Bandit'],
+    categories: ['Bandits & Personalization'],
+    tags: ['MAB', 'LinUCB', 'Thompson Sampling', 'UCB'],
     contentUrl: 'posts/mab.md',
     readTime: '10 min read'
   },
@@ -38,8 +45,8 @@ const posts = [
     title: 'UCB vs Thompson Sampling: 결정적(Deterministic) vs 확률적(Stochastic)',
     excerpt: 'UCB는 계산기, TS는 주사위? MAB의 두 거대 산맥인 UCB와 Thompson Sampling의 결정적인 차이를 직관적으로 비교합니다.',
     date: '2026-01-17',
-    categories: ['Algorithm', 'Machine Learning', 'Ad Tech'],
-    tags: ['UCB', 'Thompson Sampling', 'MAB', 'Comparison'],
+    categories: ['Bandits & Personalization'],
+    tags: ['UCB', 'Thompson Sampling', 'MAB'],
     contentUrl: 'posts/ucb_ts.md',
     readTime: '5 min read'
   }

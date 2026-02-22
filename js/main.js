@@ -38,8 +38,8 @@ function renderPostCard(post) {
 
   card.innerHTML = `
     <div class="post-meta">
-      <span class="post-date">📅 ${formatDate(post.date)}</span>
-      <span class="post-read-time">⏱️ ${post.readTime}</span>
+      <span class="post-date">${formatDate(post.date)}</span>
+      <span class="post-read-time">${post.readTime}</span>
     </div>
     <h3>${post.title}</h3>
     <p class="post-excerpt">${post.excerpt}</p>
@@ -106,22 +106,6 @@ let currentFilters = {
 };
 
 function initializeFilters() {
-  // Render category filters
-  const categoriesContainer = document.getElementById('category-filters');
-  if (categoriesContainer) {
-    const categories = getAllCategories();
-    categoriesContainer.innerHTML = `
-      <div class="filter-tag active" data-category="">All</div>
-      ${categories.map(cat =>
-      `<div class="filter-tag" data-category="${cat}">${cat}</div>`
-    ).join('')}
-    `;
-
-    categoriesContainer.querySelectorAll('.filter-tag').forEach(tag => {
-      tag.addEventListener('click', () => filterByCategory(tag.dataset.category));
-    });
-  }
-
   // Render tag filters
   const tagsContainer = document.getElementById('tag-filters');
   if (tagsContainer) {
@@ -148,17 +132,6 @@ function initializeFilters() {
   }
 }
 
-function filterByCategory(category) {
-  currentFilters.category = category;
-
-  // Update active state
-  document.querySelectorAll('#category-filters .filter-tag').forEach(tag => {
-    tag.classList.toggle('active', tag.dataset.category === category);
-  });
-
-  applyFilters();
-}
-
 function filterByTag(tag) {
   currentFilters.tag = tag;
 
@@ -180,8 +153,209 @@ function applyFilters() {
 }
 
 // ========================================
+// Markdown Preprocessor
+// ========================================
+
+function preprocessMarkdown(text) {
+  return text
+    // Normalize 3+ consecutive blank lines to max 2
+    .replace(/\n{3,}/g, '\n\n')
+    // Remove lines that are only a list marker with trailing whitespace (empty list items)
+    .replace(/^([*\-+]) +$/gm, '')
+    // Remove <br> tags that appear on their own line (avoids double-break artifacts)
+    .replace(/^<br>\s*$/gim, '');
+}
+
+// ========================================
 // Post Detail Page
 // ========================================
+
+// ========================================
+// Reading Progress Bar
+// ========================================
+
+function initializeReadingProgress() {
+  const progressBar = document.getElementById('reading-progress');
+  if (!progressBar) return;
+
+  function updateProgress() {
+    const article = document.getElementById('post-content');
+    if (!article) return;
+    const scrollTop = window.scrollY;
+    const articleTop = article.offsetTop;
+    const articleHeight = article.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const total = articleTop + articleHeight - windowHeight;
+    const progress = Math.min(Math.max((scrollTop - articleTop + windowHeight * 0.1) / (articleHeight - windowHeight * 0.8) * 100, 0), 100);
+    progressBar.style.width = progress + '%';
+  }
+
+  window.addEventListener('scroll', updateProgress, { passive: true });
+}
+
+// ========================================
+// Code Block Post-Processing
+// ========================================
+
+function enhanceCodeBlocks(container) {
+  const preBlocks = container.querySelectorAll('pre');
+  preBlocks.forEach(pre => {
+    const codeEl = pre.querySelector('code');
+    if (!codeEl) return;
+
+    // Detect language from class (highlight.js uses hljs + language-xxx)
+    let lang = '';
+    const classes = Array.from(codeEl.classList);
+    const langClass = classes.find(c => c.startsWith('language-') || c.startsWith('hljs'));
+    if (langClass && langClass.startsWith('language-')) {
+      lang = langClass.replace('language-', '');
+    } else if (codeEl.dataset.highlighted) {
+      // Try to get detected language from hljs result attribute
+      lang = codeEl.getAttribute('data-lang') || '';
+    }
+
+    // Build wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block-wrapper';
+
+    // Build header
+    const header = document.createElement('div');
+    header.className = 'code-header';
+
+    const langLabel = document.createElement('span');
+    langLabel.className = 'code-lang';
+    langLabel.textContent = lang || 'code';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn';
+    copyBtn.textContent = 'Copy';
+    copyBtn.addEventListener('click', () => {
+      const text = codeEl.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        // Fallback for non-https
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+
+    header.appendChild(langLabel);
+    header.appendChild(copyBtn);
+
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(header);
+    wrapper.appendChild(pre);
+  });
+}
+
+// ========================================
+// Table Post-Processing (mobile scroll)
+// ========================================
+
+function wrapTables(container) {
+  const tables = container.querySelectorAll('table');
+  tables.forEach(table => {
+    if (table.parentElement.classList.contains('table-wrapper')) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-wrapper';
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+}
+
+// ========================================
+// Post TOC Sidebar
+// ========================================
+
+function buildPostTOC(contentContainer) {
+  const sidebarNav = document.getElementById('sidebar-nav');
+  if (!sidebarNav) return;
+
+  const headings = contentContainer.querySelectorAll('h2, h3');
+  if (headings.length === 0) return;
+
+  // Assign IDs to headings
+  const slugCount = {};
+  headings.forEach(heading => {
+    let slug = heading.textContent
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s가-힣]/g, '')
+      .replace(/\s+/g, '-')
+      .slice(0, 60);
+    if (!slug) slug = 'section';
+    slugCount[slug] = (slugCount[slug] || 0) + 1;
+    if (slugCount[slug] > 1) slug += '-' + slugCount[slug];
+    heading.id = slug;
+  });
+
+  // Build TOC HTML
+  const backLink = `<a href="index.html" class="toc-back-link">← All Posts</a>`;
+  const tocItems = Array.from(headings).map(h => {
+    const level = h.tagName === 'H2' ? 'toc-h2' : 'toc-h3';
+    return `<a href="#${h.id}" class="toc-item ${level}">${h.textContent}</a>`;
+  }).join('');
+
+  sidebarNav.innerHTML = `
+    <div class="sidebar-header" style="border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;">
+      <h3 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0; padding: 0 1.5rem 1rem;">Contents</h3>
+    </div>
+    ${backLink}
+    <div class="toc-list">${tocItems}</div>
+  `;
+
+  // Highlight active heading on scroll
+  const tocLinks = sidebarNav.querySelectorAll('.toc-item');
+  const headingEls = Array.from(headings);
+
+  function updateActiveToc() {
+    let current = headingEls[0];
+    for (const h of headingEls) {
+      if (h.getBoundingClientRect().top <= 120) {
+        current = h;
+      }
+    }
+    tocLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current.id);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveToc, { passive: true });
+  updateActiveToc();
+
+  // Smooth scroll for TOC links (with header offset)
+  tocLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').replace('#', '');
+      const target = document.getElementById(targetId);
+      if (target) {
+        const headerOffset = 80;
+        const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top, behavior: 'smooth' });
+        window.history.replaceState(null, '', '#' + targetId);
+      }
+    });
+  });
+}
 
 async function renderPostDetail() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -207,24 +381,19 @@ async function renderPostDetail() {
   if (headerContainer) {
     headerContainer.innerHTML = `
       <div class="post-meta">
-        <span class="post-date">📅 ${formatDate(post.date)}</span>
-        <!-- Read time calculation would need content first, skipping for now or estimating -->
+        <span class="post-date">${formatDate(post.date)}</span>
+        <span class="post-read-time">${post.readTime}</span>
       </div>
       <h1>${post.title}</h1>
-      <div class="post-categories">
-        ${post.categories.map(cat =>
-      `<span class="category-badge">${cat}</span>`
-    ).join('')}
-      </div>
-      <div class="post-tags" style="margin-top: 1rem;">
+      <div class="post-header-tags">
         ${post.tags.map(tag =>
-      `<span class="tag" data-tag="${tag}">${tag}</span>`
+      `<span class="post-header-tag" data-tag="${tag}">${tag}</span>`
     ).join('')}
       </div>
     `;
 
     // Add click handlers to tags - navigate to index with filter
-    const tagElements = headerContainer.querySelectorAll('.tag');
+    const tagElements = headerContainer.querySelectorAll('.post-header-tag');
     tagElements.forEach(tagEl => {
       tagEl.onclick = () => {
         const tagValue = tagEl.dataset.tag;
@@ -256,10 +425,35 @@ async function renderPostDetail() {
 
       // Convert Markdown to HTML
       if (typeof marked !== 'undefined') {
-        contentContainer.innerHTML = marked.parse(content);
+        const markedExt = { breaks: false, gfm: true };
+
+        if (typeof hljs !== 'undefined') {
+          markedExt.renderer = {
+            code({ text, lang }) {
+              const language = lang && hljs.getLanguage(lang) ? lang : null;
+              const highlighted = language
+                ? hljs.highlight(text, { language }).value
+                : hljs.highlightAuto(text).value;
+              const detectedLang = language || '';
+              return `<pre><code class="hljs language-${detectedLang}" data-lang="${detectedLang}">${highlighted}</code></pre>`;
+            }
+          };
+        }
+
+        marked.use(markedExt);
+        contentContainer.innerHTML = marked.parse(preprocessMarkdown(content));
       } else {
         contentContainer.innerHTML = content;
       }
+
+      // Enhance code blocks with language label + copy button
+      enhanceCodeBlocks(contentContainer);
+
+      // Wrap tables for mobile scroll
+      wrapTables(contentContainer);
+
+      // Build TOC in sidebar
+      buildPostTOC(contentContainer);
 
       // Render LaTeX math equations with KaTeX
       const renderMath = () => {
@@ -290,76 +484,6 @@ async function renderPostDetail() {
     }
   }
 
-  // Initialize comments
-  initializeComments(postId, post.title);
-}
-
-function initializeComments(postId, postTitle) {
-  const commentsContainer = document.getElementById('comments');
-  if (!commentsContainer) return;
-
-  // Note: Utterances requires a GitHub repo to be set up
-  commentsContainer.innerHTML = `
-    <h3>Comments</h3>
-    <p style="color: var(--text-muted); margin-bottom: 1rem;">
-      Comments powered by GitHub Discussions. 
-      <a href="https://github.com/utterances" target="_blank" rel="noopener">Learn more about utterances</a>
-    </p>
-    <div class="utterances-placeholder" style="
-      background: var(--bg-tertiary);
-      border: 1px dashed var(--border-color);
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-muted);
-    ">
-      <p><strong>💬 Comments will appear here once you:</strong></p>
-      <ol style="text-align: left; max-width: 500px; margin: 1rem auto;">
-        <li>Create a public GitHub repository</li>
-        <li>Install the <a href="https://github.com/apps/utterances" target="_blank">utterances app</a></li>
-        <li>Update the utterances configuration in main.js</li>
-      </ol>
-      <p style="margin-top: 1rem;">
-        <a href="#utterances-config" style="color: var(--accent-primary);">
-          See setup instructions below
-        </a>
-      </p>
-    </div>
-    
-    <div id="utterances-config" style="
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-    ">
-      <h4>Utterances Setup Instructions</h4>
-      <p>To enable comments, uncomment and configure the script below in main.js:</p>
-      <pre><code>// Uncomment and update with your repo name:
-/*
-const script = document.createElement('script');
-script.src = 'https://utteranc.es/client.js';
-script.setAttribute('repo', 'YOUR-USERNAME/YOUR-REPO');
-script.setAttribute('issue-term', 'pathname');
-script.setAttribute('theme', 'github-dark');
-script.setAttribute('crossorigin', 'anonymous');
-script.async = true;
-commentsContainer.appendChild(script);
-*/</code></pre>
-    </div>
-  `;
-
-  // Uncomment the following to enable utterances after setting up your repo:
-  /*
-  const script = document.createElement('script');
-  script.src = 'https://utteranc.es/client.js';
-  script.setAttribute('repo', 'YOUR-USERNAME/YOUR-REPO'); // CHANGE THIS
-  script.setAttribute('issue-term', 'pathname');
-  script.setAttribute('theme', document.documentElement.getAttribute('data-theme') === 'dark' ? 'github-dark' : 'github-light');
-  script.setAttribute('crossorigin', 'anonymous');
-  script.async = true;
-  commentsContainer.appendChild(script);
-  */
 }
 
 // ========================================
@@ -535,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else if (postContent) {
     // Post detail page
     renderPostDetail();
+    initializeReadingProgress();
   }
 
   // Initialize smooth scrolling
@@ -576,7 +701,6 @@ function applyUrlFilters() {
   const tag = urlParams.get('tag');
   const search = urlParams.get('search');
 
-  if (category) filterByCategory(category);
   if (tag) filterByTag(tag);
   if (search) {
     const searchInput = document.getElementById('search-input');

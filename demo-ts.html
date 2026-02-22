@@ -115,7 +115,6 @@
             <div class="nav-content">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
                 </ul>
                 <div class="nav-actions">
                     <a href="demo-ts.html" class="btn-demo" style="background: var(--accent-primary); color: white;">TS
@@ -142,9 +141,8 @@
             <div class="chart-panel">
                 <canvas id="tsChart"></canvas>
                 <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
-                    <p><strong>X-Axis (CTR):</strong> The probability that a user clicks.</p>
-                    <p><strong>Y-Axis (Density):</strong> How confident the model is. Taller/Narrower = More Confident.
-                    </p>
+                    <p><strong>X축 (CTR):</strong> 유저가 클릭할 확률 추정값.</p>
+                    <p><strong>Y축 (밀도):</strong> 모델의 확신도. 높고 좁을수록 = 더 확신함.</p>
                 </div>
             </div>
 
@@ -172,26 +170,21 @@
         </div>
 
         <div class="post-content" style="margin-top: 3rem;">
-            <h2>How it works</h2>
+            <h2>작동 원리</h2>
             <p>
-                This demo uses <strong>Bernoulli Thompson Sampling</strong> with Beta distributions.
+                이 데모는 <strong>베르누이 Thompson Sampling</strong>을 Beta 분포로 구현합니다.
             </p>
             <ul>
-                <li><strong>Beta Distribution ($\alpha, \beta$):</strong> Represents the probability of success (CTR).
-                </li>
-                <li><strong>$\alpha$ (Alpha):</strong> Number of Clicks (Successes) + 1.</li>
-                <li><strong>$\beta$ (Beta):</strong> Number of Non-Clicks (Failures) + 1.</li>
+                <li><strong>Beta 분포 (알파, 베타):</strong> 각 광고의 클릭 성공 확률(CTR)을 표현하는 분포입니다.</li>
+                <li><strong>알파(α):</strong> 클릭 횟수(성공) + 1. 값이 클수록 CTR이 높다고 학습됩니다.</li>
+                <li><strong>베타(β):</strong> 클릭하지 않은 횟수(실패) + 1. 값이 클수록 CTR이 낮다고 학습됩니다.</li>
             </ul>
 
-            <h3>Interpretation</h3>
+            <h3>그래프 해석</h3>
             <ul>
-                <li><strong>Shift Right:</strong> When you click (👍), $\alpha$ increases, moving the curve to the right
-                    (higher estimated CTR).</li>
-                <li><strong>Shift Left:</strong> When you ignore (👎), $\beta$ increases, moving the curve to the left.
-                </li>
-                <li><strong>Get Narrower:</strong> As you provide more feedback (clicks or ignores), the curve becomes
-                    taller and narrower. This means the model is becoming <strong>more certain</strong> about the true
-                    CTR.</li>
+                <li><strong>곡선이 오른쪽으로 이동:</strong> 클릭 성공 시 α가 증가하여 CTR 추정값이 높아집니다.</li>
+                <li><strong>곡선이 왼쪽으로 이동:</strong> 클릭하지 않으면 β가 증가하여 CTR 추정값이 낮아집니다.</li>
+                <li><strong>곡선이 좁아짐:</strong> 피드백이 쌓일수록 곡선이 높고 좁아집니다. 모델이 실제 CTR에 대해 <strong>더 확신</strong>하게 된 것입니다.</li>
             </ul>
         </div>
     </main>

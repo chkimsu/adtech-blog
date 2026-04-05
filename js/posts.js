@@ -49,6 +49,56 @@ const posts = [
     tags: ['UCB', 'Thompson Sampling', 'MAB'],
     contentUrl: 'posts/ucb_ts.md',
     readTime: '5 min read'
+  },
+  {
+    id: 'disjoint-linucb',
+    title: 'Disjoint LinUCB 모델 상세 해석',
+    excerpt: 'LinUCB의 핵심 공식인 "최종 점수 = 예측(Exploitation) + 불확실성(Exploration)"을 시각화와 함께 해석합니다.',
+    date: '2026-01-20',
+    categories: ['Bandits & Personalization'],
+    tags: ['LinUCB', 'Contextual Bandit', 'MAB'],
+    contentUrl: 'posts/disjoint-LinUCB.md',
+    readTime: '12 min read'
+  },
+  {
+    id: 'ad-analytics',
+    title: 'Ad Analytics: Metrics, Attribution, and Measurement',
+    excerpt: 'Impression, Engagement, Conversion 핵심 지표와 Last-click부터 Data-driven까지 어트리뷰션 모델을 정리합니다.',
+    date: '2026-01-05',
+    categories: ['Measurement & Modeling'],
+    tags: ['Attribution', 'Analytics', 'Conversion Modeling'],
+    contentUrl: 'posts/ad-analytics.md',
+    readTime: '15 min read'
+  },
+  {
+    id: 'intro-to-programmatic',
+    title: 'Introduction to Programmatic Advertising',
+    excerpt: 'DSP, SSP, Ad Exchange, DMP 등 프로그래매틱 광고의 핵심 구성요소와 작동 원리를 소개합니다.',
+    date: '2025-12-20',
+    categories: ['Bidding & Auction'],
+    tags: ['Programmatic', 'DSP', 'SSP'],
+    contentUrl: 'posts/intro-to-programmatic.md',
+    readTime: '10 min read'
+  },
+  {
+    id: 'rtb-explained',
+    title: 'Real-Time Bidding (RTB) Deep Dive',
+    excerpt: 'RTB 옥션 플로우 7단계, OpenRTB 프로토콜, First/Second Price Auction, Bid Shading까지 상세 해설합니다.',
+    date: '2025-12-28',
+    categories: ['Bidding & Auction'],
+    tags: ['RTB', 'Auction', 'Programmatic'],
+    contentUrl: 'posts/rtb-explained.md',
+    readTime: '12 min read'
+  },
+  {
+    id: 'privacy-compliance',
+    title: 'Privacy & Compliance in Ad Tech',
+    excerpt: 'GDPR, CCPA, ePrivacy 등 주요 규제와 IAB TCF, Privacy Sandbox 등 업계 대응 프레임워크를 정리합니다.',
+    date: '2025-12-15',
+    categories: ['Privacy & Compliance'],
+    tags: ['GDPR', 'CCPA', 'Privacy'],
+    contentUrl: 'posts/privacy-compliance.md',
+    readTime: '12 min read'
   }
 ];
 

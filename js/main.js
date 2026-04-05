@@ -22,7 +22,7 @@ function toggleTheme() {
 function updateThemeButton(theme) {
   const button = document.getElementById('theme-toggle');
   if (button) {
-    button.textContent = theme === 'dark' ? '☀️' : '🌙';
+    button.textContent = theme === 'dark' ? 'Light' : 'Dark';
     button.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
   }
 }
@@ -106,6 +106,22 @@ let currentFilters = {
 };
 
 function initializeFilters() {
+  // Render category filters
+  const categoriesContainer = document.getElementById('category-filters');
+  if (categoriesContainer) {
+    const categories = getAllCategories();
+    categoriesContainer.innerHTML = `
+      <div class="filter-tag active" data-category="">All</div>
+      ${categories.map(cat =>
+      `<div class="filter-tag" data-category="${cat}">${cat}</div>`
+    ).join('')}
+    `;
+
+    categoriesContainer.querySelectorAll('.filter-tag').forEach(catEl => {
+      catEl.addEventListener('click', () => filterByCategory(catEl.dataset.category));
+    });
+  }
+
   // Render tag filters
   const tagsContainer = document.getElementById('tag-filters');
   if (tagsContainer) {
@@ -130,6 +146,16 @@ function initializeFilters() {
       applyFilters();
     });
   }
+}
+
+function filterByCategory(category) {
+  currentFilters.category = category;
+
+  document.querySelectorAll('#category-filters .filter-tag').forEach(catEl => {
+    catEl.classList.toggle('active', catEl.dataset.category === category);
+  });
+
+  applyFilters();
 }
 
 function filterByTag(tag) {
@@ -472,6 +498,10 @@ async function renderPostDetail() {
 
       renderMath();
 
+      // Render post navigation and related posts
+      renderPostNavigation(post.id);
+      renderRelatedPosts(post);
+
     } catch (error) {
       console.error('Error loading post:', error);
       contentContainer.innerHTML = `
@@ -484,6 +514,72 @@ async function renderPostDetail() {
     }
   }
 
+}
+
+// ========================================
+// Post Navigation (Prev / Next)
+// ========================================
+
+function renderPostNavigation(currentPostId) {
+  const nav = document.getElementById('post-nav');
+  if (!nav) return;
+
+  const sorted = getAllPosts();
+  const idx = sorted.findIndex(p => p.id === currentPostId);
+  if (idx === -1) return;
+
+  const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  const next = idx > 0 ? sorted[idx - 1] : null;
+
+  nav.innerHTML = `
+    ${prev ? `<a href="post.html?id=${prev.id}" class="post-nav-link post-nav-prev">
+      <span class="post-nav-label">Previous</span>
+      <span class="post-nav-title">${prev.title}</span>
+    </a>` : '<div></div>'}
+    ${next ? `<a href="post.html?id=${next.id}" class="post-nav-link post-nav-next">
+      <span class="post-nav-label">Next</span>
+      <span class="post-nav-title">${next.title}</span>
+    </a>` : '<div></div>'}
+  `;
+}
+
+// ========================================
+// Related Posts
+// ========================================
+
+function renderRelatedPosts(currentPost) {
+  const container = document.getElementById('related-posts');
+  if (!container) return;
+
+  // Find posts sharing tags or categories
+  const scored = posts
+    .filter(p => p.id !== currentPost.id)
+    .map(p => {
+      let score = 0;
+      p.tags.forEach(t => { if (currentPost.tags.includes(t)) score += 2; });
+      p.categories.forEach(c => { if (currentPost.categories.includes(c)) score += 1; });
+      return { post: p, score };
+    })
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (scored.length === 0) return;
+
+  container.innerHTML = `
+    <div class="container">
+      <h3 class="related-posts-title">Related Posts</h3>
+      <div class="related-posts-grid">
+        ${scored.map(s => `
+          <a href="post.html?id=${s.post.id}" class="related-post-card">
+            <span class="related-post-date">${formatDate(s.post.date)}</span>
+            <span class="related-post-name">${s.post.title}</span>
+            <span class="related-post-excerpt">${s.post.excerpt}</span>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+  `;
 }
 
 // ========================================
@@ -701,6 +797,7 @@ function applyUrlFilters() {
   const tag = urlParams.get('tag');
   const search = urlParams.get('search');
 
+  if (category) filterByCategory(category);
   if (tag) filterByTag(tag);
   if (search) {
     const searchInput = document.getElementById('search-input');

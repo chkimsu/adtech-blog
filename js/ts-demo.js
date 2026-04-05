@@ -292,4 +292,12 @@ function logAction(message) {
     log.insertBefore(entry, log.firstChild);
 }
 
+function resetTS() {
+    model = new ThompsonSampling(N_ARMS);
+    updateVisualization();
+    const log = document.getElementById('demo-log');
+    log.innerHTML = '';
+    logAction('Model reset to initial state (Uniform Prior).');
+}
+
 document.addEventListener('DOMContentLoaded', initDemo);

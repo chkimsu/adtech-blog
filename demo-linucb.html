@@ -161,11 +161,12 @@
             <div class="nav-content">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
                 </ul>
                 <div class="nav-actions">
                     <a href="demo-ts.html" class="btn-demo">TS Demo</a>
-                    <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                    <a href="demo-linucb.html" class="btn-demo" style="background: var(--accent-primary); color: white;">LinUCB Demo</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
                 </div>
             </div>
         </nav>
@@ -228,6 +229,14 @@
                 <!-- Table injected by JS -->
             </div>
         </div>
+        </div>
+
+        <!-- Related Posts Links -->
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 2rem; flex-wrap: wrap; gap: 0.75rem;">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Related:</span>
+            <a href="post.html?id=disjoint-linucb" class="btn-demo">Disjoint LinUCB</a>
+            <a href="post.html?id=mab-summary" class="btn-demo">MAB Collection</a>
+            <a href="post.html?id=ucb-vs-ts" class="btn-demo">UCB vs TS</a>
         </div>
 
         <div class="post-content" style="margin-top: 3rem;">
@@ -343,11 +352,10 @@
         <div class="footer-content">
             <div class="footer-links">
                 <a href="index.html">Home</a>
-                <a href="#">Twitter</a>
-                <a href="#">GitHub</a>
-                <a href="#">RSS</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
             </div>
-            <p class="footer-text">© 2026 Ad Tech Blog. Built with vanilla HTML/CSS/JS.</p>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with modern web technologies.</p>
         </div>
     </footer>
 

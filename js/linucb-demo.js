@@ -344,6 +344,13 @@ function handleAdClick(armIdx) {
     updateVisualization();
 }
 
+function handleAdIgnore(armIdx) {
+    const context = ads[armIdx].features;
+    model.update(armIdx, context, 0.0);
+    logAction(`Ignored <strong>${ads[armIdx].name}</strong>. Model updated (reward=0).`);
+    updateVisualization();
+}
+
 function renderAdCards() {
     const container = document.getElementById('ad-cards-container');
     container.innerHTML = '';
@@ -354,7 +361,10 @@ function renderAdCards() {
         card.innerHTML = `
       <h3>${ad.name}</h3>
       <div class="features">Features: [${ad.features.join(', ')}]</div>
-      <button onclick="handleAdClick(${idx})">Click (Like)</button>
+      <div style="display: flex; gap: 0.5rem; justify-content: center;">
+        <button onclick="handleAdClick(${idx})" style="flex:1;">Click</button>
+        <button onclick="handleAdIgnore(${idx})" style="flex:1; background: rgba(255,75,87,0.15); border-color: #ff4b57; color: #ff4b57;">Ignore</button>
+      </div>
     `;
         container.appendChild(card);
     });

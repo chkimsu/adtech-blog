@@ -115,12 +115,13 @@
             <div class="nav-content">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
                 </ul>
                 <div class="nav-actions">
                     <a href="demo-ts.html" class="btn-demo" style="background: var(--accent-primary); color: white;">TS
                         Demo</a>
                     <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
                 </div>
             </div>
         </nav>
@@ -169,6 +170,16 @@
             </div>
         </div>
 
+        <!-- Reset & Related -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <button onclick="resetTS()" style="background: #ff4757; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600;">Reset Model</button>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a href="post.html?id=ucb-vs-ts" class="btn-demo">UCB vs TS</a>
+                <a href="post.html?id=TS-linTS" class="btn-demo">Standard TS vs Linear TS</a>
+                <a href="post.html?id=mab-summary" class="btn-demo">MAB Collection</a>
+            </div>
+        </div>
+
         <div class="post-content" style="margin-top: 3rem;">
             <h2>작동 원리</h2>
             <p>
@@ -193,11 +204,10 @@
         <div class="footer-content">
             <div class="footer-links">
                 <a href="index.html">Home</a>
-                <a href="#">Twitter</a>
-                <a href="#">GitHub</a>
-                <a href="#">RSS</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
             </div>
-            <p class="footer-text">© 2026 Ad Tech Blog. Built with vanilla HTML/CSS/JS.</p>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with modern web technologies.</p>
         </div>
     </footer>
 

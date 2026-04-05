@@ -60,6 +60,16 @@ const posts = [
     contentUrl: 'posts/disjoint-LinUCB.md',
     readTime: '12 min read'
   },
+  {
+    id: 'ad-serving-flow',
+    title: 'Ad Serving Flow: 광고가 유저에게 도달하는 전체 과정',
+    excerpt: 'DSP, SSP, Ad Exchange, DMP의 역할과 RTB Auction 플로우를 도식도와 함께 정리합니다.',
+    date: '2026-01-25',
+    categories: ['Bidding & Auction'],
+    tags: ['DSP', 'SSP', 'RTB', 'Ad Exchange'],
+    contentUrl: 'posts/ad-serving-flow.md',
+    readTime: '8 min read'
+  },
 ];
 
 // Helper functions for data access

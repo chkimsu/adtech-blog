@@ -183,6 +183,7 @@ function applyFilters() {
 // ========================================
 
 function preprocessMarkdown(text) {
+  if (!text) return '';
   return text
     // Normalize 3+ consecutive blank lines to max 2
     .replace(/\n{3,}/g, '\n\n')
@@ -455,13 +456,19 @@ async function renderPostDetail() {
 
         if (typeof hljs !== 'undefined') {
           markedExt.renderer = {
-            code({ text, lang }) {
+            code(token) {
+              const text = token.text || token.raw || '';
+              const lang = token.lang || '';
               const language = lang && hljs.getLanguage(lang) ? lang : null;
-              const highlighted = language
-                ? hljs.highlight(text, { language }).value
-                : hljs.highlightAuto(text).value;
-              const detectedLang = language || '';
-              return `<pre><code class="hljs language-${detectedLang}" data-lang="${detectedLang}">${highlighted}</code></pre>`;
+              try {
+                const highlighted = language
+                  ? hljs.highlight(text, { language }).value
+                  : text ? hljs.highlightAuto(text).value : '';
+                const detectedLang = language || '';
+                return `<pre><code class="hljs language-${detectedLang}" data-lang="${detectedLang}">${highlighted}</code></pre>`;
+              } catch (e) {
+                return `<pre><code>${text}</code></pre>`;
+              }
             }
           };
         }

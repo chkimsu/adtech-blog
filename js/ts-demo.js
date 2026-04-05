@@ -243,8 +243,8 @@ function renderControls() {
         div.innerHTML = `
             <h3>${ad.name}</h3>
             <div class="btn-group">
-                <button class="btn-success" onclick="handleFeedback(${idx}, 1)">👍 Click</button>
-                <button class="btn-fail" onclick="handleFeedback(${idx}, 0)">👎 Ignore</button>
+                <button class="btn-success" onclick="handleFeedback(${idx}, 1)">Click</button>
+                <button class="btn-fail" onclick="handleFeedback(${idx}, 0)">Ignore</button>
             </div>
         `;
         container.appendChild(div);

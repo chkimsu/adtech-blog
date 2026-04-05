@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Auction Simulator - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .control-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .auction-type-group {
+            display: flex;
+            gap: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .auction-type-btn {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .auction-type-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .auction-type-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-run {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-run:hover {
+            opacity: 0.85;
+        }
+
+        .btn-run:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-auto {
+            background: rgba(176, 38, 255, 0.2);
+            color: #b026ff;
+            border: 1px solid rgba(176, 38, 255, 0.4);
+        }
+
+        .btn-auto:hover {
+            background: rgba(176, 38, 255, 0.35);
+        }
+
+        .btn-auto:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 71, 87, 0.35);
+        }
+
+        .btn-action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .stats-table thead tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-table th {
+            text-align: left;
+            padding: 0.5rem 0.4rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stats-table th:not(:first-child) {
+            text-align: right;
+        }
+
+        .stats-table td {
+            padding: 0.5rem 0.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stats-table td:not(:first-child) {
+            text-align: right;
+        }
+
+        .log-panel {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-panel div {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.25rem;
+        }
+
+        .log-panel .time {
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+        }
+
+        .log-winner {
+            color: #4bc0c0;
+        }
+
+        .log-no-winner {
+            color: #ff6384;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demo-ts.html" class="btn-demo">TS Demo</a>
+                    <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
+                    <a href="demo-rtb.html" class="btn-demo"
+                        style="background: var(--accent-primary); color: white;">RTB Demo</a>
+                    <a href="demo-bid-landscape.html" class="btn-demo">Bid Landscape Demo</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>RTB Auction Simulator</h1>
+            <p class="post-excerpt">
+                Real-Time Bidding 경매 과정을 시각적으로 시뮬레이션합니다.
+                <strong>First Price</strong>와 <strong>Second Price</strong> 경매 방식의 차이를
+                직접 확인하고, DSP별 입찰 전략이 결과에 미치는 영향을 관찰해 보세요.
+            </p>
+        </div>
+
+        <div class="demo-container">
+            <!-- Left: Chart -->
+            <div class="chart-panel">
+                <canvas id="auctionChart"></canvas>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <p><strong>X축 (DSP):</strong> 각 DSP(Demand-Side Platform)의 입찰 현황을 나타냅니다.</p>
+                    <p><strong>Y축 (Bid Amount):</strong> 입찰 금액($). 빨간 점선은 Floor Price(최소 입찰가)입니다.</p>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="control-panel">
+                <!-- Auction Type Toggle -->
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.75rem;">Auction Type</h3>
+                    <div class="auction-type-group">
+                        <button class="auction-type-btn active" id="btn-first-price"
+                            onclick="setAuctionType('first')">First Price</button>
+                        <button class="auction-type-btn" id="btn-second-price"
+                            onclick="setAuctionType('second')">Second Price</button>
+                    </div>
+                </div>
+
+                <!-- Floor Price Slider -->
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.75rem;">Floor Price</h3>
+                    <div class="slider-container">
+                        <input type="range" id="floor-slider" min="0.5" max="5.0" step="0.1" value="1.5"
+                            oninput="updateFloorPrice(this.value)">
+                        <div class="slider-label">
+                            <span>$0.50</span>
+                            <strong id="floor-value">$1.50</strong>
+                            <span>$5.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="btn-action-group">
+                    <button class="btn-action btn-run" id="btn-run" onclick="runAuction()">Run Auction</button>
+                    <button class="btn-action btn-auto" id="btn-auto" onclick="autoRun()">Auto Run (10 Rounds)</button>
+                    <button class="btn-action btn-reset" id="btn-reset" onclick="resetDemo()">Reset</button>
+                </div>
+
+                <!-- Stats Table -->
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.5rem;">DSP Statistics</h3>
+                    <div id="stats-container">
+                        <!-- Stats injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">Activity Log</h3>
+                    <div id="demo-log" class="log-panel">
+                        <!-- Logs here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation Section -->
+        <div class="post-content" style="margin-top: 3rem;">
+            <h2>First Price vs Second Price Auction</h2>
+            <p>
+                RTB(Real-Time Bidding)에서 경매 방식은 광고 생태계의 핵심 메커니즘입니다.
+                퍼블리셔의 광고 슬롯이 노출될 때마다 밀리초 단위로 경매가 진행되며,
+                가장 높은 입찰가를 제시한 DSP의 광고가 게재됩니다.
+            </p>
+
+            <h3>First Price Auction (1차 가격 경매)</h3>
+            <ul>
+                <li><strong>규칙:</strong> 낙찰자가 자신이 제시한 금액 그대로 지불합니다.</li>
+                <li><strong>장점:</strong> 퍼블리셔 입장에서 수익이 투명하고 예측 가능합니다.</li>
+                <li><strong>단점:</strong> 바이어는 과다 지불(overpaying)의 위험이 있어 입찰가를 낮추려는 동기가 생깁니다.</li>
+                <li><strong>현재 트렌드:</strong> Google Ad Manager를 비롯한 대부분의 SSP가 First Price로 전환했습니다.</li>
+            </ul>
+
+            <h3>Second Price Auction (2차 가격 경매)</h3>
+            <ul>
+                <li><strong>규칙:</strong> 낙찰자가 두 번째로 높은 입찰가 + $0.01을 지불합니다.</li>
+                <li><strong>장점:</strong> 바이어는 자신의 진정한 가치(True Value)대로 입찰할 유인이 있습니다 (Truthful Bidding).</li>
+                <li><strong>단점:</strong> 헤더비딩 환경에서 경매 투명성이 떨어질 수 있습니다.</li>
+            </ul>
+
+            <h3>Bid Shading (입찰가 조정)</h3>
+            <p>
+                First Price 경매에서 바이어는 낙찰가가 곧 지불 금액이므로, 과다 지불을 피하기 위해
+                <strong>Bid Shading</strong> 전략을 사용합니다. 이는 원래 입찰하려던 금액보다 낮게 입찰하되,
+                여전히 낙찰될 확률을 유지하는 최적 지점을 찾는 기법입니다.
+            </p>
+            <ul>
+                <li>위 시뮬레이션에서 <strong>DSP C (Smart)</strong>가 이 전략을 사용합니다.</li>
+                <li>First Price에서는 입찰가를 낮추어 비용을 절감하고, Second Price에서는 진정한 가치에 가깝게 입찰합니다.</li>
+                <li>실제 DSP들은 과거 낙찰 데이터, 경쟁 환경, Win Rate 등을 ML 모델로 학습하여 Shading 비율을 결정합니다.</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+            </div>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with modern web technologies.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/rtb-demo.js"></script>
+</body>
+
+</html>

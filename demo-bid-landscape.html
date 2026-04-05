@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Landscape Explorer - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-full {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            min-height: 400px;
+        }
+
+        .chart-legend {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .controls-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .controls-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .control-panel h3 {
+            margin-bottom: 1rem;
+        }
+
+        .slider-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .slider-group label span {
+            color: var(--accent-primary);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .stats-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .stats-panel h3 {
+            margin-bottom: 1rem;
+        }
+
+        .stat-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-primary);
+        }
+
+        .explanation-section {
+            margin-top: 3rem;
+        }
+
+        .explanation-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .explanation-section ul {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .explanation-section li {
+            margin-bottom: 0.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demo-ts.html" class="btn-demo">TS Demo</a>
+                    <a href="demo-linucb.html" class="btn-demo">LinUCB Demo</a>
+                    <a href="demo-rtb.html" class="btn-demo">RTB Demo</a>
+                    <a href="demo-bid-landscape.html" class="btn-demo"
+                        style="background: var(--accent-primary); color: white;">Bid Landscape</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>Bid Landscape Explorer</h1>
+            <p class="post-excerpt">
+                입찰 가격에 따른 <strong>낙찰률(Win Rate)</strong>, <strong>예상 비용</strong>, <strong>예상 수익</strong>의
+                변화를 시각적으로 탐색합니다. 슬라이더를 조절하여 최적 입찰가를 찾아보세요.
+            </p>
+        </div>
+
+        <!-- Chart Panel (Full Width) -->
+        <div class="chart-full">
+            <canvas id="bidLandscapeChart"></canvas>
+            <div class="chart-legend">
+                <p><strong>X축 (Bid Price):</strong> DSP가 제출하는 입찰 가격 ($).</p>
+                <p><strong>좌측 Y축 (Win Rate):</strong> 해당 입찰가에서 경매를 낙찰할 확률 (%).</p>
+                <p><strong>우측 Y축 (Amount):</strong> 예상 비용 및 예상 수익/손익 금액 ($).</p>
+            </div>
+        </div>
+
+        <!-- Controls + Stats Grid -->
+        <div class="controls-stats-grid">
+            <!-- Left: Controls -->
+            <div class="control-panel">
+                <h3>Controls</h3>
+
+                <div class="slider-group">
+                    <label>Bid Price ($) <span id="val-bid">2.00</span></label>
+                    <input type="range" id="slider-bid" min="0" max="5.0" step="0.1" value="2.0">
+                </div>
+
+                <div class="slider-group">
+                    <label>Market Median ($) <span id="val-median">2.00</span></label>
+                    <input type="range" id="slider-median" min="0.5" max="4.0" step="0.1" value="2.0">
+                </div>
+
+                <div class="slider-group">
+                    <label>Competition Level (k) <span id="val-competition">3.0</span></label>
+                    <input type="range" id="slider-competition" min="1.0" max="8.0" step="0.5" value="3.0">
+                </div>
+
+                <div class="slider-group">
+                    <label>pCTR <span id="val-pctr">0.05</span></label>
+                    <input type="range" id="slider-pctr" min="0.01" max="0.20" step="0.01" value="0.05">
+                </div>
+
+                <div class="slider-group">
+                    <label>Conversion Value ($) <span id="val-convvalue">20</span></label>
+                    <input type="range" id="slider-convvalue" min="1" max="50" step="1" value="20">
+                </div>
+            </div>
+
+            <!-- Right: Stats -->
+            <div class="stats-panel">
+                <h3>Stats</h3>
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-label">Current Bid</div>
+                        <div class="stat-value" id="stat-bid">$2.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Win Rate</div>
+                        <div class="stat-value" id="stat-winrate">50.0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Expected Cost / Win</div>
+                        <div class="stat-value" id="stat-cost">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Expected Revenue / Win</div>
+                        <div class="stat-value" id="stat-revenue">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Expected Profit / Win</div>
+                        <div class="stat-value" id="stat-profit">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Optimal Bid</div>
+                        <div class="stat-value" id="stat-optimal">$0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation Section -->
+        <div class="post-content explanation-section">
+            <h2>Bid Landscape 해석 가이드</h2>
+            <p>
+                Bid Landscape는 RTB(Real-Time Bidding) 환경에서 입찰 가격에 따른 낙찰 확률과 비용 구조를
+                시각화한 것입니다. DSP(Demand-Side Platform)가 최적의 입찰 전략을 수립하는 데 핵심 도구로 사용됩니다.
+            </p>
+
+            <h3>핵심 지표</h3>
+            <ul>
+                <li><strong>Win Rate (낙찰률):</strong> 시그모이드 함수로 모델링됩니다.
+                    입찰가가 시장 중앙값(Market Median)보다 높을수록 낙찰 확률이 급격히 증가합니다.</li>
+                <li><strong>Expected Cost (예상 비용):</strong> 2nd-price 옥션 기반의 예상 지불 비용입니다.
+                    입찰가를 올려도 실제 지불하는 비용은 점진적으로 증가합니다.</li>
+                <li><strong>Expected Profit (예상 수익):</strong> 예상 매출(pCTR x Conversion Value x Win Rate)에서
+                    예상 비용을 뺀 순이익입니다. 녹색 영역이 양(+)의 수익 구간을 나타냅니다.</li>
+            </ul>
+
+            <h3>슬라이더 설명</h3>
+            <ul>
+                <li><strong>Bid Price:</strong> 현재 입찰 가격. 차트 위의 수직 점선으로 표시됩니다.</li>
+                <li><strong>Market Median:</strong> 시장 경쟁 입찰가의 중앙값. 이 값을 기준으로 낙찰률 곡선이 형성됩니다.</li>
+                <li><strong>Competition Level (k):</strong> 경쟁 강도. 값이 높을수록 낙찰률 곡선이 가파르게 변합니다.</li>
+                <li><strong>pCTR:</strong> 예측 클릭률(Predicted Click-Through Rate). 광고가 노출되었을 때 클릭될 확률입니다.</li>
+                <li><strong>Conversion Value:</strong> 클릭 1회당 기대 전환 가치 ($). 광고주가 설정한 목표 전환 단가입니다.</li>
+            </ul>
+
+            <h3>최적 입찰 전략</h3>
+            <p>
+                Expected Profit이 최대가 되는 입찰가가 최적 입찰가(Optimal Bid)입니다.
+                너무 낮은 입찰가는 낙찰률이 낮아 기회를 놓치고, 너무 높은 입찰가는 비용이 수익을 초과하여 손실이 발생합니다.
+                Stats 패널의 Optimal Bid 값을 참고하여 수익이 극대화되는 구간을 확인하세요.
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+            </div>
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. Built with modern web technologies.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/bid-landscape-demo.js"></script>
+</body>
+
+</html>

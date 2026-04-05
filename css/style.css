@@ -733,6 +733,17 @@ nav {
   border: none;
 }
 
+/* Mermaid Diagrams */
+.post-content pre.mermaid {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1.5rem 1rem;
+  overflow-x: auto;
+}
+
 .post-content img {
   max-width: 100%;
   height: auto;

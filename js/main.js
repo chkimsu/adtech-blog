@@ -227,6 +227,8 @@ function initializeReadingProgress() {
 function enhanceCodeBlocks(container) {
   const preBlocks = container.querySelectorAll('pre');
   preBlocks.forEach(pre => {
+    // Skip mermaid blocks
+    if (pre.classList.contains('mermaid')) return;
     const codeEl = pre.querySelector('code');
     if (!codeEl) return;
 
@@ -456,9 +458,23 @@ async function renderPostDetail() {
 
         if (typeof hljs !== 'undefined') {
           markedExt.renderer = {
-            code(token) {
-              const text = token.text || token.raw || '';
-              const lang = token.lang || '';
+            code(tokenOrText, langArg) {
+              // marked v12 passes either an object {text, lang} or (text, lang) as positional args
+              let text, lang;
+              if (typeof tokenOrText === 'string') {
+                text = tokenOrText;
+                lang = langArg || '';
+              } else {
+                text = tokenOrText.text || tokenOrText.raw || '';
+                lang = tokenOrText.lang || '';
+              }
+              if (!text) text = '';
+
+              // Mermaid diagram
+              if (lang === 'mermaid') {
+                return `<pre class="mermaid">${text}</pre>`;
+              }
+
               const language = lang && hljs.getLanguage(lang) ? lang : null;
               try {
                 const highlighted = language
@@ -504,6 +520,16 @@ async function renderPostDetail() {
       };
 
       renderMath();
+
+      // Render Mermaid diagrams
+      if (typeof mermaid !== 'undefined') {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: currentTheme === 'dark' ? 'dark' : 'default'
+        });
+        mermaid.run();
+      }
 
       // Render post navigation and related posts
       renderPostNavigation(post.id);

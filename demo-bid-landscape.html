@@ -240,36 +240,78 @@
 
         <!-- Explanation Section -->
         <div class="post-content explanation-section">
-            <h2>Bid Landscape 해석 가이드</h2>
+            <h2>Bid Landscape란?</h2>
             <p>
-                Bid Landscape는 RTB(Real-Time Bidding) 환경에서 입찰 가격에 따른 낙찰 확률과 비용 구조를
-                시각화한 것입니다. DSP(Demand-Side Platform)가 최적의 입찰 전략을 수립하는 데 핵심 도구로 사용됩니다.
+                Bid Landscape는 RTB(Real-Time Bidding) 환경에서 "입찰가를 얼마로 설정해야 하는가?"라는 질문에
+                데이터 기반으로 답하기 위한 분석 도구입니다.
+                입찰 가격(X축)에 따라 낙찰 확률, 비용, 수익이 어떻게 변하는지를 하나의 차트에서 한눈에 파악할 수 있습니다.
+            </p>
+            <p>
+                실제 DSP(The Trade Desk, DV360, AppNexus 등)는 과거 수백만 건의 경매 데이터를 분석하여
+                지면별, 시간대별, 유저 세그먼트별로 서로 다른 Bid Landscape를 구축합니다.
+                이 데모에서는 로지스틱 함수를 사용하여 단순화된 모델을 시각화합니다.
             </p>
 
-            <h3>핵심 지표</h3>
-            <ul>
-                <li><strong>Win Rate (낙찰률):</strong> 시그모이드 함수로 모델링됩니다.
-                    입찰가가 시장 중앙값(Market Median)보다 높을수록 낙찰 확률이 급격히 증가합니다.</li>
-                <li><strong>Expected Cost (예상 비용):</strong> 2nd-price 옥션 기반의 예상 지불 비용입니다.
-                    입찰가를 올려도 실제 지불하는 비용은 점진적으로 증가합니다.</li>
-                <li><strong>Expected Profit (예상 수익):</strong> 예상 매출(pCTR x Conversion Value x Win Rate)에서
-                    예상 비용을 뺀 순이익입니다. 녹색 영역이 양(+)의 수익 구간을 나타냅니다.</li>
-            </ul>
+            <h2>차트 해석 가이드</h2>
 
-            <h3>슬라이더 설명</h3>
-            <ul>
-                <li><strong>Bid Price:</strong> 현재 입찰 가격. 차트 위의 수직 점선으로 표시됩니다.</li>
-                <li><strong>Market Median:</strong> 시장 경쟁 입찰가의 중앙값. 이 값을 기준으로 낙찰률 곡선이 형성됩니다.</li>
-                <li><strong>Competition Level (k):</strong> 경쟁 강도. 값이 높을수록 낙찰률 곡선이 가파르게 변합니다.</li>
-                <li><strong>pCTR:</strong> 예측 클릭률(Predicted Click-Through Rate). 광고가 노출되었을 때 클릭될 확률입니다.</li>
-                <li><strong>Conversion Value:</strong> 클릭 1회당 기대 전환 가치 ($). 광고주가 설정한 목표 전환 단가입니다.</li>
-            </ul>
-
-            <h3>최적 입찰 전략</h3>
+            <h3>Win Rate 곡선 (파란색, 좌측 Y축)</h3>
             <p>
-                Expected Profit이 최대가 되는 입찰가가 최적 입찰가(Optimal Bid)입니다.
-                너무 낮은 입찰가는 낙찰률이 낮아 기회를 놓치고, 너무 높은 입찰가는 비용이 수익을 초과하여 손실이 발생합니다.
-                Stats 패널의 Optimal Bid 값을 참고하여 수익이 극대화되는 구간을 확인하세요.
+                시그모이드(S자) 형태의 낙찰 확률 곡선입니다.
+                입찰가가 시장 중앙값(Market Median) 부근에서 급격히 상승하며,
+                중앙값보다 훨씬 높게 입찰하면 거의 100%에 수렴합니다.
+            </p>
+            <ul>
+                <li>Market Median = $2.00일 때, $2.00 입찰 시 약 50%의 낙찰 확률을 가집니다.</li>
+                <li>Competition Level이 높을수록 곡선이 가파르게 변합니다. 경쟁이 치열한 시장에서는 조금만 낮게 입찰해도 낙찰률이 급락합니다.</li>
+            </ul>
+
+            <h3>Expected Cost 곡선 (빨간색, 우측 Y축)</h3>
+            <p>
+                Second Price Auction 기반의 예상 지불 비용입니다.
+                입찰가를 높인다고 비용이 비례하여 증가하지는 않습니다.
+                실제 지불 금액은 2등 입찰가에 의해 결정되므로, 입찰가 대비 비용 증가율은 점차 완만해집니다.
+            </p>
+
+            <h3>Expected Profit 곡선 (초록색/녹색 영역, 우측 Y축)</h3>
+            <p>
+                Expected Revenue(pCTR x Conversion Value x Win Rate)에서 Expected Cost를 뺀 순이익입니다.
+            </p>
+            <ul>
+                <li>녹색 영역이 양(+)의 수익 구간: 이 범위 내에서 입찰해야 이익이 발생합니다.</li>
+                <li>Profit이 최대인 지점 = Optimal Bid: Stats 패널에 자동 계산되어 표시됩니다.</li>
+                <li>Optimal Bid보다 높게 입찰하면: 낙찰률은 올라가지만 비용 증가가 수익을 초과하여 이익이 감소합니다.</li>
+                <li>Optimal Bid보다 낮게 입찰하면: 비용은 절약되지만 낙찰 기회를 놓쳐 전체 수익이 감소합니다.</li>
+            </ul>
+
+            <h2>슬라이더 상세 설명</h2>
+            <ul>
+                <li>Bid Price: 현재 입찰 가격. 차트 위의 수직 점선으로 표시됩니다. 이 값을 움직이면 Stats 패널의 수치가 실시간으로 변합니다.</li>
+                <li>Market Median: 시장 경쟁 입찰가의 중앙값. 이 지면에서 경쟁 DSP들이 평균적으로 얼마를 입찰하는지를 나타냅니다. 프리미엄 지면일수록 높습니다.</li>
+                <li>Competition Level (k): 경쟁 강도 파라미터. 값이 높으면 소수의 DSP가 비슷한 가격에 밀집해 있어, 약간의 가격 차이가 낙찰 여부를 결정합니다. 값이 낮으면 입찰가 분포가 넓어 가격에 덜 민감합니다.</li>
+                <li>pCTR: 예측 클릭률(Predicted Click-Through Rate). 해당 유저가 이 광고를 클릭할 확률입니다. 일반적으로 디스플레이 광고는 0.01~0.05, 검색 광고는 0.05~0.20 범위입니다.</li>
+                <li>Conversion Value: 클릭 1회당 기대 전환 가치($). CPA(Cost Per Action) 기반 캠페인에서 광고주가 전환 1건에 지불할 의향이 있는 금액입니다.</li>
+            </ul>
+
+            <h2>실무 활용 시나리오</h2>
+
+            <h3>시나리오 1: 경쟁이 심한 프리미엄 지면</h3>
+            <p>
+                Market Median을 $3.0 이상으로, Competition Level을 6.0 이상으로 설정해 보세요.
+                Win Rate 곡선이 매우 가파르게 변하며, Optimal Bid가 높아지는 것을 확인할 수 있습니다.
+                이런 환경에서는 조금이라도 낮게 입찰하면 거의 낙찰되지 않습니다.
+            </p>
+
+            <h3>시나리오 2: pCTR이 낮은 광고</h3>
+            <p>
+                pCTR을 0.01~0.02로 낮추면 Expected Revenue가 급감하여 Profit 곡선이 대부분 마이너스 영역에 머물게 됩니다.
+                이는 "이 유저에게 이 광고를 보여줘봐야 클릭이 거의 없으므로, 입찰 자체를 하지 않는 게 합리적"이라는 의사결정으로 이어집니다.
+                실제 DSP에서는 이런 경우 입찰을 skip합니다.
+            </p>
+
+            <h3>시나리오 3: 고가 전환 캠페인</h3>
+            <p>
+                Conversion Value를 $40~50으로 높이면 Profit 곡선이 전체적으로 상승하며,
+                더 공격적으로 입찰해도 수익이 유지됩니다. 보험, 금융, B2B SaaS처럼 전환 단가가 높은 업종에 해당합니다.
             </p>
         </div>
     </main>

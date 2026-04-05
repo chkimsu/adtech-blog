@@ -39,10 +39,10 @@ function renderPostCard(post) {
   card.innerHTML = `
     <div class="post-meta">
       <span class="post-date">${formatDate(post.date)}</span>
+      <span class="post-meta-sep">·</span>
       <span class="post-read-time">${post.readTime}</span>
     </div>
     <h3>${post.title}</h3>
-    <p class="post-excerpt">${post.excerpt}</p>
     <div class="post-tags">
       ${post.tags.map(tag => `<span class="tag" data-tag="${tag}">${tag}</span>`).join('')}
     </div>

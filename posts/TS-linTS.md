@@ -7,7 +7,7 @@
 | 구분 | Standard Thompson Sampling (Vanilla) | Linear Thompson Sampling (Contextual) |
 | --- | --- | --- |
 | 핵심 철학 | "각자도생" (Independence) | "응용과 추론" (Generalization) |
-| 학습 대상 | 개별 광고 ID (Arm)의 성공 확률 | Feature(특징)의 가중치 () |
+| 학습 대상 | 개별 광고 ID (Arm)의 성공 확률 | Feature(특징)의 가중치 ($\theta$) |
 | 확률 분포 | Beta Distribution (이진 결과) | Gaussian Distribution (실수 가중치) |
 | 신규 광고 | 대응 불가 (Cold Start 문제 발생) | 즉시 대응 (Feature 기반 추론) |
 | 주요 용도 | 단순 A/B 테스트, 고정된 배너 최적화 | 검색 광고, 개인화 추천, 동적 후보군 |
@@ -23,7 +23,7 @@
 각 광고(Arm)를 서로 완전히 다른 독립적인 존재로 취급합니다. 광고 A가 잘된다고 해서, 비슷하게 생긴 광고 B도 잘될 것이라고 추론하지 못합니다.
 
 * 작동 원리:
-  * 각 광고에 대해 성공()과 실패() 횟수를 기록합니다.
+  * 각 광고에 대해 성공($\alpha$)과 실패($\beta$) 횟수를 기록합니다.
   * 각 광고의 CTR을 Beta 분포 $Beta(\alpha_i, \beta_i)$로 모델링합니다.
   * 매 요청마다 각 분포에서 랜덤한 값(Sample)을 뽑아 가장 높은 광고를 노출합니다.
 * 치명적 단점 (AdTech 관점):
@@ -37,11 +37,11 @@
 광고 ID가 아니라 광고가 가진 속성(Feature)을 학습합니다. "나이키가 잘 팔린다"는 법칙(Weight)을 배우면, 새로운 나이키 신발이 들어와도 즉시 점수를 높게 줍니다.
 
 * 작동 원리:
-  * 유저와 광고의 특징을 Context Vector ()로 정의합니다.
-  * 각 특징이 보상(클릭)에 기여하는 가중치()를 Multivariate Gaussian Distribution(다변량 정규분포)로 모델링합니다.
-  * 평균(): 학습된 가중치 (Exploitation)
-  * 분산(): 해당 특징에 대한 불확실성 (Exploration)
-  * 매 요청마다 가중치 분포에서 샘플()을 뽑아 점수()를 계산합니다.
+  * 유저와 광고의 특징을 Context Vector ($x$)로 정의합니다.
+  * 각 특징이 보상(클릭)에 기여하는 가중치($\theta$)를 Multivariate Gaussian Distribution(다변량 정규분포)로 모델링합니다.
+  * 평균($\mu$): 학습된 가중치 (Exploitation)
+  * 분산($\Sigma$): 해당 특징에 대한 불확실성 (Exploration)
+  * 매 요청마다 가중치 분포에서 샘플($\tilde{\theta}$)을 뽑아 점수($x^T \tilde{\theta}$)를 계산합니다.
 * 압도적 장점 (AdTech 관점):
   * Generalization (일반화): 신규 광고가 등록되어도, 기존에 학습된 Feature 가중치(예: '나이키' 가중치 +5점)를 그대로 공유받아 즉시 합리적인 추론이 가능합니다.
 

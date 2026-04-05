@@ -522,13 +522,14 @@ async function renderPostDetail() {
       renderMath();
 
       // Render Mermaid diagrams
-      if (typeof mermaid !== 'undefined') {
+      const mermaidInstance = window.mermaidLib || (typeof mermaid !== 'undefined' ? mermaid : null);
+      if (mermaidInstance) {
         const currentTheme = document.documentElement.getAttribute('data-theme');
-        mermaid.initialize({
+        mermaidInstance.initialize({
           startOnLoad: false,
           theme: currentTheme === 'dark' ? 'dark' : 'default'
         });
-        mermaid.run();
+        mermaidInstance.run();
       }
 
       // Render post navigation and related posts

@@ -9,6 +9,24 @@
 
 우리는 "탐색(Exploration)과 활용(Exploitation)의 균형"을 맞추기 위해 다음의 무기들을 사용합니다.
 
+### AdTech Ad Serving Pipeline
+
+```mermaid
+graph LR
+  A[Advertiser] -->|Campaign| B[DSP]
+  B -->|Bid Request| C[Ad Exchange]
+  C -->|Auction| D[SSP]
+  D -->|Ad| E[Publisher]
+  E -->|Impression| F[User]
+  F -->|Click / Conversion| B
+  B -.->|MAB Algorithm| G{{Ad Selection Engine}}
+  G -.->|pCTR Ranking| C
+  style B fill:#ff6384,stroke:#ff6384,color:#fff
+  style C fill:#36a2eb,stroke:#36a2eb,color:#fff
+  style D fill:#ffce56,stroke:#ffce56,color:#333
+  style G fill:#b026ff,stroke:#b026ff,color:#fff
+```
+
 ## 1. Context-Free Bandits (상황을 보지 않음)
 
 > "누가 오든 똑같이 대한다. 오직 광고의 '평균 실력'만 믿는다."
@@ -73,6 +91,24 @@ AdTech 적용: 문서의 "Broad match keyword" 처럼 다양한 키워드와 광
 * 특징: 딥러닝 모델의 마지막 레이어에 붙여서 탐색을 유도할 때 자주 쓰임.
 
 ---
+
+### Algorithm Selection Flowchart
+
+```mermaid
+graph TD
+  Start[Ad Selection 요청] --> Q1{User Context 있음?}
+  Q1 -->|No| Q2{탐색 방식?}
+  Q2 -->|Random| EG[e-Greedy]
+  Q2 -->|Sampling| TS[Basic TS - Beta]
+  Q1 -->|Yes| Q3{신규 광고 많음?}
+  Q3 -->|No| LinUCB[Disjoint LinUCB]
+  Q3 -->|Yes| Hybrid[Hybrid LinUCB]
+  style Start fill:#36a2eb,stroke:#36a2eb,color:#fff
+  style EG fill:#ff6384,stroke:#ff6384,color:#fff
+  style TS fill:#ff6384,stroke:#ff6384,color:#fff
+  style LinUCB fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+  style Hybrid fill:#b026ff,stroke:#b026ff,color:#fff
+```
 
 ## 3. 한눈에 보는 비교표
 

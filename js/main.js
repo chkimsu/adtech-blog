@@ -37,14 +37,18 @@ function renderPostCard(post) {
   card.onclick = () => navigateToPost(post.id);
 
   card.innerHTML = `
-    <div class="post-meta">
-      <span class="post-date">${formatDate(post.date)}</span>
-      <span class="post-meta-sep">·</span>
-      <span class="post-read-time">${post.readTime}</span>
-    </div>
+    <div class="post-card-category">${post.categories[0] || ''}</div>
     <h3>${post.title}</h3>
-    <div class="post-tags">
-      ${post.tags.map(tag => `<span class="tag" data-tag="${tag}">${tag}</span>`).join('')}
+    <p class="post-card-excerpt">${post.excerpt}</p>
+    <div class="post-card-footer">
+      <div class="post-meta">
+        <span class="post-date">${formatDate(post.date)}</span>
+        <span class="post-meta-sep">·</span>
+        <span class="post-read-time">${post.readTime}</span>
+      </div>
+      <div class="post-tags">
+        ${post.tags.slice(0, 3).map(tag => `<span class="tag" data-tag="${tag}">${tag}</span>`).join('')}
+      </div>
     </div>
   `;
 

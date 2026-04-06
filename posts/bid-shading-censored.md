@@ -1,5 +1,3 @@
-# Bid Shading & Censored Data: 1st Price Auction에서 최적 입찰가를 찾는 법
-
 2017년을 기점으로 디지털 광고 시장의 경매 방식이 **2nd Price에서 1st Price으로** 대전환되었습니다. AppNexus, Index Exchange, OpenX, Rubicon Project가 잇따라 전환했고, Google AdX도 2019년에 합류했습니다. 이 변화는 DSP 엔지니어에게 전혀 새로운 문제를 던졌습니다: **"내 진짜 가치(True Value)보다 얼마나 깎아서 입찰해야 하는가?"**
 
 이 글에서는 두 편의 논문을 중심으로 Bid Shading의 이론과 실무를 해부합니다:

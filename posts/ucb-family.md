@@ -1,5 +1,3 @@
-# UCB 알고리즘 패밀리: UCB1 vs LinUCB vs Hybrid LinUCB
-
 AdTech에서 "어떤 광고를 보여줄 것인가"를 결정하는 핵심 알고리즘인 UCB(Upper Confidence Bound) 계열을 상세 비교합니다.
 
 ---

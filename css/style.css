@@ -820,7 +820,6 @@ nav {
   padding: 0.875rem 1rem;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
-  white-space: nowrap;
 }
 
 .post-content td {
@@ -1467,6 +1466,22 @@ footer {
     font-size: 2rem;
   }
 
+  h3 {
+    font-size: 1.4rem;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+  }
+
+  h5 {
+    font-size: 1.1rem;
+  }
+
+  h6 {
+    font-size: 0.95rem;
+  }
+
   .hero {
     padding: 4rem 0 2rem;
   }
@@ -1510,5 +1525,27 @@ footer {
 
   .related-posts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .post-content img {
+    margin: 1rem auto;
+  }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

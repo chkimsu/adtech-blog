@@ -182,6 +182,33 @@ function applyFilters() {
 // Markdown Preprocessor
 // ========================================
 
+// Math block placeholders: protect $$...$$ and $...$ from marked.js
+// which would otherwise interpret _ as italic markers inside LaTeX.
+const mathPlaceholders = [];
+
+function protectMathBlocks(text) {
+  mathPlaceholders.length = 0;
+  // Protect display math $$...$$ first (greedy, multiline)
+  text = text.replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
+    const idx = mathPlaceholders.length;
+    mathPlaceholders.push(match);
+    return `%%MATH_BLOCK_${idx}%%`;
+  });
+  // Protect inline math $...$ (single line, non-greedy)
+  text = text.replace(/\$([^\$\n]+?)\$/g, (match) => {
+    const idx = mathPlaceholders.length;
+    mathPlaceholders.push(match);
+    return `%%MATH_BLOCK_${idx}%%`;
+  });
+  return text;
+}
+
+function restoreMathBlocks(html) {
+  return html.replace(/%%MATH_BLOCK_(\d+)%%/g, (_, idx) => {
+    return mathPlaceholders[parseInt(idx)];
+  });
+}
+
 function preprocessMarkdown(text) {
   if (!text) return '';
   return text
@@ -490,7 +517,10 @@ async function renderPostDetail() {
         }
 
         marked.use(markedExt);
-        contentContainer.innerHTML = marked.parse(preprocessMarkdown(content));
+        const preprocessed = preprocessMarkdown(content);
+        const mathProtected = protectMathBlocks(preprocessed);
+        const parsed = marked.parse(mathProtected);
+        contentContainer.innerHTML = restoreMathBlocks(parsed);
       } else {
         contentContainer.innerHTML = content;
       }

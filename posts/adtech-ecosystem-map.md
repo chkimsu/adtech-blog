@@ -277,6 +277,22 @@ graph TD
     style FINAL fill:#4bc0c0,stroke:#4bc0c0,color:#fff
 ```
 
+### eCPM: 과금 모델을 통일하는 정규화 공식
+
+광고 시장에는 CPM(노출 과금), CPC(클릭 과금), CPA(전환 과금) 등 다양한 과금 모델이 공존합니다. Ad Exchange에서 서로 다른 과금 모델의 캠페인이 **동일 지면을 놓고 경쟁**할 때, 이를 비교하려면 **eCPM(effective Cost Per Mille)**으로 정규화해야 합니다.
+
+$$\text{eCPM} = \text{1,000 노출당 기대 수익}$$
+
+| 과금 모델 | eCPM 변환 공식 | 예시 |
+|----------|--------------|------|
+| **CPM** | $\text{eCPM} = \text{CPM}$ | CPM $5.00 → eCPM $5.00 |
+| **CPC** | $\text{eCPM} = pCTR \times CPC \times 1{,}000$ | pCTR 2%, CPC $0.50 → eCPM $10.00 |
+| **CPA** | $\text{eCPM} = pCTR \times pCVR \times CPA \times 1{,}000$ | pCTR 2%, pCVR 10%, CPA $20 → eCPM $40.00 |
+
+**pCTR 모델의 정확도가 eCPM에 직결되는 이유**: CPC/CPA 캠페인의 eCPM은 pCTR을 곱해서 산출됩니다. pCTR이 2%인데 모델이 4%로 과대추정하면 eCPM이 2배로 뻥튀기되어, 실제 가치보다 훨씬 높은 가격에 입찰하게 됩니다. 반대로 과소추정하면 경쟁에서 밀려 노출 기회를 잃습니다.
+
+**SSP/Exchange 관점**: Exchange는 모든 입찰을 eCPM으로 변환한 뒤 비교하여 낙찰자를 결정합니다. 따라서 DSP가 보내는 입찰가는 이미 eCPM 기반이며, 앞서 본 True Value 계산이 바로 이 eCPM 산출 과정입니다.
+
 ### 두 가지 가치 산정 방식
 
 **CPA 기반** (전환 최적화 캠페인):

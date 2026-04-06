@@ -328,6 +328,65 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 ---
 
+## 6. 실무 피처 엔지니어링 가이드
+
+논문들이 "feature vector $x$"로 추상화하는 부분을 실무에서 어떻게 구성하는지 정리합니다. Zhou et al.이 실험에 사용한 12개 피처를 기반으로, 실무에서 검증된 피처 카테고리를 소개합니다.
+
+### ① 핵심 피처 카테고리
+
+| 카테고리 | 피처 예시 | 영향도 | 설명 |
+|---------|---------|-------|------|
+| **Exchange 특성** | exchange_id, auction_type | ★★★ | Exchange마다 경쟁 강도와 가격 분포가 근본적으로 다름 |
+| **지면 특성** | domain, sub_domain, ad_layout, slot_size | ★★★ | 프리미엄 매체 vs 롱테일의 가격 차이가 수 배 |
+| **시간 특성** | hour_of_day, day_of_week | ★★☆ | 출퇴근 시간대, 주말 vs 평일의 경쟁 강도 차이 |
+| **디바이스 특성** | device_type, os, browser | ★★☆ | 모바일 vs 데스크톱, iOS vs Android의 가격대 차이 |
+| **유저 특성** | geo (country/region), audience_segment | ★★☆ | 미국 vs 동남아, 고가치 세그먼트의 가격 차이 |
+| **광고 특성** | ad_format (banner/video/native), creative_size | ★☆☆ | 비디오 지면이 배너보다 높은 가격대 형성 |
+
+### ② 피처 선택 시 주의사항
+
+**Cardinality 관리**: `sub_domain`처럼 카디널리티가 수만~수십만인 피처는 직접 원핫 인코딩하면 차원이 폭발합니다. 실무에서는:
+- Hashing Trick (feature hashing)으로 고정 차원에 매핑
+- 상위 N개만 유지하고 나머지는 "기타"로 묶기
+- Embedding Layer로 저차원 벡터에 학습
+
+**Cross Feature**: `exchange_id × hour_of_day`처럼 피처 간 교차항이 중요합니다. 특정 Exchange는 낮 시간대에만 경쟁이 치열할 수 있습니다. DeepFM이 이 Cross Feature를 자동 학습하는 것이 강점입니다.
+
+**사용하면 안 되는 피처**: 자신의 과거 입찰가(`my_previous_bid`)를 피처로 넣으면 **자기 참조 루프**가 발생합니다. 시장 분포는 내 입찰과 독립적이어야 합니다.
+
+---
+
+## 7. 시간에 따른 시장 분포 변화 대응
+
+실무에서 가장 과소평가되는 문제 중 하나입니다. 시장 분포 $F(b|x)$는 **고정되어 있지 않습니다**.
+
+### ① 분포가 변하는 원인
+
+| 원인 | 시간 스케일 | 영향 |
+|------|-----------|------|
+| **시간대 변동** | 시간 단위 | 출근 시간 vs 새벽의 경쟁 강도 차이 |
+| **요일 변동** | 일 단위 | 주말 쇼핑 트래픽 증가 → 커머스 지면 가격 급등 |
+| **시즌 효과** | 주~월 단위 | 블랙 프라이데이, 연말 시즌에 입찰가 전반 상승 |
+| **경쟁 DSP 전략 변경** | 일~주 단위 | 대형 DSP의 알고리즘 업데이트 → 시장 구조 변화 |
+| **SSP Floor Price 조정** | 비정기 | Floor 인상 → 하위 분포 잘림 (left-truncation) |
+
+### ② 대응 전략
+
+**모델 재학습 주기 설정**:
+- **일 단위 재학습**이 일반적인 베이스라인. Zhou et al.도 "7일 학습 → 1일 테스트"로 실험
+- 시즌 전환기(블랙 프라이데이 전후)에는 **학습 윈도우를 짧게** (3일) 조정하여 최신 분포를 빠르게 반영
+- 학습 데이터에 **시간 감쇠 가중치(time-decay weighting)** 적용: 최근 데이터에 높은 가중치
+
+**실시간 보정 (Online Calibration)**:
+- 오프라인 모델의 예측을 실시간 Win Rate 관측으로 보정
+- 예: 모델이 예측한 Win Rate = 30%인데 실제 최근 1시간 Win Rate = 20%이면, 시장 가격이 올랐다는 신호 → Shading 비율을 줄여 입찰가를 높임
+
+**Distribution Shift 모니터링**:
+- 시간대별 예측 Win Rate vs 실제 Win Rate의 괴리(calibration gap) 추적
+- Gap이 임계치(예: 5%p)를 초과하면 모델 재학습 트리거 또는 온라인 보정 강도 증가
+
+---
+
 ## 마무리
 
 1. **1st Price Auction에서 Bid Shading은 선택이 아니라 필수** — True Value 그대로 입찰하면 이익이 0. [데모](demo-bid-shading.html)에서 No Shade의 E[Profit] = $0.00을 직접 확인해보세요.

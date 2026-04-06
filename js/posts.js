@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'adtech-ecosystem-map',
+    title: 'pCTR 모델러를 위한 광고 기술 생태계 전체 지도',
+    excerpt: '광고주의 캠페인 등록부터 유저의 전환까지 — DSP, SSP, Ad Exchange, pCTR, pCVR, 자동입찰, Bid Shading의 관계를 6개 다이어그램으로 완전 해부합니다.',
+    date: '2026-04-06',
+    categories: ['Bidding & Auction'],
+    tags: ['pCTR', 'pCVR', 'DSP', 'SSP', 'Auto-Bidding', 'Ad Exchange', 'Bid Shading'],
+    contentUrl: 'posts/adtech-ecosystem-map.md',
+    readTime: '15 min read'
+  },
+  {
     id: 'bid-shading-censored',
     title: 'Bid Shading & Censored Data: 1st Price Auction에서 최적 입찰가를 찾는 법',
     excerpt: 'Right-Censored 데이터에서 시장 분포를 추정하고, Surplus를 극대화하는 최적 입찰가를 실시간으로 계산하는 End-to-End 파이프라인을 두 편의 논문과 함께 해부합니다.',

@@ -105,6 +105,52 @@ sequenceDiagram
 - Header Bidding 지원
 - Ad Quality 필터링
 
+#### Header Bidding 상세: Waterfall에서 Parallel로
+
+기존 **Waterfall 방식**에서는 SSP가 Ad Exchange를 순차적으로 호출했습니다. 1순위 Exchange가 floor price를 넘지 못하면 2순위로 넘기고, 또 실패하면 3순위로 넘기는 식입니다. 이 방식은 **매체 수익을 구조적으로 저하**시킵니다 — 1순위가 아닌 Exchange에 더 높은 입찰자가 있어도, 1순위가 floor를 넘기면 거기서 끝납니다.
+
+**Header Bidding(Parallel Auction)**은 이 문제를 해결합니다. 매체 페이지의 `<head>` 태그에 JavaScript(대표적으로 **Prebid.js**)를 삽입하여, 페이지 로드 시 **여러 Exchange에 동시에** Bid Request를 보냅니다.
+
+```mermaid
+graph TD
+    subgraph Waterfall["기존: Waterfall (순차)"]
+        W1["Exchange A<br/>Floor $1.50"] -->|패스| W2["Exchange B<br/>Floor $1.20"]
+        W2 -->|패스| W3["Exchange C<br/>Floor $0.80"]
+        W3 -->|낙찰 $0.95| WRES["낙찰가: $0.95"]
+    end
+
+    subgraph Header["Header Bidding (병렬)"]
+        HB["Prebid.js<br/>(페이지 <head>)"]
+        HB -->|동시 요청| HA["Exchange A: $2.10"]
+        HB -->|동시 요청| HBX["Exchange B: $1.80"]
+        HB -->|동시 요청| HC["Exchange C: $0.95"]
+        HA --> HRES["낙찰가: $2.10 ✓"]
+        HBX --> HRES
+        HC --> HRES
+    end
+
+    style WRES fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style HRES fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+```
+
+| 구분 | Waterfall | Header Bidding |
+|------|-----------|---------------|
+| 요청 방식 | 순차 (1→2→3) | **병렬 (동시)** |
+| 경쟁 범위 | 우선순위 내 제한적 | **전체 Exchange 동시 경쟁** |
+| 매체 수익 | 낮음 (숨겨진 경쟁자) | **높음 (+30~50% 수익 증가 사례)** |
+| 레이턴시 | 낮음 (1개만 호출) | 높음 (타임아웃 관리 필요) |
+| DSP 영향 | 일부 Exchange에서만 기회 | **모든 Exchange에서 기회 균등** |
+
+**Prebid.js 동작 흐름**:
+1. 유저가 페이지 방문 → Prebid.js 실행
+2. 설정된 모든 Bidder Adapter(Exchange)에 병렬로 Bid Request 전송
+3. 각 Exchange가 DSP로부터 입찰을 수집 → 최고 입찰가를 Prebid에 반환
+4. Prebid.js가 모든 응답을 취합 (타임아웃: 보통 1,000~1,500ms)
+5. 최고가를 Ad Server(Google Ad Manager 등)에 key-value로 전달
+6. Ad Server가 자체 demand와 Header Bidding 최고가를 비교 → 최종 낙찰자 결정
+
+**DSP/pCTR 모델러에게 주는 시사점**: Header Bidding 환경에서는 **모든 Exchange에서 동시에 경쟁**하므로, 동일 임프레션에 대해 여러 Exchange로부터 Bid Request를 받을 수 있습니다. 중복 입찰(duplicate bidding) 방지와 Exchange별 Win Rate 차이를 피처로 활용하는 것이 중요합니다.
+
 ### Ad Exchange
 
 DSP와 SSP를 연결하는 거래소. 실시간 경매를 수행합니다.

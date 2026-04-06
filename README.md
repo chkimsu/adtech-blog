@@ -1,3 +1,5 @@
+**https://chkimsu.github.io/adtech-blog/**
+
 # Ad Tech Blog
 
 A modern, dark-mode focused blog about Ad Tech, built with vanilla HTML, CSS, and JavaScript. Perfect for sharing insights on programmatic advertising, RTB, analytics, and privacy compliance.

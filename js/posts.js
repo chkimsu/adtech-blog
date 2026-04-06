@@ -70,6 +70,16 @@ const posts = [
     contentUrl: 'posts/ad-serving-flow.md',
     readTime: '8 min read'
   },
+  {
+    id: 'ucb-family',
+    title: 'UCB 알고리즘 패밀리: UCB1 vs LinUCB vs Hybrid LinUCB',
+    excerpt: 'UCB 계열 알고리즘 3종의 수식, 작동 방식, Cold Start 대응력을 상세 비교합니다.',
+    date: '2026-02-01',
+    categories: ['Bandits & Personalization'],
+    tags: ['UCB', 'LinUCB', 'MAB', 'Contextual Bandit'],
+    contentUrl: 'posts/ucb-family.md',
+    readTime: '12 min read'
+  },
 ];
 
 // Helper functions for data access

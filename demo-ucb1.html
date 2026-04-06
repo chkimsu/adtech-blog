@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCB1 Algorithm Simulator - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(0, 229, 255, 0.3);
+        }
+
+        .btn-reset {
+            background: rgba(255, 75, 87, 0.15);
+            color: #ff4b57;
+            border: 1px solid #ff4b57;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            background: rgba(255, 75, 87, 0.3);
+        }
+
+        .log-panel {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 180px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-panel div {
+            margin-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.2rem;
+        }
+
+        .log-panel .time {
+            color: var(--accent-primary);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demos.html" class="btn-demo" style="background: var(--accent-primary); color: white;">Demos</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>UCB1 Algorithm Simulator</h1>
+            <p class="post-excerpt">
+                Upper Confidence Bound 알고리즘이 탐색(Exploration)과 활용(Exploitation)의 균형을 잡는 과정을 시각화합니다.
+                각 광고의 평균 보상(Mean Reward)과 탐색 보너스(UCB Bonus)가 어떻게 변하는지 관찰하세요.
+            </p>
+        </div>
+
+        <div class="demo-container">
+            <!-- Left: Chart -->
+            <div class="chart-panel">
+                <canvas id="ucb1Chart"></canvas>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <p>색깔 막대 (Mean Reward): 지금까지 관측된 평균 CTR. 데이터가 쌓일수록 실제 CTR에 수렴합니다.</p>
+                    <p>회색 막대 (UCB Bonus): 불확실성 보너스. 데이터가 적을수록 크고, 쌓일수록 줄어듭니다.</p>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="control-panel">
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.75rem;">Actions</h3>
+                    <button class="btn-action btn-primary" onclick="runOneRound()">Select Best Arm</button>
+                    <button class="btn-action btn-secondary" onclick="autoRun(50)">Auto Run (50 Rounds)</button>
+                    <button class="btn-action btn-secondary" onclick="autoRun(200)">Auto Run (200 Rounds)</button>
+                    <button class="btn-action btn-reset" onclick="resetDemo()">Reset</button>
+                </div>
+
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.5rem;">Arm Statistics</h3>
+                    <div id="stats-container" style="overflow-x: auto;">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">Activity Log</h3>
+                    <div id="demo-log" class="log-panel"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-content" style="margin-top: 3rem;">
+            <h2>UCB1 알고리즘이란?</h2>
+            <p>
+                UCB1(Upper Confidence Bound 1)은 Multi-Armed Bandit 문제의 대표적인 해법입니다.
+                각 선택지(arm)에 대해 "지금까지의 평균 보상"과 "아직 잘 모르니까 주는 보너스"를 합산하여
+                가장 높은 점수를 가진 arm을 선택합니다.
+            </p>
+
+            <h3>수식</h3>
+            <p>
+                $\text{Score}_a = \bar{x}_a + \sqrt{\frac{2 \ln t}{n_a}}$
+            </p>
+            <ul>
+                <li>$\bar{x}_a$ : arm $a$의 평균 보상 (관측된 평균 CTR)</li>
+                <li>$t$ : 전체 라운드 수</li>
+                <li>$n_a$ : arm $a$가 선택된 횟수</li>
+                <li>$\sqrt{\frac{2 \ln t}{n_a}}$ : 탐색 보너스 (많이 선택될수록 줄어듦)</li>
+            </ul>
+
+            <h3>탐색 보너스가 줄어드는 원리</h3>
+            <p>
+                분자의 $\ln t$는 전체 라운드가 늘어날수록 천천히 증가합니다 (로그 함수).
+                분모의 $n_a$는 해당 arm이 선택될 때마다 1씩 증가합니다.
+                따라서 특정 arm을 많이 선택할수록 보너스가 빠르게 감소합니다.
+                반대로, 오래 선택되지 않은 arm은 $t$만 증가하므로 보너스가 서서히 커집니다.
+                이것이 "덜 탐색된 arm에 기회를 준다"는 UCB의 핵심 메커니즘입니다.
+            </p>
+
+            <h3>로그 Regret 보장</h3>
+            <p>
+                UCB1은 수학적으로 $O(\ln t)$의 regret bound를 보장합니다.
+                이는 "최적의 arm만 선택했을 때와 비교한 손실"이 라운드 수에 대해
+                로그 함수적으로만 증가한다는 뜻입니다. 사실상 최적에 가까운 성능을 보장합니다.
+            </p>
+
+            <h3>UCB1 vs Thompson Sampling</h3>
+            <ul>
+                <li>UCB1은 Deterministic: 같은 상태에서 항상 같은 arm을 선택. 디버깅과 재현이 쉬움.</li>
+                <li>TS는 Stochastic: 확률 분포에서 샘플링하므로 매번 다른 결과. 실전 성능은 보통 TS가 약간 우위.</li>
+                <li>UCB1은 이론적 보장이 강함. TS는 실험적 성능이 강함.</li>
+                <li>실무에서는 둘 다 Context-Free이므로, 개인화가 필요하면 LinUCB나 Linear TS로 확장해야 합니다.</li>
+            </ul>
+
+            <h3>이 데모에서 관찰할 것</h3>
+            <ul>
+                <li>초반 5라운드: 각 arm을 한 번씩 선택 (보너스가 INF이므로 미탐색 arm 우선)</li>
+                <li>10~30라운드: 보너스가 줄어들면서 높은 CTR의 arm이 더 자주 선택되기 시작</li>
+                <li>50라운드 이후: Ad A (High CTR)와 Ad D (Hidden Gem)에 선택이 집중되는 것을 확인</li>
+                <li>200라운드: Mean Reward가 실제 CTR에 매우 가깝게 수렴</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+            </div>
+            <p class="footer-text">© 2026 Ad Tech Blog. Built with modern web technologies.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/ucb1-demo.js"></script>
+</body>
+
+</html>

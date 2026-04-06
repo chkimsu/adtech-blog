@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'walled-garden',
+    title: 'Walled Garden: 네이버·카카오는 왜 DSP부터 Publisher까지 다 가지고 있는가',
+    excerpt: 'Open RTB와 Walled Garden(폐쇄형 생태계)의 구조적 차이를 분석하고, pCTR 모델링·경매 구조·데이터 활용이 어떻게 달라지는지 해부합니다.',
+    date: '2026-04-06',
+    categories: ['Bidding & Auction'],
+    tags: ['Walled Garden', 'Open RTB', 'DSP', 'SSP', 'pCTR', 'Position Bias', 'Retail Media'],
+    contentUrl: 'posts/walled-garden.md',
+    readTime: '15 min read'
+  },
+  {
     id: 'adtech-ecosystem-map',
     title: 'pCTR 모델러를 위한 광고 기술 생태계 전체 지도',
     excerpt: '광고주의 캠페인 등록부터 유저의 전환까지 — DSP, SSP, Ad Exchange, pCTR, pCVR, 자동입찰, Bid Shading의 관계를 6개 다이어그램으로 완전 해부합니다.',

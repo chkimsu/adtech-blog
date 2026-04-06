@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'bid-shading-censored',
+    title: 'Bid Shading & Censored Data: 1st Price Auction에서 최적 입찰가를 찾는 법',
+    excerpt: 'Right-Censored 데이터에서 시장 분포를 추정하고, Surplus를 극대화하는 최적 입찰가를 실시간으로 계산하는 End-to-End 파이프라인을 두 편의 논문과 함께 해부합니다.',
+    date: '2026-04-06',
+    categories: ['Bidding & Auction'],
+    tags: ['Bid Shading', 'Censored Regression', 'First-Price Auction', 'Deep Learning', 'Survival Analysis'],
+    contentUrl: 'posts/bid-shading-censored.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'my-markdown-post',
     title: 'pCVR 모델링 학습 시 주요 고려사항 및 중복 전환(Deduplication) 이슈 정리',
     excerpt: 'pCVR 모델 학습에서 발생하는 중복 전환(Deduplication) 이슈와 주요 고려사항을 정리합니다.',

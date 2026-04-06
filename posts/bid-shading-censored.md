@@ -285,7 +285,7 @@ sequenceDiagram
 
 - **MCNet**(혼합 밀도 네트워크)이 Standard Censored Regression, Kaplan-Meier 추정 대비 **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
 - 특히 **다봉 분포 구간**에서 MCNet의 강점이 두드러짐: 단일 가우시안으로는 포착할 수 없는 복수 피크를 정확히 모델링
-- Adobe Adcloud(내부 DSP) 데이터에서도 동일한 경향 확인
+- Adobe Adcloud(Adobe 자사 DSP) 데이터에서도 동일한 경향 확인
 
 ### ② Yahoo/Verizon Offline — Zhou et al.
 
@@ -321,7 +321,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 | **Censoring 처리** | Censored Likelihood (PDF + Survival) | Censored + Non-censored 통합 |
 | **최적 입찰** | 별도 다루지 않음 | Golden Section Search + Unimodality 증명 |
 | **실시간 서빙** | 언급 없음 | 프로덕션 아키텍처 공개 |
-| **검증** | iPinYou (공개) + Adobe Adcloud (내부) | Yahoo/Verizon Online A/B (프로덕션) |
+| **검증** | iPinYou (공개) + Adobe Adcloud (자사 DSP) | Yahoo/Verizon Online A/B (프로덕션) |
 | **핵심 기여** | 이질적 분산 + 다봉 분포 모델링 | Unimodality 증명 + O(log n) 최적 탐색 |
 
 두 논문은 **상호 보완적**입니다. Ghosh et al.이 "분포 추정을 어떻게 정확하게 할 것인가"에 집중한다면, Zhou et al.은 "추정한 분포로 실제 bid를 어떻게 실시간으로 최적화하고 서빙할 것인가"까지 포함하는 end-to-end 시스템입니다. 만약 시장이 심하게 multi-modal하다면 MCNet의 혼합 모델이 유리하고, 레이턴시가 극도로 중요하다면 Zhou et al.의 단일 분포 + Golden Section 조합이 실용적입니다.

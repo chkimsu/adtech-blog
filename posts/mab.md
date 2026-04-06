@@ -5,8 +5,6 @@
 
 ---
 
-# [Summary] AdTech MAB Algorithm Collection
-
 우리는 "탐색(Exploration)과 활용(Exploitation)의 균형"을 맞추기 위해 다음의 무기들을 사용합니다.
 
 ## 1. Context-Free Bandits (상황을 보지 않음)

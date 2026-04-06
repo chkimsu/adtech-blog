@@ -1,5 +1,3 @@
-# Exploration Strategy: Standard TS vs. Linear TS
-
 이 문서는 AdTech 및 추천 시스템(RecSys)에서 탐색(Exploration)과 활용(Exploitation)의 균형을 맞추기 위해 사용되는 두 가지 핵심 알고리즘, Standard Thompson Sampling과 Linear Thompson Sampling의 차이점을 정의하고 비교합니다.
 
 ## 1. 핵심 요약 (Executive Summary)

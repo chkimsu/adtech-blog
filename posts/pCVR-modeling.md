@@ -61,7 +61,7 @@ graph TD
 **왜 이 구조가 SSB를 해결하는가?**
 
 - 기존 방식: CVR 모델을 **클릭된 샘플에서만** 학습 → $P(z=1|y=1, x)$를 학습하지만 서빙 시에는 $P(z=1|x)$가 필요 → 분포 불일치
-- ESMM: CVR Tower의 출력이 CTR Tower와 곱해진 뒤, **전체 임프레션 라벨**로 감독됨 → CVR Tower가 자연스럽게 전체 공간의 $P(z=1|y=1, x)$를 학습
+- ESMM: CVR Tower의 출력(pCVR)이 CTR Tower의 출력(pCTR)과 곱해져 pCTCVR을 만들고, 이 곱이 **전체 임프레션 라벨**(CTCVR)로 감독됨 → CVR Tower는 여전히 $P(z=1|y=1, x)$를 모델링하지만, 클릭 필터 없이 전체 임프레션으로 학습하므로 Training-Serving 분포 불일치 해소
 - 추가 이점: Embedding Layer 공유로 **전환 데이터의 희소성 문제**까지 완화 (CTR의 풍부한 클릭 시그널이 공유 임베딩을 통해 CVR Tower로 전이)
 
 ### ② 데이터 희소성 (Data Sparsity)

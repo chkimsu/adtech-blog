@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'online-learning-delayed-feedback',
+    title: 'Online Learning & Delayed Feedback: 광고 모델은 왜 매일 낡아지는가',
+    excerpt: 'Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.',
+    date: '2026-04-10',
+    categories: ['ML Infrastructure'],
+    tags: ['Online Learning', 'Delayed Feedback', 'Concept Drift', 'Distribution Shift', 'Model Staleness', 'Streaming Update'],
+    contentUrl: 'posts/online-learning-delayed-feedback.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'auto-bidding-pacing',
     title: 'Auto-Bidding & Budget Pacing: 일 예산 제약 하에서 수십만 번 입찰을 최적화하는 법',
     excerpt: 'PID Controller, Lagrangian Dual, 강화학습(RL)으로 일 예산을 하루 전체에 걸쳐 균등하게 분배하는 Budget Pacing의 이론과 실전을 해부합니다.',

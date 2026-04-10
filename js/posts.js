@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'auto-bidding-pacing',
+    title: 'Auto-Bidding & Budget Pacing: 일 예산 제약 하에서 수십만 번 입찰을 최적화하는 법',
+    excerpt: 'PID Controller, Lagrangian Dual, 강화학습(RL)으로 일 예산을 하루 전체에 걸쳐 균등하게 분배하는 Budget Pacing의 이론과 실전을 해부합니다.',
+    date: '2026-04-10',
+    categories: ['Bidding & Auction'],
+    tags: ['Auto-Bidding', 'Budget Pacing', 'PID Controller', 'Lagrangian', 'RL', 'Bid Shading'],
+    contentUrl: 'posts/auto-bidding-pacing.md',
+    readTime: '20 min read'
+  },
+  {
     id: 'feature-store-serving',
     title: 'Feature Store & Real-Time Serving: 광고 ML 시스템의 데이터 공급망 전체 지도',
     excerpt: 'Batch·Streaming·Real-Time 세 갈래 파이프라인이 Feature Store로 합류하고, 10ms 안에 Feature Vector로 조합되어 모델 추론에 공급되는 전체 아키텍처를 해부합니다.',

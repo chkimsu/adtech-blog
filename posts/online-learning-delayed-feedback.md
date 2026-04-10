@@ -366,11 +366,17 @@ Fake Negative가 많아지면 모델이 전환율을 **과소추정**합니다:
 
 > 자세한 유도 과정은 [pCVR 모델링 포스트](post.html?id=my-markdown-post)를 참고하세요.
 
-관측 시점 $t$에서 아직 전환하지 않은 샘플에 대해, 실제로 전환하지 않을 확률(진짜 negative일 확률)로 가중치를 부여합니다:
+FSIW의 핵심 아이디어: 관측 시점에 "미전환"으로 보이는 샘플 중 일부는 **아직 전환이 안 온 Fake Negative**입니다. 이 비율을 추정하여 학습 가중치를 보정합니다.
 
-$$w_i = \frac{1}{P(\text{not yet converted} | \text{true negative})} = \frac{1}{1 - F_d(t - t_{\text{click}})}$$
+- **이미 전환된 Positive 샘플**: 전환이 관측 시점 내에 도착할 확률 $F_d(\Delta t)$로 나누어 보정
 
-여기서 $F_d(\cdot)$는 전환 지연 시간의 CDF입니다. 클릭 직후에는 $F_d$가 작아서 가중치가 커지고(불확실), 시간이 지나면 $F_d$가 1에 가까워져서 가중치가 안정됩니다.
+$$w_i^{(+)} = \frac{1}{F_d(t - t_{\text{click}})}$$
+
+- **미전환 Negative 샘플**: 경과 시간이 길수록 진짜 Negative일 확률이 높으므로 가중치를 낮춤
+
+$$w_i^{(-)} = \frac{1 - p_{\text{cvr}} \cdot (1 - F_d(t - t_{\text{click}}))}{1 - p_{\text{cvr}}}$$
+
+여기서 $F_d(\cdot)$는 전환 지연 시간의 CDF, $p_{\text{cvr}}$은 전환 확률 추정값입니다. 시간이 충분히 지나면 $F_d \to 1$이 되어 Positive 가중치는 1에 수렴하고, Negative 가중치도 1에 수렴합니다 — 즉, 충분히 오래 기다린 샘플은 보정 없이 그대로 사용해도 안전합니다.
 
 ---
 

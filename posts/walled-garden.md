@@ -124,7 +124,7 @@ graph TD
         A1["광고주 A<br/>CPC ₩500<br/>pCTR 3.2%"] --> RANK["랭킹 엔진<br/>Score = pCTR × Bid"]
         A2["광고주 B<br/>CPC ₩800<br/>pCTR 1.5%"] --> RANK
         A3["광고주 C<br/>CPC ₩300<br/>pCTR 5.1%"] --> RANK
-        RANK --> W2["1위: C (₩300×5.1%=15.3)<br/>2위: A (₩500×3.2%=16.0)<br/>3위: B (₩800×1.5%=12.0)"]
+        RANK --> W2["1위: A (₩500×3.2%=16.0)<br/>2위: C (₩300×5.1%=15.3)<br/>3위: B (₩800×1.5%=12.0)"]
     end
 
     style EX fill:#36a2eb,stroke:#36a2eb,color:#fff

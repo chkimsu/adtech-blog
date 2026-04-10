@@ -88,10 +88,13 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
 Pre-Ranking 없이 500개 후보를 Ranking 모델(DeepFM)에 직접 넣으면:
 
 ```
-500개 × 3ms/batch = 총 ~15ms (Ranking만으로 예산 초과)
+[Pre-Ranking 없이]
+500개를 Ranking 모델(DeepFM)에 직접 → 50개씩 배치 = 10 배치 × 3ms = 30ms
+→ 10ms 예산 3배 초과
 
-Pre-Ranking으로 50개로 축소하면:
-500개 × 0.01ms/개 = 5ms (Pre-Ranking) + 50개 × 0.1ms/개 = 5ms (Ranking)
+[Pre-Ranking 적용]
+500개 × 0.01ms = 5ms (Pre-Ranking, CPU 경량 모델)
+ 50개 × 0.1ms  = 5ms (Ranking, GPU DeepFM)
 총 ~10ms → 예산 내 처리 가능
 ```
 
@@ -215,11 +218,11 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 ### 왜 Embedding이 병목인가
 
 ```
-유저 ID: 1억 개   × 64차원 = 6.4GB
-광고 ID: 1000만 개 × 64차원 = 640MB
-카테고리: 1만 개   × 32차원 = 320KB
-──────────────────────────────
-총 Embedding 테이블: ~7GB → 단일 GPU 메모리 초과 가능
+유저 ID: 1억 개   × 64차원 × 4B(FP32) = 25.6GB
+광고 ID: 1000만 개 × 64차원 × 4B(FP32) = 2.56GB
+카테고리: 1만 개   × 32차원 × 4B(FP32) = 1.3MB
+──────────────────────────────────────────
+총 Embedding 테이블: ~28GB → 단일 GPU 메모리(16-80GB) 초과 가능
 ```
 
 추론 시 매 요청마다 해당 유저/광고의 Embedding을 조회해야 합니다. 이 조회가 **랜덤 메모리 접근**이라 캐시 미스가 빈번합니다.

@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'model-serving-architecture',
+    title: '광고 모델 서빙 아키텍처: 10ms 안에 수백 개 광고를 스코어링하는 법',
+    excerpt: 'Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.',
+    date: '2026-04-10',
+    categories: ['ML Infrastructure'],
+    tags: ['Model Serving', 'Multi-Stage Ranking', 'Distillation', 'Quantization', 'Embedding', 'Canary Deploy'],
+    contentUrl: 'posts/model-serving-architecture.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'online-learning-delayed-feedback',
     title: 'Online Learning & Delayed Feedback: 광고 모델은 왜 매일 낡아지는가',
     excerpt: 'Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.',

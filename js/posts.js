@@ -16,7 +16,7 @@ const posts = [
     excerpt: 'Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.',
     date: '2026-04-10',
     categories: ['ML Infrastructure'],
-    tags: ['Model Serving', 'Multi-Stage Ranking', 'Distillation', 'Quantization', 'Embedding', 'Canary Deploy'],
+    tags: ['Model Serving', 'ML Infra', 'pCTR'],
     contentUrl: 'posts/model-serving-architecture.md',
     readTime: '18 min read'
   },
@@ -26,7 +26,7 @@ const posts = [
     excerpt: 'Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.',
     date: '2026-04-10',
     categories: ['ML Infrastructure'],
-    tags: ['Online Learning', 'Delayed Feedback', 'Concept Drift', 'Distribution Shift', 'Model Staleness', 'Streaming Update'],
+    tags: ['Online Learning', 'ML Infra', 'pCTR', 'pCVR'],
     contentUrl: 'posts/online-learning-delayed-feedback.md',
     readTime: '18 min read'
   },
@@ -36,7 +36,7 @@ const posts = [
     excerpt: 'PID Controller, Lagrangian Dual, 강화학습(RL)으로 일 예산을 하루 전체에 걸쳐 균등하게 분배하는 Budget Pacing의 이론과 실전을 해부합니다.',
     date: '2026-04-10',
     categories: ['Bidding & Auction'],
-    tags: ['Auto-Bidding', 'Budget Pacing', 'PID Controller', 'Lagrangian', 'RL', 'Bid Shading'],
+    tags: ['Auto-Bidding', 'Bid Shading', 'RTB'],
     contentUrl: 'posts/auto-bidding-pacing.md',
     readTime: '20 min read'
   },
@@ -46,7 +46,7 @@ const posts = [
     excerpt: 'Batch·Streaming·Real-Time 세 갈래 파이프라인이 Feature Store로 합류하고, 10ms 안에 Feature Vector로 조합되어 모델 추론에 공급되는 전체 아키텍처를 해부합니다.',
     date: '2026-04-10',
     categories: ['ML Infrastructure'],
-    tags: ['Feature Store', 'Real-Time Serving', 'Feature Pipeline', 'Online/Offline', 'Latency', 'ML Infrastructure'],
+    tags: ['ML Infra', 'DSP', 'pCTR'],
     contentUrl: 'posts/feature-store-serving.md',
     readTime: '18 min read'
   },
@@ -56,7 +56,7 @@ const posts = [
     excerpt: 'Open RTB와 Walled Garden(폐쇄형 생태계)의 구조적 차이를 분석하고, pCTR 모델링·경매 구조·데이터 활용이 어떻게 달라지는지 해부합니다.',
     date: '2026-04-06',
     categories: ['Bidding & Auction'],
-    tags: ['Walled Garden', 'Open RTB', 'DSP', 'SSP', 'pCTR', 'Position Bias', 'Retail Media'],
+    tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB', 'pCTR'],
     contentUrl: 'posts/walled-garden.md',
     readTime: '15 min read'
   },
@@ -66,7 +66,7 @@ const posts = [
     excerpt: '광고주의 캠페인 등록부터 유저의 전환까지 — DSP, SSP, Ad Exchange, pCTR, pCVR, 자동입찰, Bid Shading의 관계를 6개 다이어그램으로 완전 해부합니다.',
     date: '2026-04-06',
     categories: ['Bidding & Auction'],
-    tags: ['pCTR', 'pCVR', 'DSP', 'SSP', 'Auto-Bidding', 'Ad Exchange', 'Bid Shading'],
+    tags: ['Ad Ecosystem', 'pCTR', 'pCVR', 'Auto-Bidding', 'Bid Shading'],
     contentUrl: 'posts/adtech-ecosystem-map.md',
     readTime: '15 min read'
   },
@@ -76,7 +76,7 @@ const posts = [
     excerpt: 'Right-Censored 데이터에서 시장 분포를 추정하고, Surplus를 극대화하는 최적 입찰가를 실시간으로 계산하는 End-to-End 파이프라인을 두 편의 논문과 함께 해부합니다.',
     date: '2026-04-06',
     categories: ['Bidding & Auction'],
-    tags: ['Bid Shading', 'Censored Regression', 'First-Price Auction', 'Deep Learning', 'Survival Analysis'],
+    tags: ['Bid Shading', 'RTB', 'pCTR'],
     contentUrl: 'posts/bid-shading-censored.md',
     readTime: '18 min read'
   },
@@ -86,7 +86,7 @@ const posts = [
     excerpt: 'pCVR 모델 학습에서 발생하는 중복 전환(Deduplication) 이슈와 주요 고려사항을 정리합니다.',
     date: '2026-01-10',
     categories: ['Measurement & Modeling'],
-    tags: ['pCVR', 'Conversion Modeling'],
+    tags: ['pCVR', 'pCTR'],
     contentUrl: 'posts/pCVR-modeling.md',
     readTime: '10 min read'
   },
@@ -96,7 +96,7 @@ const posts = [
     excerpt: '개별 광고 ID를 학습하는 Standard TS와 Feature 가중치를 학습하는 Linear TS의 핵심 차이를 비교합니다.',
     date: '2026-01-03',
     categories: ['Bandits & Personalization'],
-    tags: ['Thompson Sampling', 'Linear TS', 'Contextual Bandit'],
+    tags: ['Thompson Sampling', 'MAB', 'Contextual Bandit'],
     contentUrl: 'posts/TS-linTS.md',
     readTime: '15 min read'
   },
@@ -136,7 +136,7 @@ const posts = [
     excerpt: 'DSP, SSP, Ad Exchange, DMP의 역할과 RTB Auction 플로우를 도식도와 함께 정리합니다.',
     date: '2026-01-25',
     categories: ['Bidding & Auction'],
-    tags: ['DSP', 'SSP', 'RTB', 'Ad Exchange'],
+    tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB'],
     contentUrl: 'posts/ad-serving-flow.md',
     readTime: '8 min read'
   },

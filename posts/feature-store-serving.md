@@ -349,7 +349,7 @@ feature_vector = {
   </div>
   <div class="chart-card">
     <div class="chart-card-header">
-      <div class="chart-card-icon green">&#11013;</div>
+      <div class="chart-card-icon green">RT</div>
       <div>
         <div class="chart-card-name">Real-Time</div>
         <div class="chart-card-subtitle">요청 시점 (0ms 지연)</div>

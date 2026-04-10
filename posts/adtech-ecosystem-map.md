@@ -10,22 +10,22 @@ pCTR 모델을 만드는 입장에서, "내 모델이 실제로 어디에서 어
 
 ```mermaid
 graph TB
-    subgraph Advertiser["🏢 광고주 (Advertiser)"]
+    subgraph Advertiser["광고주 (Advertiser)"]
         ADV(["광고주<br/>KPI: ROAS, CPA, ROI"])
         CAMP(["캠페인 설정<br/>예산 · 타겟 · 소재"])
         CREATIVE(["광고 소재<br/>배너, 동영상, 네이티브"])
     end
 
-    subgraph DSP_System["🤖 DSP (Demand-Side Platform)"]
+    subgraph DSP_System["DSP (Demand-Side Platform)"]
         BIDDER(["Bidder<br/>실시간 입찰 엔진"])
 
-        subgraph ML_Models["🧠 ML 모델 스택"]
+        subgraph ML_Models["ML 모델 스택"]
             PCTR(["pCTR 모델<br/>클릭 확률 예측"])
             PCVR(["pCVR 모델<br/>전환 확률 예측"])
             BUDGET(["Budget Pacer<br/>예산 분배 최적화"])
         end
 
-        subgraph Bid_Optimization["💰 입찰 최적화"]
+        subgraph Bid_Optimization["입찰 최적화"]
             TV(["True Value 계산<br/>V = pCTR × pCVR × ConvValue"])
             SHADE(["Bid Shading<br/>최적 입찰가 b*"])
         end
@@ -35,29 +35,29 @@ graph TB
         FEAT[("Feature Store<br/>유저·지면·시간 피처")]
     end
 
-    subgraph DMP_CDP["📊 데이터 플랫폼"]
+    subgraph DMP_CDP["데이터 플랫폼"]
         DMP(["DMP<br/>3rd Party 데이터"])
         CDP(["CDP<br/>1st Party 데이터"])
         SEGMENT(["Audience Segment"])
     end
 
-    subgraph Exchange["⚖️ Ad Exchange"]
+    subgraph Exchange["Ad Exchange"]
         ADEX(["Ad Exchange<br/>경매 운영"])
         AUCTION(["Auction Engine<br/>1st/2nd Price"])
     end
 
-    subgraph SSP_System["📡 SSP (Supply-Side Platform)"]
+    subgraph SSP_System["SSP (Supply-Side Platform)"]
         SSP(["SSP<br/>매체 수익 최적화"])
         FLOOR(["Floor Price 설정"])
         HB(["Header Bidding<br/>병렬 경매"])
     end
 
-    subgraph Publisher["🌐 매체 (Publisher)"]
+    subgraph Publisher["매체 (Publisher)"]
         PUB(["웹사이트 / 앱"])
         SLOT(["광고 지면 (Ad Slot)"])
     end
 
-    subgraph User_Side["👤 유저 (Consumer)"]
+    subgraph User_Side["유저 (Consumer)"]
         USER(["유저"])
         IMP(["광고 노출 (Impression)"])
         CLICK(["클릭 (Click)"])

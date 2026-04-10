@@ -7,9 +7,19 @@
 // - Measurement & Modeling     → pCVR, attribution, conversion modeling
 // - Bidding & Auction          → RTB, auction theory, bid optimization (future)
 // - Privacy & Compliance       → GDPR, CCPA, cookie-less (future)
-// - ML Infrastructure          → feature pipelines, serving, A/B platforms (future)
+// - ML Infrastructure          → feature pipelines, serving, A/B platforms
 
 const posts = [
+  {
+    id: 'feature-store-serving',
+    title: 'Feature Store & Real-Time Serving: 광고 ML 시스템의 데이터 공급망 전체 지도',
+    excerpt: 'Batch·Streaming·Real-Time 세 갈래 파이프라인이 Feature Store로 합류하고, 10ms 안에 Feature Vector로 조합되어 모델 추론에 공급되는 전체 아키텍처를 해부합니다.',
+    date: '2026-04-10',
+    categories: ['ML Infrastructure'],
+    tags: ['Feature Store', 'Real-Time Serving', 'Feature Pipeline', 'Online/Offline', 'Latency', 'ML Infrastructure'],
+    contentUrl: 'posts/feature-store-serving.md',
+    readTime: '18 min read'
+  },
   {
     id: 'walled-garden',
     title: 'Walled Garden: 네이버·카카오는 왜 DSP부터 Publisher까지 다 가지고 있는가',

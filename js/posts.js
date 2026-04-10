@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'position-bias-ultr',
+    title: 'Position Bias & Unbiased Learning to Rank: 위치가 만드는 착각을 제거하는 법',
+    excerpt: 'Examination Hypothesis, IPS(Inverse Propensity Scoring), DLA(Dual Learning Algorithm)로 Position Bias를 보정하고 광고 랭킹의 공정성을 확보하는 방법을 해부합니다.',
+    date: '2026-04-10',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Ad Ecosystem', 'MAB'],
+    contentUrl: 'posts/position-bias-ultr.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'model-serving-architecture',
     title: '광고 모델 서빙 아키텍처: 10ms 안에 수백 개 광고를 스코어링하는 법',
     excerpt: 'Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.',

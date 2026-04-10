@@ -81,7 +81,7 @@ Budget Pacing에는 크게 두 가지 방식이 있습니다:
 <div class="chart-cards">
   <div class="chart-card">
     <div class="chart-card-header">
-      <div class="chart-card-icon yellow">&#9201;</div>
+      <div class="chart-card-icon yellow">A</div>
       <div>
         <div class="chart-card-name">Throttling (확률적 참여)</div>
         <div class="chart-card-subtitle">입찰 기회 자체를 필터링</div>
@@ -116,7 +116,7 @@ Budget Pacing에는 크게 두 가지 방식이 있습니다:
   </div>
   <div class="chart-card" style="grid-column: span 2;">
     <div class="chart-card-header">
-      <div class="chart-card-icon green">&#128200;</div>
+      <div class="chart-card-icon green">B</div>
       <div>
         <div class="chart-card-name">Bid Modification (입찰가 조절)</div>
         <div class="chart-card-subtitle">입찰가에 pacing multiplier를 곱함</div>
@@ -175,7 +175,7 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
 <div class="chart-arch">
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#127919;</span>
+      <span class="chart-arch-section-icon">1</span>
       <span class="chart-arch-section-title orange">목표 설정</span>
     </div>
     <div class="chart-arch-grid">
@@ -192,7 +192,7 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#128207;</span>
+      <span class="chart-arch-section-icon">2</span>
       <span class="chart-arch-section-title pink">오차 측정 (매 시간 or 매 분)</span>
     </div>
     <div class="chart-arch-grid">
@@ -213,7 +213,7 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#9881;</span>
+      <span class="chart-arch-section-icon">3</span>
       <span class="chart-arch-section-title blue">PID 조절</span>
     </div>
     <div class="chart-arch-grid">
@@ -234,7 +234,7 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#9989;</span>
+      <span class="chart-arch-section-icon">4</span>
       <span class="chart-arch-section-title" style="color:#4bc0c0;">출력</span>
     </div>
     <div class="chart-arch-grid">
@@ -372,7 +372,7 @@ RL은 이 한계를 극복합니다:
 <div class="chart-arch">
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#128065;</span>
+      <span class="chart-arch-section-icon">S</span>
       <span class="chart-arch-section-title purple">State (상태)</span>
     </div>
     <div class="chart-arch-grid">
@@ -397,7 +397,7 @@ RL은 이 한계를 극복합니다:
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#127922;</span>
+      <span class="chart-arch-section-icon">A</span>
       <span class="chart-arch-section-title blue">Action (행동)</span>
     </div>
     <div class="chart-arch-grid">
@@ -410,7 +410,7 @@ RL은 이 한계를 극복합니다:
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#127942;</span>
+      <span class="chart-arch-section-icon">R</span>
       <span class="chart-arch-section-title green">Reward (보상)</span>
     </div>
     <div class="chart-arch-grid">

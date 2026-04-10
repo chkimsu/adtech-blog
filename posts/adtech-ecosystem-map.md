@@ -261,7 +261,7 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
 <div class="chart-arch">
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#127919;</span>
+      <span class="chart-arch-section-icon">1</span>
       <span class="chart-arch-section-title orange">광고주 입력 (Input)</span>
     </div>
     <div class="chart-arch-grid">
@@ -282,7 +282,7 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#129504;</span>
+      <span class="chart-arch-section-icon">2</span>
       <span class="chart-arch-section-title pink">예측 단계 (Prediction)</span>
     </div>
     <div class="chart-arch-grid">
@@ -304,7 +304,7 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
-        <span class="chart-arch-section-icon">&#128176;</span>
+        <span class="chart-arch-section-icon">3</span>
         <span class="chart-arch-section-title purple">가치 산정 (Valuation)</span>
       </div>
       <div class="chart-arch-grid">
@@ -320,7 +320,7 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
     </div>
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
-        <span class="chart-arch-section-icon">&#128200;</span>
+        <span class="chart-arch-section-icon">4</span>
         <span class="chart-arch-section-title blue">입찰 최적화 (Shading)</span>
       </div>
       <div class="chart-arch-grid">
@@ -338,7 +338,7 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
   <div class="chart-arch-connector">&#8595;</div>
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
-      <span class="chart-arch-section-icon">&#9989;</span>
+      <span class="chart-arch-section-icon">5</span>
       <span class="chart-arch-section-title" style="color:#4bc0c0;">입찰 출력 (Output)</span>
     </div>
     <div class="chart-arch-grid">
@@ -457,7 +457,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">&#9888; 난관 (Challenges)</div>
+      <div class="chart-layer-group-label">! 난관 (Challenges)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item orange">Selection Bias</span>
         <span class="chart-layer-item orange">Delayed Feedback</span>

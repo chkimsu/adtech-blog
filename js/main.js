@@ -555,6 +555,9 @@ async function renderPostDetail() {
 
       renderMath();
 
+      // Render Chart.js charts identified by data-chart attribute
+      renderChartJsCharts(contentContainer);
+
       // Render Mermaid diagrams
       const mermaidInstance = window.mermaidLib || (typeof mermaid !== 'undefined' ? mermaid : null);
       if (mermaidInstance) {
@@ -885,4 +888,90 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyUrlFilters);
 } else {
   applyUrlFilters();
+}
+
+// ========================================
+// Chart.js Rendering for Post Content
+// ========================================
+
+function renderChartJsCharts(container) {
+  if (typeof Chart === 'undefined') return;
+
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const textColor = isDark ? '#b8c5d6' : '#4a5568';
+
+  // Chart: Feature Freshness
+  const freshnessCanvas = container.querySelector('#freshnessChart');
+  if (freshnessCanvas) {
+    new Chart(freshnessCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['디바이스/시간대', '캠페인 잔여예산', '유저 최근 클릭', '광고 CTR', '유저 7일 CTR', '유저 임베딩', '관심사 세그먼트'],
+        datasets: [{
+          label: '권장 갱신 주기 (분)',
+          data: [0.01, 1, 5, 60, 1440, 1440, 1440],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.7)', 'rgba(75, 192, 192, 0.7)',
+            'rgba(255, 159, 64, 0.7)', 'rgba(255, 159, 64, 0.7)',
+            'rgba(255, 206, 86, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(255, 206, 86, 0.7)'
+          ],
+          borderColor: [
+            'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)',
+            'rgba(255, 159, 64, 1)', 'rgba(255, 159, 64, 1)',
+            'rgba(255, 206, 86, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 206, 86, 1)'
+          ],
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: '피처별 권장 갱신 주기 (로그 스케일)',
+            color: textColor,
+            font: { size: 14, weight: 600 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const v = ctx.raw;
+                if (v < 1) return 'Real-Time (요청 시점)';
+                if (v < 60) return v + '분 (Streaming)';
+                if (v < 1440) return (v / 60) + '시간 (Streaming/Batch)';
+                return (v / 1440) + '일 (Batch)';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'logarithmic',
+            title: { display: true, text: '갱신 주기 (분, 로그 스케일)', color: textColor },
+            grid: { color: gridColor },
+            ticks: {
+              color: textColor,
+              callback: function(v) {
+                if (v === 0.01) return 'RT';
+                if (v === 1) return '1분';
+                if (v === 5) return '5분';
+                if (v === 60) return '1시간';
+                if (v === 1440) return '1일';
+                return '';
+              }
+            }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: textColor, font: { size: 12 } }
+          }
+        }
+      }
+    });
+  }
 }

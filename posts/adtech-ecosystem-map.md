@@ -8,112 +8,110 @@ pCTR 모델을 만드는 입장에서, "내 모델이 실제로 어디에서 어
 
 먼저 숲을 보겠습니다. 광고 생태계의 모든 주요 참여자와 데이터 흐름입니다:
 
-<div class="chart-layer">
-  <div class="chart-layer-title">ADVERTISER (광고주)</div>
-  <div class="chart-layer-row">
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">광고주</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item orange">KPI: ROAS, CPA, ROI</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">캠페인 설정</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item orange">예산</span>
-        <span class="chart-layer-item orange">타겟</span>
-        <span class="chart-layer-item orange">소재</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">데이터 플랫폼</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item purple">DMP (3rd Party)</span>
-        <span class="chart-layer-item purple">CDP (1st Party)</span>
-        <span class="chart-layer-item purple">Audience Segment</span>
-      </div>
-    </div>
-  </div>
-  <div class="chart-layer-arrow">&#8595;</div>
-  <div class="chart-layer-title">DSP (Demand-Side Platform)</div>
-  <div class="chart-layer-row">
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">ML 모델 스택</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item pink">pCTR 모델</span>
-        <span class="chart-layer-item pink">pCVR 모델</span>
-        <span class="chart-layer-item yellow">Budget Pacer</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">입찰 최적화</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item purple">True Value 계산</span>
-        <span class="chart-layer-item blue">Bid Shading (b*)</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">타겟팅 &middot; 피처</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item cyan">타겟팅 엔진</span>
-        <span class="chart-layer-item cyan">Ad Ranking</span>
-        <span class="chart-layer-item cyan">Feature Store</span>
-      </div>
-    </div>
-  </div>
-  <div class="chart-layer-arrow">&#8595; Bid Response</div>
-  <div class="chart-layer-title">AD EXCHANGE (거래소)</div>
-  <div class="chart-layer-row">
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Ad Exchange</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item blue">경매 운영</span>
-        <span class="chart-layer-item blue">Auction Engine (1st/2nd Price)</span>
-      </div>
-    </div>
-  </div>
-  <div class="chart-layer-arrow">&#8595; 낙찰 결과</div>
-  <div class="chart-layer-title">SSP (Supply-Side Platform)</div>
-  <div class="chart-layer-row">
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">SSP</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item green">매체 수익 최적화</span>
-        <span class="chart-layer-item green">Floor Price 설정</span>
-        <span class="chart-layer-item green">Header Bidding</span>
-      </div>
-    </div>
-  </div>
-  <div class="chart-layer-arrow">&#8595; 광고 전달</div>
-  <div class="chart-layer-title">PUBLISHER &amp; USER</div>
-  <div class="chart-layer-row">
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">매체 (Publisher)</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item green">웹사이트 / 앱</span>
-        <span class="chart-layer-item green">광고 지면 (Ad Slot)</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">유저 (Consumer)</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item cyan">광고 노출 (Impression)</span>
-        <span class="chart-layer-item cyan">클릭 (Click)</span>
-        <span class="chart-layer-item cyan">전환 (Conversion)</span>
-      </div>
-    </div>
-    <div class="chart-layer-group">
-      <div class="chart-layer-group-label">피드백 루프</div>
-      <div class="chart-layer-items">
-        <span class="chart-layer-item pink">클릭 &rarr; pCTR 학습</span>
-        <span class="chart-layer-item pink">전환 &rarr; pCVR 학습</span>
-        <span class="chart-layer-item blue">Win/Lose &rarr; Shading 학습</span>
-      </div>
-    </div>
-  </div>
-</div>
+```mermaid
+graph TB
+    subgraph Advertiser["광고주 (Advertiser)"]
+        ADV["광고주<br/>KPI: ROAS, CPA, ROI"]
+        CAMP["캠페인 설정<br/>예산 · 타겟 · 소재"]
+        CREATIVE["광고 소재<br/>(배너, 동영상, 네이티브)"]
+    end
 
-이 다이어그램에서 **분홍색(pCTR, pCVR)**이 pCTR 모델러의 영역입니다. 보라색(True Value)과 파란색(Bid Shading)은 모델 출력이 실제 입찰로 전환되는 지점입니다.
+    subgraph DSP_System["DSP (Demand-Side Platform)"]
+        BIDDER["Bidder<br/>(실시간 입찰 엔진)"]
+
+        subgraph ML_Models["ML 모델 스택"]
+            PCTR["pCTR 모델<br/>클릭 확률 예측"]
+            PCVR["pCVR 모델<br/>전환 확률 예측"]
+            BUDGET["Budget Pacer<br/>예산 분배 최적화"]
+        end
+
+        subgraph Bid_Optimization["입찰 최적화"]
+            TV["True Value 계산<br/>V = pCTR × pCVR × ConvValue"]
+            SHADE["Bid Shading<br/>최적 입찰가 b*"]
+        end
+
+        TARGETING["타겟팅 엔진<br/>(Audience Matching)"]
+        ADSELECT["광고 선택<br/>(Ad Ranking)"]
+        FEAT["Feature Store<br/>(유저·지면·시간 피처)"]
+    end
+
+    subgraph DMP_CDP["데이터 플랫폼"]
+        DMP["DMP<br/>3rd Party 데이터"]
+        CDP["CDP<br/>1st Party 데이터"]
+        SEGMENT["Audience Segment<br/>(유저 세그먼트)"]
+    end
+
+    subgraph Exchange["Ad Exchange (거래소)"]
+        ADEX["Ad Exchange<br/>경매 운영"]
+        AUCTION["Auction Engine<br/>(1st/2nd Price)"]
+    end
+
+    subgraph SSP_System["SSP (Supply-Side Platform)"]
+        SSP["SSP<br/>매체 수익 최적화"]
+        FLOOR["Floor Price 설정"]
+        HB["Header Bidding<br/>(병렬 경매)"]
+    end
+
+    subgraph Publisher["매체 (Publisher)"]
+        PUB["웹사이트 / 앱"]
+        SLOT["광고 지면<br/>(Ad Slot)"]
+    end
+
+    subgraph User_Side["유저 (Consumer)"]
+        USER["유저"]
+        IMP["광고 노출<br/>(Impression)"]
+        CLICK["클릭<br/>(Click)"]
+        CONV["전환<br/>(Conversion)"]
+    end
+
+    ADV -->|캠페인 등록| CAMP
+    CAMP --> CREATIVE
+    CAMP -->|예산·타겟·KPI| DSP_System
+
+    CDP --> SEGMENT
+    DMP --> SEGMENT
+    SEGMENT -->|유저 프로필| TARGETING
+
+    USER -->|페이지 방문| PUB
+    PUB -->|광고 요청| SSP
+    SSP --> FLOOR
+    SSP --> HB
+    HB -->|Bid Request| ADEX
+    ADEX -->|Bid Request 전달| BIDDER
+
+    BIDDER --> FEAT
+    FEAT --> PCTR
+    FEAT --> PCVR
+    PCTR --> TV
+    PCVR --> TV
+    TARGETING --> ADSELECT
+    ADSELECT --> TV
+    TV --> SHADE
+    BUDGET --> SHADE
+    SHADE -->|Bid Response| ADEX
+
+    ADEX --> AUCTION
+    AUCTION -->|낙찰 결과| SSP
+    SSP -->|광고 전달| SLOT
+    SLOT --> IMP
+    IMP -->|유저 반응| CLICK
+    CLICK --> CONV
+
+    CONV -.->|전환 피드백| PCVR
+    CLICK -.->|클릭 피드백| PCTR
+    AUCTION -.->|Win/Lose 피드백| SHADE
+
+    style PCTR fill:#ff6384,stroke:#ff6384,color:#fff
+    style PCVR fill:#ff6384,stroke:#ff6384,color:#fff
+    style SHADE fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style TV fill:#b026ff,stroke:#b026ff,color:#fff
+    style ADEX fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style USER fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style ADV fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style BUDGET fill:#ffce56,stroke:#ffce56,color:#333
+```
+
+이 다이어그램에서 **빨간색(pCTR, pCVR)**이 pCTR 모델러의 영역입니다. 보라색(True Value)과 파란색(Bid Shading)은 모델 출력이 실제 입찰로 전환되는 지점입니다.
 
 ---
 

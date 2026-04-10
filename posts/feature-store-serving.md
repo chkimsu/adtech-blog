@@ -206,6 +206,68 @@ pCTR 모델의 AUC를 0.01 올리는 데 몇 주를 투자하지만, **100ms 안
 
 **병렬 조회가 핵심입니다.** 유저/광고/지면/컨텍스트 피처를 순차적으로 가져오면 4ms → 병렬로 가져오면 1ms. 이 차이가 후보 광고 수를 2배 이상 늘릴 여유를 만듭니다.
 
+### 실전 예시: Redis에서 피처 조회하기
+
+실제 Bid Request가 도착했을 때 Feature Gateway가 수행하는 Redis 명령입니다:
+
+```bash
+# 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
+
+# 2a. 유저 피처 조회 (Hash)
+HGETALL user:U98712
+# → {
+#     "ctr_7d": "0.023",         ← 최근 7일 CTR
+#     "click_count_5m": "3",     ← 최근 5분 클릭 수 (Streaming)
+#     "interest": "auto,finance", ← 관심사 세그먼트
+#     "embedding": "[0.12, -0.34, ...]"  ← 유저 임베딩 (128차원)
+#   }
+
+# 2b. 광고 피처 일괄 조회 (Pipeline)
+HGETALL ad:A001
+HGETALL ad:A002
+HGETALL ad:A003
+# → 각 광고별 { "historical_ctr": "0.045", "creative_emb": "[...]", "budget_remain": "0.73" }
+
+# 2c. 지면 피처 조회
+HGETALL slot:S50
+# → { "category": "news", "avg_ctr": "0.031", "position": "above_fold" }
+
+# 2d. 컨텍스트 피처 (Redis 조회 아님 — 요청 데이터에서 직접 파싱)
+# device=mobile, os=iOS, hour=14, weekday=Thu, geo=KR
+```
+
+이렇게 모인 피처들이 하나의 Feature Vector로 concat됩니다:
+
+```python
+# Feature Vector 조합 (간략화)
+feature_vector = {
+    # 유저 피처 (Batch + Streaming)
+    "user_ctr_7d": 0.023,
+    "user_click_count_5m": 3,
+    "user_interest_auto": 1,    # one-hot
+    "user_interest_finance": 1, # one-hot
+    "user_embedding": [0.12, -0.34, ...],  # 128dim
+
+    # 광고 피처 (Batch)
+    "ad_historical_ctr": 0.045,
+    "ad_creative_embedding": [0.08, 0.21, ...],  # 64dim
+    "ad_budget_remain_ratio": 0.73,
+
+    # 지면 피처 (Batch)
+    "slot_category_news": 1,    # one-hot
+    "slot_avg_ctr": 0.031,
+    "slot_position_above_fold": 1,
+
+    # 컨텍스트 피처 (Real-Time)
+    "device_mobile": 1,
+    "os_ios": 1,
+    "hour_of_day": 14,
+    "is_weekday": 1,
+}
+# → 이 벡터가 pCTR 모델에 입력됨
+# → pCTR(user=U98712, ad=A001) = 0.038
+```
+
 ---
 
 ## 3. Offline vs Near-Real-Time vs Real-Time Feature Pipeline
@@ -477,6 +539,84 @@ user_ctr = clicks_7d / max(impressions_7d, 1)  # 0으로 나누기 방지
 
 Feature Store는 **피처 정의를 한 곳에서 관리**하여 로직 Skew를 방지하고, **Point-in-Time Join**으로 시간 Skew를 방지합니다. 분포 Skew는 모니터링으로 감지합니다.
 
+### 실전 예시: Point-in-Time Join
+
+학습 데이터를 만들 때, "이 유저가 이 광고를 본 **그 시점**의 피처"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage입니다.
+
+```sql
+-- 학습 데이터 생성: 클릭 이벤트 + 해당 시점의 피처 조합
+SELECT
+    e.user_id,
+    e.ad_id,
+    e.timestamp AS event_time,
+    e.clicked AS label,
+
+    -- Point-in-Time Join: 이벤트 시점 직전의 피처만 사용
+    f.user_ctr_7d,
+    f.user_click_count_5m,
+    f.ad_historical_ctr,
+    f.slot_avg_ctr
+
+FROM impression_events e
+LEFT JOIN feature_snapshots f
+  ON  e.user_id = f.user_id
+  AND e.ad_id   = f.ad_id
+  AND f.snapshot_time = (
+      -- 이벤트 시점 이전의 가장 최근 스냅샷
+      SELECT MAX(snapshot_time)
+      FROM feature_snapshots
+      WHERE user_id = e.user_id
+        AND ad_id   = e.ad_id
+        AND snapshot_time <= e.timestamp  -- 핵심: 미래 데이터 차단
+  )
+
+WHERE e.date BETWEEN '2026-03-01' AND '2026-03-31'
+```
+
+**잘못된 Join (data leakage 발생)**:
+
+```sql
+-- 위험: snapshot_time 조건 없이 최신 피처를 그냥 가져오는 경우
+LEFT JOIN feature_latest f ON e.user_id = f.user_id
+-- → 3월 1일 이벤트에 3월 31일 피처가 붙음
+-- → 오프라인 AUC 0.82 → 온라인 AUC 0.74 (성능 급락)
+```
+
+### 실전 예시: Online Store 데이터 구조
+
+Redis에서 피처를 저장하는 실제 Key-Value 구조입니다:
+
+```
+Key 설계: {entity_type}:{entity_id}
+TTL: 피처 갱신 주기의 2배 (안전 마진)
+
+┌──────────────────────────────────────────────────────┐
+│  Key: user:U98712          TTL: 48h (Batch 피처)     │
+│  ┌──────────────────┬────────────────────────────┐   │
+│  │ ctr_7d           │ 0.023                      │   │
+│  │ interest         │ auto,finance               │   │
+│  │ embedding        │ [0.12, -0.34, 0.56, ...]   │   │
+│  │ updated_at       │ 2026-04-10T06:00:00Z       │   │
+│  └──────────────────┴────────────────────────────┘   │
+├──────────────────────────────────────────────────────┤
+│  Key: user:U98712:rt       TTL: 10m (Streaming 피처) │
+│  ┌──────────────────┬────────────────────────────┐   │
+│  │ click_count_5m   │ 3                          │   │
+│  │ last_click_cat   │ auto                       │   │
+│  │ updated_at       │ 2026-04-10T14:32:15Z       │   │
+│  └──────────────────┴────────────────────────────┘   │
+├──────────────────────────────────────────────────────┤
+│  Key: ad:A001              TTL: 24h                  │
+│  ┌──────────────────┬────────────────────────────┐   │
+│  │ historical_ctr   │ 0.045                      │   │
+│  │ creative_emb     │ [0.08, 0.21, -0.15, ...]   │   │
+│  │ budget_remain    │ 0.73                        │   │
+│  └──────────────────┴────────────────────────────┘   │
+└──────────────────────────────────────────────────────┘
+```
+
+Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Streaming 피처의 TTL이 훨씬 짧아서(10분), 만료 시 Batch 피처까지 함께 사라지는 것을 방지합니다.
+
 ---
 
 ## 5. Feature Freshness vs Latency 트레이드오프
@@ -507,6 +647,27 @@ Feature Store는 **피처 정의를 한 곳에서 관리**하여 로직 Skew를 
 - **5분 전 CTR 피처**: 직전 클릭 패턴 반영 → 자동차 관심사 포착 → 자동차 광고 pCTR 정확 추정 → 적정 입찰 → 낙찰
 
 이 차이가 **Streaming Pipeline의 존재 이유**입니다. 다만 모든 피처를 5분 갱신할 필요는 없고, 위 표처럼 **피처의 변화 속도에 맞춰 갱신 주기를 차등 설정**하는 것이 비용 대비 효과적입니다.
+
+### 실전 예시: Freshness가 입찰가에 미치는 영향 (숫자 시뮬레이션)
+
+같은 유저(U98712)에게 자동차 광고(A001)를 보여줄 때, 피처 갱신 주기에 따라 입찰가가 어떻게 달라지는지 추적합니다:
+
+**상황**: 유저가 오전 10시부터 자동차 기사를 집중적으로 클릭 중. 현재 오후 2시.
+
+| | Batch Only (24시간) | + Streaming (5분) |
+|---|---|---|
+| **user_ctr_7d** | 0.023 (어제 기준) | 0.023 (동일) |
+| **user_click_count_5m** | 0 (피처 없음) | 3 (직전 5분) |
+| **user_interest_auto** | 0 (어제엔 관심 없었음) | 1 (오늘 클릭 패턴 반영) |
+| **pCTR 예측** | 0.018 | 0.042 |
+| **True Value** (pCTR × pCVR × CPA) | $0.018 × 0.12 × $50 = **$0.108** | $0.042 × 0.12 × $50 = **$0.252** |
+| **Bid Shading 후 입찰가** | **$0.076** | **$0.177** |
+| **시장 평균가** | $0.15 | $0.15 |
+| **결과** | **패찰** (입찰가 < 시장가) | **낙찰** (입찰가 > 시장가) |
+
+Streaming 피처 하나(`user_click_count_5m`)의 추가로 pCTR이 0.018 → 0.042로 올라가고, 입찰가가 $0.076 → $0.177로 바뀌면서 **패찰이 낙찰로 전환**됩니다.
+
+이것이 하루 수억 건의 입찰에서 반복되면, Streaming Pipeline 도입의 ROI는 명확해집니다.
 
 ---
 

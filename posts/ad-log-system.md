@@ -35,11 +35,84 @@ graph LR
 
 ### Request Log
 
-광고 요청이 들어온 순간 기록됩니다. 아직 어떤 광고를 보여줄지 결정되기 전의 **입력 컨텍스트**입니다.
+광고 요청이 들어온 순간 기록됩니다. 아직 어떤 광고를 보여줄지 결정되기 전의 **입력 컨텍스트**이자, 모든 다운스트림 로그의 **출발점**입니다.
 
-- 유저 ID, 디바이스, OS, 브라우저
-- 지면 ID, 앱/웹 구분, 페이지 카테고리
-- 타임스탬프, 요청 IP, 지역
+#### 핵심 역할
+
+Request Log는 단순한 "트래픽 분석, 디버깅" 이상의 역할을 합니다:
+
+- **`request_id` 생성**: 이후 모든 로그(Candidate → Impression → Click → Conversion)를 연결하는 **조인 키의 출발점**. Request Log 없이는 파이프라인 전체의 연결 고리가 끊어집니다.
+- **No-Fill 분석의 유일한 데이터 소스**: 광고 요청이 들어왔지만 적절한 후보가 없어 빈 응답을 반환하는 경우, Impression Log에는 기록되지 않습니다. `Fill Rate = Impressions / Requests`의 **분모**가 되는 로그입니다.
+- **트래픽 필터링 지점**: 봇 트래픽 탐지, 빈도 캡(frequency capping), 유저 타겟팅 사전 필터링 등의 결정이 이 단계에서 기록됩니다.
+- **QPS/Latency 모니터링 기준점**: 광고 서버의 요청 처리량과 응답 시간을 측정하는 시작점입니다.
+- **Context Feature의 원천**: 시간대, 지역, 디바이스 등 Request-level 컨텍스트는 모델 학습 시 **context feature**로 직접 사용됩니다.
+
+#### 일반적인 구조
+
+```python
+# Request Log 1건 (= 광고 요청 1건)
+{
+  "request_id": "req_abc123",           # 모든 다운스트림 로그의 조인 키
+  "timestamp": "2026-04-11T14:30:00Z",
+
+  # 유저 컨텍스트
+  "user_id": "u_789",
+  "device": "mobile",
+  "os": "iOS 17.2",
+  "browser": "Safari",
+  "ip": "203.0.113.42",
+  "geo": {"country": "KR", "region": "Seoul", "city": "Gangnam"},
+
+  # 지면 정보
+  "slot_id": "slot_main_1",
+  "publisher_id": "pub_news_001",
+  "app_or_web": "web",
+  "page_url": "https://news.example.com/tech/article-123",
+  "page_category": "news/tech",
+  "slot_size": "320x50",
+  "slot_position": "above_fold",
+
+  # 요청 메타
+  "request_type": "display",            # display, video, native 등
+  "is_refresh": false,                   # 페이지 새로고침에 의한 재요청 여부
+  "frequency_cap_status": {              # 빈도 캡 상태
+    "user_daily_impressions": 12,
+    "user_hourly_impressions": 3
+  },
+
+  # 응답 결과
+  "response_status": "filled",          # filled, no_fill, timeout, error
+  "candidate_count": 47,                # 후보 광고 수
+  "latency_ms": 23,                     # 응답 시간
+  "filtering_reason": null               # no_fill인 경우 사유
+}
+```
+
+#### No-Fill 분석
+
+Request Log의 고유한 가치 중 하나는 **"왜 광고가 안 나왔는지"**를 추적할 수 있다는 점입니다:
+
+| response_status | 의미 | 분석 포인트 |
+|----------------|------|------------|
+| `filled` | 정상 노출 | — |
+| `no_fill` | 후보 광고 없음 | 타겟팅 조건이 너무 좁은지, 예산 소진된 광고주가 많은지 |
+| `timeout` | 응답 시간 초과 | 서버 성능 문제, 외부 DSP 응답 지연 |
+| `error` | 처리 오류 | 버그, 인프라 장애 |
+| `filtered` | 봇/정책 필터링 | IVT(Invalid Traffic) 비율 모니터링 |
+
+> Fill Rate가 낮으면 **매출 기회 손실**이고, 원인을 파악하려면 Request Log의 `response_status`와 `filtering_reason` 분석이 필수입니다.
+
+#### 볼륨
+
+Request Log는 모든 광고 로그 중 **가장 볼륨이 큽니다**. 모든 요청을 기록하며, 다른 로그들은 Request의 부분 집합입니다:
+
+| 로그 | 요청 대비 비율 | QPS 10만 기준 일일 레코드 |
+|------|--------------|------------------------|
+| **Request Log** | 100% (전수) | ~8.6B |
+| Candidate Log | 1~10% (샘플링) | ~86M~860M |
+| Impression Log | Fill Rate 의존 (~70~90%) | ~6~7.7B |
+| Click Log | CTR 의존 (~1~3%) | ~86M~258M |
+| Conversion Log | CVR 의존 (~0.1~1%) | ~8.6M~86M |
 
 ### Candidate Log
 
@@ -366,7 +439,59 @@ actual_pctr = base_score * position_factor[assigned_position]
 
 ---
 
-## 7. 정리: 로그 설계가 모델 성능을 결정한다
+## 7. 다른 회사들은 어떻게 로그를 수집하는가
+
+주요 광고 플랫폼들의 로그 수집 방식을 살펴보면, 공통 패턴과 각 사의 고유한 설계 결정이 보입니다.
+
+### Meta (Facebook Ads)
+
+- **Scribe → Hive/Spark**: 모든 광고 이벤트를 내부 로그 수집 시스템 **Scribe**로 수집 후 데이터 레이크에 적재
+- **Opportunity Log**: Candidate Log와 유사한 개념으로, 노출 기회(opportunity)마다 **후보군 전체의 스코어를 기록**
+- **실시간 피처**: 자체 Feature Store(**Sagitta**)에서 유저의 최근 N분 인게이지먼트를 실시간 집계하여 서빙
+- **이중 전환 수집**: Conversion을 **서버사이드 이벤트(CAPI)** + **클라이언트 픽셀** 양쪽에서 수집하여 Delayed Feedback과 누락을 최소화
+
+### Google (DV360 / Google Ads)
+
+- **Mesa + Dremel**: Near-realtime 데이터 웨어하우스 **Mesa**에 적재, **Dremel(BigQuery)**로 분석. PB 스케일 처리
+- **로그가 더 세분화됨**: RTB 환경에서는 일반적인 5종류가 아니라 `AdRequest → BidRequest → BidResponse → Impression → Click → Conversion`으로 입찰 과정 자체를 별도 로그로 분리
+- **ColumnIO 포맷**: 자체 개발 컬럼형 포맷으로 저장하여 압축률과 쿼리 성능을 최적화
+- **Data Transfer**: 광고주에게도 impression-level 로그를 제공하여 광고주 측 자체 분석을 지원
+
+### Twitter(X) Ads
+
+- **Manhattan(KV store) + Kafka + HDFS** 파이프라인
+- Request Log에 해당하는 **Ad Serving Log**에 풍부한 소셜 컨텍스트를 포함:
+  - 타임라인 위치, 트윗 컨텍스트, **팔로우 그래프 기반 피처**
+- **Earlybird(검색 인덱스)** 단계의 리트리벌 로그도 별도 수집하여 후보 생성 과정까지 추적
+
+### LinkedIn
+
+- **Unified Logging Framework**: 모든 광고 이벤트를 **Kafka → Brooklin → HDFS** 파이프라인으로 통합 수집
+- Request 단계에서 **member features snapshot**을 별도 저장 — 프로필 변경 전 시점의 피처를 보존하여 학습 데이터 일관성 확보
+- B2B 광고 특성상 **company-level aggregated features** (회사 규모, 업종, 직급 분포 등)가 Request Log에 포함
+
+### Criteo (리타게팅 DSP)
+
+- 공개 논문/데이터셋에서 가장 상세한 로그 구조를 밝힌 회사 중 하나
+- **Display Log**: Request + Candidate + Impression을 하나의 로그에 통합한 형태로, 리타게팅 특성상 유저의 **과거 상품 조회 이력 시퀀스**가 Request-level 피처에 포함
+- **Criteo 1TB Dataset**: 실제 24일간의 click log(40개 익명화 피처 + click label)를 공개하여 업계 벤치마크로 활용됨
+
+### 업계 공통 패턴
+
+| 패턴 | 설명 | 사용 회사 |
+|------|------|----------|
+| **Event Sourcing** | 모든 이벤트를 Kafka 등 이벤트 스트림에 먼저 적재, 이후 다양한 consumer가 소비 | 거의 모든 회사 |
+| **Lambda Architecture** | 실시간(Streaming) + 배치(Batch) 이중 파이프라인으로 피처 신선도와 안정성을 동시 확보 | Meta, Google, LinkedIn |
+| **Request-ID 기반 조인** | 모든 로그를 `request_id`로 연결. Request → Candidate → Impression → Click → Conversion | 공통 |
+| **Feature Snapshot** | 추론 시점의 피처 값을 로그에 기록하여, 나중에 피처가 변해도 학습 데이터 일관성 유지 | Meta, LinkedIn, Criteo |
+| **Candidate 분리 저장** | 후보군 전체 로그는 **샘플링하여 별도 저장** (비용 문제) | Meta, Google |
+| **서버 + 클라이언트 이중 수집** | Impression/Click을 서버·클라이언트 양쪽에서 수집하여 누락 방지 | Google, Meta |
+
+> 회사마다 로그 이름이나 구조는 다르지만, **"이벤트 스트림으로 수집 → request_id로 조인 → 피처 스냅샷 보존"**이라는 3가지 원칙은 사실상 업계 표준입니다.
+
+---
+
+## 8. 정리: 로그 설계가 모델 성능을 결정한다
 
 광고 시스템의 로그는 단순한 "기록"이 아닙니다. **ML 파이프라인의 첫 번째 설계 결정**이며, 이후 모든 단계의 품질을 좌우합니다.
 

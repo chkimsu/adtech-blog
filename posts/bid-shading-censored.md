@@ -223,7 +223,7 @@ $$s''(b) = \frac{f_{\ln}(b)}{b\sigma^2} \left[(\mu - \sigma^2 - \ln b)(V - b) - 
 
 단봉 함수에서 최적값을 찾는 가장 효율적인 방법은 **황금 비율 탐색(Golden Section Search)**입니다:
 
-```
+```text
 Algorithm: Golden Section Search for Optimal Bid
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Input:  V (true value), F(·|x) (학습된 CDF), ε (허용 오차)
@@ -384,6 +384,49 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 **Distribution Shift 모니터링**:
 - 시간대별 예측 Win Rate vs 실제 Win Rate의 괴리(calibration gap) 추적
 - Gap이 임계치(예: 5%p)를 초과하면 모델 재학습 트리거 또는 온라인 보정 강도 증가
+
+---
+
+## 8. 보론: Quality Index가 존재할 때의 시장 가격 재정의
+
+앞선 섹션들에서는 입찰가 자체가 경매 순위를 결정하는 순수 CPM 경매를 가정했습니다. 하지만 실제 RTB 경매에서는 SSP가 입찰가에 **Quality Index(QI)** -- 광고 품질 점수, Viewability 예측치, 클릭률 보정 계수 등 -- 를 곱한 **Rank Index(RI)**로 순위를 매깁니다. 이때 자연스러운 의문이 생깁니다: "낙찰자의 Raw Bid가 내 입찰가보다 **낮은데** 내가 졌다면, 섹션 2에서 정의한 Censored Data의 전제(시장 가격 > 내 입찰가)가 깨지는 것 아닌가?"
+
+결론부터 말하면, **깨지지 않습니다.** 핵심은 "시장 가격"의 정의를 Raw Bid가 아닌 **Required Bid**로 변환하는 것입니다.
+
+### Required Bid: 내가 이기려면 얼마를 써야 했는가
+
+구체적인 시나리오를 보겠습니다.
+
+| 참여자 | Raw Bid | Quality Index | Rank Index (Bid x QI) | 결과 |
+|--------|---------|---------------|----------------------|------|
+| **나 (패찰)** | $80 | 1.0 | 80 | Lose |
+| **경쟁자 (낙찰)** | $60 | 2.0 | 120 | Win |
+
+경쟁자의 Raw Bid($60)는 내 Raw Bid($80)보다 **낮습니다.** 그런데 내가 졌습니다. QI가 2배 높은 경쟁자가 더 적은 돈으로도 더 높은 Rank Index를 확보했기 때문입니다.
+
+이 상황에서 **Required Bid** -- 내가 이기기 위해 필요했던 최소 입찰가 -- 를 계산하면:
+
+$$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0} = \$120$$
+
+이제 관계가 역전됩니다: **Required Bid($120) > My Bid($80)**. Censored Regression의 전제가 성립합니다. 섹션 2의 Right-Censoring 프레임워크와 섹션 4의 Surplus 극대화 공식을 그대로 적용할 수 있되, "시장 가격"을 Required Bid로 치환하면 됩니다.
+
+### 비유: 높이뛰기 경기
+
+직관적으로 이해하기 위해 높이뛰기에 비유해보겠습니다.
+
+- **경쟁자**는 키가 큰 선수(QI = 2.0)입니다. 60cm만 점프해도 120cm 바를 넘습니다.
+- **나**는 키가 작은 선수(QI = 1.0)입니다. 80cm를 점프해도 120cm 바를 넘지 못합니다.
+- 경쟁자가 "덜 뛰었다(Raw Bid가 낮다)"는 사실은 중요하지 않습니다. **바의 높이(Required Bid)가 내 점프력(My Bid)을 초과했다**는 사실이 핵심입니다.
+
+따라서 "Market Height > 80cm(내 점프)" -- 즉 시장 가격이 내 입찰가보다 높다 -- 는 유효한 관측입니다.
+
+### 핵심 통찰
+
+**"품질이 부족해서 진 것"도 돈으로 환산하면 "돈을 덜 내서 진 것"과 수학적으로 동치입니다.** QI 차이로 인한 패찰이든, Raw Bid 차이로 인한 패찰이든, Required Bid 공간으로 변환하면 동일한 Censored Regression 문제로 귀결됩니다.
+
+참고로, 모든 참여자의 QI = 1.0인 순수 CPM 경매에서는 Required Bid = Winner's Raw Bid가 되어, 앞선 섹션들에서 다룬 표준적인 경우와 정확히 일치합니다. 즉 QI가 없는 경매는 이 프레임워크의 **특수 케이스**입니다.
+
+실무적으로 DSP가 경쟁자의 정확한 QI 값을 항상 알 수 있는 것은 아닙니다. 하지만 SSP가 제공하는 Minimum Bid to Win 같은 신호를 통해 Required Bid를 근사할 수 있고, 수학적 프레임워크 자체는 QI 정보의 정밀도와 무관하게 성립합니다.
 
 ---
 

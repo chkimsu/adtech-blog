@@ -269,7 +269,7 @@ function enhanceCodeBlocks(container) {
     // Detect language from class (highlight.js uses hljs + language-xxx)
     let lang = '';
     const classes = Array.from(codeEl.classList);
-    const langClass = classes.find(c => c.startsWith('language-') || c.startsWith('hljs'));
+    const langClass = classes.find(c => c.startsWith('language-') && c !== 'language-undefined');
     if (langClass && langClass.startsWith('language-')) {
       lang = langClass.replace('language-', '');
     } else if (codeEl.dataset.highlighted) {

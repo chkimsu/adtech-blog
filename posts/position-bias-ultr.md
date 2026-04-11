@@ -57,7 +57,7 @@ $$P(\text{click}) = \underbrace{P(\text{examine} | \text{position})}_{\text{Posi
 
 Position Bias를 보정하지 않으면 강화 루프가 발생합니다:
 
-```
+```text
 1. 광고 A가 1위에 배치됨
 2. Position Bias로 CTR 높게 관측됨
 3. 모델이 "A는 좋은 광고"라고 학습
@@ -80,7 +80,7 @@ Position Bias를 보정하지 않으면 강화 루프가 발생합니다:
 
 ### 실전 예시: 서빙 위치와 학습 위치의 불일치
 
-```
+```text
 [학습 데이터]
   광고 A: position=1, CTR=5.0% → 모델 학습: pCTR(A) = 5.0%
   광고 B: position=3, CTR=2.2% → 모델 학습: pCTR(B) = 2.2%
@@ -338,7 +338,7 @@ IPS는 Propensity를 알아야 합니다. Randomized Experiment 없이 Propensit
 
 ### 실전 파이프라인
 
-```
+```text
 [데이터 수집]
   클릭 로그: (user, query, ad, position, clicked)
 

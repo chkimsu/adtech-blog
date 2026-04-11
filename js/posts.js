@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'ad-network-vs-exchange',
+    title: 'Ad Network vs Ad Exchange: 디지털 광고 유통 구조의 진화',
+    excerpt: 'Waterfall에서 RTB, Header Bidding까지 — Ad Network과 Ad Exchange의 구조적 차이, 기술 아키텍처, 진화 과정을 해부합니다.',
+    date: '2026-04-11',
+    categories: ['Bidding & Auction'],
+    tags: ['Ad Ecosystem', 'RTB', 'SSP', 'DSP'],
+    contentUrl: 'posts/ad-network-vs-exchange.md',
+    readTime: '15 min read'
+  },
+  {
     id: 'position-bias-ultr',
     title: 'Position Bias & Unbiased Learning to Rank: 위치가 만드는 착각을 제거하는 법',
     excerpt: 'Examination Hypothesis, IPS(Inverse Propensity Scoring), DLA(Dual Learning Algorithm)로 Position Bias를 보정하고 광고 랭킹의 공정성을 확보하는 방법을 해부합니다.',
@@ -59,6 +69,16 @@ const posts = [
     tags: ['ML Infra', 'DSP', 'pCTR'],
     contentUrl: 'posts/feature-store-serving.md',
     readTime: '18 min read'
+  },
+  {
+    id: 'ecpm-ranking',
+    title: 'eCPM과 광고 랭킹: 서로 다른 시장에서 1등을 결정하는 기준',
+    excerpt: 'eCPM의 정의와 계산법을 정리하고, Open RTB·CPC Exchange·Walled Garden 세 가지 시장에서 광고 랭킹이 어떻게 달라지는지 구체적 시나리오로 비교합니다.',
+    date: '2026-04-11',
+    categories: ['Bidding & Auction'],
+    tags: ['Ad Ecosystem', 'pCTR', 'RTB'],
+    contentUrl: 'posts/ecpm-ranking.md',
+    readTime: '12 min read'
   },
   {
     id: 'walled-garden',

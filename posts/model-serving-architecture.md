@@ -87,7 +87,7 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
 
 Pre-Ranking 없이 500개 후보를 Ranking 모델(DeepFM)에 직접 넣으면:
 
-```
+```text
 [Pre-Ranking 없이]
 500개를 Ranking 모델(DeepFM)에 직접 → 50개씩 배치 = 10 배치 × 3ms = 30ms
 → 10ms 예산 3배 초과
@@ -192,7 +192,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 ### 실전 경량화 전략
 
-```
+```text
 [Ranking 모델 - 원본]
   DeepFM, 50M parameters, FP32
   AUC: 0.823, 레이턴시: 5ms/50ads
@@ -217,7 +217,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 ### 왜 Embedding이 병목인가
 
-```
+```text
 유저 ID: 1억 개   × 64차원 × 4B(FP32) = 25.6GB
 광고 ID: 1000만 개 × 64차원 × 4B(FP32) = 2.56GB
 카테고리: 1만 개   × 32차원 × 4B(FP32) = 1.3MB
@@ -316,7 +316,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 ### Canary 배포 의사결정
 
-```
+```text
 [Day 0] 새 모델 v2 학습 완료, 오프라인 AUC +0.005
 
 [Day 1] Canary 배포: 5% 트래픽
@@ -394,7 +394,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 ### Timeout Fallback 계층
 
-```
+```text
 [정상] Ranking Model 응답 (3ms)
   → pCTR = 0.032
 

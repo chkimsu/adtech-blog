@@ -91,6 +91,33 @@ Disjoint LinUCB에서는 광고(Arm)마다 별도의 행렬을 관리합니다. 
 * 결과: 값이 0에 가까워짐 회색 막대가 사라짐.
 * 의미: "난 이제 경험치(A)가 만렙이야. 모르는 거($A^{-1} \approx 0$) 없어. 모험 안 해."
 
+```python
+import numpy as np
+
+def sherman_morrison_update(A_inv, x):
+    """Sherman-Morrison: O(d²)로 역행렬 갱신 (전체 역행렬 재계산 불필요)"""
+    Ax = A_inv @ x
+    denom = 1.0 + x @ Ax
+    return A_inv - np.outer(Ax, Ax) / denom
+
+# 데이터가 쌓일수록 불확실성 감소 과정
+d = 3
+x_test = np.array([1.0, 0.5, -0.3])
+
+np.random.seed(42)
+checkpoints = [0, 1, 5, 20, 100]
+A_inv = np.eye(d)
+prev = 0
+for step in checkpoints:
+    for _ in range(step - prev):
+        A_inv = sherman_morrison_update(A_inv, np.random.randn(d))
+    prev = step
+    unc = np.sqrt(x_test @ A_inv @ x_test)
+    print(f"  데이터 {step:3d}개: 불확실성={unc:.4f}"
+          f"{'  ← 최대 (탐색 모드)' if step == 0 else ''}")
+# 데이터 0→100개: 불확실성이 지속 감소 → 탐색에서 활용으로 전환
+```
+
 ---
 
 ### 3. 기하학적 시각화 (타원)
@@ -107,3 +134,28 @@ Disjoint LinUCB에서는 광고(Arm)마다 별도의 행렬을 관리합니다. 
 > 지식의 탑($A$)이 높게 쌓일수록, 빈틈($A^{-1}$)은 작아집니다.
 
 이 개념을 이해했다면, LinUCB 수식의 핵심 90%를 파악한 것과 같습니다.
+
+```python
+import numpy as np
+
+def linucb_alpha_comparison(d=3):
+    """alpha 값에 따른 탐색/활용 균형 변화"""
+    A_inv_learned = np.eye(d) * 0.05   # 학습된 광고 (불확실성 낮음)
+    A_inv_new = np.eye(d) * 1.0        # 신규 광고 (불확실성 높음)
+    theta_learned = np.array([0.8, 0.3, 0.1])
+    theta_new = np.array([0.2, 0.1, 0.0])
+    x = np.array([1.0, 0.5, 0.3])
+
+    for alpha in [0.1, 1.0, 2.5]:
+        label = '보수적' if alpha < 0.5 else '탐색적' if alpha > 1.5 else '균형'
+        print(f"\n  alpha={alpha} ({label}):")
+        for name, theta, A_inv in [("학습광고", theta_learned, A_inv_learned),
+                                     ("신규광고", theta_new, A_inv_new)]:
+            pred = x @ theta
+            bonus = alpha * np.sqrt(x @ A_inv @ x)
+            print(f"    {name}: 예측={pred:.3f} + 보너스={bonus:.3f} = {pred+bonus:.3f}")
+
+linucb_alpha_comparison()
+# alpha 작으면: 학습된 광고 유리 (활용 중심)
+# alpha 크면: 신규 광고도 기회 획득 (탐색 중심)
+```

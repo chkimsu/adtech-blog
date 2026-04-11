@@ -64,6 +64,30 @@ graph TD
 - ESMM: CVR Tower의 출력(pCVR)이 CTR Tower의 출력(pCTR)과 곱해져 pCTCVR을 만들고, 이 곱이 **전체 임프레션 라벨**(CTCVR)로 감독됨 → CVR Tower는 여전히 $P(z=1|y=1, x)$를 모델링하지만, 클릭 필터 없이 전체 임프레션으로 학습하므로 Training-Serving 분포 불일치 해소
 - 추가 이점: Embedding Layer 공유로 **전환 데이터의 희소성 문제**까지 완화 (CTR의 풍부한 클릭 시그널이 공유 임베딩을 통해 CVR Tower로 전이)
 
+```python
+# ESMM Forward Pass (Pseudocode)
+# 핵심: 전체 임프레션 공간에서 학습 → Selection Bias 제거
+
+class ESMM:
+    def __init__(self, embed_dim, hidden_dim):
+        self.shared_embedding = EmbeddingLayer(embed_dim)  # 공유 임베딩
+        self.ctr_tower = DNN(hidden_dim)   # 클릭 예측 Tower
+        self.cvr_tower = DNN(hidden_dim)   # 전환 예측 Tower
+
+    def forward(self, x):
+        emb = self.shared_embedding(x)        # 지식 전이의 핵심
+        pCTR = sigmoid(self.ctr_tower(emb))   # P(click | impression)
+        pCVR = sigmoid(self.cvr_tower(emb))   # P(convert | click)
+        pCTCVR = pCTR * pCVR                  # P(convert | impression)
+        return pCTR, pCVR, pCTCVR
+
+    def loss(self, pCTR, pCTCVR, click_label, convert_label):
+        # 두 Loss 모두 '전체 임프레션' 데이터 사용 (클릭 데이터만 X)
+        L_ctr = binary_cross_entropy(pCTR, click_label)
+        L_ctcvr = binary_cross_entropy(pCTCVR, convert_label)
+        return L_ctr + L_ctcvr  # CVR Tower는 곱셈을 통해 간접 학습
+```
+
 ### ② 데이터 희소성 (Data Sparsity)
 - 현상: Click 대비 Conversion은 발생 빈도가 현저히 낮아 양성 샘플(Positive Sample) 확보가 어려움.
 - 해결: CTR 태스크와의 Multi-task Learning을 통해 로우 레벨 임베딩 층을 공유하거나, 사전 학습된 CTR 모델의 가중치를 Transfer 하는 방식이 유효함.
@@ -93,6 +117,26 @@ $$w_i = \frac{P(\text{True Negative} | x_i, \text{elapsed time})}{P(\text{Observ
 - **Delay Distribution 모델링**: 전환 지연 시간의 분포를 별도로 학습해야 합니다 (보통 Exponential 또는 Weibull 분포 사용)
 - **Attribution Window와의 관계**: 윈도우를 짧게 설정하면 Fake Negative가 늘어나 FSIW 보정이 더 중요해지고, 길게 설정하면 학습 데이터의 신선도가 떨어집니다
 - **대안 접근법**: ES-DFM(Elapsed-time Sampling based Delayed Feedback Model)은 지연 시간을 모델에 직접 피처로 넣어 학습하는 방식으로, FSIW 대비 구현이 단순합니다
+
+```python
+import numpy as np
+
+def fsiw_weights(elapsed_hours, delay_lambda=0.05):
+    """FSIW: 경과 시간에 따른 Negative 샘플 가중치"""
+    # 전환 지연 ~ Exponential(λ): 오래될수록 진짜 Negative 확률 ↑
+    survival = np.exp(-delay_lambda * elapsed_hours)
+    return np.clip(1.0 - survival, 0.01, 1.0)
+
+hours = np.array([1, 6, 12, 24, 48, 168])  # 1시간 ~ 7일
+weights = fsiw_weights(hours)
+
+for h, w in zip(hours, weights):
+    bar = "█" * int(w * 20)
+    trust = "낮은 신뢰" if w < 0.5 else "높은 신뢰"
+    print(f"  경과 {h:3d}시간 → w={w:.3f} {bar} ({trust})")
+# 클릭 직후 Negative: Fake Negative 가능성 높음 → 가중치 낮음
+# 7일 후 Negative: 진짜 Negative일 확률 높음 → 가중치 높음
+```
 
 ### ④ Last Click Attribution의 한계 
 - 현재 실무에서 많이 쓰는 Last Click 방식은 구매 직전의 매체에만 기여도를 몰아주는 경향이 있음. 모델이 특정 시점의 광고만 과대평가하지 않도록 비즈니스 로직에 따른 라벨링 검증이 중요함.

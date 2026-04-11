@@ -100,6 +100,32 @@ Pre-Ranking 없이 500개 후보를 Ranking 모델(DeepFM)에 직접 넣으면:
 
 **Pre-Ranking의 목표**: Ranking 모델이 선택할 Top-50을 놓치지 않으면서 후보를 줄이는 것. Pre-Ranking에서 탈락한 광고는 영영 기회를 잃으므로, **recall이 precision보다 중요**합니다.
 
+```python
+# Multi-Stage Ranking Pipeline (Pseudocode)
+# 수천 후보 → 1개 선택, 총 10ms 이내
+
+def multi_stage_ranking(bid_request, budget_ms=10):
+    """광고 랭킹: 단계별 후보 축소 + 모델 복잡도 증가"""
+
+    # Stage 1: Retrieval (수천 → 수백, ~0.1ms, 규칙 기반)
+    candidates = retrieval(bid_request)       # 타겟팅, 예산 필터
+
+    # Stage 2: Pre-Ranking (수백 → 50, ~1ms, 경량 모델)
+    feats = extract_features(candidates, light=True)
+    scores = lightweight_model.predict(feats)  # LR / 작은 MLP
+    candidates = top_k(candidates, scores, k=50)
+
+    # Stage 3: Ranking (50 → 5, ~5ms, 풀 모델)
+    feats = extract_features(candidates, light=False)
+    pCTR = ranking_model.predict(feats)        # DeepFM / DIN
+    value = pCTR * conversion_value
+    candidates = top_k(candidates, value, k=5)
+
+    # Stage 4: Re-Ranking (5 → 1, ~0.5ms, 비즈니스 로직)
+    final = apply_rules(candidates)            # 다양성, 빈도 제한
+    return final, bid_shading(final, value)
+```
+
 ---
 
 ## 3. 모델 경량화: 정확도와 속도의 트레이드오프
@@ -406,6 +432,35 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 [Timeout 10ms] 전체 장애 → 입찰 포기
   → 이 경우에만 기회 손실
+```
+
+```python
+# Timeout Fallback (Pseudocode)
+# 모델 장애에도 입찰 기회를 놓치지 않는 방어 계층
+
+def score_with_fallback(user, candidates, timeout_ms=10):
+    """다단계 Fallback: 정확도를 점진적으로 포기하되 입찰은 유지"""
+    start = now()
+
+    # Level 1: Ranking Model (최고 정확도, ~3ms)
+    try:
+        return ranking_model.predict(candidates, timeout=5)
+    except TimeoutError:
+        pass
+
+    # Level 2: Pre-Ranking 점수 (덜 정확, 개인화 유지)
+    if elapsed(start) < 8:
+        log_fallback("preranking")
+        return preranking_model.predict(candidates)
+
+    # Level 3: 캐시된 평균 pCTR (개인화 없음, 입찰은 유지)
+    if elapsed(start) < 10:
+        log_fallback("cache")
+        return [user_cache.get(user.id, GLOBAL_AVG)] * len(candidates)
+
+    # Level 4: 전체 타임아웃 → 이 임프레션 건너뜀
+    log_fallback("skip")
+    raise BidSkipException("전체 장애 — 기회 손실")
 ```
 
 ---

@@ -28,6 +28,35 @@
   * Cold Start: 데이터가 0인 신규 광고는 $Beta(1,1)$에서 시작하므로, 운 좋게 노출되기 전까지 성능을 증명할 수 없습니다.
   * 확장성 부족: 광고 후보가 수만 개로 늘어나거나 매번 바뀌는 환경(Dynamic Candidates)에서는 모든 광고의 Beta 분포를 관리할 수 없습니다.
 
+```python
+import numpy as np
+
+def standard_ts_demo(true_ctrs, n_rounds=500):
+    """Standard TS: Beta(α, β) 진화 과정"""
+    n_arms = len(true_ctrs)
+    alphas = np.ones(n_arms)
+    betas = np.ones(n_arms)
+
+    for t in range(n_rounds):
+        samples = [np.random.beta(alphas[a], betas[a]) for a in range(n_arms)]
+        arm = np.argmax(samples)
+        reward = np.random.binomial(1, true_ctrs[arm])
+        if reward:
+            alphas[arm] += 1
+        else:
+            betas[arm] += 1
+
+    for a in range(n_arms):
+        n = alphas[a] + betas[a] - 2
+        est = alphas[a] / (alphas[a] + betas[a])
+        print(f"  광고{a}: α={alphas[a]:.0f}, β={betas[a]:.0f}, "
+              f"추정CTR={est:.3f} (실제={true_ctrs[a]:.3f}), 노출={n:.0f}회")
+
+np.random.seed(42)
+standard_ts_demo(true_ctrs=[0.02, 0.08, 0.05])
+# 광고1(CTR 8%)에 자연스럽게 노출 집중
+```
+
 ### 2.2 Linear Thompson Sampling (Linear TS)
 
 > "레시피를 학습한 셰프"
@@ -42,6 +71,39 @@
   * 매 요청마다 가중치 분포에서 샘플($\tilde{\theta}$)을 뽑아 점수($x^T \tilde{\theta}$)를 계산합니다.
 * 압도적 장점 (AdTech 관점):
   * Generalization (일반화): 신규 광고가 등록되어도, 기존에 학습된 Feature 가중치(예: '나이키' 가중치 +5점)를 그대로 공유받아 즉시 합리적인 추론이 가능합니다.
+
+```python
+import numpy as np
+
+def linear_ts_demo(d=4, n_train=50, alpha=0.5):
+    """Linear TS: Feature 기반 일반화 — 신규 광고도 즉시 추론"""
+    A = np.eye(d)
+    b = np.zeros(d)
+    true_theta = np.array([0.5, -0.3, 0.8, 0.1])
+
+    # 학습: 과거 데이터로 posterior 업데이트
+    np.random.seed(42)
+    for _ in range(n_train):
+        x = np.random.randn(d)
+        reward = x @ true_theta + np.random.randn() * 0.1
+        A += np.outer(x, x)
+        b += reward * x
+
+    mu = np.linalg.inv(A) @ b
+    Sigma = alpha * np.linalg.inv(A)
+
+    # 서빙: 기존 광고 vs 신규 광고 (유사 Feature)
+    x_old = np.array([1.0, 0.5, 0.3, -0.1])  # 기존 나이키 러닝화
+    x_new = np.array([1.0, 0.5, 0.4, 0.0])   # 신규 나이키 트레일화
+
+    for name, x in [("기존 광고", x_old), ("신규 광고", x_new)]:
+        theta_sample = np.random.multivariate_normal(mu, Sigma)
+        score = x @ theta_sample
+        print(f"  {name}: 점수={score:.3f} (Feature 유사 → 비슷한 점수)")
+    # 신규 광고도 학습된 Feature 가중치를 공유 → Cold Start 해결
+
+linear_ts_demo()
+```
 
 ---
 

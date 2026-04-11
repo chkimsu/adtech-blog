@@ -106,6 +106,36 @@ graph LR
 
 이 정규화가 **공정한 비교**를 가능하게 하는 이유는, 모든 캠페인을 "1,000회 노출당 플랫폼 기대 수익"이라는 동일한 단위로 변환했기 때문입니다. 과금 모델이 무엇이든, 플랫폼은 **가장 높은 기대 수익을 주는 광고**를 선택합니다.
 
+```python
+def compute_ecpm(bid_type, bid, pCTR=None, pCVR=None):
+    """과금 모델별 eCPM 정규화: 1,000회 노출당 기대 수익"""
+    if bid_type == "CPM":
+        return bid                            # CPM은 그대로
+    elif bid_type == "CPC":
+        return pCTR * bid * 1000              # 클릭 확률 × CPC × 1000
+    elif bid_type == "CPA":
+        return pCTR * pCVR * bid * 1000       # 클릭 × 전환 확률 × CPA × 1000
+    raise ValueError(f"Unknown: {bid_type}")
+
+# 세 캠페인이 동일 지면에서 경쟁
+campaigns = [
+    {"name": "캠페인A(CPM)", "type": "CPM", "bid": 8000},
+    {"name": "캠페인B(CPC)", "type": "CPC", "bid": 2000, "pCTR": 0.05},
+    {"name": "캠페인C(CPA)", "type": "CPA", "bid": 50000,
+     "pCTR": 0.03, "pCVR": 0.10},
+]
+
+results = []
+for c in campaigns:
+    ecpm = compute_ecpm(c["type"], c["bid"], c.get("pCTR"), c.get("pCVR"))
+    results.append((c["name"], ecpm))
+    print(f"  {c['name']}: eCPM = {ecpm:,.0f}원")
+
+winner = max(results, key=lambda x: x[1])
+print(f"\n  승자: {winner[0]} (eCPM {winner[1]:,.0f}원)")
+# 과금 모델이 달라도 eCPM으로 공정 비교 가능
+```
+
 여기서 핵심은 pCTR과 pCVR 모델의 정확도입니다. 모델이 클릭률을 과대 예측하면 eCPM이 부풀려져서 실제 수익보다 높은 랭킹을 받게 되고, 이는 플랫폼 매출 손실로 이어집니다.
 
 ---
@@ -239,6 +269,31 @@ $$\text{Ranking Score} = pCTR_{\text{platform}} \times \text{Bid}$$
 - **유저 경험 보호** 효과가 있습니다. 클릭률이 낮은(유저가 관심 없는) 광고가 돈의 힘으로 상위에 노출되는 것을 방지합니다.
 
 > [Walled Garden 포스트](post.html?id=walled-garden)에서 폐쇄형 생태계의 구조와 Open RTB와의 차이를 더 깊이 확인하세요.
+
+```python
+def ranking_comparison():
+    """세 시장 유형에서 동일 광고주의 랭킹 결과 비교"""
+    ads = {
+        "A(고품질)": {"cpc": 1000, "pCTR": 0.10, "cpm": 8000},
+        "B(고입찰)": {"cpc": 3000, "pCTR": 0.01, "cpm": 25000},
+    }
+    markets = {
+        "Open RTB":      lambda a: a["cpm"],                  # 입찰가만
+        "CPC Exchange":  lambda a: a["pCTR"] * a["cpc"] * 1000,  # eCPM
+        "Walled Garden": lambda a: a["pCTR"] * a["cpc"],      # pCTR × Bid
+    }
+
+    for market, score_fn in markets.items():
+        scores = {name: score_fn(ad) for name, ad in ads.items()}
+        winner = max(scores, key=scores.get)
+        parts = "  ".join(f"{n}={s:,.0f}" + (" ← 승" if n == winner else "")
+                         for n, s in scores.items())
+        print(f"  {market:15s}: {parts}")
+
+ranking_comparison()
+# Open RTB: 돈이 결정 → B 승리
+# CPC/Walled Garden: 품질이 결정 → A 승리
+```
 
 ### 4.4 세 시장의 비교
 

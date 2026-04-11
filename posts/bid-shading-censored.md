@@ -45,6 +45,29 @@ $$s(b; V, x) = \underbrace{(V - b)}_{\text{낙찰 시 이익 (Surplus)}} \cdot \
 
 이 **시소 관계**의 균형점이 최적 입찰가 $b^*$입니다. [데모의 Sweep 차트](demo-bid-shading.html)에서 이 균형점을 직접 확인할 수 있습니다.
 
+```python
+import numpy as np
+from scipy.stats import lognorm
+
+def surplus(b, V, mu, sigma):
+    """Surplus = (V - b) × F(b|x): 이익 × 낙찰 확률"""
+    if b <= 0 or b >= V:
+        return 0.0
+    win_prob = lognorm.cdf(b, s=sigma, scale=np.exp(mu))
+    return (V - b) * win_prob
+
+# True Value $5, 시장가격 Log-normal(μ=0.8, σ=0.5)
+V, mu, sigma = 5.0, 0.8, 0.5
+bids = np.linspace(0.1, V - 0.1, 50)
+surpluses = [surplus(b, V, mu, sigma) for b in bids]
+
+best_idx = np.argmax(surpluses)
+print(f"  최적 입찰가 b* = ${bids[best_idx]:.2f}")
+print(f"  최대 Surplus  = ${surpluses[best_idx]:.3f}")
+print(f"  Shading 비율  = {(1 - bids[best_idx]/V)*100:.0f}% 할인")
+# b를 올리면 Win Rate↑ but 이익↓, 내리면 반대 — 이 균형이 b*
+```
+
 ### ③ End-to-End 파이프라인 개요
 
 최적 입찰가를 실시간으로 계산하려면 **2단계 파이프라인**이 필요합니다:
@@ -223,25 +246,35 @@ $$s''(b) = \frac{f_{\ln}(b)}{b\sigma^2} \left[(\mu - \sigma^2 - \ln b)(V - b) - 
 
 단봉 함수에서 최적값을 찾는 가장 효율적인 방법은 **황금 비율 탐색(Golden Section Search)**입니다:
 
-```text
-Algorithm: Golden Section Search for Optimal Bid
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Input:  V (true value), F(·|x) (학습된 CDF), ε (허용 오차)
-Output: b* (최적 입찰가)
+```python
+import numpy as np
+from scipy.stats import lognorm
 
-1.  a ← 0,  b ← V
-2.  gr ← (√5 + 1) / 2            // 황금 비율 ≈ 1.618
-3.  x₁ ← b - (b - a) / gr
-4.  x₂ ← a + (b - a) / gr
-5.  for i = 1, 2, ..., N do:
-6.      if s(x₁) > s(x₂) then    // s(x) = (V-x)·F(x|x)
-7.          b ← x₂
-8.      else
-9.          a ← x₁
-10.     if (b - a) < ε then break
-11.     x₁ ← b - (b - a) / gr
-12.     x₂ ← a + (b - a) / gr
-13. return (a + b) / 2
+def golden_section_search(V, mu, sigma, tol=0.01):
+    """황금 비율 탐색으로 최적 입찰가 b* 계산"""
+    def surplus(b):
+        return (V - b) * lognorm.cdf(b, s=sigma, scale=np.exp(mu))
+
+    gr = (np.sqrt(5) + 1) / 2  # 황금 비율 ≈ 1.618
+    a, b = 1e-6, V - 1e-6
+
+    iters = 0
+    while (b - a) > tol:
+        x1 = b - (b - a) / gr
+        x2 = a + (b - a) / gr
+        if surplus(x1) > surplus(x2):
+            b = x2
+        else:
+            a = x1
+        iters += 1
+
+    optimal_bid = (a + b) / 2
+    print(f"  b* = ${optimal_bid:.4f}  ({iters}회 반복, 구간 < ${tol})")
+    return optimal_bid
+
+# V=$5.00, 시장가격 Log-normal(μ=0.8, σ=0.5)
+b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
+# Grid Search(500개) 대비 약 25배 빠른 수렴
 ```
 
 **수렴 속도**: 매 반복마다 탐색 구간이 $1/\phi \approx 0.618$배로 줄어듭니다. $V = \$5.00$, $\varepsilon = \$0.01$일 때 약 **20회 반복**이면 충분합니다. Grid Search($N = 500$개 그리드)보다 25배 빠릅니다.

@@ -555,6 +555,8 @@ async function renderPostDetail() {
             ],
             throwOnError: false
           });
+        } else {
+          setTimeout(renderMath, 50);
         }
       };
 

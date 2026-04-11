@@ -224,6 +224,22 @@ nav {
   color: var(--accent-primary);
 }
 
+.nav-links a.active {
+  color: var(--accent-primary);
+  position: relative;
+}
+
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: 1px;
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -345,15 +361,15 @@ nav {
 }
 
 .search-box::before {
-  content: "Search";
+  content: "\1F50D";
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.8rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .filter-section h4 {

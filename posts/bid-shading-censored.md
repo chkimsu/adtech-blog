@@ -244,7 +244,7 @@ $$s''(b) = \frac{f_{\ln}(b)}{b\sigma^2} \left[(\mu - \sigma^2 - \ln b)(V - b) - 
 
 ### ② Golden Section Search
 
-단봉 함수에서 최적값을 찾는 가장 효율적인 방법은 **황금 비율 탐색(Golden Section Search)**입니다:
+단봉 함수에서 최적값을 찾는 가장 효율적인 방법은 **황금 비율 탐색(Golden Section Search)**입니다. [Golden Section Search 데모](demo-golden-section.html)에서 알고리즘이 단계별로 최적 입찰가를 찾아가는 과정을 직접 체험할 수 있습니다.
 
 ```python
 import numpy as np

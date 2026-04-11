@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'exploration-exploitation',
+    title: '탐색과 활용(Exploration & Exploitation): 광고 시스템의 근본적 딜레마',
+    excerpt: 'Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.',
+    date: '2026-04-11',
+    categories: ['Bandits & Personalization'],
+    tags: ['MAB', 'Contextual Bandit', 'UCB', 'Thompson Sampling'],
+    contentUrl: 'posts/exploration-exploitation.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'deep-ctr-models',
     title: 'Deep CTR 모델의 진화: LR에서 DIN까지, 광고 클릭률 예측의 핵심 아키텍처',
     excerpt: 'LR, FM, Wide&Deep, DeepFM, DCN-v2, DIN, DIEN — CTR 예측 모델이 "어떤 문제를 풀려고 했는가" 관점으로 진화 과정을 추적하고, 프로덕션 선택 가이드까지 제시합니다.',

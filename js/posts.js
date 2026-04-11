@@ -11,6 +11,36 @@
 
 const posts = [
   {
+    id: 'negative-sampling-bias',
+    title: 'Negative Sampling & Sample Selection Bias: 광고 CTR 모델의 학습 데이터는 처음부터 편향되어 있다',
+    excerpt: 'Class Imbalance, Negative Downsampling, Log-odds Correction, IPS, Doubly Robust Estimator까지 — 광고 CTR 모델 학습 데이터의 구조적 편향과 보정 기법을 해부합니다.',
+    date: '2026-04-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Ad Ecosystem', 'ML Infra'],
+    contentUrl: 'posts/negative-sampling-bias.md',
+    readTime: '18 min read'
+  },
+  {
+    id: 'two-tower-retrieval',
+    title: 'Two-Tower Model & 광고 후보 생성: 수백만 광고에서 10ms 안에 후보를 추리는 법',
+    excerpt: 'Rule-based Retrieval의 한계부터 Two-Tower(DSSM) 아키텍처, Negative Sampling 전략, ANN 인덱스 비교, Multi-Interest Model까지 — 수백만 광고 후보에서 10ms 이내에 개인화된 후보를 추리는 Retrieval 시스템을 해부합니다.',
+    date: '2026-04-11',
+    categories: ['ML Infrastructure'],
+    tags: ['Model Serving', 'ML Infra', 'pCTR'],
+    contentUrl: 'posts/two-tower-retrieval.md',
+    readTime: '20 min read'
+  },
+  {
+    id: 'multi-task-learning',
+    title: 'Multi-Task Learning: pCTR과 pCVR을 동시에 학습하면 왜 더 좋은가',
+    excerpt: 'Sample Selection Bias를 해결하는 ESMM, Negative Transfer를 완화하는 MMoE, Seesaw 현상을 해소하는 PLE까지 — 광고 시스템 Multi-Task Learning 아키텍처의 진화와 실무 선택 가이드를 해부합니다.',
+    date: '2026-04-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'pCVR', 'Model Serving'],
+    contentUrl: 'posts/multi-task-learning.md',
+    readTime: '20 min read'
+  },
+  {
     id: 'exploration-exploitation',
     title: '탐색과 활용(Exploration & Exploitation): 광고 시스템의 근본적 딜레마',
     excerpt: 'Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.',

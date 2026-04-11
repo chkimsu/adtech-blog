@@ -981,4 +981,82 @@ function renderChartJsCharts(container) {
       }
     });
   }
+
+  // Chart: LinUCB Score Decomposition (static snapshot matching post text)
+  const linucbCanvas = container.querySelector('#linucbChart');
+  if (linucbCanvas) {
+    new Chart(linucbCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['Ad A (Tech) ★', 'Ad B (Fashion)', 'Ad C (Food)', 'Ad D (Travel)'],
+        datasets: [
+          {
+            label: '예측 점수 (Exploitation)',
+            data: [0.45, 0.10, 0.08, 0.00],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: '탐색 보너스 (Exploration)',
+            data: [0.22, 0.35, 0.20, 0.61],
+            backgroundColor: 'rgba(200, 200, 200, 0.45)',
+            borderColor: 'rgba(200, 200, 200, 0.8)',
+            borderWidth: 1,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { color: textColor, font: { size: 12 } }
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            title: { display: true, text: 'UCB Score', color: textColor },
+            grid: { color: gridColor },
+            ticks: { color: textColor }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'LinUCB Score Decomposition — Ad A Recommended',
+            color: textColor,
+            font: { size: 14, weight: 600 }
+          },
+          legend: {
+            labels: { color: textColor }
+          },
+          tooltip: {
+            callbacks: {
+              afterBody: function(context) {
+                const idx = context[0].dataIndex;
+                const pred = [0.45, 0.10, 0.08, 0.00][idx];
+                const unc = [0.22, 0.35, 0.20, 0.61][idx];
+                return '합계 UCB: ' + (pred + unc).toFixed(2);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 }

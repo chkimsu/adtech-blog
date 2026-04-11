@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'ltv-ad-ranking',
+    title: 'LTV(Long Term Value): eCPM 너머, 광고 랭킹의 진짜 기준',
+    excerpt: 'eCPM만으로 광고를 정렬하면 왜 위험한가? 사용자 비용(β), Squashing Function까지 — 광고 플랫폼이 "돈"과 "경험"을 동시에 최적화하는 LTV 랭킹의 원리를 해부합니다.',
+    date: '2026-04-11',
+    categories: ['Bidding & Auction'],
+    tags: ['eCPM', 'Ad Ranking', 'Ad Ecosystem', 'pCTR'],
+    contentUrl: 'posts/ltv-ad-ranking.md',
+    readTime: '12 min read'
+  },
+  {
     id: 'ad-log-system',
     title: '광고 로그 시스템 완전 해부: Request Log에서 Candidate Log까지',
     excerpt: 'Request, Impression, Click, Conversion, Candidate Log의 역할과 차이를 정리하고, 실시간 피처 파이프라인(Redis), Candidate Log 유무에 따른 모델 품질 차이, 멀티슬롯 rank=1 추론 문제까지 해부합니다.',

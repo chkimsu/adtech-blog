@@ -39,7 +39,6 @@ function renderPostCard(post) {
   card.innerHTML = `
     <div class="post-card-category">${post.categories[0] || ''}</div>
     <h3>${post.title}</h3>
-    <p class="post-card-excerpt">${post.excerpt}</p>
     <div class="post-card-footer">
       <div class="post-meta">
         <span class="post-date">${formatDate(post.date)}</span>
@@ -115,13 +114,13 @@ function initializeFilters() {
   if (categoriesContainer) {
     const categories = getAllCategories();
     categoriesContainer.innerHTML = `
-      <div class="filter-tag active" data-category="">All</div>
+      <div class="category-tab active" data-category="">All</div>
       ${categories.map(cat =>
-      `<div class="filter-tag" data-category="${cat}">${cat}</div>`
+      `<div class="category-tab" data-category="${cat}">${cat}</div>`
     ).join('')}
     `;
 
-    categoriesContainer.querySelectorAll('.filter-tag').forEach(catEl => {
+    categoriesContainer.querySelectorAll('.category-tab').forEach(catEl => {
       catEl.addEventListener('click', () => filterByCategory(catEl.dataset.category));
     });
   }
@@ -155,7 +154,7 @@ function initializeFilters() {
 function filterByCategory(category) {
   currentFilters.category = category;
 
-  document.querySelectorAll('#category-filters .filter-tag').forEach(catEl => {
+  document.querySelectorAll('#category-filters .category-tab').forEach(catEl => {
     catEl.classList.toggle('active', catEl.dataset.category === category);
   });
 
@@ -221,7 +220,11 @@ function preprocessMarkdown(text) {
     // Remove lines that are only a list marker with trailing whitespace (empty list items)
     .replace(/^([*\-+]) +$/gm, '')
     // Remove <br> tags that appear on their own line (avoids double-break artifacts)
-    .replace(/^<br>\s*$/gim, '');
+    .replace(/^<br>\s*$/gim, '')
+    // Fix CommonMark flanking rule: closing ** after punctuation )/]/"/'" + Korean
+    // is not recognized as right-flanking, so bold fails to render.
+    // Convert these cases to HTML <strong> tags before marked.js processes them.
+    .replace(/\*\*([^*\n]+?[)\]"'"\u2019\u201D])\*\*(?=[가-힣])/g, '<strong>$1</strong>');
 }
 
 // ========================================

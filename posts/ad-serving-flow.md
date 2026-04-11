@@ -49,6 +49,13 @@ graph TD
 
 유저가 페이지를 로드하는 순간부터 광고가 노출되기까지 100~200ms 안에 벌어지는 일입니다.
 
+<figure style="text-align: center; margin: 2rem 0;">
+  <img src="../images/rtb-flow-overview.png" alt="RTB 플로우 개요" style="max-width: 100%; border-radius: 8px;">
+  <figcaption style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+    RTB의 핵심 흐름: Advertiser → DSP → Ad Exchange → SSP → Publisher. DSP가 Bid Request에 대해 $2.50 CPM으로 입찰하고, 낙찰되면 광고가 매체를 통해 유저에게 노출된다. 이 전체 과정이 100~200ms 안에 완료된다.
+  </figcaption>
+</figure>
+
 ```mermaid
 sequenceDiagram
   participant U as User

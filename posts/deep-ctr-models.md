@@ -212,7 +212,7 @@ graph TD
 
     subgraph FM_Component["FM Component (2차 Interaction)"]
         FM_ADD["1차: sum(w_i * x_i)"]
-        FM_INNER["2차: sum(<e_i, e_j>)"]
+        FM_INNER["2차: sum(e_i · e_j)"]
     end
 
     subgraph DNN_Component["DNN Component (고차 Interaction)"]

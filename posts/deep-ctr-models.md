@@ -100,6 +100,38 @@ $$\sum_{i=1}^{n} \sum_{j=i+1}^{n} \langle v_i, v_j \rangle x_i x_j = \frac{1}{2}
 
 이 트릭 덕분에 FM은 대규모 광고 시스템에서도 실시간 서빙이 가능합니다.
 
+```python
+import numpy as np
+
+def fm_interaction_naive(V, x):
+    """Naive: O(kn²) — 모든 쌍의 내적을 직접 계산"""
+    n = len(x)
+    result = 0.0
+    for i in range(n):
+        for j in range(i + 1, n):
+            result += np.dot(V[i], V[j]) * x[i] * x[j]
+    return result
+
+def fm_interaction_fast(V, x):
+    """O(kn) 트릭: (합의 제곱 - 제곱의 합) / 2"""
+    vx = V * x[:, np.newaxis]
+    square_of_sum = np.sum(vx, axis=0) ** 2
+    sum_of_square = np.sum(vx ** 2, axis=0)
+    return 0.5 * np.sum(square_of_sum - sum_of_square)
+
+# 5개 Feature, embedding 차원 k=4
+np.random.seed(42)
+V = np.random.randn(5, 4)
+x = np.array([1, 0, 1, 1, 0], dtype=float)  # sparse feature
+
+naive = fm_interaction_naive(V, x)
+fast = fm_interaction_fast(V, x)
+print(f"  Naive O(kn²): {naive:.4f}")
+print(f"  Fast  O(kn):  {fast:.4f}")
+print(f"  동일 결과: {np.isclose(naive, fast)}")
+# O(kn) 트릭으로 실시간 서빙에서도 모든 피처 쌍 상호작용 계산 가능
+```
+
 **한계**: FM은 **2차 interaction까지만** 포착합니다. `유저 X 광고 X 시간대` 같은 3차 이상의 interaction은 학습할 수 없습니다.
 
 ### ③ Wide & Deep (Google, 2016)
@@ -384,6 +416,46 @@ graph TD
 ```
 
 **직관**: 러닝화 광고를 볼 때, 유저의 과거 러닝화/운동화/운동복 구매 이력에 높은 weight가 부여되고, 노트북이나 여행 상품에는 거의 0에 가까운 weight가 부여됩니다. 동일한 유저라도 **후보 광고가 바뀌면 유저 표현 $v_U$가 달라집니다** -- 이것이 DIN의 핵심 혁신입니다.
+
+```python
+import numpy as np
+
+def din_attention(user_behaviors, candidate_ad):
+    """DIN: 후보 광고에 따라 유저 행동 가중치가 달라짐"""
+    scores = []
+    for behavior in user_behaviors:
+        # Attention 입력: [행동, 후보, 차이, element-wise 곱]
+        diff = behavior - candidate_ad
+        product = behavior * candidate_ad
+        mlp_input = np.concatenate([behavior, candidate_ad, diff, product])
+        score = np.tanh(mlp_input.sum())  # 실제론 학습된 MLP
+        scores.append(score)
+
+    # Softmax → 행동별 관련성 가중치
+    exp_s = np.exp(scores - np.max(scores))
+    weights = exp_s / exp_s.sum()
+
+    user_repr = sum(w * b for w, b in zip(weights, user_behaviors))
+    return weights, user_repr
+
+# 예시: 러닝화 광고 vs 유저의 5개 행동
+np.random.seed(42)
+d = 8
+behaviors = {
+    "운동화": np.random.randn(d) + [1,0,0,0,0,0,0,0],
+    "노트북": np.random.randn(d) + [0,0,1,0,0,0,0,0],
+    "러닝화": np.random.randn(d) + [1,0,0,0,0,0,0,0],
+    "여행팩": np.random.randn(d) + [0,0,0,1,0,0,0,0],
+    "운동복": np.random.randn(d) + [1,0,0,0,0,0,0,0],
+}
+candidate = np.random.randn(d) + [1,0,0,0,0,0,0,0]  # 러닝화 광고
+
+weights, _ = din_attention(list(behaviors.values()), candidate)
+for name, w in zip(behaviors.keys(), weights):
+    bar = "█" * int(w * 40)
+    print(f"  {name:4s}: {w:.3f} {bar}")
+# 운동화/러닝화/운동복에 높은 가중치 → 관련 행동만 주목
+```
 
 #### DIN vs 기존 방식 비교
 

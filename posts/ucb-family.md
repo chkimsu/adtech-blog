@@ -30,6 +30,34 @@ $$\text{Score}_a = \underbrace{\bar{x}_a}_{\text{평균 보상}} + \underbrace{\
 
 20대 남성이든 50대 여성이든 같은 결과. 개인화 불가능.
 
+```python
+import numpy as np
+
+def ucb1_scores(means, counts, t):
+    """UCB1: 평균 보상 + 탐색 보너스"""
+    scores = []
+    for a in range(len(means)):
+        if counts[a] == 0:
+            scores.append(float('inf'))  # 미탐색 → 무조건 선택
+            continue
+        exploit = means[a]
+        explore = np.sqrt(2 * np.log(t) / counts[a])
+        scores.append(exploit + explore)
+    return scores
+
+# 예시: 광고 3개, 현재 t=100 라운드
+means = [0.05, 0.03, 0.04]   # 평균 CTR
+counts = [50, 40, 10]         # 노출 횟수
+t = sum(counts)
+
+scores = ucb1_scores(means, counts, t)
+for i in range(3):
+    bonus = np.sqrt(2 * np.log(t) / counts[i]) if counts[i] > 0 else float('inf')
+    print(f"  광고{i}: 평균={means[i]:.3f} + 보너스={bonus:.3f} "
+          f"= {scores[i]:.3f}  (노출 {counts[i]}회)")
+# 광고2: 노출 적음 → 보너스 큼 → 탐색 유도
+```
+
 ---
 
 ## 2. LinUCB (Disjoint)
@@ -66,6 +94,38 @@ $$\text{Score}_a = \underbrace{x^T \theta_a}_{\text{개인화 예측}} + \underb
 - 각 광고가 독립적인 $A_a$, $b_a$를 가짐
 - 광고 A에서 "20대 남성은 클릭을 잘 한다"는 걸 배워도, 광고 B는 이 사실을 모름
 - 신규 광고가 들어오면 $A = I$ (단위행렬)에서 처음부터 시작 -> Cold Start 문제
+
+```python
+import numpy as np
+
+def linucb_update_demo(d=3, alpha=1.5):
+    """LinUCB: 데이터 누적 → 불확실성 감소 과정"""
+    A = np.eye(d)           # 초기 A = 단위행렬
+    b = np.zeros(d)
+    x = np.array([1.0, 0.5, -0.2])  # 테스트 context
+
+    print("  === 학습 전 (A = I) ===")
+    theta = np.linalg.inv(A) @ b
+    unc = alpha * np.sqrt(x @ np.linalg.inv(A) @ x)
+    print(f"  예측: {x @ theta:.3f}, 탐색 보너스: {unc:.3f}")
+
+    # 데이터 5개 관측
+    np.random.seed(42)
+    for i in range(5):
+        x_obs = np.random.randn(d)
+        reward = 0.3 + 0.5 * x_obs[0]
+        A += np.outer(x_obs, x_obs)  # 경험 행렬 누적
+        b += reward * x_obs           # 보상 벡터 누적
+
+    print("\n  === 학습 후 (데이터 5개) ===")
+    A_inv = np.linalg.inv(A)
+    theta = A_inv @ b
+    unc = alpha * np.sqrt(x @ A_inv @ x)
+    print(f"  예측: {x @ theta:.3f}, 탐색 보너스: {unc:.3f}")
+    print(f"  → 데이터가 쌓이면 보너스(불확실성) 감소")
+
+linucb_update_demo()
+```
 
 ---
 

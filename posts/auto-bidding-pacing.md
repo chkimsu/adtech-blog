@@ -273,6 +273,38 @@ $$\lambda(t+1) = \text{clamp}\Big(\lambda(t) + K_p \cdot e(t) + K_i \cdot \sum_{
 
 **핵심 포인트**: PID Controller는 매 시간(또는 매 분) 오차를 측정하고 $\lambda$를 조절하여, 하루 끝에 예산을 거의 정확히 소진시킵니다.
 
+```python
+import numpy as np
+
+def pid_pacing_simulation(budget=1000, hours=24, Kp=0.04, Ki=0.01, Kd=0.02):
+    """PID Controller: 하루 예산 Pacing 시뮬레이션"""
+    target_rate = budget / hours
+    lam, cum_error, prev_error = 1.0, 0.0, 0.0
+    remaining = budget
+
+    for t in range(hours):
+        # 트래픽 패턴: 낮 시간대 1.2배, 밤 0.8배
+        traffic = 1.2 if 6 <= t <= 14 else 0.8
+        noise = np.random.normal(0, 5)
+        spend = np.clip(target_rate * lam * traffic + noise, 0, remaining)
+        remaining -= spend
+
+        # PID 오차 계산 및 λ 업데이트
+        error = target_rate - spend
+        cum_error += error
+        lam += Kp * error + Ki * cum_error + Kd * (error - prev_error)
+        lam = np.clip(lam, 0.1, 1.0)
+        prev_error = error
+
+        if t % 6 == 0:
+            print(f"  t={t:2d}h  잔여=${remaining:6.0f}  λ={lam:.3f}")
+
+    print(f"  최종 소진율: {(budget - remaining) / budget * 100:.1f}%")
+
+np.random.seed(42)
+pid_pacing_simulation()
+```
+
 ---
 
 ## 4. Lagrangian 기반 최적화: 이론적 접근
@@ -317,6 +349,35 @@ $$\lambda = \frac{1}{1 + \mu}$$
 - $\mu \to \infty$ → $\lambda \to 0$ (예산 위기, 입찰 포기)
 
 PID는 $\lambda$를 경험적으로 조절하고, Lagrangian은 $\mu$를 수학적으로 풀지만, **결과적으로 같은 곳에 수렴합니다**.
+
+```python
+import numpy as np
+
+def lagrangian_dual_update(budget=1000, n_rounds=100, lr=0.05):
+    """Lagrangian Dual: μ(shadow price) 업데이트로 λ(pacing) 도출"""
+    mu = 0.0  # 예산의 shadow price
+
+    for t in range(1, n_rounds + 1):
+        lam = 1.0 / (1.0 + mu)  # μ → λ 변환
+
+        # 이번 라운드의 시뮬레이션된 지출
+        n_bids = np.random.randint(80, 120)
+        values = np.random.exponential(0.5, n_bids)
+        spend = np.sum(values * lam)
+        budget_per_round = budget / n_rounds
+
+        # Subgradient: 초과 → μ↑(보수적), 여유 → μ↓(적극적)
+        mu = max(0, mu + lr * (spend - budget_per_round))
+
+        if t % 25 == 0:
+            print(f"  Round {t:3d}: μ={mu:.3f}, λ={lam:.3f}, "
+                  f"지출=${spend:.1f} (목표=${budget_per_round:.1f})")
+
+    print(f"  최종: μ={mu:.3f} → λ={1/(1+mu):.3f}")
+
+np.random.seed(42)
+lagrangian_dual_update()
+```
 
 ---
 

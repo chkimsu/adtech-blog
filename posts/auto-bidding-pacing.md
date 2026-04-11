@@ -57,6 +57,29 @@
 
 질문 1-2는 이전 포스트에서 다뤘습니다. 이 글은 **질문 3: Budget Pacing**에 집중합니다.
 
+### Bid Shading vs Budget Pacing: 스코프가 다르다
+
+Bid Shading과 Budget Pacing은 모두 "입찰 최적화"에 속하지만, **최적화하는 대상과 시간 범위가 근본적으로 다릅니다**:
+
+| 구분 | Bid Shading | Budget Pacing (PID) |
+|------|-------------|---------------------|
+| **최적화 스코프** | 개별 경매 1건 (미시적) | 하루 전체 입찰 (거시적) |
+| **풀고 있는 질문** | "이 경매에서 얼마에 입찰해야 Surplus가 최대인가?" | "지금 입찰해도 하루 예산이 버틸 수 있는가?" |
+| **핵심 수식** | $b^* = \arg\max (V - b) \cdot F(b \mid x)$ | $\lambda_{t+1} = \lambda_t + K_p \cdot e_t + K_i \cdot \sum e$ |
+| **입력** | 시장 가격 분포 $F(b \mid x)$, True Value $V$ | 남은 예산, 남은 시간, 현재 소비 속도 |
+| **출력** | 최적 입찰가 $b^*$ | 입찰 강도 배수 $\lambda$ |
+| **없으면 생기는 문제** | 1st Price 경매에서 매번 과다 지불 | 오전에 예산 소진, 오후 최적 시간대 놓침 |
+
+실제 파이프라인에서는 **두 모듈이 직렬로 연결**됩니다:
+
+1. **Bid Shading**이 먼저 개별 경매의 최적 입찰가 $b^*$를 계산
+2. **Budget Pacer**가 현재 예산 상황에 따라 배수 $\lambda$를 결정
+3. **최종 입찰가** = $b^* \times \lambda$ (예산이 빨리 소진되면 $\lambda < 1$로 억제, 여유가 있으면 $\lambda > 1$로 공격적)
+
+> Bid Shading 없이 Pacing만 있으면 개별 경매에서 과다 지불하고, Pacing 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
+
+Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 Budget Pacing에 집중합니다.
+
 ### 왜 Budget Pacing이 필요한가?
 
 예산 $1,000을 Pacing 없이 사용하면 이런 일이 벌어집니다:

@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'ad-log-system',
+    title: '광고 로그 시스템 완전 해부: Request Log에서 Candidate Log까지',
+    excerpt: 'Request, Impression, Click, Conversion, Candidate Log의 역할과 차이를 정리하고, 실시간 피처 파이프라인(Redis), Candidate Log 유무에 따른 모델 품질 차이, 멀티슬롯 rank=1 추론 문제까지 해부합니다.',
+    date: '2026-04-11',
+    categories: ['ML Infrastructure'],
+    tags: ['ML Infra', 'pCTR', 'pCVR', 'Ad Ecosystem', 'Online Learning'],
+    contentUrl: 'posts/ad-log-system.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'adtech-dev-layers',
     title: 'Ad Tech 개발 레이어 맵: 광고 요청 하나가 유저에게 도달하기까지',
     excerpt: '타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.',

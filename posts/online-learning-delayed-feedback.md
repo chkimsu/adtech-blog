@@ -108,7 +108,7 @@
 
 ### 실전 예시: CTR이 하루 만에 달라지는 이유
 
-```
+```text
 월요일 오전 9시 (출근길, 모바일)
   - 유저 행동: 뉴스 훑어보기, 짧은 체류
   - 평균 CTR: 1.8%
@@ -494,7 +494,7 @@ $$w_i^{(-)} = \frac{1 - p_{\text{cvr}} \cdot (1 - F_d(t - t_{\text{click}}))}{1 
 
 ### 자동 재학습 트리거
 
-```
+```text
 [Level 1] Calibration Gap > 10%
   → Online Calibration 즉시 업데이트 (수 분)
 

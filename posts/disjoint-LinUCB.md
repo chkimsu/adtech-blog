@@ -11,6 +11,13 @@ Disjoint LinUCB에서는 광고(Arm)마다 별도의 행렬을 관리합니다. 
 
 ---
 
+<div class="chart-js-container">
+  <canvas id="linucbChart" height="300"></canvas>
+</div>
+<p style="text-align: center; margin-top: 0.5rem;">
+  <a href="demo-linucb.html" class="btn-demo">Interactive Demo로 직접 실험해보기 →</a>
+</p>
+
 ### 2. 그래프 완벽 해석 (The Anatomy of UCB)
 
 이 그래프는 LinUCB의 핵심 공식인 "최종 점수 = 예측(Exploitation) + 불확실성(Exploration)"을 눈으로 보여줍니다.

@@ -287,7 +287,9 @@ function enhanceCodeBlocks(container) {
 
     const langLabel = document.createElement('span');
     langLabel.className = 'code-lang';
-    langLabel.textContent = lang || 'code';
+    const meaningfulLang = lang && lang !== 'text' && lang !== 'plaintext';
+    langLabel.textContent = meaningfulLang ? lang : '';
+    if (!meaningfulLang) langLabel.style.display = 'none';
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'copy-btn';

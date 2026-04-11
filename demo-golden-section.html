@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Section Search - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* === Layout === */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .demo-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 900px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === Panels === */
+        .panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .panel h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+            font-size: 1rem;
+        }
+
+        /* === Sliders === */
+        .slider-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .slider-group label span {
+            color: var(--accent-primary);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .slider-group .slider-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* === Playback Controls === */
+        .controls-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-control {
+            padding: 0.55rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-control:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-control:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-control.playing {
+            background: rgba(255, 99, 132, 0.15);
+            border-color: #ff6384;
+            color: #ff6384;
+        }
+
+        .btn-control.primary {
+            background: rgba(0, 229, 255, 0.12);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        /* === Iteration Info === */
+        .iter-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .iter-info-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .iter-info-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .iter-info-value {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        /* === Progress Bar === */
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), #4bc0c0);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* === Log Table === */
+        .log-container {
+            max-height: 220px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .log-table th,
+        .log-table td {
+            padding: 0.45rem 0.5rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .log-table th:first-child,
+        .log-table td:first-child {
+            text-align: center;
+        }
+
+        .log-table th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            z-index: 1;
+        }
+
+        /* === Chart Container === */
+        .chart-wrap {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart-wrap-sm {
+            position: relative;
+            height: 200px;
+        }
+
+        /* === Result Box === */
+        .result-box {
+            margin-top: 1rem;
+            padding: 1.25rem;
+            background: rgba(75, 192, 192, 0.08);
+            border: 1px solid rgba(75, 192, 192, 0.3);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result-box h4 {
+            color: #4BC0C0;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-divider {
+            border-top: 1px solid rgba(75, 192, 192, 0.2);
+            margin: 0.6rem 0;
+        }
+
+        .result-highlight {
+            color: #4BC0C0 !important;
+        }
+
+        /* === Subtitle === */
+        .demo-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* === Insight Box === */
+        .insight-box {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .insight-box.info {
+            background: rgba(0, 229, 255, 0.08);
+            border-left: 4px solid #00e5ff;
+        }
+
+        .insight-box strong {
+            color: var(--text-primary);
+        }
+
+        /* === Legend dots === */
+        .legend-inline {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="demos.html" class="btn-demo">Demos</a>
+                <button id="theme-toggle" class="btn-theme">Light</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>Golden Section Search</h1>
+        <p class="demo-subtitle">
+            1st Price Auction에서 Surplus를 극대화하는 최적 입찰가 b*를
+            <strong>황금 비율 탐색</strong>으로 찾는 과정을 단계별로 시각화합니다.
+            매 반복마다 탐색 구간이 1/&phi; &approx; 0.618배로 줄어드는 것을 관찰하세요.
+        </p>
+
+        <div class="demo-grid">
+
+            <!-- Left Column: Controls -->
+            <div>
+                <!-- Panel 1: Parameters -->
+                <div class="panel" style="margin-bottom:1.5rem">
+                    <h3>Parameters</h3>
+                    <div class="slider-group">
+                        <label>True Value (V) <span id="val-V">$5.0</span></label>
+                        <input type="range" id="slider-V" min="1" max="10" step="0.1" value="5">
+                        <div class="slider-hint">pCTR &times; Conversion Value</div>
+                    </div>
+                    <div class="slider-group">
+                        <label>Market &mu; <span id="val-mu">0.80</span></label>
+                        <input type="range" id="slider-mu" min="0.2" max="1.5" step="0.05" value="0.8">
+                        <div class="slider-hint">Log-normal 위치 파라미터 (시장 가격 수준)</div>
+                    </div>
+                    <div class="slider-group">
+                        <label>Market &sigma; <span id="val-sigma">0.50</span></label>
+                        <input type="range" id="slider-sigma" min="0.2" max="1.0" step="0.05" value="0.5">
+                        <div class="slider-hint">Log-normal 스케일 파라미터 (시장 변동성)</div>
+                    </div>
+                    <div class="slider-group">
+                        <label>Tolerance &epsilon; <span id="val-tol">$0.010</span></label>
+                        <input type="range" id="slider-tol" min="0.001" max="0.1" step="0.001" value="0.01">
+                        <div class="slider-hint">수렴 허용 오차 (구간 크기 &lt; &epsilon; 이면 종료)</div>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Playback -->
+                <div class="panel" style="margin-bottom:1.5rem">
+                    <h3>Playback</h3>
+                    <div class="controls-row">
+                        <button class="btn-control primary" id="btn-step">Step</button>
+                        <button class="btn-control" id="btn-play">Play</button>
+                        <button class="btn-control" id="btn-skip">Skip to End</button>
+                        <button class="btn-control" id="btn-reset">Reset</button>
+                    </div>
+                    <div class="slider-group" style="margin-bottom:0.75rem">
+                        <label>Speed <span id="val-speed">Medium</span></label>
+                        <input type="range" id="slider-speed" min="100" max="1000" step="50" value="500">
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="iter-info">
+                        <div class="iter-info-item">
+                            <div class="iter-info-label">Iteration</div>
+                            <div class="iter-info-value" id="iter-num">-</div>
+                        </div>
+                        <div class="iter-info-item">
+                            <div class="iter-info-label">Bracket Size</div>
+                            <div class="iter-info-value" id="iter-bracket">-</div>
+                        </div>
+                        <div class="iter-info-item">
+                            <div class="iter-info-label">a (lower)</div>
+                            <div class="iter-info-value" id="iter-a">-</div>
+                        </div>
+                        <div class="iter-info-item">
+                            <div class="iter-info-label">b (upper)</div>
+                            <div class="iter-info-value" id="iter-b">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 3: Iteration Log -->
+                <div class="panel">
+                    <h3>Iteration Log</h3>
+                    <div class="log-container" id="log-container">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>a</th>
+                                    <th>b</th>
+                                    <th>x&#x2081;</th>
+                                    <th>x&#x2082;</th>
+                                    <th>bracket</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Charts -->
+            <div>
+                <!-- Panel 4: Surplus Curve -->
+                <div class="panel" style="margin-bottom:1.5rem">
+                    <h3>Surplus Curve &mdash; s(b) = (V &minus; b) &times; F(b|x)</h3>
+                    <div class="legend-inline">
+                        <span><span class="legend-dot" style="background:#00e5ff"></span> Surplus</span>
+                        <span><span class="legend-dot" style="background:rgba(0,229,255,0.4)"></span> Bracket [a, b]</span>
+                        <span><span class="legend-dot" style="background:#ff6384"></span> x&#x2081;</span>
+                        <span><span class="legend-dot" style="background:#ffce56"></span> x&#x2082;</span>
+                        <span><span class="legend-dot" style="background:#4bc0c0"></span> b* (Optimal)</span>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="surplusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Panel 5: Convergence -->
+                <div class="panel" style="margin-bottom:1.5rem">
+                    <h3>Convergence &mdash; Bracket Size per Iteration</h3>
+                    <div class="chart-wrap-sm">
+                        <canvas id="convergenceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Panel 6: Results -->
+                <div class="panel">
+                    <h3>Results</h3>
+                    <div class="result-box" id="result-box">
+                        <h4>Converged</h4>
+                        <div class="result-row">
+                            <span class="result-label">Optimal Bid b*</span>
+                            <span class="result-value result-highlight" id="res-bstar">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Shading Ratio</span>
+                            <span class="result-value" id="res-shading">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Max Surplus</span>
+                            <span class="result-value" id="res-surplus">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Iterations</span>
+                            <span class="result-value" id="res-iters">-</span>
+                        </div>
+                        <div class="result-divider"></div>
+                        <div class="result-row">
+                            <span class="result-label">GSS Evaluations</span>
+                            <span class="result-value" id="res-evals">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Grid Search (same &epsilon;)</span>
+                            <span class="result-value" id="res-grid">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Speedup</span>
+                            <span class="result-value result-highlight" id="res-speedup">-</span>
+                        </div>
+                    </div>
+
+                    <div class="insight-box info">
+                        <strong>Why Golden Section Search?</strong><br>
+                        Surplus 함수 s(b)는 <strong>단봉(unimodal)</strong>함이 수학적으로 증명되어 있습니다 (Zhou et al., KDD 2021).
+                        단봉 함수에서 Golden Section Search는 매 반복마다 탐색 구간을 정확히 1/&phi; &approx; 61.8%로 축소하며,
+                        Grid Search 대비 <strong>약 25배 빠르게</strong> 수렴합니다.
+                        이 효율성이 수십억 건/일의 실시간 입찰을 가능하게 합니다.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="demos.html">Demos</a>
+                <a href="post.html?id=bid-shading-censored">Bid Shading Post</a>
+            </div>
+            <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/golden-section-demo.js"></script>
+</body>
+
+</html>

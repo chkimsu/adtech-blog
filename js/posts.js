@@ -11,6 +11,26 @@
 
 const posts = [
   {
+    id: 'deep-ctr-models',
+    title: 'Deep CTR 모델의 진화: LR에서 DIN까지, 광고 클릭률 예측의 핵심 아키텍처',
+    excerpt: 'LR, FM, Wide&Deep, DeepFM, DCN-v2, DIN, DIEN — CTR 예측 모델이 "어떤 문제를 풀려고 했는가" 관점으로 진화 과정을 추적하고, 프로덕션 선택 가이드까지 제시합니다.',
+    date: '2026-04-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Model Serving', 'ML Infra'],
+    contentUrl: 'posts/deep-ctr-models.md',
+    readTime: '20 min read'
+  },
+  {
+    id: 'calibration',
+    title: 'Calibration: AUC가 높아도 돈을 잃는 이유 — 광고 모델의 확률 보정',
+    excerpt: 'AUC는 순서만 평가하고 확률값의 정확도는 평가하지 않습니다. Platt Scaling, Isotonic Regression, Temperature Scaling으로 pCTR을 보정하고, 프로덕션 Calibration 파이프라인을 구축하는 방법을 해부합니다.',
+    date: '2026-04-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Bid Shading', 'Auto-Bidding'],
+    contentUrl: 'posts/calibration.md',
+    readTime: '18 min read'
+  },
+  {
     id: 'ad-network-vs-exchange',
     title: 'Ad Network vs Ad Exchange: 디지털 광고 유통 구조의 진화',
     excerpt: 'Waterfall에서 RTB, Header Bidding까지 — Ad Network과 Ad Exchange의 구조적 차이, 기술 아키텍처, 진화 과정을 해부합니다.',

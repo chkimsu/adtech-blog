@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Censored Data in RTB - AdTech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* === Step Progress Bar === */
+        .step-progress {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0;
+            margin: 2rem 0 2.5rem;
+            padding: 1rem 0;
+        }
+
+        .step-dot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+            opacity: 0.35;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            opacity: 1;
+        }
+
+        .step-dot.completed {
+            opacity: 0.75;
+            cursor: pointer;
+        }
+
+        .step-dot.locked {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .step-number {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active .step-number {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.3);
+        }
+
+        .step-dot.completed .step-number {
+            background: rgba(75, 192, 192, 0.15);
+            border-color: #4BC0C0;
+            color: #4BC0C0;
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .step-dot.active .step-label {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .step-connector {
+            width: 50px;
+            height: 2px;
+            background: var(--border-color);
+            margin: 18px 0.3rem 0;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .step-connector.completed {
+            background: #4BC0C0;
+        }
+
+        /* === Layout === */
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .demo-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === Panels === */
+        .panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .panel h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+            font-size: 1rem;
+        }
+
+        /* === View Toggle === */
+        .view-toggle-wrap {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.25rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: opacity 0.3s;
+        }
+
+        .btn-view {
+            flex: 1;
+            padding: 0.55rem 0.5rem;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            border: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view.active {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--accent-primary);
+        }
+
+        .btn-view:first-child {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .btn-view:disabled {
+            cursor: not-allowed;
+        }
+
+        /* === Sliders === */
+        .slider-group {
+            margin-bottom: 1.1rem;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        .slider-group label span {
+            color: var(--accent-primary);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .slider-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        /* === Buttons === */
+        .btn-control {
+            width: 100%;
+            padding: 0.65rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-control.primary {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-control.primary:hover {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-control.reveal {
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+        }
+
+        .btn-control.reveal:hover {
+            background: rgba(255, 215, 0, 0.25);
+        }
+
+        /* === Step Sections === */
+        .step-section {
+            display: none;
+        }
+
+        .step-section.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-instruction {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: var(--accent-gradient);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .btn-next-step {
+            display: none;
+            padding: 0.65rem 1.5rem;
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--accent-primary);
+            border-radius: 8px;
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.25rem;
+        }
+
+        .btn-next-step:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* === Stat Cards === */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 0.75rem 0.85rem;
+            text-align: center;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .stat-card .stat-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* === Censored Bar === */
+        .censored-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+
+        .censored-observed {
+            background: rgba(75, 192, 192, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            min-width: 50px;
+            transition: width 0.3s;
+        }
+
+        .censored-hidden {
+            background: repeating-linear-gradient(45deg, rgba(255, 99, 132, 0.2), rgba(255, 99, 132, 0.2) 4px, rgba(255, 99, 132, 0.1) 4px, rgba(255, 99, 132, 0.1) 8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            min-width: 40px;
+            transition: width 0.3s;
+        }
+
+        /* === Auction Table === */
+        .auction-table-container {
+            max-height: 280px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+
+        .auction-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .auction-table th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 0.55rem 0.5rem;
+            text-align: left;
+            z-index: 1;
+        }
+
+        .auction-table td {
+            padding: 0.35rem 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .result-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .result-badge.win {
+            background: rgba(75, 192, 192, 0.15);
+            color: #4BC0C0;
+        }
+
+        .result-badge.lose {
+            background: rgba(255, 99, 132, 0.15);
+            color: #FF6384;
+        }
+
+        .auction-row.revealing {
+            animation: reveal-flash 0.6s ease;
+        }
+
+        @keyframes reveal-flash {
+            0%, 100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(255, 215, 0, 0.12);
+            }
+        }
+
+        .reveal-tooltip {
+            display: none;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.82rem;
+            color: #FFD700;
+            margin-top: 0.75rem;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        /* === Stats Table === */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin: 1rem 0;
+        }
+
+        .stats-table th,
+        .stats-table td {
+            padding: 0.55rem 0.6rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .stats-table th:first-child,
+        .stats-table td:first-child {
+            text-align: left;
+        }
+
+        .stats-table th {
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* === Insight Boxes === */
+        .insight-box {
+            padding: 1.1rem 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.25rem;
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+        .insight-box.warning {
+            background: rgba(255, 99, 132, 0.08);
+            border-left: 4px solid #FF6384;
+        }
+
+        .insight-box.success {
+            background: rgba(75, 192, 192, 0.08);
+            border-left: 4px solid #4BC0C0;
+        }
+
+        .insight-box.info {
+            background: rgba(0, 229, 255, 0.08);
+            border-left: 4px solid #00e5ff;
+        }
+
+        .insight-box strong {
+            color: var(--text-primary);
+        }
+
+        /* === Formula Block === */
+        .formula-block {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        /* === Chart Panels === */
+        .chart-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-legend {
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* === Survival Analysis Parallel === */
+        .parallel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin: 1rem 0;
+        }
+
+        .parallel-table th {
+            background: var(--bg-tertiary);
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .parallel-table td {
+            padding: 0.55rem 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* === Paper References === */
+        .paper-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .paper-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .paper-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+        }
+
+        .paper-card strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .paper-card em {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        /* === Explanation Section === */
+        .explanation-section {
+            margin-top: 3rem;
+        }
+
+        .explanation-section h2 {
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        .explanation-section h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .explanation-section ul {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .explanation-section li {
+            margin-bottom: 0.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="demos.html" class="btn-demo">Demos</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>Censored Data in RTB</h1>
+            <p class="post-excerpt">
+                입찰에서 졌을 때 <strong>어떤 정보를 잃어버리는지</strong>,
+                왜 <strong>Naive 추정이 실패하는지</strong>,
+                <strong>Censored Regression</strong>은 어떻게 이를 복구하는지를
+                5단계로 체험합니다.
+            </p>
+        </div>
+
+        <!-- ====== Step Progress Bar ====== -->
+        <div class="step-progress">
+            <div class="step-dot active" id="step-dot-1">
+                <span class="step-number">1</span>
+                <span class="step-label">God View</span>
+            </div>
+            <div class="step-connector" id="step-conn-1"></div>
+            <div class="step-dot locked" id="step-dot-2">
+                <span class="step-number">2</span>
+                <span class="step-label">Engineer View</span>
+            </div>
+            <div class="step-connector" id="step-conn-2"></div>
+            <div class="step-dot locked" id="step-dot-3">
+                <span class="step-number">3</span>
+                <span class="step-label">Naive 추정</span>
+            </div>
+            <div class="step-connector" id="step-conn-3"></div>
+            <div class="step-dot locked" id="step-dot-4">
+                <span class="step-number">4</span>
+                <span class="step-label">Censored Reg.</span>
+            </div>
+            <div class="step-connector" id="step-conn-4"></div>
+            <div class="step-dot locked" id="step-dot-5">
+                <span class="step-number">5</span>
+                <span class="step-label">Impact</span>
+            </div>
+        </div>
+
+        <!-- ====== Main Layout ====== -->
+        <div class="demo-layout">
+
+            <!-- ====== Left: Controls Panel ====== -->
+            <div class="panel" style="position: sticky; top: 80px; align-self: start;">
+                <h3>Controls</h3>
+
+                <!-- View Toggle -->
+                <div class="view-toggle-wrap" id="view-toggle-wrap" style="opacity: 0.4;">
+                    <button id="btn-god-view" class="btn-view active" disabled>God View</button>
+                    <button id="btn-engineer-view" class="btn-view" disabled>Engineer View</button>
+                </div>
+
+                <div class="slider-group">
+                    <label>My Bid ($) <span id="val-my-bid">2.00</span></label>
+                    <input type="range" id="slider-my-bid" min="0.5" max="5.0" step="0.1" value="2.0">
+                    <div class="slider-hint">내 입찰가 = Censoring 기준선</div>
+                </div>
+
+                <div class="slider-group">
+                    <label>Market μ <span id="val-mu">0.40</span></label>
+                    <input type="range" id="slider-mu" min="-0.5" max="1.5" step="0.05" value="0.4">
+                    <div class="slider-hint">시장 중앙값 ≈ <span id="val-median">$1.49</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>Market σ <span id="val-sigma">0.50</span></label>
+                    <input type="range" id="slider-sigma" min="0.1" max="1.2" step="0.05" value="0.5">
+                    <div class="slider-hint">클수록 시장 불확실성 ↑</div>
+                </div>
+
+                <div class="slider-group">
+                    <label>경매 수 <span id="val-n">1000</span></label>
+                    <input type="range" id="slider-n" min="100" max="5000" step="100" value="1000">
+                </div>
+
+                <button id="btn-run" class="btn-control primary">Run Auctions</button>
+                <button id="btn-reveal" class="btn-control reveal" style="display: none;">Reveal One Censored Auction</button>
+                <div id="reveal-tooltip" class="reveal-tooltip"></div>
+            </div>
+
+            <!-- ====== Right: Step Content ====== -->
+            <div>
+
+                <!-- ==================== STEP 1 ==================== -->
+                <div id="step-1" class="step-section active">
+                    <div class="step-instruction">
+                        <span class="step-badge">1</span>
+                        <strong>God View — 시장 전체를 봅니다</strong><br>
+                        당신은 전지적 시장 관찰자입니다. "Run Auctions"을 눌러 1,000회 경매를 실행하고,
+                        모든 시장 가격을 확인하세요.
+                    </div>
+
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-label">전체 경매</div>
+                            <div class="stat-value" id="stat-total">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">True Mean</div>
+                            <div class="stat-value" id="stat-true-mean">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">True Median</div>
+                            <div class="stat-value" id="stat-true-median">-</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box info">
+                        <strong>이것이 God View입니다.</strong> 모든 경매의 시장 가격을 볼 수 있습니다.
+                        현실에서는 이런 시점이 존재하지 않습니다 — 다음 단계에서 그 이유를 확인하세요.
+                    </div>
+
+                    <button id="btn-next-1" class="btn-next-step" style="display: none;">다음: Engineer View로 전환 →</button>
+                </div>
+
+                <!-- ==================== STEP 2 ==================== -->
+                <div id="step-2" class="step-section">
+                    <div class="step-instruction">
+                        <span class="step-badge">2</span>
+                        <strong>Engineer View — 실제 DSP가 보는 것</strong><br>
+                        이제 현실입니다. 패찰(Lose)한 경매에서는 경쟁자 가격을 <strong>알 수 없습니다</strong>.
+                        오직 "내 입찰가보다 높았다"는 사실만 알 수 있습니다. 이것이 <strong>Right-Censoring</strong>입니다.
+                    </div>
+
+                    <div class="censored-bar">
+                        <div class="censored-observed" id="censored-obs-bar" style="width: 50%">
+                            <span id="censored-obs-label">50% 관측</span>
+                        </div>
+                        <div class="censored-hidden" id="censored-hid-bar" style="width: 50%">
+                            <span id="censored-hid-label">50% ???</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-label">관측 (Win)</div>
+                            <div class="stat-value" style="color: #4BC0C0;" id="stat-observed">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">미관측 (Lose)</div>
+                            <div class="stat-value" style="color: #FF6384;" id="stat-hidden">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">관측률</div>
+                            <div class="stat-value" id="stat-obs-pct">-</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box warning">
+                        <span id="step2-insight-text">
+                            데이터의 상당 부분이 사라졌습니다. 모든 ??? 뒤에 실제 시장 가격이 있지만, 당신은 절대 볼 수 없습니다.
+                        </span>
+                    </div>
+
+                    <button id="btn-next-2" class="btn-next-step" style="display: none;">다음: Naive 추정의 함정 →</button>
+                </div>
+
+                <!-- ==================== STEP 3 ==================== -->
+                <div id="step-3" class="step-section">
+                    <div class="step-instruction">
+                        <span class="step-badge">3</span>
+                        <strong>Naive 추정 — 보이는 것만으로 분포를 추정하면?</strong><br>
+                        "관측된 Win 데이터만으로 시장 분포를 피팅하면 어떻게 될까?" 차트에서 <span
+                            style="color: #ff6b9d;">분홍 점선</span>(Naive)과 <span style="color:
+                            #4BC0C0;">초록 점선</span>(실제)을 비교해보세요.
+                    </div>
+
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Naive 추정<br><span style="font-weight:400;font-size:0.68rem;">(Win 데이터만)</span></th>
+                                <th>실제 값<br><span style="font-weight:400;font-size:0.68rem;">(God View)</span></th>
+                                <th>오차</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mean</td>
+                                <td id="stat-naive-mean">-</td>
+                                <td id="stat-true-mean-3">-</td>
+                                <td id="stat-mean-error">-</td>
+                            </tr>
+                            <tr>
+                                <td>Median</td>
+                                <td id="stat-naive-median">-</td>
+                                <td id="stat-true-median-3">-</td>
+                                <td id="stat-median-error">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="formula-block">
+                        Selection Bias:<br>
+                        μ_naive = E[W | W &lt; b] &lt; E[W] = μ_true<br><br>
+                        관측 데이터 = "내가 이긴 경매" = 경쟁자가 낮게 입찰한 경매만
+                    </div>
+
+                    <div class="insight-box warning">
+                        <span id="step3-insight-text">
+                            Naive 추정은 시장 평균을 체계적으로 과소추정합니다.
+                            이것이 Selection Bias입니다.
+                        </span>
+                    </div>
+
+                    <button id="btn-next-3" class="btn-next-step" style="display: none;">다음: Censored Regression으로 해결 →</button>
+                </div>
+
+                <!-- ==================== STEP 4 ==================== -->
+                <div id="step-4" class="step-section">
+                    <div class="step-instruction">
+                        <span class="step-badge">4</span>
+                        <strong>Censored Regression — Lose 데이터도 활용한다</strong><br>
+                        패찰한 경매에서도 "시장 가격 &gt; 내 입찰가"라는 <strong>부분 정보</strong>가 있습니다.
+                        이 하한(lower bound) 정보를 Survival Function으로 학습에 포함시킵니다.
+                    </div>
+
+                    <div class="formula-block">
+                        Censored Log-Likelihood:<br><br>
+                        L = <span style="color:#4BC0C0">Σ(wins)</span> log <strong>PDF</strong>(w_i; μ, σ)
+                        &nbsp;+&nbsp; <span style="color:#FF6384">Σ(losses)</span> log <strong>S</strong>(b_i; μ, σ)<br><br>
+                        <span style="color:#4BC0C0">Win: PDF 직접 사용</span> — 실제 관측된 시장 가격의 likelihood<br>
+                        <span style="color:#FF6384">Lose: Survival Function 사용</span> — P(W &gt; b) = 1 - CDF(b)
+                    </div>
+
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>실제</th>
+                                <th>Naive</th>
+                                <th>오차</th>
+                                <th>Censored</th>
+                                <th>오차</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mean</td>
+                                <td id="stat4-true-mean">-</td>
+                                <td id="stat4-naive-mean">-</td>
+                                <td id="stat4-naive-mean-err">-</td>
+                                <td id="stat4-censored-mean">-</td>
+                                <td id="stat4-censored-mean-err">-</td>
+                            </tr>
+                            <tr>
+                                <td>Median</td>
+                                <td id="stat4-true-median">-</td>
+                                <td id="stat4-naive-median">-</td>
+                                <td id="stat4-naive-median-err">-</td>
+                                <td id="stat4-censored-median">-</td>
+                                <td id="stat4-censored-median-err">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Survival Analysis Parallel -->
+                    <div class="insight-box info" style="margin-top: 1.25rem;">
+                        <strong>의학 Survival Analysis와 정확히 같은 구조입니다</strong>
+                        <table class="parallel-table" style="margin-top: 0.75rem;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>의학 (Survival Analysis)</th>
+                                    <th>RTB (Bid Shading)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>관측 가능</td>
+                                    <td>연구 기간 내 사망한 환자의 수명</td>
+                                    <td>낙찰(Win)한 경매의 시장 가격</td>
+                                </tr>
+                                <tr>
+                                    <td>Censored</td>
+                                    <td>연구 종료 시 생존한 환자 (수명 미관측)</td>
+                                    <td>패찰(Lose)한 경매 (시장가 미관측)</td>
+                                </tr>
+                                <tr>
+                                    <td>부분 정보</td>
+                                    <td>"최소 T년은 살았다"</td>
+                                    <td>"시장가 > 내 입찰가 $b"</td>
+                                </tr>
+                                <tr>
+                                    <td>해결 기법</td>
+                                    <td>Kaplan-Meier, Cox PH</td>
+                                    <td>Censored Regression, MCNet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="insight-box success">
+                        <span id="step4-insight-text">
+                            Censored Regression은 Lose 데이터의 하한 정보를 활용하여 잃어버린 정보의 대부분을 복구합니다.
+                        </span>
+                    </div>
+
+                    <button id="btn-next-4" class="btn-next-step" style="display: none;">다음: 입찰 전략에 미치는 영향 →</button>
+                </div>
+
+                <!-- ==================== STEP 5 ==================== -->
+                <div id="step-5" class="step-section">
+                    <div class="step-instruction">
+                        <span class="step-badge">5</span>
+                        <strong>Impact — 추정 오차가 입찰 전략에 미치는 영향</strong><br>
+                        각 추정 방법으로 최적 입찰가를 계산하고, 실제 시장(God View)에서의 성과를 비교합니다.
+                        True Value = My Bid × 1.5로 가정합니다.
+                    </div>
+
+                    <div class="stat-cards" style="grid-template-columns: 1fr 1fr;">
+                        <div class="stat-card">
+                            <div class="stat-label">Naive Surplus 손실 (vs Oracle)</div>
+                            <div class="stat-value" id="stat5-surplus-loss-naive">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Censored Surplus 손실 (vs Oracle)</div>
+                            <div class="stat-value" id="stat5-surplus-loss-censored">-</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box success">
+                        <span id="step5-insight-text">
+                            Censored Regression을 사용하면 Naive 추정 대비 Surplus 손실이 크게 줄어듭니다.
+                        </span>
+                    </div>
+
+                    <!-- Paper References -->
+                    <div style="margin-top: 2rem;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 1rem;">논문 참조</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            이 데모의 개념은 다음 두 논문에 기반합니다.
+                            상세한 해설은 <a href="post.html?id=bid-shading-censored" style="color: var(--accent-primary);">Bid Shading & Censored Data 포스트</a>에서 확인할 수 있습니다.
+                        </p>
+                        <div class="paper-grid">
+                            <div class="paper-card">
+                                <strong>Ghosh et al. (Adobe Research, 2020)</strong>
+                                "Scalable Bid Landscape Forecasting in Real-time Bidding"
+                                <br><br>
+                                <em>핵심 기여: MCNet (Mixture Density Censored Network) — 이분산 + 다봉 분포를
+                                    Censored Data에서 학습. iPinYou 데이터 + Adobe Adcloud DSP 검증.</em>
+                            </div>
+                            <div class="paper-card">
+                                <strong>Zhou et al. (Yahoo/Verizon, KDD 2021)</strong>
+                                "An Efficient Deep Distribution Network for Bid Shading in First-Price Auctions"
+                                <br><br>
+                                <em>핵심 기여: Log-normal + DeepFM + Golden Section Search.
+                                    Surplus unimodality 증명. 수십억 bid/일 규모 프로덕션 A/B 테스트 검증.</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== Distribution Chart (Steps 1-4) ====== -->
+                <div id="dist-chart-panel" class="chart-panel">
+                    <canvas id="distributionChart" height="110"></canvas>
+                    <div class="chart-legend">
+                        <span style="color: rgba(75, 192, 192, 0.8);">■</span> Win (관측 가능) &nbsp;
+                        <span style="color: rgba(255, 99, 132, 0.8);">■</span> Lose 영역 &nbsp;
+                        <span style="color: rgba(120, 120, 120, 0.6);">▨</span> ??? 관측 불가 &nbsp;
+                        <span style="color: #00e5ff;">━━</span> My Bid &nbsp;
+                        <span style="color: #4BC0C0;">- -</span> 실제 분포 &nbsp;
+                        <span style="color: #ff6b9d;">- -</span> Naive 추정 &nbsp;
+                        <span style="color: #FFD700;">━━</span> Censored 보정
+                    </div>
+                </div>
+
+                <!-- ====== Auction Table (Steps 1-2) ====== -->
+                <div id="auction-table-panel" class="chart-panel">
+                    <h3 style="color: var(--accent-primary); font-size: 0.95rem; margin-bottom: 0.75rem;">
+                        개별 경매 결과 (상위 50건)
+                    </h3>
+                    <div class="auction-table-container">
+                        <table class="auction-table">
+                            <thead>
+                                <tr>
+                                    <th>경매 #</th>
+                                    <th>My Bid</th>
+                                    <th>시장 가격</th>
+                                    <th>결과</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auction-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ====== Comparison Chart (Steps 3-4) ====== -->
+                <div id="comparison-panel" class="chart-panel" style="display: none;">
+                    <canvas id="comparisonChart" height="80"></canvas>
+                </div>
+
+                <!-- ====== Impact Chart (Step 5) ====== -->
+                <div id="impact-panel" class="chart-panel" style="display: none;">
+                    <canvas id="impactChart" height="90"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 상세 해설 ====== -->
+        <div class="post-content explanation-section">
+            <h2>Right-Censoring이란?</h2>
+            <p>
+                DSP(Demand-Side Platform) 입장에서 경매 결과 데이터는 <strong>비대칭적</strong>입니다.
+            </p>
+
+            <table class="parallel-table">
+                <thead>
+                    <tr>
+                        <th>경매 결과</th>
+                        <th>관측 가능한 정보</th>
+                        <th>수식</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>낙찰 (Win)</strong></td>
+                        <td>실제 Clearing Price w_i</td>
+                        <td>w_i 직접 관측</td>
+                    </tr>
+                    <tr>
+                        <td><strong>패찰 (Lose)</strong></td>
+                        <td>"내 입찰가 b_i보다 높았다"는 사실만</td>
+                        <td>W_i > b_i (하한만 알 수 있음)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                패찰한 경매에서는 경쟁자가 $2.01을 입찰했는지, $10.00을 입찰했는지 알 수 없습니다.
+                내 입찰가 <strong>오른쪽(이상)</strong>의 분포가 잘려있으므로 이를
+                <strong>Right-Censoring</strong>이라 부릅니다.
+            </p>
+
+            <h2>Censored Likelihood의 핵심</h2>
+            <div class="formula-block">
+                L = Σ(wins) log P(w_i | x) + Σ(losses) log Pr(W > b_i | x)<br><br>
+                Win: PDF 사용 — 관측된 가격의 likelihood를 직접 최대화<br>
+                Lose: Survival Function 사용 — "시장가 > 내 입찰가"의 likelihood를 최대화
+            </div>
+            <p>
+                Lose 데이터를 버리지 않고, 그 안에 담긴 <strong>하한 정보(lower bound)</strong>를
+                Survival Function으로 학습에 포함시키는 것이 Censored Regression의 핵심입니다.
+                두 논문(Ghosh et al., Zhou et al.) 모두 이 형태의 손실 함수를 기반으로 합니다.
+            </p>
+
+            <h2>실험해볼 시나리오</h2>
+
+            <h3>시나리오 1: 입찰가를 낮추면?</h3>
+            <p>
+                My Bid를 $1.00으로 낮춰보세요. 관측률이 급감하고, Naive 추정의 오차가 극단적으로 커집니다.
+                Censored Regression조차 정보가 부족해져 정확도가 떨어지는 것을 확인할 수 있습니다.
+                이것이 <strong>탐색-활용(Exploration-Exploitation) 딜레마</strong>입니다.
+            </p>
+
+            <h3>시나리오 2: 입찰가를 높이면?</h3>
+            <p>
+                My Bid를 $4.00 이상으로 올려보세요. 거의 모든 경매에서 이기므로 관측률이 90%+가 됩니다.
+                Naive와 Censored의 차이가 줄어듭니다 — 데이터가 충분하면 Censoring 문제가 완화됩니다.
+                하지만 현실에서 이렇게 높은 입찰가는 수익성이 없습니다.
+            </p>
+
+            <h3>시나리오 3: 시장 분산이 클 때</h3>
+            <p>
+                Market σ를 1.0으로 키워보세요. 시장 불확실성이 크면 Naive 추정의 오차도 커지고,
+                Censored Regression의 보정 효과가 더 두드러집니다.
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="demos.html">Demos</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+            </div>
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. Built with modern web technologies.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/censored-data-demo.js"></script>
+</body>
+
+</html>

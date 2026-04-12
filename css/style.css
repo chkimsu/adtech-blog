@@ -1875,6 +1875,8 @@ footer {
 .chart-card-icon.yellow { background: rgba(255, 206, 86, 0.2); }
 .chart-card-icon.orange { background: rgba(255, 159, 64, 0.2); }
 .chart-card-icon.green { background: rgba(75, 192, 192, 0.2); }
+.chart-card-icon.blue { background: rgba(54, 162, 235, 0.2); }
+.chart-card-icon.pink { background: rgba(255, 99, 132, 0.2); }
 
 .chart-card-name {
   font-size: 1rem;
@@ -1979,6 +1981,7 @@ footer {
 .chart-step-dot.yellow { background: rgba(255, 206, 86, 0.8); color: #333; }
 .chart-step-dot.orange { background: rgba(255, 159, 64, 0.8); }
 .chart-step-dot.pink { background: rgba(255, 99, 132, 0.8); }
+.chart-step-dot.blue { background: rgba(54, 162, 235, 0.8); }
 
 .chart-step-line {
   width: 2px;
@@ -2019,6 +2022,7 @@ footer {
 .chart-step-badge.yellow { background: rgba(255, 206, 86, 0.2); color: #ffd740; }
 .chart-step-badge.orange { background: rgba(255, 159, 64, 0.2); color: #ff9f40; }
 .chart-step-badge.pink { background: rgba(255, 99, 132, 0.2); color: #ff6384; }
+.chart-step-badge.blue { background: rgba(54, 162, 235, 0.2); color: #36a2eb; }
 
 /* --- Architecture Diagram --- */
 .chart-arch {

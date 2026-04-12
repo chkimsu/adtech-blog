@@ -492,6 +492,23 @@ flowchart LR
 
 **Streaming 피처의 핵심:** 추론 시에는 Flink가 실시간으로 계산한 값을 Redis에서 읽지만, 학습 시에는 원본 이벤트 로그를 다시 읽어서 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
 
+**"Redis에 바로 쓰면 학습은 어떻게 하지?"** — 핵심은 Kafka에서 이벤트가 나올 때 **두 갈래**로 간다는 것입니다:
+
+1. **추론 경로:** Kafka → Flink (윈도우 집계) → Redis → 모델이 읽음
+2. **학습 경로:** Kafka → S3/Hive에 원본 이벤트 그대로 아카이브
+
+Redis는 TTL로 사라지기 때문에 학습용으로 쓸 수 없습니다. 대신 아카이브된 원본 이벤트를 Spark 등으로 다시 읽어서 같은 윈도우 로직을 재현합니다:
+
+```sql
+-- 학습 시: "2026-04-10 14:00에 유저 U98712의 최근 5분 클릭 수"를 재현
+SELECT user_id, COUNT(*) AS click_count_5m
+FROM click_events_archive
+WHERE user_id = 'U98712'
+  AND event_time BETWEEN '2026-04-10 13:55:00' AND '2026-04-10 14:00:00'
+GROUP BY user_id
+-- → "그 시점에 Redis에 들어있었을 값"을 과거 데이터로부터 복원
+```
+
 ### 4-3. Real-Time 피처의 Lifecycle
 
 ```mermaid
@@ -531,6 +548,30 @@ flowchart LR
 ```
 
 **Real-Time 피처의 핵심:** 저장소를 거치지 않습니다. 추론 시에는 Bid Request를 직접 파싱하고, 학습 시에는 Request Log에 기록된 같은 필드를 파싱합니다.
+
+**"저장을 안 하면 학습은 어떻게 하지?"** — Bid Request 자체를 **Request Log**로 기록해둡니다. 추론에 쓰는 것과는 별개의 경로입니다:
+
+1. **추론 경로:** Bid Request JSON → 앱 내부 파싱 → 즉시 Feature Vector에 합류
+2. **학습 경로:** Bid Request JSON → Request Log로 S3에 기록 → 학습 시 같은 파싱
+
+```json
+// Request Log (S3에 저장됨)
+{
+  "request_id": "req-abc123",
+  "user_id": "U98712",
+  "timestamp": "2026-04-10T14:00:00Z",
+  "user_agent": "Mozilla/5.0 (iPhone; ...)",
+  "page_url": "https://news.example.com/auto",
+  "slot_id": "S50",
+  "geo": "KR"
+}
+// 학습 시 같은 파싱 로직 적용:
+// user_agent → device=mobile, os=iOS
+// timestamp  → hour=14, weekday=Thu
+// page_url   → category=auto
+```
+
+> **공통 원칙:** 추론용으로 Redis에 쓰든, 저장을 안 하든, 학습에 필요한 원본 데이터는 반드시 **S3/Hive 같은 영구 저장소에 별도로 기록**합니다. Redis의 TTL은 수 분~수 시간이라 학습 데이터 원본으로 쓸 수 없습니다.
 
 ### 4-4. 통합 비교: 학습 vs 추론에서 피처를 어디서 가져오는가
 

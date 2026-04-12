@@ -158,9 +158,6 @@ function filterByCategory(category) {
     catEl.classList.toggle('active', catEl.dataset.category === category);
   });
 
-  // Sync tree sidebar
-  syncTreeActive(category);
-
   applyFilters();
 }
 
@@ -686,127 +683,7 @@ function initializeSmoothScroll() {
 // Sidebar Navigation
 // ========================================
 
-// ========================================
-// Home Page: Tree Sidebar Navigation
-// ========================================
 
-const demosByCategory = {
-  'Bandits & Personalization': [
-    { title: 'UCB1 Algorithm', url: 'demo-ucb1.html' },
-    { title: 'Thompson Sampling', url: 'demo-ts.html' },
-    { title: 'LinUCB (Contextual Bandit)', url: 'demo-linucb.html' },
-  ],
-  'Bidding & Auction': [
-    { title: 'RTB Auction Simulator', url: 'demo-rtb.html' },
-    { title: 'Bid Landscape Explorer', url: 'demo-bid-landscape.html' },
-    { title: 'Bid Shading Visualizer', url: 'demo-bid-shading.html' },
-    { title: 'Golden Section Search', url: 'demo-golden-section.html' },
-    { title: 'Censored Data in RTB', url: 'demo-censored-data.html' },
-  ]
-};
-
-function initializeTreeSidebar() {
-  const treeNav = document.getElementById('tree-nav');
-  if (!treeNav) return;
-
-  // Group posts by first category
-  const postsByCategory = {};
-  posts.forEach(post => {
-    const cat = (post.categories && post.categories[0]) || 'Uncategorized';
-    if (!postsByCategory[cat]) postsByCategory[cat] = [];
-    postsByCategory[cat].push(post);
-  });
-
-  // Sort categories, sort posts within each by date desc
-  const sortedCategories = Object.keys(postsByCategory).sort();
-  sortedCategories.forEach(cat => {
-    postsByCategory[cat].sort((a, b) => new Date(b.date) - new Date(a.date));
-  });
-
-  const totalPosts = posts.length;
-
-  // Build HTML
-  let html = '';
-
-  // "All" node
-  html += `<div class="tree-all active" data-category="">전체 <span class="tree-count">(${totalPosts})</span></div>`;
-
-  // Category nodes
-  sortedCategories.forEach(cat => {
-    const catPosts = postsByCategory[cat];
-    const catDemos = demosByCategory[cat] || [];
-    const count = catPosts.length + catDemos.length;
-
-    html += `<div class="tree-category" data-category="${cat}">`;
-    html += `<div class="tree-category-header" data-category="${cat}">`;
-    html += `<span class="tree-toggle">▶</span>`;
-    html += `<span class="tree-category-name">${cat}</span>`;
-    html += `<span class="tree-category-count">${count}</span>`;
-    html += `</div>`;
-    html += `<div class="tree-children">`;
-
-    // Posts
-    catPosts.forEach(post => {
-      html += `<a class="tree-item" href="post.html?id=${post.id}" title="${post.title}">${post.title}</a>`;
-    });
-
-    // Demos
-    catDemos.forEach(demo => {
-      html += `<a class="tree-item" href="${demo.url}" title="${demo.title}"><span class="tree-demo-badge">Demo</span>${demo.title}</a>`;
-    });
-
-    html += `</div></div>`;
-  });
-
-  treeNav.innerHTML = html;
-
-  // Event: "All" node click
-  const allNode = treeNav.querySelector('.tree-all');
-  if (allNode) {
-    allNode.addEventListener('click', () => {
-      filterByCategory('');
-      syncTreeActive('');
-    });
-  }
-
-  // Event: Category header click → toggle + filter
-  treeNav.querySelectorAll('.tree-category-header').forEach(header => {
-    header.addEventListener('click', () => {
-      const cat = header.dataset.category;
-      const parent = header.closest('.tree-category');
-      const children = parent.querySelector('.tree-children');
-      const toggle = header.querySelector('.tree-toggle');
-
-      // Toggle open/close
-      const isOpen = children.classList.contains('open');
-      if (isOpen) {
-        children.classList.remove('open');
-        toggle.classList.remove('open');
-      } else {
-        children.classList.add('open');
-        toggle.classList.add('open');
-      }
-
-      // Filter main content
-      filterByCategory(cat);
-      syncTreeActive(cat);
-    });
-  });
-}
-
-function syncTreeActive(category) {
-  const treeNav = document.getElementById('tree-nav');
-  if (!treeNav) return;
-
-  // Update "All" node
-  const allNode = treeNav.querySelector('.tree-all');
-  if (allNode) allNode.classList.toggle('active', category === '');
-
-  // Update category headers
-  treeNav.querySelectorAll('.tree-category-header').forEach(header => {
-    header.classList.toggle('active', header.dataset.category === category);
-  });
-}
 
 function initializeSidebar() {
   const sidebarNav = document.getElementById('sidebar-nav');
@@ -954,7 +831,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (postsGrid) {
     // Home page
     initializeFilters();
-    initializeTreeSidebar();
     renderPosts(posts);
   } else if (postContent) {
     // Post detail page

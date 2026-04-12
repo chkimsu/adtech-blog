@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AdTech Blog 포스트 & 데모 카테고리별 트리 탐색">
+  <title>Posts — Ad Tech Blog</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* === Posts Browse Page === */
+    .browse-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .browse-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* === Search === */
+    .browse-search {
+      margin-bottom: 1.5rem;
+    }
+
+    .browse-search input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.8rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.92rem;
+      transition: all 0.2s;
+    }
+
+    .browse-search input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .browse-search {
+      position: relative;
+    }
+
+    .browse-search::before {
+      content: "\1F50D";
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+    }
+
+    /* === Category Panel === */
+    .cat-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      animation: fadeInUp 0.5s ease both;
+    }
+
+    .cat-panel:nth-child(2) { animation-delay: 0.08s; }
+    .cat-panel:nth-child(3) { animation-delay: 0.16s; }
+    .cat-panel:nth-child(4) { animation-delay: 0.24s; }
+    .cat-panel:nth-child(5) { animation-delay: 0.32s; }
+    .cat-panel:nth-child(6) { animation-delay: 0.40s; }
+
+    /* === Category Header === */
+    .cat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0.25rem;
+    }
+
+    .cat-header:hover .cat-name {
+      color: var(--accent-primary);
+    }
+
+    .cat-toggle {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+      margin-right: 0.5rem;
+    }
+
+    .cat-toggle.open {
+      transform: rotate(90deg);
+    }
+
+    .cat-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+      flex: 1;
+      transition: color 0.15s;
+    }
+
+    .cat-count {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      padding: 0.15rem 0.55rem;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .cat-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    /* === Post List === */
+    .cat-items {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .cat-items.open {
+      max-height: 3000px;
+    }
+
+    .cat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      margin: 0.15rem 0;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .cat-item:hover {
+      background: rgba(0, 229, 255, 0.06);
+    }
+
+    .cat-item-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      flex: 1;
+      transition: color 0.15s;
+    }
+
+    .cat-item:hover .cat-item-title {
+      color: var(--accent-primary);
+    }
+
+    .cat-item-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .cat-item-icon {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      width: 14px;
+      text-align: center;
+    }
+
+    /* === Demo Badge === */
+    .demo-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent-primary);
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    /* === Stats Bar === */
+    .browse-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .browse-stats strong {
+      color: var(--accent-primary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* === No results === */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    /* Highlight matched text */
+    .highlight {
+      background: rgba(0, 229, 255, 0.2);
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    /* Active nav link */
+    .btn-posts-active {
+      background: var(--accent-primary) !important;
+      color: var(--bg-primary) !important;
+      box-shadow: var(--shadow-glow);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo btn-posts-active">Posts</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="main-content">
+    <section class="hero">
+      <div class="container">
+        <h1>Posts</h1>
+        <p>카테고리별로 포스트와 데모를 빠르게 찾아보세요</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <!-- Search -->
+        <div class="browse-search">
+          <input type="text" id="browse-search-input" placeholder="포스트 제목으로 검색..." aria-label="포스트 검색">
+        </div>
+
+        <!-- Stats -->
+        <div class="browse-stats" id="browse-stats"></div>
+
+        <!-- Category Panels Grid -->
+        <div class="browse-layout" id="browse-layout">
+          <!-- JS로 동적 생성 -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/posts.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ==========================================
+    // Posts Browse Page
+    // ==========================================
+
+    const demosByCategory = {
+      'Bandits & Personalization': [
+        { title: 'UCB1 Algorithm', url: 'demo-ucb1.html' },
+        { title: 'Thompson Sampling', url: 'demo-ts.html' },
+        { title: 'LinUCB (Contextual Bandit)', url: 'demo-linucb.html' },
+      ],
+      'Bidding & Auction': [
+        { title: 'RTB Auction Simulator', url: 'demo-rtb.html' },
+        { title: 'Bid Landscape Explorer', url: 'demo-bid-landscape.html' },
+        { title: 'Bid Shading Visualizer', url: 'demo-bid-shading.html' },
+        { title: 'Golden Section Search', url: 'demo-golden-section.html' },
+        { title: 'Censored Data in RTB', url: 'demo-censored-data.html' },
+      ]
+    };
+
+    const categoryDescriptions = {
+      'Bandits & Personalization': 'MAB, Exploration/Exploitation, Contextual Bandits',
+      'Measurement & Modeling': 'pCTR, pCVR, Calibration, Deep CTR Models',
+      'Bidding & Auction': 'RTB, Bid Shading, Auto-Bidding, eCPM',
+      'ML Infrastructure': 'Feature Store, Model Serving, Online Learning, 로그 파이프라인',
+      'DevOps & Tooling': 'Git, 워크플로우, 협업 도구',
+    };
+
+    function initBrowsePage() {
+      const layout = document.getElementById('browse-layout');
+      const statsEl = document.getElementById('browse-stats');
+      if (!layout) return;
+
+      // Group posts by category
+      const postsByCategory = {};
+      posts.forEach(post => {
+        const cat = (post.categories && post.categories[0]) || 'Uncategorized';
+        if (!postsByCategory[cat]) postsByCategory[cat] = [];
+        postsByCategory[cat].push(post);
+      });
+
+      const sortedCats = Object.keys(postsByCategory).sort();
+      sortedCats.forEach(cat => {
+        postsByCategory[cat].sort((a, b) => new Date(b.date) - new Date(a.date));
+      });
+
+      const totalDemos = Object.values(demosByCategory).reduce((s, d) => s + d.length, 0);
+
+      // Stats
+      statsEl.innerHTML = `
+        <span><strong>${posts.length}</strong> 포스트</span>
+        <span><strong>${totalDemos}</strong> 인터랙티브 데모</span>
+        <span><strong>${sortedCats.length}</strong> 카테고리</span>
+      `;
+
+      // Render
+      renderCategories(sortedCats, postsByCategory, '');
+
+      // Search
+      document.getElementById('browse-search-input').addEventListener('input', (e) => {
+        renderCategories(sortedCats, postsByCategory, e.target.value.trim().toLowerCase());
+      });
+    }
+
+    function renderCategories(sortedCats, postsByCategory, searchTerm) {
+      const layout = document.getElementById('browse-layout');
+      let html = '';
+      let totalMatches = 0;
+
+      sortedCats.forEach(cat => {
+        const catPosts = postsByCategory[cat];
+        const catDemos = demosByCategory[cat] || [];
+        const desc = categoryDescriptions[cat] || '';
+
+        // Filter by search
+        const filteredPosts = searchTerm
+          ? catPosts.filter(p => p.title.toLowerCase().includes(searchTerm))
+          : catPosts;
+        const filteredDemos = searchTerm
+          ? catDemos.filter(d => d.title.toLowerCase().includes(searchTerm))
+          : catDemos;
+
+        if (searchTerm && filteredPosts.length === 0 && filteredDemos.length === 0) return;
+
+        totalMatches += filteredPosts.length + filteredDemos.length;
+        const isOpen = !!searchTerm; // 검색 시 자동 펼침
+        const count = filteredPosts.length + filteredDemos.length;
+
+        html += `<div class="cat-panel">`;
+        html += `<div class="cat-header" onclick="toggleCategory(this)">`;
+        html += `<span class="cat-toggle ${isOpen ? 'open' : ''}">▶</span>`;
+        html += `<span class="cat-name">${cat}</span>`;
+        html += `<span class="cat-count">${count}</span>`;
+        html += `</div>`;
+        if (desc) html += `<div class="cat-desc">${desc}</div>`;
+        html += `<div class="cat-items ${isOpen ? 'open' : ''}">`;
+
+        filteredPosts.forEach(post => {
+          const title = searchTerm
+            ? post.title.replace(new RegExp(`(${escapeRegex(searchTerm)})`, 'gi'), '<span class="highlight">$1</span>')
+            : post.title;
+          html += `<a class="cat-item" href="post.html?id=${post.id}">`;
+          html += `<span class="cat-item-icon">📄</span>`;
+          html += `<span class="cat-item-title">${title}</span>`;
+          html += `<span class="cat-item-meta">${post.readTime}</span>`;
+          html += `</a>`;
+        });
+
+        filteredDemos.forEach(demo => {
+          const title = searchTerm
+            ? demo.title.replace(new RegExp(`(${escapeRegex(searchTerm)})`, 'gi'), '<span class="highlight">$1</span>')
+            : demo.title;
+          html += `<a class="cat-item" href="${demo.url}">`;
+          html += `<span class="demo-badge">Demo</span>`;
+          html += `<span class="cat-item-title">${title}</span>`;
+          html += `</a>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      if (html === '') {
+        html = `<div class="no-results"><h3>검색 결과 없음</h3><p>"${escapeHtml(document.getElementById('browse-search-input').value)}"에 해당하는 포스트가 없습니다.</p></div>`;
+      }
+
+      layout.innerHTML = html;
+    }
+
+    function toggleCategory(headerEl) {
+      const toggle = headerEl.querySelector('.cat-toggle');
+      const items = headerEl.parentElement.querySelector('.cat-items');
+      toggle.classList.toggle('open');
+      items.classList.toggle('open');
+    }
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    document.addEventListener('DOMContentLoaded', initBrowsePage);
+  </script>
+</body>
+
+</html>

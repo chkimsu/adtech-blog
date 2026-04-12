@@ -71,6 +71,8 @@ graph LR
 | **Position Bias 보정** | 광고 위치에 따른 클릭률 편향을 제거하여 공정한 랭킹 보장 |
 
 **관련 포스트:**
+- [오디언스 세그멘테이션](post.html?id=audience-segmentation) — Demographic, Behavioral, RFM, ML Clustering 기반 세그먼트 설계
+- [Lookalike Modeling](post.html?id=lookalike-modeling) — Seed에서 유사 유저를 발굴하는 Embedding/Propensity/Graph 접근법
 - [Position Bias & Unbiased Learning to Rank](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
 - [Two-Tower Model & 광고 후보 생성](post.html?id=two-tower-retrieval) — 유저-광고 매칭의 기반 기술
 

@@ -74,28 +74,45 @@
       </div>
     </nav>
 
-    <!-- Search and Filter Bar -->
+    <!-- Search, Sidebar Tree, and Posts -->
     <section class="section">
       <div class="container">
-        <div class="search-filter-bar">
-          <!-- Search Box -->
-          <div class="search-box">
-            <input type="text" id="search-input" placeholder="제목, 내용, 키워드로 검색..."
-              aria-label="포스트 검색">
-          </div>
+        <div class="content-layout">
 
-          <!-- Tag Filters -->
-          <div class="filter-section">
-            <h4>Tags</h4>
-            <div id="tag-filters" class="filter-tags">
+          <!-- Sidebar Tree -->
+          <aside id="sidebar-tree" class="sidebar-tree">
+            <div class="sidebar-header">
+              <h3>콘텐츠 탐색</h3>
+            </div>
+            <nav id="tree-nav" class="tree-nav">
+              <!-- JS로 동적 생성 -->
+            </nav>
+          </aside>
+
+          <!-- Main Content Area -->
+          <div class="main-content-area">
+            <div class="search-filter-bar">
+              <!-- Search Box -->
+              <div class="search-box">
+                <input type="text" id="search-input" placeholder="제목, 내용, 키워드로 검색..."
+                  aria-label="포스트 검색">
+              </div>
+
+              <!-- Tag Filters -->
+              <div class="filter-section">
+                <h4>Tags</h4>
+                <div id="tag-filters" class="filter-tags">
+                  <!-- Dynamically populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Posts Grid -->
+            <div id="posts-grid" class="posts-grid">
               <!-- Dynamically populated by JavaScript -->
             </div>
           </div>
-        </div>
 
-        <!-- Posts Grid -->
-        <div id="posts-grid" class="posts-grid">
-          <!-- Dynamically populated by JavaScript -->
         </div>
       </div>
     </section>

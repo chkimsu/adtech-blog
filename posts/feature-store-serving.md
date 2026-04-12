@@ -403,7 +403,224 @@ feature_vector = {
 
 ---
 
-## 4. Feature Store 아키텍처 심층 해부
+## 4. 파이프라인별 피처 Lifecycle — 수집 → 저장 → 학습 → 추론
+
+Section 1의 조감도는 전체를 한눈에 보여주지만, "이 피처 하나가 어떤 경로를 타는가"가 잘 안 보입니다. 여기서는 **Batch / Streaming / Real-Time 각각을 독립적으로** 추적합니다.
+
+### 4-1. Batch 피처의 Lifecycle
+
+```mermaid
+flowchart LR
+    subgraph 수집["수집 (Data Source)"]
+        L1["이벤트 로그<br/>(Impression, Click)"]
+        L2["유저 프로필<br/>(DMP/CDP)"]
+        L3["캠페인 메타<br/>(예산, 타겟)"]
+    end
+
+    subgraph 파이프라인["파이프라인 (Spark / Hive)"]
+        P1["7일 윈도우 집계<br/>CTR, CVR 계산"]
+        P2["임베딩 생성<br/>(유저, 소재)"]
+    end
+
+    subgraph 저장["저장"]
+        OFF["Offline Store<br/>S3 / Hive<br/>(시간축 스냅샷)"]
+        ON["Online Store<br/>Redis<br/>(최신 값만)"]
+    end
+
+    subgraph 소비["소비"]
+        TR["학습<br/>Point-in-Time Join<br/>→ 학습 데이터셋"]
+        INF["추론<br/>Redis GET<br/>→ Feature Vector"]
+    end
+
+    L1 --> P1
+    L2 --> P1
+    L3 --> P2
+    P1 --> OFF
+    P2 --> OFF
+    OFF -->|"Materialization<br/>(일 1회)"| ON
+    OFF --> TR
+    ON --> INF
+
+    style 수집 fill:#1a1a3e,stroke:#36a2eb,color:#36a2eb
+    style 파이프라인 fill:#1a1a3e,stroke:#ffce56,color:#ffce56
+    style 저장 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
+    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+```
+
+**Batch 피처의 핵심:** 학습과 추론에서 **같은 피처 정의**를 사용하지만, 읽는 저장소가 다릅니다 — 학습은 Offline Store(과거 시점 복원), 추론은 Online Store(최신 값).
+
+### 4-2. Streaming 피처의 Lifecycle
+
+```mermaid
+flowchart LR
+    subgraph 수집["수집 (Event Stream)"]
+        K1["Kafka Topic<br/>click_events"]
+        K2["Kafka Topic<br/>impression_events"]
+        K3["Kafka Topic<br/>budget_events"]
+    end
+
+    subgraph 파이프라인["파이프라인 (Flink / Kafka Streams)"]
+        F1["Sliding Window<br/>5분 / 1시간 집계"]
+        F2["실시간 카운터<br/>예산 소진율"]
+    end
+
+    subgraph 저장["저장"]
+        ON2["Online Store<br/>Redis<br/>(TTL: 10분~1시간)"]
+        LOG["이벤트 로그 아카이브<br/>S3 (학습용 원본)"]
+    end
+
+    subgraph 소비["소비"]
+        TR2["학습<br/>아카이브 로그에서<br/>윈도우 집계 재현"]
+        INF2["추론<br/>Redis GET<br/>→ Feature Vector"]
+    end
+
+    K1 --> F1
+    K2 --> F1
+    K3 --> F2
+    F1 --> ON2
+    F2 --> ON2
+    K1 --> LOG
+    K2 --> LOG
+    LOG --> TR2
+    ON2 --> INF2
+
+    style 수집 fill:#1a1a3e,stroke:#ff9f40,color:#ff9f40
+    style 파이프라인 fill:#1a1a3e,stroke:#ff9f40,color:#ff9f40
+    style 저장 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
+    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+```
+
+**Streaming 피처의 핵심:** 추론 시에는 Flink가 실시간으로 계산한 값을 Redis에서 읽지만, 학습 시에는 원본 이벤트 로그를 다시 읽어서 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
+
+### 4-3. Real-Time 피처의 Lifecycle
+
+```mermaid
+flowchart LR
+    subgraph 수집["수집 (Bid Request)"]
+        BR["Bid Request<br/>JSON Payload"]
+    end
+
+    subgraph 파이프라인["파이프라인 (App 내부)"]
+        P3["User-Agent 파싱<br/>→ device, os"]
+        P4["서버 시각 계산<br/>→ hour, weekday"]
+        P5["Geo/IP 변환<br/>→ region"]
+    end
+
+    subgraph 저장["저장"]
+        NS["저장하지 않음<br/>(메모리에서 즉시 소비)"]
+    end
+
+    subgraph 소비["소비"]
+        TR3["학습<br/>Request Log에서<br/>같은 필드를 파싱"]
+        INF3["추론<br/>파싱 즉시<br/>Feature Vector에 합류"]
+    end
+
+    BR --> P3
+    BR --> P4
+    BR --> P5
+    P3 --> NS
+    P4 --> NS
+    P5 --> NS
+    NS --> INF3
+    BR -->|"Request Log<br/>로 기록"| TR3
+
+    style 수집 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
+    style 파이프라인 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
+    style 저장 fill:#1a1a3e,stroke:#7a8ba3,color:#7a8ba3
+    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+```
+
+**Real-Time 피처의 핵심:** 저장소를 거치지 않습니다. 추론 시에는 Bid Request를 직접 파싱하고, 학습 시에는 Request Log에 기록된 같은 필드를 파싱합니다.
+
+### 4-4. 통합 비교: 학습 vs 추론에서 피처를 어디서 가져오는가
+
+<div class="chart-cards" style="grid-template-columns: repeat(2, 1fr);">
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div class="chart-card-icon blue">T</div>
+      <div>
+        <div class="chart-card-name">학습 (Training)</div>
+        <div class="chart-card-subtitle">과거 데이터에서 피처 복원</div>
+      </div>
+    </div>
+    <div class="chart-card-body">
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Batch 피처</span>
+        <span class="chart-card-row-value">Offline Store (S3/Hive) → Point-in-Time Join</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Streaming 피처</span>
+        <span class="chart-card-row-value">이벤트 로그 아카이브 → 윈도우 집계 재현</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Real-Time 피처</span>
+        <span class="chart-card-row-value">Request Log → 같은 파싱 로직 적용</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">시간 제약</span>
+        <span class="chart-card-row-value">없음 (오프라인, 수 시간 OK)</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">핵심 원칙</span>
+        <span class="chart-card-row-value">미래 데이터 절대 사용 금지 (leakage)</span>
+      </div>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div class="chart-card-icon pink">I</div>
+      <div>
+        <div class="chart-card-name">추론 (Inference)</div>
+        <div class="chart-card-subtitle">실시간으로 피처 조합</div>
+      </div>
+    </div>
+    <div class="chart-card-body">
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Batch 피처</span>
+        <span class="chart-card-row-value">Online Store (Redis) → HGETALL</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Streaming 피처</span>
+        <span class="chart-card-row-value">Online Store (Redis) → HGETALL (별도 Key)</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">Real-Time 피처</span>
+        <span class="chart-card-row-value">Bid Request → 즉석 파싱 (I/O 없음)</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">시간 제약</span>
+        <span class="chart-card-row-value">~10ms 이내 (전체 입찰 예산)</span>
+      </div>
+      <div class="chart-card-row">
+        <span class="chart-card-row-label">핵심 원칙</span>
+        <span class="chart-card-row-value">병렬 조회 + Fallback 필수</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+### 4-5. 피처별 전체 Lifecycle 매트릭스
+
+각 피처가 수집 → 파이프라인 → 저장 → 학습 → 추론의 전체 경로를 한 눈에 봅니다:
+
+| 피처 | 파이프라인 | 수집 소스 | 저장 위치 | 학습 시 읽는 곳 | 추론 시 읽는 곳 | 갱신 주기 |
+|------|-----------|----------|----------|---------------|---------------|----------|
+| 유저 7일 CTR | **Batch** | Click/Impression 로그 | Offline: S3, Online: Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
+| 유저 임베딩 (128d) | **Batch** | 유저 행동 로그 전체 | Offline: S3, Online: Redis | S3 (모델 학습 시점 스냅샷) | Redis `user:{id}` | 일 1회 |
+| 광고 과거 CTR | **Batch** | Impression/Click 로그 | Offline: S3, Online: Redis | S3 (Point-in-Time Join) | Redis `ad:{id}` | 1시간~일 1회 |
+| 소재 임베딩 (64d) | **Batch** | 광고 소재 이미지/텍스트 | Offline: S3, Online: Redis | S3 (모델 학습 시점) | Redis `ad:{id}` | 소재 변경 시 |
+| 유저 최근 5분 클릭 수 | **Streaming** | Kafka click_events | Online: Redis (TTL 10분) | 이벤트 로그 → 윈도우 재현 | Redis `user:{id}:rt` | 5분 |
+| 광고 최근 1시간 CTR | **Streaming** | Kafka impression/click | Online: Redis (TTL 2시간) | 이벤트 로그 → 윈도우 재현 | Redis `ad:{id}:rt` | 1분 |
+| 캠페인 잔여 예산 | **Streaming** | Kafka budget_events | Online: Redis (TTL 30분) | 이벤트 로그 → 소진 재현 | Redis `campaign:{id}` | 실시간 |
+| 디바이스 타입 | **Real-Time** | Bid Request UA | 저장 안 함 | Request Log 파싱 | Bid Request 즉석 파싱 | 요청마다 |
+| 시간대 (hour) | **Real-Time** | 서버 시각 | 저장 안 함 | Request Log 파싱 | 서버 시각 계산 | 요청마다 |
+| 지면 URL 카테고리 | **Real-Time** | Bid Request URL | 저장 안 함 | Request Log 파싱 | URL 패턴 매칭 | 요청마다 |
+
+> **이 표의 핵심 패턴:** Batch 피처는 학습/추론 모두 같은 계산 로직이지만 **읽는 저장소가 다르고** (S3 vs Redis), Streaming 피처는 추론에서는 Flink가 실시간 계산하지만 **학습에서는 원본 로그로 재현**해야 하고, Real-Time 피처는 **저장소 자체가 없어서** 학습/추론 모두 원본(Request/Log)에서 파싱합니다.
+
+---
+
+## 5. Feature Store 아키텍처 심층 해부
 
 Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 동일한 피처를 보장**하는 시스템입니다:
 
@@ -619,7 +836,7 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 ---
 
-## 5. Feature Freshness vs Latency 트레이드오프
+## 6. Feature Freshness vs Latency 트레이드오프
 
 "피처를 더 자주 갱신하면 모델 성능이 올라간다"는 직관적이지만, 비용과 복잡도가 함께 올라갑니다:
 
@@ -671,7 +888,7 @@ Streaming 피처 하나(`user_click_count_5m`)의 추가로 pCTR이 0.018 → 0.
 
 ---
 
-## 6. 장애 시나리오 & Reliability
+## 7. 장애 시나리오 & Reliability
 
 Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장애가 곧 매출 손실입니다.
 

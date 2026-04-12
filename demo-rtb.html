@@ -472,6 +472,294 @@
                 First Price와 Second Price를 각각 10라운드씩 돌려보면,
                 DSP C (Smart)의 Bid Shading 전략이 First Price 환경에서 얼마나 비용 효율적인지 확인할 수 있습니다.
             </p>
+
+            <h2>OpenRTB 생태계 — 실제 서비스 맵</h2>
+            <p>
+                위 시뮬레이터에서 "DSP A, B, C, D"로 추상화한 입찰자들은
+                실제로는 수십 개의 글로벌 서비스가 참여하는 거대한 프로그래매틱 생태계의 일부입니다.
+                아래에서 OpenRTB 스펙을 기반으로 동작하는 주요 플레이어를 역할별로 정리합니다.
+            </p>
+
+            <h3>DSP (Demand-Side Platform)</h3>
+            <p>
+                광고주·대행사 측에서 입찰을 수행하는 플랫폼입니다.
+                위 시뮬레이터의 DSP A~D가 이 역할에 해당합니다.
+            </p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>운영사</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>DV360</strong> (Display &amp; Video 360)</td>
+                            <td>Google</td>
+                            <td>Google 생태계 통합, YouTube 인벤토리 독점 접근</td>
+                        </tr>
+                        <tr>
+                            <td><strong>The Trade Desk</strong></td>
+                            <td>The Trade Desk</td>
+                            <td>독립 DSP 1위, CTV/오디오 강세, UID2 주도</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon DSP</strong></td>
+                            <td>Amazon</td>
+                            <td>Amazon 쇼핑 데이터 기반 타겟팅, 리테일 미디어</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Xandr Invest</strong> (구 AppNexus)</td>
+                            <td>Microsoft</td>
+                            <td>LinkedIn 데이터 연동, 프로그래매틱 TV</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Criteo</strong></td>
+                            <td>Criteo</td>
+                            <td>리타겟팅 특화, 커머스 미디어 네트워크</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Moloco</strong></td>
+                            <td>Moloco</td>
+                            <td>ML 기반 모바일 퍼포먼스, 한국 출신 글로벌 기업</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>SSP (Supply-Side Platform)</h3>
+            <p>
+                퍼블리셔 측에서 인벤토리를 판매하는 플랫폼입니다.
+                시뮬레이터에서 Floor Price를 설정하는 주체가 바로 SSP/퍼블리셔입니다.
+            </p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>운영사</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Google Ad Manager</strong> (GAM)</td>
+                            <td>Google</td>
+                            <td>가장 큰 점유율, 자체 AdX와 통합</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Magnite</strong> (구 Rubicon + Telaria)</td>
+                            <td>Magnite</td>
+                            <td>독립 SSP 1위, CTV SSP 시장 선도</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PubMatic</strong></td>
+                            <td>PubMatic</td>
+                            <td>클라우드 인프라 자체 운영, OpenWrap 헤더비딩</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Index Exchange</strong></td>
+                            <td>Index Exchange</td>
+                            <td>헤더비딩 선구자, 투명성 강조</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenX</strong></td>
+                            <td>OpenX</td>
+                            <td>100% 클라우드 기반(GCP 이전), 친환경 강조</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Ad Exchange</h3>
+            <p>
+                DSP와 SSP 사이에서 실시간 경매를 중개합니다.
+                시뮬레이터의 "Run Auction" 버튼이 Ad Exchange의 역할에 해당합니다.
+                현재 대부분의 SSP가 자체 Exchange 기능을 포함하여, 둘의 경계는 거의 사라진 상태입니다.
+            </p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Google AdX</strong> (Authorized Buyers)</td>
+                            <td>세계 최대 거래소, GAM에 내장</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Xandr Marketplace</strong></td>
+                            <td>Microsoft 생태계, 프리미엄 인벤토리</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Magnite Exchange</strong></td>
+                            <td>SSP+Exchange 겸업, CTV 강세</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>DMP / CDP (데이터 플랫폼)</h3>
+            <p>
+                오디언스 데이터를 수집하고 세그먼트를 생성합니다.
+                DSP가 입찰가를 결정할 때 참조하는 pCTR, 전환 가치 등의 배경 데이터를 제공하는 역할입니다.
+            </p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>LiveRamp</strong></td>
+                            <td>ID 그래프, 데이터 온보딩 인프라</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lotame</strong></td>
+                            <td>쿠키리스 대응, Panorama ID</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Treasure Data</strong> (Arm)</td>
+                            <td>CDP, 1st party 데이터 통합</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Segment</strong> (Twilio)</td>
+                            <td>CDP, 이벤트 스트리밍 기반</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Ad Verification / Brand Safety</h3>
+            <p>광고 품질 검증 및 사기 방지를 담당합니다.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>IAS</strong> (Integral Ad Science)</td>
+                            <td>Viewability, Brand Safety, Fraud 측정</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DoubleVerify</strong></td>
+                            <td>미디어 품질 인증, 사기 탐지</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pixalate</strong></td>
+                            <td>CTV/모바일 광고 사기 탐지 특화</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Identity / ID 솔루션</h3>
+            <p>3rd party 쿠키 폐지 이후의 사용자 식별 체계입니다.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>주도사</th>
+                            <th>방식</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>UID2</strong></td>
+                            <td>The Trade Desk</td>
+                            <td>이메일 기반 해시 ID, 오픈소스</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RampID</strong></td>
+                            <td>LiveRamp</td>
+                            <td>결정론적 ID 그래프</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ID5</strong></td>
+                            <td>ID5</td>
+                            <td>확률론적 + 결정론적 혼합</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Topics API</strong></td>
+                            <td>Google Chrome</td>
+                            <td>브라우저 기반 관심사 카테고리</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>실제 입찰 흐름 예시</h3>
+            <p>
+                유저가 웹페이지를 로드하는 순간부터 광고가 렌더링되기까지,
+                위에서 소개한 서비스들이 어떻게 연동되는지 보여주는 흐름입니다.
+                이 전체 과정이 <strong>100~200ms 이내</strong>에 완료됩니다.
+            </p>
+<pre><code>유저가 웹페이지 로드 (예: CNN.com)
+    │
+    ▼
+퍼블리셔 광고 슬롯 발생
+    │
+    ├─── Prebid.js 헤더비딩 ──┬── PubMatic
+    │                         ├── Index Exchange
+    │                         └── Magnite
+    ▼
+Google Ad Manager (SSP) → Google AdX (Exchange)
+    │
+    │  Bid Request (OpenRTB 2.6)
+    │
+    ├──→ DV360          → 입찰 $2.50
+    ├──→ The Trade Desk  → 입찰 $2.80  ★ Winner
+    ├──→ Amazon DSP      → 입찰 $2.30
+    └──→ Criteo          → 입찰 $1.90
+    │
+    ▼  1st Price Auction
+Winner: The Trade Desk, Pays $2.80
+    │
+    ▼
+광고 렌더링 완료 (~100ms)</code></pre>
+
+            <h3>한국 시장 주요 플레이어</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>역할</th>
+                            <th>서비스</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>DSP / 네트워크</strong></td>
+                            <td>카카오모먼트, 네이버 GFA, NHN ACE</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SSP</strong></td>
+                            <td>NHN AD (Toast AD), 카울리(Cauly), IGAWorks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ad Exchange</strong></td>
+                            <td>Google AdX (지배적), Kakao Adfit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>리테일 미디어</strong></td>
+                            <td>쿠팡 광고, 네이버 쇼핑 광고</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 

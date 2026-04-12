@@ -73,6 +73,42 @@ graph LR
 
 > **핵심:** 모든 Git 명령은 결국 이 4개 공간 사이의 데이터 이동입니다. 아래 모든 섹션에서 "이 명령은 어디에서 어디로 데이터를 옮기는가?"를 기억하세요.
 
+### HEAD란 무엇인가?
+
+이 글 전체에서 `HEAD`가 자주 등장합니다. 먼저 정확히 짚고 넘어갑니다.
+
+```mermaid
+graph LR
+    HEAD["HEAD<br/>(현재 위치 포인터)"] -->|"가리킴"| MAIN["main<br/>(브랜치 포인터)"]
+    MAIN -->|"가리킴"| C3["commit C3<br/>(최신 커밋)"]
+    C3 -->|"parent"| C2["commit C2"]
+    C2 -->|"parent"| C1["commit C1"]
+
+    style HEAD fill:#5c1a2a,stroke:#ff6384,color:#ff6384
+    style MAIN fill:#1a3a5c,stroke:#36a2eb,color:#36a2eb
+    style C3 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
+    style C2 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
+    style C1 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
+```
+
+**HEAD는 "지금 내가 어디에 있는가"를 알려주는 포인터입니다.** 보통은 브랜치를 가리키고, 그 브랜치가 다시 최신 커밋을 가리킵니다.
+
+| 개념 | 정체 | 비유 |
+|------|------|------|
+| **HEAD** | 현재 체크아웃된 위치를 가리키는 포인터 | "You are here" 표지판 |
+| **브랜치** (main, feature/x) | 특정 커밋을 가리키는 포인터 | 책갈피 |
+| **커밋** | 코드의 스냅샷 + 부모 커밋 링크 | 사진 (되돌릴 수 있는) |
+
+HEAD가 사용되는 핵심 패턴:
+
+```bash
+git diff HEAD          # Working Dir과 현재 커밋 비교
+git reset --soft HEAD~1  # HEAD를 1개 전 커밋으로 이동 (변경은 유지)
+git log HEAD~5..HEAD   # 최근 5개 커밋 보기
+```
+
+> **Detached HEAD:** `git checkout <커밋해시>`로 브랜치가 아닌 특정 커밋을 직접 체크아웃하면 HEAD가 브랜치를 거치지 않고 커밋을 직접 가리킵니다. 이 상태에서 커밋하면 어떤 브랜치에도 속하지 않으므로, 반드시 `git checkout -b <새 브랜치>`로 브랜치를 만들어주세요.
+
 ---
 
 ## 2. git add & git commit — 변경을 기록하는 기본 단위

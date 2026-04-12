@@ -8,8 +8,29 @@
 // - Bidding & Auction          → RTB, auction theory, bid optimization (future)
 // - Privacy & Compliance       → GDPR, CCPA, cookie-less (future)
 // - ML Infrastructure          → feature pipelines, serving, A/B platforms
+// - Targeting & Audience       → segmentation, lookalike, retargeting, contextual targeting
 
 const posts = [
+  {
+    id: 'audience-segmentation',
+    title: '오디언스 세그멘테이션: 광고 타겟팅의 첫 번째 질문 — 누구에게 보여줄 것인가',
+    excerpt: 'Demographic, Behavioral, RFM, Lifecycle 세그멘트 분류 체계부터 Rule-based SQL, ML Clustering(K-Means, GMM), 실시간 스트리밍 할당, Feature Store 연동, DMP vs CDP, GDPR/CCPA까지 — 세그멘테이션 전체를 해부합니다.',
+    date: '2026-04-13',
+    categories: ['Targeting & Audience'],
+    tags: ['Segmentation', 'Targeting', 'Ad Ecosystem', 'DMP', 'CDP', 'ML Infra'],
+    contentUrl: 'posts/audience-segmentation.md',
+    readTime: '20 min read'
+  },
+  {
+    id: 'lookalike-modeling',
+    title: 'Lookalike Modeling: 전환 유저 100명에서 100만 유사 유저를 발굴하는 법',
+    excerpt: 'Seed Audience 선정부터 Embedding 유사도, Propensity Score, Graph Expansion까지 — 3대 접근법과 Expansion Ratio 트레이드오프, 멀티 플랫폼 비교, 프로덕션 아키텍처를 해부합니다.',
+    date: '2026-04-13',
+    categories: ['Targeting & Audience'],
+    tags: ['Lookalike', 'Targeting', 'Ad Ecosystem', 'ML Infra', 'Two-Tower'],
+    contentUrl: 'posts/lookalike-modeling.md',
+    readTime: '18 min read'
+  },
   {
     id: 'git-practical-guide',
     title: '실무에서 바로 쓰는 Git 완전 가이드: 시각적으로 이해하는 fetch, merge, rebase, stash',

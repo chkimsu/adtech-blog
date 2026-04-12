@@ -210,6 +210,79 @@
         .log-no-winner {
             color: #ff6384;
         }
+
+        .log-savings {
+            color: #4bc0c0;
+            font-weight: 600;
+        }
+
+        /* DSP C Strategy Badge */
+        .strategy-badge {
+            margin-top: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 206, 86, 0.08);
+            border: 1px solid rgba(255, 206, 86, 0.25);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .strategy-label {
+            color: var(--text-muted);
+        }
+
+        .strategy-mode {
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .strategy-mode.shading {
+            color: #ff6384;
+        }
+
+        .strategy-mode.truthful {
+            color: #4bc0c0;
+        }
+
+        /* Comparison Panel */
+        .comparison-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .comparison-panel h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .comparison-table td:not(:first-child),
+        .comparison-table th:not(:first-child) {
+            text-align: right;
+        }
+
+        .btn-clear {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 71, 87, 0.3);
+        }
     </style>
 </head>
 
@@ -262,6 +335,10 @@
                         <button class="auction-type-btn" id="btn-second-price"
                             onclick="setAuctionType('second')">Second Price</button>
                     </div>
+                    <div class="strategy-badge">
+                        <span class="strategy-label">DSP C Strategy:</span>
+                        <span id="strategy-mode" class="strategy-mode shading">Bid Shading (50-65%)</span>
+                    </div>
                 </div>
 
                 <!-- Floor Price Slider -->
@@ -301,6 +378,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Comparison Panel -->
+        <div id="comparison-panel" class="comparison-panel" style="display: none;">
+            <h3>
+                Auction Type Comparison
+                <button class="btn-clear" onclick="clearComparison()">Clear</button>
+            </h3>
+            <div id="comparison-content"></div>
         </div>
 
         <!-- Explanation Section -->

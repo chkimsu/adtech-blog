@@ -379,21 +379,25 @@
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
+                    <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.5;">
+                        s(x&#x2081;) &gt; s(x&#x2082;)이면 오른쪽을 버리고 (b&rarr;x&#x2082;),
+                        아니면 왼쪽을 버립니다 (a&rarr;x&#x2081;).
+                    </div>
                     <div class="iter-info">
                         <div class="iter-info-item">
                             <div class="iter-info-label">Iteration</div>
                             <div class="iter-info-value" id="iter-num">-</div>
                         </div>
                         <div class="iter-info-item">
-                            <div class="iter-info-label">Bracket Size</div>
+                            <div class="iter-info-label">Bracket (b&minus;a)</div>
                             <div class="iter-info-value" id="iter-bracket">-</div>
                         </div>
                         <div class="iter-info-item">
-                            <div class="iter-info-label">a (lower)</div>
+                            <div class="iter-info-label">a (구간 하한)</div>
                             <div class="iter-info-value" id="iter-a">-</div>
                         </div>
                         <div class="iter-info-item">
-                            <div class="iter-info-label">b (upper)</div>
+                            <div class="iter-info-label">b (구간 상한)</div>
                             <div class="iter-info-value" id="iter-b">-</div>
                         </div>
                     </div>
@@ -402,6 +406,9 @@
                 <!-- Panel 3: Iteration Log -->
                 <div class="panel">
                     <h3>Iteration Log</h3>
+                    <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.5rem; line-height:1.5;">
+                        매 반복마다 x&#x2081;, x&#x2082; 두 점의 Surplus를 비교하여 구간 [a, b]를 축소합니다.
+                    </div>
                     <div class="log-container" id="log-container">
                         <table class="log-table">
                             <thead>
@@ -425,12 +432,19 @@
                 <!-- Panel 4: Surplus Curve -->
                 <div class="panel" style="margin-bottom:1.5rem">
                     <h3>Surplus Curve &mdash; s(b) = (V &minus; b) &times; F(b|x)</h3>
+                    <div style="font-size:0.82rem; color:var(--text-secondary); line-height:1.55; margin-bottom:0.75rem;">
+                        <strong>Surplus</strong> = (낙찰 시 이익) &times; (낙찰 확률).
+                        입찰가 b를 올리면 이길 확률은 높아지지만 이익은 줄어듭니다.
+                        이 곡선의 <strong>봉우리</strong>가 최적 입찰가 b*입니다.
+                    </div>
                     <div class="legend-inline">
-                        <span><span class="legend-dot" style="background:#00e5ff"></span> Surplus</span>
-                        <span><span class="legend-dot" style="background:rgba(0,229,255,0.4)"></span> Bracket [a, b]</span>
-                        <span><span class="legend-dot" style="background:#ff6384"></span> x&#x2081;</span>
-                        <span><span class="legend-dot" style="background:#ffce56"></span> x&#x2082;</span>
-                        <span><span class="legend-dot" style="background:#4bc0c0"></span> b* (Optimal)</span>
+                        <span><span class="legend-dot" style="background:#00e5ff"></span> <strong>Surplus</strong> — 기대 이익 곡선</span>
+                        <span><span class="legend-dot" style="background:rgba(0,229,255,0.4)"></span> <strong>Bracket</strong> — 현재 탐색 구간 [a, b]</span>
+                    </div>
+                    <div class="legend-inline" style="margin-bottom:0.75rem;">
+                        <span><span class="legend-dot" style="background:#ff6384"></span> <strong>x&#x2081;</strong> — 왼쪽 비교점 (황금비 위치)</span>
+                        <span><span class="legend-dot" style="background:#ffce56"></span> <strong>x&#x2082;</strong> — 오른쪽 비교점 (황금비 위치)</span>
+                        <span><span class="legend-dot" style="background:#4bc0c0"></span> <strong>b*</strong> — 수렴 후 최적 입찰가</span>
                     </div>
                     <div class="chart-wrap">
                         <canvas id="surplusChart"></canvas>
@@ -440,6 +454,11 @@
                 <!-- Panel 5: Convergence -->
                 <div class="panel" style="margin-bottom:1.5rem">
                     <h3>Convergence &mdash; Bracket Size per Iteration</h3>
+                    <div style="font-size:0.82rem; color:var(--text-secondary); line-height:1.55; margin-bottom:0.75rem;">
+                        <strong>Bracket Size</strong> = 탐색 구간의 폭 (b &minus; a).
+                        매 반복마다 &times;0.618로 줄어들며, &epsilon; 미만이 되면 수렴 완료.
+                        로그 스케일에서 직선 = 기하급수적 수렴.
+                    </div>
                     <div class="chart-wrap-sm">
                         <canvas id="convergenceChart"></canvas>
                     </div>
@@ -451,22 +470,25 @@
                     <div class="result-box" id="result-box">
                         <h4>Converged</h4>
                         <div class="result-row">
-                            <span class="result-label">Optimal Bid b*</span>
+                            <span class="result-label">Optimal Bid b* <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">— 이 가격으로 입찰</span></span>
                             <span class="result-value result-highlight" id="res-bstar">-</span>
                         </div>
                         <div class="result-row">
-                            <span class="result-label">Shading Ratio</span>
+                            <span class="result-label">Shading Ratio <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">— V 대비 할인율</span></span>
                             <span class="result-value" id="res-shading">-</span>
                         </div>
                         <div class="result-row">
-                            <span class="result-label">Max Surplus</span>
+                            <span class="result-label">Max Surplus <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">— 경매당 기대 이익</span></span>
                             <span class="result-value" id="res-surplus">-</span>
                         </div>
                         <div class="result-row">
-                            <span class="result-label">Iterations</span>
+                            <span class="result-label">Iterations <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">— 수렴까지 반복 수</span></span>
                             <span class="result-value" id="res-iters">-</span>
                         </div>
                         <div class="result-divider"></div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.5rem;">
+                            같은 정밀도(&epsilon;)를 달성하는 데 필요한 함수 평가 횟수 비교:
+                        </div>
                         <div class="result-row">
                             <span class="result-label">GSS Evaluations</span>
                             <span class="result-value" id="res-evals">-</span>

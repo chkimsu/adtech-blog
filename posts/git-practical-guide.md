@@ -371,6 +371,89 @@ sequenceDiagram
 > git config --global pull.rebase true
 > ```
 
+### "Divergent Branch" 경고 — git pull이 혈압을 올리는 이유
+
+어느 날 평소처럼 `git pull`을 했는데 이런 메시지가 뜹니다:
+
+```
+hint: You have divergent branches and need to specify how to reconcile them.
+hint: You can do so by running one of the following commands sometime before
+hint: your next pull:
+hint:
+hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+hint:
+hint: You can replace "git config" with "git config --global" to set a default
+hint: preference for all repositories.
+```
+
+**왜 이 경고가 뜨는가?** Local과 Remote가 **각각 독립적으로 커밋을 쌓아서 분기(diverge)된 상태**이기 때문입니다:
+
+```mermaid
+gitGraph
+    commit id: "A"
+    commit id: "B"
+    branch origin/main
+    commit id: "D (remote)"
+    commit id: "E (remote)"
+    checkout main
+    commit id: "C (local)"
+```
+
+이 상태에서 `git pull`은 두 갈래를 합쳐야 하는데, **어떻게 합칠지(merge? rebase? 거부?)를 Git이 모르기 때문에** 사용자에게 묻는 것입니다. Git 2.27부터 이 경고가 추가되었고, 기본 전략을 설정하지 않으면 매번 출력됩니다.
+
+### git pull의 3가지 전략: merge vs rebase vs ff-only
+
+| 전략 | 설정 | 동작 | 히스토리 모양 | 적합한 상황 |
+|------|------|------|-------------|------------|
+| **merge** | `pull.rebase false` | fetch + merge → 합류 커밋 생성 | 갈래가 보이는 다이아몬드 형태 | merge commit을 명시적으로 남기고 싶을 때 |
+| **rebase** | `pull.rebase true` | fetch + rebase → 내 커밋을 remote 뒤에 재배치 | 일직선 | 깔끔한 히스토리 선호, 대부분의 실무 팀 |
+| **ff-only** | `pull.ff only` | fast-forward가 가능할 때만 pull, 불가능하면 **거부** | 일직선 (항상) | 분기 자체를 허용하지 않는 엄격한 워크플로우 |
+
+#### Fast-Forward란 정확히 무엇인가?
+
+Fast-forward는 **"합칠 것이 없는" 상황**입니다. Local에 추가 커밋이 없고, Remote만 앞서 나간 경우:
+
+```mermaid
+gitGraph
+    commit id: "A"
+    commit id: "B"
+    commit id: "C (remote)"
+    commit id: "D (remote)"
+```
+
+이 경우 Local의 `main` 포인터를 Remote의 최신 커밋으로 **그냥 앞으로 옮기면** 됩니다 — merge도 rebase도 필요 없이, 포인터만 "빨리 감기(fast-forward)"합니다. 충돌 가능성이 0이므로 가장 안전합니다.
+
+**`pull.ff only`의 의미**: "fast-forward가 가능한 상황에서만 pull을 수행하고, 내가 로컬 커밋을 쌓아서 분기가 발생한 상태라면 pull을 거부한다." 즉, **분기가 생기기 전에 먼저 해결하라**는 엄격한 정책입니다. 이 경우 사용자는 직접 `git rebase` 또는 `git merge`를 선택해서 분기를 해소한 뒤 다시 pull해야 합니다.
+
+### git config로 기본 전략 설정하기
+
+경고를 영구적으로 없애려면 기본 전략을 설정합니다:
+
+```bash
+# 방법 1: rebase (가장 많이 쓰는 실무 설정)
+git config --global pull.rebase true
+
+# 방법 2: merge (전통적 방식, merge commit 남김)
+git config --global pull.rebase false
+
+# 방법 3: fast-forward only (분기 자체를 거부)
+git config --global pull.ff only
+```
+
+`--global`은 모든 저장소에 적용됩니다. 특정 저장소에만 다르게 설정하려면 `--global`을 빼면 됩니다:
+
+```bash
+# 이 저장소에서만 rebase 사용
+git config pull.rebase true
+```
+
+> **실무 추천 요약:**
+> - **개인 프로젝트** 또는 **소규모 팀**: `pull.rebase true` — 히스토리가 깔끔하고, 대부분의 상황에서 안전
+> - **팀 컨벤션이 이미 있다면**: 팀 설정을 따르세요. merge 기반 워크플로우를 쓰는 팀에서 혼자 rebase하면 히스토리가 꼬입니다
+> - **분기를 원천 차단하고 싶다면**: `pull.ff only` — 가장 엄격하지만, `git pull` 전에 항상 최신 상태를 유지해야 하는 규율이 필요
+
 ---
 
 ## 6. Branching — 브랜치의 생성, 이동, 삭제

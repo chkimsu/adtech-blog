@@ -501,12 +501,19 @@ nav {
   top: 80px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 1.25rem;
+  min-width: 0;
+}
+
+.tree-nav {
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .sidebar-tree::-webkit-scrollbar {
@@ -572,6 +579,8 @@ nav {
   cursor: pointer;
   user-select: none;
   transition: all 0.15s ease;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tree-category-header:hover {
@@ -600,7 +609,11 @@ nav {
   font-size: 0.82rem;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tree-category-header.active .tree-category-name {
@@ -617,7 +630,7 @@ nav {
 .tree-children {
   max-height: 0;
   overflow: hidden;
-  padding-left: 1.5rem;
+  padding-left: 1rem;
   transition: max-height 0.25s ease;
 }
 

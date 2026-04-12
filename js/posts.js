@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'git-practical-guide',
+    title: '실무에서 바로 쓰는 Git 완전 가이드: 시각적으로 이해하는 fetch, merge, rebase, stash',
+    excerpt: 'Working Directory → Staging → Local Repo → Remote Repo 멘탈 모델부터 fetch vs pull, merge vs rebase 비교, stash 활용, 충돌 해결, 실무 브랜치 전략까지 — 다이어그램으로 완전 해부합니다.',
+    date: '2026-04-12',
+    categories: ['DevOps & Tooling'],
+    tags: ['Git', 'DevOps', 'Workflow', 'Collaboration'],
+    contentUrl: 'posts/git-practical-guide.md',
+    readTime: '22 min read'
+  },
+  {
     id: 'ad-log-pipeline',
     title: '광고 시스템 로그 파이프라인: 한 번의 입찰에서 10개의 로그가 만들어지는 구조',
     excerpt: 'Request Log부터 Attribution Log까지 — 광고 시스템의 10가지 핵심 로그가 언제, 어디서, 무엇을 기록하고, ML 학습 데이터로 어떻게 합류하는지 전체 파이프라인을 해부합니다.',

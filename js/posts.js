@@ -11,6 +11,16 @@
 
 const posts = [
   {
+    id: 'ad-log-pipeline',
+    title: '광고 시스템 로그 파이프라인: 한 번의 입찰에서 10개의 로그가 만들어지는 구조',
+    excerpt: 'Request Log부터 Attribution Log까지 — 광고 시스템의 10가지 핵심 로그가 언제, 어디서, 무엇을 기록하고, ML 학습 데이터로 어떻게 합류하는지 전체 파이프라인을 해부합니다.',
+    date: '2026-04-12',
+    categories: ['ML Infrastructure'],
+    tags: ['ML Infra', 'pCTR', 'Ad Ecosystem', 'DSP'],
+    contentUrl: 'posts/ad-log-pipeline.md',
+    readTime: '22 min read'
+  },
+  {
     id: 'ltv-ad-ranking',
     title: 'LTV(Long Term Value): eCPM 너머, 광고 랭킹의 진짜 기준',
     excerpt: 'eCPM만으로 광고를 정렬하면 왜 위험한가? 사용자 비용(β), Squashing Function까지 — 광고 플랫폼이 "돈"과 "경험"을 동시에 최적화하는 LTV 랭킹의 원리를 해부합니다.',

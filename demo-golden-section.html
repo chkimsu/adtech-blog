@@ -344,22 +344,22 @@
                     <div class="slider-group">
                         <label>True Value (V) <span id="val-V">$5.0</span></label>
                         <input type="range" id="slider-V" min="1" max="10" step="0.1" value="5">
-                        <div class="slider-hint">pCTR &times; Conversion Value</div>
+                        <div class="slider-hint">광고의 진짜 가치 = pCTR &times; Conversion Value. 이 금액을 초과하면 손해</div>
                     </div>
                     <div class="slider-group">
                         <label>Market &mu; <span id="val-mu">0.80</span></label>
                         <input type="range" id="slider-mu" min="0.2" max="1.5" step="0.05" value="0.8">
-                        <div class="slider-hint">Log-normal 위치 파라미터 (시장 가격 수준)</div>
+                        <div class="slider-hint">시장 가격 분포의 중심. 높을수록 경쟁이 치열 (중앙값 &approx; e<sup>&mu;</sup>)</div>
                     </div>
                     <div class="slider-group">
                         <label>Market &sigma; <span id="val-sigma">0.50</span></label>
                         <input type="range" id="slider-sigma" min="0.2" max="1.0" step="0.05" value="0.5">
-                        <div class="slider-hint">Log-normal 스케일 파라미터 (시장 변동성)</div>
+                        <div class="slider-hint">시장 가격의 퍼짐 정도. 클수록 경쟁자 입찰가 편차가 커 예측이 어려움</div>
                     </div>
                     <div class="slider-group">
                         <label>Tolerance &epsilon; <span id="val-tol">$0.010</span></label>
                         <input type="range" id="slider-tol" min="0.001" max="0.1" step="0.001" value="0.01">
-                        <div class="slider-hint">수렴 허용 오차 (구간 크기 &lt; &epsilon; 이면 종료)</div>
+                        <div class="slider-hint">수렴 정밀도. 작을수록 정확하지만 반복 횟수 증가 (구간 &lt; &epsilon; 이면 종료)</div>
                     </div>
                 </div>
 
@@ -492,6 +492,127 @@
             </div>
 
         </div>
+
+        <!-- ====== 상세 해설 ====== -->
+        <div class="post-content" style="margin-top: 3rem;">
+
+            <h2>이 데모는 무엇을 보여주나?</h2>
+            <p>
+                1st Price Auction에서 DSP는 광고의 진짜 가치(True Value) <strong>V</strong>보다 낮게 입찰해야 이익을 남길 수 있습니다.
+                하지만 너무 낮으면 낙찰 자체가 안 됩니다. 이 <strong>시소 관계의 균형점</strong> &mdash; 즉 기대 이익(Surplus)을 극대화하는
+                최적 입찰가 <strong>b*</strong> &mdash; 를 찾는 것이 Bid Shading의 핵심이며,
+                이 데모는 그 탐색 과정을 <strong>Golden Section Search</strong>로 시각화합니다.
+            </p>
+
+            <h2>Surplus 함수: s(b) = (V &minus; b) &times; F(b|x)</h2>
+            <p>
+                차트에 그려진 곡선이 <strong>Surplus 함수</strong>입니다. 두 힘의 곱으로 구성됩니다:
+            </p>
+            <ul>
+                <li><strong>(V &minus; b)</strong>: 낙찰 시 이익. 입찰가 b가 낮을수록 이익이 큼</li>
+                <li><strong>F(b|x)</strong>: 낙찰 확률 (Win Rate). 시장 가격 분포의 CDF. 입찰가 b가 높을수록 이길 확률이 높음</li>
+            </ul>
+            <p>
+                이 두 값의 곱은 <strong>산 모양(단봉, unimodal)</strong>을 그립니다: b=0 근처에서는 이익은 크지만 낙찰 확률이 0에 가깝고,
+                b=V 근처에서는 거의 항상 이기지만 이익이 0입니다.
+                <strong>봉우리가 정확히 하나</strong>라는 것이 수학적으로 증명되어 있으며 (Zhou et al., KDD 2021),
+                이 단봉성이 Golden Section Search를 사용할 수 있는 근거입니다.
+            </p>
+
+            <h2>Golden Section Search란?</h2>
+            <p>
+                <strong>단봉 함수에서 최대값을 찾는 가장 효율적인 구간 축소 알고리즘</strong>입니다.
+                이진 탐색(Binary Search)과 유사하지만, 매 반복마다 탐색 구간을 <strong>황금 비율(&phi; &approx; 1.618)</strong>로
+                축소하며, <strong>함수 평가 1회</strong>만으로 구간을 줄일 수 있습니다.
+            </p>
+
+            <h3>알고리즘 단계</h3>
+            <ol>
+                <li><strong>초기화</strong>: 탐색 구간 [a, b]를 설정 (a &approx; 0, b &approx; V)</li>
+                <li>구간 내에 두 점 <span style="color:#ff6384;font-weight:600;">x₁</span>,
+                    <span style="color:#ffce56;font-weight:600;">x₂</span>를 황금 비율로 배치:
+                    <br>x₁ = b &minus; (b&minus;a)/&phi;, &nbsp; x₂ = a + (b&minus;a)/&phi;</li>
+                <li>두 점의 Surplus를 비교: s(x₁) vs s(x₂)</li>
+                <li>s(x₁) > s(x₂)이면 최대값은 x₂ 왼쪽에 있으므로 b = x₂로 축소</li>
+                <li>s(x₁) &le; s(x₂)이면 최대값은 x₁ 오른쪽에 있으므로 a = x₁로 축소</li>
+                <li>구간 크기가 허용 오차 &epsilon; 미만이면 종료, 아니면 2번으로 반복</li>
+            </ol>
+            <p>
+                매 반복마다 구간이 <strong>1/&phi; &approx; 61.8%</strong>로 줄어듭니다.
+                Convergence 차트(로그 스케일)에서 이 기하급수적 수렴을 직접 확인할 수 있습니다.
+            </p>
+
+            <h2>파라미터 해석 가이드</h2>
+
+            <h3>True Value (V)</h3>
+            <p>
+                <strong>pCTR &times; Conversion Value</strong>로 계산되는 광고의 진짜 가치입니다.
+                예를 들어 pCTR = 5%, 전환 가치 = $100이면 V = $5.00입니다.
+                V가 시장 가격보다 훨씬 높으면 최적 입찰가도 높아지고 (여유가 있으므로), V가 시장 가격에 가까우면
+                아주 정밀한 shading이 필요합니다.
+            </p>
+
+            <h3>Market &mu; (로그노멀 위치)</h3>
+            <p>
+                시장 가격 분포의 중심을 결정합니다. 시장 중앙값 &approx; e<sup>&mu;</sup>이므로,
+                &mu; = 0.8이면 중앙값 &approx; $2.23입니다.
+                <strong>&mu;를 올리면</strong> 경쟁이 치열해져 최적 입찰가가 상승하고, Surplus가 줄어듭니다.
+            </p>
+
+            <h3>Market &sigma; (로그노멀 스케일)</h3>
+            <p>
+                경쟁자 입찰가의 퍼짐 정도입니다. &sigma;가 크면 경쟁자 가격의 불확실성이 높아
+                Surplus 곡선이 넓고 완만해집니다. &sigma;가 작으면 곡선이 뾰족해져 최적 지점이 좁아집니다.
+            </p>
+
+            <h3>Tolerance &epsilon;</h3>
+            <p>
+                탐색 정밀도입니다. &epsilon; = $0.01이면 최적 입찰가를 $0.01 이내로 찾습니다.
+                V = $5.00일 때 약 <strong>20회 반복</strong>이면 충분하며,
+                같은 정밀도를 Grid Search로 달성하려면 500개 그리드를 평가해야 합니다 (<strong>약 25배 차이</strong>).
+            </p>
+
+            <h2>왜 Grid Search 대신 Golden Section Search인가?</h2>
+            <p>
+                RTB에서는 <strong>수십억 건/일</strong>의 bid request마다 최적 입찰가를 실시간으로 계산해야 합니다.
+                Distribution Network가 시장 분포 파라미터 (&mu;, &sigma;)를 출력하면,
+                Golden Section Search가 <strong>~20회의 CDF 평가</strong>만으로 b*를 찾습니다.
+                전체 Bid Shading 모듈의 레이턴시가 <strong>10ms 이내</strong>에 완료되며,
+                이는 Grid Search로는 불가능한 속도입니다.
+            </p>
+
+            <h2>실험해볼 시나리오</h2>
+
+            <h3>시나리오 1: V를 시장 가격 근처로</h3>
+            <p>
+                V = $2.5, &mu; = 0.8 (중앙값 &approx; $2.23)으로 설정해보세요.
+                True Value가 시장 평균에 가까우면 Surplus 곡선이 매우 낮고 좁아져,
+                최적 입찰가와 이익 모두 작아집니다. 이런 경매는 입찰 자체를 skip하는 것이 합리적입니다.
+            </p>
+
+            <h3>시나리오 2: 높은 정밀도</h3>
+            <p>
+                &epsilon; = $0.001로 줄여보세요. 반복 횟수가 늘어나지만, Grid Search 대비 효율성 격차는 더 벌어집니다.
+                Results 패널의 Speedup 배수가 크게 증가하는 것을 확인할 수 있습니다.
+            </p>
+
+            <h3>시나리오 3: 변동성이 큰 시장</h3>
+            <p>
+                &sigma; = 1.0으로 키워보세요. Surplus 곡선이 넓고 완만해져 최적 지점이 넓어집니다.
+                이런 시장에서는 정밀한 최적화보다 대략적인 shading도 충분히 효과적입니다.
+            </p>
+
+            <h2>참고</h2>
+            <p>
+                이 데모는 <a href="post.html?id=bid-shading-censored" style="color: var(--accent-primary);">Bid Shading & Censored Data 포스트</a>의
+                섹션 4 "최적 입찰가 계산: Surplus Maximization"을 시각화한 것입니다.
+                Zhou et al. (Yahoo/Verizon Media, KDD 2021)의 Theorem 1에서 증명한 <strong>Surplus unimodality</strong>가
+                이 알고리즘의 이론적 근거이며,
+                <a href="demo-bid-shading.html" style="color: var(--accent-primary);">Bid Shading Visualizer</a>의 Sweep 차트에서
+                동일한 단봉 곡선을 Monte Carlo로 확인할 수 있습니다.
+            </p>
+        </div>
+
     </div>
 
     <!-- Footer -->

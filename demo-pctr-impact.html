@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="pCTR 모델의 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지 실시간 슬라이더로 보는 인터랙티브 대시보드.">
+  <title>pCTR Model Quality Impact — Ad Tech Blog</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .pq-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .pq-hero { text-align: center; padding: 2rem 0 1rem; }
+    .pq-hero h1 {
+      font-size: 2.05rem;
+      margin-bottom: 0.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .pq-hero p {
+      color: var(--text-secondary);
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+    }
+
+    .pq-intro {
+      max-width: 980px;
+      margin: 0 auto 1.5rem;
+      padding: 1.15rem 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .pq-intro strong { color: var(--accent-primary); }
+    .pq-intro code {
+      background: var(--bg-tertiary);
+      padding: 0.08rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+
+    /* Controls */
+    .pq-controls {
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+      padding: 1.3rem 1.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+    }
+
+    .pq-slider-row {
+      margin-bottom: 0.9rem;
+      display: grid;
+      grid-template-columns: 200px 1fr 80px;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    @media (max-width: 700px) {
+      .pq-slider-row { grid-template-columns: 1fr; }
+    }
+
+    .pq-slider-label {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .pq-slider-label small {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 0.15rem;
+    }
+
+    .pq-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      outline: none;
+    }
+    .pq-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--accent-primary);
+    }
+    .pq-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .pq-slider-value {
+      text-align: right;
+      font-family: 'Fira Code', monospace;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+
+    /* Dashboard columns */
+    .pq-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .pq-dashboard { grid-template-columns: 1fr; }
+    }
+
+    .pq-panel {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.35rem 1.4rem;
+    }
+
+    .pq-panel h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pq-panel table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    .pq-panel th,
+    .pq-panel td {
+      padding: 0.45rem 0.55rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pq-panel th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pq-panel td.num {
+      font-family: 'Fira Code', monospace;
+      text-align: right;
+      color: var(--text-secondary);
+    }
+
+    .pq-panel td.num.good  { color: #4BC0C0; font-weight: 700; }
+    .pq-panel td.num.bad   { color: #ff6384; font-weight: 700; }
+    .pq-panel td.num.accent{ color: var(--accent-primary); font-weight: 700; }
+
+    /* Summary big metric */
+    .pq-summary {
+      max-width: 980px;
+      margin: 0 auto 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+    }
+
+    @media (max-width: 700px) {
+      .pq-summary { grid-template-columns: 1fr; }
+    }
+
+    .pq-summary-item {
+      padding: 1rem 1.1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .pq-summary-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+    }
+
+    .pq-summary-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-primary);
+    }
+
+    .pq-summary-value.warn { color: #ff9f40; }
+    .pq-summary-value.bad  { color: #ff6384; }
+    .pq-summary-value.good { color: #4BC0C0; }
+
+    .pq-summary-delta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Chart card */
+    .pq-chart-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.3rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .pq-chart-card h3 { font-size: 1rem; margin-bottom: 0.7rem; }
+    .pq-chart-wrap { position: relative; height: 320px; }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pq-hero">
+      <div class="pq-container">
+        <h1>pCTR Model Quality Impact</h1>
+        <p>pCTR 예측 모델의 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지,
+          슬라이더 하나로 실시간 계산해 봅니다.</p>
+      </div>
+    </section>
+
+    <div class="pq-container">
+      <div class="pq-intro">
+        <strong>시나리오</strong> — 광고 지면 하나, 진짜 세계의 <em>True</em> 파라미터는 고정입니다:
+        <code>True pCTR = 2.0%</code>, <code>pCVR = 5.0%</code>, <code>Conversion Value = $20</code> ·
+        따라서 <code>True Value = $0.020</code> per impression.<br><br>
+        DSP의 pCTR 모델이 <em>얼마나 정확한가</em>에 따라 예측 True Value가 달라지고, 그 값을 근거로 입찰가가 결정됩니다.
+        경매 시장은 경쟁자 입찰가 분포(Log-normal)로 단순화했습니다.
+        <strong>"모델 오차가 수익으로 어떻게 번역되는가"</strong>를 슬라이더로 직접 만져 확인하세요.
+      </div>
+
+      <!-- Slider controls -->
+      <div class="pq-controls">
+        <div class="pq-slider-row">
+          <div class="pq-slider-label">
+            pCTR 모델 편향 (%)
+            <small>예측 pCTR = True pCTR × (1 + 편향)</small>
+          </div>
+          <input type="range" class="pq-slider" id="slider-bias" min="-50" max="50" step="1" value="0">
+          <div class="pq-slider-value" id="val-bias">0%</div>
+        </div>
+        <div class="pq-slider-row">
+          <div class="pq-slider-label">
+            시장 경쟁도
+            <small>높을수록 경쟁자 분포의 평균이 올라감 (낙찰 어려움)</small>
+          </div>
+          <input type="range" class="pq-slider" id="slider-market" min="0.005" max="0.025" step="0.001" value="0.015">
+          <div class="pq-slider-value" id="val-market">$0.015</div>
+        </div>
+        <div class="pq-slider-row">
+          <div class="pq-slider-label">
+            Shading Factor
+            <small>입찰가 = 예측 True Value × (1 − Shade)</small>
+          </div>
+          <input type="range" class="pq-slider" id="slider-shade" min="0" max="0.5" step="0.01" value="0.2">
+          <div class="pq-slider-value" id="val-shade">20%</div>
+        </div>
+      </div>
+
+      <!-- Summary headline -->
+      <div class="pq-summary">
+        <div class="pq-summary-item">
+          <div class="pq-summary-label">예측 True Value</div>
+          <div class="pq-summary-value" id="sum-predicted">—</div>
+          <div class="pq-summary-delta" id="sum-predicted-delta">—</div>
+        </div>
+        <div class="pq-summary-item">
+          <div class="pq-summary-label">Win Rate</div>
+          <div class="pq-summary-value" id="sum-winrate">—</div>
+          <div class="pq-summary-delta">낙찰률</div>
+        </div>
+        <div class="pq-summary-item">
+          <div class="pq-summary-label">실제 Surplus (1000 impr)</div>
+          <div class="pq-summary-value" id="sum-surplus">—</div>
+          <div class="pq-summary-delta" id="sum-surplus-delta">최적 대비</div>
+        </div>
+      </div>
+
+      <!-- Two panels: numbers + curve -->
+      <div class="pq-dashboard">
+        <div class="pq-panel">
+          <h3>🧮 단계별 계산</h3>
+          <table>
+            <thead>
+              <tr><th>단계</th><th>값</th></tr>
+            </thead>
+            <tbody id="calc-body">
+              <tr><td>True pCTR</td><td class="num accent">2.00%</td></tr>
+              <tr><td>예측 pCTR</td><td class="num" id="c-pred-pctr">—</td></tr>
+              <tr><td>True Value</td><td class="num accent">$0.0200</td></tr>
+              <tr><td>예측 Value</td><td class="num" id="c-pred-value">—</td></tr>
+              <tr><td>입찰가 (shaded)</td><td class="num" id="c-bid">—</td></tr>
+              <tr><td>Win Rate</td><td class="num" id="c-winrate">—</td></tr>
+              <tr><td>낙찰 시 평균 지불 CPM</td><td class="num" id="c-avgpay">—</td></tr>
+              <tr><td>실제 Surplus / impression</td><td class="num" id="c-surplus-per">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pq-panel">
+          <h3>📉 편향별 Surplus 곡선</h3>
+          <div class="pq-chart-wrap">
+            <canvas id="surplus-curve"></canvas>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.7rem; line-height:1.5;">
+            x축: pCTR 편향(%), y축: 1000 impression당 Surplus. 0% 편향에서 최적점이 형성되며,
+            양쪽으로 갈수록 과대·과소입찰 손실이 비대칭적으로 커집니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>✨ 이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>pCTR 모델 정확도가 곧 수익</strong> — 10% 편향이 입찰가 10%를 흔들고, 결국 Surplus를 훨씬 더 크게 흔든다. "모델 개선 1%가 ROAS 3~5%"로 증폭되는 이유.</li>
+            <li><strong>과대입찰의 독성</strong> — 낙찰률은 올라도 True Value보다 많이 내면 매 경매가 손실. 편향 축의 양쪽이 비대칭인 이유다.</li>
+            <li><strong>Calibration의 중요성</strong> — AUC가 높아도 출력 확률이 실제와 다르면(=편향) 이 곡선에서 바로 0% 지점에서 벗어난다. 모델 평가에 Calibration 지표가 필수.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>🚀 다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="demo-bid-shading.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">Bid Shading Visualizer</span>
+              <span class="demo-next-excerpt">정확한 pCTR이 있어도 입찰가를 어떻게 조정해야 Surplus가 최대가 되는가</span>
+              <span class="demo-next-meta">⏱ 15분 · 중급</span>
+            </a>
+            <a href="post.html?id=calibration" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Calibration — AUC가 높아도 돈을 잃는 이유</span>
+              <span class="demo-next-excerpt">Platt Scaling, Isotonic Regression으로 pCTR을 보정하는 파이프라인</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // ===================================================================
+    // pCTR Model Quality Impact Dashboard
+    // ===================================================================
+
+    // Fixed "true world" parameters
+    const TRUE_PCTR = 0.02;
+    const TRUE_PCVR = 0.05;
+    const CONV_VALUE = 20;
+    const TRUE_VALUE = TRUE_PCTR * TRUE_PCVR * CONV_VALUE; // $0.02 per impression
+    const IMPRESSIONS = 1000; // scale for display
+
+    // Simplified log-normal competitor distribution (median = marketMedian param, sigma fixed)
+    const COMP_SIGMA = 0.6;
+
+    // Win Rate = P(my bid > competitor). For log-normal, we can compute via CDF.
+    // Use a simple standard normal CDF approximation.
+    function normalCDF(z) {
+      // Abramowitz & Stegun 26.2.17
+      const t = 1 / (1 + 0.2316419 * Math.abs(z));
+      const d = 0.3989422804 * Math.exp(-z * z / 2);
+      const p = d * t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+      return z > 0 ? 1 - p : p;
+    }
+
+    function winRate(bid, median) {
+      if (bid <= 0) return 0;
+      const mu = Math.log(median);
+      const z = (Math.log(bid) - mu) / COMP_SIGMA;
+      return normalCDF(z);
+    }
+
+    // Expected payment given win (truncated mean of competitor below bid)
+    // Simplified: use median × 0.9 for conservative estimate (approximation for display)
+    function expectedPayGivenWin(bid, median) {
+      if (bid <= 0) return 0;
+      // Rough: truncated log-normal mean below bid
+      const mu = Math.log(median);
+      const z = (Math.log(bid) - mu) / COMP_SIGMA;
+      // Mean of lognormal truncated from above = exp(mu + sigma^2/2) * Phi(z-sigma)/Phi(z)
+      const num = normalCDF(z - COMP_SIGMA);
+      const den = normalCDF(z);
+      if (den < 1e-6) return 0;
+      return Math.exp(mu + COMP_SIGMA * COMP_SIGMA / 2) * (num / den);
+    }
+
+    function calcOutcome(biasPct, marketMedian, shade) {
+      const predPctr = TRUE_PCTR * (1 + biasPct / 100);
+      const predValue = predPctr * TRUE_PCVR * CONV_VALUE;
+      const bid = Math.max(0, predValue * (1 - shade));
+
+      const wr = winRate(bid, marketMedian);
+      const avgPay = expectedPayGivenWin(bid, marketMedian);
+      // True Surplus per impression = Win Rate × (True Value − avgPay)
+      const surplusPerImpr = wr * (TRUE_VALUE - avgPay);
+      const surplusTotal = surplusPerImpr * IMPRESSIONS;
+
+      return { predPctr, predValue, bid, wr, avgPay, surplusPerImpr, surplusTotal };
+    }
+
+    // -- Chart --
+    let chart;
+    function initChart() {
+      chart = new Chart(document.getElementById('surplus-curve'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Surplus (1000 impr)',
+              data: [],
+              borderColor: '#00e5ff',
+              backgroundColor: 'rgba(0, 229, 255, 0.15)',
+              tension: 0.2,
+              pointRadius: 0,
+              borderWidth: 2,
+              fill: true
+            },
+            {
+              label: '현재 편향',
+              data: [],
+              borderColor: '#ff9f40',
+              backgroundColor: '#ff9f40',
+              pointRadius: 6,
+              pointHoverRadius: 8,
+              showLine: false,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          plugins: {
+            legend: { labels: { color: '#b8c5d6' } }
+          },
+          scales: {
+            x: { title: { display: true, text: 'pCTR 편향 (%)', color: '#7a8ba3' }, ticks: { color: '#7a8ba3' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { title: { display: true, text: 'Surplus ($)', color: '#7a8ba3' }, ticks: { color: '#7a8ba3' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+          }
+        }
+      });
+    }
+
+    function updateCurve(biasNow, marketMedian, shade) {
+      const points = [];
+      const labels = [];
+      for (let b = -50; b <= 50; b += 2) {
+        const o = calcOutcome(b, marketMedian, shade);
+        labels.push(b);
+        points.push(+o.surplusTotal.toFixed(4));
+      }
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = points;
+      // Current point marker
+      const o = calcOutcome(biasNow, marketMedian, shade);
+      chart.data.datasets[1].data = labels.map(l => l === biasNow ? +o.surplusTotal.toFixed(4) : null);
+      chart.update('none');
+    }
+
+    function render() {
+      const bias = +document.getElementById('slider-bias').value;
+      const market = +document.getElementById('slider-market').value;
+      const shade = +document.getElementById('slider-shade').value;
+
+      document.getElementById('val-bias').textContent = (bias >= 0 ? '+' : '') + bias + '%';
+      document.getElementById('val-market').textContent = '$' + market.toFixed(3);
+      document.getElementById('val-shade').textContent = (shade * 100).toFixed(0) + '%';
+
+      const out = calcOutcome(bias, market, shade);
+      const optimal = calcOutcome(0, market, shade); // 편향 0일 때
+
+      // Calc panel
+      document.getElementById('c-pred-pctr').textContent = (out.predPctr * 100).toFixed(2) + '%';
+      document.getElementById('c-pred-value').textContent = '$' + out.predValue.toFixed(4);
+      document.getElementById('c-bid').textContent = '$' + out.bid.toFixed(4);
+      document.getElementById('c-winrate').textContent = (out.wr * 100).toFixed(1) + '%';
+      document.getElementById('c-avgpay').textContent = '$' + out.avgPay.toFixed(4);
+      const surplusCell = document.getElementById('c-surplus-per');
+      surplusCell.textContent = '$' + out.surplusPerImpr.toFixed(5);
+      surplusCell.className = 'num ' + (out.surplusPerImpr >= 0 ? 'good' : 'bad');
+
+      // Summary
+      document.getElementById('sum-predicted').textContent = '$' + out.predValue.toFixed(4);
+      const deltaPct = ((out.predValue - TRUE_VALUE) / TRUE_VALUE * 100);
+      const deltaEl = document.getElementById('sum-predicted-delta');
+      deltaEl.textContent = 'True $0.0200 대비 ' + (deltaPct >= 0 ? '+' : '') + deltaPct.toFixed(1) + '%';
+      deltaEl.style.color = Math.abs(deltaPct) < 5 ? '#4BC0C0' : '#ff9f40';
+
+      document.getElementById('sum-winrate').textContent = (out.wr * 100).toFixed(1) + '%';
+
+      const surplusEl = document.getElementById('sum-surplus');
+      surplusEl.textContent = '$' + out.surplusTotal.toFixed(2);
+      const deltaSurplus = out.surplusTotal - optimal.surplusTotal;
+      document.getElementById('sum-surplus-delta').textContent =
+        '최적($' + optimal.surplusTotal.toFixed(2) + ') 대비 ' +
+        (deltaSurplus >= -0.01 ? '최적 근방' : '$' + Math.abs(deltaSurplus).toFixed(2) + ' 손실');
+      surplusEl.className = 'pq-summary-value ' + (out.surplusTotal >= 0 ? (Math.abs(deltaSurplus) < 0.5 ? 'good' : 'warn') : 'bad');
+
+      updateCurve(bias, market, shade);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initChart();
+      ['slider-bias', 'slider-market', 'slider-shade'].forEach(id => {
+        document.getElementById(id).addEventListener('input', render);
+      });
+      render();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Header Bidding vs Waterfall — 매체 수익에 어느 것이 더 유리한지 타임라인과 반복 시뮬레이션으로 비교하는 인터랙티브 데모.">
+  <title>Header Bidding vs Waterfall 시뮬레이터 — Ad Tech Blog</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .hb-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .hb-hero { text-align: center; padding: 2rem 0 1.5rem; }
+    .hb-hero h1 {
+      font-size: 2.1rem;
+      margin-bottom: 0.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hb-hero p {
+      color: var(--text-secondary);
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+    }
+
+    .hb-intro {
+      max-width: 980px;
+      margin: 0 auto 1.5rem;
+      padding: 1.2rem 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .hb-intro strong { color: var(--accent-primary); }
+
+    /* Controls */
+    .hb-controls {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .hb-btn {
+      padding: 0.55rem 1.1rem;
+      border-radius: 9px;
+      border: 1px solid var(--accent-primary);
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent-primary);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .hb-btn:hover:not(:disabled) {
+      background: var(--accent-primary);
+      color: var(--bg-primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .hb-btn.danger {
+      border-color: #ff4b57;
+      color: #ff4b57;
+      background: rgba(255, 75, 87, 0.1);
+    }
+    .hb-btn.danger:hover { background: #ff4b57; color: white; }
+
+    /* SSP lane */
+    .hb-ssps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .hb-ssp-card {
+      padding: 0.9rem 1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+    }
+    .hb-ssp-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+    .hb-ssp-name { font-weight: 700; font-size: 0.98rem; color: var(--text-primary); }
+    .hb-ssp-color {
+      width: 12px; height: 12px; border-radius: 3px;
+    }
+    .hb-ssp-stats {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+      line-height: 1.5;
+    }
+
+    /* Timeline */
+    .hb-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .hb-compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .hb-mode {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.2rem 1.3rem;
+    }
+    .hb-mode h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+    .hb-mode .hb-mode-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+    .hb-mode .hb-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.15rem 0.55rem;
+      border-radius: 20px;
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--accent-primary);
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+    .hb-timeline {
+      position: relative;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 0.9rem 1rem 1.2rem;
+      margin-bottom: 0.9rem;
+    }
+    .hb-timeline-axis {
+      position: relative;
+      height: 2px;
+      background: var(--border-color);
+      margin: 1.2rem 0 0.5rem;
+    }
+    .hb-timeline-axis .tick {
+      position: absolute;
+      top: -5px;
+      width: 1px;
+      height: 10px;
+      background: var(--text-muted);
+    }
+    .hb-timeline-axis .tick-label {
+      position: absolute;
+      top: 8px;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+    .hb-bar {
+      position: relative;
+      height: 22px;
+      margin-bottom: 0.3rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .hb-bar-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+    }
+    .hb-bar-label {
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      padding-left: 0.3rem;
+      pointer-events: none;
+    }
+    .hb-result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .hb-result-item {
+      padding: 0.5rem 0.65rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .hb-result-label {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.2rem;
+    }
+    .hb-result-value {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-primary);
+    }
+    .hb-result-value.winner { color: #4BC0C0; }
+    .hb-result-value.loser  { color: var(--text-muted); }
+
+    /* Aggregate chart card */
+    .hb-stats-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.3rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .hb-stats-card h3 { font-size: 1.05rem; margin-bottom: 1rem; }
+    .hb-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 900px) { .hb-stats-grid { grid-template-columns: 1fr; } }
+    .hb-stats-col { }
+    .hb-stats-col h4 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+    .hb-stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0.2rem;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 0.88rem;
+    }
+    .hb-stats-row:last-child { border-bottom: none; }
+    .hb-stats-row .num {
+      color: var(--accent-primary);
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hb-hero">
+      <div class="hb-container">
+        <h1>Header Bidding vs Waterfall</h1>
+        <p>같은 광고 노출 요청에 대해 순차(Waterfall)와 병렬(Header Bidding)이 각각 어떻게 경매를 돌리는지,
+          타임라인과 반복 시뮬레이션으로 직접 비교합니다.</p>
+      </div>
+    </section>
+
+    <div class="hb-container">
+      <div class="hb-intro">
+        <strong>시나리오</strong> — 매체가 광고 지면 1개를 팔려고 합니다. 4개 SSP가 각자 다른 CPM 분포와 응답 지연을 가집니다.
+        <strong>Waterfall</strong>은 SSP를 순서대로 호출하고 첫 번째 성공에서 멈춥니다(실패 시 다음). 총 지연 = 호출 시간의 <em>합</em>.
+        <strong>Header Bidding</strong>은 모든 SSP를 <em>동시에</em> 호출해 최고 CPM을 선택합니다. 총 지연 = 호출 시간의 <em>최댓값</em>.
+        <br><br>
+        핵심 관찰: SSP마다 CPM 분포 top-k 확률이 다르면 병렬 경매가 더 자주 높은 가격을 얻는다. 다만 페이지 로딩 지연은 더 가변적이 된다.
+      </div>
+
+      <div class="hb-controls">
+        <button class="hb-btn" id="btn-single">🎲 1회 시뮬레이션</button>
+        <button class="hb-btn" id="btn-100">🔁 100회 반복</button>
+        <button class="hb-btn" id="btn-1000">🔁 1000회 반복</button>
+        <button class="hb-btn danger" id="btn-reset">↺ 리셋</button>
+      </div>
+
+      <!-- SSPs -->
+      <div class="hb-ssps" id="ssp-panel"></div>
+
+      <!-- Two timelines side by side -->
+      <div class="hb-compare-grid">
+        <!-- Waterfall -->
+        <div class="hb-mode">
+          <h3>🪣 Waterfall <span class="hb-badge">순차</span></h3>
+          <div class="hb-mode-desc">SSP A → B → C → D 순으로 호출. 성공하면 멈추고, 실패하면 다음 SSP로. 총 지연 = 호출 시간의 합.</div>
+          <div class="hb-timeline" id="wf-timeline"></div>
+          <div class="hb-result">
+            <div class="hb-result-item">
+              <div class="hb-result-label">낙찰 CPM</div>
+              <div class="hb-result-value" id="wf-cpm">—</div>
+            </div>
+            <div class="hb-result-item">
+              <div class="hb-result-label">총 지연 시간</div>
+              <div class="hb-result-value" id="wf-latency">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Header Bidding -->
+        <div class="hb-mode">
+          <h3>⚡ Header Bidding <span class="hb-badge">병렬</span></h3>
+          <div class="hb-mode-desc">모든 SSP를 동시에 호출. 응답 중 최고 CPM을 선택. 총 지연 = 호출 시간의 최댓값.</div>
+          <div class="hb-timeline" id="hb-timeline"></div>
+          <div class="hb-result">
+            <div class="hb-result-item">
+              <div class="hb-result-label">낙찰 CPM</div>
+              <div class="hb-result-value" id="hb-cpm">—</div>
+            </div>
+            <div class="hb-result-item">
+              <div class="hb-result-label">총 지연 시간</div>
+              <div class="hb-result-value" id="hb-latency">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aggregate stats -->
+      <div class="hb-stats-card">
+        <h3>📊 반복 시뮬레이션 요약</h3>
+        <div class="hb-stats-grid">
+          <div class="hb-stats-col">
+            <h4>평균값 (반복 횟수: <span id="total-sims">0</span>)</h4>
+            <div class="hb-stats-row"><span>Waterfall 평균 CPM</span><span class="num" id="avg-wf-cpm">—</span></div>
+            <div class="hb-stats-row"><span>Header Bidding 평균 CPM</span><span class="num" id="avg-hb-cpm">—</span></div>
+            <div class="hb-stats-row"><span>평균 수익 증가율</span><span class="num" id="cpm-uplift">—</span></div>
+            <div class="hb-stats-row"><span>Waterfall 평균 지연</span><span class="num" id="avg-wf-latency">—</span></div>
+            <div class="hb-stats-row"><span>Header Bidding 평균 지연</span><span class="num" id="avg-hb-latency">—</span></div>
+          </div>
+          <div class="hb-stats-col">
+            <h4>분포 차트</h4>
+            <div style="position:relative;height:240px;">
+              <canvas id="cpm-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>✨ 이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>병렬 경매가 평균 CPM을 끌어올린다</strong> — 수백 회 반복하면 Header Bidding의 평균 CPM이 Waterfall을 체계적으로 상회. 업계에서 "HB 도입 시 매체 수익 +10~30%" 보고가 이 분포 차이에서 온다.</li>
+            <li><strong>대신 지연은 가변적</strong> — Waterfall은 한 SSP 통과 시 바로 멈춰 예측 가능. HB는 "가장 느린 SSP"까지 기다리므로 때로 더 오래 걸린다.</li>
+            <li><strong>SSP 우선순위 설계가 Waterfall의 성패를 가른다</strong> — CPM 높은 SSP를 맨 앞에 두지 않으면 낮은 가격에 조기 낙찰될 수 있다. HB는 순서 영향을 받지 않는다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>🚀 다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="demo-rtb.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">RTB Auction Simulator</span>
+              <span class="demo-next-excerpt">HB가 끝나고 Exchange로 넘어간 뒤 일어나는 DSP 간 경매 과정</span>
+              <span class="demo-next-meta">⏱ 10분 · 입문</span>
+            </a>
+            <a href="post.html?id=ad-network-vs-exchange" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Ad Network vs Ad Exchange — 유통 구조의 진화</span>
+              <span class="demo-next-excerpt">Waterfall에서 RTB·Header Bidding까지, 디지털 광고 유통 구조의 진화사</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // =====================================================================
+    // Header Bidding vs Waterfall Simulator
+    // =====================================================================
+
+    // SSPs: 평균 CPM (log-normal 근사), 지연 평균/분산 (ms), fill rate
+    const SSPS = [
+      { name: 'SSP A · Premium', color: '#00e5ff', cpmMean: 3.20, cpmStd: 1.00, latMean: 180, latStd: 40, fillRate: 0.75 },
+      { name: 'SSP B · Open',    color: '#b026ff', cpmMean: 2.40, cpmStd: 0.80, latMean: 140, latStd: 30, fillRate: 0.85 },
+      { name: 'SSP C · Regional',color: '#ff6b9d', cpmMean: 1.80, cpmStd: 0.60, latMean: 120, latStd: 35, fillRate: 0.80 },
+      { name: 'SSP D · Backup',  color: '#4BC0C0', cpmMean: 1.10, cpmStd: 0.40, latMean: 200, latStd: 25, fillRate: 0.90 }
+    ];
+    const TIMELINE_MAX = 900; // ms
+
+    function sampleNormal(mu, sigma) {
+      const u = Math.random(), v = Math.random();
+      return mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    function sampleCPM(s) {
+      return Math.max(0.1, sampleNormal(s.cpmMean, s.cpmStd));
+    }
+    function sampleLatency(s) {
+      return Math.max(20, sampleNormal(s.latMean, s.latStd));
+    }
+    function drawsResponse(s) {
+      return Math.random() < s.fillRate;
+    }
+
+    // Single auction: returns per-SSP draws
+    function runAuction() {
+      return SSPS.map(s => ({
+        ssp: s,
+        filled: drawsResponse(s),
+        cpm: sampleCPM(s),
+        latency: sampleLatency(s)
+      }));
+    }
+
+    function waterfallOutcome(draws) {
+      let cumLatency = 0;
+      for (let i = 0; i < draws.length; i++) {
+        cumLatency += draws[i].latency;
+        if (draws[i].filled) {
+          return { winnerIdx: i, cpm: draws[i].cpm, latency: cumLatency, path: draws.slice(0, i + 1) };
+        }
+      }
+      return { winnerIdx: -1, cpm: 0, latency: cumLatency, path: draws };
+    }
+
+    function hbOutcome(draws) {
+      const filled = draws.filter(d => d.filled);
+      if (filled.length === 0) {
+        const maxLat = Math.max(...draws.map(d => d.latency));
+        return { winnerIdx: -1, cpm: 0, latency: maxLat };
+      }
+      const winner = filled.reduce((a, b) => (b.cpm > a.cpm ? b : a));
+      const winnerIdx = SSPS.indexOf(winner.ssp);
+      const maxLat = Math.max(...draws.map(d => d.latency));
+      return { winnerIdx, cpm: winner.cpm, latency: maxLat };
+    }
+
+    // Aggregate state
+    let stats = {
+      total: 0,
+      wfCpmSum: 0,
+      hbCpmSum: 0,
+      wfLatSum: 0,
+      hbLatSum: 0,
+      wfCpms: [],
+      hbCpms: []
+    };
+    let chart;
+
+    function renderSSPs() {
+      const panel = document.getElementById('ssp-panel');
+      panel.innerHTML = SSPS.map(s => `
+        <div class="hb-ssp-card">
+          <div class="hb-ssp-head">
+            <span class="hb-ssp-name">${s.name}</span>
+            <span class="hb-ssp-color" style="background:${s.color}"></span>
+          </div>
+          <div class="hb-ssp-stats">
+            CPM μ=$${s.cpmMean.toFixed(2)} σ=$${s.cpmStd.toFixed(2)}<br>
+            지연 μ=${s.latMean}ms σ=${s.latStd}ms<br>
+            응답률 ${(s.fillRate * 100).toFixed(0)}%
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTimeline(containerId, outcome, draws, isParallel) {
+      const container = document.getElementById(containerId);
+      // Build axis + bars
+      const bars = SSPS.map((s, i) => {
+        const d = draws[i];
+        let start, end;
+        if (isParallel) {
+          start = 0;
+          end = d.latency;
+        } else {
+          // Waterfall: sequential starts
+          let cum = 0;
+          for (let j = 0; j < i; j++) cum += draws[j].latency;
+          start = cum;
+          end = cum + d.latency;
+          // Skip if outcome stopped earlier
+          if (outcome.winnerIdx >= 0 && i > outcome.winnerIdx) {
+            start = end = 0;
+          }
+        }
+        const wPct = ((end - start) / TIMELINE_MAX) * 100;
+        const leftPct = (start / TIMELINE_MAX) * 100;
+        const label = (end - start) > 0
+          ? `${s.name.split('·')[0].trim()} · ${d.filled ? '$' + d.cpm.toFixed(2) : 'no-fill'} · ${Math.round(d.latency)}ms`
+          : '';
+        const bg = d.filled ? s.color : '#555';
+        const isWinner = outcome.winnerIdx === i;
+        const border = isWinner ? 'box-shadow: 0 0 0 2px #4BC0C0, 0 0 15px rgba(75,192,192,0.6);' : '';
+        return `
+          <div class="hb-bar">
+            ${(end - start) > 0 ? `
+              <div class="hb-bar-fill" style="left:${leftPct}%; width:${wPct}%; background:${bg}; ${border}">
+                ${label}
+              </div>
+            ` : `<div class="hb-bar-label">${s.name.split('·')[0].trim()} · skip</div>`}
+          </div>
+        `;
+      }).join('');
+      const ticks = [0, 200, 400, 600, 800].map(t => {
+        const pct = (t / TIMELINE_MAX) * 100;
+        return `<span class="tick" style="left:${pct}%"></span><span class="tick-label" style="left:${pct}%">${t}ms</span>`;
+      }).join('');
+      container.innerHTML = bars + `<div class="hb-timeline-axis">${ticks}</div>`;
+    }
+
+    function runSingle() {
+      const draws = runAuction();
+      // Waterfall uses draws in SSP order (A→D)
+      const wf = waterfallOutcome(draws);
+      const hb = hbOutcome(draws);
+
+      renderTimeline('wf-timeline', wf, draws, false);
+      renderTimeline('hb-timeline', hb, draws, true);
+
+      const wfBetter = wf.cpm > hb.cpm ? 'winner' : wf.cpm < hb.cpm ? 'loser' : '';
+      const hbBetter = hb.cpm > wf.cpm ? 'winner' : hb.cpm < wf.cpm ? 'loser' : '';
+      document.getElementById('wf-cpm').textContent = wf.cpm > 0 ? '$' + wf.cpm.toFixed(2) : 'no-fill';
+      document.getElementById('wf-cpm').className = 'hb-result-value ' + wfBetter;
+      document.getElementById('wf-latency').textContent = Math.round(wf.latency) + 'ms';
+      document.getElementById('hb-cpm').textContent = hb.cpm > 0 ? '$' + hb.cpm.toFixed(2) : 'no-fill';
+      document.getElementById('hb-cpm').className = 'hb-result-value ' + hbBetter;
+      document.getElementById('hb-latency').textContent = Math.round(hb.latency) + 'ms';
+
+      stats.total += 1;
+      stats.wfCpmSum += wf.cpm;
+      stats.hbCpmSum += hb.cpm;
+      stats.wfLatSum += wf.latency;
+      stats.hbLatSum += hb.latency;
+      if (wf.cpm > 0) stats.wfCpms.push(wf.cpm);
+      if (hb.cpm > 0) stats.hbCpms.push(hb.cpm);
+
+      renderStats();
+    }
+
+    function runMany(n) {
+      // Quick batch without rendering per-step timeline
+      for (let i = 0; i < n; i++) {
+        const draws = runAuction();
+        const wf = waterfallOutcome(draws);
+        const hb = hbOutcome(draws);
+        stats.total += 1;
+        stats.wfCpmSum += wf.cpm;
+        stats.hbCpmSum += hb.cpm;
+        stats.wfLatSum += wf.latency;
+        stats.hbLatSum += hb.latency;
+        if (wf.cpm > 0) stats.wfCpms.push(wf.cpm);
+        if (hb.cpm > 0) stats.hbCpms.push(hb.cpm);
+      }
+      runSingle(); // 하나 보여주기
+      renderStats();
+    }
+
+    function renderStats() {
+      document.getElementById('total-sims').textContent = stats.total;
+      if (stats.total === 0) return;
+      const wfAvg = stats.wfCpmSum / stats.total;
+      const hbAvg = stats.hbCpmSum / stats.total;
+      document.getElementById('avg-wf-cpm').textContent = '$' + wfAvg.toFixed(2);
+      document.getElementById('avg-hb-cpm').textContent = '$' + hbAvg.toFixed(2);
+      const uplift = wfAvg > 0 ? ((hbAvg - wfAvg) / wfAvg * 100).toFixed(1) + '%' : '—';
+      document.getElementById('cpm-uplift').textContent = uplift;
+      document.getElementById('avg-wf-latency').textContent = Math.round(stats.wfLatSum / stats.total) + 'ms';
+      document.getElementById('avg-hb-latency').textContent = Math.round(stats.hbLatSum / stats.total) + 'ms';
+      updateChart();
+    }
+
+    function histogram(arr, bins, min, max) {
+      const out = new Array(bins).fill(0);
+      const step = (max - min) / bins;
+      arr.forEach(v => {
+        const idx = Math.min(bins - 1, Math.max(0, Math.floor((v - min) / step)));
+        out[idx] += 1;
+      });
+      return out;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('cpm-chart');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Waterfall', data: [], backgroundColor: 'rgba(0, 229, 255, 0.4)', borderColor: '#00e5ff', borderWidth: 1 },
+            { label: 'Header Bidding', data: [], backgroundColor: 'rgba(176, 38, 255, 0.4)', borderColor: '#b026ff', borderWidth: 1 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { labels: { color: '#b8c5d6' } },
+            title: { display: true, text: '낙찰 CPM 분포', color: '#b8c5d6' }
+          },
+          scales: {
+            x: { title: { display: true, text: 'CPM ($)', color: '#7a8ba3' }, ticks: { color: '#7a8ba3' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { title: { display: true, text: '빈도', color: '#7a8ba3' }, ticks: { color: '#7a8ba3' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function updateChart() {
+      if (stats.wfCpms.length === 0 && stats.hbCpms.length === 0) return;
+      const allVals = [...stats.wfCpms, ...stats.hbCpms];
+      const min = 0, max = Math.max(...allVals, 6);
+      const bins = 15;
+      const wfHist = histogram(stats.wfCpms, bins, min, max);
+      const hbHist = histogram(stats.hbCpms, bins, min, max);
+      const step = (max - min) / bins;
+      chart.data.labels = Array.from({ length: bins }, (_, i) => '$' + (min + i * step).toFixed(1));
+      chart.data.datasets[0].data = wfHist;
+      chart.data.datasets[1].data = hbHist;
+      chart.update('none');
+    }
+
+    function resetAll() {
+      stats = { total: 0, wfCpmSum: 0, hbCpmSum: 0, wfLatSum: 0, hbLatSum: 0, wfCpms: [], hbCpms: [] };
+      document.getElementById('wf-timeline').innerHTML = '';
+      document.getElementById('hb-timeline').innerHTML = '';
+      document.getElementById('wf-cpm').textContent = '—';
+      document.getElementById('wf-cpm').className = 'hb-result-value';
+      document.getElementById('wf-latency').textContent = '—';
+      document.getElementById('hb-cpm').textContent = '—';
+      document.getElementById('hb-cpm').className = 'hb-result-value';
+      document.getElementById('hb-latency').textContent = '—';
+      document.getElementById('total-sims').textContent = '0';
+      document.getElementById('avg-wf-cpm').textContent = '—';
+      document.getElementById('avg-hb-cpm').textContent = '—';
+      document.getElementById('cpm-uplift').textContent = '—';
+      document.getElementById('avg-wf-latency').textContent = '—';
+      document.getElementById('avg-hb-latency').textContent = '—';
+      if (chart) {
+        chart.data.labels = [];
+        chart.data.datasets[0].data = [];
+        chart.data.datasets[1].data = [];
+        chart.update();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSSPs();
+      initChart();
+      document.getElementById('btn-single').addEventListener('click', runSingle);
+      document.getElementById('btn-100').addEventListener('click', () => runMany(100));
+      document.getElementById('btn-1000').addEventListener('click', () => runMany(1000));
+      document.getElementById('btn-reset').addEventListener('click', resetAll);
+    });
+  </script>
+</body>
+
+</html>

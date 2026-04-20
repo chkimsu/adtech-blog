@@ -2669,3 +2669,148 @@ footer {
   padding: 0.4rem 0.7rem;
   font-size: 1rem;
 }
+
+/* ========================================
+   Demo pages — TL;DR + "Next Up" sections
+   ======================================== */
+
+.demo-tldr {
+  padding: 2.5rem 0 1.5rem;
+}
+
+.demo-tldr-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem;
+  background: var(--glass-bg);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 12px;
+}
+
+.demo-tldr h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.85rem;
+  color: var(--accent-primary);
+  letter-spacing: 0.02em;
+}
+
+.demo-tldr ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.demo-tldr li {
+  margin-bottom: 0.55rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.demo-tldr li:last-child {
+  margin-bottom: 0;
+}
+
+.demo-tldr strong {
+  color: var(--text-primary);
+}
+
+.demo-next {
+  padding: 1.5rem 0 4rem;
+}
+
+.demo-next-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.demo-next h3 {
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.demo-next-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.demo-next-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.demo-next-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 229, 255, 0.12);
+}
+
+.demo-next-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.demo-next-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.demo-next-excerpt {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.demo-next-meta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+@media (max-width: 768px) {
+  .demo-tldr-inner { margin: 0 1rem; padding: 1.25rem; }
+  .demo-next-inner { padding: 0 1rem; }
+}
+
+/* ========================================
+   Demo pages — Abbreviation intro tooltip/box
+   ======================================== */
+
+.demo-abbr-box {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.demo-abbr-box strong {
+  color: var(--accent-primary);
+  margin-right: 0.3rem;
+}
+
+.demo-abbr-box .demo-abbr-item + .demo-abbr-item::before {
+  content: '·';
+  margin: 0 0.45rem;
+  color: var(--text-muted);
+}

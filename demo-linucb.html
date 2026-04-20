@@ -383,6 +383,38 @@
         </div>
     </main>
 
+    <!-- TL;DR -->
+    <section class="demo-tldr">
+      <div class="demo-tldr-inner">
+        <h3>✨ 이 데모에서 알게 된 3가지</h3>
+        <ol>
+          <li><strong>Context Vector로 학습</strong> — 광고 ID가 아닌 피처(성별·관심사·시간대 등) 가중치를 학습하므로, 처음 보는 유저·광고에도 일반화된다.</li>
+          <li><strong>점수 = 예측(Exploitation) + 불확실성(Exploration)</strong> — θᵀx는 기댓값, √(xᵀA⁻¹x)는 불확실성 타원의 반지름. 둘의 합이 UCB 스코어다.</li>
+          <li><strong>Cold Start 거의 없음</strong> — 피처만 괜찮다면 새 광고도 처음부터 합리적 점수로 시작해, 개별 UCB1·TS를 크게 앞지른다.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Next Up -->
+    <section class="demo-next">
+      <div class="demo-next-inner">
+        <h3>🚀 다음 배우기</h3>
+        <div class="demo-next-grid">
+          <a href="demo-censored-data.html" class="demo-next-card">
+            <span class="demo-next-label">다음 데모</span>
+            <span class="demo-next-title">Censored Data in RTB</span>
+            <span class="demo-next-excerpt">입찰 시장의 통계적 함정 — 패찰 경매에서 잃어버리는 정보</span>
+            <span class="demo-next-meta">⏱ 20분 · 고급</span>
+          </a>
+          <a href="post.html?id=disjoint-linucb" class="demo-next-card">
+            <span class="demo-next-label">관련 포스트</span>
+            <span class="demo-next-title">Disjoint LinUCB 모델 상세 해석</span>
+            <span class="demo-next-excerpt">"예측 + 불확실성" 구조를 시각화·수식으로 상세히 풀어쓴 가이드</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <footer>
         <div class="footer-content">
             <div class="footer-links">

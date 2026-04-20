@@ -1,0 +1,29 @@
+# ===== Local dev / tool artifacts =====
+
+# Claude Code local config & telemetry
+.claude/
+
+# Playwright MCP session logs, screenshots, snapshots
+.playwright-mcp/
+
+# Node / build
+node_modules/
+dist/
+build/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===== Ad-hoc root-level PNGs (validation dumps) =====
+# images/ and diagrams/ are intentionally tracked.
+/*.png
+
+# ===== Log files =====
+*.log

@@ -86,11 +86,13 @@ const MathUtils = {
 // ==========================================
 
 class ThompsonSampling {
-    constructor(nArms) {
+    constructor(nArms, priorAlpha = 1, priorBeta = 1) {
         this.nArms = nArms;
-        // Initialize alpha=1, beta=1 (Uniform Prior)
-        this.alphas = new Array(nArms).fill(1);
-        this.betas = new Array(nArms).fill(1);
+        this.priorAlpha = priorAlpha;
+        this.priorBeta = priorBeta;
+        // Initialize alpha=priorAlpha, beta=priorBeta (user-tunable prior)
+        this.alphas = new Array(nArms).fill(priorAlpha);
+        this.betas = new Array(nArms).fill(priorBeta);
     }
 
     selectArm() {
@@ -293,11 +295,34 @@ function logAction(message) {
 }
 
 function resetTS() {
-    model = new ThompsonSampling(N_ARMS);
+    const pa = getCurrentPriorAlpha();
+    const pb = getCurrentPriorBeta();
+    model = new ThompsonSampling(N_ARMS, pa, pb);
     updateVisualization();
     const log = document.getElementById('demo-log');
     log.innerHTML = '';
-    logAction('Model reset to initial state (Uniform Prior).');
+    logAction(`Model reset with prior Beta(α₀=${pa}, β₀=${pb}).`);
+}
+
+function getCurrentPriorAlpha() {
+    const el = document.getElementById('slider-prior-a');
+    return el ? parseFloat(el.value) : 1;
+}
+
+function getCurrentPriorBeta() {
+    const el = document.getElementById('slider-prior-b');
+    return el ? parseFloat(el.value) : 1;
+}
+
+// Called by TS demo prior sliders — triggers auto-reset (prior only matters at initialization)
+function onPriorChange() {
+    const pa = getCurrentPriorAlpha();
+    const pb = getCurrentPriorBeta();
+    const aVal = document.getElementById('pa-val');
+    const bVal = document.getElementById('pb-val');
+    if (aVal) aVal.textContent = pa;
+    if (bVal) bVal.textContent = pb;
+    resetTS();
 }
 
 document.addEventListener('DOMContentLoaded', initDemo);

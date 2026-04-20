@@ -156,6 +156,24 @@
 
             <!-- Right: Controls -->
             <div class="control-panel">
+                <!-- Parameter slider (added) -->
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.75rem;">⚙️ 파라미터</h3>
+                    <div style="margin-bottom: 0.6rem;">
+                        <label style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.35rem;">
+                            <span>Exploration 상수 c</span>
+                            <span style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;" id="c-val">2.0</span>
+                        </label>
+                        <input type="range" id="slider-c" min="0.1" max="5" step="0.1" value="2.0"
+                            style="width: 100%;"
+                            oninput="onCChange(this.value)">
+                        <small style="display: block; font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.45;">
+                            보너스 공식: <code>√(c × ln t / n)</code>. 표준값 c=2.<br>
+                            ↑ 올리면 <strong style="color: var(--accent-primary);">탐색 우세</strong>, ↓ 내리면 <strong>활용 우세</strong>.
+                        </small>
+                    </div>
+                </div>
+
                 <div class="control-card">
                     <h3 style="margin-bottom: 0.75rem;">Actions</h3>
                     <button class="btn-action btn-primary" onclick="runOneRound()">Select Best Arm</button>

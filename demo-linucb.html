@@ -185,11 +185,26 @@
         </div>
 
         <div class="demo-container">
-            <div class="controls">
-                <div>
-                    <strong>Status:</strong> <span id="status-text">Ready to learn...</span>
+            <div class="controls" style="flex-direction: column; align-items: stretch; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>Status:</strong> <span id="status-text">Ready to learn...</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetDemo()">Reset Model</button>
                 </div>
-                <button class="btn-reset" onclick="resetDemo()">Reset Model</button>
+                <!-- Alpha slider (added) -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 0.9rem;">
+                    <label style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:0.35rem;">
+                        <span><strong>⚙️ α (불확실성 계수)</strong></span>
+                        <span id="alpha-val" style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;">0.50</span>
+                    </label>
+                    <input type="range" id="slider-alpha" min="0.1" max="2" step="0.05" value="0.5"
+                        style="width: 100%;" oninput="onAlphaChange(this.value)">
+                    <small style="display:block; font-size:0.74rem; color: var(--text-muted); line-height:1.45; margin-top: 0.35rem;">
+                        UCB 공식 <code>θᵀx + α·√(xᵀA⁻¹x)</code>의 α. ↑ 올리면 불확실한 광고에 더 큰 가산점 → <strong>탐색 우세</strong>.
+                        값 변경은 실시간 반영되며 학습 상태(A, b)는 유지됩니다.
+                    </small>
+                </div>
             </div>
 
             <div class="demo-grid">

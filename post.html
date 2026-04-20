@@ -4,11 +4,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Read in-depth articles about ad tech, programmatic advertising, and digital advertising technologies.">
+  <meta name="description" id="meta-description"
+    content="한국어로 읽는 애드테크(Ad Tech) 기술 블로그 — 프로그래매틱 광고, 실시간 입찰(RTB), 입찰 최적화, CTR/CVR 예측, 광고 ML 모델링까지 깊이 있는 기술 콘텐츠를 제공합니다.">
+  <meta name="author" content="Ad Tech Blog">
 
-  <!-- Dynamic meta tags will be set by JavaScript -->
+  <!-- Google Search Console -->
+  <meta name="google-site-verification" content="KMtC4oCkmzUjSzQpt3TdOM7ts2V0-slvgfhIX9LQFlk" />
+
+  <!-- Canonical URL (set dynamically per post) -->
+  <link rel="canonical" id="canonical-link" href="https://chkimsu.github.io/adtech-blog/">
+
+  <!-- Open Graph / Social Media (set dynamically per post) -->
   <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Ad Tech Blog">
+  <meta property="og:title" id="og-title" content="Ad Tech Blog — 한국어 애드테크 기술 블로그">
+  <meta property="og:description" id="og-description"
+    content="한국어로 읽는 애드테크 기술 블로그. RTB, 입찰 최적화, CTR/CVR 예측, 광고 ML 모델링까지.">
+  <meta property="og:url" id="og-url" content="https://chkimsu.github.io/adtech-blog/">
+  <meta property="og:image" id="og-image" content="https://chkimsu.github.io/adtech-blog/images/rtb-flow-overview.png">
+  <meta property="og:locale" content="ko_KR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twitter-title" content="Ad Tech Blog — 한국어 애드테크 기술 블로그">
+  <meta name="twitter:description" id="twitter-description"
+    content="RTB, 입찰 최적화, CTR/CVR 예측, 광고 ML 모델링 — 깊이 있는 기술 콘텐츠.">
+
+  <!-- JSON-LD Article schema (set dynamically per post) -->
+  <script type="application/ld+json" id="ld-article"></script>
+
+  <!-- JSON-LD BreadcrumbList (set dynamically per post) -->
+  <script type="application/ld+json" id="ld-breadcrumb"></script>
 
   <title>Post - Ad Tech Blog</title>
 
@@ -47,7 +73,9 @@
           <li><a href="about.html">소개</a></li>
         </ul>
         <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
           <a href="demos.html" class="btn-demo">데모</a>
+          <button id="post-search-btn" class="theme-toggle" aria-label="포스트 검색" title="포스트 검색">🔍</button>
           <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
         </div>
       </div>
@@ -71,8 +99,16 @@
 
   <!-- Main Content Wrapper -->
   <div class="with-sidebar" id="main-content">
+    <!-- Breadcrumb -->
+    <div id="breadcrumb" class="breadcrumb-container"></div>
+
     <!-- Post Header -->
     <section class="post-header" id="post-header">
+      <!-- Dynamically populated by JavaScript -->
+    </section>
+
+    <!-- Continue Reading (top) — appears above content -->
+    <section class="continue-reading-top" id="continue-reading-top">
       <!-- Dynamically populated by JavaScript -->
     </section>
 
@@ -96,6 +132,22 @@
     </section>
 
   </div><!-- End of main content wrapper -->
+
+  <!-- Mobile Next Post CTA (shown after 80% scroll on mobile) -->
+  <a id="mobile-next-cta" class="mobile-next-cta" href="#" hidden></a>
+
+  <!-- Post Search Modal -->
+  <div id="search-modal" class="search-modal" hidden>
+    <div class="search-modal-backdrop" data-close-modal></div>
+    <div class="search-modal-dialog" role="dialog" aria-modal="true" aria-label="포스트 검색">
+      <div class="search-modal-header">
+        <input type="text" id="search-modal-input" placeholder="제목·설명·태그로 검색…" autocomplete="off" aria-label="포스트 검색 입력">
+        <button class="search-modal-close" data-close-modal aria-label="닫기">×</button>
+      </div>
+      <div class="search-modal-hint">↑↓ 탐색 · Enter 이동 · Esc 닫기</div>
+      <div id="search-modal-results" class="search-modal-results"></div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer>

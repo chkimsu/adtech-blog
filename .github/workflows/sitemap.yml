@@ -1,0 +1,49 @@
+name: Update sitemap.xml
+
+# posts.js, posts/*.md, 또는 generate-sitemap.js가 main에 push될 때 자동 실행
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'js/posts.js'
+      - 'posts/**'
+      - 'generate-sitemap.js'
+  # Actions 탭에서 수동 실행도 가능
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 봇 커밋 → 본 워크플로 재실행 루프 방지를 위해 전체 히스토리 체크아웃
+          fetch-depth: 0
+          # 기본 GITHUB_TOKEN 사용 (permissions.contents: write 로 push 가능)
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate sitemap.xml
+        run: node generate-sitemap.js
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet sitemap.xml; then
+            echo "sitemap.xml unchanged — nothing to commit"
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml
+          # [skip ci] 로 워크플로 재실행 방지
+          git commit -m "chore: regenerate sitemap.xml [skip ci]"
+          git push

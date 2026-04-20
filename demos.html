@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="애드테크 핵심 알고리즘 인터랙티브 데모 — UCB1, Thompson Sampling, LinUCB, RTB 경매, 입찰 전략을 직접 체험해 보세요.">
+    content="애드테크 핵심 알고리즘 인터랙티브 데모 — UCB1, Thompson Sampling, LinUCB, RTB 경매, 입찰 전략을 직접 체험해 보세요. 초보자를 위한 추천 학습 경로와 용어 사전 제공.">
   <meta name="keywords"
-    content="애드테크 데모, UCB1, Thompson Sampling, LinUCB, RTB 경매, 입찰 전략, 밴딧 알고리즘, 광고 기술">
+    content="애드테크 데모, UCB1, Thompson Sampling, LinUCB, RTB 경매, 입찰 전략, 밴딧 알고리즘, 광고 기술, 추천 학습 경로">
   <meta name="author" content="Ad Tech Blog">
 
   <title>인터랙티브 데모 — Ad Tech Blog</title>
@@ -19,10 +19,134 @@
        Demos Page -- Inline Styles
        ======================================== */
 
+    /* --- Learning Path Section --- */
+    .learning-path {
+      padding: 3rem 0 2rem;
+    }
+
+    .learning-path-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 2rem;
+    }
+
+    .learning-path-label {
+      display: inline-block;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
+    .learning-path-header h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .learning-path-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .learning-path-steps {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem;
+      margin: 0;
+      padding: 0;
+      counter-reset: step;
+    }
+
+    .learning-path-steps li {
+      counter-increment: step;
+    }
+
+    .learning-path-step {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.85rem 1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      height: 100%;
+    }
+
+    .learning-path-step:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 229, 255, 0.12);
+    }
+
+    .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .step-title {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.15rem;
+      line-height: 1.3;
+    }
+
+    .step-meta {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* --- All Demos Section --- */
+    .demos-section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .demos-section-title h2 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .demos-section-title .count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
     .demos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.75rem;
       margin-bottom: 3rem;
     }
 
@@ -32,46 +156,79 @@
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
       border-radius: 16px;
-      padding: 2rem;
+      padding: 1.75rem;
       transition: all var(--transition-normal);
       display: flex;
       flex-direction: column;
-      animation: fadeInUp 0.6s ease both;
+      animation: fadeInUp 0.5s ease both;
     }
 
-    .demo-card:nth-child(1) { animation-delay: 0.1s; }
-    .demo-card:nth-child(2) { animation-delay: 0.2s; }
-    .demo-card:nth-child(3) { animation-delay: 0.3s; }
-    .demo-card:nth-child(4) { animation-delay: 0.4s; }
-    .demo-card:nth-child(5) { animation-delay: 0.5s; }
-    .demo-card:nth-child(6) { animation-delay: 0.6s; }
-    .demo-card:nth-child(7) { animation-delay: 0.7s; }
-    .demo-card:nth-child(8) { animation-delay: 0.8s; }
+    .demo-card:nth-child(1) { animation-delay: 0.05s; }
+    .demo-card:nth-child(2) { animation-delay: 0.10s; }
+    .demo-card:nth-child(3) { animation-delay: 0.15s; }
+    .demo-card:nth-child(4) { animation-delay: 0.20s; }
+    .demo-card:nth-child(5) { animation-delay: 0.25s; }
+    .demo-card:nth-child(6) { animation-delay: 0.30s; }
+    .demo-card:nth-child(7) { animation-delay: 0.35s; }
+    .demo-card:nth-child(8) { animation-delay: 0.40s; }
 
     .demo-card:hover {
-      transform: translateY(-8px);
+      transform: translateY(-6px);
       box-shadow: var(--shadow-lg);
       border-color: var(--accent-primary);
     }
 
+    .demo-card-badges {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
     .demo-card-badge {
       display: inline-block;
-      padding: 0.3rem 0.85rem;
+      padding: 0.25rem 0.75rem;
       background: var(--accent-gradient);
       border-radius: 20px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: white;
       letter-spacing: 0.03em;
-      width: fit-content;
-      margin-bottom: 1rem;
+    }
+
+    .demo-card-level {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .level-beginner {
+      background: rgba(75, 192, 192, 0.15);
+      color: #4BC0C0;
+      border: 1px solid rgba(75, 192, 192, 0.4);
+    }
+
+    .level-intermediate {
+      background: rgba(255, 159, 64, 0.15);
+      color: #FF9F40;
+      border: 1px solid rgba(255, 159, 64, 0.4);
+    }
+
+    .level-advanced {
+      background: rgba(255, 99, 132, 0.15);
+      color: #FF6384;
+      border: 1px solid rgba(255, 99, 132, 0.4);
     }
 
     .demo-card h3 {
-      font-size: 1.35rem;
-      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+      margin-bottom: 0.65rem;
       color: var(--text-primary);
       transition: color var(--transition-fast);
+      line-height: 1.35;
     }
 
     .demo-card:hover h3 {
@@ -79,16 +236,33 @@
     }
 
     .demo-card p {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
       flex: 1;
+    }
+
+    .demo-card-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .demo-card-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .demo-card .btn-try {
       display: inline-block;
-      padding: 0.65rem 1.5rem;
+      padding: 0.6rem 1.4rem;
       background: rgba(0, 229, 255, 0.1);
       border: 1px solid var(--accent-primary);
       border-radius: 8px;
@@ -98,6 +272,7 @@
       text-align: center;
       transition: all var(--transition-fast);
       width: fit-content;
+      text-decoration: none;
     }
 
     .demo-card .btn-try:hover {
@@ -113,14 +288,115 @@
       box-shadow: var(--shadow-glow);
     }
 
-    /* Responsive: single column on mobile */
+    /* --- Glossary Section --- */
+    .glossary-section {
+      padding: 3rem 0 4rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .glossary-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .glossary-header h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .glossary-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 0.65rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .glossary-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+
+    .glossary-item:hover {
+      border-color: rgba(0, 229, 255, 0.35);
+    }
+
+    .glossary-item summary {
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: color var(--transition-fast);
+    }
+
+    .glossary-item summary::-webkit-details-marker { display: none; }
+
+    .glossary-item summary::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      transition: transform var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .glossary-item[open] summary::after {
+      content: '−';
+      color: var(--accent-primary);
+    }
+
+    .glossary-item summary:hover {
+      color: var(--accent-primary);
+    }
+
+    .glossary-term-abbrev {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-left: 0.5rem;
+    }
+
+    .glossary-body {
+      padding: 0 1rem 0.95rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .glossary-body strong {
+      color: var(--text-primary);
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
       .demos-grid {
         grid-template-columns: 1fr;
       }
 
       .demo-card {
-        padding: 1.5rem;
+        padding: 1.4rem;
+      }
+
+      .learning-path-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .learning-path-header h2 {
+        font-size: 1.4rem;
       }
     }
   </style>
@@ -151,79 +427,231 @@
     <section class="hero">
       <div class="container">
         <h1>인터랙티브 데모</h1>
-        <p>AdTech 핵심 알고리즘과 메커니즘을 직접 체험해 보세요</p>
+        <p>애드테크 핵심 알고리즘과 메커니즘을 직접 체험해 보세요</p>
       </div>
     </section>
 
-    <!-- Demo Cards Grid -->
+    <!-- Learning Path -->
+    <section class="learning-path">
+      <div class="container">
+        <div class="learning-path-header">
+          <span class="learning-path-label">🧭 추천 학습 경로</span>
+          <h2>처음이시라면 이 순서로</h2>
+          <p>광고 경매 → 입찰 → 밴딧 탐색-활용 → 개인화 → 통계적 함정 → 최적화 순으로 이해가 쌓입니다.
+            각 데모 10~20분이면 충분해요.</p>
+        </div>
+        <ol class="learning-path-steps">
+          <li><a href="demo-rtb.html" class="learning-path-step">
+            <span class="step-num">1</span>
+            <span class="step-body">
+              <span class="step-title">RTB 경매 시뮬레이터</span>
+              <span class="step-meta">⏱ 10분 · 입문 · 선수지식 없음</span>
+            </span>
+          </a></li>
+          <li><a href="demo-bid-landscape.html" class="learning-path-step">
+            <span class="step-num">2</span>
+            <span class="step-body">
+              <span class="step-title">Bid Landscape Explorer</span>
+              <span class="step-meta">⏱ 10분 · 입문 · 선수지식 없음</span>
+            </span>
+          </a></li>
+          <li><a href="demo-ucb1.html" class="learning-path-step">
+            <span class="step-num">3</span>
+            <span class="step-body">
+              <span class="step-title">UCB1 알고리즘</span>
+              <span class="step-meta">⏱ 10분 · 입문 · 평균 계산</span>
+            </span>
+          </a></li>
+          <li><a href="demo-ts.html" class="learning-path-step">
+            <span class="step-num">4</span>
+            <span class="step-body">
+              <span class="step-title">Thompson Sampling</span>
+              <span class="step-meta">⏱ 12분 · 중급 · 확률/Beta 분포</span>
+            </span>
+          </a></li>
+          <li><a href="demo-bid-shading.html" class="learning-path-step">
+            <span class="step-num">5</span>
+            <span class="step-body">
+              <span class="step-title">Bid Shading Visualizer</span>
+              <span class="step-meta">⏱ 15분 · 중급 · RTB 경매 기초</span>
+            </span>
+          </a></li>
+          <li><a href="demo-linucb.html" class="learning-path-step">
+            <span class="step-num">6</span>
+            <span class="step-body">
+              <span class="step-title">LinUCB (Contextual Bandit)</span>
+              <span class="step-meta">⏱ 15분 · 중급 · UCB1·벡터</span>
+            </span>
+          </a></li>
+          <li><a href="demo-censored-data.html" class="learning-path-step">
+            <span class="step-num">7</span>
+            <span class="step-body">
+              <span class="step-title">Censored Data in RTB</span>
+              <span class="step-meta">⏱ 20분 · 고급 · 통계·CDF</span>
+            </span>
+          </a></li>
+          <li><a href="demo-golden-section.html" class="learning-path-step">
+            <span class="step-num">8</span>
+            <span class="step-body">
+              <span class="step-title">Golden Section Search</span>
+              <span class="step-meta">⏱ 10분 · 중급 · 단봉 함수</span>
+            </span>
+          </a></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- All Demos Grid -->
     <section class="section">
       <div class="container">
+        <div class="demos-section-title">
+          <h2>전체 데모</h2>
+          <span class="count">8개 · 카테고리별</span>
+        </div>
+
         <div class="demos-grid">
 
-          <!-- 1. UCB1 Algorithm -->
+          <!-- 1. RTB Auction Simulator -->
           <div class="demo-card">
-            <span class="demo-card-badge">Bandits</span>
-            <h3>UCB1 Algorithm</h3>
-            <p>UCB1 알고리즘이 평균 보상과 탐색 보너스를 조합하여 최적의 광고를 선택하는 과정을 시각화합니다.</p>
-            <a href="demo-ucb1.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 2. Thompson Sampling -->
-          <div class="demo-card">
-            <span class="demo-card-badge">Bandits</span>
-            <h3>Thompson Sampling</h3>
-            <p>Beta 분포 기반 Thompson Sampling이 클릭 피드백에 따라 확률 분포를 업데이트하는 과정을 관찰합니다.</p>
-            <a href="demo-ts.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 3. LinUCB (Contextual Bandit) -->
-          <div class="demo-card">
-            <span class="demo-card-badge">Bandits</span>
-            <h3>LinUCB (Contextual Bandit)</h3>
-            <p>유저와 광고의 Feature Vector를 활용하여 개인화된 광고 선택을 수행하는 LinUCB를 체험합니다.</p>
-            <a href="demo-linucb.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 4. RTB Auction Simulator -->
-          <div class="demo-card">
-            <span class="demo-card-badge">Auction</span>
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Auction</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
             <h3>RTB Auction Simulator</h3>
-            <p>First Price와 Second Price 경매에서 4개 DSP가 실시간 입찰하는 과정을 시뮬레이션합니다.</p>
+            <p>First Price / Second Price 경매에서 4개 DSP가 실시간 입찰하는 과정을 시뮬레이션합니다.
+              같은 상황에서 경매 유형이 어떻게 다른 결과를 만드는지 눈으로 확인하세요.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">📚 선수지식 없음</span>
+            </div>
             <a href="demo-rtb.html" class="btn-try">체험하기</a>
           </div>
 
-          <!-- 5. Bid Landscape Explorer -->
+          <!-- 2. Bid Landscape Explorer -->
           <div class="demo-card">
-            <span class="demo-card-badge">Bidding Strategy</span>
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Bidding</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
             <h3>Bid Landscape Explorer</h3>
-            <p>입찰가별 낙찰률, 비용, 수익 곡선을 탐색하여 최적 입찰 전략을 찾습니다.</p>
+            <p>입찰가별 낙찰률(Win Rate), 비용, 기대 수익(Profit) 곡선을 탐색해 최적 입찰가를 찾습니다.
+              "왜 가장 높게 입찰하는 게 최선이 아닌가"를 직관적으로.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">📚 선수지식 없음</span>
+            </div>
             <a href="demo-bid-landscape.html" class="btn-try">체험하기</a>
           </div>
 
-          <!-- 6. Bid Shading Visualizer -->
+          <!-- 3. UCB1 Algorithm -->
           <div class="demo-card">
-            <span class="demo-card-badge">Bidding Strategy</span>
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Bandits</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>UCB1 Algorithm</h3>
+            <p>탐색(Exploration)과 활용(Exploitation)의 균형. 평균 CTR + 불확실성 보너스로
+              어떤 광고에 예산을 할당할지 결정하는 방법을 라운드별로 시각화합니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">📚 평균 계산</span>
+            </div>
+            <a href="demo-ucb1.html" class="btn-try">체험하기</a>
+          </div>
+
+          <!-- 4. Thompson Sampling -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Bandits</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>Thompson Sampling</h3>
+            <p>Beta 분포로 각 광고의 "진짜 CTR"에 대한 불확실성을 표현하고, 매 라운드
+              분포에서 샘플링해 선택합니다. 클릭/비클릭에 따라 분포가 어떻게 좁아지는지 관찰.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 12분</span>
+              <span class="demo-card-meta-item">📚 확률/Beta 분포</span>
+            </div>
+            <a href="demo-ts.html" class="btn-try">체험하기</a>
+          </div>
+
+          <!-- 5. Bid Shading Visualizer -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Bidding</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
             <h3>Bid Shading Visualizer</h3>
-            <p>1st Price 경매에서 왜 True Value보다 낮게 입찰해야 하는지, 최적 Shading Factor를 Monte Carlo 시뮬레이션으로 탐색합니다.</p>
+            <p>1st Price 경매에서 "True Value 그대로 입찰하면 왜 이익이 0이 되는가"와
+              최적 Shading Factor를 몬테카를로 시뮬레이션으로 탐색. Censored Data 관점까지.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 15분</span>
+              <span class="demo-card-meta-item">📚 RTB 경매 기초</span>
+            </div>
             <a href="demo-bid-shading.html" class="btn-try">체험하기</a>
           </div>
 
-          <!-- 7. Golden Section Search -->
+          <!-- 6. LinUCB -->
           <div class="demo-card">
-            <span class="demo-card-badge">Optimization</span>
-            <h3>Golden Section Search</h3>
-            <p>황금 비율 탐색으로 최적 입찰가를 찾는 과정을 단계별로 시각화합니다. Grid Search 대비 25배 빠른 수렴을 확인하세요.</p>
-            <a href="demo-golden-section.html" class="btn-try">체험하기</a>
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Bandits</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>LinUCB (Contextual Bandit)</h3>
+            <p>유저·광고의 Feature Vector(성별, 관심사 등)를 활용해 "이 유저에게는 이 광고"를
+              학습하는 개인화 밴딧. Exploitation + Exploration이 맥락에 맞게 동작.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 15분</span>
+              <span class="demo-card-meta-item">📚 UCB1·벡터</span>
+            </div>
+            <a href="demo-linucb.html" class="btn-try">체험하기</a>
           </div>
 
-          <!-- 8. Censored Data in RTB -->
+          <!-- 7. Censored Data in RTB -->
           <div class="demo-card">
-            <span class="demo-card-badge">ML / Statistics</span>
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">ML · Stats</span>
+              <span class="demo-card-level level-advanced">고급</span>
+            </div>
             <h3>Censored Data in RTB</h3>
-            <p>입찰에서 졌을 때 잃어버리는 정보, Naive 추정의 함정, Censored Regression 해법을 단계별로 체험합니다.</p>
+            <p>입찰에서 졌을 때 경쟁자 가격을 못 보는 "Censored" 문제가 시장 분포 추정을
+              어떻게 왜곡하는지 5단계로 체험. Survival Analysis와 같은 수학적 구조.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 20분</span>
+              <span class="demo-card-meta-item">📚 통계·CDF</span>
+            </div>
             <a href="demo-censored-data.html" class="btn-try">체험하기</a>
           </div>
 
+          <!-- 8. Golden Section Search -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge">Optimization</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>Golden Section Search</h3>
+            <p>Surplus = (이익 per win) × (낙찰 확률) 곡선의 최대점을 황금 비율(φ ≈ 1.618)로
+              탐색. Grid Search 대비 25배 빠른 수렴을 단계별 애니메이션으로 확인.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">📚 단봉 함수</span>
+            </div>
+            <a href="demo-golden-section.html" class="btn-try">체험하기</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Glossary Section (populated by JS) -->
+    <section class="glossary-section">
+      <div class="container">
+        <div class="glossary-header">
+          <h2>📖 애드테크 용어 사전</h2>
+          <p>데모에서 자주 등장하는 핵심 용어 — 클릭해서 펼쳐보세요</p>
+        </div>
+        <div class="glossary-grid" id="glossary-grid">
+          <!-- Populated by js/glossary.js -->
         </div>
       </div>
     </section>
@@ -235,6 +663,7 @@
       <div class="footer-links">
         <a href="index.html">홈</a>
         <a href="about.html">소개</a>
+        <a href="posts-browse.html">Posts</a>
         <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
       </div>
       <p class="footer-text">
@@ -245,6 +674,7 @@
 
   <!-- Scripts -->
   <script src="js/posts.js"></script>
+  <script src="js/glossary.js"></script>
   <script src="js/main.js"></script>
 </body>
 

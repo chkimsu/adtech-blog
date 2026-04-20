@@ -20,8 +20,9 @@ const ARMS = [
 // ==========================================
 
 class UCB1 {
-    constructor(nArms) {
+    constructor(nArms, c = 2) {
         this.nArms = nArms;
+        this.c = c; // Exploration constant — user-tunable via slider
         this.pulls = new Array(nArms).fill(0);
         this.successes = new Array(nArms).fill(0);
         this.totalPulls = 0;
@@ -33,7 +34,7 @@ class UCB1 {
 
     getBonus(i) {
         if (this.pulls[i] === 0 || this.totalPulls === 0) return Infinity;
-        return Math.sqrt(2 * Math.log(this.totalPulls) / this.pulls[i]);
+        return Math.sqrt(this.c * Math.log(this.totalPulls) / this.pulls[i]);
     }
 
     getScore(i) {
@@ -152,13 +153,31 @@ function resetDemo() {
         clearInterval(autoRunInterval);
         autoRunInterval = null;
     }
-    model = new UCB1(ARMS.length);
+    const c = getCurrentC();
+    model = new UCB1(ARMS.length, c);
     lastSelected = -1;
     updateVisualization();
     renderStats();
     document.getElementById('demo-log').innerHTML = '';
     document.querySelectorAll('.btn-action').forEach(b => b.disabled = false);
-    logAction('Model reset to initial state.');
+    logAction(`Model reset (c = ${c.toFixed(1)}).`);
+}
+
+function getCurrentC() {
+    const slider = document.getElementById('slider-c');
+    return slider ? parseFloat(slider.value) : 2;
+}
+
+// Called by UCB1 demo slider — updates exploration constant on the fly
+function onCChange(value) {
+    const c = parseFloat(value);
+    const valEl = document.getElementById('c-val');
+    if (valEl) valEl.textContent = c.toFixed(1);
+    if (model) {
+        model.c = c;
+        updateVisualization();
+        renderStats();
+    }
 }
 
 function updateVisualization() {

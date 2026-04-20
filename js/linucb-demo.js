@@ -378,9 +378,26 @@ function logAction(message) {
 }
 
 function resetDemo() {
-    model = new LinUCB(N_ARMS, N_FEATURES, ALPHA);
+    const a = getCurrentAlpha();
+    model = new LinUCB(N_ARMS, N_FEATURES, a);
     updateVisualization();
-    logAction("Model reset to initial state.");
+    logAction(`Model reset (α=${a.toFixed(2)}).`);
+}
+
+function getCurrentAlpha() {
+    const el = document.getElementById('slider-alpha');
+    return el ? parseFloat(el.value) : ALPHA;
+}
+
+// Called by LinUCB demo slider — updates uncertainty coefficient on the fly
+function onAlphaChange(value) {
+    const a = parseFloat(value);
+    const valEl = document.getElementById('alpha-val');
+    if (valEl) valEl.textContent = a.toFixed(2);
+    if (model) {
+        model.alpha = a;
+        updateVisualization();
+    }
 }
 
 // Start

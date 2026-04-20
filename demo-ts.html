@@ -152,8 +152,33 @@
 
             <!-- Right: Controls -->
             <div class="control-panel">
+                <!-- Prior sliders (added) -->
+                <div class="control-card">
+                    <h3 style="margin-bottom: 0.5rem;">⚙️ 초기 Prior Beta(α₀, β₀)</h3>
+                    <div style="margin-bottom: 0.55rem;">
+                        <label style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
+                            <span>α₀ (성공 가중치)</span>
+                            <span id="pa-val" style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;">1</span>
+                        </label>
+                        <input type="range" id="slider-prior-a" min="1" max="20" step="1" value="1"
+                            style="width: 100%;" oninput="onPriorChange()">
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
+                            <span>β₀ (실패 가중치)</span>
+                            <span id="pb-val" style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;">1</span>
+                        </label>
+                        <input type="range" id="slider-prior-b" min="1" max="20" step="1" value="1"
+                            style="width: 100%;" oninput="onPriorChange()">
+                    </div>
+                    <small style="display:block; font-size:0.74rem; color: var(--text-muted); line-height:1.45;">
+                        Prior는 학습 초기 분포를 결정. 값이 크면 처음부터 "강한 믿음"으로 시작 → 탐색 성향 ↓.<br>
+                        <strong>슬라이더 변경 시 자동 Reset</strong>됩니다.
+                    </small>
+                </div>
+
                 <div id="controls-container">
-                    <!-- Controls injected by JS -->
+                    <!-- Click/Ignore buttons injected by JS -->
                 </div>
 
                 <div

@@ -7,18 +7,18 @@ A modern, dark-mode focused blog about Ad Tech, built with vanilla HTML, CSS, an
 ![Ad Tech Blog](https://img.shields.io/badge/Built%20with-HTML%2FCSS%2FJS-blue)
 ![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-green)
 
-## ✨ Features
+##  Features
 
-- 🎨 **Modern Dark Mode Design** - Sleek glassmorphism UI with smooth animations
-- 🔍 **Real-time Search** - Instantly filter posts by title, content, or keywords
-- 🏷️ **Category & Tag Filtering** - Organize and discover content easily
-- 🌓 **Theme Toggle** - Switch between dark and light modes (persisted in localStorage)
-- 💬 **GitHub Comments** - Utterances integration for privacy-friendly discussions
-- 📱 **Fully Responsive** - Works perfectly on desktop, tablet, and mobile
-- ⚡ **Fast & Lightweight** - No frameworks, pure vanilla JavaScript
-- 🔒 **Privacy-First** - No tracking, no analytics by default
+-  **Modern Dark Mode Design** - Sleek glassmorphism UI with smooth animations
+-  **Real-time Search** - Instantly filter posts by title, content, or keywords
+-  **Category & Tag Filtering** - Organize and discover content easily
+-  **Theme Toggle** - Switch between dark and light modes (persisted in localStorage)
+-  **GitHub Comments** - Utterances integration for privacy-friendly discussions
+-  **Fully Responsive** - Works perfectly on desktop, tablet, and mobile
+-  **Fast & Lightweight** - No frameworks, pure vanilla JavaScript
+-  **Privacy-First** - No tracking, no analytics by default
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 adtech-blog/
@@ -36,7 +36,7 @@ adtech-blog/
 └── README.md
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Local Development
 
@@ -83,7 +83,7 @@ git push -u origin main
 
 4. **Your site will be live at:** `https://yourusername.github.io/adtech-blog/`
 
-## 💬 Setting Up Comments
+##  Setting Up Comments
 
 This blog uses [Utterances](https://utteranc.es/) for GitHub-based comments.
 
@@ -102,7 +102,7 @@ This blog uses [Utterances](https://utteranc.es/) for GitHub-based comments.
 
 3. **Comments will now appear at the bottom of each blog post!**
 
-## ✍️ Adding New Posts
+##  Adding New Posts
 
 ### Method 1: Edit posts.js (Recommended)
 
@@ -132,7 +132,7 @@ If you prefer writing in Markdown:
 2. Use a converter like [markdowntohtml.com](https://markdowntohtml.com/)
 3. Copy the HTML output into the `content` field
 
-## 🎨 Customization
+##  Customization
 
 ### Change Colors
 
@@ -174,21 +174,21 @@ And update the hero section in `index.html`:
 <p>Your blog description</p>
 ```
 
-## 📱 Responsive Breakpoints
+##  Responsive Breakpoints
 
 The design is mobile-first with breakpoints:
 - Mobile: < 768px
 - Tablet: 768px - 1024px
 - Desktop: > 1024px
 
-## 🔧 Browser Support
+##  Browser Support
 
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
 
-## 📄 Sample Content
+##  Sample Content
 
 The blog comes with 4 sample posts covering:
 1. Introduction to Programmatic Advertising
@@ -198,7 +198,7 @@ The blog comes with 4 sample posts covering:
 
 Feel free to replace these with your own content!
 
-## 🤝 Contributing
+##  Contributing
 
 This is a personal blog template, but suggestions are welcome:
 
@@ -208,17 +208,17 @@ This is a personal blog template, but suggestions are welcome:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+##  License
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - Design inspired by modern web design trends
-- Built with ❤️ for the Ad Tech community
+- Built with  for the Ad Tech community
 - Hosted on GitHub Pages (free!)
 
-## 📞 Support
+##  Support
 
 If you have questions or need help:
 - Open an issue on GitHub
@@ -227,6 +227,6 @@ If you have questions or need help:
 
 ---
 
-**Happy Blogging! 🚀**
+**Happy Blogging! **
 
-Made with ❤️ for Ad Tech professionals
+Made with  for Ad Tech professionals

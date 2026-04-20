@@ -1,10 +1,10 @@
 # Markdown 블로그 글 작성 가이드
 
-## ✅ Marked.js 설치 완료!
+##  Marked.js 설치 완료!
 
 이제 Markdown 형식으로 블로그 글을 작성할 수 있습니다.
 
-## 📝 Markdown으로 글 작성하기
+##  Markdown으로 글 작성하기
 
 ### 1. `js/posts.js` 파일 열기
 
@@ -71,7 +71,7 @@ console.log(greeting);
 - 브라우저에서 `F5` 새로고침
 - Markdown이 자동으로 HTML로 변환되어 표시됩니다!
 
-## 🎯 Markdown vs HTML
+##  Markdown vs HTML
 
 ### Markdown 사용 (권장)
 ```javascript
@@ -95,7 +95,7 @@ console.log(greeting);
 }
 ```
 
-## 📚 Markdown 문법 치트시트
+##  Markdown 문법 치트시트
 
 | 기능 | Markdown | HTML 결과 |
 |------|----------|-----------|
@@ -109,7 +109,7 @@ console.log(greeting);
 | 리스트 | `- 항목` | `<ul><li>항목</li></ul>` |
 | 인용 | `> 인용구` | `<blockquote>인용구</blockquote>` |
 
-## 💡 팁
+##  팁
 
 1. **코드 블록**: 세 개의 백틱(```)으로 감싸고 언어 지정
    ````markdown
@@ -124,14 +124,14 @@ console.log(greeting);
 
 4. **혼합 사용**: 각 포스트마다 선택 가능
 
-## ⚙️ 기술 정보
+##  기술 정보
 
 - **라이브러리**: Marked.js (CDN)
 - **버전**: Latest
 - **변환**: 자동 (클라이언트 사이드)
 - **위치**: `main.js`의 `renderPostDetail()` 함수
 
-## 🔍 문제 해결
+##  문제 해결
 
 **Markdown이 변환되지 않음:**
 1. `isMarkdown: true` 추가했는지 확인
@@ -144,4 +144,4 @@ console.log(greeting);
 
 ---
 
-이제 Markdown으로 편하게 블로그 글을 작성하세요! 🎉
+이제 Markdown으로 편하게 블로그 글을 작성하세요! 

@@ -347,9 +347,9 @@
           총 예산: <span class="hl" id="total-budget">$500</span>
         </div>
         <div class="po-buttons">
-          <button class="po-btn" id="btn-equal">🟰 균등 분배</button>
-          <button class="po-btn" id="btn-greedy">🎯 고가치 몰빵</button>
-          <button class="po-btn strong" id="btn-optimize">⚡ 자동 최적화</button>
+          <button class="po-btn" id="btn-equal"> 균등 분배</button>
+          <button class="po-btn" id="btn-greedy"> 고가치 몰빵</button>
+          <button class="po-btn strong" id="btn-optimize"> 자동 최적화</button>
           <button class="po-btn" id="btn-reset">↺ 리셋</button>
         </div>
       </div>
@@ -380,13 +380,13 @@
       <!-- Charts -->
       <div class="po-charts">
         <div class="po-chart-card">
-          <h3>🍰 예산 배분 구성</h3>
+          <h3> 예산 배분 구성</h3>
           <div class="po-chart-wrap">
             <canvas id="budget-pie"></canvas>
           </div>
         </div>
         <div class="po-chart-card">
-          <h3>📊 Slot별 Profit 기여</h3>
+          <h3> Slot별 Profit 기여</h3>
           <div class="po-chart-wrap">
             <canvas id="profit-bar"></canvas>
           </div>
@@ -396,7 +396,7 @@
       <!-- TL;DR -->
       <section class="demo-tldr">
         <div class="demo-tldr-inner">
-          <h3>✨ 이 데모에서 알게 된 3가지</h3>
+          <h3> 이 데모에서 알게 된 3가지</h3>
           <ol>
             <li><strong>고가치 지면에 몰빵 ≠ 최적</strong> — Diminishing Returns 때문에 같은 지면에 계속 붓다 보면 한계 수익이 0에 수렴. 다른 지면의 초반 큰 기울기를 놓치게 된다.</li>
             <li><strong>등한계효용 원리</strong> — 각 지면의 <em>한계 수익(Profit의 기울기)</em>이 모든 지면에서 같아지도록 분배할 때 전체 Profit이 최대. "Auto Optimize" 버튼이 이 조건을 수치적으로 찾아낸다.</li>
@@ -408,7 +408,7 @@
       <!-- Next Up -->
       <section class="demo-next">
         <div class="demo-next-inner">
-          <h3>🚀 다음 배우기</h3>
+          <h3> 다음 배우기</h3>
           <div class="demo-next-grid">
             <a href="demo-bid-landscape.html" class="demo-next-card">
               <span class="demo-next-label">관련 데모</span>
@@ -607,14 +607,14 @@
       document.getElementById('total-budget').textContent = '$' + TOTAL_BUDGET;
 
       document.getElementById('sum-budget-used').textContent = '$' + used.toFixed(0) +
-        (Math.abs(used - TOTAL_BUDGET) < 1 ? '' : ' ⚠');
+        (Math.abs(used - TOTAL_BUDGET) < 1 ? '' : ' ');
       document.getElementById('sum-budget-used').className = 'po-summary-value ' +
         (Math.abs(used - TOTAL_BUDGET) < 1 ? 'good' : 'warn');
 
       document.getElementById('sum-profit').textContent = '$' + totalProfit.toFixed(1);
       document.getElementById('sum-roas').textContent = roas.toFixed(2) + 'x';
       document.getElementById('sum-gap').textContent =
-        gap <= 0.05 ? '✓ 최적' : '−$' + gap.toFixed(1);
+        gap <= 0.05 ? ' 최적' : '−$' + gap.toFixed(1);
       document.getElementById('sum-gap').className = 'po-summary-value ' +
         (gap <= 0.5 ? 'good' : (gap <= 5 ? 'warn' : ''));
     }

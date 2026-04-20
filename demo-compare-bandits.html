@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="UCB1 vs Thompson Sampling — 같은 시나리오에서 두 밴딧 알고리즘이 어떻게 다르게 동작하는지 직관적으로 비교하는 Head-to-Head 시뮬레이터.">
+  <title>UCB1 vs Thompson Sampling 비교 — Ad Tech Blog</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .cmp-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .cmp-hero {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+    }
+
+    .cmp-hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cmp-hero p {
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+    }
+
+    .cmp-intro {
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+      padding: 1.2rem 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .cmp-intro strong {
+      color: var(--accent-primary);
+    }
+
+    /* === Control bar === */
+    .cmp-controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .cmp-btn {
+      padding: 0.55rem 1.15rem;
+      border-radius: 9px;
+      border: 1px solid var(--accent-primary);
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent-primary);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .cmp-btn:hover:not(:disabled) {
+      background: var(--accent-primary);
+      color: var(--bg-primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .cmp-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .cmp-btn.danger {
+      border-color: #ff4b57;
+      color: #ff4b57;
+      background: rgba(255, 75, 87, 0.1);
+    }
+
+    .cmp-btn.danger:hover:not(:disabled) {
+      background: #ff4b57;
+      color: white;
+    }
+
+    .cmp-round-display {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-radius: 9px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* === Ads panel === */
+    .cmp-ads {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .cmp-ad-card {
+      padding: 1rem 1.15rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .cmp-ad-card.optimal {
+      border-color: #4BC0C0;
+      box-shadow: 0 0 0 2px rgba(75, 192, 192, 0.25);
+    }
+
+    .cmp-ad-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.35rem;
+    }
+
+    .cmp-ad-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .cmp-ad-type {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .cmp-ad-truectr {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-family: 'Fira Code', monospace;
+      min-height: 1.1rem;
+    }
+
+    .cmp-ad-truectr.revealed strong {
+      color: #4BC0C0;
+    }
+
+    .cmp-ad-optimal-tag {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      background: #4BC0C0;
+      color: var(--bg-primary);
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    /* === Algorithm panels === */
+    .cmp-algos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .cmp-algos {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cmp-algo-panel {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+
+    .cmp-algo-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cmp-algo-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .cmp-algo-name.ucb { color: #00e5ff; }
+    .cmp-algo-name.ts { color: #b026ff; }
+
+    .cmp-algo-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .cmp-algo-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .cmp-metric {
+      padding: 0.55rem 0.6rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .cmp-metric-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .cmp-metric-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .cmp-metric-value.accent {
+      color: var(--accent-primary);
+    }
+
+    .cmp-algo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .cmp-algo-table th,
+    .cmp-algo-table td {
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cmp-algo-table th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cmp-algo-table td {
+      color: var(--text-secondary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .cmp-algo-table tr.chosen-most td {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .cmp-algo-table .bar {
+      display: inline-block;
+      height: 6px;
+      background: var(--accent-primary);
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3rem;
+    }
+
+    /* === Chart card === */
+    .cmp-chart-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .cmp-chart-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .cmp-chart-wrap {
+      position: relative;
+      height: 340px;
+    }
+
+    /* === LinUCB note === */
+    .linucb-note {
+      max-width: 900px;
+      margin: 0 auto 2rem;
+      padding: 1.1rem 1.5rem;
+      background: rgba(176, 38, 255, 0.08);
+      border: 1px solid rgba(176, 38, 255, 0.3);
+      border-left: 4px solid var(--accent-secondary);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .linucb-note strong {
+      color: var(--accent-secondary);
+    }
+
+    .linucb-note a {
+      color: var(--accent-primary);
+    }
+  </style>
+
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="cmp-hero">
+      <div class="cmp-container">
+        <h1>UCB1 vs Thompson Sampling — Head-to-Head</h1>
+        <p>같은 시나리오에서 결정적(deterministic) UCB와 확률적(stochastic) Thompson Sampling이
+          어떻게 다르게 선택하고 누적 Regret을 어떻게 쌓는지 한 화면에서 비교합니다.</p>
+      </div>
+    </section>
+
+    <div class="cmp-container">
+      <!-- Intro -->
+      <div class="cmp-intro">
+        <strong>시나리오</strong> — 4개 광고(A/B/C/D)가 있고, 각 광고의 <em>실제 CTR</em>은 당신에게 숨겨져 있습니다.
+        매 라운드마다 두 알고리즘이 <em>각자</em> 한 광고를 선택하고 클릭/비클릭(Bernoulli) 피드백을 받습니다.
+        "내가 이 광고들의 진짜 CTR을 알았더라면 받을 수 있었을 수익"과 실제 수익의 차이를 <strong>Regret</strong>으로 누적합니다.
+        Regret 곡선이 낮을수록 더 효율적으로 학습한 알고리즘입니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="cmp-controls">
+        <span class="cmp-round-display" id="round-display">Round 0 / 0</span>
+        <button class="cmp-btn" id="btn-step">▶ 1 Round</button>
+        <button class="cmp-btn" id="btn-100">⏭ 100 Rounds</button>
+        <button class="cmp-btn" id="btn-500">⏭⏭ 500 Rounds</button>
+        <button class="cmp-btn" id="btn-reveal">👁 실제 CTR 공개</button>
+        <button class="cmp-btn danger" id="btn-reset">↺ 리셋</button>
+      </div>
+
+      <!-- Ads -->
+      <div class="cmp-ads" id="ads-panel"></div>
+
+      <!-- Algorithms side-by-side -->
+      <div class="cmp-algos">
+        <!-- UCB1 Panel -->
+        <div class="cmp-algo-panel">
+          <div class="cmp-algo-head">
+            <span class="cmp-algo-name ucb">UCB1</span>
+            <span class="cmp-algo-sub">
+              <code>$\bar{x}_a + \sqrt{\frac{2 \ln t}{n_a}}$</code> · 결정적 선택
+            </span>
+          </div>
+          <div class="cmp-algo-metrics">
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">누적 Regret</div>
+              <div class="cmp-metric-value accent" id="ucb-regret">0.00</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">누적 보상</div>
+              <div class="cmp-metric-value" id="ucb-reward">0</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">최적광고 선택률</div>
+              <div class="cmp-metric-value" id="ucb-optrate">—</div>
+            </div>
+          </div>
+          <table class="cmp-algo-table" id="ucb-table">
+            <thead>
+              <tr><th>광고</th><th>선택</th><th>추정 CTR</th><th>UCB 점수</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- TS Panel -->
+        <div class="cmp-algo-panel">
+          <div class="cmp-algo-head">
+            <span class="cmp-algo-name ts">Thompson Sampling</span>
+            <span class="cmp-algo-sub">
+              <code>$\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$</code> · 샘플링 선택
+            </span>
+          </div>
+          <div class="cmp-algo-metrics">
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">누적 Regret</div>
+              <div class="cmp-metric-value accent" id="ts-regret">0.00</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">누적 보상</div>
+              <div class="cmp-metric-value" id="ts-reward">0</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-metric-label">최적광고 선택률</div>
+              <div class="cmp-metric-value" id="ts-optrate">—</div>
+            </div>
+          </div>
+          <table class="cmp-algo-table" id="ts-table">
+            <thead>
+              <tr><th>광고</th><th>선택</th><th>α / β</th><th>샘플(최근)</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Cumulative Regret Chart -->
+      <div class="cmp-chart-card">
+        <h3>📉 누적 Regret 비교 (낮을수록 좋음)</h3>
+        <div class="cmp-chart-wrap">
+          <canvas id="regret-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- LinUCB note -->
+      <div class="linucb-note">
+        <strong>LinUCB는 왜 없나요?</strong> LinUCB는 <em>context</em>(유저 특성 등)를 사용하는 <strong>문맥형 밴딧(Contextual Bandit)</strong>이라,
+        UCB1/TS와 같은 축에서 비교하려면 context가 들어있는 별도 시나리오가 필요합니다.
+        <a href="demo-linucb.html">LinUCB 전용 데모</a>에서 context를 활용한 동작을 확인하세요.
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>✨ 이 비교에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>두 알고리즘 모두 최적 광고를 찾는다</strong> — 시간이 충분하면 Regret 곡선은 <code>O(log t)</code>로 수렴. 단지 경로가 다를 뿐.</li>
+            <li><strong>TS는 초기 탐색이 더 공격적</strong> — Beta 분포에서 샘플링하므로 초반에 "확률적으로" 더 다양한 광고를 시도. UCB는 보너스 수식에 의해 "결정적으로" 탐색한다.</li>
+            <li><strong>실전에서는 TS가 약간 유리한 경우가 많다</strong> — 특히 클릭 피드백이 지연(Delayed Feedback)되거나 보상이 이진값이 아닌 경우, TS의 샘플링 기반 구조가 더 유연하게 대응.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>🚀 다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="demo-linucb.html" class="demo-next-card">
+              <span class="demo-next-label">다음 데모</span>
+              <span class="demo-next-title">LinUCB (Contextual Bandit)</span>
+              <span class="demo-next-excerpt">Context를 활용하는 밴딧으로 개인화까지 — UCB/TS의 자연스러운 확장</span>
+              <span class="demo-next-meta">⏱ 15분 · 중급</span>
+            </a>
+            <a href="post.html?id=ucb-vs-ts" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">UCB vs Thompson Sampling — Deterministic vs Stochastic</span>
+              <span class="demo-next-excerpt">두 접근의 이론적 차이와 실무 선택 기준을 정리</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // ====================================================================
+    // UCB1 vs Thompson Sampling — Head-to-Head Comparison
+    // ====================================================================
+
+    // -- Scenario setup --
+    const ADS = [
+      { name: 'Ad A', type: '전자제품 · 인기',   trueCTR: 0.18 },
+      { name: 'Ad B', type: '패션 · 평균',       trueCTR: 0.10 },
+      { name: 'Ad C', type: '여행 · 시즌성',     trueCTR: 0.06 },
+      { name: 'Ad D', type: '신규 · 불확실',     trueCTR: 0.02 }
+    ];
+    const OPTIMAL = 0; // Ad A
+    const OPTIMAL_CTR = ADS[OPTIMAL].trueCTR;
+
+    // -- State --
+    let t = 0;
+    let revealed = false;
+
+    // Per-algorithm state
+    function initAlgo() {
+      return {
+        counts: ADS.map(() => 0),          // n_a
+        sumReward: ADS.map(() => 0),        // Σ reward (successes)
+        totalReward: 0,
+        regretCumulative: [],               // array per round
+        optimalChoices: 0,
+        lastSamples: ADS.map(() => null)    // TS 마지막 샘플값
+      };
+    }
+
+    let ucb = initAlgo();
+    let ts = initAlgo();
+
+    // -- Utility --
+    function rand() { return Math.random(); }
+    function sampleBernoulli(p) { return rand() < p ? 1 : 0; }
+
+    // Simple Beta sampling via two Gamma variates (Marsaglia–Tsang simplified using uniform/log trick)
+    // For α, β ≤ 100 in practice, we can use Math-based approximation or a built-in.
+    // Here: use inverse CDF approx via two Gammas — implemented with a very simple method for our ranges.
+    // Gamma(k,1) for integer k: sum of k exponential(1). Works fine for small α.
+    function gammaSample(shape) {
+      // Marsaglia-Tsang for shape >= 1; naive for shape < 1.
+      if (shape < 1) {
+        return gammaSample(shape + 1) * Math.pow(rand(), 1 / shape);
+      }
+      const d = shape - 1 / 3;
+      const c = 1 / Math.sqrt(9 * d);
+      while (true) {
+        let x, v;
+        do {
+          const u1 = rand(), u2 = rand();
+          x = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2); // std normal via Box-Muller
+          v = 1 + c * x;
+        } while (v <= 0);
+        v = v * v * v;
+        const u = rand();
+        if (u < 1 - 0.0331 * Math.pow(x, 4)) return d * v;
+        if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+      }
+    }
+    function betaSample(alpha, beta) {
+      const x = gammaSample(alpha);
+      const y = gammaSample(beta);
+      return x / (x + y);
+    }
+
+    // -- UCB1 select --
+    function ucbSelect() {
+      // Guarantee each arm once first
+      for (let i = 0; i < ADS.length; i++) {
+        if (ucb.counts[i] === 0) return i;
+      }
+      let bestIdx = 0, bestScore = -Infinity;
+      ADS.forEach((_, i) => {
+        const mean = ucb.sumReward[i] / ucb.counts[i];
+        const bonus = Math.sqrt((2 * Math.log(t + 1)) / ucb.counts[i]);
+        const score = mean + bonus;
+        if (score > bestScore) { bestScore = score; bestIdx = i; }
+      });
+      return bestIdx;
+    }
+
+    // -- TS select --
+    function tsSelect() {
+      let bestIdx = 0, bestSample = -Infinity;
+      const samples = ADS.map((_, i) => {
+        const alpha = 1 + ts.sumReward[i];
+        const beta  = 1 + (ts.counts[i] - ts.sumReward[i]);
+        const s = betaSample(alpha, beta);
+        if (s > bestSample) { bestSample = s; bestIdx = i; }
+        return s;
+      });
+      ts.lastSamples = samples;
+      return bestIdx;
+    }
+
+    // -- Run one round --
+    function stepOne() {
+      t += 1;
+
+      // UCB chooses
+      const ucbChoice = ucbSelect();
+      const ucbReward = sampleBernoulli(ADS[ucbChoice].trueCTR);
+      ucb.counts[ucbChoice] += 1;
+      ucb.sumReward[ucbChoice] += ucbReward;
+      ucb.totalReward += ucbReward;
+      if (ucbChoice === OPTIMAL) ucb.optimalChoices += 1;
+      const ucbRegretStep = OPTIMAL_CTR - ADS[ucbChoice].trueCTR;
+      const lastUcb = ucb.regretCumulative.length ? ucb.regretCumulative[ucb.regretCumulative.length - 1] : 0;
+      ucb.regretCumulative.push(lastUcb + ucbRegretStep);
+
+      // TS chooses
+      const tsChoice = tsSelect();
+      const tsReward = sampleBernoulli(ADS[tsChoice].trueCTR);
+      ts.counts[tsChoice] += 1;
+      ts.sumReward[tsChoice] += tsReward;
+      ts.totalReward += tsReward;
+      if (tsChoice === OPTIMAL) ts.optimalChoices += 1;
+      const tsRegretStep = OPTIMAL_CTR - ADS[tsChoice].trueCTR;
+      const lastTs = ts.regretCumulative.length ? ts.regretCumulative[ts.regretCumulative.length - 1] : 0;
+      ts.regretCumulative.push(lastTs + tsRegretStep);
+    }
+
+    function runMany(n) {
+      const stepsPerFrame = Math.max(1, Math.floor(n / 60));
+      let done = 0;
+      function batch() {
+        const chunkEnd = Math.min(done + stepsPerFrame, n);
+        for (let i = done; i < chunkEnd; i++) stepOne();
+        done = chunkEnd;
+        renderAll();
+        if (done < n) requestAnimationFrame(batch);
+      }
+      batch();
+    }
+
+    // -- Rendering --
+    function renderAds() {
+      const panel = document.getElementById('ads-panel');
+      panel.innerHTML = ADS.map((a, i) => `
+        <div class="cmp-ad-card ${i === OPTIMAL ? 'optimal' : ''}">
+          ${i === OPTIMAL ? '<span class="cmp-ad-optimal-tag">OPTIMAL</span>' : ''}
+          <div class="cmp-ad-head">
+            <span class="cmp-ad-name">${a.name}</span>
+          </div>
+          <div class="cmp-ad-type">${a.type}</div>
+          <div class="cmp-ad-truectr ${revealed ? 'revealed' : ''}">
+            ${revealed ? `실제 CTR: <strong>${(a.trueCTR * 100).toFixed(1)}%</strong>` : '실제 CTR: ?'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderUCB() {
+      document.getElementById('ucb-regret').textContent =
+        (ucb.regretCumulative.length ? ucb.regretCumulative[ucb.regretCumulative.length - 1] : 0).toFixed(3);
+      document.getElementById('ucb-reward').textContent = ucb.totalReward;
+      document.getElementById('ucb-optrate').textContent =
+        t > 0 ? `${((ucb.optimalChoices / t) * 100).toFixed(1)}%` : '—';
+
+      const tbody = document.querySelector('#ucb-table tbody');
+      const mostChosen = ucb.counts.indexOf(Math.max(...ucb.counts));
+      const maxCount = Math.max(...ucb.counts, 1);
+      tbody.innerHTML = ADS.map((a, i) => {
+        const mean = ucb.counts[i] ? (ucb.sumReward[i] / ucb.counts[i]) : 0;
+        const score = ucb.counts[i]
+          ? (mean + Math.sqrt((2 * Math.log(t + 1)) / ucb.counts[i])).toFixed(3)
+          : '∞';
+        const bar = Math.round((ucb.counts[i] / maxCount) * 60);
+        return `
+          <tr class="${i === mostChosen && ucb.counts[i] > 0 ? 'chosen-most' : ''}">
+            <td>${a.name}</td>
+            <td>${ucb.counts[i]}<span class="bar" style="width:${bar}px"></span></td>
+            <td>${(mean * 100).toFixed(1)}%</td>
+            <td>${score}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function renderTS() {
+      document.getElementById('ts-regret').textContent =
+        (ts.regretCumulative.length ? ts.regretCumulative[ts.regretCumulative.length - 1] : 0).toFixed(3);
+      document.getElementById('ts-reward').textContent = ts.totalReward;
+      document.getElementById('ts-optrate').textContent =
+        t > 0 ? `${((ts.optimalChoices / t) * 100).toFixed(1)}%` : '—';
+
+      const tbody = document.querySelector('#ts-table tbody');
+      const mostChosen = ts.counts.indexOf(Math.max(...ts.counts));
+      const maxCount = Math.max(...ts.counts, 1);
+      tbody.innerHTML = ADS.map((a, i) => {
+        const alpha = 1 + ts.sumReward[i];
+        const beta = 1 + (ts.counts[i] - ts.sumReward[i]);
+        const bar = Math.round((ts.counts[i] / maxCount) * 60);
+        const lastSample = ts.lastSamples[i] !== null ? (ts.lastSamples[i] * 100).toFixed(1) + '%' : '—';
+        return `
+          <tr class="${i === mostChosen && ts.counts[i] > 0 ? 'chosen-most' : ''}">
+            <td>${a.name}</td>
+            <td>${ts.counts[i]}<span class="bar" style="width:${bar}px"></span></td>
+            <td>${alpha.toFixed(0)} / ${beta.toFixed(0)}</td>
+            <td>${lastSample}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    // -- Chart --
+    let chart;
+    function initChart() {
+      const ctx = document.getElementById('regret-chart');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'UCB1',
+              data: [],
+              borderColor: '#00e5ff',
+              backgroundColor: 'rgba(0, 229, 255, 0.15)',
+              tension: 0.2,
+              pointRadius: 0,
+              borderWidth: 2,
+              fill: false
+            },
+            {
+              label: 'Thompson Sampling',
+              data: [],
+              borderColor: '#b026ff',
+              backgroundColor: 'rgba(176, 38, 255, 0.15)',
+              tension: 0.2,
+              pointRadius: 0,
+              borderWidth: 2,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { labels: { color: '#b8c5d6', font: { size: 13 } } },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Round t', color: '#7a8ba3' },
+              ticks: { color: '#7a8ba3', maxTicksLimit: 10 },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              title: { display: true, text: '누적 Regret', color: '#7a8ba3' },
+              ticks: { color: '#7a8ba3' },
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function renderChart() {
+      const maxPoints = 500;
+      const step = Math.max(1, Math.floor(ucb.regretCumulative.length / maxPoints));
+      const labels = [];
+      const ucbData = [];
+      const tsData = [];
+      for (let i = 0; i < ucb.regretCumulative.length; i += step) {
+        labels.push(i + 1);
+        ucbData.push(+ucb.regretCumulative[i].toFixed(3));
+        tsData.push(+ts.regretCumulative[i].toFixed(3));
+      }
+      // Always include the last point
+      if (ucb.regretCumulative.length > 0 && labels[labels.length - 1] !== ucb.regretCumulative.length) {
+        labels.push(ucb.regretCumulative.length);
+        ucbData.push(+ucb.regretCumulative[ucb.regretCumulative.length - 1].toFixed(3));
+        tsData.push(+ts.regretCumulative[ts.regretCumulative.length - 1].toFixed(3));
+      }
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = ucbData;
+      chart.data.datasets[1].data = tsData;
+      chart.update('none');
+    }
+
+    function renderAll() {
+      document.getElementById('round-display').textContent =
+        `Round ${t} / ${t}`;
+      renderUCB();
+      renderTS();
+      renderChart();
+    }
+
+    // -- Controls --
+    function resetAll() {
+      t = 0;
+      ucb = initAlgo();
+      ts = initAlgo();
+      revealed = false;
+      renderAds();
+      renderAll();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAds();
+      initChart();
+      renderAll();
+
+      document.getElementById('btn-step').addEventListener('click', () => { stepOne(); renderAll(); });
+      document.getElementById('btn-100').addEventListener('click', () => runMany(100));
+      document.getElementById('btn-500').addEventListener('click', () => runMany(500));
+      document.getElementById('btn-reveal').addEventListener('click', () => {
+        revealed = !revealed;
+        renderAds();
+        document.getElementById('btn-reveal').textContent = revealed ? '🙈 실제 CTR 숨기기' : '👁 실제 CTR 공개';
+      });
+      document.getElementById('btn-reset').addEventListener('click', resetAll);
+    });
+  </script>
+</body>
+
+</html>

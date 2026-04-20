@@ -373,17 +373,22 @@ function buildPostTOC(contentContainer) {
   });
 
   // Build TOC HTML
-  const backLink = `<a href="index.html" class="toc-back-link">← All Posts</a>`;
   const tocItems = Array.from(headings).map(h => {
     const level = h.tagName === 'H2' ? 'toc-h2' : 'toc-h3';
-    return `<a href="#${h.id}" class="toc-item ${level}">${h.textContent}</a>`;
+    return `<a href="#${h.id}" class="toc-item ${level}">
+      <span class="toc-dot" aria-hidden="true"></span>
+      <span class="toc-text">${h.textContent}</span>
+    </a>`;
   }).join('');
 
   sidebarNav.innerHTML = `
-    <div class="sidebar-header" style="border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;">
-      <h3 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0; padding: 0 1.5rem 1rem;">Contents</h3>
+    <div class="toc-top">
+      <a href="index.html" class="toc-back">
+        <span class="toc-back-arrow" aria-hidden="true">←</span>
+        <span>All Posts</span>
+      </a>
+      <div class="toc-title">Contents</div>
     </div>
-    ${backLink}
     <div class="toc-list">${tocItems}</div>
   `;
 

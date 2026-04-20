@@ -682,8 +682,7 @@ async function renderPostDetail() {
         mermaidInstance.run();
       }
 
-      // Render post navigation, related posts, and continue-reading CTAs
-      renderPostNavigation(post.id);
+      // Render related posts and continue-reading CTAs (Prev/Next section removed by request)
       renderRelatedPosts(post);
       renderContinueReadingTop(post);
       setupMobileNextCta(post);

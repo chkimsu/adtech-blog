@@ -2338,6 +2338,11 @@ footer {
   gap: 1rem;
 }
 
+/* `hidden` attribute must beat `display: grid` */
+.post-nav-grid[hidden] {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .post-nav-inner { padding: 0 1rem; }
   .post-nav-grid { grid-template-columns: 1fr; }

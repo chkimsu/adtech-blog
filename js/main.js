@@ -422,6 +422,109 @@ function buildPostTOC(contentContainer) {
   });
 }
 
+const SITE_BASE_URL = 'https://chkimsu.github.io/adtech-blog';
+
+function updatePostMeta(post) {
+  const url = `${SITE_BASE_URL}/post.html?id=${post.id}`;
+  const description = (post.excerpt || '').slice(0, 200);
+  const image = `${SITE_BASE_URL}/images/rtb-flow-overview.png`;
+  const category = (post.categories && post.categories[0]) || '';
+
+  document.title = `${post.title} - Ad Tech Blog`;
+
+  const setContent = (id, value) => {
+    const el = document.getElementById(id);
+    if (el && value) el.setAttribute('content', value);
+  };
+
+  setContent('meta-description', description);
+  setContent('og-title', post.title);
+  setContent('og-description', description);
+  setContent('og-url', url);
+  setContent('og-image', image);
+  setContent('twitter-title', post.title);
+  setContent('twitter-description', description);
+
+  const canonical = document.getElementById('canonical-link');
+  if (canonical) canonical.setAttribute('href', url);
+
+  const ldScript = document.getElementById('ld-article');
+  if (ldScript) {
+    const ldData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: post.title,
+      description: description,
+      datePublished: post.date,
+      dateModified: post.date,
+      author: {
+        '@type': 'Organization',
+        name: 'Ad Tech Blog',
+        url: SITE_BASE_URL
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Ad Tech Blog',
+        url: SITE_BASE_URL
+      },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+      url: url,
+      image: image,
+      inLanguage: 'ko-KR',
+      keywords: (post.tags || []).join(', '),
+      articleSection: category
+    };
+    ldScript.textContent = JSON.stringify(ldData);
+  }
+}
+
+function renderBreadcrumb(post) {
+  const container = document.getElementById('breadcrumb');
+  if (!container) return;
+  const category = (post.categories && post.categories[0]) || '';
+  const categoryLink = category
+    ? `<a href="index.html?category=${encodeURIComponent(category)}">${category}</a>`
+    : '';
+
+  container.innerHTML = `
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">홈</a>
+      ${category ? `<span class="breadcrumb-sep">›</span>${categoryLink}` : ''}
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current" title="${post.title}">${post.title}</span>
+    </nav>
+  `;
+
+  const ldBreadcrumb = document.getElementById('ld-breadcrumb');
+  if (ldBreadcrumb) {
+    const items = [
+      { position: 1, name: '홈', item: `${SITE_BASE_URL}/` }
+    ];
+    if (category) {
+      items.push({
+        position: 2,
+        name: category,
+        item: `${SITE_BASE_URL}/index.html?category=${encodeURIComponent(category)}`
+      });
+    }
+    items.push({
+      position: items.length + 1,
+      name: post.title,
+      item: `${SITE_BASE_URL}/post.html?id=${post.id}`
+    });
+    ldBreadcrumb.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map(i => ({
+        '@type': 'ListItem',
+        position: i.position,
+        name: i.name,
+        item: i.item
+      }))
+    });
+  }
+}
+
 async function renderPostDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get('id');
@@ -438,8 +541,11 @@ async function renderPostDetail() {
     return;
   }
 
-  // Update page title
-  document.title = `${post.title} - Ad Tech Blog`;
+  // Update page title and SEO meta tags
+  updatePostMeta(post);
+
+  // Render breadcrumb
+  renderBreadcrumb(post);
 
   // Render post header
   const headerContainer = document.getElementById('post-header');
@@ -576,9 +682,11 @@ async function renderPostDetail() {
         mermaidInstance.run();
       }
 
-      // Render post navigation and related posts
+      // Render post navigation, related posts, and continue-reading CTAs
       renderPostNavigation(post.id);
       renderRelatedPosts(post);
+      renderContinueReadingTop(post);
+      setupMobileNextCta(post);
 
     } catch (error) {
       console.error('Error loading post:', error);
@@ -602,23 +710,72 @@ function renderPostNavigation(currentPostId) {
   const nav = document.getElementById('post-nav');
   if (!nav) return;
 
-  const sorted = getAllPosts();
-  const idx = sorted.findIndex(p => p.id === currentPostId);
-  if (idx === -1) return;
+  const currentPost = getPostById(currentPostId);
+  if (!currentPost) return;
 
-  const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
-  const next = idx > 0 ? sorted[idx - 1] : null;
+  const allByDate = getAllPosts();
+  const dateIdx = allByDate.findIndex(p => p.id === currentPostId);
+  const dateNav = {
+    prev: dateIdx < allByDate.length - 1 ? allByDate[dateIdx + 1] : null,
+    next: dateIdx > 0 ? allByDate[dateIdx - 1] : null
+  };
 
-  nav.innerHTML = `
-    ${prev ? `<a href="post.html?id=${prev.id}" class="post-nav-link post-nav-prev">
-      <span class="post-nav-label">Previous</span>
-      <span class="post-nav-title">${prev.title}</span>
+  const primaryCategory = (currentPost.categories && currentPost.categories[0]) || '';
+  const categoryPosts = allByDate.filter(p =>
+    p.categories && p.categories[0] === primaryCategory
+  );
+  const catIdx = categoryPosts.findIndex(p => p.id === currentPostId);
+  const categoryNav = {
+    prev: catIdx < categoryPosts.length - 1 ? categoryPosts[catIdx + 1] : null,
+    next: catIdx > 0 ? categoryPosts[catIdx - 1] : null
+  };
+
+  const hasCategoryNeighbor = categoryNav.prev || categoryNav.next;
+  const defaultTab = hasCategoryNeighbor ? 'category' : 'date';
+
+  const buildGrid = (data) => `
+    ${data.prev ? `<a href="post.html?id=${data.prev.id}" class="post-nav-link post-nav-prev">
+      <span class="post-nav-label">← 이전 글</span>
+      <span class="post-nav-title">${data.prev.title}</span>
     </a>` : '<div></div>'}
-    ${next ? `<a href="post.html?id=${next.id}" class="post-nav-link post-nav-next">
-      <span class="post-nav-label">Next</span>
-      <span class="post-nav-title">${next.title}</span>
+    ${data.next ? `<a href="post.html?id=${data.next.id}" class="post-nav-link post-nav-next">
+      <span class="post-nav-label">다음 글 →</span>
+      <span class="post-nav-title">${data.next.title}</span>
     </a>` : '<div></div>'}
   `;
+
+  nav.innerHTML = `
+    <div class="post-nav-inner">
+      <div class="post-nav-tabs" role="tablist">
+        <button type="button" class="post-nav-tab ${defaultTab === 'category' ? 'active' : ''}" data-nav-tab="category" role="tab" aria-selected="${defaultTab === 'category'}">
+          같은 카테고리${primaryCategory ? ` · ${primaryCategory}` : ''}
+        </button>
+        <button type="button" class="post-nav-tab ${defaultTab === 'date' ? 'active' : ''}" data-nav-tab="date" role="tab" aria-selected="${defaultTab === 'date'}">
+          시간순
+        </button>
+      </div>
+      <div class="post-nav-grid" data-nav-panel="category"${defaultTab !== 'category' ? ' hidden' : ''}>
+        ${buildGrid(categoryNav)}
+      </div>
+      <div class="post-nav-grid" data-nav-panel="date"${defaultTab !== 'date' ? ' hidden' : ''}>
+        ${buildGrid(dateNav)}
+      </div>
+    </div>
+  `;
+
+  nav.querySelectorAll('.post-nav-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.navTab;
+      nav.querySelectorAll('.post-nav-tab').forEach(b => {
+        const active = b.dataset.navTab === target;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      nav.querySelectorAll('[data-nav-panel]').forEach(p => {
+        p.hidden = p.dataset.navPanel !== target;
+      });
+    });
+  });
 }
 
 // ========================================
@@ -661,6 +818,244 @@ function renderRelatedPosts(currentPost) {
 }
 
 // ========================================
+// Continue Reading (top of article)
+// ========================================
+
+function renderContinueReadingTop(post) {
+  const container = document.getElementById('continue-reading-top');
+  if (!container) return;
+
+  const primaryCategory = (post.categories && post.categories[0]) || '';
+  const allByDate = getAllPosts();
+  const categoryPosts = allByDate.filter(p =>
+    p.categories && p.categories[0] === primaryCategory
+  );
+  const catIdx = categoryPosts.findIndex(p => p.id === post.id);
+  const nextInCategory = catIdx > 0 ? categoryPosts[catIdx - 1] : null;
+  const prevInCategory = catIdx < categoryPosts.length - 1 ? categoryPosts[catIdx + 1] : null;
+  const categoryPick = nextInCategory || prevInCategory;
+  const categoryLabel = nextInCategory
+    ? `다음 · ${primaryCategory}`
+    : `같은 카테고리 · ${primaryCategory}`;
+
+  const scored = posts
+    .filter(p => p.id !== post.id && (!categoryPick || p.id !== categoryPick.id))
+    .map(p => {
+      let score = 0;
+      p.tags.forEach(t => { if (post.tags.includes(t)) score += 2; });
+      p.categories.forEach(c => { if (post.categories.includes(c)) score += 1; });
+      return { post: p, score };
+    })
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score);
+  const topRelated = scored[0] ? scored[0].post : null;
+
+  const cards = [];
+  if (categoryPick) {
+    cards.push({ label: categoryLabel, post: categoryPick });
+  }
+  if (topRelated) {
+    cards.push({ label: '관련 포스트', post: topRelated });
+  }
+
+  if (cards.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="container">
+      <div class="continue-reading-header">
+        <span class="continue-reading-title-label">이어서 읽기</span>
+      </div>
+      <div class="continue-reading-grid">
+        ${cards.map(item => `
+          <a href="post.html?id=${item.post.id}" class="continue-reading-card">
+            <span class="continue-reading-label">${item.label}</span>
+            <span class="continue-reading-headline">${item.post.title}</span>
+            <span class="continue-reading-excerpt">${(item.post.excerpt || '').slice(0, 120)}…</span>
+            <span class="continue-reading-meta">${formatDate(item.post.date)} · ${item.post.readTime}</span>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ========================================
+// Mobile Next-Post Floating CTA
+// ========================================
+
+function setupMobileNextCta(post) {
+  const cta = document.getElementById('mobile-next-cta');
+  if (!cta) return;
+
+  const allByDate = getAllPosts();
+  const primaryCategory = (post.categories && post.categories[0]) || '';
+  const categoryPosts = allByDate.filter(p =>
+    p.categories && p.categories[0] === primaryCategory
+  );
+  const catIdx = categoryPosts.findIndex(p => p.id === post.id);
+  const dateIdx = allByDate.findIndex(p => p.id === post.id);
+
+  // Priority: same-category newer > chronological newer > same-category older > chronological older
+  let nextPost = null;
+  let ctaLabel = '다음 글';
+  if (catIdx > 0) {
+    nextPost = categoryPosts[catIdx - 1];
+    ctaLabel = '다음 글';
+  } else if (dateIdx > 0) {
+    nextPost = allByDate[dateIdx - 1];
+    ctaLabel = '다음 글';
+  } else if (catIdx < categoryPosts.length - 1 && catIdx !== -1) {
+    nextPost = categoryPosts[catIdx + 1];
+    ctaLabel = '이어서 읽기';
+  } else if (dateIdx < allByDate.length - 1 && dateIdx !== -1) {
+    nextPost = allByDate[dateIdx + 1];
+    ctaLabel = '이어서 읽기';
+  }
+
+  if (!nextPost) {
+    cta.hidden = true;
+    return;
+  }
+
+  cta.href = `post.html?id=${nextPost.id}`;
+  cta.innerHTML = `
+    <span class="mobile-next-cta-label">${ctaLabel}</span>
+    <span class="mobile-next-cta-title">${nextPost.title} →</span>
+  `;
+
+  const mq = window.matchMedia('(max-width: 768px)');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const update = () => {
+    if (!mq.matches) {
+      cta.hidden = true;
+      if (sidebarToggle) sidebarToggle.style.display = '';
+      return;
+    }
+    const article = document.getElementById('post-content');
+    if (!article) return;
+    const articleTop = article.offsetTop;
+    const articleHeight = article.offsetHeight;
+    const progress = (window.scrollY + window.innerHeight - articleTop) / articleHeight;
+    cta.hidden = progress < 0.8;
+    // Hide the sidebar toggle when the CTA is up so they don't overlap visually
+    if (sidebarToggle) sidebarToggle.style.display = cta.hidden ? '' : 'none';
+  };
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+}
+
+// ========================================
+// Post Search Modal
+// ========================================
+
+function setupSearchModal() {
+  const modal = document.getElementById('search-modal');
+  const openBtn = document.getElementById('post-search-btn');
+  const input = document.getElementById('search-modal-input');
+  const results = document.getElementById('search-modal-results');
+  if (!modal || !input || !results) return;
+
+  let activeIndex = -1;
+  let currentItems = [];
+
+  const open = () => {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    setTimeout(() => input.focus(), 40);
+  };
+
+  const close = () => {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  };
+
+  const renderResults = (query) => {
+    const q = query.trim().toLowerCase();
+    let items;
+    if (!q) {
+      items = getAllPosts().slice(0, 10);
+    } else {
+      items = posts
+        .filter(p =>
+          p.title.toLowerCase().includes(q)
+          || (p.excerpt || '').toLowerCase().includes(q)
+          || (p.tags || []).some(t => t.toLowerCase().includes(q))
+          || (p.categories || []).some(c => c.toLowerCase().includes(q))
+        )
+        .slice(0, 20);
+    }
+    currentItems = items;
+    activeIndex = items.length ? 0 : -1;
+
+    if (items.length === 0) {
+      results.innerHTML = `<div class="search-modal-empty">"${query}"에 해당하는 포스트가 없습니다.</div>`;
+      return;
+    }
+
+    results.innerHTML = items.map((p, i) => `
+      <a href="post.html?id=${p.id}" class="search-modal-item${i === activeIndex ? ' active' : ''}" data-index="${i}">
+        <span class="search-modal-item-category">${p.categories[0] || ''}</span>
+        <span class="search-modal-item-title">${p.title}</span>
+        <span class="search-modal-item-excerpt">${(p.excerpt || '').slice(0, 110)}…</span>
+      </a>
+    `).join('');
+  };
+
+  const highlightActive = () => {
+    const items = results.querySelectorAll('.search-modal-item');
+    items.forEach((el, i) => {
+      el.classList.toggle('active', i === activeIndex);
+      if (i === activeIndex) el.scrollIntoView({ block: 'nearest' });
+    });
+  };
+
+  if (openBtn) openBtn.addEventListener('click', open);
+  modal.querySelectorAll('[data-close-modal]').forEach(el => {
+    el.addEventListener('click', close);
+  });
+
+  input.addEventListener('input', (e) => renderResults(e.target.value));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentItems.length) {
+        activeIndex = Math.min(currentItems.length - 1, activeIndex + 1);
+        highlightActive();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentItems.length) {
+        activeIndex = Math.max(0, activeIndex - 1);
+        highlightActive();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentItems[activeIndex]) {
+        window.location.href = `post.html?id=${currentItems[activeIndex].id}`;
+      }
+    } else if (e.key === 'Escape') {
+      close();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (modal.hidden) open(); else close();
+    } else if (e.key === 'Escape' && !modal.hidden) {
+      close();
+    }
+  });
+}
+
+// ========================================
 // Smooth Scrolling
 // ========================================
 
@@ -689,12 +1084,9 @@ function initializeSidebar() {
   const sidebarNav = document.getElementById('sidebar-nav');
   if (!sidebarNav) return;
 
-  // Group posts by categories
+  // Group posts by primary category
   const postsByCategory = {};
-
   posts.forEach(post => {
-    // Use only the first category as the primary category for the sidebar
-    // to prevent duplicate entries
     if (post.categories && post.categories.length > 0) {
       const primaryCategory = post.categories[0];
       if (!postsByCategory[primaryCategory]) {
@@ -704,9 +1096,26 @@ function initializeSidebar() {
     }
   });
 
-  // Render sidebar categories and posts
-  const categoriesHTML = Object.keys(postsByCategory).sort().map(category => {
-    const categoryPosts = postsByCategory[category];
+  // Determine the reader's current category (only meaningful on post.html)
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentPostId = urlParams.get('id');
+  const currentPost = currentPostId ? getPostById(currentPostId) : null;
+  const currentCategory = currentPost && currentPost.categories
+    ? currentPost.categories[0]
+    : null;
+
+  // Sort: current category first, then alphabetical for the rest
+  const sortedCategories = Object.keys(postsByCategory).sort((a, b) => {
+    if (a === currentCategory) return -1;
+    if (b === currentCategory) return 1;
+    return a.localeCompare(b);
+  });
+
+  const categoriesHTML = sortedCategories.map(category => {
+    const categoryPosts = postsByCategory[category]
+      .slice()
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    const isCurrent = category === currentCategory;
     const postsHTML = categoryPosts.map(post => `
       <a href="post.html?id=${post.id}" class="sidebar-post-link" data-post-id="${post.id}">
         ${post.title}
@@ -714,10 +1123,10 @@ function initializeSidebar() {
     `).join('');
 
     return `
-      <div class="sidebar-category">
+      <div class="sidebar-category${isCurrent ? ' is-current' : ' collapsed'}">
         <div class="category-header">
           <span class="category-icon">▼</span>
-          <span>${category}</span>
+          <span>${category}${isCurrent ? ' <em class="category-current-tag">(현재)</em>' : ''}</span>
         </div>
         <div class="category-posts">
           ${postsHTML}
@@ -823,6 +1232,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize sidebar navigation
   initializeSidebar();
+
+  // Setup global post search modal (works on any page that has the modal DOM)
+  setupSearchModal();
 
   // Check if we're on the home page or post page
   const postsGrid = document.getElementById('posts-grid');

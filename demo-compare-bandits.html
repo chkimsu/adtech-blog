@@ -381,7 +381,7 @@
         <button class="cmp-btn" id="btn-step">▶ 1 Round</button>
         <button class="cmp-btn" id="btn-100">⏭ 100 Rounds</button>
         <button class="cmp-btn" id="btn-500">⏭⏭ 500 Rounds</button>
-        <button class="cmp-btn" id="btn-reveal">👁 실제 CTR 공개</button>
+        <button class="cmp-btn" id="btn-reveal"> 실제 CTR 공개</button>
         <button class="cmp-btn danger" id="btn-reset">↺ 리셋</button>
       </div>
 
@@ -453,7 +453,7 @@
 
       <!-- Cumulative Regret Chart -->
       <div class="cmp-chart-card">
-        <h3>📉 누적 Regret 비교 (낮을수록 좋음)</h3>
+        <h3> 누적 Regret 비교 (낮을수록 좋음)</h3>
         <div class="cmp-chart-wrap">
           <canvas id="regret-chart"></canvas>
         </div>
@@ -469,7 +469,7 @@
       <!-- TL;DR -->
       <section class="demo-tldr">
         <div class="demo-tldr-inner">
-          <h3>✨ 이 비교에서 알게 된 3가지</h3>
+          <h3> 이 비교에서 알게 된 3가지</h3>
           <ol>
             <li><strong>두 알고리즘 모두 최적 광고를 찾는다</strong> — 시간이 충분하면 Regret 곡선은 <code>O(log t)</code>로 수렴. 단지 경로가 다를 뿐.</li>
             <li><strong>TS는 초기 탐색이 더 공격적</strong> — Beta 분포에서 샘플링하므로 초반에 "확률적으로" 더 다양한 광고를 시도. UCB는 보너스 수식에 의해 "결정적으로" 탐색한다.</li>
@@ -481,7 +481,7 @@
       <!-- Next Up -->
       <section class="demo-next">
         <div class="demo-next-inner">
-          <h3>🚀 다음 배우기</h3>
+          <h3> 다음 배우기</h3>
           <div class="demo-next-grid">
             <a href="demo-linucb.html" class="demo-next-card">
               <span class="demo-next-label">다음 데모</span>
@@ -828,7 +828,7 @@
       document.getElementById('btn-reveal').addEventListener('click', () => {
         revealed = !revealed;
         renderAds();
-        document.getElementById('btn-reveal').textContent = revealed ? '🙈 실제 CTR 숨기기' : '👁 실제 CTR 공개';
+        document.getElementById('btn-reveal').textContent = revealed ? ' 실제 CTR 숨기기' : ' 실제 CTR 공개';
       });
       document.getElementById('btn-reset').addEventListener('click', resetAll);
     });

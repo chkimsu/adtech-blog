@@ -369,12 +369,12 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 | 카테고리 | 피처 예시 | 영향도 | 설명 |
 |---------|---------|-------|------|
-| **Exchange 특성** | exchange_id, auction_type | ★★★ | Exchange마다 경쟁 강도와 가격 분포가 근본적으로 다름 |
-| **지면 특성** | domain, sub_domain, ad_layout, slot_size | ★★★ | 프리미엄 매체 vs 롱테일의 가격 차이가 수 배 |
-| **시간 특성** | hour_of_day, day_of_week | ★★☆ | 출퇴근 시간대, 주말 vs 평일의 경쟁 강도 차이 |
-| **디바이스 특성** | device_type, os, browser | ★★☆ | 모바일 vs 데스크톱, iOS vs Android의 가격대 차이 |
-| **유저 특성** | geo (country/region), audience_segment | ★★☆ | 미국 vs 동남아, 고가치 세그먼트의 가격 차이 |
-| **광고 특성** | ad_format (banner/video/native), creative_size | ★☆☆ | 비디오 지면이 배너보다 높은 가격대 형성 |
+| **Exchange 특성** | exchange_id, auction_type |  | Exchange마다 경쟁 강도와 가격 분포가 근본적으로 다름 |
+| **지면 특성** | domain, sub_domain, ad_layout, slot_size |  | 프리미엄 매체 vs 롱테일의 가격 차이가 수 배 |
+| **시간 특성** | hour_of_day, day_of_week |  | 출퇴근 시간대, 주말 vs 평일의 경쟁 강도 차이 |
+| **디바이스 특성** | device_type, os, browser |  | 모바일 vs 데스크톱, iOS vs Android의 가격대 차이 |
+| **유저 특성** | geo (country/region), audience_segment |  | 미국 vs 동남아, 고가치 세그먼트의 가격 차이 |
+| **광고 특성** | ad_format (banner/video/native), creative_size |  | 비디오 지면이 배너보다 높은 가격대 형성 |
 
 ### ② 피처 선택 시 주의사항
 

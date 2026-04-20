@@ -1406,7 +1406,7 @@ function renderChartJsCharts(container) {
     new Chart(linucbCanvas, {
       type: 'bar',
       data: {
-        labels: ['Ad A (Tech) ★', 'Ad B (Fashion)', 'Ad C (Food)', 'Ad D (Travel)'],
+        labels: ['Ad A (Tech) ', 'Ad B (Fashion)', 'Ad C (Food)', 'Ad D (Travel)'],
         datasets: [
           {
             label: '예측 점수 (Exploitation)',

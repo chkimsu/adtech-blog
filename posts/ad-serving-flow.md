@@ -131,7 +131,7 @@ graph TD
         HB -->|동시 요청| HA["Exchange A: $2.10"]
         HB -->|동시 요청| HBX["Exchange B: $1.80"]
         HB -->|동시 요청| HC["Exchange C: $0.95"]
-        HA --> HRES["낙찰가: $2.10 ✓"]
+        HA --> HRES["낙찰가: $2.10 "]
         HBX --> HRES
         HC --> HRES
     end

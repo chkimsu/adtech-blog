@@ -1192,21 +1192,22 @@ nav {
   align-items: center;
   gap: 0.7rem;
   padding: 0.38rem 0;
-  color: #95a1c0;
+  color: #858faf;
   text-decoration: none;
   background: transparent;
   border: none;
   border-left: none;
   border-radius: 0;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), text-shadow var(--transition-fast);
   line-height: 1.4;
 }
 
 .toc-item:hover {
-  color: #e4ebfb;
+  color: #f0f4ff;
   background: transparent;
   border-left: none;
   text-decoration: none;
+  text-shadow: 0 0 10px rgba(205, 213, 238, 0.2);
 }
 
 .toc-item.active {
@@ -1214,7 +1215,7 @@ nav {
   font-weight: 600;
   background: transparent;
   border-left: none;
-  text-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.55);
 }
 
 .toc-text {
@@ -1226,17 +1227,19 @@ nav {
 /* === H2: main section with outlined dot === */
 .toc-h2 {
   font-size: 0.87rem;
-  color: #cdd5ee;
+  color: #a9b3d0;
   font-weight: 600;
   margin-top: 0.4rem;
 }
 
 .toc-h2:hover {
   color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
 .toc-h2.active {
   color: var(--accent-primary);
+  text-shadow: 0 0 18px rgba(0, 229, 255, 0.65);
 }
 
 .toc-h2 .toc-dot {
@@ -1251,20 +1254,21 @@ nav {
 }
 
 .toc-h2:hover .toc-dot {
-  border-color: var(--accent-primary);
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .toc-h2.active .toc-dot {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 14px rgba(0, 229, 255, 0.75);
 }
 
 /* === H3: sub-heading with short dash === */
 .toc-h3 {
   font-size: 0.79rem;
   padding-left: 1.6rem;
-  color: #8690b0;
+  color: #6c7592;
 }
 
 .toc-h3 .toc-dot {
@@ -1284,11 +1288,13 @@ nav {
 }
 
 .toc-h3:hover {
-  color: #d6dcf0;
+  color: #dde3f5;
+  text-shadow: 0 0 8px rgba(170, 180, 210, 0.18);
 }
 
 .toc-h3.active {
   color: var(--accent-primary);
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
 }
 
 /* === Light theme color adjustments === */

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="광고 생태계 한 장 지도 — DSP, SSP, Ad Exchange, DMP, pCTR, Feature Store, Attribution까지 18개 핵심 모듈을 인터랙티브 그래프로 한눈에. 100ms RTB 흐름 애니메이션도 함께.">
+  <meta name="keywords"
+    content="광고 생태계, AdTech Ecosystem, DSP, SSP, Ad Exchange, DMP, CDP, pCTR, RTB, Attribution, Header Bidding, 광고 생태도">
+  <meta name="author" content="Ad Tech Blog">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ad Tech Ecosystem Map — 광고 생태계 한 장 지도">
+  <meta property="og:description"
+    content="DSP·SSP·Ad Exchange·pCTR·DMP까지 18개 모듈을 한 화면 인터랙티브 그래프로. 100ms RTB 흐름 애니메이션 포함.">
+  <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/ecosystem.html">
+
+  <title>Ecosystem Map — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo btn-demo-active">Ecosystem</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="main-content">
+    <!-- Hero -->
+    <section class="eco-hero">
+      <div class="container">
+        <h1>광고 생태계 한 장 지도</h1>
+        <p>광고는 DSP·SSP·Ad Exchange·DMP·pCTR 모델 등 너무 많은 모듈로 이루어져 있어 입문 시 길을 잃기 쉽습니다.
+          18개 핵심 모듈을 6 카테고리로 묶어 보여드립니다.
+          <strong>노드를 클릭</strong>하면 관련 데모·포스트로,
+          <strong>"100ms RTB 흐름 보기"</strong> 버튼으로 광고가 어떻게 거래되는지 점 애니메이션이 재생됩니다.</p>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <div class="eco-controls">
+      <button type="button" id="eco-flow-btn" class="eco-flow-btn">▶ 100ms RTB 흐름 보기</button>
+      <div class="eco-legend" aria-label="카테고리 범례">
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="buy"></span>Buy Side</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="exchange"></span>Exchange</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="sell"></span>Sell Side</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="ml"></span>ML / Models</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="measurement"></span>Measurement</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="user"></span>User / Privacy</span>
+      </div>
+    </div>
+
+    <!-- Main layout: Graph + Side panel -->
+    <div class="eco-main-layout">
+      <div class="eco-graph-wrap" id="eco-graph-wrap">
+        <svg id="eco-graph" viewBox="0 0 1240 720" preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="광고 생태계 노드 그래프 — 18개 모듈과 그들의 연결"></svg>
+        <div id="eco-flow-caption" class="eco-flow-caption"></div>
+        <div id="eco-tooltip" class="eco-tooltip"></div>
+      </div>
+
+      <aside class="eco-side-panel" id="eco-side-panel">
+        <div class="eco-side-empty">
+          <strong>노드를 클릭해 보세요</strong>
+          각 모듈의 정의·관련 데모·관련 포스트를 한 번에 볼 수 있어요.
+        </div>
+      </aside>
+    </div>
+
+    <!-- Category cards -->
+    <section class="eco-categories">
+      <h2>6 카테고리로 묶은 광고 생태계</h2>
+      <p class="eco-categories-sub">각 카테고리는 광고 거래의 한 축을 담당합니다. 위 그래프의 색과 동일.</p>
+      <div class="eco-categories-grid">
+        <div class="eco-cat-card" data-category="buy">
+          <h3>Buy Side · 5개 모듈</h3>
+          <p>광고주가 광고를 사는 쪽. Advertiser → Brand/Agency → DSP가 캠페인을 실행하고,
+            DMP/CDP가 타겟팅 데이터를, DCO가 크리에이티브를 자동 생성한다.</p>
+        </div>
+        <div class="eco-cat-card" data-category="exchange">
+          <h3>Exchange · 2개 모듈</h3>
+          <p>거래소. Ad Exchange가 광고 요청을 받아 여러 DSP에 동시 Bid Request를 뿌리고,
+            Auction Engine이 1st/2nd Price 규칙으로 낙찰가를 결정한다.</p>
+        </div>
+        <div class="eco-cat-card" data-category="sell">
+          <h3>Sell Side · 3개 모듈</h3>
+          <p>매체가 지면을 파는 쪽. Publisher가 광고 슬롯을 제공하고 SSP가 그걸 Exchange에 판다.
+            Header Bidding이 Waterfall 대비 +10~30% 더 비싸게 파는 기술.</p>
+        </div>
+        <div class="eco-cat-card" data-category="ml">
+          <h3>ML / Models · 4개 모듈</h3>
+          <p>예측·랭킹의 두뇌. Feature Store가 피처를 공급하고 Model Serving이 수천 후보를 좁힌다.
+            pCTR/pCVR이 확률을 예측, Calibration이 절댓값을 보정한다.</p>
+        </div>
+        <div class="eco-cat-card" data-category="measurement">
+          <h3>Measurement · 2개 모듈</h3>
+          <p>측정·피드백. Log Pipeline이 Impression·Click·Conversion을 모두 수집하고,
+            MMP/Attribution이 "어느 광고가 전환을 만들었나"를 판정한다.</p>
+        </div>
+        <div class="eco-cat-card" data-category="user">
+          <h3>User / Privacy · 2개 모듈</h3>
+          <p>최종 소비자와 데이터 보호. User Journey는 노출→클릭→전환의 시간 흐름,
+            CMP는 GDPR 동의, Walled Garden은 닫힌 생태계 (구글·메타).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deeper reading -->
+    <section class="eco-categories" style="margin-top:2rem;">
+      <h2>더 깊이 읽기</h2>
+      <p class="eco-categories-sub">기존 포스트에서 본 생태계를 더 자세히 다룹니다.</p>
+      <div class="eco-categories-grid">
+        <a class="eco-cat-card" data-category="user" href="post.html?id=adtech-30min-primer" style="text-decoration:none;">
+          <h3>30분만에 이해하는 광고 시스템</h3>
+          <p>입문자를 위한 전체 지도. 이 페이지의 텍스트 버전이라고 보면 됩니다.</p>
+        </a>
+        <a class="eco-cat-card" data-category="buy" href="post.html?id=adtech-ecosystem-map" style="text-decoration:none;">
+          <h3>광고 생태계 지도 (pCTR 모델러 관점)</h3>
+          <p>각 모듈을 ML 엔지니어 관점에서 해부. RTB 100ms 타임라인, Auto-Bidding 파이프라인 포함.</p>
+        </a>
+        <a class="eco-cat-card" data-category="ml" href="post.html?id=adtech-dev-layers" style="text-decoration:none;">
+          <h3>광고 개발 8 레이어</h3>
+          <p>Targeting·Serving·Prediction·Bidding·Creative·Measurement·Infra·Privacy 8단 구조.</p>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">
+        &copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/posts.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ecosystem.js"></script>
+</body>
+
+</html>

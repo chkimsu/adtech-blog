@@ -8,6 +8,8 @@
     content="여러 광고 지면 간 예산을 어떻게 배분할 때 전체 수익이 최대가 되는가 — Diminishing Returns 곡선 기반 포트폴리오 최적화를 슬라이더로 체험.">
   <title>Multi-Auction Portfolio Optimization — Ad Tech Blog</title>
 
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -313,7 +315,7 @@
         </ul>
         <div class="nav-actions">
           <a href="posts-browse.html" class="btn-demo">Posts</a>
-          <a href="demos.html" class="btn-demo">데모</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
           <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
         </div>
       </div>
@@ -347,9 +349,9 @@
           총 예산: <span class="hl" id="total-budget">$500</span>
         </div>
         <div class="po-buttons">
-          <button class="po-btn" id="btn-equal"> 균등 분배</button>
-          <button class="po-btn" id="btn-greedy"> 고가치 몰빵</button>
-          <button class="po-btn strong" id="btn-optimize"> 자동 최적화</button>
+          <button class="po-btn" id="btn-equal">균등 분배</button>
+          <button class="po-btn" id="btn-greedy">고가치 몰빵</button>
+          <button class="po-btn strong" id="btn-optimize">자동 최적화</button>
           <button class="po-btn" id="btn-reset">↺ 리셋</button>
         </div>
       </div>
@@ -380,7 +382,7 @@
       <!-- Charts -->
       <div class="po-charts">
         <div class="po-chart-card">
-          <h3> 예산 배분 구성</h3>
+          <h3>예산 배분 구성</h3>
           <div class="po-chart-wrap">
             <canvas id="budget-pie"></canvas>
           </div>
@@ -396,7 +398,7 @@
       <!-- TL;DR -->
       <section class="demo-tldr">
         <div class="demo-tldr-inner">
-          <h3> 이 데모에서 알게 된 3가지</h3>
+          <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
             <li><strong>고가치 지면에 몰빵 ≠ 최적</strong> — Diminishing Returns 때문에 같은 지면에 계속 붓다 보면 한계 수익이 0에 수렴. 다른 지면의 초반 큰 기울기를 놓치게 된다.</li>
             <li><strong>등한계효용 원리</strong> — 각 지면의 <em>한계 수익(Profit의 기울기)</em>이 모든 지면에서 같아지도록 분배할 때 전체 Profit이 최대. "Auto Optimize" 버튼이 이 조건을 수치적으로 찾아낸다.</li>
@@ -408,7 +410,7 @@
       <!-- Next Up -->
       <section class="demo-next">
         <div class="demo-next-inner">
-          <h3> 다음 배우기</h3>
+          <h3>다음 배우기</h3>
           <div class="demo-next-grid">
             <a href="demo-bid-landscape.html" class="demo-next-card">
               <span class="demo-next-label">관련 데모</span>

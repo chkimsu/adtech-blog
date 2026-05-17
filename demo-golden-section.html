@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golden Section Search - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -318,17 +319,22 @@
 
 <body>
     <!-- Navigation -->
-    <nav>
-        <div class="nav-content">
+    <header>
+        <nav>
             <a href="index.html" class="logo">AdTech Blog</a>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="demos.html" class="btn-demo">Demos</a>
-                <button id="theme-toggle" class="btn-theme">Light</button>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">홈</a></li>
+                    <li><a href="about.html">소개</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <div class="container section">
         <a href="demos.html" class="back-link">&larr; Demos</a>
@@ -645,7 +651,7 @@
     <!-- TL;DR -->
     <section class="demo-tldr">
       <div class="demo-tldr-inner">
-        <h3> 이 데모에서 알게 된 3가지</h3>
+        <h3>이 데모에서 알게 된 3가지</h3>
         <ol>
           <li><strong>Surplus(b) = (V − b) × F(b)는 단봉 함수</strong> — 오직 하나의 최대점이 존재한다. Zhou et al. (KDD 2021) Theorem 1.</li>
           <li><strong>황금 비율 탐색의 핵심</strong> — 매 반복마다 구간을 1/φ ≈ 0.618로 좁히고, 기존 평가점 하나를 재사용. 함수 평가 횟수가 Grid Search 대비 극적으로 준다.</li>
@@ -657,7 +663,7 @@
     <!-- Next Up -->
     <section class="demo-next">
       <div class="demo-next-inner">
-        <h3> 다음 배우기</h3>
+        <h3>다음 배우기</h3>
         <div class="demo-next-grid">
           <a href="demos.html" class="demo-next-card">
             <span class="demo-next-label"> 8개 데모 완주</span>
@@ -677,8 +683,8 @@
     <footer>
         <div class="footer-content">
             <div class="footer-links">
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
+                <a href="index.html">홈</a>
+                <a href="about.html">소개</a>
                 <a href="demos.html">Demos</a>
                 <a href="post.html?id=bid-shading-censored">Bid Shading Post</a>
             </div>

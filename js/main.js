@@ -21,10 +21,29 @@ function toggleTheme() {
 
 function updateThemeButton(theme) {
   const button = document.getElementById('theme-toggle');
-  if (button) {
-    button.textContent = theme === 'dark' ? 'Light' : 'Dark';
-    button.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
-  }
+  if (!button) return;
+  const moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  const sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+  // Show the icon for the mode user will switch to
+  button.innerHTML = theme === 'dark' ? sunSvg : moonSvg;
+  button.setAttribute('aria-label', `${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`);
+  button.setAttribute('title', `${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`);
+}
+
+// Add aria-current to active nav links based on current page
+function applyNavActiveAria() {
+  const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  document.querySelectorAll('header nav a').forEach(a => {
+    const href = (a.getAttribute('href') || '').toLowerCase();
+    if (!href || href.startsWith('http')) return;
+    const isActive = href === path || (path === '' && href === 'index.html');
+    if (isActive) {
+      a.setAttribute('aria-current', 'page');
+      if (!a.classList.contains('active') && !a.classList.contains('btn-demo-active')) {
+        a.classList.add('active');
+      }
+    }
+  });
 }
 
 // ========================================
@@ -34,10 +53,12 @@ function updateThemeButton(theme) {
 function renderPostCard(post) {
   const card = document.createElement('div');
   card.className = 'post-card';
+  const primaryCategory = post.categories[0] || '';
+  card.dataset.category = primaryCategory;
   card.onclick = () => navigateToPost(post.id);
 
   card.innerHTML = `
-    <div class="post-card-category">${post.categories[0] || ''}</div>
+    <div class="post-card-category" data-category="${primaryCategory}">${primaryCategory}</div>
     <h3>${post.title}</h3>
     <div class="post-card-footer">
       <div class="post-meta">
@@ -139,6 +160,16 @@ function initializeFilters() {
     tagsContainer.querySelectorAll('.filter-tag').forEach(tag => {
       tag.addEventListener('click', () => filterByTag(tag.dataset.tag));
     });
+
+    // Expand/collapse toggle
+    const toggleBtn = document.getElementById('tag-filter-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const expanded = tagsContainer.classList.toggle('expanded');
+        toggleBtn.textContent = expanded ? '태그 접기' : '전체 태그 보기';
+        toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      });
+    }
   }
 
   // Setup search
@@ -1233,6 +1264,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (themeToggle) {
     themeToggle.addEventListener('click', toggleTheme);
   }
+
+  // Mark active nav link with aria-current
+  applyNavActiveAria();
 
   // Initialize sidebar navigation
   initializeSidebar();

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="AdTech Blog 포스트 & 데모 카테고리별 트리 탐색">
   <title>Posts — Ad Tech Blog</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* === Posts Browse Page === */
@@ -359,7 +360,7 @@
       let html = '';
       let totalMatches = 0;
 
-      sortedCats.forEach(cat => {
+      sortedCats.forEach((cat, idx) => {
         const catPosts = postsByCategory[cat];
         const catDemos = demosByCategory[cat] || [];
         const desc = categoryDescriptions[cat] || '';
@@ -375,7 +376,7 @@
         if (searchTerm && filteredPosts.length === 0 && filteredDemos.length === 0) return;
 
         totalMatches += filteredPosts.length + filteredDemos.length;
-        const isOpen = !!searchTerm; // 검색 시 자동 펼침
+        const isOpen = idx < 2 || !!searchTerm; // 첫 2개 카테고리는 기본 펼침, 검색 시 모두 펼침
         const count = filteredPosts.length + filteredDemos.length;
 
         html += `<div class="cat-panel">`;

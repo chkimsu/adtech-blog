@@ -181,20 +181,77 @@
 
     // ── Privacy ──
     { from: 'cmp', to: 'dmp' },
+
+    // ── 추가 흐름용 엣지 (v2) ──
+    { from: 'calibration', to: 'dsp' },          // 모델 학습 → 서빙
+    { from: 'advertiser', to: 'dsp' },           // 어트리뷰션 후 KPI 조정
+    { from: 'publisher', to: 'header-bidding' }, // HB 컨테이너 실행
+    { from: 'header-bidding', to: 'ssp' },       // HB가 여러 SSP를 동시 호출
+    { from: 'exchange', to: 'publisher' },       // Winner 광고 전달
+    { from: 'user-journey', to: 'cmp' },         // 첫 방문 동의 흐름
   ];
 
-  const FLOW_STEPS = [
-    { from: 'user', to: 'publisher', caption: '① 사용자가 페이지·앱을 방문 — 광고 슬롯 발견' },
-    { from: 'publisher', to: 'ssp', caption: '② Publisher가 SSP에 광고 요청 (Ad Request)' },
-    { from: 'ssp', to: 'exchange', caption: '③ SSP가 Ad Exchange에 Bid Request 발송' },
-    { from: 'exchange', to: 'dsp', caption: '④ Ad Exchange가 여러 DSP에 동시 Bid Request 분배' },
-    { from: 'dsp', to: 'model-serving', caption: '⑤ DSP가 Model Serving에 점수 요청' },
-    { from: 'model-serving', to: 'pctr-cvr', caption: '⑥ pCTR / pCVR 모델이 클릭·전환 확률 예측' },
-    { from: 'dsp', to: 'exchange', caption: '⑦ DSP가 Bid 응답 — Bid Shading으로 입찰가 조정' },
-    { from: 'exchange', to: 'publisher', caption: '⑧ Auction Engine이 Winner 결정 → Publisher에 광고 전달' },
-    { from: 'publisher', to: 'user', caption: '⑨ 사용자에게 광고 노출 (Impression)' },
-    { from: 'user', to: 'log-pipeline', caption: '⑩ Impression·Click·Conversion → Log Pipeline → MMP' },
-  ];
+  const FLOWS = {
+    rtb: {
+      label: '100ms RTB',
+      steps: [
+        { from: 'user', to: 'publisher', caption: '① 사용자가 페이지·앱을 방문 — 광고 슬롯 발견' },
+        { from: 'publisher', to: 'ssp', caption: '② Publisher가 SSP에 광고 요청 (Ad Request)' },
+        { from: 'ssp', to: 'exchange', caption: '③ SSP가 Ad Exchange에 Bid Request 발송' },
+        { from: 'exchange', to: 'dsp', caption: '④ Ad Exchange가 여러 DSP에 동시 Bid Request 분배' },
+        { from: 'dsp', to: 'model-serving', caption: '⑤ DSP가 Model Serving에 점수 요청' },
+        { from: 'model-serving', to: 'pctr-cvr', caption: '⑥ pCTR / pCVR 모델이 클릭·전환 확률 예측' },
+        { from: 'dsp', to: 'exchange', caption: '⑦ DSP가 Bid 응답 — Bid Shading으로 입찰가 조정' },
+        { from: 'exchange', to: 'publisher', caption: '⑧ Auction Engine이 Winner 결정 → Publisher에 광고 전달' },
+        { from: 'publisher', to: 'user', caption: '⑨ 사용자에게 광고 노출 (Impression)' },
+        { from: 'user', to: 'log-pipeline', caption: '⑩ Impression·Click·Conversion → Log Pipeline → MMP' },
+      ]
+    },
+    modeling: {
+      label: '모델 학습·서빙',
+      steps: [
+        { from: 'user-journey', to: 'log-pipeline', caption: '① 사용자 행동(노출·클릭·전환)이 Log Pipeline에 수집' },
+        { from: 'log-pipeline', to: 'feature-store', caption: '② 가공된 피처가 Feature Store에 갱신 (시간·유저·지면)' },
+        { from: 'feature-store', to: 'model-serving', caption: '③ 오프라인 학습 데이터셋이 구성됨' },
+        { from: 'model-serving', to: 'pctr-cvr', caption: '④ DeepFM·DIN 등 모델이 학습/배포 — pCTR·pCVR 산출' },
+        { from: 'pctr-cvr', to: 'calibration', caption: '⑤ 예측값을 실제 분포에 맞게 Calibration' },
+        { from: 'calibration', to: 'dsp', caption: '⑥ 보정된 모델이 DSP의 서빙 파이프라인에 배포' },
+        { from: 'dsp', to: 'exchange', caption: '⑦ 다음 입찰부터 새 모델 기반 점수로 입찰가 결정' },
+      ]
+    },
+    attribution: {
+      label: '어트리뷰션',
+      steps: [
+        { from: 'user', to: 'publisher', caption: '① 사용자가 광고를 본 후 시간이 흐름…' },
+        { from: 'user-journey', to: 'log-pipeline', caption: '② Impression·Click·Conversion 이벤트가 모두 기록' },
+        { from: 'log-pipeline', to: 'mmp', caption: '③ MMP가 Last-Click·Multi-Touch 등 모델로 기여도 분배' },
+        { from: 'mmp', to: 'advertiser', caption: '④ Advertiser가 ROAS·전환 리포트를 받음' },
+        { from: 'advertiser', to: 'dsp', caption: '⑤ 광고주가 KPI에 맞춰 DSP 캠페인 예산·입찰 전략 조정' },
+        { from: 'dsp', to: 'exchange', caption: '⑥ 조정된 전략으로 다음 입찰에 반영' },
+      ]
+    },
+    hb: {
+      label: 'Header Bidding',
+      steps: [
+        { from: 'user', to: 'publisher', caption: '① 사용자가 Publisher 페이지 방문' },
+        { from: 'publisher', to: 'header-bidding', caption: '② Header Bidding 컨테이너가 페이지 헤더에서 실행' },
+        { from: 'header-bidding', to: 'ssp', caption: '③ 여러 SSP를 동시(병렬) 호출 — Waterfall 아닌 경매' },
+        { from: 'ssp', to: 'exchange', caption: '④ 각 SSP가 Ad Exchange로 Bid Request 전달' },
+        { from: 'exchange', to: 'dsp', caption: '⑤ DSP들이 병렬로 입찰 — 최고가 경쟁' },
+        { from: 'exchange', to: 'publisher', caption: '⑥ 가장 비싼 Winner가 Publisher에 광고 전달 (평균 +10~30% 수익)' },
+      ]
+    },
+    targeting: {
+      label: '데이터·타겟팅',
+      steps: [
+        { from: 'user-journey', to: 'cmp', caption: '① 사용자가 사이트 방문 → CMP가 동의(GDPR·CCPA) 처리' },
+        { from: 'cmp', to: 'dmp', caption: '② 동의된 데이터만 DMP/CDP로 흘러감 (쿠키·디바이스 ID·1st party)' },
+        { from: 'dmp', to: 'dsp', caption: '③ 오디언스 세그먼트(예: "20대 전자제품 관심")가 DSP의 타겟팅 입력' },
+        { from: 'dsp', to: 'exchange', caption: '④ DSP가 세그먼트 기반으로 입찰가 결정 — 맞는 유저에 더 비싸게' },
+        { from: 'exchange', to: 'publisher', caption: '⑤ 타겟팅된 사용자에게 개인화 광고 노출' },
+      ]
+    },
+  };
 
   const CAT_LABEL = {
     buy: 'Buy Side', exchange: 'Exchange', sell: 'Sell Side',
@@ -202,7 +259,8 @@
   };
 
   // ── state ──
-  let svg, tooltip, sidePanel, captionEl, flowBtn, wrapEl;
+  let svg, tooltip, sidePanel, captionEl, wrapEl;
+  let flowChips = [];
   let isFlowing = false;
 
   function init() {
@@ -211,12 +269,14 @@
     tooltip = document.getElementById('eco-tooltip');
     sidePanel = document.getElementById('eco-side-panel');
     captionEl = document.getElementById('eco-flow-caption');
-    flowBtn = document.getElementById('eco-flow-btn');
     wrapEl = document.getElementById('eco-graph-wrap');
+    flowChips = Array.from(document.querySelectorAll('.eco-flow-chip'));
 
     buildSVG();
     bindInteractions();
-    if (flowBtn) flowBtn.addEventListener('click', playFlow);
+    flowChips.forEach(chip => {
+      chip.addEventListener('click', () => playFlow(chip.dataset.flow, chip));
+    });
   }
 
   function buildSVG() {
@@ -384,28 +444,32 @@
   }
 
   // ── Flow animation ──
-  function playFlow() {
+  function playFlow(name, chipEl) {
     if (isFlowing) return;
+    const flow = FLOWS[name] || FLOWS.rtb;
+    if (!flow) return;
     isFlowing = true;
-    flowBtn.disabled = true;
+    flowChips.forEach(c => c.disabled = true);
+    if (chipEl) chipEl.classList.add('is-playing');
     captionEl.classList.add('is-visible');
 
     document.querySelectorAll('.eco-edge.is-active').forEach(e => e.classList.remove('is-active'));
     const dotsG = document.getElementById('eco-flow-dots');
     if (dotsG) dotsG.innerHTML = '';
 
+    const steps = flow.steps;
     let i = 0;
     function nextStep() {
-      if (i >= FLOW_STEPS.length) {
+      if (i >= steps.length) {
         isFlowing = false;
-        flowBtn.disabled = false;
+        flowChips.forEach(c => { c.disabled = false; c.classList.remove('is-playing'); });
         setTimeout(() => {
           captionEl.classList.remove('is-visible');
           document.querySelectorAll('.eco-edge.is-active').forEach(e => e.classList.remove('is-active'));
         }, 1500);
         return;
       }
-      const step = FLOW_STEPS[i++];
+      const step = steps[i++];
       captionEl.textContent = step.caption;
       highlightEdge(step.from, step.to);
       animateDot(step.from, step.to, () => setTimeout(nextStep, 100));

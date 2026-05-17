@@ -3377,6 +3377,152 @@ body[data-demo-mode="easy"] .is-pro-only {
   transform: none;
 }
 
+/* Flow selection chips (v2) */
+.eco-flow-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.eco-flow-chip {
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--accent-primary);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--accent-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.eco-flow-chip:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  box-shadow: 0 4px 14px rgba(0, 229, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.eco-flow-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.eco-flow-chip.is-playing {
+  background: var(--accent-gradient);
+  color: white;
+  border-color: transparent;
+  opacity: 1;
+  cursor: wait;
+  box-shadow: 0 4px 18px rgba(176, 38, 255, 0.35);
+}
+
+/* ========================================
+   Ecosystem Showcase (homepage hero section)
+   ======================================== */
+
+.eco-showcase {
+  padding: 1rem 0 2rem;
+}
+
+.eco-showcase-inner {
+  background: linear-gradient(135deg, rgba(176, 38, 255, 0.08), rgba(0, 229, 255, 0.06));
+  border: 1px solid rgba(176, 38, 255, 0.28);
+  border-radius: 20px;
+  padding: 2.25rem 2.5rem;
+  text-align: center;
+}
+
+[data-theme="light"] .eco-showcase-inner {
+  background: linear-gradient(135deg, rgba(125, 27, 191, 0.06), rgba(0, 119, 194, 0.05));
+}
+
+.eco-showcase-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.eco-showcase-title {
+  font-size: 1.85rem;
+  margin: 0 0 0.5rem;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.eco-showcase-desc {
+  color: var(--text-secondary);
+  font-size: 0.96rem;
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.eco-showcase-nodes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+}
+
+.eco-showcase-chip {
+  padding: 0.32rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.eco-showcase-chip[data-category="buy"]         { background: rgba(176, 38, 255, 0.12); border-color: rgba(176, 38, 255, 0.5);  color: #d489ff; }
+.eco-showcase-chip[data-category="exchange"]    { background: rgba(0, 229, 255, 0.10);  border-color: rgba(0, 229, 255, 0.5);   color: #00e5ff; }
+.eco-showcase-chip[data-category="sell"]        { background: rgba(255, 159, 64, 0.12); border-color: rgba(255, 159, 64, 0.5);  color: #ffb673; }
+.eco-showcase-chip[data-category="ml"]          { background: rgba(255, 99, 132, 0.12); border-color: rgba(255, 99, 132, 0.5);  color: #ff8ba3; }
+.eco-showcase-chip[data-category="measurement"] { background: rgba(75, 192, 192, 0.12); border-color: rgba(75, 192, 192, 0.5);  color: #4BC0C0; }
+.eco-showcase-chip[data-category="user"]        { background: rgba(255, 206, 86, 0.12); border-color: rgba(255, 206, 86, 0.55); color: #ffd740; }
+
+[data-theme="light"] .eco-showcase-chip[data-category="buy"]         { color: #7d1bbf; }
+[data-theme="light"] .eco-showcase-chip[data-category="exchange"]    { color: #0077c2; }
+[data-theme="light"] .eco-showcase-chip[data-category="sell"]        { color: #c2410c; }
+[data-theme="light"] .eco-showcase-chip[data-category="ml"]          { color: #be123c; }
+[data-theme="light"] .eco-showcase-chip[data-category="measurement"] { color: #0d9488; }
+[data-theme="light"] .eco-showcase-chip[data-category="user"]        { color: #b45309; }
+
+.eco-showcase-cta {
+  display: inline-block;
+  padding: 0.9rem 1.85rem;
+  background: var(--accent-gradient);
+  color: white;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(176, 38, 255, 0.35);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.eco-showcase-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(176, 38, 255, 0.5);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .eco-showcase-inner { padding: 1.5rem 1.25rem; border-radius: 16px; }
+  .eco-showcase-title { font-size: 1.4rem; }
+  .eco-showcase-desc { font-size: 0.88rem; }
+  .eco-showcase-chip { font-size: 0.72rem; padding: 0.25rem 0.6rem; }
+  .eco-showcase-cta { padding: 0.8rem 1.4rem; font-size: 0.92rem; }
+}
+
 .eco-legend {
   display: flex;
   flex-wrap: wrap;

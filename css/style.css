@@ -3346,10 +3346,9 @@ body[data-demo-mode="easy"] .is-pro-only {
   margin: 1rem auto 0;
   padding: 0 2rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
 }
 
 .eco-flow-btn {
@@ -3377,31 +3376,54 @@ body[data-demo-mode="easy"] .is-pro-only {
   transform: none;
 }
 
-/* Flow selection chips (v2) */
+/* Flow selection cards (v3: 라벨 + 한 줄 설명) */
 .eco-flow-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 0.6rem;
 }
 
 .eco-flow-chip {
-  padding: 0.55rem 1.05rem;
-  border: 1px solid var(--accent-primary);
-  border-radius: 999px;
-  background: rgba(0, 229, 255, 0.08);
-  color: var(--accent-primary);
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  border-radius: 12px;
+  background: rgba(0, 229, 255, 0.06);
+  color: inherit;
   font-family: inherit;
+  cursor: pointer;
+  text-align: left;
   transition: all var(--transition-fast);
+  line-height: 1.35;
+}
+
+.eco-flow-chip-label {
+  display: block;
+  color: var(--accent-primary);
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 0.18rem;
+}
+
+.eco-flow-chip-desc {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  word-break: keep-all;
 }
 
 .eco-flow-chip:hover:not(:disabled) {
-  background: var(--accent-primary);
-  color: var(--bg-primary);
-  box-shadow: 0 4px 14px rgba(0, 229, 255, 0.25);
-  transform: translateY(-1px);
+  background: rgba(0, 229, 255, 0.14);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 14px rgba(0, 229, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.eco-flow-chip:hover:not(:disabled) .eco-flow-chip-desc {
+  color: var(--text-secondary);
 }
 
 .eco-flow-chip:disabled {
@@ -3412,11 +3434,15 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 .eco-flow-chip.is-playing {
   background: var(--accent-gradient);
-  color: white;
   border-color: transparent;
   opacity: 1;
   cursor: wait;
-  box-shadow: 0 4px 18px rgba(176, 38, 255, 0.35);
+  box-shadow: 0 4px 18px rgba(176, 38, 255, 0.4);
+}
+
+.eco-flow-chip.is-playing .eco-flow-chip-label,
+.eco-flow-chip.is-playing .eco-flow-chip-desc {
+  color: white;
 }
 
 /* ========================================
@@ -3577,29 +3603,27 @@ body[data-demo-mode="easy"] .is-pro-only {
   user-select: none;
 }
 
+/* Caption sits BELOW the SVG (block child of graph-wrap), no longer overlays nodes */
 .eco-flow-caption {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 0.85rem;
+  margin: 0.85rem 0 0;
   text-align: center;
   background: rgba(10, 14, 39, 0.85);
   border: 1px solid var(--accent-primary);
   border-radius: 10px;
-  padding: 0.6rem 0.9rem;
-  font-size: 0.88rem;
+  padding: 0.65rem 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
-  opacity: 0;
+  display: none;
   pointer-events: none;
-  transition: opacity 0.2s ease;
 }
 
 [data-theme="light"] .eco-flow-caption {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.97);
+  color: var(--text-primary);
 }
 
 .eco-flow-caption.is-visible {
-  opacity: 1;
+  display: block;
 }
 
 /* SVG nodes */
@@ -3867,6 +3891,17 @@ body[data-demo-mode="easy"] .is-pro-only {
   border-radius: 12px;
   padding: 1.15rem 1.3rem;
   border-left: 4px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  display: block;
+}
+
+.eco-cat-card h3,
+.eco-cat-card p {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .eco-cat-card[data-category="buy"]         { border-left-color: #b026ff; }

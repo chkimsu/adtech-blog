@@ -628,6 +628,30 @@
             </p>
         </div>
 
+        <div class="demo-prereq">
+          <span class="demo-prereq-label">먼저 보면 좋아요</span>
+          <a href="demo-rtb.html">RTB 경매</a>
+          <a href="demo-bid-shading.html">Bid Shading</a>
+        </div>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">▮</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>시험 본 후 떨어진 학생의 점수는 모르고 "60점 미만"만 안다</strong>. 입찰에서 진 경매도 똑같이
+              "경쟁가가 내 입찰가보다 컸다"만 알고 정확한 가격은 모릅니다. 이걸 무시하면 시장가 추정이 <em>낮게 편향</em>되는 게 핵심.
+            </div>
+          </div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 12분 (5단계)</span>
+          <li><span class="step-text"><strong>Step 1 (God View)</strong>: 시장 전체를 볼 수 있다고 가정. μ·σ 슬라이더로 분포 모양 익히기.</span></li>
+          <li><span class="step-text"><strong>Step 2~3 (Engineer View / Naive)</strong>: 패찰 경매를 가린 채 추정 → 평균이 실제보다 낮아지는 <em>편향</em> 직접 확인.</span></li>
+          <li><span class="step-text"><strong>Step 4~5 (Censored Regression)</strong>: Likelihood에 censoring 항 추가 → 추정치가 진짜에 가까워지는 걸 비교.</span></li>
+        </ol>
+
         <!-- ====== Step Progress Bar ====== -->
         <div class="step-progress">
             <div class="step-dot active" id="step-dot-1">

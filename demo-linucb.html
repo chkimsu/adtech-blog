@@ -181,10 +181,34 @@
             </div>
             <h1>LinUCB Interactive Simulation</h1>
             <p style="text-align: center; max-width: 600px; margin: 0 auto; color: var(--text-secondary);">
-                Experience how the Contextual Bandit algorithm learns user preferences in real-time.
-                Click on ads to simulate user engagement and watch the model update its beliefs.
+                컨텍스트(유저 특성)를 활용해 광고를 추천하는 <strong>Contextual Bandit</strong> 알고리즘이
+                어떻게 실시간으로 유저 취향을 학습하는지 직접 클릭하며 확인하세요.
             </p>
         </div>
+
+        <div class="demo-prereq">
+          <span class="demo-prereq-label">먼저 보면 좋아요</span>
+          <a href="demo-ucb1.html">UCB1</a>
+        </div>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">×</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>UCB1 + 유저 정보</strong>. UCB1이 "어느 광고가 평균적으로 좋은가"를 학습한다면,
+              LinUCB는 <em>"이 <strong>유저 타입</strong>에는 어느 광고가 좋은가"</em>를 학습합니다.
+              유저 취향 벡터(컨텍스트)와 광고 가중치 벡터(θ)의 곱이 추천 점수가 됩니다.
+            </div>
+          </div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 10분</span>
+          <li><span class="step-text">유저 타입을 <strong>Tech</strong>로 선택 → 추천된 Ad A를 5번 Click → θ 행렬이 어떻게 업데이트되는지 관찰.</span></li>
+          <li><span class="step-text">유저 타입을 <strong>Fashion</strong>으로 변경 → 같은 Ad A를 클릭해도 점수가 다른 이유 확인 (context가 다름).</span></li>
+          <li><span class="step-text">α 슬라이더로 탐색 강도 조정 → α↑ 시 새 광고도 자주 시도, α↓ 시 익숙한 광고에 집중.</span></li>
+        </ol>
 
         <div class="demo-container">
             <div class="controls" style="flex-direction: column; align-items: stretch; gap: 1rem;">

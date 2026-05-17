@@ -345,6 +345,30 @@
             매 반복마다 탐색 구간이 1/&phi; &approx; 0.618배로 줄어드는 것을 관찰하세요.
         </p>
 
+        <div class="demo-prereq">
+          <span class="demo-prereq-label">먼저 보면 좋아요</span>
+          <a href="demo-bid-landscape.html">Bid Landscape</a>
+          <a href="demo-bid-shading.html">Bid Shading</a>
+        </div>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">φ</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>단봉(unimodal) 산의 정상 찾기</strong>. 매번 구간을 <em>0.618배(황금비)로</em> 줄여나가면
+              평가 횟수가 적어도 정상에 빠르게 수렴합니다. Grid Search 대비 약 25배 빠른 게 이 데모의 핵심.
+            </div>
+          </div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+          <li><span class="step-text"><code>Step</code> 버튼을 3번 — 매 iteration마다 Bracket [a, b]가 좁아지는 걸 확인.</span></li>
+          <li><span class="step-text">우측 Iteration Log에서 Bracket 폭이 0.618배씩 줄어드는 패턴 관찰.</span></li>
+          <li><span class="step-text"><code>Play</code>로 끝까지 → Convergence 차트가 로그 스케일 직선(기하급수 수렴)이 되는 걸 확인.</span></li>
+        </ol>
+
         <div class="demo-grid">
 
             <!-- Left Column: Controls -->

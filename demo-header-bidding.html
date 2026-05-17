@@ -310,6 +310,30 @@
     </section>
 
     <div class="hb-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-rtb.html">RTB 경매</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">‖</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 비유</div>
+          <div class="demo-tldr-analogy-text">
+            <strong>여러 가게에 동시 전화 vs 한 곳씩 순차 전화</strong>. 동시 호출(Header Bidding)은
+            <em>대기시간 = 가장 느린 한 곳</em>이지만 최고가를 뽑을 가능성이 높아짐. 순차(Waterfall)는
+            대기시간이 합이라 더 길어지고 첫 응답에서 멈춤.
+          </div>
+        </div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 8분</span>
+        <li><span class="step-text"><code>1회 시뮬레이션</code> → 타임라인에서 두 방식이 어떻게 호출되는지 시각 비교.</span></li>
+        <li><span class="step-text"><code>100회 반복</code> → CPM 분포(평균·중앙값)와 총 지연 비교.</span></li>
+        <li><span class="step-text"><code>1000회 반복</code> → 통계적으로 안정된 분포에서 "HB가 평균적으로 +몇 % 더 비싼가" 확인.</span></li>
+      </ol>
+
       <div class="hb-intro">
         <strong>시나리오</strong> — 매체가 광고 지면 1개를 팔려고 합니다. 4개 SSP가 각자 다른 CPM 분포와 응답 지연을 가집니다.
         <strong>Waterfall</strong>은 SSP를 순서대로 호출하고 첫 번째 성공에서 멈춥니다(실패 시 다음). 총 지연 = 호출 시간의 <em>합</em>.

@@ -146,6 +146,25 @@
             </p>
         </div>
 
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">?</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>c값은 호기심 수준</strong>. c가 크면 호기심쟁이처럼 <em>잘 안 본 광고에도 기회를 주고</em>,
+              c가 작으면 <em>현재 1등 광고만 줄곧 보여주는 보수적 단골</em>이 됩니다.
+              "Hidden Gem"이 진짜 발견되는지 관찰해 보세요.
+            </div>
+          </div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 7분</span>
+          <li><span class="step-text">기본 상태에서 <code>Select Best Arm</code>을 5번 — UCB가 "아직 안 가본 광고"부터 시도하는 걸 관찰.</span></li>
+          <li><span class="step-text"><code>Auto Run (50 Rounds)</code> → 최종적으로 어느 광고가 가장 많이 선택됐는지 통계 확인.</span></li>
+          <li><span class="step-text"><strong>고급 모드</strong>로 전환해 <code>c</code>를 0.5로 낮춰 Reset → Auto Run 다시 → "탐색 부족"으로 Hidden Gem을 놓치는 패턴 확인.</span></li>
+        </ol>
+
         <div class="demo-container">
             <!-- Left: Chart -->
             <div class="chart-panel">
@@ -158,8 +177,13 @@
 
             <!-- Right: Controls -->
             <div class="control-panel">
+                <div class="demo-mode-toggle" role="tablist" aria-label="데모 난이도 모드">
+                  <button type="button" data-mode="easy">쉬운 모드</button>
+                  <button type="button" data-mode="pro">고급 모드</button>
+                </div>
+
                 <!-- Parameter slider (added) -->
-                <div class="control-card">
+                <div class="control-card is-pro-only">
                     <h3 style="margin-bottom: 0.75rem;">파라미터</h3>
                     <div style="margin-bottom: 0.6rem;">
                         <label style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.35rem;">

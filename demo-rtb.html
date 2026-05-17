@@ -321,6 +321,28 @@
             </p>
         </div>
 
+        <!-- 비유 카드 -->
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">!</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>경매장 vs eBay.</strong>
+              First Price는 부동산 경매처럼 <strong>내가 부른 가격을 그대로 낸다</strong>,
+              Second Price는 eBay처럼 <strong>이긴 사람이 2등 가격만 낸다</strong>.
+              같은 입찰가에서 두 방식이 만들어내는 결과 차이를 직접 비교해 보세요.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3단계 가이드 -->
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+          <li><span class="step-text"><strong>First Price</strong> 상태에서 <code>Run Auction</code>을 1회 → 어떤 DSP가 얼마에 낙찰됐는지 로그에서 확인.</span></li>
+          <li><span class="step-text"><strong>Second Price</strong>로 바꾼 뒤 한 번 더 실행 → "낙찰가 vs 실제 지불가"의 차이가 생기는 걸 비교.</span></li>
+          <li><span class="step-text"><code>Auto Run (50 Rounds)</code>로 양쪽 통계를 누적 → "First는 평균 지불액이 더 높지만 단순, Second는 낮지만 분석이 필요"를 체감.</span></li>
+        </ol>
+
         <div class="demo-container">
             <!-- Left: Chart -->
             <div class="chart-panel">

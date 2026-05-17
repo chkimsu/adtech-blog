@@ -276,6 +276,30 @@
     </section>
 
     <div class="pq-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-bid-landscape.html">Bid Landscape</a>
+        <a href="demo-bid-shading.html">Bid Shading</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">%</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 비유</div>
+          <div class="demo-tldr-analogy-text">
+            <strong>예측 모델이 1% 틀리면 입찰가가 1% 틀리고, 매출은 3~5% 흔들린다</strong>. 입력단 오차가
+            <em>비대칭적으로</em> 증폭되는 이유와, 과대입찰이 과소입찰보다 더 큰 손해인 까닭을 슬라이더로 직접 만져보세요.
+          </div>
+        </div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 6분</span>
+        <li><span class="step-text"><strong>편향 = 0</strong>(기본) 상태에서 계산표 한 번 읽기 → Surplus(이익) 기본값 메모.</span></li>
+        <li><span class="step-text">편향을 <strong>+10%</strong>로 올려보세요 → 과대입찰 시 Surplus가 얼마나 떨어지는지 확인.</span></li>
+        <li><span class="step-text">편향을 <strong>−10%</strong>로 내려보세요 → 과소입찰의 손실은 더 작은 게 보임 (비대칭).</span></li>
+      </ol>
+
       <div class="pq-intro">
         <strong>시나리오</strong> — 광고 지면 하나, 진짜 세계의 <em>True</em> 파라미터는 고정입니다:
         <code>True pCTR = 2.0%</code>, <code>pCVR = 5.0%</code>, <code>Conversion Value = $20</code> ·

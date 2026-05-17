@@ -137,10 +137,29 @@
             <div class="post-meta">Interactive Demo</div>
             <h1>Thompson Sampling Simulator</h1>
             <p class="post-excerpt">
-                Visualize how <strong>Thompson Sampling</strong> uses Probability Distributions (Beta) to balance
-                exploration and exploitation.
+                <strong>Thompson Sampling</strong>은 각 광고의 진짜 CTR에 대한 <em>확신도(분포)</em>를 갖고,
+                매 라운드 그 분포에서 한 번씩 샘플링해 가장 높은 값을 가진 광고를 선택합니다.
+                클릭이 쌓일수록 분포가 좁아지는 모습을 직접 관찰하세요.
             </p>
         </div>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-icon">β</div>
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 비유</div>
+            <div class="demo-tldr-analogy-text">
+              <strong>Beta(1, 1)은 백지 상태</strong> — 클릭이 쌓일수록 <em>봉우리가 좁아지면서 확신이 생긴다</em>.
+              "이 광고 CTR이 7%일까 12%일까"가 점점 "8.5% 근처일 거야"로 좁혀지는 모습을 곡선 너비로 직접 보세요.
+            </div>
+          </div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 6분</span>
+          <li><span class="step-text">3개 광고에 <code>Click</code>·<code>Ignore</code>를 5번씩 — 곡선이 어떻게 움직이는지 관찰.</span></li>
+          <li><span class="step-text">곡선이 <strong>좁고 높아지는</strong> 광고가 "확신도가 올라간 광고"입니다. 너비를 비교해 보세요.</span></li>
+          <li><span class="step-text"><strong>고급 모드</strong>로 전환 후 Prior(α₀, β₀)를 10, 10으로 변경 → 같은 클릭 수로도 곡선이 덜 움직이는 걸 비교.</span></li>
+        </ol>
 
         <div class="demo-container">
             <!-- Left: Chart -->
@@ -154,8 +173,13 @@
 
             <!-- Right: Controls -->
             <div class="control-panel">
+                <div class="demo-mode-toggle" role="tablist" aria-label="데모 난이도 모드">
+                  <button type="button" data-mode="easy">쉬운 모드</button>
+                  <button type="button" data-mode="pro">고급 모드</button>
+                </div>
+
                 <!-- Prior sliders (added) -->
-                <div class="control-card">
+                <div class="control-card is-pro-only">
                     <h3 style="margin-bottom: 0.5rem;">초기 Prior Beta(α₀, β₀)</h3>
                     <div style="margin-bottom: 0.55rem;">
                         <label style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">

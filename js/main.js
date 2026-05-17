@@ -30,6 +30,67 @@ function updateThemeButton(theme) {
   button.setAttribute('title', `${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`);
 }
 
+// ========================================
+// Demo pages — Beginner-friendly UX
+// ========================================
+
+// 데모 페이지에 "쉬운/고급" 모드 토글 동작 부여
+// HTML 예: <div class="demo-mode-toggle"><button data-mode="easy">쉬운 모드</button><button data-mode="pro">고급 모드</button></div>
+function setupDemoModeToggle() {
+  const toggles = document.querySelectorAll('.demo-mode-toggle');
+  if (!toggles.length) return;
+
+  // 초기 모드: localStorage 또는 'easy'
+  const initial = localStorage.getItem('demoMode') || 'easy';
+  document.body.dataset.demoMode = initial;
+
+  toggles.forEach(group => {
+    group.querySelectorAll('button[data-mode]').forEach(btn => {
+      if (btn.dataset.mode === initial) btn.classList.add('is-active');
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        document.body.dataset.demoMode = mode;
+        localStorage.setItem('demoMode', mode);
+        // 모든 토글 그룹의 active 상태 동기화
+        document.querySelectorAll('.demo-mode-toggle button[data-mode]').forEach(b => {
+          b.classList.toggle('is-active', b.dataset.mode === mode);
+        });
+      });
+    });
+  });
+}
+
+// 데모 페이지에서 .demo-term 클릭/터치 시 팝오버 토글 (모바일 대응)
+// 호버는 CSS만으로 처리, 클릭은 sticky 동작 + 외부 클릭으로 닫기
+function setupDemoTermPopover() {
+  const terms = document.querySelectorAll('.demo-term');
+  if (!terms.length) return;
+
+  terms.forEach(term => {
+    term.setAttribute('tabindex', '0');
+    term.setAttribute('role', 'button');
+    term.setAttribute('aria-label', `용어 설명: ${term.textContent.trim()}`);
+    term.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = term.classList.contains('is-open');
+      document.querySelectorAll('.demo-term.is-open').forEach(t => t.classList.remove('is-open'));
+      if (!isOpen) term.classList.add('is-open');
+    });
+    term.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        term.click();
+      } else if (e.key === 'Escape') {
+        term.classList.remove('is-open');
+      }
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.demo-term.is-open').forEach(t => t.classList.remove('is-open'));
+  });
+}
+
 // Add aria-current to active nav links based on current page
 function applyNavActiveAria() {
   const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
@@ -1267,6 +1328,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mark active nav link with aria-current
   applyNavActiveAria();
+
+  // Demo pages: mode toggle + term popovers
+  setupDemoModeToggle();
+  setupDemoTermPopover();
 
   // Initialize sidebar navigation
   initializeSidebar();

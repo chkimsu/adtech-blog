@@ -439,6 +439,64 @@
       </div>
     </section>
 
+    <!-- Roadmap: 입문 → 중급 → 고급 3 tier -->
+    <section class="roadmap-section" style="padding: 1.5rem 0 0;">
+      <div class="container">
+        <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
+          <span class="learning-path-label">학습 로드맵</span>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 12개 데모</h2>
+          <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
+        </div>
+        <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
+          <!-- 입문 -->
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #4BC0C0; border-radius:12px; padding:1.1rem 1.25rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+              <strong style="font-size:0.95rem; color:#4BC0C0;">1단계 · 입문</strong>
+              <span style="font-size:0.7rem; color:var(--text-muted);">선수지식 거의 없음</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <a href="demo-rtb.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ RTB 경매</a>
+              <a href="demo-bid-landscape.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Bid Landscape</a>
+              <a href="demo-ucb1.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ UCB1</a>
+              <a href="demo-ts.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Thompson Sampling</a>
+            </div>
+          </div>
+          <!-- 중급 -->
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #FF9F40; border-radius:12px; padding:1.1rem 1.25rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+              <strong style="font-size:0.95rem; color:#FF9F40;">2단계 · 중급</strong>
+              <span style="font-size:0.7rem; color:var(--text-muted);">입문 4개 후</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <a href="demo-bid-shading.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Bid Shading</a>
+              <a href="demo-linucb.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LinUCB</a>
+              <a href="demo-golden-section.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Golden Section</a>
+              <a href="demo-compare-bandits.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ UCB vs TS 비교</a>
+            </div>
+          </div>
+          <!-- 고급 -->
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #FF6384; border-radius:12px; padding:1.1rem 1.25rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+              <strong style="font-size:0.95rem; color:#FF6384;">3단계 · 고급</strong>
+              <span style="font-size:0.7rem; color:var(--text-muted);">중급 후</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <a href="demo-censored-data.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Censored Data</a>
+              <a href="demo-header-bidding.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Header Bidding</a>
+              <a href="demo-pctr-impact.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ pCTR Impact</a>
+              <a href="demo-portfolio.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Portfolio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      @media (max-width: 768px) {
+        .roadmap-grid { grid-template-columns: 1fr !important; }
+      }
+    </style>
+
     <!-- Learning Path -->
     <section class="learning-path">
       <div class="container">

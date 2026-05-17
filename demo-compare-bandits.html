@@ -369,6 +369,30 @@
     </section>
 
     <div class="cmp-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-ucb1.html">UCB1</a>
+        <a href="demo-ts.html">Thompson Sampling</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">⚔</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 비유</div>
+          <div class="demo-tldr-analogy-text">
+            <strong>결정적(UCB) vs 확률적(TS) 학습자</strong>가 같은 무대에서 누가 더 빨리 1등 광고를 찾는지 경주.
+            누적 손실(Regret) 곡선이 낮을수록 더 효율적입니다.
+          </div>
+        </div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 7분</span>
+        <li><span class="step-text"><code>Step</code> 5번 — 매 라운드마다 두 알고리즘이 다른 선택을 하는지 관찰.</span></li>
+        <li><span class="step-text"><code>Auto Run (100 Rounds)</code> → Regret 곡선이 어떻게 갈리는지, "수렴 속도" 차이 확인.</span></li>
+        <li><span class="step-text"><code>실제 CTR 공개</code> 버튼으로 정답 확인 → 누가 정답에 더 가까운지 평가.</span></li>
+      </ol>
+
       <!-- Intro -->
       <div class="cmp-intro">
         <strong>시나리오</strong> — 4개 광고(A/B/C/D)가 있고, 각 광고의 <em>실제 CTR</em>은 당신에게 숨겨져 있습니다.

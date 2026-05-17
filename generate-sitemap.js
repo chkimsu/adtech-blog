@@ -49,6 +49,8 @@ const urls = [];
 urls.push(urlEntry(`${BASE_URL}/`, today, '1.0', 'weekly'));
 urls.push(urlEntry(`${BASE_URL}/about.html`, today, '0.6'));
 urls.push(urlEntry(`${BASE_URL}/demos.html`, today, '0.7'));
+urls.push(urlEntry(`${BASE_URL}/ecosystem.html`, today, '0.9', 'weekly'));
+urls.push(urlEntry(`${BASE_URL}/posts-browse.html`, today, '0.7'));
 
 // 블로그 포스트
 posts.forEach(post => {
@@ -67,4 +69,4 @@ ${urls.join('\n')}
 `;
 
 fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap);
-console.log(`sitemap.xml 생성 완료 — ${posts.length}개 포스트, ${demoFiles.length}개 데모, 3개 메인 페이지`);
+console.log(`sitemap.xml 생성 완료 — ${posts.length}개 포스트, ${demoFiles.length}개 데모, 5개 메인 페이지`);

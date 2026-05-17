@@ -57,12 +57,27 @@
 
     <!-- Controls -->
     <div class="eco-controls">
-      <div class="eco-flow-chips" role="group" aria-label="흐름 선택 — 칩을 누르면 점 애니메이션이 재생됩니다">
-        <button type="button" class="eco-flow-chip" data-flow="rtb">▶ 100ms RTB</button>
-        <button type="button" class="eco-flow-chip" data-flow="modeling">▶ 모델 학습·서빙</button>
-        <button type="button" class="eco-flow-chip" data-flow="attribution">▶ 어트리뷰션</button>
-        <button type="button" class="eco-flow-chip" data-flow="hb">▶ Header Bidding</button>
-        <button type="button" class="eco-flow-chip" data-flow="targeting">▶ 데이터·타겟팅</button>
+      <div class="eco-flow-chips" role="group" aria-label="흐름 선택 — 카드를 누르면 점 애니메이션이 재생됩니다">
+        <button type="button" class="eco-flow-chip" data-flow="rtb">
+          <span class="eco-flow-chip-label">▶ 100ms RTB</span>
+          <span class="eco-flow-chip-desc">광고가 0.1초 안에 거래되는 전체 과정</span>
+        </button>
+        <button type="button" class="eco-flow-chip" data-flow="modeling">
+          <span class="eco-flow-chip-label">▶ 모델 학습·서빙</span>
+          <span class="eco-flow-chip-desc">어제 클릭 로그가 오늘 새 모델이 되기까지</span>
+        </button>
+        <button type="button" class="eco-flow-chip" data-flow="attribution">
+          <span class="eco-flow-chip-label">▶ 어트리뷰션</span>
+          <span class="eco-flow-chip-desc">전환이 일어났을 때 누구의 공으로 인정되나</span>
+        </button>
+        <button type="button" class="eco-flow-chip" data-flow="hb">
+          <span class="eco-flow-chip-label">▶ Header Bidding</span>
+          <span class="eco-flow-chip-desc">병렬 호출로 매체 수익 +10~30% 끌어올리기</span>
+        </button>
+        <button type="button" class="eco-flow-chip" data-flow="targeting">
+          <span class="eco-flow-chip-label">▶ 데이터·타겟팅</span>
+          <span class="eco-flow-chip-desc">동의받은 사용자 데이터가 개인화 광고로 가는 길</span>
+        </button>
       </div>
       <div class="eco-legend" aria-label="카테고리 범례">
         <span class="eco-legend-item"><span class="eco-legend-dot" data-category="buy"></span>Buy Side</span>
@@ -79,8 +94,8 @@
       <div class="eco-graph-wrap" id="eco-graph-wrap">
         <svg id="eco-graph" viewBox="0 0 1240 720" preserveAspectRatio="xMidYMid meet" role="img"
              aria-label="광고 생태계 노드 그래프 — 18개 모듈과 그들의 연결"></svg>
-        <div id="eco-flow-caption" class="eco-flow-caption"></div>
         <div id="eco-tooltip" class="eco-tooltip"></div>
+        <div id="eco-flow-caption" class="eco-flow-caption" aria-live="polite"></div>
       </div>
 
       <aside class="eco-side-panel" id="eco-side-panel">

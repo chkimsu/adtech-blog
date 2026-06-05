@@ -171,6 +171,7 @@
     .demo-card:nth-child(6) { animation-delay: 0.30s; }
     .demo-card:nth-child(7) { animation-delay: 0.35s; }
     .demo-card:nth-child(8) { animation-delay: 0.40s; }
+    .demo-card:nth-child(9) { animation-delay: 0.45s; }
 
     .demo-card:hover {
       transform: translateY(-6px);
@@ -443,7 +444,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 12개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 13개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -458,6 +459,7 @@
               <a href="demo-bid-landscape.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Bid Landscape</a>
               <a href="demo-ucb1.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ UCB1</a>
               <a href="demo-ts.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Thompson Sampling</a>
+              <a href="demo-ab-vs-bandit.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ A/B vs Bandit</a>
             </div>
           </div>
           <!-- 중급 -->
@@ -571,10 +573,25 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">8개 · 카테고리별</span>
+          <span class="count">9개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
+
+          <!-- A/B vs Bandit (신규) -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>A/B vs Bandit 트래픽 시뮬레이터</h3>
+            <p>고정 트래픽(A/B 테스트)과 적응형 트래픽(멀티암드 밴딧)이 같은 광고 3개를 두고 어떻게 갈라지는지 — 누적 클릭과 트래픽 배분을 슬라이더로 직접 비교합니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 없음</span>
+            </div>
+            <a href="demo-ab-vs-bandit.html" class="btn-try">체험하기</a>
+          </div>
 
           <!-- 1. RTB Auction Simulator -->
           <div class="demo-card">

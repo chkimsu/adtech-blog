@@ -107,6 +107,40 @@ function applyNavActiveAria() {
   });
 }
 
+// Mobile nav: inject a hamburger toggle (keeps the 18 duplicated headers' markup unchanged)
+function setupMobileNav() {
+  const nav = document.querySelector('header nav');
+  const navContent = nav && nav.querySelector('.nav-content');
+  if (!nav || !navContent || nav.querySelector('.nav-toggle')) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'nav-toggle';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', '메뉴 열기');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>';
+
+  // Insert right after the logo, before the collapsible content
+  nav.insertBefore(btn, navContent);
+
+  const close = () => {
+    navContent.classList.remove('is-open');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', '메뉴 열기');
+  };
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = navContent.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  });
+
+  // Close when a menu link is tapped or when clicking outside the nav
+  navContent.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+  document.addEventListener('click', (e) => { if (!nav.contains(e.target)) close(); });
+}
+
 // ========================================
 // Post Rendering
 // ========================================
@@ -1328,6 +1362,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mark active nav link with aria-current
   applyNavActiveAria();
+
+  // Mobile nav hamburger (injects toggle button)
+  setupMobileNav();
 
   // Demo pages: mode toggle + term popovers
   setupDemoModeToggle();

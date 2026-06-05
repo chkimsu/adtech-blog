@@ -90,7 +90,7 @@
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-sans);
         }
 
         .btn-control:hover {
@@ -105,13 +105,13 @@
         }
 
         .btn-control.playing {
-            background: rgba(255, 99, 132, 0.15);
-            border-color: #ff6384;
-            color: #ff6384;
+            background: rgba(156, 90, 68, 0.15);
+            border-color: #9c5a44;
+            color: #9c5a44;
         }
 
         .btn-control.primary {
-            background: rgba(0, 229, 255, 0.12);
+            background: rgba(90, 107, 122, 0.12);
             border-color: var(--accent-primary);
             color: var(--accent-primary);
         }
@@ -155,7 +155,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), #4bc0c0);
+            background: linear-gradient(90deg, var(--accent-primary), #5f7a63);
             border-radius: 3px;
             transition: width 0.3s ease;
             width: 0%;
@@ -215,14 +215,14 @@
         .result-box {
             margin-top: 1rem;
             padding: 1.25rem;
-            background: rgba(75, 192, 192, 0.08);
-            border: 1px solid rgba(75, 192, 192, 0.3);
+            background: rgba(95, 122, 99, 0.08);
+            border: 1px solid rgba(95, 122, 99, 0.3);
             border-radius: 12px;
             display: none;
         }
 
         .result-box h4 {
-            color: #4BC0C0;
+            color: #5f7a63;
             margin-bottom: 0.75rem;
             font-size: 0.9rem;
         }
@@ -245,12 +245,12 @@
         }
 
         .result-divider {
-            border-top: 1px solid rgba(75, 192, 192, 0.2);
+            border-top: 1px solid rgba(95, 122, 99, 0.2);
             margin: 0.6rem 0;
         }
 
         .result-highlight {
-            color: #4BC0C0 !important;
+            color: #5f7a63 !important;
         }
 
         /* === Subtitle === */
@@ -284,8 +284,8 @@
         }
 
         .insight-box.info {
-            background: rgba(0, 229, 255, 0.08);
-            border-left: 4px solid #00e5ff;
+            background: rgba(90, 107, 122, 0.08);
+            border-left: 4px solid #5a6b7a;
         }
 
         .insight-box strong {
@@ -474,13 +474,13 @@
                         이 곡선의 <strong>봉우리</strong>가 최적 입찰가 b*입니다.
                     </div>
                     <div class="legend-inline">
-                        <span><span class="legend-dot" style="background:#00e5ff"></span> <strong>Surplus</strong> — 기대 이익 곡선</span>
-                        <span><span class="legend-dot" style="background:rgba(0,229,255,0.4)"></span> <strong>Bracket</strong> — 현재 탐색 구간 [a, b]</span>
+                        <span><span class="legend-dot" style="background:#5a6b7a"></span> <strong>Surplus</strong> — 기대 이익 곡선</span>
+                        <span><span class="legend-dot" style="background:rgba(90,107,122,0.4)"></span> <strong>Bracket</strong> — 현재 탐색 구간 [a, b]</span>
                     </div>
                     <div class="legend-inline" style="margin-bottom:0.75rem;">
-                        <span><span class="legend-dot" style="background:#ff6384"></span> <strong>x&#x2081;</strong> — 왼쪽 비교점 (황금비 위치)</span>
+                        <span><span class="legend-dot" style="background:#9c5a44"></span> <strong>x&#x2081;</strong> — 왼쪽 비교점 (황금비 위치)</span>
                         <span><span class="legend-dot" style="background:#ffce56"></span> <strong>x&#x2082;</strong> — 오른쪽 비교점 (황금비 위치)</span>
-                        <span><span class="legend-dot" style="background:#4bc0c0"></span> <strong>b*</strong> — 수렴 후 최적 입찰가</span>
+                        <span><span class="legend-dot" style="background:#5f7a63"></span> <strong>b*</strong> — 수렴 후 최적 입찰가</span>
                     </div>
                     <div class="chart-wrap">
                         <canvas id="surplusChart"></canvas>
@@ -587,7 +587,7 @@
             <h3>알고리즘 단계</h3>
             <ol>
                 <li><strong>초기화</strong>: 탐색 구간 [a, b]를 설정 (a &approx; 0, b &approx; V)</li>
-                <li>구간 내에 두 점 <span style="color:#ff6384;font-weight:600;">x₁</span>,
+                <li>구간 내에 두 점 <span style="color:#9c5a44;font-weight:600;">x₁</span>,
                     <span style="color:#ffce56;font-weight:600;">x₂</span>를 황금 비율로 배치:
                     <br>x₁ = b &minus; (b&minus;a)/&phi;, &nbsp; x₂ = a + (b&minus;a)/&phi;</li>
                 <li>두 점의 Surplus를 비교: s(x₁) vs s(x₂)</li>

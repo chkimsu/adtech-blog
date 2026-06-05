@@ -59,16 +59,16 @@
         }
 
         .step-dot.active .step-number {
-            background: rgba(0, 229, 255, 0.15);
+            background: rgba(90, 107, 122, 0.15);
             border-color: var(--accent-primary);
             color: var(--accent-primary);
-            box-shadow: 0 0 14px rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 14px rgba(90, 107, 122, 0.3);
         }
 
         .step-dot.completed .step-number {
-            background: rgba(75, 192, 192, 0.15);
-            border-color: #4BC0C0;
-            color: #4BC0C0;
+            background: rgba(95, 122, 99, 0.15);
+            border-color: #5f7a63;
+            color: #5f7a63;
         }
 
         .step-label {
@@ -94,7 +94,7 @@
         }
 
         .step-connector.completed {
-            background: #4BC0C0;
+            background: #5f7a63;
         }
 
         /* === Layout === */
@@ -149,7 +149,7 @@
         }
 
         .btn-view.active {
-            background: rgba(0, 229, 255, 0.12);
+            background: rgba(90, 107, 122, 0.12);
             color: var(--accent-primary);
         }
 
@@ -273,7 +273,7 @@
         .btn-next-step {
             display: none;
             padding: 0.65rem 1.5rem;
-            background: rgba(0, 229, 255, 0.1);
+            background: rgba(90, 107, 122, 0.1);
             border: 1px solid var(--accent-primary);
             border-radius: 8px;
             color: var(--accent-primary);
@@ -332,7 +332,7 @@
         }
 
         .censored-observed {
-            background: rgba(75, 192, 192, 0.5);
+            background: rgba(95, 122, 99, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -342,7 +342,7 @@
         }
 
         .censored-hidden {
-            background: repeating-linear-gradient(45deg, rgba(255, 99, 132, 0.2), rgba(255, 99, 132, 0.2) 4px, rgba(255, 99, 132, 0.1) 4px, rgba(255, 99, 132, 0.1) 8px);
+            background: repeating-linear-gradient(45deg, rgba(156, 90, 68, 0.2), rgba(156, 90, 68, 0.2) 4px, rgba(156, 90, 68, 0.1) 4px, rgba(156, 90, 68, 0.1) 8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -393,12 +393,12 @@
         }
 
         .result-badge.win {
-            background: rgba(75, 192, 192, 0.15);
-            color: #4BC0C0;
+            background: rgba(95, 122, 99, 0.15);
+            color: #5f7a63;
         }
 
         .result-badge.lose {
-            background: rgba(255, 99, 132, 0.15);
+            background: rgba(156, 90, 68, 0.15);
             color: #FF6384;
         }
 
@@ -465,18 +465,18 @@
         }
 
         .insight-box.warning {
-            background: rgba(255, 99, 132, 0.08);
+            background: rgba(156, 90, 68, 0.08);
             border-left: 4px solid #FF6384;
         }
 
         .insight-box.success {
-            background: rgba(75, 192, 192, 0.08);
-            border-left: 4px solid #4BC0C0;
+            background: rgba(95, 122, 99, 0.08);
+            border-left: 4px solid #5f7a63;
         }
 
         .insight-box.info {
-            background: rgba(0, 229, 255, 0.08);
-            border-left: 4px solid #00e5ff;
+            background: rgba(90, 107, 122, 0.08);
+            border-left: 4px solid #5a6b7a;
         }
 
         .insight-box strong {
@@ -778,7 +778,7 @@
                     <div class="stat-cards">
                         <div class="stat-card">
                             <div class="stat-label">관측 (Win)</div>
-                            <div class="stat-value" style="color: #4BC0C0;" id="stat-observed">-</div>
+                            <div class="stat-value" style="color: #5f7a63;" id="stat-observed">-</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-label">미관측 (Lose)</div>
@@ -805,8 +805,8 @@
                         <span class="step-badge">3</span>
                         <strong>Naive 추정 — 보이는 것만으로 분포를 추정하면?</strong><br>
                         "관측된 Win 데이터만으로 시장 분포를 피팅하면 어떻게 될까?" 차트에서 <span
-                            style="color: #ff6b9d;">분홍 점선</span>(Naive)과 <span style="color:
-                            #4BC0C0;">초록 점선</span>(실제)을 비교해보세요.
+                            style="color: #9c5a44;">분홍 점선</span>(Naive)과 <span style="color:
+                            #5f7a63;">초록 점선</span>(실제)을 비교해보세요.
                     </div>
 
                     <table class="stats-table">
@@ -861,9 +861,9 @@
 
                     <div class="formula-block">
                         Censored Log-Likelihood:<br><br>
-                        L = <span style="color:#4BC0C0">Σ(wins)</span> log <strong>PDF</strong>(w_i; μ, σ)
+                        L = <span style="color:#5f7a63">Σ(wins)</span> log <strong>PDF</strong>(w_i; μ, σ)
                         &nbsp;+&nbsp; <span style="color:#FF6384">Σ(losses)</span> log <strong>S</strong>(b_i; μ, σ)<br><br>
-                        <span style="color:#4BC0C0">Win: PDF 직접 사용</span> — 실제 관측된 시장 가격의 likelihood<br>
+                        <span style="color:#5f7a63">Win: PDF 직접 사용</span> — 실제 관측된 시장 가격의 likelihood<br>
                         <span style="color:#FF6384">Lose: Survival Function 사용</span> — P(W &gt; b) = 1 - CDF(b)
                     </div>
 
@@ -999,12 +999,12 @@
                 <div id="dist-chart-panel" class="chart-panel">
                     <canvas id="distributionChart" height="110"></canvas>
                     <div class="chart-legend">
-                        <span style="color: rgba(75, 192, 192, 0.8);">■</span> Win (관측 가능) &nbsp;
-                        <span style="color: rgba(255, 99, 132, 0.8);">■</span> Lose 영역 &nbsp;
+                        <span style="color: rgba(95, 122, 99, 0.8);">■</span> Win (관측 가능) &nbsp;
+                        <span style="color: rgba(156, 90, 68, 0.8);">■</span> Lose 영역 &nbsp;
                         <span style="color: rgba(120, 120, 120, 0.6);">▨</span> ??? 관측 불가 &nbsp;
-                        <span style="color: #00e5ff;">━━</span> My Bid &nbsp;
-                        <span style="color: #4BC0C0;">- -</span> 실제 분포 &nbsp;
-                        <span style="color: #ff6b9d;">- -</span> Naive 추정 &nbsp;
+                        <span style="color: #5a6b7a;">━━</span> My Bid &nbsp;
+                        <span style="color: #5f7a63;">- -</span> 실제 분포 &nbsp;
+                        <span style="color: #9c5a44;">- -</span> Naive 추정 &nbsp;
                         <span style="color: #FFD700;">━━</span> Censored 보정
                     </div>
                 </div>

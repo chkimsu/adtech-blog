@@ -24,10 +24,7 @@
     .pq-hero h1 {
       font-size: 2.05rem;
       margin-bottom: 0.5rem;
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent-primary);
     }
     .pq-hero p {
       color: var(--text-secondary);
@@ -178,8 +175,8 @@
       color: var(--text-secondary);
     }
 
-    .pq-panel td.num.good  { color: #4BC0C0; font-weight: 700; }
-    .pq-panel td.num.bad   { color: #ff6384; font-weight: 700; }
+    .pq-panel td.num.good  { color: #5f7a63; font-weight: 700; }
+    .pq-panel td.num.bad   { color: #9c5a44; font-weight: 700; }
     .pq-panel td.num.accent{ color: var(--accent-primary); font-weight: 700; }
 
     /* Summary big metric */
@@ -218,9 +215,9 @@
       color: var(--text-primary);
     }
 
-    .pq-summary-value.warn { color: #ff9f40; }
-    .pq-summary-value.bad  { color: #ff6384; }
-    .pq-summary-value.good { color: #4BC0C0; }
+    .pq-summary-value.warn { color: #a8783a; }
+    .pq-summary-value.bad  { color: #9c5a44; }
+    .pq-summary-value.good { color: #5f7a63; }
 
     .pq-summary-delta {
       font-size: 0.78rem;
@@ -509,8 +506,8 @@
             {
               label: 'Surplus (1000 impr)',
               data: [],
-              borderColor: '#00e5ff',
-              backgroundColor: 'rgba(0, 229, 255, 0.15)',
+              borderColor: '#5a6b7a',
+              backgroundColor: 'rgba(90, 107, 122, 0.15)',
               tension: 0.2,
               pointRadius: 0,
               borderWidth: 2,
@@ -519,8 +516,8 @@
             {
               label: '현재 편향',
               data: [],
-              borderColor: '#ff9f40',
-              backgroundColor: '#ff9f40',
+              borderColor: '#a8783a',
+              backgroundColor: '#a8783a',
               pointRadius: 6,
               pointHoverRadius: 8,
               showLine: false,
@@ -586,7 +583,7 @@
       const deltaPct = ((out.predValue - TRUE_VALUE) / TRUE_VALUE * 100);
       const deltaEl = document.getElementById('sum-predicted-delta');
       deltaEl.textContent = 'True $0.0200 대비 ' + (deltaPct >= 0 ? '+' : '') + deltaPct.toFixed(1) + '%';
-      deltaEl.style.color = Math.abs(deltaPct) < 5 ? '#4BC0C0' : '#ff9f40';
+      deltaEl.style.color = Math.abs(deltaPct) < 5 ? '#5f7a63' : '#a8783a';
 
       document.getElementById('sum-winrate').textContent = (out.wr * 100).toFixed(1) + '%';
 

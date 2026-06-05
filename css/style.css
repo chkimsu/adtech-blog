@@ -112,6 +112,7 @@ h3,
 h4,
 h5,
 h6 {
+  font-family: var(--font-serif);
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
@@ -905,7 +906,7 @@ nav {
   padding: 0.25rem 0.6rem;
   cursor: pointer;
   transition: all var(--transition-fast);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .post-content .copy-btn:hover {

@@ -102,6 +102,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+::selection {
+  background: rgba(176, 68, 44, 0.20);
+  color: var(--text-primary);
+}
+
 /* ========================================
    Typography
    ======================================== */

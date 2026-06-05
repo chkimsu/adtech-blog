@@ -2,70 +2,78 @@
    Ad Tech Blog - Modern Dark Mode Design
    ======================================== */
 
-/* Import Pretendard (Korean) + Inter + Fira Code */
+/* Import Pretendard (Korean body) + Newsreader & Noto Serif KR (serif headings) + Fira Code */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Noto+Serif+KR:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap');
 
 /* ========================================
    CSS Variables & Theme System
    ======================================== */
 
 :root {
-  /* Dark Theme Colors */
-  --bg-primary: #0a0e27;
-  --bg-secondary: #161b33;
-  --bg-tertiary: #1e2541;
-  --bg-gradient: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  /* Editorial Light (default) */
+  --bg-primary: #faf8f3;        /* cream */
+  --bg-secondary: #fffdf8;      /* card / surface */
+  --bg-tertiary: #efe9dd;       /* tag / divider surface */
+  --bg-gradient: var(--bg-primary);   /* flat — body background becomes solid cream */
 
-  /* Accent Colors */
-  --accent-primary: #00e5ff;
-  --accent-secondary: #b026ff;
-  --accent-gradient: linear-gradient(135deg, #b026ff 0%, #ff6b9d 100%);
-  --accent-glow: rgba(0, 229, 255, 0.3);
+  /* Accent Colors — single restrained brick */
+  --accent-primary: #b0442c;    /* brick */
+  --accent-secondary: #8a6a3a;  /* bronze/ochre (replaces purple) */
+  --accent-gradient: var(--accent-primary);  /* solid — 12 fill consumers go solid for free */
+  --accent-glow: transparent;
 
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #b8c5d6;
-  --text-muted: #7a8ba3;
+  --text-primary: #201d1a;      /* ink */
+  --text-secondary: #4f4a42;
+  --text-muted: #8a8176;
 
   /* UI Elements */
-  --border-color: rgba(255, 255, 255, 0.1);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px var(--accent-glow);
+  --border-color: rgba(32, 29, 26, 0.14);
+  --shadow-sm: 0 1px 2px rgba(32, 29, 26, 0.05);
+  --shadow-md: 0 4px 14px rgba(32, 29, 26, 0.07);
+  --shadow-lg: 0 12px 30px rgba(32, 29, 26, 0.10);
+  --shadow-glow: none;          /* neutralizes the 7 var(--shadow-glow) consumers */
 
-  /* Glassmorphism */
-  --glass-bg: rgba(30, 37, 65, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.18);
+  /* Surfaces (formerly glassmorphism) */
+  --glass-bg: var(--bg-secondary);   /* opaque — blur lines become visually dead even if missed */
+  --glass-border: var(--border-color);
 
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* Fonts */
+  --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif: 'Newsreader', 'Noto Serif KR', Georgia, 'Apple SD Gothic Neo', serif;
+  --font-mono: 'Fira Code', ui-monospace, monospace;
 }
 
-[data-theme="light"] {
-  --bg-primary: #f5f7fa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #e8ecf1;
-  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+[data-theme="dark"] {
+  /* Editorial Dark (warm — no blue cast) */
+  --bg-primary: #1a1715;
+  --bg-secondary: #232020;
+  --bg-tertiary: #2e2a26;
+  --bg-gradient: var(--bg-primary);
 
-  --accent-primary: #0077c2;
-  --accent-secondary: #7d1bbf;
+  --accent-primary: #d77a5f;    /* slightly brighter brick for dark */
+  --accent-secondary: #c9a36b;
+  --accent-gradient: var(--accent-primary);
+  --accent-glow: transparent;
 
-  --text-primary: #1a1f36;
-  --text-secondary: #3a4459;
-  --text-muted: #5f6b80;
+  --text-primary: #f1ece3;
+  --text-secondary: #c6bdae;
+  --text-muted: #8f8678;
 
-  --border-color: rgba(0, 0, 0, 0.12);
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.12);
-  --shadow-lg: 0 12px 36px rgba(15, 23, 42, 0.18);
-  --shadow-glow: 0 0 18px rgba(0, 119, 194, 0.25);
+  --border-color: rgba(241, 236, 227, 0.13);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: none;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-bg: var(--bg-secondary);
+  --glass-border: var(--border-color);
 }
 
 /* ========================================
@@ -83,7 +91,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg-gradient);
   color: var(--text-primary);
   line-height: 1.6;

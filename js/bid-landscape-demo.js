@@ -109,7 +109,7 @@ function createChart() {
                     label: 'Win Rate (%)',
                     data: [],
                     borderColor: '#36A2EB',
-                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    backgroundColor: 'rgba(90, 107, 122, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,
@@ -120,7 +120,7 @@ function createChart() {
                     label: 'Expected Cost ($)',
                     data: [],
                     borderColor: '#FF6384',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    backgroundColor: 'rgba(156, 90, 68, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,
@@ -130,8 +130,8 @@ function createChart() {
                 {
                     label: 'Expected Profit ($)',
                     data: [],
-                    borderColor: '#4BC0C0',
-                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderColor: '#5f7a63',
+                    backgroundColor: 'rgba(95, 122, 99, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,
@@ -249,7 +249,7 @@ function updateStats(params, data) {
     var profitEl = document.getElementById('stat-profit');
     profitEl.textContent = '$' + profit.toFixed(2);
     if (profit >= 0) {
-        profitEl.style.color = '#4BC0C0';
+        profitEl.style.color = '#5f7a63';
     } else {
         profitEl.style.color = '#FF6384';
     }

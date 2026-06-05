@@ -435,8 +435,8 @@ function createDistributionChart() {
                 { // 0: Win Zone
                     label: 'Win (관측 가능)',
                     data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(95, 122, 99, 0.6)',
+                    borderColor: 'rgba(95, 122, 99, 1)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -445,8 +445,8 @@ function createDistributionChart() {
                 { // 1: Lose Zone
                     label: 'Lose (내 입찰가 초과)',
                     data: [],
-                    backgroundColor: 'rgba(255, 99, 132, 0.4)',
-                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                    backgroundColor: 'rgba(156, 90, 68, 0.4)',
+                    borderColor: 'rgba(156, 90, 68, 0.8)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -467,7 +467,7 @@ function createDistributionChart() {
                     label: 'My Bid (= Censoring Threshold)',
                     data: [],
                     type: 'line',
-                    borderColor: '#00e5ff',
+                    borderColor: '#5a6b7a',
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: false,
@@ -477,7 +477,7 @@ function createDistributionChart() {
                     label: '실제 분포 (God View)',
                     data: [],
                     type: 'line',
-                    borderColor: '#4BC0C0',
+                    borderColor: '#5f7a63',
                     borderWidth: 2,
                     borderDash: [6, 3],
                     pointRadius: 0,
@@ -489,7 +489,7 @@ function createDistributionChart() {
                     label: 'Naive 추정 (Win 데이터만)',
                     data: [],
                     type: 'line',
-                    borderColor: '#ff6b9d',
+                    borderColor: '#9c5a44',
                     borderWidth: 2.5,
                     borderDash: [4, 4],
                     pointRadius: 0,
@@ -651,7 +651,7 @@ function updateAuctionTable() {
         let priceDisplay;
 
         if (a.win || !isEngineer) {
-            priceDisplay = `<span style="color: ${a.win ? '#4BC0C0' : '#FF6384'}">$${a.marketPrice.toFixed(3)}</span>`;
+            priceDisplay = `<span style="color: ${a.win ? '#5f7a63' : '#FF6384'}">$${a.marketPrice.toFixed(3)}</span>`;
         } else {
             priceDisplay = `<span class="censored-price" style="color: #FF6384;">??? (&gt; $${a.myBid.toFixed(2)})</span>`;
         }
@@ -811,14 +811,14 @@ function updateStep4Stats() {
     s4c('stat4-naive-mean-err', naiveMeanErr.toFixed(1) + '%', '#FF6384');
     s4('stat4-censored-mean', '$' + censoredMean.toFixed(3));
     s4c('stat4-censored-mean-err', censoredMeanErr.toFixed(1) + '%',
-        Math.abs(censoredMeanErr) < Math.abs(naiveMeanErr) ? '#4BC0C0' : '#FF6384');
+        Math.abs(censoredMeanErr) < Math.abs(naiveMeanErr) ? '#5f7a63' : '#FF6384');
 
     s4('stat4-true-median', '$' + trueMedian.toFixed(3));
     s4('stat4-naive-median', '$' + naiveMedian.toFixed(3));
     s4c('stat4-naive-median-err', naiveMedianErr.toFixed(1) + '%', '#FF6384');
     s4('stat4-censored-median', '$' + censoredMedian.toFixed(3));
     s4c('stat4-censored-median-err', censoredMedianErr.toFixed(1) + '%',
-        Math.abs(censoredMedianErr) < Math.abs(naiveMedianErr) ? '#4BC0C0' : '#FF6384');
+        Math.abs(censoredMedianErr) < Math.abs(naiveMedianErr) ? '#5f7a63' : '#FF6384');
 
     // Dynamic insight
     const insight = el('step4-insight-text');
@@ -826,7 +826,7 @@ function updateStep4Stats() {
         const improvement = Math.abs(naiveMeanErr) - Math.abs(censoredMeanErr);
         insight.innerHTML = `Censored Regression은 평균 추정 오차를
             <strong style="color:#FF6384;">${Math.abs(naiveMeanErr).toFixed(1)}%</strong>에서
-            <strong style="color:#4BC0C0;">${Math.abs(censoredMeanErr).toFixed(1)}%</strong>로 줄였습니다.
+            <strong style="color:#5f7a63;">${Math.abs(censoredMeanErr).toFixed(1)}%</strong>로 줄였습니다.
             Lose 데이터의 "하한(lower bound) 정보"를 활용하여 잃어버린 정보의 대부분을 복구합니다.`;
     }
 }
@@ -845,8 +845,8 @@ function createComparisonChart() {
                 {
                     label: '실제 (God View)',
                     data: [0, 0],
-                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(95, 122, 99, 0.7)',
+                    borderColor: 'rgba(95, 122, 99, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
@@ -930,8 +930,8 @@ function createImpactChart() {
                 {
                     label: 'Oracle (God View)',
                     data: [0, 0, 0],
-                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(95, 122, 99, 0.7)',
+                    borderColor: 'rgba(95, 122, 99, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
@@ -1019,7 +1019,7 @@ function updateImpactChart() {
     if (s5) { s5.textContent = surplusLossNaive.toFixed(1) + '%'; s5.style.color = '#FF6384'; }
     if (s5c) {
         s5c.textContent = surplusLossCensored.toFixed(1) + '%';
-        s5c.style.color = Math.abs(surplusLossCensored) < Math.abs(surplusLossNaive) ? '#4BC0C0' : '#FF6384';
+        s5c.style.color = Math.abs(surplusLossCensored) < Math.abs(surplusLossNaive) ? '#5f7a63' : '#FF6384';
     }
 
     const insight = el('step5-insight-text');
@@ -1027,7 +1027,7 @@ function updateImpactChart() {
         insight.innerHTML = `Naive 추정 기반 입찰은 Oracle 대비 Surplus를
             <strong style="color:#FF6384;">${Math.abs(surplusLossNaive).toFixed(1)}%</strong> 손실합니다.
             Censored Regression을 사용하면 손실이
-            <strong style="color:#4BC0C0;">${Math.abs(surplusLossCensored).toFixed(1)}%</strong>로 줄어듭니다.
+            <strong style="color:#5f7a63;">${Math.abs(surplusLossCensored).toFixed(1)}%</strong>로 줄어듭니다.
             Lose 데이터를 버리지 않는 것만으로도 대부분의 정보를 복구할 수 있습니다.`;
     }
 }

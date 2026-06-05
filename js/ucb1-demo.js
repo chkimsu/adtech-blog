@@ -8,11 +8,11 @@
 // ==========================================
 
 const ARMS = [
-    { name: "Ad A (High CTR)", trueCTR: 0.08, color: 'rgba(255, 99, 132, 0.8)' },
-    { name: "Ad B (Medium)", trueCTR: 0.05, color: 'rgba(54, 162, 235, 0.8)' },
-    { name: "Ad C (Low CTR)", trueCTR: 0.02, color: 'rgba(255, 206, 86, 0.8)' },
-    { name: "Ad D (Hidden Gem)", trueCTR: 0.07, color: 'rgba(75, 192, 192, 0.8)' },
-    { name: "Ad E (Unknown)", trueCTR: 0.06, color: 'rgba(153, 102, 255, 0.8)' }
+    { name: "Ad A (High CTR)", trueCTR: 0.08, color: 'rgba(156, 90, 68, 0.8)' },
+    { name: "Ad B (Medium)", trueCTR: 0.05, color: 'rgba(90, 107, 122, 0.8)' },
+    { name: "Ad C (Low CTR)", trueCTR: 0.02, color: 'rgba(154, 125, 56, 0.8)' },
+    { name: "Ad D (Hidden Gem)", trueCTR: 0.07, color: 'rgba(95, 122, 99, 0.8)' },
+    { name: "Ad E (Unknown)", trueCTR: 0.06, color: 'rgba(125, 94, 114, 0.8)' }
 ];
 
 // ==========================================
@@ -225,7 +225,7 @@ function renderStats() {
         const bonus = model.getBonus(i);
         const score = model.getScore(i);
         const isSelected = i === lastSelected;
-        const rowStyle = isSelected ? 'background: rgba(0, 229, 255, 0.1);' : '';
+        const rowStyle = isSelected ? 'background: rgba(90, 107, 122, 0.1);' : '';
 
         html += `
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); ${rowStyle}">

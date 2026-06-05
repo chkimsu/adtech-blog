@@ -195,8 +195,8 @@ function createDistChart() {
                 {   // 0: Win Zone
                     label: 'Win Zone (관측 가능: 낙찰한 경매)',
                     data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(95, 122, 99, 0.6)',
+                    borderColor: 'rgba(95, 122, 99, 1)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -205,8 +205,8 @@ function createDistChart() {
                 {   // 1: Lose Zone
                     label: 'Lose Zone (내 입찰가 초과)',
                     data: [],
-                    backgroundColor: 'rgba(255, 99, 132, 0.4)',
-                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                    backgroundColor: 'rgba(156, 90, 68, 0.4)',
+                    borderColor: 'rgba(156, 90, 68, 0.8)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -238,7 +238,7 @@ function createDistChart() {
                     label: 'Shaded Bid (실제 입찰가)',
                     data: [],
                     type: 'line',
-                    borderColor: '#00e5ff',
+                    borderColor: '#5a6b7a',
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: false,
@@ -248,7 +248,7 @@ function createDistChart() {
                     label: '잘못된 추정 분포 (관측 데이터만 사용)',
                     data: [],
                     type: 'line',
-                    borderColor: '#ff6b9d',
+                    borderColor: '#9c5a44',
                     borderWidth: 2,
                     borderDash: [4, 4],
                     pointRadius: 0,
@@ -422,24 +422,24 @@ function createCompareChart() {
                 {
                     label: '1st Price (No Shade)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(156, 90, 68, 0.7)',
+                    borderColor: 'rgba(156, 90, 68, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
                 {
                     label: '1st Price (Shaded)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(0, 229, 255, 0.7)',
-                    borderColor: 'rgba(0, 229, 255, 1)',
+                    backgroundColor: 'rgba(90, 107, 122, 0.7)',
+                    borderColor: 'rgba(90, 107, 122, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
                 {
                     label: '2nd Price (Truthful)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
-                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(154, 125, 56, 0.7)',
+                    borderColor: 'rgba(154, 125, 56, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 }
@@ -515,8 +515,8 @@ function createSweepChart() {
                 {
                     label: 'E[Profit] / Auction ($)',
                     data: [],
-                    borderColor: '#4BC0C0',
-                    backgroundColor: 'rgba(75, 192, 192, 0.15)',
+                    borderColor: '#5f7a63',
+                    backgroundColor: 'rgba(95, 122, 99, 0.15)',
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: true,
@@ -526,7 +526,7 @@ function createSweepChart() {
                 {
                     label: 'Win Rate (%)',
                     data: [],
-                    borderColor: 'rgba(255, 206, 86, 0.8)',
+                    borderColor: 'rgba(154, 125, 56, 0.8)',
                     borderWidth: 2,
                     borderDash: [6, 3],
                     pointRadius: 0,
@@ -585,13 +585,13 @@ function createSweepChart() {
                 ctx.save();
                 ctx.beginPath();
                 ctx.setLineDash([6, 4]);
-                ctx.strokeStyle = 'rgba(0, 229, 255, 0.7)';
+                ctx.strokeStyle = 'rgba(90, 107, 122, 0.7)';
                 ctx.lineWidth = 1.5;
                 ctx.moveTo(xPx, yScale.top);
                 ctx.lineTo(xPx, yScale.bottom);
                 ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.fillStyle = 'rgba(0, 229, 255, 0.9)';
+                ctx.fillStyle = 'rgba(90, 107, 122, 0.9)';
                 ctx.font = '11px Fira Code, monospace';
                 ctx.textAlign = 'center';
                 ctx.fillText(val + '%', xPx, yScale.top - 6);
@@ -651,7 +651,7 @@ function updateStats(result) {
     const savings = fp.expectedProfit - ns.expectedProfit;
     const savingsEl = document.getElementById('stat-savings');
     savingsEl.textContent = (savings >= 0 ? '+$' : '-$') + Math.abs(savings).toFixed(4);
-    savingsEl.style.color = savings >= 0 ? '#4BC0C0' : '#FF6384';
+    savingsEl.style.color = savings >= 0 ? '#5f7a63' : '#FF6384';
 }
 
 // ==========================================
@@ -758,7 +758,7 @@ function toggleCensoredMode() {
         btn.textContent = 'Censored View로 전환';
         btn.classList.remove('active');
         indicator.textContent = 'God View 활성';
-        indicator.style.color = '#4BC0C0';
+        indicator.style.color = '#5f7a63';
     }
 
     // 차트만 다시 그리기 (시뮬레이션 재실행 불필요)

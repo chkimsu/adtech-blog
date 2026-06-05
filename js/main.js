@@ -774,7 +774,7 @@ async function renderPostDetail() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         mermaidInstance.initialize({
           startOnLoad: false,
-          theme: currentTheme === 'dark' ? 'dark' : 'default'
+          theme: currentTheme === 'dark' ? 'dark' : 'neutral'
         });
         mermaidInstance.run();
       }

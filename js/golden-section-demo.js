@@ -129,13 +129,13 @@ function generateSurplusCurve(V, mu, sigma, nPoints = 300) {
 function getChartColors() {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     return {
-        curve: '#00e5ff',
-        curveFill: 'rgba(0, 229, 255, 0.08)',
-        bracketFill: 'rgba(0, 229, 255, 0.15)',
-        bracketBorder: 'rgba(0, 229, 255, 0.6)',
-        x1: '#ff6384',
+        curve: '#5a6b7a',
+        curveFill: 'rgba(90, 107, 122, 0.08)',
+        bracketFill: 'rgba(90, 107, 122, 0.15)',
+        bracketBorder: 'rgba(90, 107, 122, 0.6)',
+        x1: '#9c5a44',
         x2: '#ffce56',
-        optimal: '#4bc0c0',
+        optimal: '#5f7a63',
         grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)',
         text: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
         textMuted: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)',
@@ -261,7 +261,7 @@ function initConvergenceChart() {
                 label: 'Bracket Size (b - a)',
                 data: [],
                 borderColor: colors.curve,
-                backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                backgroundColor: 'rgba(90, 107, 122, 0.1)',
                 fill: true,
                 borderWidth: 2,
                 pointRadius: 4,
@@ -383,12 +383,12 @@ function updateIterationLog() {
             <td>${h.iter}</td>
             <td>${h.a.toFixed(3)}</td>
             <td>${h.b.toFixed(3)}</td>
-            <td style="color:#ff6384">${h.x1.toFixed(3)}</td>
+            <td style="color:#9c5a44">${h.x1.toFixed(3)}</td>
             <td style="color:#ffce56">${h.x2.toFixed(3)}</td>
             <td>${h.bracket.toFixed(4)}</td>
         `;
         if (engine.converged && h.iter === engine.iteration) {
-            tr.style.background = 'rgba(75, 192, 192, 0.15)';
+            tr.style.background = 'rgba(95, 122, 99, 0.15)';
         }
         tbody.appendChild(tr);
     }

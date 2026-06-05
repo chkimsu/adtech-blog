@@ -11,8 +11,8 @@ const DSPS = [
     {
         id: 0,
         name: 'DSP A (Aggressive)',
-        color: 'rgba(255, 99, 132, 0.8)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        color: 'rgba(156, 90, 68, 0.8)',
+        borderColor: 'rgba(156, 90, 68, 1)',
         strategy: 'aggressive',
         basePCTR: 0.08,
         conversionValue: 25
@@ -20,8 +20,8 @@ const DSPS = [
     {
         id: 1,
         name: 'DSP B (Conservative)',
-        color: 'rgba(54, 162, 235, 0.8)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        color: 'rgba(90, 107, 122, 0.8)',
+        borderColor: 'rgba(90, 107, 122, 1)',
         strategy: 'conservative',
         basePCTR: 0.04,
         conversionValue: 15
@@ -29,8 +29,8 @@ const DSPS = [
     {
         id: 2,
         name: 'DSP C (Smart)',
-        color: 'rgba(255, 206, 86, 0.8)',
-        borderColor: 'rgba(255, 206, 86, 1)',
+        color: 'rgba(154, 125, 56, 0.8)',
+        borderColor: 'rgba(154, 125, 56, 1)',
         strategy: 'smart',
         basePCTR: 0.06,
         conversionValue: 20
@@ -38,8 +38,8 @@ const DSPS = [
     {
         id: 3,
         name: 'DSP D (Random)',
-        color: 'rgba(75, 192, 192, 0.8)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        color: 'rgba(95, 122, 99, 0.8)',
+        borderColor: 'rgba(95, 122, 99, 1)',
         strategy: 'random',
         basePCTR: 0.03,
         conversionValue: 10
@@ -198,7 +198,7 @@ const clearingPricePlugin = {
 
         // Draw clearing price horizontal line
         ctx.beginPath();
-        ctx.strokeStyle = '#4bc0c0';
+        ctx.strokeStyle = '#5f7a63';
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 4]);
         ctx.moveTo(chartArea.left, yPixel);
@@ -207,7 +207,7 @@ const clearingPricePlugin = {
         ctx.setLineDash([]);
 
         // Label
-        ctx.fillStyle = '#4bc0c0';
+        ctx.fillStyle = '#5f7a63';
         ctx.font = 'bold 11px "Fira Code", monospace';
         ctx.textAlign = 'right';
         ctx.fillText('Paid: $' + cp.toFixed(2), chartArea.right - 4, yPixel - 6);
@@ -224,11 +224,11 @@ const clearingPricePlugin = {
                 const barW = bar.width;
 
                 // Semi-transparent savings overlay
-                ctx.fillStyle = 'rgba(0, 229, 255, 0.18)';
+                ctx.fillStyle = 'rgba(90, 107, 122, 0.18)';
                 ctx.fillRect(barX, bidY, barW, yPixel - bidY);
 
                 // Diagonal stripes pattern
-                ctx.strokeStyle = 'rgba(0, 229, 255, 0.35)';
+                ctx.strokeStyle = 'rgba(90, 107, 122, 0.35)';
                 ctx.lineWidth = 1;
                 const step = 6;
                 ctx.beginPath();
@@ -240,7 +240,7 @@ const clearingPricePlugin = {
 
                 // Savings label
                 const savings = (lastAuctionResult.winnerBid - cp).toFixed(2);
-                ctx.fillStyle = '#00e5ff';
+                ctx.fillStyle = '#5a6b7a';
                 ctx.font = 'bold 10px "Fira Code", monospace';
                 ctx.textAlign = 'center';
                 const midY = (bidY + yPixel) / 2;
@@ -415,7 +415,7 @@ function renderStats() {
         const avgSpend = s.wins > 0 ? (s.totalSpend / s.wins) : 0;
         const avgSavings = s.wins > 0 ? ((s.totalBidWhenWon - s.totalSpend) / s.wins) : 0;
         const surplus = s.totalValueWhenWon - s.totalSpend;
-        const savingsColor = avgSavings > 0.005 ? '#4bc0c0' : 'inherit';
+        const savingsColor = avgSavings > 0.005 ? '#5f7a63' : 'inherit';
 
         html += `
             <tr>
@@ -674,7 +674,7 @@ function deltaRow(label, v1, v2, delta, prefix, lowerIsBetter) {
     const fmt = (v) => prefix + (typeof v === 'number' ? v.toFixed(2) : v);
     const sign = delta > 0.005 ? '+' : (delta < -0.005 ? '' : '');
     const color = Math.abs(delta) < 0.005 ? 'var(--text-muted)' :
-        (lowerIsBetter ? (delta < 0 ? '#4bc0c0' : '#ff6384') : (delta > 0 ? '#4bc0c0' : '#ff6384'));
+        (lowerIsBetter ? (delta < 0 ? '#5f7a63' : '#9c5a44') : (delta > 0 ? '#5f7a63' : '#9c5a44'));
     return `<tr>
         <td style="padding-left: 1rem; font-size: 0.8rem;">${label}</td>
         <td>${fmt(v1)}</td>

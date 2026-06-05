@@ -1423,7 +1423,7 @@ function renderChartJsCharts(container) {
 
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const textColor = isDark ? '#b8c5d6' : '#4a5568';
+  const textColor = isDark ? '#c6bdae' : '#4f4a42';
 
   // Chart: Feature Freshness
   const freshnessCanvas = container.querySelector('#freshnessChart');
@@ -1436,14 +1436,14 @@ function renderChartJsCharts(container) {
           label: '권장 갱신 주기 (분)',
           data: [0.01, 1, 5, 60, 1440, 1440, 1440],
           backgroundColor: [
-            'rgba(75, 192, 192, 0.7)', 'rgba(75, 192, 192, 0.7)',
-            'rgba(255, 159, 64, 0.7)', 'rgba(255, 159, 64, 0.7)',
-            'rgba(255, 206, 86, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(255, 206, 86, 0.7)'
+            'rgba(95, 122, 99, 0.7)', 'rgba(95, 122, 99, 0.7)',
+            'rgba(168, 120, 58, 0.7)', 'rgba(168, 120, 58, 0.7)',
+            'rgba(154, 125, 56, 0.7)', 'rgba(154, 125, 56, 0.7)', 'rgba(154, 125, 56, 0.7)'
           ],
           borderColor: [
-            'rgba(75, 192, 192, 1)', 'rgba(75, 192, 192, 1)',
-            'rgba(255, 159, 64, 1)', 'rgba(255, 159, 64, 1)',
-            'rgba(255, 206, 86, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 206, 86, 1)'
+            'rgba(95, 122, 99, 1)', 'rgba(95, 122, 99, 1)',
+            'rgba(168, 120, 58, 1)', 'rgba(168, 120, 58, 1)',
+            'rgba(154, 125, 56, 1)', 'rgba(154, 125, 56, 1)', 'rgba(154, 125, 56, 1)'
           ],
           borderWidth: 1,
           borderRadius: 6
@@ -1511,16 +1511,16 @@ function renderChartJsCharts(container) {
             label: '예측 점수 (Exploitation)',
             data: [0.45, 0.10, 0.08, 0.00],
             backgroundColor: [
-              'rgba(255, 99, 132, 0.7)',
-              'rgba(54, 162, 235, 0.7)',
-              'rgba(255, 206, 86, 0.7)',
-              'rgba(75, 192, 192, 0.7)'
+              'rgba(156, 90, 68, 0.7)',
+              'rgba(90, 107, 122, 0.7)',
+              'rgba(154, 125, 56, 0.7)',
+              'rgba(95, 122, 99, 0.7)'
             ],
             borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)'
+              'rgba(156, 90, 68, 1)',
+              'rgba(90, 107, 122, 1)',
+              'rgba(154, 125, 56, 1)',
+              'rgba(95, 122, 99, 1)'
             ],
             borderWidth: 1,
             borderRadius: 4

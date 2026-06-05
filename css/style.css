@@ -185,8 +185,6 @@ pre code {
 
 header {
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--glass-border);
   padding: 1rem 0;
   position: sticky;
@@ -207,10 +205,7 @@ nav {
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-primary);
 }
 
 .nav-content {
@@ -351,10 +346,7 @@ nav {
 .hero h1 {
   font-size: 2.75rem;
   margin-bottom: 1rem;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-primary);
   animation: fadeInUp 0.8s ease;
   line-height: 1.15;
 }
@@ -373,7 +365,6 @@ nav {
 
 .search-filter-bar {
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 2rem;
@@ -445,8 +436,6 @@ nav {
   transition: all 0.3s ease;
   border-radius: 12px;
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   position: relative;
   letter-spacing: 0.02em;
@@ -552,8 +541,6 @@ nav {
 
 .post-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 2rem;
@@ -759,7 +746,6 @@ nav {
   margin: 0 auto;
   padding: 3rem 2.5rem;
   background: rgba(22, 27, 51, 0.92);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--shadow-md);
@@ -1443,8 +1429,6 @@ nav {
 
 .about-section {
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 2.5rem 3rem;
@@ -1590,8 +1574,6 @@ footer {
   width: 280px;
   height: calc(100vh - 70px);
   background: rgba(22, 27, 51, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-right: 1px solid var(--glass-border);
   overflow-y: auto;
   z-index: 900;
@@ -2663,7 +2645,6 @@ footer {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
 }
 
 .search-modal-dialog {
@@ -3335,10 +3316,7 @@ body[data-demo-mode="easy"] .is-pro-only {
 .eco-hero h1 {
   font-size: 2.5rem;
   margin-bottom: 0.6rem;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-primary);
   line-height: 1.15;
 }
 
@@ -3486,10 +3464,7 @@ body[data-demo-mode="easy"] .is-pro-only {
 .eco-showcase-title {
   font-size: 1.85rem;
   margin: 0 0 0.5rem;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-primary);
   line-height: 1.2;
 }
 

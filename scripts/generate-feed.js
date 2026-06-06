@@ -22,7 +22,7 @@ const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Ad Tech Blog</title>
   <subtitle>한국어로 읽는 애드테크 기술 블로그</subtitle>
-  <link href="${BASE}/"/>
+  <link href="${BASE}/home.html"/>
   <link rel="self" href="${BASE}/feed.xml"/>
   <id>${BASE}/</id>
   <updated>${updated}</updated>

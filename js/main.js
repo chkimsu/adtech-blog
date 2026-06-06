@@ -249,6 +249,20 @@ function renderPosts(postsToRender) {
   });
 }
 
+// 표지(랜딩) — 통계 + 최근 글 미리보기 (#cover-root 가드)
+function renderCover() {
+  const stats = document.getElementById('cover-stats');
+  if (stats && typeof posts !== 'undefined') {
+    const seriesCount = (typeof series !== 'undefined') ? Object.keys(series).length : 0;
+    stats.textContent = `글 ${posts.length}편 · 시리즈 ${seriesCount}개 · 인터랙티브 데모 12개`;
+  }
+  const featured = document.getElementById('cover-featured');
+  if (featured && typeof getAllPosts === 'function') {
+    featured.innerHTML = '';
+    getAllPosts().slice(0, 3).forEach(p => featured.appendChild(renderPostCard(p)));
+  }
+}
+
 // 큐레이션 홈 — 시작하기/최신/시리즈 (renderPostCard + posts.js 게터 재사용)
 function renderHome() {
   const root = document.getElementById('home-root');
@@ -1556,14 +1570,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if we're on the home page or post page
   const homeRoot = document.getElementById('home-root');
   const postContent = document.getElementById('post-content');
+  const coverRoot = document.getElementById('cover-root');
 
   if (homeRoot) {
-    // Home page (큐레이션 랜딩)
+    // 큐레이션 피드 (home.html)
     renderHome();
   } else if (postContent) {
     // Post detail page
     renderPostDetail();
     initializeReadingProgress();
+  } else if (coverRoot) {
+    // 표지(랜딩) 페이지 (index.html)
+    renderCover();
   }
 
   // Initialize smooth scrolling

@@ -4071,3 +4071,18 @@ a.series-name:hover { color: var(--accent-primary); }
   border-top: 1px solid var(--border-color);
 }
 .comments-title { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 1rem; color: var(--text-primary); }
+
+/* ===== 표지(랜딩) — 차분한 에디토리얼 ===== */
+.cover-meta { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.75rem; }
+.cover-cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 1.75rem; }
+.cover-topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.cover-topic-card {
+  display: block; padding: 1.2rem 1.3rem;
+  background: var(--bg-secondary); border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-primary); border-radius: 10px;
+  text-decoration: none; color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cover-topic-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.cover-topic-card h3 { font-family: var(--font-serif); margin: 0.6rem 0 0.35rem; color: var(--text-primary); }
+.cover-topic-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }

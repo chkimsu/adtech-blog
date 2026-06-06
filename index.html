@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="한국어로 읽는 애드테크(Ad Tech) 기술 블로그 — 프로그래매틱 광고, 실시간 입찰(RTB), 입찰 최적화, CTR/CVR 예측, 광고 ML 모델링까지 깊이 있는 기술 콘텐츠를 제공합니다.">
+    content="광고가 어떻게 돌아가는지 쉽게 — 한국어로 읽는 애드테크(Ad Tech) 기술 블로그. RTB·입찰 최적화·CTR/CVR 예측·광고 ML 모델링·광고 생태계 지도·인터랙티브 데모.">
   <meta name="keywords"
     content="애드테크, ad tech, 광고 기술, 프로그래매틱 광고, RTB, 실시간 입찰, CTR 예측, CVR 예측, 입찰 최적화, 광고 ML, 밴딧 알고리즘, 광고 시스템">
   <meta name="author" content="Ad Tech Blog">
@@ -27,11 +27,6 @@
     content="한국어로 된 애드테크 기술 블로그가 없어서 만들었습니다. RTB, 입찰 최적화, CTR/CVR 예측, 광고 ML 모델링까지.">
 
   <title>Ad Tech Blog — 한국어 애드테크 기술 블로그</title>
-
-  <!-- KaTeX for Math Rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
@@ -61,91 +56,80 @@
 
   <!-- Main Content Wrapper -->
   <div id="main-content">
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- A. 표지 헤더 -->
+    <section class="hero" id="cover-root">
       <div class="container">
         <h1>Ad Tech Blog</h1>
-        <p>한국어로 된 애드테크 기술 블로그가 없어서 직접 만들었습니다.<br>
-          프로그래매틱 광고, 실시간 입찰, ML 모델링까지 — 깊이 있는 기술 콘텐츠를 한글로 제공합니다.</p>
+        <p>한국어로 읽는 애드테크 — 광고가 어떻게 돌아가는지, 쉽고 깊게.</p>
+        <p class="cover-meta" id="cover-stats">글 · 시리즈 · 데모</p>
+        <div class="cover-cta-row">
+          <a href="home.html" class="btn-try">글 보러 가기 →</a>
+          <a href="ecosystem.html" class="btn-try">광고 생태계 지도 →</a>
+        </div>
       </div>
     </section>
 
-    <!-- Ecosystem Showcase -->
+    <!-- B. 소개 콜아웃 -->
     <section class="eco-showcase">
       <div class="container">
         <div class="eco-showcase-inner">
-          <div class="eco-showcase-label">처음 보시나요?</div>
-          <h2 class="eco-showcase-title">광고는 이렇게 생겼습니다.</h2>
+          <div class="eco-showcase-label">왜 이 블로그?</div>
+          <h2 class="eco-showcase-title">광고 기술, 쉽게 풀어 씁니다.</h2>
           <p class="eco-showcase-desc">
-            18개 핵심 모듈 · 6개 카테고리 · 5가지 흐름 애니메이션(100ms RTB · 모델 학습 · 어트리뷰션 · Header Bidding · 데이터 타겟팅)을
-            한 화면에서 인터랙티브하게 살펴보세요.
+            RTB·DSP·pCTR… 용어만 쏟아지는 글은 많지만, 왜 그렇게 도는지 그림과 데모로
+            풀어주는 한국어 글은 드뭅니다. 처음 보는 사람도 큰 그림을 잡을 수 있게 썼습니다.
           </p>
+          <a href="about.html" class="eco-showcase-cta">블로그 소개 더 보기 →</a>
+        </div>
+      </div>
+    </section>
 
-          <div class="eco-showcase-nodes" aria-label="18개 모듈 미리보기">
-            <span class="eco-showcase-chip" data-category="user">사용자</span>
-            <span class="eco-showcase-chip" data-category="sell">Publisher</span>
-            <span class="eco-showcase-chip" data-category="sell">SSP</span>
-            <span class="eco-showcase-chip" data-category="sell">Header Bidding</span>
-            <span class="eco-showcase-chip" data-category="exchange">Ad Exchange</span>
-            <span class="eco-showcase-chip" data-category="exchange">Auction</span>
-            <span class="eco-showcase-chip" data-category="buy">DSP</span>
-            <span class="eco-showcase-chip" data-category="buy">Advertiser</span>
-            <span class="eco-showcase-chip" data-category="buy">Brand</span>
-            <span class="eco-showcase-chip" data-category="buy">DMP/CDP</span>
-            <span class="eco-showcase-chip" data-category="buy">DCO</span>
-            <span class="eco-showcase-chip" data-category="ml">Feature Store</span>
-            <span class="eco-showcase-chip" data-category="ml">Model Serving</span>
-            <span class="eco-showcase-chip" data-category="ml">pCTR/pCVR</span>
-            <span class="eco-showcase-chip" data-category="ml">Calibration</span>
-            <span class="eco-showcase-chip" data-category="measurement">Log Pipeline</span>
-            <span class="eco-showcase-chip" data-category="measurement">MMP</span>
-            <span class="eco-showcase-chip" data-category="user">CMP/WG</span>
-          </div>
-
-          <a href="ecosystem.html" class="eco-showcase-cta">
-            광고 생태계 한 장 지도 + 5가지 흐름 보기 →
+    <!-- C. 주제 맵 (6개 카테고리 → posts-browse 필터 진입) -->
+    <section class="section">
+      <div class="container">
+        <div class="home-section-head"><h2>무엇을 읽을 수 있나</h2><p>6개 주제로 묶었어요</p></div>
+        <div class="cover-topics">
+          <a class="cover-topic-card" href="posts-browse.html?category=Bidding%20%26%20Auction">
+            <span class="post-card-category" data-category="Bidding & Auction">Bidding &amp; Auction</span>
+            <h3>입찰·옥션</h3>
+            <p>RTB 경매, 입찰 최적화, bid shading, 페이싱.</p>
+          </a>
+          <a class="cover-topic-card" href="posts-browse.html?category=ML%20Infrastructure">
+            <span class="post-card-category" data-category="ML Infrastructure">ML Infrastructure</span>
+            <h3>ML 인프라</h3>
+            <p>로그 파이프라인, 피처 스토어, 모델 서빙, 온라인 러닝.</p>
+          </a>
+          <a class="cover-topic-card" href="posts-browse.html?category=Measurement%20%26%20Modeling">
+            <span class="post-card-category" data-category="Measurement & Modeling">Measurement &amp; Modeling</span>
+            <h3>측정·모델링</h3>
+            <p>어트리뷰션, 캘리브레이션, CTR/CVR 예측, LTV.</p>
+          </a>
+          <a class="cover-topic-card" href="posts-browse.html?category=Bandits%20%26%20Personalization">
+            <span class="post-card-category" data-category="Bandits & Personalization">Bandits &amp; Personalization</span>
+            <h3>밴딧·개인화</h3>
+            <p>탐색-활용, UCB·톰슨 샘플링, 추천·랭킹.</p>
+          </a>
+          <a class="cover-topic-card" href="posts-browse.html?category=Targeting%20%26%20Audience">
+            <span class="post-card-category" data-category="Targeting & Audience">Targeting &amp; Audience</span>
+            <h3>타겟팅·오디언스</h3>
+            <p>오디언스 세그먼트, 룩얼라이크 모델링.</p>
+          </a>
+          <a class="cover-topic-card" href="posts-browse.html?category=DevOps%20%26%20Tooling">
+            <span class="post-card-category" data-category="DevOps & Tooling">DevOps &amp; Tooling</span>
+            <h3>데브옵스·툴링</h3>
+            <p>광고 개발 레이어, 운영·도구.</p>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- 시작하기 -->
-    <section class="section" id="home-root">
-      <div class="container">
-        <div class="home-section-head"><h2>시작하기</h2><p>처음이라면 여기서부터</p></div>
-        <div id="home-start" class="posts-grid"></div>
-      </div>
-    </section>
-
-    <!-- 이어 읽기 (개인 기록, localStorage — 기록 있을 때만 노출) -->
-    <section class="section" id="home-personal" hidden>
-      <div class="container">
-        <div class="home-section-head"><h2>이어 읽기</h2><p>이 브라우저에 저장된 내 기록</p></div>
-        <div id="home-recent" class="posts-grid"></div>
-        <h3 class="home-personal-sub" id="home-bookmarks-head" hidden>저장한 글</h3>
-        <div id="home-bookmarks" class="posts-grid"></div>
-      </div>
-    </section>
-
-    <!-- 최신 글 -->
+    <!-- D. 지금 읽을거리 (동적: renderCover가 최신 3개 채움) -->
     <section class="section">
       <div class="container">
-        <div class="home-section-head"><h2>최신 글</h2><a href="posts-browse.html?sort=newest">더보기 →</a></div>
-        <div id="home-latest" class="posts-grid"></div>
+        <div class="home-section-head"><h2>지금 읽을거리</h2><a href="home.html">큐레이션 홈 전체 보기 →</a></div>
+        <div id="cover-featured" class="posts-grid"></div>
+        <div class="home-browse-cta"><a href="demos.html" class="btn-try">인터랙티브 데모 둘러보기 →</a></div>
       </div>
-    </section>
-
-    <!-- 시리즈로 읽기 -->
-    <section class="section">
-      <div class="container">
-        <div class="home-section-head"><h2>시리즈로 읽기</h2><p>주제별 추천 순서</p></div>
-        <div id="home-series" class="home-series"></div>
-      </div>
-    </section>
-
-    <!-- 전체 탐색 CTA -->
-    <section class="section home-browse-cta">
-      <div class="container"><a id="home-all-cta" class="btn-try" href="posts-browse.html">전체 글 탐색 →</a></div>
     </section>
   </div><!-- End of main content wrapper -->
 

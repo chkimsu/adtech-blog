@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Ad Tech Blog</title>
   <subtitle>한국어로 읽는 애드테크 기술 블로그</subtitle>
-  <link href="https://chkimsu.github.io/adtech-blog/"/>
+  <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
   <updated>2026-06-05T00:00:00Z</updated>

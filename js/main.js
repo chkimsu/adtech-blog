@@ -841,7 +841,8 @@ async function renderPostDetail() {
         mermaidInstance.run();
       }
 
-      // Render related posts and continue-reading CTAs (Prev/Next section removed by request)
+      // Render series box, related posts and continue-reading CTAs (Prev/Next section removed by request)
+      renderSeriesBox(post);
       renderRelatedPosts(post);
       renderContinueReadingTop(post);
       setupMobileNextCta(post);
@@ -939,6 +940,33 @@ function renderPostNavigation(currentPostId) {
 // ========================================
 // Related Posts
 // ========================================
+
+// 시리즈 진행 박스 — 시리즈 소속 글에만 표시 (데모 learning-path와 동일 시각 언어)
+function renderSeriesBox(post) {
+  const box = document.getElementById('series-box');
+  if (!box) return;
+  const s = getSeriesForPost(post);
+  if (!s) { box.innerHTML = ''; return; }   // 시리즈 아니면 아무것도 안 보임
+  box.innerHTML = `
+    <div class="container"><div class="series-box">
+      <div class="series-box-head">
+        <span class="series-kicker">시리즈</span>
+        <span class="series-title">${s.title}</span>
+        <span class="series-progress">${s.position}/${s.total}</span>
+      </div>
+      <ol class="series-list">
+        ${s.posts.map((p, i) => `<li class="series-item${p.id === post.id ? ' is-current' : ''}">
+          <span class="series-num">${i + 1}</span>
+          ${p.id === post.id ? `<span class="series-name">${p.title}</span>`
+                             : `<a class="series-name" href="post.html?id=${p.id}">${p.title}</a>`}
+        </li>`).join('')}
+      </ol>
+      <div class="series-nav">
+        ${s.prev ? `<a href="post.html?id=${s.prev.id}">← ${s.prev.title}</a>` : '<span></span>'}
+        ${s.next ? `<a href="post.html?id=${s.next.id}">${s.next.title} →</a>` : '<span></span>'}
+      </div>
+    </div></div>`;
+}
 
 function renderRelatedPosts(currentPost) {
   const container = document.getElementById('related-posts');

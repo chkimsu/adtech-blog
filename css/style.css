@@ -3943,3 +3943,57 @@ body[data-demo-mode="easy"] .is-pro-only {
   .eco-graph-wrap { padding: 0.6rem; }
   .eco-categories { padding: 0 1rem; }
 }
+
+/* ===== 공용 try/more 버튼 ===== */
+.btn-try {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border-radius: 9px;
+  border: 1px solid var(--accent-primary);
+  background: transparent;
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+.btn-try:hover { background: var(--accent-primary); color: var(--bg-primary); }
+
+/* ===== Browse / Index ===== */
+.browse-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 1.5rem;
+}
+.browse-count { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; }
+.browse-toolbar-right { display: flex; align-items: center; gap: 0.9rem; }
+.browse-sort { font-size: 0.85rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.4rem; }
+.browse-sort select {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.browse-more { text-align: center; margin: 1.75rem 0 0.5rem; }
+.browse-empty { grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.browse-empty h3 { color: var(--text-secondary); margin-bottom: 0.5rem; }
+.series-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--accent-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  margin-bottom: 0.6rem;
+}
+/* 다중선택: 여러 칩이 동시에 .active 가능 — 기존 .active 스타일 재사용 */
+.category-tab, .filter-tag { cursor: pointer; }

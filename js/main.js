@@ -614,7 +614,7 @@ function renderBreadcrumb(post) {
   if (!container) return;
   const category = (post.categories && post.categories[0]) || '';
   const categoryLink = category
-    ? `<a href="index.html?category=${encodeURIComponent(category)}">${category}</a>`
+    ? `<a href="posts-browse.html?category=${encodeURIComponent(category)}">${category}</a>`
     : '';
 
   container.innerHTML = `
@@ -635,7 +635,7 @@ function renderBreadcrumb(post) {
       items.push({
         position: 2,
         name: category,
-        item: `${SITE_BASE_URL}/index.html?category=${encodeURIComponent(category)}`
+        item: `${SITE_BASE_URL}/posts-browse.html?category=${encodeURIComponent(category)}`
       });
     }
     items.push({
@@ -699,7 +699,7 @@ async function renderPostDetail() {
     tagElements.forEach(tagEl => {
       tagEl.onclick = () => {
         const tagValue = tagEl.dataset.tag;
-        window.location.href = `index.html?tag=${encodeURIComponent(tagValue)}`;
+        window.location.href = `posts-browse.html?tag=${encodeURIComponent(tagValue)}`;
       };
     });
   }

@@ -108,40 +108,33 @@
       </div>
     </section>
 
-    <!-- Category Navigation -->
-    <nav class="category-nav">
+    <!-- 시작하기 -->
+    <section class="section" id="home-root">
       <div class="container">
-        <div id="category-filters" class="category-tabs">
-          <!-- Dynamically populated by JavaScript -->
-        </div>
+        <div class="home-section-head"><h2>시작하기</h2><p>처음이라면 여기서부터</p></div>
+        <div id="home-start" class="posts-grid"></div>
       </div>
-    </nav>
+    </section>
 
-    <!-- Search and Filter Bar -->
+    <!-- 최신 글 -->
     <section class="section">
       <div class="container">
-        <div class="search-filter-bar">
-          <!-- Search Box -->
-          <div class="search-box">
-            <input type="text" id="search-input" placeholder="제목, 내용, 키워드로 검색..."
-              aria-label="포스트 검색">
-          </div>
-
-          <!-- Tag Filters -->
-          <div class="filter-section">
-            <h4>Tags</h4>
-            <div id="tag-filters" class="filter-tags">
-              <!-- Dynamically populated by JavaScript -->
-            </div>
-            <button id="tag-filter-toggle" class="filter-section-toggle" type="button" aria-expanded="false" aria-controls="tag-filters">전체 태그 보기</button>
-          </div>
-        </div>
-
-        <!-- Posts Grid -->
-        <div id="posts-grid" class="posts-grid">
-          <!-- Dynamically populated by JavaScript -->
-        </div>
+        <div class="home-section-head"><h2>최신 글</h2><a href="posts-browse.html?sort=newest">더보기 →</a></div>
+        <div id="home-latest" class="posts-grid"></div>
       </div>
+    </section>
+
+    <!-- 시리즈로 읽기 -->
+    <section class="section">
+      <div class="container">
+        <div class="home-section-head"><h2>시리즈로 읽기</h2><p>주제별 추천 순서</p></div>
+        <div id="home-series" class="home-series"></div>
+      </div>
+    </section>
+
+    <!-- 전체 탐색 CTA -->
+    <section class="section home-browse-cta">
+      <div class="container"><a id="home-all-cta" class="btn-try" href="posts-browse.html">전체 글 탐색 →</a></div>
     </section>
   </div><!-- End of main content wrapper -->
 

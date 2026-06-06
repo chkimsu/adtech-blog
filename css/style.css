@@ -4045,3 +4045,22 @@ a.series-name:hover { color: var(--accent-primary); }
 }
 .series-nav a { color: var(--accent-primary); text-decoration: none; }
 .series-nav a:hover { text-decoration: underline; }
+
+/* ===== Reading state: 북마크 · 시리즈 읽음 · 홈 개인 기록 ===== */
+.bookmark-btn {
+  font-family: var(--font-sans); font-size: 0.78rem; cursor: pointer;
+  padding: 0.2rem 0.7rem; margin-left: 0.5rem;
+  background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border-color); border-radius: 999px;
+  transition: all var(--transition-fast);
+}
+.bookmark-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+.bookmark-btn.is-on { background: var(--accent-primary); color: var(--bg-primary); border-color: var(--accent-primary); }
+
+.series-item.is-read .series-num { border-color: var(--accent-primary); color: var(--accent-primary); }
+.series-item.is-read .series-name::after { content: ' ✓'; color: var(--accent-primary); font-size: 0.82em; }
+
+.home-personal-sub {
+  font-family: var(--font-serif); font-size: 1.05rem; color: var(--text-secondary);
+  margin: 1.6rem 0 1rem;
+}

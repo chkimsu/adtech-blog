@@ -274,6 +274,21 @@ function renderHome() {
   }
   const cta = document.getElementById('home-all-cta');
   if (cta) cta.textContent = `전체 ${posts.length}개 글 탐색 →`;
+
+  // 개인 기록(이어 읽기 / 저장한 글) — localStorage, 기록 있을 때만 노출
+  if (window.ReadingState) {
+    const recent = ReadingState.recent(3).map(getPostById).filter(Boolean);
+    const marks = ReadingState.bookmarks().map(getPostById).filter(Boolean);
+    const sec = document.getElementById('home-personal');
+    const put = (id, list) => { const el = document.getElementById(id); if (el) { el.innerHTML = ''; list.forEach(p => el.appendChild(renderPostCard(p))); } };
+    if (sec && (recent.length || marks.length)) {
+      sec.hidden = false;
+      put('home-recent', recent);
+      put('home-bookmarks', marks);
+      const bh = document.getElementById('home-bookmarks-head');
+      if (bh) bh.hidden = !marks.length;
+    }
+  }
 }
 
 function formatDate(dateString) {
@@ -775,6 +790,9 @@ async function renderPostDetail() {
   // Render breadcrumb
   renderBreadcrumb(post);
 
+  // 읽음 기록 (localStorage, 프라이버시 안전)
+  if (window.ReadingState) ReadingState.markRead(post.id);
+
   // Render post header
   const headerContainer = document.getElementById('post-header');
   if (headerContainer) {
@@ -782,6 +800,7 @@ async function renderPostDetail() {
       <div class="post-meta">
         <span class="post-date">${formatDate(post.date)}</span>
         <span class="post-read-time">${post.readTime}</span>
+        <button id="bookmark-btn" class="bookmark-btn" type="button" aria-pressed="false">♢ 저장</button>
       </div>
       <h1>${post.title}</h1>
       <div class="post-header-tags">
@@ -799,6 +818,19 @@ async function renderPostDetail() {
         window.location.href = `posts-browse.html?tag=${encodeURIComponent(tagValue)}`;
       };
     });
+
+    // 북마크(저장) 토글 — localStorage
+    const bm = document.getElementById('bookmark-btn');
+    if (bm && window.ReadingState) {
+      const sync = () => {
+        const on = ReadingState.isBookmarked(post.id);
+        bm.classList.toggle('is-on', on);
+        bm.setAttribute('aria-pressed', String(on));
+        bm.textContent = on ? '♦ 저장됨' : '♢ 저장';
+      };
+      sync();
+      bm.addEventListener('click', () => { ReadingState.toggleBookmark(post.id); sync(); });
+    }
   }
 
 
@@ -1019,15 +1051,16 @@ function renderSeriesBox(post) {
   if (!box) return;
   const s = getSeriesForPost(post);
   if (!s) { box.innerHTML = ''; return; }   // 시리즈 아니면 아무것도 안 보임
+  const readCnt = window.ReadingState ? ReadingState.seriesRead(s.posts.map(p => p.id)) : 0;
   box.innerHTML = `
     <div class="container"><div class="series-box">
       <div class="series-box-head">
         <span class="series-kicker">시리즈</span>
         <span class="series-title">${s.title}</span>
-        <span class="series-progress">${s.position}/${s.total}</span>
+        <span class="series-progress">${s.position}/${s.total}${readCnt ? ` · ${readCnt} 읽음` : ''}</span>
       </div>
       <ol class="series-list">
-        ${s.posts.map((p, i) => `<li class="series-item${p.id === post.id ? ' is-current' : ''}">
+        ${s.posts.map((p, i) => `<li class="series-item${p.id === post.id ? ' is-current' : ''}${window.ReadingState && ReadingState.isRead(p.id) ? ' is-read' : ''}">
           <span class="series-num">${i + 1}</span>
           ${p.id === post.id ? `<span class="series-name">${p.title}</span>`
                              : `<a class="series-name" href="post.html?id=${p.id}">${p.title}</a>`}

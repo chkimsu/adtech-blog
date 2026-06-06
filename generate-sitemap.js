@@ -39,6 +39,7 @@ const urls = [];
 
 // 메인 페이지
 urls.push(urlEntry(`${BASE_URL}/`, today, '1.0', 'weekly'));
+urls.push(urlEntry(`${BASE_URL}/home.html`, today, '0.9', 'weekly'));
 urls.push(urlEntry(`${BASE_URL}/about.html`, today, '0.6'));
 urls.push(urlEntry(`${BASE_URL}/demos.html`, today, '0.7'));
 urls.push(urlEntry(`${BASE_URL}/ecosystem.html`, today, '0.9', 'weekly'));

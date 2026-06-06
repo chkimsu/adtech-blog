@@ -2,13 +2,9 @@
 // All blog posts are stored here as JavaScript objects
 // Content is loaded dynamically from Markdown files in the posts/ directory
 
-// Category taxonomy (ad-tech focused, broad groupings):
-// - Bandits & Personalization  → MAB, exploration/exploitation, contextual bandits
-// - Measurement & Modeling     → pCVR, attribution, conversion modeling
-// - Bidding & Auction          → RTB, auction theory, bid optimization (future)
-// - Privacy & Compliance       → GDPR, CCPA, cookie-less (future)
-// - ML Infrastructure          → feature pipelines, serving, A/B platforms
-// - Targeting & Audience       → segmentation, lookalike, retargeting, contextual targeting
+// Category/tag 표준 목록은 data/taxonomy.json 이 단일 소스다.
+// 새 글은 `node scripts/new-post.js` 로 추가하고, 추가 후
+// `node scripts/compute-read-time.js && node scripts/validate-posts.js` 를 돌린다.
 
 const posts = [
   {
@@ -369,4 +365,9 @@ function filterPosts(searchTerm, category, tag) {
 
     return matchesSearch && matchesCategory && matchesTag;
   });
+}
+
+// Node(tooling) interop — 브라우저에선 module이 undefined라 no-op.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { posts, getAllPosts, getPostById, getAllCategories, getAllTags, filterPosts };
 }

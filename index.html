@@ -117,6 +117,16 @@
       </div>
     </section>
 
+    <!-- 이어 읽기 (개인 기록, localStorage — 기록 있을 때만 노출) -->
+    <section class="section" id="home-personal" hidden>
+      <div class="container">
+        <div class="home-section-head"><h2>이어 읽기</h2><p>이 브라우저에 저장된 내 기록</p></div>
+        <div id="home-recent" class="posts-grid"></div>
+        <h3 class="home-personal-sub" id="home-bookmarks-head" hidden>저장한 글</h3>
+        <div id="home-bookmarks" class="posts-grid"></div>
+      </div>
+    </section>
+
     <!-- 최신 글 -->
     <section class="section">
       <div class="container">
@@ -157,6 +167,7 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="js/posts.js"></script>
+  <script src="js/reading-state.js"></script>
   <script src="js/main.js"></script>
 </body>
 

@@ -15,7 +15,9 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'A/B Testing', 'Contextual Bandit', 'Exploration', 'Online Learning'],
     contentUrl: 'posts/ab-test-vs-mab.md',
-    readTime: '14 min read'
+    readTime: '14 min read',
+    featured: true,
+    series: 'bandits-track'
   },
   {
     id: 'adtech-30min-primer',
@@ -25,7 +27,9 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['입문', 'Ad Ecosystem', 'RTB', 'DSP', 'SSP', 'pCTR', 'pCVR', 'Attribution', 'eCPM'],
     contentUrl: 'posts/adtech-30min-primer.md',
-    readTime: '30 min read'
+    readTime: '30 min read',
+    featured: true,
+    series: 'getting-started'
   },
   {
     id: 'audience-segmentation',
@@ -245,7 +249,8 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'pCTR', 'pCVR', 'Auto-Bidding', 'Bid Shading'],
     contentUrl: 'posts/adtech-ecosystem-map.md',
-    readTime: '15 min read'
+    readTime: '15 min read',
+    featured: true
   },
   {
     id: 'bid-shading-censored',
@@ -315,7 +320,8 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB'],
     contentUrl: 'posts/ad-serving-flow.md',
-    readTime: '8 min read'
+    readTime: '8 min read',
+    series: 'getting-started'
   },
   {
     id: 'ucb-family',
@@ -329,9 +335,31 @@ const posts = [
   },
 ];
 
+// 읽는 순서(시리즈). 순서는 여기 한 곳에서만 관리한다(데모 learning-path와 동일 사상).
+const series = {
+  'getting-started': {
+    title: '광고 시스템 입문 경로',
+    desc: '배경지식 없이 시작해 광고 생태계 전체를 한 바퀴',
+    posts: ['adtech-30min-primer', 'ad-serving-flow', 'ad-network-vs-exchange', 'ecpm-ranking', 'ltv-ad-ranking'],
+  },
+  'bandits-track': {
+    title: '밴딧 & 개인화 트랙',
+    desc: 'A/B vs 밴딧 → MAB 기초 → UCB/TS → Contextual',
+    posts: ['ab-test-vs-mab', 'mab-summary', 'exploration-exploitation', 'ucb-vs-ts', 'ucb-family', 'TS-linTS', 'disjoint-linucb'],
+  },
+  'modeling-track': {
+    title: '예측 모델링 트랙',
+    desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
+    posts: ['deep-ctr-models', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
+  },
+};
+
+// 홈 "시작하기" 레일 순서(큐레이션). featured와 독립적으로 시퀀스를 정한다.
+const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-flow'];
+
 // Helper functions for data access
 function getAllPosts() {
-  return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  return posts.slice().sort((a, b) => new Date(b.date) - new Date(a.date)); // slice로 원본 보존
 }
 
 function getPostById(id) {
@@ -354,20 +382,58 @@ function getAllTags() {
   return Array.from(tags).sort();
 }
 
+function toList(v) { return !v ? [] : (Array.isArray(v) ? v.filter(Boolean) : [v]); }
+
+// searchTerm + category/tag(문자열 또는 배열). facet 안에서는 OR, facet 사이에서는 AND.
 function filterPosts(searchTerm, category, tag) {
+  const cats = toList(category);
+  const tags = toList(tag);
+  const q = (searchTerm || '').toLowerCase();
   return posts.filter(post => {
-    const matchesSearch = searchTerm === '' ||
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesCategory = category === '' || post.categories.includes(category);
-    const matchesTag = tag === '' || post.tags.includes(tag);
-
+    const matchesSearch = !q
+      || post.title.toLowerCase().includes(q)
+      || (post.excerpt || '').toLowerCase().includes(q)
+      || (post.tags || []).some(t => t.toLowerCase().includes(q));
+    const matchesCategory = cats.length === 0 || cats.some(c => post.categories.includes(c));
+    const matchesTag      = tags.length === 0 || tags.some(t => post.tags.includes(t));
     return matchesSearch && matchesCategory && matchesTag;
   });
 }
 
+function readMinutes(p) { const m = String(p.readTime || '').match(/\d+/); return m ? parseInt(m[0], 10) : 0; }
+function sortPosts(list, mode) {
+  const arr = list.slice();
+  if (mode === 'oldest')   return arr.sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (mode === 'readtime') return arr.sort((a, b) => readMinutes(a) - readMinutes(b));
+  return arr.sort((a, b) => new Date(b.date) - new Date(a.date)); // newest 기본
+}
+
+function getFeaturedPosts() { return posts.filter(p => p.featured); }
+
+function getStartHerePosts() {
+  const ordered = (typeof startHere !== 'undefined' ? startHere : []).map(getPostById).filter(Boolean);
+  return ordered.length ? ordered : getFeaturedPosts();
+}
+
+function getSeries(id) {
+  const s = series[id];
+  if (!s) return null;
+  return { id, ...s, posts: s.posts.map(getPostById).filter(Boolean) };
+}
+
+function getSeriesForPost(post) {
+  if (!post) return null;
+  const id = post.series || Object.keys(series).find(k => series[k].posts.includes(post.id));
+  if (!id) return null;
+  const r = getSeries(id);
+  const i = r.posts.findIndex(p => p.id === post.id);
+  if (i === -1) return null;
+  return { ...r, index: i, position: i + 1, total: r.posts.length,
+    prev: i > 0 ? r.posts[i - 1] : null, next: i < r.posts.length - 1 ? r.posts[i + 1] : null };
+}
+
 // Node(tooling) interop — 브라우저에선 module이 undefined라 no-op.
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { posts, getAllPosts, getPostById, getAllCategories, getAllTags, filterPosts };
+  module.exports = { posts, getAllPosts, getPostById, getAllCategories, getAllTags, filterPosts,
+    sortPosts, readMinutes, getFeaturedPosts, getStartHerePosts, getSeries, getSeriesForPost, series, startHere };
 }

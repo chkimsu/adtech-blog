@@ -1,0 +1,24 @@
+name: Validate posts
+
+# 글 메타데이터가 표준 분류(data/taxonomy.json)를 어기면 빌드 실패.
+# 읽기전용 — 커밋하지 않는다(쓰는 잡은 sitemap.yml).
+on:
+  push:
+    branches: [main]
+    paths: ['js/posts.js', 'posts/**', 'data/taxonomy.json', 'scripts/validate-posts.js']
+  pull_request:
+    paths: ['js/posts.js', 'posts/**', 'data/taxonomy.json', 'scripts/validate-posts.js']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/validate-posts.js

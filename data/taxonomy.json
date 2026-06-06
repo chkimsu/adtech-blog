@@ -1,0 +1,19 @@
+{
+  "_comment": "adtech-blog 표준 분류 v1. posts.js의 categories/tags는 반드시 여기에 있어야 함.",
+  "categories": [
+    { "id": "Bandits & Personalization", "label": "Bandits & Personalization", "description": "MAB, 탐색/활용, contextual bandit, 개인화" },
+    { "id": "Bidding & Auction",         "label": "Bidding & Auction",         "description": "RTB, 경매 이론, bid shading, 입찰 최적화, 생태계" },
+    { "id": "Measurement & Modeling",    "label": "Measurement & Modeling",    "description": "pCTR/pCVR, calibration, attribution, bias 보정" },
+    { "id": "ML Infrastructure",         "label": "ML Infrastructure",         "description": "로그 파이프라인, feature store, 모델 서빙" },
+    { "id": "Targeting & Audience",      "label": "Targeting & Audience",      "description": "세그멘테이션, lookalike, 타겟팅" },
+    { "id": "DevOps & Tooling",          "label": "DevOps & Tooling",          "description": "Git, 워크플로, 협업 도구" }
+  ],
+  "tags": [
+    "MAB", "Contextual Bandit", "UCB", "LinUCB", "Thompson Sampling", "Exploration",
+    "Online Learning", "A/B Testing", "입문",
+    "pCTR", "pCVR", "Calibration", "Attribution", "Ad Ranking", "Model Serving", "Two-Tower", "ML Infra",
+    "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
+    "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
+    "Git", "DevOps", "Workflow", "Collaboration"
+  ]
+}

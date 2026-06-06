@@ -2,14 +2,14 @@
 
 # Ad Tech Blog
 
-A modern, dark-mode focused blog about Ad Tech, built with vanilla HTML, CSS, and JavaScript. Perfect for sharing insights on programmatic advertising, RTB, analytics, and privacy compliance.
+A calm, editorial blog about Ad Tech, built with vanilla HTML, CSS, and JavaScript. Covers programmatic advertising, RTB & auctions, pCTR/pCVR modeling, bandits, and ML serving infrastructure — written in approachable Korean.
 
 ![Ad Tech Blog](https://img.shields.io/badge/Built%20with-HTML%2FCSS%2FJS-blue)
 ![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-green)
 
 ##  Features
 
--  **Modern Dark Mode Design** - Sleek glassmorphism UI with smooth animations
+-  **Calm Editorial Design** - Cream/ink/brick palette, serif headings, restrained typography
 -  **Real-time Search** - Instantly filter posts by title, content, or keywords
 -  **Category & Tag Filtering** - Organize and discover content easily
 -  **Theme Toggle** - Switch between dark and light modes (persisted in localStorage)
@@ -143,10 +143,11 @@ Edit CSS variables in `css/style.css`:
 
 ```css
 :root {
-  --accent-primary: #00e5ff;      /* Primary accent color */
-  --accent-secondary: #b026ff;    /* Secondary accent */
-  --bg-primary: #0a0e27;         /* Main background */
-  /* ... more variables */
+  --bg-primary: #faf8f3;          /* cream */
+  --accent-primary: #b0442c;      /* brick */
+  --accent-secondary: #8a6a3a;    /* bronze/ochre */
+  --text-primary: #201d1a;        /* ink */
+  /* ... more variables (see css/style.css :root) */
 }
 ```
 
@@ -155,10 +156,12 @@ Edit CSS variables in `css/style.css`:
 Update Google Fonts import in `css/style.css`:
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Your+Font&display=swap');
+/* Actual fonts are imported in css/style.css (lines 6-7):
+   Pretendard (body) · Newsreader + Noto Serif KR (serif headings) · Fira Code (code).
+   Swap them there, then reference via the CSS variables: */
 
 body {
-  font-family: 'Your Font', sans-serif;
+  font-family: var(--font-sans);
 }
 ```
 
@@ -191,15 +194,17 @@ The design is mobile-first with breakpoints:
 - Safari (latest)
 - Edge (latest)
 
-##  Sample Content
+##  Content
 
-The blog comes with 4 sample posts covering:
-1. Introduction to Programmatic Advertising
-2. Real-Time Bidding (RTB) Deep Dive
-3. Ad Analytics & Attribution
-4. Privacy & Compliance in Ad Tech
+The blog contains ~32 posts across 6 categories:
+- **Bidding & Auction** — RTB, eCPM, bid shading, auto-bidding, walled gardens
+- **Bandits & Personalization** — MAB, UCB, Thompson Sampling, contextual bandits
+- **Measurement & Modeling** — pCTR/pCVR, calibration, attribution, debiasing
+- **ML Infrastructure** — log pipelines, feature stores, model serving, online learning
+- **Targeting & Audience** — segmentation, lookalike modeling
+- **DevOps & Tooling** — Git, workflows
 
-Feel free to replace these with your own content!
+Curated reading paths (`series`) and a "start here" rail are defined in `js/posts.js`. Add a post with `node scripts/new-post.js` (see 새 글 추가 below).
 
 ##  Contributing
 

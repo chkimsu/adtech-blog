@@ -1,6 +1,6 @@
-name: Update sitemap.xml
+name: Update sitemap.xml + feed.xml
 
-# posts.js, posts/*.md, 또는 generate-sitemap.js가 main에 push될 때 자동 실행
+# posts.js, posts/*.md, 생성 스크립트가 main에 push될 때 자동 실행
 on:
   push:
     branches: [main]
@@ -8,6 +8,7 @@ on:
       - 'js/posts.js'
       - 'posts/**'
       - 'generate-sitemap.js'
+      - 'scripts/generate-feed.js'
   # Actions 탭에서 수동 실행도 가능
   workflow_dispatch:
 
@@ -31,19 +32,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Regenerate sitemap.xml
-        run: node generate-sitemap.js
+      - name: Regenerate sitemap.xml + feed.xml
+        run: |
+          node generate-sitemap.js
+          node scripts/generate-feed.js
 
       - name: Commit and push if changed
         run: |
-          if git diff --quiet sitemap.xml; then
-            echo "sitemap.xml unchanged — nothing to commit"
+          if git diff --quiet sitemap.xml feed.xml; then
+            echo "sitemap.xml / feed.xml unchanged — nothing to commit"
             exit 0
           fi
 
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml
+          git add sitemap.xml feed.xml
           # [skip ci] 로 워크플로 재실행 방지
-          git commit -m "chore: regenerate sitemap.xml [skip ci]"
+          git commit -m "chore: regenerate sitemap.xml + feed.xml [skip ci]"
           git push

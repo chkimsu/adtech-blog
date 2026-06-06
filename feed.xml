@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Ad Tech Blog</title>
+  <subtitle>한국어로 읽는 애드테크 기술 블로그</subtitle>
+  <link href="https://chkimsu.github.io/adtech-blog/"/>
+  <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
+  <id>https://chkimsu.github.io/adtech-blog/</id>
+  <updated>2026-06-05T00:00:00Z</updated>
+  <author><name>chkimsu</name></author>
+  <entry>
+    <title>A/B 테스트 vs 멀티암드 밴딧: 고정 트래픽과 적응형 트래픽, 그리고 Contextual은 왜 필요한가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ab-test-vs-mab"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ab-test-vs-mab</id>
+    <updated>2026-06-05T00:00:00Z</updated>
+    <summary>50:50으로 나눠 기다리는 A/B 테스트와, 데이터가 쌓이는 대로 트래픽을 옮기는 밴딧은 무엇이 다른가? 광고 3개·하루 100노출·10일이라는 구체적 숫자와 일상 비유로 고정 트래픽 vs 적응형, 그리고 같은 광고라도 사람마다 다르게 보여주는 Contextual Bandit까지 쉽게 풀어냅니다.</summary>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>30분만에 이해하는 광고 시스템: 생태계·경매·랭킹·측정 전체 지도 (입문 가이드)</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=adtech-30min-primer"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=adtech-30min-primer</id>
+    <updated>2026-04-20T00:00:00Z</updated>
+    <summary>완전 초보자를 위한 올인원 입문서. 생태계(DSP/SSP/Ad Exchange), 1st Price 경매와 Bid Shading, eCPM·pCTR·pCVR·Calibration, Attribution과 iOS ATT, 타겟팅·인프라까지 — 수식 없이 비유와 숫자로 한 번에 훑고, 이 블로그의 30편 포스트로 연결해 주는 허브입니다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>오디언스 세그멘테이션: 광고 타겟팅의 첫 번째 질문 — 누구에게 보여줄 것인가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=audience-segmentation"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=audience-segmentation</id>
+    <updated>2026-04-13T00:00:00Z</updated>
+    <summary>Demographic, Behavioral, RFM, Lifecycle 세그멘트 분류 체계부터 Rule-based SQL, ML Clustering(K-Means, GMM), 실시간 스트리밍 할당, Feature Store 연동, DMP vs CDP, GDPR/CCPA까지 — 세그멘테이션 전체를 해부합니다.</summary>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>Lookalike Modeling: 전환 유저 100명에서 100만 유사 유저를 발굴하는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-modeling"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-modeling</id>
+    <updated>2026-04-13T00:00:00Z</updated>
+    <summary>Seed Audience 선정부터 Embedding 유사도, Propensity Score, Graph Expansion까지 — 3대 접근법과 Expansion Ratio 트레이드오프, 멀티 플랫폼 비교, 프로덕션 아키텍처를 해부합니다.</summary>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>실무에서 바로 쓰는 Git 완전 가이드: 시각적으로 이해하는 fetch, merge, rebase, stash</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=git-practical-guide"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=git-practical-guide</id>
+    <updated>2026-04-12T00:00:00Z</updated>
+    <summary>Working Directory → Staging → Local Repo → Remote Repo 멘탈 모델부터 fetch vs pull, merge vs rebase 비교, stash 활용, 충돌 해결, 실무 브랜치 전략까지 — 다이어그램으로 완전 해부합니다.</summary>
+    <category term="DevOps &amp; Tooling"/>
+  </entry>
+  <entry>
+    <title>광고 시스템 로그 파이프라인: 한 번의 입찰에서 10개의 로그가 만들어지는 구조</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-pipeline"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-pipeline</id>
+    <updated>2026-04-12T00:00:00Z</updated>
+    <summary>Request Log부터 Attribution Log까지 — 광고 시스템의 10가지 핵심 로그가 언제, 어디서, 무엇을 기록하고, ML 학습 데이터로 어떻게 합류하는지 전체 파이프라인을 해부합니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>LTV(Long Term Value): eCPM 너머, 광고 랭킹의 진짜 기준</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ltv-ad-ranking"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ltv-ad-ranking</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>eCPM만으로 광고를 정렬하면 왜 위험한가? 사용자 비용(β), Squashing Function까지 — 광고 플랫폼이 &quot;돈&quot;과 &quot;경험&quot;을 동시에 최적화하는 LTV 랭킹의 원리를 해부합니다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>광고 로그 시스템 완전 해부: Request Log에서 Candidate Log까지</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-system"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-system</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Request, Impression, Click, Conversion, Candidate Log의 역할과 차이를 정리하고, 실시간 피처 파이프라인(Redis), Candidate Log 유무에 따른 모델 품질 차이, 멀티슬롯 rank=1 추론 문제까지 해부합니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>Ad Tech 개발 레이어 맵: 광고 요청 하나가 유저에게 도달하기까지</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=adtech-dev-layers"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=adtech-dev-layers</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>Negative Sampling &amp; Sample Selection Bias: 광고 CTR 모델의 학습 데이터는 처음부터 편향되어 있다</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=negative-sampling-bias"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=negative-sampling-bias</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Class Imbalance, Negative Downsampling, Log-odds Correction, IPS, Doubly Robust Estimator까지 — 광고 CTR 모델 학습 데이터의 구조적 편향과 보정 기법을 해부합니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>Two-Tower Model &amp; 광고 후보 생성: 수백만 광고에서 10ms 안에 후보를 추리는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-retrieval"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-retrieval</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Rule-based Retrieval의 한계부터 Two-Tower(DSSM) 아키텍처, Negative Sampling 전략, ANN 인덱스 비교, Multi-Interest Model까지 — 수백만 광고 후보에서 10ms 이내에 개인화된 후보를 추리는 Retrieval 시스템을 해부합니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>Multi-Task Learning: pCTR과 pCVR을 동시에 학습하면 왜 더 좋은가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=multi-task-learning"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=multi-task-learning</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Sample Selection Bias를 해결하는 ESMM, Negative Transfer를 완화하는 MMoE, Seesaw 현상을 해소하는 PLE까지 — 광고 시스템 Multi-Task Learning 아키텍처의 진화와 실무 선택 가이드를 해부합니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>탐색과 활용(Exploration &amp; Exploitation): 광고 시스템의 근본적 딜레마</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=exploration-exploitation"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=exploration-exploitation</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.</summary>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>Deep CTR 모델의 진화: LR에서 DIN까지, 광고 클릭률 예측의 핵심 아키텍처</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=deep-ctr-models"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=deep-ctr-models</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>LR, FM, Wide&amp;Deep, DeepFM, DCN-v2, DIN, DIEN — CTR 예측 모델이 &quot;어떤 문제를 풀려고 했는가&quot; 관점으로 진화 과정을 추적하고, 프로덕션 선택 가이드까지 제시합니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>Calibration: AUC가 높아도 돈을 잃는 이유 — 광고 모델의 확률 보정</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=calibration"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=calibration</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>AUC는 순서만 평가하고 확률값의 정확도는 평가하지 않습니다. Platt Scaling, Isotonic Regression, Temperature Scaling으로 pCTR을 보정하고, 프로덕션 Calibration 파이프라인을 구축하는 방법을 해부합니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>Ad Network vs Ad Exchange: 디지털 광고 유통 구조의 진화</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ad-network-vs-exchange"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ad-network-vs-exchange</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>Waterfall에서 RTB, Header Bidding까지 — Ad Network과 Ad Exchange의 구조적 차이, 기술 아키텍처, 진화 과정을 해부합니다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>eCPM과 광고 랭킹: 서로 다른 시장에서 1등을 결정하는 기준</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ecpm-ranking"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ecpm-ranking</id>
+    <updated>2026-04-11T00:00:00Z</updated>
+    <summary>eCPM의 정의와 계산법을 정리하고, Open RTB·CPC Exchange·Walled Garden 세 가지 시장에서 광고 랭킹이 어떻게 달라지는지 구체적 시나리오로 비교합니다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>Position Bias &amp; Unbiased Learning to Rank: 위치가 만드는 착각을 제거하는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=position-bias-ultr"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=position-bias-ultr</id>
+    <updated>2026-04-10T00:00:00Z</updated>
+    <summary>Examination Hypothesis, IPS(Inverse Propensity Scoring), DLA(Dual Learning Algorithm)로 Position Bias를 보정하고 광고 랭킹의 공정성을 확보하는 방법을 해부합니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>광고 모델 서빙 아키텍처: 10ms 안에 수백 개 광고를 스코어링하는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=model-serving-architecture"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=model-serving-architecture</id>
+    <updated>2026-04-10T00:00:00Z</updated>
+    <summary>Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>Online Learning &amp; Delayed Feedback: 광고 모델은 왜 매일 낡아지는가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=online-learning-delayed-feedback"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=online-learning-delayed-feedback</id>
+    <updated>2026-04-10T00:00:00Z</updated>
+    <summary>Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+</feed>

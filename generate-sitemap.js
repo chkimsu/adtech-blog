@@ -14,16 +14,8 @@ const path = require('path');
 
 const BASE_URL = 'https://chkimsu.github.io/adtech-blog';
 
-// posts.js에서 posts 배열 추출
-const postsFile = fs.readFileSync(path.join(__dirname, 'js', 'posts.js'), 'utf-8');
-const match = postsFile.match(/const posts = \[([\s\S]*?)\];/);
-if (!match) {
-  console.error('posts.js에서 posts 배열을 찾을 수 없습니다.');
-  process.exit(1);
-}
-
-// posts 배열 파싱
-const posts = eval('[' + match[1] + ']');
+// posts.js를 Node 모듈로 직접 require (정규식/eval 제거)
+const { posts } = require('./js/posts.js');
 
 // demo 페이지 자동 탐색
 const demoFiles = fs.readdirSync(__dirname)

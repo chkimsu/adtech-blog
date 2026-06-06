@@ -9,6 +9,7 @@ on:
       - 'posts/**'
       - 'generate-sitemap.js'
       - 'scripts/generate-feed.js'
+      - 'scripts/build-search-index.js'
   # Actions 탭에서 수동 실행도 가능
   workflow_dispatch:
 
@@ -32,21 +33,22 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Regenerate sitemap.xml + feed.xml
+      - name: Regenerate sitemap.xml + feed.xml + search-index.json
         run: |
           node generate-sitemap.js
           node scripts/generate-feed.js
+          node scripts/build-search-index.js
 
       - name: Commit and push if changed
         run: |
-          if git diff --quiet sitemap.xml feed.xml; then
-            echo "sitemap.xml / feed.xml unchanged — nothing to commit"
+          if git diff --quiet sitemap.xml feed.xml search-index.json; then
+            echo "sitemap.xml / feed.xml / search-index.json unchanged — nothing to commit"
             exit 0
           fi
 
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml feed.xml
+          git add sitemap.xml feed.xml search-index.json
           # [skip ci] 로 워크플로 재실행 방지
-          git commit -m "chore: regenerate sitemap.xml + feed.xml [skip ci]"
+          git commit -m "chore: regenerate sitemap.xml + feed.xml + search-index.json [skip ci]"
           git push

@@ -1254,7 +1254,24 @@ function setupSearchModal() {
   let activeIndex = -1;
   let currentItems = [];
 
+  let bodyIndex = null;                        // 본문 색인 (lazy fetch)
+  const loadIndex = () => {
+    if (bodyIndex !== null) return;
+    bodyIndex = {};
+    fetch('search-index.json').then(r => r.ok ? r.json() : {}).then(j => { bodyIndex = j; }).catch(() => { bodyIndex = {}; });
+  };
+  const inMeta = (p, q) => p.title.toLowerCase().includes(q) || (p.excerpt || '').toLowerCase().includes(q)
+    || (p.tags || []).some(t => t.toLowerCase().includes(q)) || (p.categories || []).some(c => c.toLowerCase().includes(q));
+  const snippet = (p, q) => {
+    if (q && !inMeta(p, q) && bodyIndex && bodyIndex[p.id]) {
+      const body = bodyIndex[p.id], idx = body.indexOf(q);
+      if (idx >= 0) return '본문 일치 · … ' + body.slice(Math.max(0, idx - 35), idx + q.length + 55).trim() + ' …';
+    }
+    return (p.excerpt || '').slice(0, 110) + '…';
+  };
+
   const open = () => {
+    loadIndex();
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
     input.value = '';
@@ -1274,12 +1291,7 @@ function setupSearchModal() {
       items = getAllPosts().slice(0, 10);
     } else {
       items = posts
-        .filter(p =>
-          p.title.toLowerCase().includes(q)
-          || (p.excerpt || '').toLowerCase().includes(q)
-          || (p.tags || []).some(t => t.toLowerCase().includes(q))
-          || (p.categories || []).some(c => c.toLowerCase().includes(q))
-        )
+        .filter(p => inMeta(p, q) || (bodyIndex && bodyIndex[p.id] && bodyIndex[p.id].includes(q)))
         .slice(0, 20);
     }
     currentItems = items;
@@ -1294,7 +1306,7 @@ function setupSearchModal() {
       <a href="post.html?id=${p.id}" class="search-modal-item${i === activeIndex ? ' active' : ''}" data-index="${i}">
         <span class="search-modal-item-category">${p.categories[0] || ''}</span>
         <span class="search-modal-item-title">${p.title}</span>
-        <span class="search-modal-item-excerpt">${(p.excerpt || '').slice(0, 110)}…</span>
+        <span class="search-modal-item-excerpt">${snippet(p, query.trim().toLowerCase())}</span>
       </a>
     `).join('');
   };

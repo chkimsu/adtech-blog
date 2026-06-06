@@ -4064,3 +4064,10 @@ a.series-name:hover { color: var(--accent-primary); }
   font-family: var(--font-serif); font-size: 1.05rem; color: var(--text-secondary);
   margin: 1.6rem 0 1rem;
 }
+
+/* ===== Comments (Giscus) ===== */
+.post-comments-section {
+  max-width: 860px; margin: 2.5rem auto 0; padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+.comments-title { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 1rem; color: var(--text-primary); }

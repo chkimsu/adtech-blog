@@ -17,6 +17,7 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
   updateThemeButton(newTheme);
+  if (typeof setGiscusTheme === 'function') setGiscusTheme(newTheme);   // 댓글 테마 동기
 }
 
 function updateThemeButton(theme) {
@@ -950,6 +951,9 @@ async function renderPostDetail() {
       renderRelatedPosts(post);
       renderContinueReadingTop(post);
       setupMobileNextCta(post);
+
+      // 댓글(Giscus) — repoId/categoryId 미설정이면 내부에서 조용히 숨김
+      if (typeof initComments === 'function') initComments(post.id);
 
     } catch (error) {
       console.error('Error loading post:', error);

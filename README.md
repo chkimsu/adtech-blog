@@ -22,18 +22,27 @@ A modern, dark-mode focused blog about Ad Tech, built with vanilla HTML, CSS, an
 
 ```
 adtech-blog/
-├── index.html              # Home page with blog listing
-├── post.html              # Blog post detail template
-├── about.html             # About page
+├── index.html              # 홈 — 시작하기·최신·시리즈 큐레이션 랜딩
+├── posts-browse.html       # 전체 글 탐색 (카테고리·태그 다중필터·정렬·검색·더보기)
+├── post.html               # 글 상세 템플릿 (TOC·시리즈 박스·관련 글)
+├── about.html / demos.html / ecosystem.html
 ├── css/
-│   └── style.css         # Main stylesheet with dark mode
+│   └── style.css           # 단일 스타일시트 (차분한 에디토리얼 토큰)
 ├── js/
-│   ├── main.js           # Core functionality (search, filter, theme)
-│   └── posts.js          # Blog posts data
-├── posts/                # (Optional) Individual post HTML files
-├── assets/
-│   └── images/          # Blog images and assets
-└── README.md
+│   ├── posts.js            # 글 데이터 단일 소스 + series/startHere + 헬퍼
+│   ├── main.js             # 렌더·테마·검색·홈·시리즈 박스
+│   └── browse.js           # 통합 탐색 페이지 로직
+├── data/
+│   └── taxonomy.json       # 카테고리·태그 표준 목록 (단일 소스)
+├── scripts/
+│   ├── new-post.js         # 새 글 스캐폴드
+│   ├── compute-read-time.js# 읽기시간 자동 계산 (.md 분량 기반)
+│   ├── validate-posts.js   # 분류·무결성 검증 (CI 게이트)
+│   └── generate-feed.js    # Atom feed.xml 생성
+├── generate-sitemap.js     # sitemap.xml 생성
+├── posts/                  # 글 본문 마크다운(.md)
+├── feed.xml / sitemap.xml  # 생성 산출물 (GitHub Actions 자동 갱신)
+└── .github/workflows/      # validate.yml(검증) · sitemap.yml(sitemap+feed)
 ```
 
 ##  Quick Start
@@ -102,35 +111,29 @@ This blog uses [Utterances](https://utteranc.es/) for GitHub-based comments.
 
 3. **Comments will now appear at the bottom of each blog post!**
 
-##  Adding New Posts
+##  새 글 추가
 
-### Method 1: Edit posts.js (Recommended)
+스캐폴드 스크립트가 파일 생성·메타데이터 입력·분류 검증을 도와줍니다. (빌드 도구 없음 — 모두 zero-dependency Node)
 
-Add a new post object to the `posts` array in `js/posts.js`:
+```bash
+# 1) 새 글 생성 (대화형, 또는 인자 모드)
+node scripts/new-post.js
+#   인자 모드: node scripts/new-post.js <slug> "<제목>" "<카테고리|번호>" "<태그,콤마>"
 
-```javascript
-{
-  id: 'your-post-slug',
-  title: 'Your Post Title',
-  excerpt: 'A brief description of your post',
-  date: '2026-01-15',
-  readTime: '10 min read',
-  categories: ['Category1', 'Category2'],
-  tags: ['tag1', 'tag2', 'tag3'],
-  content: `
-    <h2>Your Post Content</h2>
-    <p>Write your content here using HTML...</p>
-  `
-}
+# 2) posts/<slug>.md 본문 작성 + js/posts.js 의 excerpt 채우기
+
+# 3) 읽기시간 자동 계산 (.md 분량 기반, 손으로 적지 않음)
+node scripts/compute-read-time.js
+
+# 4) 표준 분류·무결성 검증 (이게 통과해야 CI도 통과)
+node scripts/validate-posts.js
+
+# 5) chkimsu 계정으로 커밋·푸시 → GitHub Actions가 sitemap·feed 자동 갱신
 ```
 
-### Method 2: Markdown Conversion
-
-If you prefer writing in Markdown:
-
-1. Write your post in Markdown
-2. Use a converter like [markdowntohtml.com](https://markdowntohtml.com/)
-3. Copy the HTML output into the `content` field
+- **카테고리·태그는 자유 입력이 아니라 `data/taxonomy.json` 표준 목록**에서만 씁니다. 새 분류가 필요하면 먼저 `taxonomy.json`에 추가하세요 — 검증기가 어긋난 값(`ML Infra` vs `ML Infrastructure` 같은 드리프트)을 막습니다.
+- 글 본문은 `posts/<slug>.md` 마크다운입니다. 작성 규칙(KaTeX·코드 펜스·다이어그램)은 `MARKDOWN_GUIDE.md` 참고.
+- 주제별 읽는 순서(시리즈)·시작하기 글은 `js/posts.js` 상단의 `series` / `startHere` 에서 관리합니다.
 
 ##  Customization
 

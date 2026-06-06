@@ -128,12 +128,13 @@ node scripts/compute-read-time.js
 # 4) 표준 분류·무결성 검증 (이게 통과해야 CI도 통과)
 node scripts/validate-posts.js
 
-# 5) chkimsu 계정으로 커밋·푸시 → GitHub Actions가 sitemap·feed 자동 갱신
+# 5) chkimsu 계정으로 커밋·푸시 → GitHub Actions가 sitemap·feed·검색색인 자동 갱신
 ```
 
 - **카테고리·태그는 자유 입력이 아니라 `data/taxonomy.json` 표준 목록**에서만 씁니다. 새 분류가 필요하면 먼저 `taxonomy.json`에 추가하세요 — 검증기가 어긋난 값(`ML Infra` vs `ML Infrastructure` 같은 드리프트)을 막습니다.
 - 글 본문은 `posts/<slug>.md` 마크다운입니다. 작성 규칙(KaTeX·코드 펜스·다이어그램)은 `MARKDOWN_GUIDE.md` 참고.
 - 주제별 읽는 순서(시리즈)·시작하기 글은 `js/posts.js` 상단의 `series` / `startHere` 에서 관리합니다.
+- **전체 본문 검색**(Cmd+K 모달)은 `scripts/build-search-index.js`가 만든 `search-index.json`을 씁니다. 본문 변경 시 CI가 자동 재생성하지만, 로컬에서 미리 확인하려면 `node scripts/build-search-index.js`.
 
 ##  Customization
 

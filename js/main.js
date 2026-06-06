@@ -345,6 +345,12 @@ const mathPlaceholders = [];
 
 function protectMathBlocks(text) {
   mathPlaceholders.length = 0;
+  // 코드(펜스/인라인)를 잠시 빼두어 그 안의 $(예: 표 안 달러 금액 `$0.30`)가 수식으로 오인되지 않게 한다.
+  // 수식 매칭이 끝나면 곧바로 복원해 marked가 코드 블록을 정상 렌더하도록 한다.
+  const code = [];
+  text = text
+    .replace(/```[\s\S]*?```/g, (m) => { code.push(m); return `%%CODE_${code.length - 1}%%`; })
+    .replace(/`[^`\n]*`/g, (m) => { code.push(m); return `%%CODE_${code.length - 1}%%`; });
   // Protect display math $$...$$ first (greedy, multiline)
   text = text.replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
     const idx = mathPlaceholders.length;
@@ -357,6 +363,8 @@ function protectMathBlocks(text) {
     mathPlaceholders.push(match);
     return `%%MATH_BLOCK_${idx}%%`;
   });
+  // 코드 복원 (marked가 정상 렌더하도록)
+  text = text.replace(/%%CODE_(\d+)%%/g, (_, i) => code[+i]);
   return text;
 }
 

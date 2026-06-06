@@ -195,15 +195,15 @@ sequenceDiagram
 | 항목 | DSP A (Nike) | DSP B (Insurance) |
 |------|-------------|-------------------|
 | 내부 pCTR 예측 | 0.5% | 0.25% |
-| CPC 입찰가 | $20 | $20 |
-| 내부 eCPM 계산 | $0.005 x $20 x 1,000 = **$100** | $0.0025 x $20 x 1,000 = **$50** |
-| Exchange에 제출하는 CPM 입찰가 | **$10** (Bid Shading 적용) | **$5** (Bid Shading 적용) |
-| Exchange가 보는 값 | **$10 CPM** | **$5 CPM** |
+| CPC 입찰가 | `$20` | `$20` |
+| 내부 eCPM 계산 | `$0.005 x $20 x 1,000 = $100` | `$0.0025 x $20 x 1,000 = $50` |
+| Exchange에 제출하는 CPM 입찰가 | `$10` (Bid Shading 적용) | `$5` (Bid Shading 적용) |
+| Exchange가 보는 값 | `$10 CPM` | `$5 CPM` |
 | **결과** | **승리** | 패배 |
 
 여기서 주목할 점이 두 가지 있습니다:
 
-1. **Exchange는 $10과 $5만 비교합니다.** DSP 내부의 pCTR 값이나 eCPM 계산 과정은 Exchange에게 블랙박스입니다.
+1. **Exchange는 `$10`과 `$5`만 비교합니다.** DSP 내부의 pCTR 값이나 eCPM 계산 과정은 Exchange에게 블랙박스입니다.
 2. **DSP가 제출하는 CPM 입찰가는 내부 eCPM과 다릅니다.** [Bid Shading](post.html?id=bid-shading-censored) 등의 전략으로 True Value보다 낮게 입찰하기 때문입니다.
 
 **리스크:** DSP의 pCTR 모델이 부정확하면, 가치를 잘못 평가한 입찰가를 제출하게 됩니다. pCTR을 과대 예측하면 과다입찰로 손해를 보고, 과소 예측하면 이길 수 있는 경매를 놓치는 기회손실이 발생합니다.

@@ -352,6 +352,21 @@ const series = {
     desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
     posts: ['deep-ctr-models', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
   },
+  'ml-infra-track': {
+    title: 'ML 인프라 트랙',
+    desc: '로그 수집 → 피처스토어 → 검색 → 서빙 → 온라인 학습, 데이터에서 모델까지',
+    posts: ['ad-log-pipeline', 'ad-log-system', 'feature-store-serving', 'two-tower-retrieval', 'model-serving-architecture', 'online-learning-delayed-feedback'],
+  },
+  'targeting-track': {
+    title: '타겟팅 & 오디언스 트랙',
+    desc: '세그멘테이션에서 룩얼라이크 확장까지',
+    posts: ['audience-segmentation', 'lookalike-modeling'],
+  },
+  'advanced-bidding-track': {
+    title: '입찰·생태계 심화 트랙',
+    desc: '생태계 구조 → 개발 레이어 → 자동입찰·페이싱 → 입찰 셰이딩',
+    posts: ['walled-garden', 'adtech-dev-layers', 'auto-bidding-pacing', 'bid-shading-censored'],
+  },
 };
 
 // 홈 "시작하기" 레일 순서(큐레이션). featured와 독립적으로 시퀀스를 정한다.

@@ -6,9 +6,9 @@
 // ==========================================================================
 const GISCUS = {
   repo: 'chkimsu/adtech-blog',
-  repoId: '',            // ← giscus.app 에서 복사 (예: R_kgD...)
-  category: 'Comments',  // ← Discussions 카테고리 이름
-  categoryId: '',        // ← giscus.app 에서 복사 (예: DIC_kwD...)
+  repoId: 'R_kgDOQzA7Ow',
+  category: 'Announcements',          // Announcement 형식 — 글쓴이만 토론 생성(스팸 방지)
+  categoryId: 'DIC_kwDOQzA7O84C-oFL',
 };
 
 function giscusTheme() {

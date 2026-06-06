@@ -368,7 +368,7 @@ function restoreMathBlocks(html) {
 
 function preprocessMarkdown(text) {
   if (!text) return '';
-  return text
+  text = text
     // Normalize 3+ consecutive blank lines to max 2
     .replace(/\n{3,}/g, '\n\n')
     // Remove lines that are only a list marker with trailing whitespace (empty list items)
@@ -379,6 +379,24 @@ function preprocessMarkdown(text) {
     // is not recognized as right-flanking, so bold fails to render.
     // Convert these cases to HTML <strong> tags before marked.js processes them.
     .replace(/\*\*([^*\n]+?[)\]"'"\u2019\u201D])\*\*(?=[가-힣])/g, '<strong>$1</strong>');
+
+  // 코드·수식을 잠시 보호 (그 안의 ** 는 굵게로 바꾸지 않는다)
+  const stash = [];
+  const hold = m => { stash.push(m); return ` ${stash.length - 1} `; };
+  text = text
+    .replace(/```[\s\S]*?```/g, hold)   // 펜스 코드 블록
+    .replace(/`[^`\n]*`/g, hold)        // 인라인 코드
+    .replace(/\$\$[\s\S]*?\$\$/g, hold) // 블록 수식
+    .replace(/\$[^$\n]+?\$/g, hold);    // 인라인 수식
+
+  // **...** → <strong>...</strong>
+  // marked.js는 한글(CJK)이 ** 에 인접하면 flanking 규칙 때문에 굵게를 놓쳐 literal "**" 가 노출된다.
+  // 코드·수식을 제외한 본문의 정상 bold 쌍을 직접 <strong>으로 변환해 우회한다.
+  text = text.replace(/\*\*(?!\s)([^\n]+?)(?<!\s)\*\*/g, '<strong>$1</strong>');
+
+  // 보호 해제
+  text = text.replace(/ (\d+) /g, (_, i) => stash[+i]);
+  return text;
 }
 
 // ========================================

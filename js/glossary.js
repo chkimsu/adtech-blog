@@ -46,16 +46,19 @@ const GLOSSARY = [
   },
   {
     term: 'CPM / CPC / CPA',
+    match: ['CPM', 'CPC', 'CPA'],
     abbr: '비용 과금 단위',
     body: '<strong>CPM</strong>(Cost Per Mille) = 1,000회 노출당 비용, <strong>CPC</strong>(Cost Per Click) = 클릭당, <strong>CPA</strong>(Cost Per Action) = 전환당. 광고주가 원하는 KPI에 따라 선택. 퍼포먼스 마케팅은 CPA 중심, 브랜딩은 CPM 중심.'
   },
   {
     term: 'CTR / CVR',
+    match: ['CTR', 'CVR'],
     abbr: 'Click / Conversion Rate',
     body: '<strong>CTR</strong> = 클릭 ÷ 노출, <strong>CVR</strong> = 전환 ÷ 클릭. 광고 성과의 두 핵심 깔때기. 디스플레이 CTR은 0.1~1% 수준, 검색광고는 3~20% 수준.'
   },
   {
     term: 'pCTR / pCVR',
+    match: ['pCTR', 'pCVR'],
     abbr: 'predicted CTR/CVR',
     body: '<strong>예측 클릭률·전환율</strong>. 머신러닝 모델이 출력하는 확률값으로, 입찰가 계산의 입력이 된다. 정확도와 Calibration(보정)이 직접적으로 수익과 직결된다.'
   },
@@ -91,6 +94,7 @@ const GLOSSARY = [
   },
   {
     term: 'UCB (Upper Confidence Bound)',
+    match: ['UCB'],
     abbr: '상한 신뢰 구간',
     body: '각 광고에 "평균 CTR + 불확실성 보너스"를 더한 점수로 선택. 데이터가 적을수록 보너스가 커져 자연스럽게 탐색 유도. <strong>UCB1 공식: x̄ + √(2 ln t / n)</strong>.'
   },

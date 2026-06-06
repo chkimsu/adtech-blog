@@ -446,7 +446,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 13개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 14개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -475,6 +475,7 @@
               <a href="demo-linucb.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LinUCB</a>
               <a href="demo-golden-section.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Golden Section</a>
               <a href="demo-compare-bandits.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ UCB vs TS 비교</a>
+              <a href="demo-calibration.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Calibration Explorer</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -575,10 +576,25 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">9개 · 카테고리별</span>
+          <span class="count">10개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
+
+          <!-- Calibration Explorer (신규) -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>Calibration Explorer</h3>
+            <p>AUC가 높아도 확률이 어긋나면(miscalibration) 입찰가가 왜곡됩니다. 보정 기울기·편향을 슬라이더로 바꿔 신뢰도 곡선·입찰 왜곡·ECE를 실시간으로 봅니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 12분</span>
+              <span class="demo-card-meta-item">확률·로짓 기초</span>
+            </div>
+            <a href="demo-calibration.html" class="btn-try">체험하기</a>
+          </div>
 
           <!-- A/B vs Bandit (신규) -->
           <div class="demo-card">

@@ -6,6 +6,8 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 입찰가의 근거가 되는 확률값이 체계적으로 틀리면, 아무리 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **Calibration** 문제입니다.
 
+<a href="demo-calibration.html" class="btn-demo">보정 왜곡을 직접 슬라이더로 실험해보기 →</a>
+
 > [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 True Value를 기반으로 최적 입찰가를 계산하는 구조를 다뤘습니다. [Auto-Bidding 포스트](post.html?id=auto-bidding-pacing)에서는 True Value가 Budget Pacing의 입력이 되는 과정을 다뤘습니다. 그리고 [eCPM 랭킹 포스트](post.html?id=ecpm-ranking)에서 pCTR이 광고 랭킹의 핵심 입력임을 확인했습니다. 이 모든 시스템의 **전제 조건**이 바로 "pCTR 값 자체가 정확할 것" — 즉 Calibration입니다.
 
 ---

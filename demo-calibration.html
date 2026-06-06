@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="AUC가 높아도 확률이 어긋나면(miscalibration) 입찰가가 왜곡된다 — 신뢰도 곡선과 입찰 왜곡을 슬라이더로 직접 보는 인터랙티브 데모.">
+  <title>Calibration Explorer — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .cal-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .cal-hero { text-align: center; padding: 2rem 0 1rem; }
+    .cal-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .cal-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .cal-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .cal-intro strong { color: var(--accent-primary); }
+    .cal-intro .katex { font-size: 1em; }
+
+    /* Controls */
+    .cal-controls {
+      max-width: 900px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+    }
+    .cal-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 230px 1fr 70px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .cal-slider-row { grid-template-columns: 1fr; } }
+    .cal-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .cal-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .cal-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none; }
+    .cal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 50%; cursor: pointer; }
+    .cal-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 50%; cursor: pointer; border: none; }
+    .cal-slider-value { text-align: right; font-family: 'Fira Code', monospace; font-weight: 700; color: var(--accent-primary); }
+
+    .cal-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+    .cal-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+      transition: all var(--transition-fast);
+    }
+    .cal-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* Metrics */
+    .cal-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+    @media (max-width: 700px) { .cal-metrics { grid-template-columns: 1fr; } }
+    .cal-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; text-align: center; }
+    .cal-metric-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .cal-metric-value { font-size: 1.35rem; font-weight: 700; font-family: 'Fira Code', monospace; color: var(--text-primary); }
+    .cal-metric-value.good { color: #5f7a63; }
+    .cal-metric-value.warn { color: #a8783a; }
+    .cal-metric-value.bad  { color: #9c5a44; }
+    .cal-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .cal-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 10px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* Charts */
+    .cal-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .cal-charts { grid-template-columns: 1fr; } }
+    .cal-chart-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 1.3rem 1.4rem; }
+    .cal-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .cal-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .cal-chart-wrap { position: relative; height: 300px; }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="cal-hero">
+      <div class="cal-container">
+        <h1>Calibration Explorer</h1>
+        <p>AUC가 높아도 — 즉 순위를 잘 매겨도 — 출력 <em>확률</em>이 실제와 어긋나면 입찰가가 왜곡됩니다.
+          보정 상태를 슬라이더로 바꿔가며 신뢰도 곡선과 입찰 왜곡을 직접 보세요.</p>
+      </div>
+    </section>
+
+    <div class="cal-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-pctr-impact.html">pCTR Impact</a>
+        <a href="demo-bid-landscape.html">Bid Landscape</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">%</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 비유</div>
+          <div class="demo-tldr-analogy-text">
+            <strong>"90% 확신"이라 말하는 모델이 실제로는 10번 중 8번만 맞는다면</strong>, 순위(누가 더 높은가)는 맞아도
+            그 확률을 그대로 곱해 만든 <em>입찰가</em>는 매번 어긋납니다. 보정(calibration)은 이 "확률의 정직함"을 맞추는 일입니다.
+          </div>
+        </div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <li><span class="step-text"><strong>완벽</strong> 프리셋에서 두 곡선이 대각선/겹침인지 확인하고 ECE ≈ 0 메모.</span></li>
+        <li><span class="step-text"><strong>과신</strong> 프리셋 → 신뢰도 곡선이 S자로 휘고, 높은 확률에서 모델이 과대입찰하는 것 확인.</span></li>
+        <li><span class="step-text"><strong>양성 편향</strong> → 모든 구간에서 입찰선이 적정선 위로 떠 과지출되는 모습 확인.</span></li>
+      </ol>
+
+      <div class="cal-intro">
+        <strong>모델</strong> — 보정 왜곡을 로짓 축의 1차 변환으로 둡니다:
+        $\mathrm{logit}(p_{\text{pred}}) = \text{slope}\cdot\mathrm{logit}(p_{\text{true}}) + \text{bias}$.
+        <strong>slope &gt; 1</strong> 은 과신(확률을 0·1 쪽으로 밀어냄), <strong>slope &lt; 1</strong> 은 과소(가운데로 수축),
+        <strong>bias</strong> 는 전반적 과대/과소 예측입니다. 입찰가는 단순화해 <code>입찰 = 확률 × 가치($10)</code> 로 둡니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="cal-controls">
+        <div class="cal-slider-row">
+          <div class="cal-slider-label">보정 기울기 (slope)<small>1.0 = 완벽 · &gt;1 과신 · &lt;1 과소</small></div>
+          <input type="range" class="cal-slider" id="cal-slope" min="0.4" max="2.2" step="0.05" value="1">
+          <div class="cal-slider-value" id="cal-slope-val">1.00</div>
+        </div>
+        <div class="cal-slider-row">
+          <div class="cal-slider-label">보정 편향 (bias)<small>logit 축 이동 · &gt;0 전반적 과대예측</small></div>
+          <input type="range" class="cal-slider" id="cal-bias" min="-1.5" max="1.5" step="0.05" value="0">
+          <div class="cal-slider-value" id="cal-bias-val">+0.00</div>
+        </div>
+        <div class="cal-presets">
+          <button class="cal-preset-btn" data-preset="1,0">완벽</button>
+          <button class="cal-preset-btn" data-preset="1.6,0">과신 (overconfident)</button>
+          <button class="cal-preset-btn" data-preset="0.6,0">과소 (underconfident)</button>
+          <button class="cal-preset-btn" data-preset="1,0.6">양성 편향</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="cal-metrics">
+        <div class="cal-metric">
+          <div class="cal-metric-label">ECE (기대 보정오차)</div>
+          <div class="cal-metric-value" id="cal-ece">—</div>
+          <div class="cal-metric-sub">예측과 실제의 평균 격차</div>
+        </div>
+        <div class="cal-metric">
+          <div class="cal-metric-label">입찰 왜곡 @ 예측 90%</div>
+          <div class="cal-metric-value" id="cal-d90">—</div>
+          <div class="cal-metric-sub">+ 과입찰 · − 과소입찰</div>
+        </div>
+        <div class="cal-metric">
+          <div class="cal-metric-label">입찰 왜곡 @ 예측 10%</div>
+          <div class="cal-metric-value" id="cal-d10">—</div>
+          <div class="cal-metric-sub">+ 과입찰 · − 과소입찰</div>
+        </div>
+      </div>
+
+      <div class="cal-verdict" id="cal-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="cal-charts">
+        <div class="cal-chart-card">
+          <h3>신뢰도 곡선 (Reliability Diagram)</h3>
+          <p class="note">x: 모델이 출력한 확률 · y: 그 확률에서 실제로 일어난 빈도. 점선(대각선)에 붙을수록 잘 보정된 모델.</p>
+          <div class="cal-chart-wrap"><canvas id="cal-rel-chart"></canvas></div>
+        </div>
+        <div class="cal-chart-card">
+          <h3>입찰 왜곡 (Bid Distortion)</h3>
+          <p class="note">모델은 자기 예측을 믿고 입찰(실선)하지만, 적정 입찰(점선)은 실제 확률 기준. 두 선의 간격이 곧 새어나가는 돈.</p>
+          <div class="cal-chart-wrap"><canvas id="cal-bid-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>AUC ≠ 보정</strong> — 순위 지표(AUC)는 확률을 단조 변환해도 그대로다. 즉 과신/과소 모델도 AUC는 높을 수 있지만, 확률은 어긋난다.</li>
+            <li><strong>보정오차가 곧 입찰오차</strong> — 입찰가는 확률을 직접 곱해 만들므로, miscalibration은 그대로 과/과소입찰로 번역돼 돈을 새게 한다.</li>
+            <li><strong>비대칭</strong> — 과신 모델은 비싼(고pCTR) 트래픽에 과대입찰해 더 큰 손해를 본다. 보정(Platt/Isotonic/Temperature)이 평가 파이프라인에 필수인 이유.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=calibration" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Calibration — AUC가 높아도 돈을 잃는 이유</span>
+              <span class="demo-next-excerpt">Platt Scaling·Isotonic·Temperature Scaling으로 pCTR을 보정하는 파이프라인</span>
+            </a>
+            <a href="demo-pctr-impact.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">pCTR Model Quality Impact</span>
+              <span class="demo-next-excerpt">모델 오차가 입찰가·낙찰률·수익으로 연쇄 증폭되는 과정</span>
+              <span class="demo-next-meta">⏱ 12분 · 중급</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/calibration-demo.js"></script>
+</body>
+
+</html>

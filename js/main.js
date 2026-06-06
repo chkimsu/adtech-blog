@@ -91,6 +91,49 @@ function setupDemoTermPopover() {
   });
 }
 
+// 본문 adtech 용어를 GLOSSARY 정의와 연결 → .demo-term 툴팁(용어당 글 1회).
+// 코드/링크/헤딩/KaTeX/수식($) 텍스트는 건드리지 않는다.
+function autoLinkGlossary(container) {
+  if (typeof GLOSSARY === 'undefined' || !container) return;
+  const entries = [];
+  GLOSSARY.forEach(g => (g.match || [g.term]).forEach(tok => entries.push({ tok, g })));
+  entries.sort((a, b) => b.tok.length - a.tok.length);           // 긴 토큰 우선
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const linkedTerms = new Set();                                  // 용어당 글 1회
+  const SKIP = new Set(['A', 'CODE', 'PRE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BUTTON', 'SUMMARY']);
+
+  function makePop(g, matchText) {
+    const span = document.createElement('span');
+    span.className = 'demo-term';
+    span.innerHTML = `${matchText}<span class="demo-term-pop"><strong>${g.term}${g.abbr ? ' · ' + g.abbr : ''}</strong> ${g.body}</span>`;
+    return span;
+  }
+  function walk(node) {
+    for (const child of [...node.childNodes]) {
+      if (child.nodeType === 1) {
+        if (SKIP.has(child.tagName)) continue;
+        if (child.classList && (child.classList.contains('katex') || child.classList.contains('demo-term'))) continue;
+        walk(child);
+      } else if (child.nodeType === 3) {
+        const text = child.textContent;
+        if (text.includes('$')) continue;                         // 수식 가능성 → skip
+        for (const { tok, g } of entries) {
+          if (linkedTerms.has(g.term)) continue;
+          const m = new RegExp(`\\b${esc(tok)}\\b`).exec(text);
+          if (!m) continue;
+          const after = child.splitText(m.index);
+          after.textContent = after.textContent.slice(tok.length);
+          child.parentNode.insertBefore(makePop(g, tok), after);
+          linkedTerms.add(g.term);
+          break;                                                  // 이 노드는 한 번만
+        }
+      }
+    }
+  }
+  walk(container);
+  setupDemoTermPopover();                                         // 새 .demo-term에 모바일 탭/접근성
+}
+
 // Add aria-current to active nav links based on current page
 function applyNavActiveAria() {
   const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
@@ -833,6 +876,9 @@ async function renderPostDetail() {
 
       // Build TOC in sidebar
       buildPostTOC(contentContainer);
+
+      // 본문 adtech 용어 자동 툴팁 (renderMath 전 — $…$ 텍스트는 skip되어 수식 보호)
+      autoLinkGlossary(contentContainer);
 
       // Render LaTeX math equations with KaTeX
       const renderMath = () => {

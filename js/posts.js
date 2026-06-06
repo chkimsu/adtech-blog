@@ -15,7 +15,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'A/B Testing', 'Contextual Bandit', 'Exploration', 'Online Learning'],
     contentUrl: 'posts/ab-test-vs-mab.md',
-    readTime: '14 min read',
+    readTime: '7 min read',
     featured: true,
     series: 'bandits-track'
   },
@@ -27,7 +27,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['입문', 'Ad Ecosystem', 'RTB', 'DSP', 'SSP', 'pCTR', 'pCVR', 'Attribution', 'eCPM'],
     contentUrl: 'posts/adtech-30min-primer.md',
-    readTime: '30 min read',
+    readTime: '13 min read',
     featured: true,
     series: 'getting-started'
   },
@@ -39,7 +39,7 @@ const posts = [
     categories: ['Targeting & Audience'],
     tags: ['Segmentation', 'Targeting', 'Ad Ecosystem', 'DMP', 'CDP', 'ML Infra'],
     contentUrl: 'posts/audience-segmentation.md',
-    readTime: '20 min read'
+    readTime: '39 min read'
   },
   {
     id: 'lookalike-modeling',
@@ -49,7 +49,7 @@ const posts = [
     categories: ['Targeting & Audience'],
     tags: ['Lookalike', 'Targeting', 'Ad Ecosystem', 'ML Infra', 'Two-Tower'],
     contentUrl: 'posts/lookalike-modeling.md',
-    readTime: '18 min read'
+    readTime: '36 min read'
   },
   {
     id: 'git-practical-guide',
@@ -59,7 +59,7 @@ const posts = [
     categories: ['DevOps & Tooling'],
     tags: ['Git', 'DevOps', 'Workflow', 'Collaboration'],
     contentUrl: 'posts/git-practical-guide.md',
-    readTime: '22 min read'
+    readTime: '21 min read'
   },
   {
     id: 'ad-log-pipeline',
@@ -69,7 +69,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['ML Infra', 'pCTR', 'Ad Ecosystem', 'DSP'],
     contentUrl: 'posts/ad-log-pipeline.md',
-    readTime: '22 min read'
+    readTime: '21 min read'
   },
   {
     id: 'ltv-ad-ranking',
@@ -79,7 +79,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['eCPM', 'Ad Ranking', 'Ad Ecosystem', 'pCTR'],
     contentUrl: 'posts/ltv-ad-ranking.md',
-    readTime: '12 min read'
+    readTime: '9 min read'
   },
   {
     id: 'ad-log-system',
@@ -89,7 +89,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['ML Infra', 'pCTR', 'pCVR', 'Ad Ecosystem', 'Online Learning'],
     contentUrl: 'posts/ad-log-system.md',
-    readTime: '18 min read'
+    readTime: '12 min read'
   },
   {
     id: 'adtech-dev-layers',
@@ -99,7 +99,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'pCTR', 'Auto-Bidding', 'ML Infra', 'RTB'],
     contentUrl: 'posts/adtech-dev-layers.md',
-    readTime: '15 min read'
+    readTime: '9 min read'
   },
   {
     id: 'negative-sampling-bias',
@@ -109,7 +109,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCTR', 'Ad Ecosystem', 'ML Infra'],
     contentUrl: 'posts/negative-sampling-bias.md',
-    readTime: '18 min read'
+    readTime: '13 min read'
   },
   {
     id: 'two-tower-retrieval',
@@ -119,7 +119,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['Model Serving', 'ML Infra', 'pCTR'],
     contentUrl: 'posts/two-tower-retrieval.md',
-    readTime: '20 min read'
+    readTime: '14 min read'
   },
   {
     id: 'multi-task-learning',
@@ -129,7 +129,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCTR', 'pCVR', 'Model Serving'],
     contentUrl: 'posts/multi-task-learning.md',
-    readTime: '20 min read'
+    readTime: '14 min read'
   },
   {
     id: 'exploration-exploitation',
@@ -139,7 +139,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'Contextual Bandit', 'UCB', 'Thompson Sampling'],
     contentUrl: 'posts/exploration-exploitation.md',
-    readTime: '18 min read'
+    readTime: '12 min read'
   },
   {
     id: 'deep-ctr-models',
@@ -149,7 +149,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCTR', 'Model Serving', 'ML Infra'],
     contentUrl: 'posts/deep-ctr-models.md',
-    readTime: '20 min read'
+    readTime: '16 min read'
   },
   {
     id: 'calibration',
@@ -159,7 +159,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCTR', 'Bid Shading', 'Auto-Bidding'],
     contentUrl: 'posts/calibration.md',
-    readTime: '18 min read'
+    readTime: '15 min read'
   },
   {
     id: 'ad-network-vs-exchange',
@@ -169,7 +169,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'RTB', 'SSP', 'DSP'],
     contentUrl: 'posts/ad-network-vs-exchange.md',
-    readTime: '15 min read'
+    readTime: '10 min read'
   },
   {
     id: 'position-bias-ultr',
@@ -179,7 +179,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCTR', 'Ad Ecosystem', 'MAB'],
     contentUrl: 'posts/position-bias-ultr.md',
-    readTime: '18 min read'
+    readTime: '8 min read'
   },
   {
     id: 'model-serving-architecture',
@@ -189,7 +189,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['Model Serving', 'ML Infra', 'pCTR'],
     contentUrl: 'posts/model-serving-architecture.md',
-    readTime: '18 min read'
+    readTime: '9 min read'
   },
   {
     id: 'online-learning-delayed-feedback',
@@ -199,7 +199,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['Online Learning', 'ML Infra', 'pCTR', 'pCVR'],
     contentUrl: 'posts/online-learning-delayed-feedback.md',
-    readTime: '18 min read'
+    readTime: '12 min read'
   },
   {
     id: 'auto-bidding-pacing',
@@ -209,7 +209,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Auto-Bidding', 'Bid Shading', 'RTB'],
     contentUrl: 'posts/auto-bidding-pacing.md',
-    readTime: '20 min read'
+    readTime: '13 min read'
   },
   {
     id: 'feature-store-serving',
@@ -219,7 +219,7 @@ const posts = [
     categories: ['ML Infrastructure'],
     tags: ['ML Infra', 'DSP', 'pCTR'],
     contentUrl: 'posts/feature-store-serving.md',
-    readTime: '18 min read'
+    readTime: '21 min read'
   },
   {
     id: 'ecpm-ranking',
@@ -229,7 +229,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'pCTR', 'RTB'],
     contentUrl: 'posts/ecpm-ranking.md',
-    readTime: '12 min read'
+    readTime: '14 min read'
   },
   {
     id: 'walled-garden',
@@ -239,7 +239,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB', 'pCTR'],
     contentUrl: 'posts/walled-garden.md',
-    readTime: '15 min read'
+    readTime: '11 min read'
   },
   {
     id: 'adtech-ecosystem-map',
@@ -249,7 +249,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'pCTR', 'pCVR', 'Auto-Bidding', 'Bid Shading'],
     contentUrl: 'posts/adtech-ecosystem-map.md',
-    readTime: '15 min read',
+    readTime: '13 min read',
     featured: true
   },
   {
@@ -270,7 +270,7 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['pCVR', 'pCTR'],
     contentUrl: 'posts/pCVR-modeling.md',
-    readTime: '10 min read'
+    readTime: '5 min read'
   },
   {
     id: 'TS-linTS',
@@ -280,7 +280,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['Thompson Sampling', 'MAB', 'Contextual Bandit'],
     contentUrl: 'posts/TS-linTS.md',
-    readTime: '15 min read'
+    readTime: '3 min read'
   },
   {
     id: 'mab-summary',
@@ -290,7 +290,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'LinUCB', 'Thompson Sampling', 'UCB'],
     contentUrl: 'posts/mab.md',
-    readTime: '10 min read'
+    readTime: '3 min read'
   },
   {
     id: 'ucb-vs-ts',
@@ -300,7 +300,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['UCB', 'Thompson Sampling', 'MAB'],
     contentUrl: 'posts/ucb_ts.md',
-    readTime: '5 min read'
+    readTime: '2 min read'
   },
   {
     id: 'disjoint-linucb',
@@ -310,7 +310,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['LinUCB', 'Contextual Bandit', 'MAB'],
     contentUrl: 'posts/disjoint-LinUCB.md',
-    readTime: '12 min read'
+    readTime: '4 min read'
   },
   {
     id: 'ad-serving-flow',
@@ -320,7 +320,7 @@ const posts = [
     categories: ['Bidding & Auction'],
     tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB'],
     contentUrl: 'posts/ad-serving-flow.md',
-    readTime: '8 min read',
+    readTime: '3 min read',
     series: 'getting-started'
   },
   {
@@ -331,7 +331,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['UCB', 'LinUCB', 'MAB', 'Contextual Bandit'],
     contentUrl: 'posts/ucb-family.md',
-    readTime: '12 min read'
+    readTime: '4 min read'
   },
 ];
 

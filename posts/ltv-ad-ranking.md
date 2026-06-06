@@ -1,5 +1,7 @@
 "이 광고를 1등으로 노출하면 당장 100원을 벌 수 있다. 하지만 유저가 짜증을 느끼고 내일 돌아오지 않으면?" — eCPM 랭킹만으로는 이 질문에 답할 수 없습니다. 이 글은 eCPM을 넘어 **광고 노출의 장기적 순가치**를 측정하는 LTV(Long Term Value) 개념을 소개하고, 왜 대부분의 광고 플랫폼이 eCPM이 아닌 LTV로 랭킹을 결정하는지 해부합니다.
 
+<a href="demo-frequency-capping.html" class="btn-demo">광고 피로와 최적 빈도 상한을 직접 실험해보기 →</a>
+
 > 이 글은 [eCPM과 광고 랭킹](post.html?id=ecpm-ranking) 포스트의 연장선입니다. eCPM의 정의와 계산법을 먼저 읽으면 이해가 쉽습니다.
 
 ---

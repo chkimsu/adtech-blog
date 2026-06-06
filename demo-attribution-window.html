@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="어트리뷰션 윈도우(7/14/30일)와 모델(마지막·첫·선형·위치 기반)에 따라 같은 전환의 공로가 채널마다 어떻게 달라지는지 — 여정 타임라인으로 직접 보는 인터랙티브 데모.">
+  <title>Attribution Window Playground — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .aw-container { max-width: 1080px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .aw-hero { text-align: center; padding: 2rem 0 1rem; }
+    .aw-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .aw-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .aw-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .aw-intro strong { color: var(--accent-primary); }
+
+    /* Controls */
+    .aw-controls {
+      max-width: 900px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .aw-control-title { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 0.5rem; }
+    .aw-btn-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .aw-btn {
+      font-family: var(--font-sans); font-size: 0.85rem; padding: 0.45rem 1rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+      transition: all var(--transition-fast);
+    }
+    .aw-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .aw-btn.active { background: var(--accent-primary); color: var(--bg-primary); border-color: var(--accent-primary); font-weight: 600; }
+
+    .aw-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 10px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+    .aw-verdict strong { color: var(--accent-primary); }
+
+    /* Card */
+    .aw-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
+    .aw-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .aw-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 1rem; line-height: 1.5; }
+
+    /* Timeline */
+    .aw-track { position: relative; height: 120px; margin: 1.5rem 0 0.5rem; }
+    .aw-track::before { content: ''; position: absolute; left: 0; right: 0; top: 38px; height: 2px; background: var(--border-color); }
+    .aw-shade { position: absolute; left: 0; top: 14px; bottom: 38px; background: var(--bg-tertiary); border-right: 2px dashed var(--text-muted); opacity: 0.6; border-radius: 6px 0 0 6px; transition: width var(--transition-normal); }
+    .aw-boundary { position: absolute; top: 6px; bottom: 30px; width: 0; border-left: 2px dashed var(--accent-secondary); transition: left var(--transition-normal); }
+    .aw-tp { position: absolute; top: 22px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.25rem; transition: opacity var(--transition-normal); }
+    .aw-tp-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-primary); border: 2px solid var(--bg-secondary); box-shadow: 0 0 0 1px var(--accent-primary); }
+    .aw-tp-ch { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-top: 0.35rem; }
+    .aw-tp-day { font-size: 0.7rem; color: var(--text-muted); font-family: 'Fira Code', monospace; }
+    .aw-tp.out { opacity: 0.32; }
+    .aw-tp.out .aw-tp-dot { background: var(--text-muted); box-shadow: 0 0 0 1px var(--text-muted); }
+    .aw-conv { position: absolute; top: 16px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+    .aw-conv-dot { font-size: 1.3rem; color: var(--accent-secondary); line-height: 1; }
+    .aw-conv-label { font-size: 0.72rem; color: var(--accent-secondary); font-weight: 600; margin-top: 0.55rem; }
+    .aw-axis { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.4rem; }
+
+    .aw-chart-wrap { position: relative; height: 220px; }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="aw-hero">
+      <div class="aw-container">
+        <h1>Attribution Window Playground</h1>
+        <p>한 번의 전환에 여러 채널이 기여했습니다. 어느 채널이 "공로"를 가져갈까요? —
+          어트리뷰션 윈도우와 모델을 바꿔가며 공로가 어떻게 재배분되는지 보세요.</p>
+      </div>
+    </section>
+
+    <div class="aw-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="post.html?id=ad-log-pipeline">광고 로그 파이프라인</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">⛳</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 비유</div>
+          <div class="demo-tldr-analogy-text">
+            <strong>축구 골 하나에 어시스트는 누구 몫일까요?</strong> 마지막 패스만? 첫 드리블도? —
+            어트리뷰션은 전환이라는 "골"의 공로를 터치포인트들에게 나누는 규칙이고, 그 규칙에 따라 채널 평가가 완전히 달라집니다.
+          </div>
+        </div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <li><span class="step-text"><strong>30일 · 마지막 터치</strong>에서 공로가 어디로 가는지 확인(전환 직전 채널 독식).</span></li>
+        <li><span class="step-text">윈도우를 <strong>7일</strong>로 줄여보세요 → 오래된 터치(Display·Search)가 회색으로 빠지는 것 확인.</span></li>
+        <li><span class="step-text">모델을 <strong>선형/위치 기반</strong>으로 바꿔 공로가 여러 채널로 나뉘는 걸 비교.</span></li>
+      </ol>
+
+      <div class="aw-intro">
+        <strong>여정</strong> — 한 유저가 전환(0일)에 이르기까지: <strong>Display</strong>(D-20) → <strong>Search</strong>(D-9) →
+        <strong>Social</strong>(D-3) → <strong>Email</strong>(D-1). <strong>윈도우</strong> 는 전환에서 거슬러 며칠까지의 터치를 인정할지,
+        <strong>모델</strong> 은 인정된 터치들에 공로를 어떻게 나눌지 정합니다. 윈도우 밖(너무 오래된) 터치는 아예 0이 됩니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="aw-controls">
+        <div>
+          <span class="aw-control-title">어트리뷰션 윈도우 (전환 전 N일)</span>
+          <div class="aw-btn-group">
+            <button class="aw-btn" data-window="7">7일</button>
+            <button class="aw-btn" data-window="14">14일</button>
+            <button class="aw-btn" data-window="30">30일</button>
+            <button class="aw-btn" data-window="9999">∞ 전체</button>
+          </div>
+        </div>
+        <div>
+          <span class="aw-control-title">어트리뷰션 모델</span>
+          <div class="aw-btn-group">
+            <button class="aw-btn" data-model="last">마지막 터치</button>
+            <button class="aw-btn" data-model="first">첫 터치</button>
+            <button class="aw-btn" data-model="linear">선형 (균등)</button>
+            <button class="aw-btn" data-model="position">위치 기반 (40·20·40)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="aw-verdict" id="aw-verdict">—</div>
+
+      <!-- Timeline -->
+      <div class="aw-card">
+        <h3>유저 여정 타임라인</h3>
+        <p class="note">왼쪽이 과거, 오른쪽(★)이 전환. 빗금 영역은 윈도우 밖이라 공로에서 제외되는 구간입니다.</p>
+        <div class="aw-track" id="aw-track">
+          <div class="aw-shade" id="aw-shade"></div>
+          <div class="aw-boundary" id="aw-boundary"></div>
+        </div>
+        <div class="aw-axis"><span>← 과거 (D-24)</span><span>전환 (D-0) →</span></div>
+      </div>
+
+      <!-- Credit bar -->
+      <div class="aw-card">
+        <h3>채널별 공로 배분</h3>
+        <p class="note">현재 윈도우·모델 기준으로 각 채널이 가져가는 공로(%). 윈도우 밖 채널은 0%.</p>
+        <div class="aw-chart-wrap"><canvas id="aw-credit-chart"></canvas></div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>공로는 "사실"이 아니라 "규칙"</strong> — 같은 여정이라도 윈도우·모델을 바꾸면 1등 채널이 바뀐다. 마지막 터치는 전환 직전 채널을, 첫 터치는 발견 채널을 띄운다.</li>
+            <li><strong>윈도우가 채널을 살리고 죽인다</strong> — 윈도우를 좁히면 인지 단계의 오래된 채널(Display·Search)이 통째로 0이 된다. 윈도우 선택이 곧 예산 배분을 흔든다.</li>
+            <li><strong>그래서 인크리멘털리티</strong> — 어떤 규칙도 "진짜 기여"를 보장하지 못한다. 그래서 holdout·지오 실험 같은 인과적 측정이 어트리뷰션을 보완한다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=ad-log-pipeline" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">광고 로그 파이프라인 — 측정의 출발점</span>
+              <span class="demo-next-excerpt">한 번의 입찰에서 10개의 로그가 만들어지는 구조와 전환 매칭</span>
+            </a>
+            <a href="demo-pctr-impact.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">pCTR Model Quality Impact</span>
+              <span class="demo-next-excerpt">측정한 신호가 입찰가·수익으로 번역되는 과정</span>
+              <span class="demo-next-meta">⏱ 12분 · 중급</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/attribution-window-demo.js"></script>
+</body>
+
+</html>

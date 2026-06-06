@@ -290,6 +290,8 @@ sequenceDiagram
 - **ROAS 계산**: Return on Ad Spend = conversion_value 합 / 광고비 합
 - **광고주 리포팅**: 캠페인별 전환 수, 전환 가치 집계
 
+<a href="demo-attribution-window.html" class="btn-demo">윈도우·모델이 공로를 어떻게 바꾸는지 직접 눌러보기 →</a>
+
 > [Online Learning & Delayed Feedback 포스트](post.html?id=online-learning-delayed-feedback)에서 다뤘듯이, 전환 지연이 **Fake Negative를 만들어 pCVR을 과소추정**시킵니다. 클릭 후 3일 뒤에 전환이 발생했는데, 학습 데이터를 1일 뒤에 잘라버리면 이 전환은 "비전환(y=0)"으로 잘못 라벨링됩니다. Conversion Log의 도착 지연이 이 문제의 근원입니다.
 
 ### 2.6 Win/Loss Log — 경매의 결과

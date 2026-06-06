@@ -205,6 +205,34 @@ function renderPosts(postsToRender) {
   });
 }
 
+// 큐레이션 홈 — 시작하기/최신/시리즈 (renderPostCard + posts.js 게터 재사용)
+function renderHome() {
+  const root = document.getElementById('home-root');
+  if (!root) return;
+  const put = (id, list) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    list.forEach(p => el.appendChild(renderPostCard(p)));
+  };
+  put('home-start', getStartHerePosts().slice(0, 3));
+  put('home-latest', getAllPosts().slice(0, 6));
+
+  const seriesBox = document.getElementById('home-series');
+  if (seriesBox) {
+    seriesBox.innerHTML = Object.keys(series).map(id => {
+      const s = getSeries(id);
+      const first = s.posts[0];
+      return `<a class="home-series-card" href="post.html?id=${first ? first.id : ''}">
+        <span class="home-series-name">${s.title}</span>
+        <span class="home-series-desc">${s.desc}</span>
+        <span class="home-series-count">${s.posts.length}개 글 · 첫 글부터 →</span></a>`;
+    }).join('');
+  }
+  const cta = document.getElementById('home-all-cta');
+  if (cta) cta.textContent = `전체 ${posts.length}개 글 탐색 →`;
+}
+
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString('en-US', options);
@@ -1377,13 +1405,12 @@ document.addEventListener('DOMContentLoaded', () => {
   setupSearchModal();
 
   // Check if we're on the home page or post page
-  const postsGrid = document.getElementById('posts-grid');
+  const homeRoot = document.getElementById('home-root');
   const postContent = document.getElementById('post-content');
 
-  if (postsGrid) {
-    // Home page
-    initializeFilters();
-    renderPosts(posts);
+  if (homeRoot) {
+    // Home page (큐레이션 랜딩)
+    renderHome();
   } else if (postContent) {
     // Post detail page
     renderPostDetail();

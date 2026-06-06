@@ -3997,3 +3997,26 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 /* 다중선택: 여러 칩이 동시에 .active 가능 — 기존 .active 스타일 재사용 */
 .category-tab, .filter-tag { cursor: pointer; }
+
+/* ===== Home curated ===== */
+.home-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.home-section-head h2 { font-family: var(--font-serif); margin: 0; }
+.home-section-head p, .home-section-head a { color: var(--text-muted); font-size: 0.9rem; }
+.home-section-head a { text-decoration: none; }
+.home-section-head a:hover { color: var(--accent-primary); }
+.home-series { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.home-series-card {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  padding: 1.2rem 1.3rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  border-left: 3px solid var(--accent-primary);
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+.home-series-card:hover { transform: translateY(-2px); }
+.home-series-name { font-family: var(--font-serif); font-weight: 700; color: var(--text-primary); }
+.home-series-desc { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
+.home-series-count { color: var(--accent-secondary); font-size: 0.8rem; margin-top: 0.2rem; }
+.home-browse-cta { text-align: center; }

@@ -8,6 +8,28 @@
 
 const posts = [
   {
+    id: 'causal-inference-101',
+    title: '인과추론 입문: 상관과 인과는 왜 다른가 — 반사실, 교란변수, 그리고 \'안 일어난 세계\'의 문제',
+    excerpt: '아이스크림이 많이 팔린 날 익사 사고도 많다 — 그렇다고 아이스크림이 익사를 부르나? 상관과 인과를 가르는 \'숨은 원인(교란변수)\', 같은 사람의 두 세계를 동시에 못 보는 반사실의 근본 난제, 두 무리가 원래 다를 때 생기는 선택편향까지. 광고 효과 측정이 왜 인과추론 문제인지, 그리고 그걸 푸는 두 갈래 길(랜덤 실험 vs 준실험)을 비유와 그림으로 풀어내는 인과추론 트랙의 출발점.',
+    date: '2026-06-07',
+    categories: ['Measurement & Modeling'],
+    tags: ['Causal Inference'],
+    contentUrl: 'posts/causal-inference-101.md',
+    readTime: '6 min read',
+    series: 'causal-inference-track'
+  },
+  {
+    id: 'rct-randomized-experiment',
+    title: '랜덤 실험(RCT): 동전 던지기 하나가 어떻게 \'진짜 효과\'를 증명하는가',
+    excerpt: '약을 먹은 사람이 빨리 나았다 — 약 덕분인가, 원래 건강해서인가? 누가 처치를 받을지 동전 던지기로 정하면 교란변수가 양쪽에 골고루 섞여 두 그룹이 \'쌍둥이\'가 된다. 그래서 차이가 곧 순수 효과다. A/B 테스트가 왜 인과추론의 황금기준인지, 랜덤화가 편향을 없애는 원리와 그 한계(못 하는 경우)를 비유와 수식으로 풀어낸다.',
+    date: '2026-06-07',
+    categories: ['Measurement & Modeling'],
+    tags: ['Causal Inference', 'A/B Testing'],
+    contentUrl: 'posts/rct-randomized-experiment.md',
+    readTime: '7 min read',
+    series: 'causal-inference-track'
+  },
+  {
     id: 'difference-in-differences',
     title: '이중차분법(DiD) 쉽게 이해하기: 차이를 두 번 빼서 \'진짜 효과\'만 남기는 법',
     excerpt: '광고를 켠 뒤 매출이 올랐다 — 광고 덕분일까, 그냥 성수기일까? 단순 전후 비교는 시간 효과에, 단순 그룹 비교는 원래 차이에 속는다. 광고를 안 한 옆 동네를 \'대역 배우\'로 세워 (처치군 변화)−(대조군 변화)로 자연 증가를 걷어내는 이중차분의 직관을, 서울/부산 숫자와 평행추세 그림으로 풀어낸다. 교차항 회귀식의 β₃가 왜 곧 효과인지, 그리고 A/B를 못 돌릴 때 증분효과(incrementality)를 재는 도구로서의 DiD까지.',
@@ -15,7 +37,30 @@ const posts = [
     categories: ['Measurement & Modeling'],
     tags: ['Causal Inference', 'Incrementality', 'A/B Testing'],
     contentUrl: 'posts/difference-in-differences.md',
-    readTime: '9 min read'
+    readTime: '9 min read',
+    series: 'causal-inference-track'
+  },
+  {
+    id: 'regression-discontinuity',
+    title: '회귀불연속(RDD): 합격컷 1점 차이가 만드는 자연 실험',
+    excerpt: '79점과 80점, 사실상 같은 사람인데 한 명만 합격선을 넘었다. 이 \'컷오프 바로 위/아래\'를 비교하면 거의 실험에 가까운 비교가 된다. 어떤 기준선에서 처치가 갈릴 때 그 경계의 점프로 인과효과를 읽어내는 회귀불연속 설계 — 직관, 컷오프 국소효과 수식, 조작 없음 가정과 국소성 한계, 그리고 입찰가·빈도 캡 같은 광고 임계값 사례까지.',
+    date: '2026-06-07',
+    categories: ['Measurement & Modeling'],
+    tags: ['Causal Inference'],
+    contentUrl: 'posts/regression-discontinuity.md',
+    readTime: '6 min read',
+    series: 'causal-inference-track'
+  },
+  {
+    id: 'instrumental-variables',
+    title: '도구변수(IV): 직접 못 흔드는 원인을, 바람을 빌려 미는 법',
+    excerpt: '교란변수 때문에 X가 Y에 주는 진짜 효과를 못 볼 때, X를 \'우연히\' 흔드는 외부 손잡이(도구변수 Z)를 찾는다. 직접 못 미는 그네를 바람이 밀어준 만큼만 보고 효과를 추정하는 셈. 2SLS와 Wald 추정량의 직관, 도구가 갖춰야 할 세 조건(관련성·배제·독립성)과 약한 도구 문제, 그리고 광고 노출을 무작위화 못 할 때의 encouragement design 사례까지.',
+    date: '2026-06-07',
+    categories: ['Measurement & Modeling'],
+    tags: ['Causal Inference'],
+    contentUrl: 'posts/instrumental-variables.md',
+    readTime: '7 min read',
+    series: 'causal-inference-track'
   },
   {
     id: 'ab-test-vs-mab',
@@ -347,6 +392,11 @@ const posts = [
 
 // 읽는 순서(시리즈). 순서는 여기 한 곳에서만 관리한다(데모 learning-path와 동일 사상).
 const series = {
+  'causal-inference-track': {
+    title: '인과추론 트랙',
+    desc: '상관과 인과의 차이부터, 실험을 못 할 때 효과를 캐내는 도구들(RCT·DiD·RDD·IV)까지',
+    posts: ['causal-inference-101', 'rct-randomized-experiment', 'difference-in-differences', 'regression-discontinuity', 'instrumental-variables'],
+  },
   'getting-started': {
     title: '광고 시스템 입문 경로',
     desc: '배경지식 없이 시작해 광고 생태계 전체를 한 바퀴',

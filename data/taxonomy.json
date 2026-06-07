@@ -6,7 +6,8 @@
     { "id": "Measurement & Modeling",    "label": "Measurement & Modeling",    "description": "pCTR/pCVR, calibration, attribution, bias 보정" },
     { "id": "ML Infrastructure",         "label": "ML Infrastructure",         "description": "로그 파이프라인, feature store, 모델 서빙" },
     { "id": "Targeting & Audience",      "label": "Targeting & Audience",      "description": "세그멘테이션, lookalike, 타겟팅" },
-    { "id": "DevOps & Tooling",          "label": "DevOps & Tooling",          "description": "Git, 워크플로, 협업 도구" }
+    { "id": "DevOps & Tooling",          "label": "DevOps & Tooling",          "description": "Git, 워크플로, 협업 도구" },
+    { "id": "Software Engineering",      "label": "Software Engineering",      "description": "소프트웨어 아키텍처, 시스템 설계, 컨테이너/네트워킹 등 일반 개발 기초" }
   ],
   "tags": [
     "MAB", "Contextual Bandit", "UCB", "LinUCB", "Thompson Sampling", "Exploration",
@@ -14,6 +15,7 @@
     "pCTR", "pCVR", "Calibration", "Attribution", "Causal Inference", "Incrementality", "Ad Ranking", "Model Serving", "Two-Tower", "ML Infra",
     "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
     "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
-    "Git", "DevOps", "Workflow", "Collaboration"
+    "Git", "DevOps", "Workflow", "Collaboration",
+    "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking"
   ]
 }

@@ -8,6 +8,29 @@
 
 const posts = [
   {
+    id: 'software-architecture-patterns',
+    title: '소프트웨어 아키텍처 패턴 6가지 쉽게 이해하기: 이벤트 기반·계층형·모놀리식·마이크로서비스·MVC·마스터-슬레이브',
+    excerpt: '집을 짓는 방식이 여러 가지이듯, 소프트웨어도 \'어떻게 짜맞출지\'의 정형화된 설계도가 있다. 컴포넌트가 \'사건\'으로 대화하는 이벤트 기반, 책임을 층층이 쌓는 계층형, 한 덩어리로 만드는 모놀리식, 잘게 쪼개는 마이크로서비스, 화면·로직·데이터를 나누는 MVC, 읽기/쓰기를 분산하는 마스터-슬레이브까지 — 6가지 대표 패턴을 일상 비유와 도식으로 풀고, 언제 무엇을 고를지까지 정리한다.',
+    date: '2026-06-07',
+    categories: ['Software Engineering'],
+    tags: ['Software Architecture', 'System Design', 'Microservices', 'Event-Driven', '입문'],
+    contentUrl: 'posts/software-architecture-patterns.md',
+    readTime: '20 min read',
+    featured: true,
+    series: 'engineering-foundations'
+  },
+  {
+    id: 'kubernetes-networking',
+    title: '쿠버네티스 네트워킹 쉽게 이해하기: Pods → Services → Ingress, 트래픽은 어떻게 흐르는가',
+    excerpt: '사용자의 요청 한 건이 쿠버네티스 클러스터 안에서 어떻게 앱까지 도착할까? 앱이 도는 \'집\' Pod, 그 집들을 안정적으로 이어주는 \'길\' Service, 도시 밖에서 들어오는 입구 \'성문\' Ingress — 이 세 가지가 어떻게 협력하는지 비유와 트래픽 흐름 도식으로 풀어낸다. Pod는 왜 자꾸 바뀌고(ephemeral), 그래서 왜 안정적 주소(Service)와 입구(Ingress)가 필요한지까지.',
+    date: '2026-06-07',
+    categories: ['Software Engineering'],
+    tags: ['Kubernetes', 'Networking', 'DevOps', 'System Design', '입문'],
+    contentUrl: 'posts/kubernetes-networking.md',
+    readTime: '13 min read',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'causal-inference-101',
     title: '인과추론 입문: 상관과 인과는 왜 다른가 — 반사실, 교란변수, 그리고 \'안 일어난 세계\'의 문제',
     excerpt: '아이스크림이 많이 팔린 날 익사 사고도 많다 — 그렇다고 아이스크림이 익사를 부르나? 상관과 인과를 가르는 \'숨은 원인(교란변수)\', 같은 사람의 두 세계를 동시에 못 보는 반사실의 근본 난제, 두 무리가 원래 다를 때 생기는 선택편향까지. 광고 효과 측정이 왜 인과추론 문제인지, 그리고 그걸 푸는 두 갈래 길(랜덤 실험 vs 준실험)을 비유와 그림으로 풀어내는 인과추론 트랙의 출발점.',
@@ -114,7 +137,8 @@ const posts = [
     categories: ['DevOps & Tooling'],
     tags: ['Git', 'DevOps', 'Workflow', 'Collaboration'],
     contentUrl: 'posts/git-practical-guide.md',
-    readTime: '21 min read'
+    readTime: '21 min read',
+    series: 'engineering-foundations'
   },
   {
     id: 'ad-log-pipeline',
@@ -426,6 +450,11 @@ const series = {
     title: '입찰·생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰·페이싱 → 입찰 셰이딩',
     posts: ['walled-garden', 'adtech-dev-layers', 'auto-bidding-pacing', 'bid-shading-censored'],
+  },
+  'engineering-foundations': {
+    title: '엔지니어링 기초 트랙',
+    desc: '협업 도구(Git)부터 시스템 설계(아키텍처 패턴)와 운영(쿠버네티스)까지 — 백엔드/인프라 엔지니어의 기본기',
+    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking'],
   },
 };
 

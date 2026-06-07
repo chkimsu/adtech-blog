@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>베타 분포에서 샘플링하기 — Ad Tech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 900px) {
+            .demo-container { grid-template-columns: 1fr; }
+        }
+        .chart-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-height: 360px;
+        }
+        .control-panel { display: flex; flex-direction: column; gap: 1.25rem; }
+        .control-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.1rem 1.2rem;
+        }
+        .control-card h3 { margin: 0 0 0.8rem; font-size: 0.98rem; }
+        .slider-row { margin-bottom: 0.9rem; }
+        .slider-row:last-child { margin-bottom: 0; }
+        .slider-label {
+            display: flex; justify-content: space-between;
+            font-size: 0.85rem; margin-bottom: 0.35rem; color: var(--text-secondary);
+        }
+        .slider-label b {
+            color: var(--accent-primary);
+            font-family: 'Fira Code', monospace;
+        }
+        .slider-row input[type="range"] { width: 100%; accent-color: var(--accent-primary); }
+        .samp-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .samp-btn {
+            flex: 1 1 auto; padding: 0.6rem 0.9rem; border-radius: 8px;
+            border: 1px solid var(--border-color); background: var(--bg-tertiary);
+            color: var(--text-primary); cursor: pointer; font-weight: 600; font-size: 0.88rem;
+            transition: filter 0.15s, transform 0.1s;
+        }
+        .samp-btn:hover { filter: brightness(1.06); }
+        .samp-btn:active { transform: translateY(1px); }
+        .samp-btn.primary { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }
+        .samp-btn.ghost { background: transparent; color: var(--text-muted); }
+        .stat-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding: 0.4rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem;
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-row .v { font-family: 'Fira Code', monospace; font-weight: 700; color: var(--text-primary); }
+        .stat-row .v.accent { color: var(--accent-primary); }
+        .axis-note { margin-top: 1rem; font-size: 0.88rem; color: var(--text-secondary); }
+        .axis-note p { margin: 0.2rem 0; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="index.html">홈</a></li>
+                    <li><a href="about.html">소개</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">Dark</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <div class="post-header">
+            <div class="post-meta">Interactive Demo</div>
+            <h1>베타 분포에서 샘플링하기</h1>
+            <p class="post-excerpt">
+                "분포에서 한 번 뽑는다"는 게 정확히 무슨 뜻일까요? 베타 분포 곡선에서
+                샘플을 반복해 뽑아 보세요. 점들이 <strong>봉우리 아래에 더 자주</strong> 쌓이고,
+                많이 모일수록 히스토그램이 <strong>원래 곡선 모양을 그대로 재현</strong>합니다.
+                이것이 톰슨 샘플링이 매 라운드 "한 번 뽑는" 바로 그 행위예요.
+            </p>
+        </div>
+
+        <div class="demo-tldr-analogy">
+            <div class="demo-tldr-analogy-icon">β</div>
+            <div class="demo-tldr-analogy-body">
+                <div class="demo-tldr-analogy-label">한 줄 비유</div>
+                <div class="demo-tldr-analogy-text">
+                    분포 곡선을 <strong>땅의 높낮이</strong>라고 생각하세요. 샘플은
+                    <em>높은 곳(확률이 큰 곳)에 더 자주 떨어지는 빗방울</em>입니다.
+                    빗방울을 충분히 모으면, 그 자국이 곡선 모양을 똑같이 그려냅니다.
+                </div>
+            </div>
+        </div>
+
+        <ol class="demo-steps">
+            <span class="demo-steps-title">이렇게 해보세요</span>
+            <li><span class="step-text"><strong>샘플 1번</strong>을 여러 번 눌러 보세요 — 점(세로 막대)이 곡선의 봉우리 근처에 더 자주 찍힙니다.</span></li>
+            <li><span class="step-text"><strong>100번</strong>·<strong>자동</strong>으로 많이 뽑으면, 막대들이 쌓여 <strong>곡선과 거의 같은 모양</strong>이 됩니다. (표본 평균도 분포 평균에 가까워져요.)</span></li>
+            <li><span class="step-text">슬라이더로 <strong>α·β</strong>를 바꿔 곡선 모양을 바꿔 보세요. α는 클릭(성공), β는 무시(실패)에 해당합니다.</span></li>
+        </ol>
+
+        <div class="demo-container">
+            <div class="chart-panel">
+                <canvas id="betaChart"></canvas>
+                <div class="axis-note">
+                    <p><strong>X축 (CTR):</strong> 클릭 확률 값 (0~1).</p>
+                    <p><strong>곡선(베타 분포):</strong> "이 값일 것 같다"는 믿음의 높낮이. <strong>막대:</strong> 실제로 뽑힌 샘플들의 빈도. <strong>세로 표시:</strong> 가장 최근에 뽑은 한 점.</p>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="control-card">
+                    <h3>분포 모양 — Beta(α, β)</h3>
+                    <div class="slider-row">
+                        <div class="slider-label"><span>α &nbsp;(클릭 + 1)</span><b id="alpha-val">8</b></div>
+                        <input type="range" id="slider-alpha" min="1" max="40" step="1" value="8">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label"><span>β &nbsp;(무시 + 1)</span><b id="beta-val">14</b></div>
+                        <input type="range" id="slider-beta" min="1" max="40" step="1" value="14">
+                    </div>
+                    <small style="display:block; font-size:0.74rem; color:var(--text-muted); line-height:1.5;">
+                        α, β를 바꾸면 분포가 바뀌어 <strong>쌓인 샘플이 초기화</strong>됩니다.
+                    </small>
+                </div>
+
+                <div class="control-card">
+                    <h3>샘플 뽑기</h3>
+                    <div class="samp-buttons">
+                        <button class="samp-btn primary" id="btn-one" type="button">샘플 1번</button>
+                        <button class="samp-btn" id="btn-hundred" type="button">100번</button>
+                        <button class="samp-btn" id="btn-auto" type="button">자동 ▶</button>
+                        <button class="samp-btn ghost" id="btn-reset" type="button">리셋</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <h3>현황</h3>
+                    <div class="stat-row"><span>마지막 샘플</span><span class="v accent" id="stat-last">—</span></div>
+                    <div class="stat-row"><span>총 샘플 수</span><span class="v" id="stat-count">0</span></div>
+                    <div class="stat-row"><span>표본 평균</span><span class="v" id="stat-mean">—</span></div>
+                    <div class="stat-row"><span>분포 평균 α/(α+β)</span><span class="v" id="stat-true">0.364</span></div>
+                </div>
+            </div>
+        </div>
+
+        <section style="margin-top: 3rem;">
+            <h2>작동 원리</h2>
+            <p>
+                베타 분포는 "어떤 확률(예: CTR)이 얼마쯤일까"에 대한 <strong>믿음</strong>을 나타냅니다.
+                곡선이 높은 곳일수록 그 값이 나올 가능성이 큽니다. 그래서 분포에서 한 번 뽑으면,
+                <strong>봉우리 근처 값이 자주, 가장자리 값은 드물게</strong> 나옵니다.
+            </p>
+            <p>
+                샘플을 하나만 보면 그냥 점 하나지만, 많이 모으면 <strong>큰 수의 법칙</strong>에 따라
+                히스토그램이 원래 곡선을 재현합니다. 표본 평균도 분포의 평균
+                $\;\mathbb{E}[\theta] = \frac{\alpha}{\alpha + \beta}\;$ 에 점점 가까워지죠.
+            </p>
+            <h3>톰슨 샘플링과의 연결</h3>
+            <ul>
+                <li><strong>α = 클릭(성공) + 1, β = 무시(실패) + 1.</strong> 데이터가 쌓일수록 곡선이 좁고 높아져 "확신"이 커집니다.</li>
+                <li><strong>매 라운드 딱 한 번 뽑아</strong> 가장 큰 값을 낸 광고를 선택합니다. 이 데모의 "샘플 1번"이 바로 그 행위예요.</li>
+                <li>데이터가 적은 광고는 곡선이 <strong>넓어서</strong> 가끔 큰 값이 뽑힙니다 → 자연스러운 <strong>탐색(exploration)</strong>. 데이터가 많으면 좁은 곳에서만 뽑혀 <strong>안정적(exploitation)</strong>.</li>
+            </ul>
+            <p>
+                여러 광고를 동시에 놓고 "각자 한 번 뽑아 최고를 고르고, 결과로 곡선을 업데이트"하는
+                전체 과정은 <a href="demo-ts.html">Thompson Sampling Simulator</a>에서 볼 수 있어요.
+            </p>
+        </section>
+
+        <div class="demo-next" style="margin-top:2.5rem;">
+            <a href="demo-ts.html" class="demo-next-card">
+                <span class="demo-next-label">관련 데모</span>
+                <span class="demo-next-title">Thompson Sampling Simulator</span>
+                <span class="demo-next-excerpt">여러 광고의 베타 분포가 클릭에 따라 좁아지는 전체 학습 과정</span>
+            </a>
+            <a href="post.html?id=ucb-vs-ts" class="demo-next-card">
+                <span class="demo-next-label">관련 포스트</span>
+                <span class="demo-next-title">UCB vs Thompson Sampling</span>
+                <span class="demo-next-excerpt">계산기(UCB) vs 주사위(TS) — 결정적 vs 확률적 접근</span>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">홈</a>
+                <a href="about.html">소개</a>
+                <a href="ecosystem.html">Ecosystem</a>
+                <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+            </div>
+            <p class="footer-text">© 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/beta-sampling-demo.js"></script>
+</body>
+
+</html>

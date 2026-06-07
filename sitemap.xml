@@ -37,6 +37,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=kubernetes-networking</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>

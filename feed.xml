@@ -8,6 +8,22 @@
   <updated>2026-06-07T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
+    <title>소프트웨어 아키텍처 패턴 6가지 쉽게 이해하기: 이벤트 기반·계층형·모놀리식·마이크로서비스·MVC·마스터-슬레이브</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns</id>
+    <updated>2026-06-07T00:00:00Z</updated>
+    <summary>집을 짓는 방식이 여러 가지이듯, 소프트웨어도 &apos;어떻게 짜맞출지&apos;의 정형화된 설계도가 있다. 컴포넌트가 &apos;사건&apos;으로 대화하는 이벤트 기반, 책임을 층층이 쌓는 계층형, 한 덩어리로 만드는 모놀리식, 잘게 쪼개는 마이크로서비스, 화면·로직·데이터를 나누는 MVC, 읽기/쓰기를 분산하는 마스터-슬레이브까지 — 6가지 대표 패턴을 일상 비유와 도식으로 풀고, 언제 무엇을 고를지까지 정리한다.</summary>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>쿠버네티스 네트워킹 쉽게 이해하기: Pods → Services → Ingress, 트래픽은 어떻게 흐르는가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kubernetes-networking"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kubernetes-networking</id>
+    <updated>2026-06-07T00:00:00Z</updated>
+    <summary>사용자의 요청 한 건이 쿠버네티스 클러스터 안에서 어떻게 앱까지 도착할까? 앱이 도는 &apos;집&apos; Pod, 그 집들을 안정적으로 이어주는 &apos;길&apos; Service, 도시 밖에서 들어오는 입구 &apos;성문&apos; Ingress — 이 세 가지가 어떻게 협력하는지 비유와 트래픽 흐름 도식으로 풀어낸다. Pod는 왜 자꾸 바뀌고(ephemeral), 그래서 왜 안정적 주소(Service)와 입구(Ingress)가 필요한지까지.</summary>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
     <title>인과추론 입문: 상관과 인과는 왜 다른가 — 반사실, 교란변수, 그리고 &apos;안 일어난 세계&apos;의 문제</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101</id>
@@ -150,21 +166,5 @@
     <updated>2026-04-11T00:00:00Z</updated>
     <summary>Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.</summary>
     <category term="Bandits &amp; Personalization"/>
-  </entry>
-  <entry>
-    <title>Deep CTR 모델의 진화: LR에서 DIN까지, 광고 클릭률 예측의 핵심 아키텍처</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=deep-ctr-models"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=deep-ctr-models</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>LR, FM, Wide&amp;Deep, DeepFM, DCN-v2, DIN, DIEN — CTR 예측 모델이 &quot;어떤 문제를 풀려고 했는가&quot; 관점으로 진화 과정을 추적하고, 프로덕션 선택 가이드까지 제시합니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>Calibration: AUC가 높아도 돈을 잃는 이유 — 광고 모델의 확률 보정</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=calibration"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=calibration</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>AUC는 순서만 평가하고 확률값의 정확도는 평가하지 않습니다. Platt Scaling, Isotonic Regression, Temperature Scaling으로 pCTR을 보정하고, 프로덕션 Calibration 파이프라인을 구축하는 방법을 해부합니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

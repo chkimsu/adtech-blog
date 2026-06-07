@@ -53,7 +53,7 @@ for i, h in enumerate(history):
 ### ③ Thompson Sampling (Basic / Beta)
 
 * 별명: 도박사 (확률주의자)
-* 로직: 각 광고의 성공 확률을 Beta 분포로 그림. 매번 주사위를 굴려서(Sampling) 나온 값으로 1등을 정함.
+* 로직: 각 광고의 성공 확률을 Beta 분포로 그림. 매번 주사위를 굴려서(Sampling) 나온 값으로 1등을 정함. ([베타 분포 샘플링 데모](demo-beta-sampling.html))
 * 특징: 현업에서 A/B 테스트용으로 성능이 가장 좋음. 하지만 유저별 개인화는 불가능.
 
 ```python

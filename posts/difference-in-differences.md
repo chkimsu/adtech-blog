@@ -172,5 +172,7 @@ DiD가 성립하려면 딱 하나를 믿어야 합니다.
 
 ### 더 깊이 읽기
 
-- [A/B 테스트 vs 멀티암드 밴딧](post.html?id=ab-test-vs-mab) — 랜덤 분할이 가능할 때의 정석 비교
-- [30분 만에 이해하는 광고 시스템](post.html?id=adtech-30min-primer) — Attribution·측정을 포함한 전체 지도
+- [인과추론 입문](post.html?id=causal-inference-101) — 상관·인과·반사실의 큰 그림 (이 트랙의 출발점)
+- [랜덤 실험(RCT)](post.html?id=rct-randomized-experiment) — 랜덤 분할이 가능할 때의 황금기준
+- [회귀불연속(RDD)](post.html?id=regression-discontinuity) · [도구변수(IV)](post.html?id=instrumental-variables) — 또 다른 준실험 도구들
+- [A/B 테스트 vs 멀티암드 밴딧](post.html?id=ab-test-vs-mab) — 랜덤 분할을 실제로 굴리는 이야기

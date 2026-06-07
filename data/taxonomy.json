@@ -11,7 +11,7 @@
   "tags": [
     "MAB", "Contextual Bandit", "UCB", "LinUCB", "Thompson Sampling", "Exploration",
     "Online Learning", "A/B Testing", "입문",
-    "pCTR", "pCVR", "Calibration", "Attribution", "Ad Ranking", "Model Serving", "Two-Tower", "ML Infra",
+    "pCTR", "pCVR", "Calibration", "Attribution", "Causal Inference", "Incrementality", "Ad Ranking", "Model Serving", "Two-Tower", "ML Infra",
     "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
     "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
     "Git", "DevOps", "Workflow", "Collaboration"

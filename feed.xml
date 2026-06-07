@@ -5,8 +5,16 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-06-05T00:00:00Z</updated>
+  <updated>2026-06-07T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>이중차분법(DiD) 쉽게 이해하기: 차이를 두 번 빼서 &apos;진짜 효과&apos;만 남기는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences</id>
+    <updated>2026-06-07T00:00:00Z</updated>
+    <summary>광고를 켠 뒤 매출이 올랐다 — 광고 덕분일까, 그냥 성수기일까? 단순 전후 비교는 시간 효과에, 단순 그룹 비교는 원래 차이에 속는다. 광고를 안 한 옆 동네를 &apos;대역 배우&apos;로 세워 (처치군 변화)−(대조군 변화)로 자연 증가를 걷어내는 이중차분의 직관을, 서울/부산 숫자와 평행추세 그림으로 풀어낸다. 교차항 회귀식의 β₃가 왜 곧 효과인지, 그리고 A/B를 못 돌릴 때 증분효과(incrementality)를 재는 도구로서의 DiD까지.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
   <entry>
     <title>A/B 테스트 vs 멀티암드 밴딧: 고정 트래픽과 적응형 트래픽, 그리고 Contextual은 왜 필요한가</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ab-test-vs-mab"/>
@@ -157,14 +165,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=model-serving-architecture</id>
     <updated>2026-04-10T00:00:00Z</updated>
     <summary>Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>Online Learning &amp; Delayed Feedback: 광고 모델은 왜 매일 낡아지는가</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=online-learning-delayed-feedback"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=online-learning-delayed-feedback</id>
-    <updated>2026-04-10T00:00:00Z</updated>
-    <summary>Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
 </feed>

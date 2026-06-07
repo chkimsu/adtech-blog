@@ -37,7 +37,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=instrumental-variables</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

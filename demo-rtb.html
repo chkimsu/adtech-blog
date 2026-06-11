@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RTB Auction Simulator - AdTech Blog</title>
@@ -336,6 +336,11 @@
           </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 지면 하나를 놓고 4개 DSP가 벌이는 실시간 경매 — 경매 방식(1st/2nd Price)과 Floor Price에 따라 낙찰자와 실제 지불 가격이 어떻게 달라지는지 직접 돌려보며 확인합니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>여러분이 보는 거의 모든 배너 광고가 이 0.1초짜리 경매의 결과물입니다. <strong>경매 방식의 차이</strong>를 알아야 Bid Shading 같은 입찰 전략이 왜 생겼는지 이해할 수 있어요.</div>
+        </div>
+
         <!-- 3단계 가이드 -->
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
@@ -494,14 +499,6 @@
                 <li>Floor Price를 낮추면: 더 많은 DSP가 참여하여 경쟁이 활발해지지만, 낙찰 단가가 낮아질 수 있습니다.</li>
                 <li>위 시뮬레이터에서 Floor Price를 조절하며 DSP별 탈락/참여 패턴을 관찰해 보세요.</li>
             </ul>
-
-            <h2>실무에서의 활용</h2>
-            <p>
-                이 시뮬레이터의 결과를 Auto Run 10라운드로 누적하면,
-                각 전략의 장기적 성과(Win Rate, Avg Spend, Total Cost)를 비교할 수 있습니다.
-                First Price와 Second Price를 각각 10라운드씩 돌려보면,
-                DSP C (Smart)의 Bid Shading 전략이 First Price 환경에서 얼마나 비용 효율적인지 확인할 수 있습니다.
-            </p>
 
             <h2>OpenRTB 생태계 — 실제 서비스 맵</h2>
             <p>
@@ -791,6 +788,25 @@ Winner: The Trade Desk, Pays $2.80
                 </table>
             </div>
         </div>
+
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                이 데모의 First/Second Price 전환은 실제 업계가 통째로 겪은 사건입니다. 2017년부터 SSP들이
+                Second Price에서 First Price로 옮겨갔고, 2019년 Google Ad Manager까지 전환을 마치면서
+                디스플레이 광고 경매의 기본값이 바뀌었습니다.
+            </p>
+            <ul>
+                <li><strong>1st Price 전환기의 DSP:</strong> "써낸 값 그대로 지불"이 되자 The Trade Desk, DV360 같은
+                    DSP들은 일제히 Bid Shading 알고리즘을 도입했습니다. 이 데모의 DSP C가 그 축소판이에요 —
+                    Auto Run으로 두 경매 방식을 10라운드씩 돌려 비교하면 그 효과를 직접 볼 수 있습니다.</li>
+                <li><strong>SSP의 Floor Price 운영:</strong> 퍼블리셔와 SSP는 지면·시간대·유저별로 최저가를 다르게 거는
+                    Dynamic Floor를 운영합니다. 너무 높으면 미판매가 늘고, 너무 낮으면 수익을 놓치는 —
+                    이 데모의 Floor Price 슬라이더 실험 그대로입니다.</li>
+                <li><strong>경매 로그 분석:</strong> DSP 운영팀은 이 데모의 Activity Log에 해당하는 입찰 로그(입찰가·지불가·낙찰률)를
+                    매일 분석해 전략을 조정합니다. "낙찰은 많은데 Surplus가 마이너스"라면 과다입찰 신호예요.</li>
+            </ul>
+        </section>
     </main>
 
     <!-- TL;DR -->
@@ -839,6 +855,8 @@ Winner: The Trade Desk, Pays $2.80
 
     <script src="js/main.js"></script>
     <script src="js/rtb-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

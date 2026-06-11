@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bid Shading Visualizer - AdTech Blog</title>
@@ -384,6 +384,11 @@
           </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>1st Price 경매에서 진짜 가치(True Value) 그대로 입찰하면 왜 이익이 0이 되는지, 그리고 얼마나 깎아 불러야(Shading) 이익이 최대가 되는지를 2,000회 모의 경매로 확인합니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>업계가 1st Price로 전환한 뒤 모든 주요 DSP가 <strong>Bid Shading</strong>을 기본 탑재했습니다. pCTR 모델의 정확도가 이 전략의 성패를 좌우하기 때문에, 모델을 만드는 사람이라면 꼭 알아야 하는 구조예요.</div>
+        </div>
+
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해보세요 — 8분</span>
           <li><span class="step-text">Shading <code>1.0</code>(깎기 없음)에서 <code>Run Simulation</code> → Win Rate는 높지만 이익이 거의 0인 것 확인.</span></li>
@@ -692,6 +697,23 @@
                 실제 DSP에서는 이 로직으로 bid request를 skip합니다.
             </p>
         </div>
+
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                Bid Shading은 더 이상 선택이 아니라 기본 장착 기능입니다. 1st Price 전환이 완료된 2019년 이후,
+                주요 DSP는 모두 ML 기반 Shading 모듈을 입찰 경로에 내장하고 있습니다.
+            </p>
+            <ul>
+                <li><strong>DSP의 기본 기능화:</strong> Google DV360, The Trade Desk, Amazon DSP 등은 광고주가 따로 설정하지
+                    않아도 매 입찰마다 자동으로 Shading을 적용합니다. 과거 낙찰 데이터로 지면별 Win Rate 곡선을 학습해
+                    깎는 폭을 정해요.</li>
+                <li><strong>Exploration Bid:</strong> 데모의 Censored View에서 본 "안 보이는 영역" 문제 때문에, 실무에서는
+                    트래픽 일부에 일부러 높은 입찰을 섞어 시장 데이터를 수집합니다. 약간의 손해를 내고 정보를 사는 셈이죠.</li>
+                <li><strong>생존 분석 보정:</strong> 패찰한 경매는 "내 입찰가보다 높았다"는 사실만 남습니다. Kaplan-Meier 같은
+                    생존 분석 기법으로 이 절단(censoring)을 보정해야 시장 분포를 올바르게 추정할 수 있습니다.</li>
+            </ul>
+        </section>
     </main>
 
     <!-- TL;DR -->
@@ -745,6 +767,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/bid-shading-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

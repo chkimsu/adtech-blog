@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>베타 분포에서 샘플링하기 — Ad Tech Blog</title>
@@ -114,6 +114,11 @@
             </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>"확률 분포에서 샘플을 한 번 뽑는다"는 추상적인 말이 실제로 어떤 행위인지 — 뽑힌 점들이 어디에 쌓이고, 많이 모이면 무엇이 되는지를 눈으로 확인합니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>광고 추천의 핵심 알고리즘인 <strong>톰슨 샘플링</strong>이 매 라운드 수행하는 단 하나의 행위가 바로 이 "한 번 뽑기"입니다. 이게 이해되면 톰슨 샘플링의 절반은 이해한 거예요.</div>
+        </div>
+
         <ol class="demo-steps">
             <span class="demo-steps-title">이렇게 해보세요</span>
             <li><span class="step-text"><strong>샘플 1번</strong>을 여러 번 눌러 보세요 — 점(세로 막대)이 곡선의 봉우리 근처에 더 자주 찍힙니다.</span></li>
@@ -190,6 +195,23 @@
             </p>
         </section>
 
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                새 광고 소재가 등록되면 클릭 데이터가 0건입니다. 이때 베타 분포가 <strong>콜드 스타트</strong> 문제를
+                풀어줍니다 — 데이터가 없으면 Beta(1, 1)처럼 넓은 분포에서 시작해 "모른다"를 정직하게 표현하고,
+                노출·클릭이 쌓일 때마다 α와 β를 1씩 올려 분포를 좁혀갑니다.
+            </p>
+            <ul>
+                <li><strong>광고 소재 선택:</strong> 광고 플랫폼들은 한 캠페인의 여러 소재(이미지/문구) 중 무엇을 내보낼지를
+                    이 방식으로 고릅니다. 소재마다 베타 분포를 하나씩 들고, 요청이 올 때마다 각자 한 번씩 뽑아 가장 큰 값의 소재를 노출합니다.</li>
+                <li><strong>탐색 예산이 공짜:</strong> A/B 테스트처럼 트래픽을 미리 50:50으로 가르지 않아도, 데이터가 적은
+                    소재는 분포가 넓어 가끔 큰 값이 뽑히며 자연스럽게 기회를 받습니다. 명시적인 탐색 로직 없이도요.</li>
+                <li><strong>실시간 업데이트가 쉬움:</strong> 모델 재학습 없이 클릭 1건 = α+1, 무시 1건 = β+1만 하면 끝이라
+                    초당 수만 건 요청을 받는 광고 서버에서도 부담이 없습니다.</li>
+            </ul>
+        </section>
+
         <div class="demo-next" style="margin-top:2.5rem;">
             <a href="demo-ts.html" class="demo-next-card">
                 <span class="demo-next-label">관련 데모</span>
@@ -218,6 +240,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/beta-sampling-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

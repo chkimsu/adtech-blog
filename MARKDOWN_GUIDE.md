@@ -100,3 +100,26 @@ $\mathrm{Score}_a = \bar{x}_a + \sqrt{\frac{2 \ln t}{n_a}}$
 | 함수명 | `$수익(x)$` | `$\mathrm{수익}(x)$` |
 
 > 콘솔에 `Unicode text character "X" used in math mode` 경고가 보이면, 그 수식 안에 한글이 섞여 있다는 신호입니다.
+
+## 데모 임베드 (글 안 미니 데모)
+
+포스트 본문 중간에 인터랙티브 데모를 iframe으로 인라인 삽입할 수 있다.
+데모 페이지에 `?embed=1`을 붙이면 차트·컨트롤·해설 패널만 남는 컴팩트 모드가 된다.
+
+```html
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-beta-sampling.html?embed=1" height="560" loading="lazy" title="베타 분포 샘플링 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-beta-sampling.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+```
+
+**규칙 (어기면 렌더가 깨진다):**
+
+1. **블록 앞뒤로 빈 줄** 필수 — 마크다운 HTML 블록으로 인식되기 위함.
+2. **블록 내부에는 빈 줄 금지** — 빈 줄이 있으면 HTML 블록이 중간에 끊긴다.
+3. **블록 안에 `$`와 `**` 금지** — 수식 보호(protectMathBlocks)와 볼드 전처리(preprocessMarkdown)가
+   HTML 속성/텍스트를 치환해 버린다. title 등에 필요하면 다른 표현으로.
+4. `height="560"`은 JS 로드 전 폴백 — 로드 후에는 postMessage로 실제 높이에 맞게 자동 조정된다.
+5. `src`는 루트 상대 경로 (`demo-*.html?embed=1`) — post.html이 루트에 있으므로 그대로 동작.
+
+임베드 모드를 지원하려면 해당 데모가 `js/demo-edu-content.js`에 엔트리(embedKeep)를 갖고 있어야 한다.

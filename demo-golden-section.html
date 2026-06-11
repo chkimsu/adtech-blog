@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golden Section Search - AdTech Blog</title>
@@ -337,7 +337,7 @@
         </nav>
     </header>
 
-    <div class="container section">
+    <main class="container section">
         <a href="demos.html" class="back-link">&larr; Demos</a>
         <h1>Golden Section Search</h1>
         <p class="demo-subtitle">
@@ -361,6 +361,11 @@
               평가 횟수가 적어도 정상에 빠르게 수렴합니다. Grid Search 대비 약 25배 빠른 게 이 데모의 핵심.
             </div>
           </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰가를 올리면 이길 확률은 커지지만 남는 이익은 줄어드는 시소 관계에서, 기대 이익이 최대인 균형점(최적 입찰가 b*)을 탐색 구간을 0.618배씩 잘라내며 20번 안팎의 계산으로 찾아내는 과정을 봅니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>실시간 경매(RTB)는 입찰 요청마다 수 밀리초 안에 답해야 합니다. "1원이라도 싸게 이기는" <strong>비드 셰이딩</strong>의 마지막 계산 단계가 바로 이 탐색이고, 이 빠르기 덕분에 하루 수십억 건 경매에 쓸 수 있어요.</div>
         </div>
 
         <ol class="demo-steps">
@@ -671,7 +676,21 @@
             </p>
         </div>
 
-    </div>
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                주요 광고 거래소가 1st Price 경매로 전환된 뒤, 모든 DSP는 "얼마나 깎아 입찰할까"를 계산하는
+                비드 셰이딩 모듈을 운영합니다. 모델이 시장 가격 분포를 예측하면, 그 위에서 최적 입찰가를
+                실제로 찾아내는 마지막 계산기가 바로 이 황금 비율 탐색입니다.
+            </p>
+            <ul>
+                <li><strong>실시간 비드 셰이딩:</strong> 입찰 요청마다 예측된 시장 분포(&mu;, &sigma;) 위에서 약 20회의 함수 평가만으로 b*를 찾습니다. 전체 응답 시한이 수십 ms라 500회씩 평가하는 Grid Search는 선택지가 아닙니다.</li>
+                <li><strong>예산 페이싱 계수 맞추기:</strong> "배율을 올리면 과소비, 내리면 예산 미달"처럼 한 방향으로 좋아지다 나빠지는 1차원 조절 문제에서 목표 지출 속도를 맞출 때도 같은 구간 축소 탐색을 씁니다.</li>
+                <li><strong>단봉 가정 확인 습관:</strong> 이 알고리즘은 봉우리가 하나라는 보장이 있을 때만 안전합니다. 실무에서는 Surplus처럼 단봉성이 증명된 함수(Zhou et al., KDD 2021)에 한해 적용하고, 확신이 없으면 먼저 곡선을 그려 확인합니다.</li>
+            </ul>
+        </section>
+
+    </main>
 
     <!-- TL;DR -->
     <section class="demo-tldr">
@@ -720,6 +739,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/golden-section-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

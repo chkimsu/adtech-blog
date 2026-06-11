@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A/B 테스트(고정 트래픽)와 멀티암드 밴딧(적응형 트래픽)이 같은 광고를 두고 어떻게 다르게 트래픽을 나누는지 슬라이더로 직접 비교하는 인터랙티브 데모.">
@@ -106,12 +106,38 @@
       각 광고의 <strong>진짜 클릭률(CTR)</strong>을 슬라이더로 정하세요 (우리는 이걸 알지만, 알고리즘은 모릅니다). <strong>하루 150명</strong>에게 노출하며 10일을 진행합니다. A/B는 매일 트래픽을 <strong>1/3씩 똑같이</strong> 나누고, 밴딧은 <strong>톰슨 샘플링</strong>으로 매 노출마다 더 좋아 보이는 광고를 고릅니다. 누가 클릭을 더 버는지 보세요.
     </div>
 
-    <div class="ab-controls" id="ab-controls"><!-- 슬라이더 JS 주입 --></div>
+    <div class="demo-tldr-analogy">
+      <div class="demo-tldr-analogy-icon">⚖</div>
+      <div class="demo-tldr-analogy-body">
+        <div class="demo-tldr-analogy-label">한 줄 비유</div>
+        <div class="demo-tldr-analogy-text">
+          A/B 테스트는 <strong>열흘 내내 모든 메뉴를 똑같이 깔아두는 시식 코너</strong>,
+          밴딧은 <em>잘 팔리는 메뉴에 매대를 점점 더 내주는 노련한 상인</em>입니다.
+          실험이 끝나기 전에도 장사는 계속되니까요.
+        </div>
+      </div>
+    </div>
 
-    <div class="ab-buttons">
-      <button class="ab-btn" id="ab-step" type="button">하루 진행 ▶</button>
-      <button class="ab-btn primary" id="ab-auto" type="button">10일 자동 ▶▶</button>
-      <button class="ab-btn ghost" id="ab-reset" type="button">리셋</button>
+    <div class="demo-intro">
+      <div><span class="demo-intro-label">이 데모가 보여주는 것</span>같은 광고 3개를 두고 A/B 테스트(트래픽 균등 고정)와 밴딧(잘 되는 쪽으로 이동)이 10일 동안 트래픽을 어떻게 다르게 나누고, 그 차이가 누적 클릭으로 얼마나 벌어지는지를 비교합니다.</div>
+      <div><span class="demo-intro-label">왜 알아야 하나</span>A/B 테스트는 결과를 기다리는 동안 <strong>나쁜 광고에도 트래픽을 계속 태우는 기회비용</strong>을 치릅니다. 캠페인 기간이 짧은 광고 운영에서는 이 비용이 커서, 밴딧으로 바꾸는 것만으로 클릭이 늘어나는 경우가 많아요.</div>
+    </div>
+
+    <ol class="demo-steps">
+      <span class="demo-steps-title">이렇게 해보세요</span>
+      <li><span class="step-text"><strong>10일 자동 ▶▶</strong>을 눌러 한 번 끝까지 돌려 보세요 — 누적 클릭 그래프에서 밴딧 선이 A/B 선 위로 벌어집니다.</span></li>
+      <li><span class="step-text">오른쪽 <strong>트래픽 배분 차트</strong>를 보세요. 밴딧은 며칠 만에 클릭률 높은 광고에 노출을 몰아주기 시작합니다.</span></li>
+      <li><span class="step-text">슬라이더로 <strong>광고들의 CTR 차이를 좁혀</strong> 보세요(예: 3% vs 3.5%). 차이가 작을수록 밴딧의 이득도 줄어드는 걸 확인하세요.</span></li>
+    </ol>
+
+    <div class="ab-sim">
+      <div class="ab-controls" id="ab-controls"><!-- 슬라이더 JS 주입 --></div>
+
+      <div class="ab-buttons">
+        <button class="ab-btn" id="ab-step" type="button">하루 진행 ▶</button>
+        <button class="ab-btn primary" id="ab-auto" type="button">10일 자동 ▶▶</button>
+        <button class="ab-btn ghost" id="ab-reset" type="button">리셋</button>
+      </div>
     </div>
 
     <div class="ab-summary">
@@ -145,8 +171,34 @@
       </div>
     </div>
 
-    <div class="ab-cta">
-      <a href="post.html?id=ab-test-vs-mab">← 개념을 글로 읽기: A/B 테스트 vs 멀티암드 밴딧</a>
+    <section class="demo-practice">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <p>
+        실무에서 A/B냐 밴딧이냐는 "정확한 측정"과 "기회비용" 사이의 선택입니다.
+        둘 중 하나가 항상 옳은 게 아니라, 캠페인의 성격이 답을 정합니다.
+      </p>
+      <ul>
+        <li><strong>단기 캠페인은 밴딧:</strong> 2주짜리 시즌 프로모션 배너는 A/B 결과가 통계적으로 유의해질 때쯤
+          캠페인이 끝납니다. 이런 경우 밴딧이 "실험하면서 동시에 버는" 유일한 선택지입니다.</li>
+        <li><strong>의사결정용 실험은 A/B:</strong> "랜딩 페이지를 아예 바꿀까" 같은 되돌리기 어려운 결정에는
+          정확한 효과 측정이 필요해서, 트래픽을 균등하게 나누는 A/B 테스트가 여전히 표준입니다.</li>
+        <li><strong>하이브리드 운영:</strong> 실제 광고 플랫폼은 초반 며칠은 탐색 비중을 높게(균등에 가깝게) 두고,
+          데이터가 쌓이면 밴딧이 서서히 쏠리게 하는 절충안을 자주 씁니다. 이 데모의 밴딧도 첫 1~2일은
+          거의 균등하게 나누는 걸 볼 수 있어요.</li>
+      </ul>
+    </section>
+
+    <div class="demo-next" style="margin-top:2.5rem;">
+      <a href="demo-ts.html" class="demo-next-card">
+        <span class="demo-next-label">관련 데모</span>
+        <span class="demo-next-title">Thompson Sampling Simulator</span>
+        <span class="demo-next-excerpt">밴딧이 매 노출마다 돌리는 엔진 — 베타 분포가 좁아지는 학습 과정</span>
+      </a>
+      <a href="post.html?id=ab-test-vs-mab" class="demo-next-card">
+        <span class="demo-next-label">관련 포스트</span>
+        <span class="demo-next-title">A/B 테스트 vs 멀티암드 밴딧</span>
+        <span class="demo-next-excerpt">언제 A/B를 쓰고 언제 밴딧을 쓰나 — 개념과 선택 기준을 글로 정리</span>
+      </a>
     </div>
   </main>
 
@@ -164,6 +216,8 @@
 
   <script src="js/main.js"></script>
   <script src="js/ab-vs-bandit-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

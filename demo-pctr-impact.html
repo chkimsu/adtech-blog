@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -291,6 +291,11 @@
         </div>
       </div>
 
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>pCTR 모델의 작은 편향이 입찰가 → 낙찰률 → Surplus(남는 이익)로 연쇄 증폭되는 과정을 슬라이더 하나로 실시간 계산해 봅니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>"모델 1% 개선"이 매출에서는 3~5%로 증폭됩니다. 특히 <strong>과대입찰이 과소입찰보다 더 아픈</strong> 비대칭을 알아야 모델 오차의 비용을 제대로 읽을 수 있어요.</div>
+      </div>
+
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 6분</span>
         <li><span class="step-text"><strong>편향 = 0</strong>(기본) 상태에서 계산표 한 번 읽기 → Surplus(이익) 기본값 메모.</span></li>
@@ -397,6 +402,19 @@
             <li><strong>Calibration의 중요성</strong> — AUC가 높아도 출력 확률이 실제와 다르면(=편향) 이 곡선에서 바로 0% 지점에서 벗어난다. 모델 평가에 Calibration 지표가 필수.</li>
           </ol>
         </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          DSP에서 pCTR 모델 개선은 "오프라인 지표 몇 점"이 아니라 <strong>돈의 언어</strong>로 번역해 보고합니다.
+          이 데모의 Surplus 곡선이 바로 그 번역기예요.
+        </p>
+        <ul>
+          <li><strong>모델 투자 설득:</strong> "AUC 0.01 개선"보다 "편향 10%p 감소 → 1000 노출당 Surplus $X 회복"이 예산 결정을 움직입니다. 모델 팀과 비즈니스 팀이 같은 곡선을 보고 대화해요.</li>
+          <li><strong>과대예측 안전장치:</strong> 과대입찰 쪽 손실이 더 크기 때문에, 새 모델·새 지면처럼 예측이 불안한 구간에는 bid cap이나 더 보수적인 shading을 걸어 하방을 막습니다.</li>
+          <li><strong>성수기 재점검:</strong> 시장 경쟁도가 오르면 같은 편향이라도 손실 금액이 커집니다. 블랙프라이데이 같은 성수기 전에 모델 보정과 shading 파라미터를 다시 맞추는 이유예요.</li>
+        </ul>
       </section>
 
       <!-- Next Up -->
@@ -606,6 +624,8 @@
       render();
     });
   </script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

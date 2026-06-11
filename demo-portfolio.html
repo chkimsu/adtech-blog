@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -348,6 +348,11 @@
         </div>
       </div>
 
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>정해진 예산을 5개 광고 지면에 나눌 때, 한 곳 몰아주기도 균등 분배도 아닌 "마지막 1달러의 추가 이익이 모든 지면에서 같아지는" 분배가 최적임을 슬라이더와 버튼으로 직접 확인합니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>"어디에 얼마 쓸까"는 광고 운영의 가장 일상적인 결정입니다. <strong>캠페인 예산 분배</strong>와 플랫폼의 <strong>예산 페이싱</strong>이 모두 이 원리(등한계효용) 위에 서 있어요.</div>
+      </div>
+
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 8분</span>
         <li><span class="step-text"><code>균등 분배</code> 버튼 → 모든 슬롯에 동일 예산. 총 이익 메모.</span></li>
@@ -428,6 +433,19 @@
             <li><strong>이것이 Budget Pacer의 본질</strong> — 실제 광고 시스템의 Pacing 알고리즘(PID·Lagrangian Dual)도 결국은 이 포트폴리오 문제를 <em>시간과 지면</em> 두 축으로 동시에 푸는 것.</li>
           </ol>
         </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "어디에 얼마 쓸까"는 광고주와 플랫폼 모두의 일상 문제입니다. 이 데모의 등한계효용 원리 —
+          마지막 1달러의 이익이 모든 곳에서 같아지게 — 가 그 답의 공통 뼈대입니다.
+        </p>
+        <ul>
+          <li><strong>캠페인 예산 분배:</strong> 검색·디스플레이·리타게팅 등 여러 채널에 일 예산을 나눌 때, 채널별 한계 ROAS가 같아지는 쪽으로 옮깁니다. 잘 나가는 채널이라도 포화 조짐이 보이면 증액을 멈추는 근거가 됩니다.</li>
+          <li><strong>예산 페이싱(Budget Pacing):</strong> 플랫폼의 페이서는 같은 문제를 시간축으로 풉니다 — 하루를 잘게 쪼개 시간대별 한계 가치가 같도록 지출 속도를 조절합니다. PID 제어와 Lagrangian Dual이 그 도구입니다.</li>
+          <li><strong>신규 지면 온보딩:</strong> 기존 지면의 한계 수익이 충분히 낮아졌다면, 단가가 낮아 보여도 아직 포화되지 않은 새 지면(이 데모의 Slot E 같은)에 예산을 떼어주는 것이 전체 이익을 늘립니다.</li>
+        </ul>
       </section>
 
       <!-- Next Up -->
@@ -690,6 +708,8 @@
       });
     });
   </script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UCB1 Algorithm Simulator - AdTech Blog</title>
@@ -159,6 +159,11 @@
           </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>UCB1이 광고마다 "평균 보상(색깔 막대) + 불확실성 보너스(회색 막대)"를 합산해 선택하고, 라운드가 쌓일수록 탐색에서 활용으로 자연스럽게 무게를 옮기는 과정을 봅니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>광고 서버는 매 순간 "검증된 광고"와 "아직 모르는 광고" 사이에서 골라야 하는데, UCB는 이 <strong>탐색 비용을 수식 하나로 자동 관리</strong>하는 가장 고전적인 해법이라 새 소재가 끊임없이 들어오는 광고 시스템의 기본기입니다.</div>
+        </div>
+
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해보세요 — 7분</span>
           <li><span class="step-text">기본 상태에서 <code>Select Best Arm</code>을 5번 — UCB가 "아직 안 가본 광고"부터 시도하는 걸 관찰.</span></li>
@@ -274,6 +279,23 @@
                 <li>200라운드: Mean Reward가 실제 CTR에 매우 가깝게 수렴</li>
             </ul>
         </div>
+
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                광고 시스템에는 새 캠페인·새 소재가 끊임없이 들어옵니다. "이미 잘 되는 광고만 트는" 시스템은
+                새 광고에게 영영 기회를 주지 못하는데, UCB 계열은 이 문제를 수식 하나로 풉니다.
+            </p>
+            <ul>
+                <li><strong>신규 소재 콜드 스타트:</strong> 노출 0회인 소재는 보너스가 무한대(INF)라 최소 한 번은
+                    반드시 노출됩니다. "새 광고가 묻히는" 문제를 별도 로직 없이 구조적으로 방지합니다.</li>
+                <li><strong>소재 로테이션:</strong> 한 캠페인의 여러 배너 중 무엇을 내보낼지 고를 때, 평균 CTR에
+                    보너스를 더한 점수로 선택하면 낭비되는 트래픽(Regret)이 로그 수준으로 억제됩니다.</li>
+                <li><strong>재현 가능한 운영:</strong> UCB는 같은 데이터면 항상 같은 선택을 하는 결정적 알고리즘이라,
+                    "왜 이 광고가 나갔지?"를 점수표 그대로 광고주에게 설명할 수 있습니다. 감사·디버깅이 중요한
+                    환경에서 톰슨 샘플링 대신 UCB를 고르는 이유입니다.</li>
+            </ul>
+        </section>
     </main>
 
     <!-- TL;DR -->
@@ -322,6 +344,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/ucb1-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

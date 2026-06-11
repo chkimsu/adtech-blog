@@ -53,8 +53,15 @@ for i, h in enumerate(history):
 ### ③ Thompson Sampling (Basic / Beta)
 
 * 별명: 도박사 (확률주의자)
-* 로직: 각 광고의 성공 확률을 Beta 분포로 그림. 매번 주사위를 굴려서(Sampling) 나온 값으로 1등을 정함. ([베타 분포 샘플링 데모](demo-beta-sampling.html))
+* 로직: 각 광고의 성공 확률을 Beta 분포로 그림. 매번 주사위를 굴려서(Sampling) 나온 값으로 1등을 정함.
 * 특징: 현업에서 A/B 테스트용으로 성능이 가장 좋음. 하지만 유저별 개인화는 불가능.
+
+"주사위를 굴린다"가 어떤 행위인지 아래에서 직접 굴려 보세요:
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-beta-sampling.html?embed=1" height="560" loading="lazy" title="베타 분포 샘플링 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-beta-sampling.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
 
 ```python
 import numpy as np

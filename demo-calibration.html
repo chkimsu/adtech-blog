@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -129,6 +129,11 @@
         </div>
       </div>
 
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>모델이 말하는 확률이 실제와 어긋나면(miscalibration) 신뢰도 곡선이 어떻게 휘고, 그 어긋남이 입찰가를 얼마나 비틀어 놓는지 슬라이더로 직접 확인합니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>입찰가는 <strong>pCTR 확률을 그대로 곱해서</strong> 만들기 때문에, 확률이 10% 부풀면 입찰가도 10% 부풀어 그대로 돈이 샙니다 — AUC만 보고 모델을 배포하면 안 되는 이유예요.</div>
+      </div>
+
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
         <li><span class="step-text"><strong>완벽</strong> 프리셋에서 두 곡선이 대각선/겹침인지 확인하고 ECE ≈ 0 메모.</span></li>
@@ -210,6 +215,19 @@
         </div>
       </section>
 
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          광고 플랫폼에서 pCTR 모델은 학습이 끝났다고 바로 입찰에 투입되지 않습니다.
+          확률이 "말한 만큼 맞는지"를 점검하고 고치는 <strong>보정 단계</strong>가 평가 파이프라인에 따로 들어갑니다.
+        </p>
+        <ul>
+          <li><strong>배포 전 보정 게이트:</strong> 새 모델은 AUC뿐 아니라 ECE·신뢰도 곡선도 함께 통과해야 배포됩니다. 어긋나 있으면 Platt Scaling·Isotonic Regression·Temperature Scaling 같은 후처리로 확률을 펴서 내보내요.</li>
+          <li><strong>운영 중 드리프트 감시:</strong> 새 지면 추가나 시즌 변화로 트래픽 분포가 바뀌면 잘 보정됐던 모델도 다시 틀어집니다. ECE를 대시보드 지표로 두고 임계치를 넘으면 재보정을 돌립니다.</li>
+          <li><strong>과신 모델 우선 수리:</strong> 과신 모델은 비싼 고pCTR 트래픽일수록 더 크게 과대입찰해 손해가 집중됩니다. 모델 재학습 없이 보정만 고쳐도 입찰 효율(ROAS)이 바로 개선되는 경우가 많아요.</li>
+        </ul>
+      </section>
+
       <!-- Next Up -->
       <section class="demo-next">
         <div class="demo-next-inner">
@@ -247,6 +265,8 @@
 
   <script src="js/main.js"></script>
   <script src="js/calibration-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

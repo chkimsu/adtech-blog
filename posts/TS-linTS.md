@@ -23,10 +23,17 @@
 * 작동 원리:
   * 각 광고에 대해 성공($\alpha$)과 실패($\beta$) 횟수를 기록합니다.
   * 각 광고의 CTR을 Beta 분포 $Beta(\alpha_i, \beta_i)$로 모델링합니다.
-  * 매 요청마다 각 분포에서 랜덤한 값(Sample)을 뽑아 가장 높은 광고를 노출합니다. — [베타 분포에서 직접 샘플을 뽑아보는 데모](demo-beta-sampling.html)
+  * 매 요청마다 각 분포에서 랜덤한 값(Sample)을 뽑아 가장 높은 광고를 노출합니다.
 * 치명적 단점 (AdTech 관점):
   * Cold Start: 데이터가 0인 신규 광고는 $Beta(1,1)$에서 시작하므로, 운 좋게 노출되기 전까지 성능을 증명할 수 없습니다.
   * 확장성 부족: 광고 후보가 수만 개로 늘어나거나 매번 바뀌는 환경(Dynamic Candidates)에서는 모든 광고의 Beta 분포를 관리할 수 없습니다.
+
+"분포에서 랜덤한 값을 뽑는다"를 아래에서 직접 해볼 수 있습니다:
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-beta-sampling.html?embed=1" height="560" loading="lazy" title="베타 분포 샘플링 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-beta-sampling.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
 
 ```python
 import numpy as np

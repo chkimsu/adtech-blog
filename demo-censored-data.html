@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Censored Data in RTB - AdTech Blog</title>
@@ -646,6 +646,11 @@
           </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰에서 진 경매의 시장 가격은 영영 알 수 없다는 사실(Right-Censoring)이 시장가 추정을 어떻게 낮게 비틀고, Censored Regression이 그걸 어떻게 복구하는지 5단계로 체험합니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>입찰 최적화(Bid Shading)는 시장가 분포 추정 위에 서 있습니다. <strong>패찰 데이터를 버리면</strong> 시장을 싸게 보고 → 입찰을 낮추고 → 더 자주 지면서 데이터가 더 가려지는 악순환에 빠져요.</div>
+        </div>
+
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해보세요 — 12분 (5단계)</span>
           <li><span class="step-text"><strong>Step 1 (God View)</strong>: 시장 전체를 볼 수 있다고 가정. μ·σ 슬라이더로 분포 모양 익히기.</span></li>
@@ -1111,6 +1116,19 @@
                 Censored Regression의 보정 효과가 더 두드러집니다.
             </p>
         </div>
+
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                DSP의 입찰 로그는 절반 이상이 "진 경매"입니다. 이 패찰 로그를 버리느냐 살리느냐가
+                시장가 추정 모델의 품질을 가르고, 그 추정이 곧 입찰가가 됩니다.
+            </p>
+            <ul>
+                <li><strong>Bid Shading 모델 학습:</strong> Adobe(MCNet)·Yahoo(KDD 2021)처럼 낙찰 로그는 가격 그대로, 패찰 로그는 "내 입찰가 이상"이라는 하한 정보로 손실 함수에 함께 넣습니다. 이 데모의 Step 4가 바로 그 손실 함수예요.</li>
+                <li><strong>추정 편향 진단:</strong> 입찰가를 내린 뒤 시장가 추정치가 따라 내려가 보이면 시장이 싸진 게 아니라 Selection Bias일 수 있습니다 — 관측률(낙찰률)과 함께 봐야 해요.</li>
+                <li><strong>탐색 트래픽 운영:</strong> 일부 트래픽에 일부러 높게 입찰해 관측률을 확보합니다. 약간의 손해로 "커튼 뒤" 데이터를 사 오는 탐색-활용 트레이드오프예요.</li>
+            </ul>
+        </section>
     </main>
 
     <!-- TL;DR -->
@@ -1164,6 +1182,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/censored-data-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

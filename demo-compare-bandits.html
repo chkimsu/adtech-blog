@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -384,6 +384,11 @@
         </div>
       </div>
 
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>똑같은 4개 광고를 두고 UCB1(점수를 계산해 고르는 계산기형)과 톰슨 샘플링(분포에서 뽑아 고르는 주사위형)이 각자 어떻게 선택하고, 누적 손실(Regret)이 어떻게 갈리는지를 나란히 비교합니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>실무에서 밴딧을 도입할 때 첫 질문이 "<strong>UCB냐 TS냐</strong>"입니다. 성능 차이는 크지 않아서, 결국 결정적이냐 확률적이냐는 성격 차이를 알아야 자기 시스템 조건(감사 필요, 피드백 지연 등)에 맞는 쪽을 고를 수 있어요.</div>
+      </div>
+
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 7분</span>
         <li><span class="step-text"><code>Step</code> 5번 — 매 라운드마다 두 알고리즘이 다른 선택을 하는지 관찰.</span></li>
@@ -400,13 +405,15 @@
       </div>
 
       <!-- Controls -->
-      <div class="cmp-controls">
-        <span class="cmp-round-display" id="round-display">Round 0 / 0</span>
-        <button class="cmp-btn" id="btn-step">▶ 1 Round</button>
-        <button class="cmp-btn" id="btn-100">⏭ 100 Rounds</button>
-        <button class="cmp-btn" id="btn-500">⏭⏭ 500 Rounds</button>
-        <button class="cmp-btn" id="btn-reveal">실제 CTR 공개</button>
-        <button class="cmp-btn danger" id="btn-reset">↺ 리셋</button>
+      <div class="cmp-sim">
+        <div class="cmp-controls">
+          <span class="cmp-round-display" id="round-display">Round 0 / 0</span>
+          <button class="cmp-btn" id="btn-step">▶ 1 Round</button>
+          <button class="cmp-btn" id="btn-100">⏭ 100 Rounds</button>
+          <button class="cmp-btn" id="btn-500">⏭⏭ 500 Rounds</button>
+          <button class="cmp-btn" id="btn-reveal">실제 CTR 공개</button>
+          <button class="cmp-btn danger" id="btn-reset">↺ 리셋</button>
+        </div>
       </div>
 
       <!-- Ads -->
@@ -489,6 +496,22 @@
         UCB1/TS와 같은 축에서 비교하려면 context가 들어있는 별도 시나리오가 필요합니다.
         <a href="demo-linucb.html">LinUCB 전용 데모</a>에서 context를 활용한 동작을 확인하세요.
       </div>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          두 알고리즘 모두 충분히 좋아서, 실무에서의 선택은 성능보다
+          "우리 시스템이 어떤 운영 조건이냐"가 가릅니다.
+        </p>
+        <ul>
+          <li><strong>설명 책임이 무거우면 UCB:</strong> 같은 입력이면 항상 같은 선택을 하므로,
+            "이 광고가 왜 나갔나"를 점수표 그대로 재현해 광고주 리포트나 장애 분석에 쓸 수 있습니다.</li>
+          <li><strong>피드백이 늦게 오면 TS:</strong> 클릭·전환 로그가 몇 분에서 몇 시간 지연되는 DSP 환경에서는,
+            선택을 확률적으로 분산하는 TS가 낡은 정보로 한 광고에 몰빵하는 실수를 덜 합니다.</li>
+          <li><strong>배치 업데이트 환경도 TS:</strong> 모델을 실시간이 아니라 주기적으로(예: 5분마다) 갱신하는
+            광고 서버에서는, UCB는 갱신 사이에 계속 같은 광고만 내보내지만 TS는 자연스럽게 트래픽을 섞어줍니다.</li>
+        </ul>
+      </section>
 
       <!-- TL;DR -->
       <section class="demo-tldr">
@@ -858,6 +881,8 @@
       document.getElementById('btn-reset').addEventListener('click', resetAll);
     });
   </script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LinUCB Interactive Demo - Ad Tech Blog</title>
@@ -204,6 +204,11 @@
           </div>
         </div>
 
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고마다 "예측 점수(색깔 막대) + 불확실성 보너스(회색 막대)"를 합쳐 추천을 고르고, 클릭 피드백 한 번이 학습 가중치(θ)를 실시간으로 바꾸는 과정을 직접 만들어 봅니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>UCB1·톰슨 샘플링은 모든 유저에게 같은 답을 주지만, 실제 광고는 <strong>유저마다 다른 답(개인화)</strong>이 필요합니다. LinUCB는 유저·광고의 특징을 수식에 넣는 가장 기본적인 문맥형 밴딧이라, 실무 추천 시스템 공부의 출발점이에요.</div>
+        </div>
+
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해보세요 — 10분</span>
           <li><span class="step-text">유저 타입을 <strong>Tech</strong>로 선택 → 추천된 Ad A를 5번 Click → θ 행렬이 어떻게 업데이트되는지 관찰.</span></li>
@@ -269,7 +274,6 @@
             <div id="model-internals-container" style="overflow-x: auto;">
                 <!-- Table injected by JS -->
             </div>
-        </div>
         </div>
 
         <!-- Related Posts Links -->
@@ -387,14 +391,7 @@
                 </li>
             </ul>
 
-            <h2>AdTech 실무 적용</h2>
-
-            <h3>LinUCB가 해결하는 문제</h3>
-            <p>
-                기본 Thompson Sampling은 유저 정보 없이 광고의 평균 CTR만으로 판단합니다.
-                LinUCB는 유저의 Context(검색어, 성별, 시간대 등)를 Feature Vector로 입력받아
-                "이 유저에게 이 광고가 얼마나 적합한가"를 개인화된 수준에서 예측합니다.
-            </p>
+            <h2>더 깊이 알아두기</h2>
 
             <h3>Feature Vector 설계</h3>
             <p>
@@ -423,6 +420,23 @@
                 <li>한 광고만 집중 Click하면: 해당 광고의 Uncertainty가 빠르게 줄지만, 나머지 광고는 Uncertainty 보너스로 여전히 경쟁력을 유지합니다.</li>
             </ul>
         </div>
+
+        <section class="demo-practice">
+            <h2>현업에서는 이렇게 씁니다</h2>
+            <p>
+                기본 밴딧(UCB1·TS)이 "어떤 광고가 평균적으로 좋은가"를 풀었다면, 현업의 다음 질문은
+                "<strong>이 유저에게는</strong> 어떤 광고가 좋은가"입니다. LinUCB는 유저의 Context(검색어·성별·시간대 등)를
+                피처 벡터로 수식에 넣어, 평균 CTR만 보던 한계를 개인화로 넘어섭니다.
+            </p>
+            <ul>
+                <li><strong>개인화 추천의 고전:</strong> Yahoo! 뉴스 추천에 적용되며 유명해진 알고리즘입니다.
+                    광고에서는 "이 지면·이 유저 세그먼트에 어떤 소재를 내보낼까"를 고르는 데 같은 구조를 씁니다.</li>
+                <li><strong>신규 광고 콜드 스타트 완화:</strong> 광고 ID가 아니라 피처의 가중치를 학습하므로,
+                    피처만 채워져 있으면 새 광고도 첫 노출부터 합리적인 점수로 출발합니다.</li>
+                <li><strong>탐색 강도 α의 운영:</strong> 트래픽이 많은 지면은 α를 낮춰 안정적으로, 데이터가 적은
+                    신규 지면은 α를 높여 탐색 위주로 — 이 데모의 α 슬라이더가 실제 운영에서 돌리는 노브에 해당합니다.</li>
+            </ul>
+        </section>
     </main>
 
     <!-- TL;DR -->
@@ -471,6 +485,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/linucb-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

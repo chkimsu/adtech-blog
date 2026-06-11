@@ -4086,3 +4086,349 @@ a.series-name:hover { color: var(--accent-primary); }
 .cover-topic-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .cover-topic-card h3 { font-family: var(--font-serif); margin: 0.6rem 0 0.35rem; color: var(--text-primary); }
 .cover-topic-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+
+/* ============================================
+   데모 교육 프레임워크 (demo-edu)
+   ============================================ */
+
+/* 1) "이게 뭔가" 인트로 표준 블록 */
+.demo-intro {
+  max-width: 900px;
+  margin: 0.9rem auto 0;
+  padding: 1rem 1.4rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: grid;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.demo-intro-label {
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  white-space: nowrap;
+}
+
+.demo-intro strong { color: var(--text-primary); }
+
+@media (max-width: 768px) {
+  .demo-intro { margin: 0.9rem 1rem 0; padding: 0.9rem 1.1rem; }
+}
+
+/* 2) 실무 적용 섹션 — "현업에서는 이렇게 씁니다" */
+.demo-practice {
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+  padding: 1.4rem 1.6rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent-secondary);
+  border-radius: 12px;
+}
+
+.demo-practice h2 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin: 0 0 0.8rem;
+  color: var(--text-primary);
+}
+
+.demo-practice p,
+.demo-practice li {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.demo-practice p { margin: 0 0 0.7rem; }
+.demo-practice p:last-child { margin-bottom: 0; }
+.demo-practice ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+.demo-practice li { margin-bottom: 0.4rem; }
+.demo-practice strong { color: var(--accent-primary); }
+
+@media (max-width: 768px) {
+  .demo-practice { margin: 2rem 1rem 0; padding: 1.1rem 1.2rem; }
+}
+
+/* 3) 실시간 해설 패널 — "지금 일어난 일" */
+.demo-explain {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.demo-explain-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 0.4rem;
+}
+
+.demo-explain-msg {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.demo-explain-msg strong { color: var(--accent-primary); }
+
+.demo-explain-msg.is-prev {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.demo-explain-msg.is-prev strong { color: var(--text-muted); }
+
+.demo-explain.is-flash { animation: demoExplainFlash 0.6s ease; }
+
+@keyframes demoExplainFlash {
+  0% { background: var(--bg-tertiary); }
+  100% { background: var(--bg-secondary); }
+}
+
+/* 4) 가이드 투어 — 스포트라이트 + 말풍선 */
+.edu-tour-spotlight {
+  position: absolute;
+  z-index: 1200;
+  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: 0 0 0 200vmax rgba(20, 16, 12, 0.5);
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+[data-theme="dark"] .edu-tour-spotlight {
+  box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.62);
+}
+
+.edu-tour-bubble {
+  position: absolute;
+  z-index: 1201;
+  width: min(340px, calc(100vw - 2rem));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 1rem 1.1rem;
+  outline: none;
+}
+
+.edu-tour-bubble h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.edu-tour-bubble p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.edu-tour-bubble p strong { color: var(--accent-primary); }
+
+.edu-tour-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.edu-tour-progress {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+  margin-right: auto;
+}
+
+.edu-tour-btn {
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: filter var(--transition-fast);
+}
+
+.edu-tour-btn:hover { filter: brightness(1.06); }
+
+.edu-tour-btn.primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.edu-tour-btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+
+.edu-tour-wait {
+  font-size: 0.8rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+  animation: eduTourPulse 1.4s ease infinite;
+}
+
+@keyframes eduTourPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (max-width: 900px) {
+  .edu-tour-bubble {
+    position: fixed;
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    top: auto !important;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+  }
+}
+
+.edu-tour-chip {
+  margin-left: 0.7rem;
+  vertical-align: middle;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.edu-tour-chip:hover {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.edu-tour-chip.is-floating {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 900;
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
+  font-size: 0.78rem;
+  padding: 0.45rem 0.9rem;
+}
+
+/* 5) 임베드 모드 (?embed=1) — 데모 페이지 자신(자식) */
+html.is-embed header,
+html.is-embed footer {
+  display: none !important;
+}
+
+/* hidden 속성이 display를 지정한 author 스타일(.demo-tldr-analogy{display:flex} 등)에
+   지지 않도록 강제 — 임베드 숨김은 JS가 hidden 속성으로 처리한다 */
+html.is-embed [hidden] {
+  display: none !important;
+}
+
+html.is-embed main {
+  padding-top: 1rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+html.is-embed .demo-container { margin-top: 0.5rem; }
+
+/* 임베드 폭이 충분하면(포스트 본문 데스크톱) 데모 자체 900px 단열 브레이크포인트를
+   무시하고 2열 유지 — 인라인 임베드가 세로로 너무 길어지는 것 방지 */
+@media (min-width: 640px) {
+  html.is-embed .demo-container {
+    grid-template-columns: 2fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.demo-embed-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.82rem;
+}
+
+.demo-embed-bar-title { color: var(--text-muted); }
+
+.demo-embed-bar a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.demo-embed-bar a:hover { text-decoration: underline; }
+
+/* 6) 포스트 본문 내 데모 임베드 (부모 측) */
+.post-content .demo-embed-wrap {
+  margin: 2rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.post-content iframe.demo-embed {
+  width: 100%;
+  display: block;
+  border: 0;
+}
+
+.post-content .demo-embed-open {
+  display: block;
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-decoration: none;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+}
+
+.post-content .demo-embed-open:hover { text-decoration: underline; }
+
+/* 7) demos.html 카드 비유 한 줄 */
+.demo-card-analogy {
+  margin: 0.5rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.demo-card-analogy::before { content: '“'; color: var(--accent-secondary); }
+.demo-card-analogy::after { content: '”'; color: var(--accent-secondary); }

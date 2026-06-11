@@ -1538,6 +1538,25 @@ function setupSidebarToggle() {
 }
 
 // ========================================
+// 포스트 본문 내 데모 임베드 (iframe 높이 자동 조정)
+// ========================================
+
+// 데모 페이지(?embed=1)가 postMessage로 보내는 콘텐츠 높이를 받아 iframe에 적용.
+// 본문 iframe은 marked 렌더 후 동적으로 생기므로, 수신 시점에 매칭한다.
+function setupDemoEmbeds() {
+  window.addEventListener('message', (event) => {
+    if (event.origin !== location.origin) return;
+    const data = event.data;
+    if (!data || data.type !== 'demo-edu:height' || typeof data.height !== 'number') return;
+    document.querySelectorAll('iframe.demo-embed').forEach((frame) => {
+      if (frame.contentWindow === event.source) {
+        frame.style.height = Math.ceil(data.height) + 'px';
+      }
+    });
+  });
+}
+
+// ========================================
 // Initialization
 // ========================================
 
@@ -1560,6 +1579,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Demo pages: mode toggle + term popovers
   setupDemoModeToggle();
   setupDemoTermPopover();
+
+  // Post pages: demo iframe auto-resize
+  setupDemoEmbeds();
 
   // Initialize sidebar navigation
   initializeSidebar();

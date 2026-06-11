@@ -446,7 +446,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 16개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 17개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -579,7 +579,7 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">12개 · 카테고리별</span>
+          <span class="count">17개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
@@ -690,6 +690,22 @@
               <span class="demo-card-meta-item">평균 계산</span>
             </div>
             <a href="demo-ucb1.html" class="btn-try">체험하기</a>
+          </div>
+
+          <!-- 베타 분포 샘플링 -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>베타 분포 샘플링</h3>
+            <p>"분포에서 한 번 뽑는다"가 정확히 무슨 뜻일까? 베타 분포에서 샘플을 반복해 뽑으며
+              히스토그램이 곡선을 재현하는 과정을 봅니다. Thompson Sampling의 핵심 행위를 분리해 체험.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-beta-sampling.html" class="btn-try">체험하기</a>
           </div>
 
           <!-- 4. Thompson Sampling -->
@@ -882,6 +898,25 @@
   <script src="js/posts.js"></script>
   <script src="js/glossary.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script>
+    // 데모 카드에 한 줄 비유 주입 — js/demo-edu-content.js가 단일 소스
+    (function () {
+      if (!window.DEMO_EDU) return;
+      document.querySelectorAll('.demo-card').forEach(function (card) {
+        var btn = card.querySelector('.btn-try[href]');
+        var h3 = card.querySelector('h3');
+        if (!btn || !h3) return;
+        var m = btn.getAttribute('href').match(/demo-([a-z0-9-]+)\.html/);
+        var cfg = m && window.DEMO_EDU[m[1]];
+        if (!cfg || !cfg.analogy) return;
+        var pEl = document.createElement('p');
+        pEl.className = 'demo-card-analogy';
+        pEl.textContent = cfg.analogy;
+        h3.insertAdjacentElement('afterend', pEl);
+      });
+    })();
+  </script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<head><script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -125,6 +125,11 @@
         </div>
       </div>
 
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>같은 광고를 반복해 보여줄수록 추가 반응은 점점 줄고 비용은 똑같이 듭니다. 그래서 "몇 번까지 보여줄까"에는 순가치가 최대가 되는 정답(최적 cap)이 존재하고, 그 위치가 피로·비용·전환가치에 따라 어떻게 움직이는지 직접 확인합니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>캠페인 설정의 "유저당 하루 3회" 같은 숫자가 바로 이 계산의 결과입니다. <strong>빈도 상한 정책 튜닝</strong>을 감이 아니라 수치 근거로 할 수 있게 돼요.</div>
+      </div>
+
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
         <li><span class="step-text">기본값에서 <strong>순가치 곡선의 봉우리(최적 cap)</strong> 위치를 메모.</span></li>
@@ -216,6 +221,20 @@
         </div>
       </section>
 
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          광고 플랫폼의 캠페인 설정에는 거의 항상 "유저당 빈도 상한" 항목이 있습니다.
+          그 기본값과 권장값은 감이 아니라, 이 데모처럼 한계 반응의 가치가 노출 비용 아래로
+          떨어지는 지점을 찾는 계산에서 나옵니다.
+        </p>
+        <ul>
+          <li><strong>빈도 상한 정책 튜닝:</strong> 캠페인 목표별로 cap을 다르게 둡니다 — 브랜드 인지 캠페인은 피로가 늦게 와서 높은 cap, 리타게팅은 같은 유저를 반복 타겟하므로 낮은 cap이 보통입니다.</li>
+          <li><strong>도달(reach) 재배분:</strong> cap을 낮춰 아낀 노출은 아직 광고를 못 본 새 유저에게 돌립니다. 같은 예산이면 "한 명에게 10번"보다 "다섯 명에게 2번"이 전환 합계가 큰 경우가 많습니다.</li>
+          <li><strong>소재 교체 신호:</strong> 노출 횟수별 CTR이 꺾이는 속도(이 데모의 r)를 로그에서 추정해, 피로가 빨라진 소재는 cap을 줄이거나 새 소재로 교체(크리에이티브 로테이션)하는 신호로 씁니다.</li>
+        </ul>
+      </section>
+
       <!-- Next Up -->
       <section class="demo-next">
         <div class="demo-next-inner">
@@ -253,6 +272,8 @@
 
   <script src="js/main.js"></script>
   <script src="js/frequency-capping-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
 </body>
 
 </html>

@@ -393,6 +393,45 @@ nav {
   background: var(--border-color);
 }
 
+/* ===== Theme Picker Panel ===== */
+.nav-actions { position: relative; }
+.theme-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 248px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  padding: 10px;
+}
+.theme-panel[hidden] { display: none; }
+.theme-panel-title {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-muted); padding: 2px 4px 8px;
+}
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.theme-tile {
+  display: block; padding: 0; text-align: left; cursor: pointer;
+  border: 2px solid transparent; border-radius: 10px; background: none;
+  font-family: inherit; overflow: hidden; transition: border-color var(--transition-fast);
+}
+.theme-tile:hover { border-color: var(--accent-secondary); }
+.theme-tile.is-current { border-color: var(--accent-primary); }
+.theme-tile-preview { display: block; height: 46px; padding: 9px 10px; }
+.theme-tile-bar { display: block; width: 34px; height: 6px; border-radius: 3px; }
+.theme-tile-line { display: block; width: 86%; height: 6px; border-radius: 3px; margin-top: 6px; }
+.theme-tile-line.short { width: 60%; height: 5px; margin-top: 5px; }
+.theme-tile-name {
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  font-size: 0.72rem; font-weight: 600; color: var(--text-primary);
+  padding: 5px 8px; background: var(--bg-tertiary);
+}
+.theme-tile-check { color: var(--accent-primary); font-weight: 700; opacity: 0; }
+.theme-tile.is-current .theme-tile-check { opacity: 1; }
+
 /* ========================================
    Container & Layout
    ======================================== */

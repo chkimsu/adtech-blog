@@ -27,3 +27,6 @@ Thumbs.db
 
 # ===== Log files =====
 *.log
+
+# Superpowers brainstorm companion scratch
+.superpowers/

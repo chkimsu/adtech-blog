@@ -48,14 +48,23 @@
     <!-- Hero -->
     <section class="eco-hero">
       <div class="container">
-        <h1>광고 생태계 한 장 지도</h1>
-        <p>광고는 DSP·SSP·Ad Exchange·DMP·pCTR 모델 등 너무 많은 모듈로 이루어져 있어 입문 시 길을 잃기 쉽습니다.
-          18개 핵심 모듈을 6 카테고리로 묶고, 화살표로 흐름의 방향까지 보여드립니다.
-          <strong>노드를 클릭</strong>하면 정의·관련 데모·포스트가 열리고,
-          <strong>아래 ▶ 시나리오 버튼</strong>을 누르면 요청·입찰가·광고·로그가 어디로 이동하는지
-          라벨이 붙은 패킷이 단계별 설명과 함께 움직입니다.</p>
+        <span class="eco-hero-kicker">AD TECH · 한 장으로 읽는 지도</span>
+        <h1 class="eco-hero-title">0.1초 안에 벌어지는<br>광고 한 편의 여정</h1>
+        <p class="eco-hero-dek">사용자가 페이지를 연 순간부터 광고가 뜨기까지 — 요청·입찰가·소재·데이터가 어디로 흐르는지,
+          19개 모듈을 <strong>왼쪽(사용자)에서 오른쪽(광고주)으로</strong> 읽는 순서대로 따라가 봅니다.</p>
+        <p class="eco-hero-guide">아래에서 <strong>① 흐름을 고르고</strong> ▶ 재생하면, 지도 위 라벨 패킷이 움직이며
+          각 단계의 <strong>설명과 예시</strong>가 옆 패널에 차곡차곡 쌓입니다. 노드를 클릭하면 정의·데모·포스트도 열려요.</p>
       </div>
     </section>
+
+    <!-- ① 흐름 고르기 -->
+    <div class="eco-section-head">
+      <span class="eco-section-num">1</span>
+      <div class="eco-section-head-text">
+        <h2 class="eco-section-title">흐름 고르기</h2>
+        <p class="eco-section-desc">보고 싶은 시나리오를 하나 고르세요. 카드를 누르면 아래 지도 위에서 단계별로 재생됩니다.</p>
+      </div>
+    </div>
 
     <!-- Controls -->
     <div class="eco-controls">
@@ -81,13 +90,26 @@
           <span class="eco-flow-chip-desc">동의받은 사용자 데이터가 개인화 광고로 가는 길</span>
         </button>
       </div>
+    </div>
+
+    <!-- ② 지도 따라가기 -->
+    <div class="eco-section-head">
+      <span class="eco-section-num">2</span>
+      <div class="eco-section-head-text">
+        <h2 class="eco-section-title">지도 따라가기</h2>
+        <p class="eco-section-desc">왼쪽(사용자)에서 오른쪽(광고주)으로 읽습니다. 색은 역할, 화살표는 이동 방향.
+          재생을 누르면 라벨 패킷이 움직이고 옆 패널에 단계 설명·예시가 쌓여요.</p>
+      </div>
+    </div>
+
+    <div class="eco-legend-wrap">
       <div class="eco-legend" aria-label="카테고리 범례">
-        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="buy"></span>Buy Side</span>
-        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="exchange"></span>Exchange</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="user"></span>User / Privacy</span>
         <span class="eco-legend-item"><span class="eco-legend-dot" data-category="sell"></span>Sell Side</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="exchange"></span>Exchange</span>
+        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="buy"></span>Buy Side</span>
         <span class="eco-legend-item"><span class="eco-legend-dot" data-category="ml"></span>ML / Models</span>
         <span class="eco-legend-item"><span class="eco-legend-dot" data-category="measurement"></span>Measurement</span>
-        <span class="eco-legend-item"><span class="eco-legend-dot" data-category="user"></span>User / Privacy</span>
       </div>
     </div>
 
@@ -107,8 +129,8 @@
     <!-- Main layout: Graph + Side panel -->
     <div class="eco-main-layout">
       <div class="eco-graph-wrap" id="eco-graph-wrap">
-        <svg id="eco-graph" viewBox="0 0 1240 720" preserveAspectRatio="xMidYMid meet" role="img"
-             aria-label="광고 생태계 노드 그래프 — 18개 모듈과 그들의 연결"></svg>
+        <svg id="eco-graph" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="광고 생태계 지도 — 사용자·판매·거래소·구매 레인으로 배치한 19개 모듈과 그 연결"></svg>
         <div id="eco-tooltip" class="eco-tooltip"></div>
         <div class="eco-flow-bar" id="eco-flow-bar" hidden>
           <div id="eco-flow-caption" class="eco-flow-caption" aria-live="polite"></div>

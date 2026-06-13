@@ -3320,27 +3320,106 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 .eco-hero {
   text-align: center;
-  padding: 3rem 0 1rem;
+  padding: 4rem 0 1.5rem;
 }
 
-.eco-hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.6rem;
-  color: var(--accent-primary);
-  line-height: 1.15;
+.eco-hero-kicker {
+  display: inline-block;
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
-.eco-hero p {
+.eco-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.3rem, 5.4vw, 3.9rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 auto 1.3rem;
+}
+
+.eco-hero-dek {
   color: var(--text-secondary);
-  max-width: 760px;
+  max-width: 680px;
+  margin: 0 auto 0.85rem;
+  font-size: 1.12rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.eco-hero-dek strong { color: var(--accent-primary); font-weight: 700; }
+
+.eco-hero-guide {
+  color: var(--text-muted);
+  max-width: 660px;
   margin: 0 auto;
-  font-size: 1rem;
+  font-size: 0.92rem;
   line-height: 1.6;
+  word-break: keep-all;
+}
+
+.eco-hero-guide strong { color: var(--text-secondary); font-weight: 700; }
+
+/* 매거진 섹션 헤더 (① ② 번호 + 제목 + 부제) */
+.eco-section-head {
+  max-width: 1280px;
+  margin: 3.25rem auto 1rem;
+  padding: 1.5rem 2rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.eco-section-num {
+  flex-shrink: 0;
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-primary);
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--accent-primary);
+  border-radius: 50%;
+}
+
+.eco-section-head-text { flex: 1; min-width: 0; }
+
+.eco-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin: 0.1rem 0 0.3rem;
+  color: var(--text-primary);
+}
+
+.eco-section-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  word-break: keep-all;
+}
+
+/* 범례 (지도 바로 위) */
+.eco-legend-wrap {
+  max-width: 1280px;
+  margin: 0.6rem auto 0;
+  padding: 0 2rem;
 }
 
 .eco-controls {
-  max-width: 1200px;
-  margin: 1rem auto 0;
+  max-width: 1280px;
+  margin: 0.6rem auto 0;
   padding: 0 2rem;
   display: flex;
   flex-direction: column;
@@ -3666,16 +3745,55 @@ body[data-demo-mode="easy"] .is-pro-only {
   margin-left: 0.25rem;
 }
 
+/* 가치사슬 레인 배경 + 헤더/밴드 라벨 */
+.eco-lane-bg {
+  fill: rgba(120, 104, 88, 0.05);
+  stroke: var(--border-color);
+  stroke-width: 1;
+}
+
+[data-theme="dark"] .eco-lane-bg {
+  fill: rgba(255, 255, 255, 0.025);
+}
+
+.eco-lane-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-anchor: middle;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+.eco-band-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-anchor: start;
+  fill: var(--text-muted);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 /* SVG nodes */
 .eco-node {
   cursor: pointer;
   transition: filter 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
 }
 
+.eco-node-accent { pointer-events: none; }
+.eco-node[data-category="buy"]         .eco-node-accent { fill: #7d5e72; }
+.eco-node[data-category="exchange"]    .eco-node-accent { fill: #5a6b7a; }
+.eco-node[data-category="sell"]        .eco-node-accent { fill: #a8783a; }
+.eco-node[data-category="ml"]          .eco-node-accent { fill: #9c5a44; }
+.eco-node[data-category="measurement"] .eco-node-accent { fill: #5f7a63; }
+.eco-node[data-category="user"]        .eco-node-accent { fill: #9a7d38; }
+
 .eco-node .eco-node-rect {
   rx: 12;
   stroke-width: 1.5;
   transition: all 0.2s ease;
+  filter: drop-shadow(0 1px 2px rgba(32, 29, 26, 0.07));
 }
 
 .eco-node[data-category="buy"]         .eco-node-rect { fill: rgba(125, 94, 114, 0.15); stroke: rgba(125, 94, 114, 0.6); }
@@ -3696,7 +3814,7 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 
 .eco-node-title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   fill: var(--text-primary);
   text-anchor: middle;
@@ -3704,7 +3822,7 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 
 .eco-node-sub {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 500;
   fill: var(--text-muted);
   text-anchor: middle;
@@ -3717,13 +3835,15 @@ body[data-demo-mode="easy"] .is-pro-only {
 /* SVG edges */
 .eco-edge {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.18);
-  stroke-width: 1.5;
+  stroke: rgba(255, 255, 255, 0.32);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
   transition: stroke 0.25s ease, stroke-width 0.25s ease, opacity 0.3s ease;
 }
 
 [data-theme="light"] .eco-edge {
-  stroke: rgba(0, 0, 0, 0.18);
+  stroke: rgba(70, 60, 50, 0.3);
 }
 
 .eco-edge.is-done {
@@ -3737,8 +3857,8 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 
 /* Arrowhead markers (referenced from <defs>) */
-.eco-arrow-head { fill: rgba(255, 255, 255, 0.35); }
-[data-theme="light"] .eco-arrow-head { fill: rgba(0, 0, 0, 0.3); }
+.eco-arrow-head { fill: rgba(255, 255, 255, 0.5); }
+[data-theme="light"] .eco-arrow-head { fill: rgba(70, 60, 50, 0.45); }
 .eco-arrow-head-done { fill: var(--accent-secondary); }
 .eco-arrow-head-active { fill: var(--accent-primary); }
 
@@ -4201,6 +4321,56 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 .eco-step.is-current .eco-step-detail { display: block; }
 
+/* 단계 예시 (스토리 한 줄 + 실제 데이터값 칩) */
+.eco-step-example {
+  margin-top: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg-tertiary);
+  border-left: 3px solid var(--accent-secondary);
+  border-radius: 0 8px 8px 0;
+}
+
+.eco-step-example-label {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.eco-step-story {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: keep-all;
+}
+
+.eco-step-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.eco-data-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.12rem 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.eco-data-chip b {
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-right: 0.15rem;
+}
+
 .eco-flow-summary {
   margin-top: 0.9rem;
   padding: 0.7rem 0.85rem;
@@ -4248,10 +4418,15 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 
 @media (max-width: 768px) {
-  .eco-hero { padding: 2rem 0 1rem; }
-  .eco-hero h1 { font-size: 2rem; }
+  .eco-hero { padding: 2.5rem 0 1rem; }
+  .eco-hero-dek { font-size: 1rem; }
+  .eco-hero-guide { font-size: 0.86rem; }
   .eco-controls { padding: 0 1rem; }
   .eco-howto-wrap { padding: 0 1rem; }
+  .eco-legend-wrap { padding: 0 1rem; }
+  .eco-section-head { padding: 1.25rem 1rem 0; margin-top: 2.5rem; gap: 0.8rem; }
+  .eco-section-title { font-size: 1.3rem; }
+  .eco-section-num { width: 2.1rem; height: 2.1rem; }
   .eco-main-layout { padding: 0 1rem; gap: 1rem; }
   .eco-graph-wrap { padding: 0.6rem; }
   .eco-flow-caption { font-size: 0.82rem; }

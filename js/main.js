@@ -44,7 +44,7 @@ function updateThemeButton() {
   button.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.6" cy="9.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.4" cy="9.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.4" cy="15" r="1.3" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg>';
   button.setAttribute('aria-label', '테마 선택');
   button.setAttribute('title', '테마 선택');
-  button.setAttribute('aria-haspopup', 'true');
+  button.setAttribute('aria-haspopup', 'menu');
 }
 
 function buildThemePanel() {
@@ -83,12 +83,13 @@ function markCurrentThemeTile() {
   panel.querySelectorAll('.theme-tile').forEach(tile => {
     const on = tile.dataset.palette === cur.palette && tile.dataset.mode === cur.mode;
     tile.classList.toggle('is-current', on);
-    if (on) tile.setAttribute('aria-checked', 'true'); else tile.removeAttribute('aria-checked');
+    tile.setAttribute('aria-checked', on ? 'true' : 'false');
   });
 }
 
 function openThemePanel() {
   const panel = buildThemePanel();
+  if (!panel.hidden) return;
   markCurrentThemeTile();
   panel.hidden = false;
   const btn = document.getElementById('theme-toggle');

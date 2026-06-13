@@ -5,31 +5,119 @@
 // Theme Management
 // ========================================
 
+const THEMES = [
+  { palette: 'cream', mode: 'light', name: '크림 라이트',   chips: ['#faf8f3', '#fffdf8', '#b0442c', '#201d1a'] },
+  { palette: 'cream', mode: 'dark',  name: '크림 다크',     chips: ['#1a1715', '#232020', '#d77a5f', '#f1ece3'] },
+  { palette: 'slate', mode: 'light', name: '슬레이트 라이트', chips: ['#f2f4f7', '#ffffff', '#3f5b8b', '#1e2430'] },
+  { palette: 'slate', mode: 'dark',  name: '슬레이트 다크',   chips: ['#161a22', '#1f2530', '#7fa0d4', '#e8ecf3'] },
+];
+
+function getSavedTheme() {
+  return {
+    mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
+    palette: localStorage.getItem('palette') === 'slate' ? 'slate' : 'cream',
+  };
+}
+
 function initializeTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeButton(savedTheme);
+  const { mode, palette } = getSavedTheme();
+  const root = document.documentElement;
+  root.setAttribute('data-theme', mode);
+  root.setAttribute('data-palette', palette);
+  updateThemeButton();
 }
 
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateThemeButton(newTheme);
-  if (typeof setGiscusTheme === 'function') setGiscusTheme(newTheme);   // 댓글 테마 동기
+function applyTheme(palette, mode) {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', mode);
+  root.setAttribute('data-palette', palette);
+  localStorage.setItem('theme', mode);
+  localStorage.setItem('palette', palette);
+  updateThemeButton();
+  markCurrentThemeTile();
+  if (typeof setGiscusTheme === 'function') setGiscusTheme(mode);
 }
 
-function updateThemeButton(theme) {
+function updateThemeButton() {
   const button = document.getElementById('theme-toggle');
   if (!button) return;
-  const moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-  const sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
-  // Show the icon for the mode user will switch to
-  button.innerHTML = theme === 'dark' ? sunSvg : moonSvg;
-  button.setAttribute('aria-label', `${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`);
-  button.setAttribute('title', `${theme === 'dark' ? '라이트' : '다크'} 모드로 전환`);
+  button.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.6" cy="9.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.4" cy="9.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.4" cy="15" r="1.3" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg>';
+  button.setAttribute('aria-label', '테마 선택');
+  button.setAttribute('title', '테마 선택');
+  button.setAttribute('aria-haspopup', 'true');
 }
+
+function buildThemePanel() {
+  let panel = document.getElementById('theme-panel');
+  if (panel) return panel;
+  panel = document.createElement('div');
+  panel.id = 'theme-panel';
+  panel.className = 'theme-panel';
+  panel.setAttribute('role', 'menu');
+  panel.hidden = true;
+  panel.innerHTML = '<div class="theme-panel-title">테마</div><div class="theme-grid">' +
+    THEMES.map(t =>
+      '<button type="button" class="theme-tile" role="menuitemradio" data-palette="' + t.palette + '" data-mode="' + t.mode + '" aria-label="' + t.name + '">' +
+        '<span class="theme-tile-preview" style="background:' + t.chips[0] + '">' +
+          '<span class="theme-tile-bar" style="background:' + t.chips[2] + '"></span>' +
+          '<span class="theme-tile-line" style="background:' + t.chips[3] + '"></span>' +
+          '<span class="theme-tile-line short" style="background:' + t.chips[1] + '"></span>' +
+        '</span>' +
+        '<span class="theme-tile-name">' + t.name + '<span class="theme-tile-check">✓</span></span>' +
+      '</button>'
+    ).join('') + '</div>';
+  (document.querySelector('.nav-actions') || document.body).appendChild(panel);
+  panel.addEventListener('click', (e) => {
+    const tile = e.target.closest('.theme-tile');
+    if (!tile) return;
+    applyTheme(tile.dataset.palette, tile.dataset.mode);
+    closeThemePanel();
+  });
+  return panel;
+}
+
+function markCurrentThemeTile() {
+  const panel = document.getElementById('theme-panel');
+  if (!panel) return;
+  const cur = getSavedTheme();
+  panel.querySelectorAll('.theme-tile').forEach(tile => {
+    const on = tile.dataset.palette === cur.palette && tile.dataset.mode === cur.mode;
+    tile.classList.toggle('is-current', on);
+    if (on) tile.setAttribute('aria-checked', 'true'); else tile.removeAttribute('aria-checked');
+  });
+}
+
+function openThemePanel() {
+  const panel = buildThemePanel();
+  markCurrentThemeTile();
+  panel.hidden = false;
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+  setTimeout(() => {
+    document.addEventListener('click', onOutsideThemeClick);
+    document.addEventListener('keydown', onThemeKeydown);
+  }, 0);
+}
+
+function closeThemePanel() {
+  const panel = document.getElementById('theme-panel');
+  if (panel) panel.hidden = true;
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+  document.removeEventListener('click', onOutsideThemeClick);
+  document.removeEventListener('keydown', onThemeKeydown);
+}
+
+function toggleThemePanel() {
+  const panel = document.getElementById('theme-panel');
+  if (panel && !panel.hidden) closeThemePanel(); else openThemePanel();
+}
+
+function onOutsideThemeClick(e) {
+  if (e.target.closest('#theme-panel') || e.target.closest('#theme-toggle')) return;
+  closeThemePanel();
+}
+function onThemeKeydown(e) { if (e.key === 'Escape') closeThemePanel(); }
 
 // ========================================
 // Demo pages — Beginner-friendly UX
@@ -1567,7 +1655,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup theme toggle button
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
-    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('click', toggleThemePanel);
   }
 
   // Mark active nav link with aria-current

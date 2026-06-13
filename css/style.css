@@ -3440,7 +3440,7 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 /* 매거진 섹션 헤더 (① ② 번호 + 제목 + 부제) */
 .eco-section-head {
-  max-width: 1280px;
+  max-width: min(1640px, 96vw);
   margin: 3.25rem auto 1rem;
   padding: 1.5rem 2rem 0;
   display: flex;
@@ -3485,13 +3485,13 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 /* 범례 (지도 바로 위) */
 .eco-legend-wrap {
-  max-width: 1280px;
+  max-width: min(1640px, 96vw);
   margin: 0.6rem auto 0;
   padding: 0 2rem;
 }
 
 .eco-controls {
-  max-width: 1280px;
+  max-width: min(1640px, 96vw);
   margin: 0.6rem auto 0;
   padding: 0 2rem;
   display: flex;
@@ -3723,12 +3723,12 @@ body[data-demo-mode="easy"] .is-pro-only {
 
 /* Main layout: SVG + side panel */
 .eco-main-layout {
-  max-width: 1280px;
+  max-width: min(1640px, 96vw);
   margin: 1.5rem auto 0;
   padding: 0 2rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.25rem;
 }
 
 .eco-graph-wrap {

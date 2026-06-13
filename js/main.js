@@ -45,6 +45,7 @@ function updateThemeButton() {
   button.setAttribute('aria-label', '테마 선택');
   button.setAttribute('title', '테마 선택');
   button.setAttribute('aria-haspopup', 'menu');
+  button.setAttribute('aria-expanded', 'false');
 }
 
 function buildThemePanel() {

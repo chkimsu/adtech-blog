@@ -8,6 +8,40 @@
 
 const posts = [
   {
+    id: 'kakao-ads-products',
+    title: '카카오 광고 상품 지도: 비즈보드·모먼트·키워드광고는 우리가 배운 무엇인가',
+    excerpt: '카카오톡 채팅탭 위 비즈보드 배너 한 칸은, 우리가 배운 디스플레이 경매·eCPM 랭킹의 실물이다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지 같은 실제 상품을 하나씩 짚어, 각각이 블로그가 다룬 어떤 개념의 응용인지 연결하는 카카오 광고 3부작의 1편 — 무엇이 팔리고 어떻게 줄 세워지는가.',
+    date: '2026-06-13',
+    categories: ['Bidding & Auction'],
+    tags: ['Ad Ecosystem', 'DSP', 'SSP', 'eCPM', '입문'],
+    contentUrl: 'posts/kakao-ads-products.md',
+    readTime: '8 min read',
+    featured: true,
+    series: 'kakao-adtech'
+  },
+  {
+    id: 'kakao-ads-prediction-targeting',
+    title: '카카오는 무엇으로 광고를 고르나: pCTR·톡 데이터·맞춤/유사타겟',
+    excerpt: '비즈보드·모먼트는 무엇으로 광고를 고르나? 줄 세우기의 심장인 pCTR·pCVR 예측, 돈과 직결되는 보정(Calibration), 데모·맞춤·유사타겟, 그리고 톡·다음·맵을 합친 1st-party 데이터의 힘까지 — 카카오의 예측·타겟팅 층을 Deep CTR·멀티태스크·세그멘테이션·룩얼라이크·포지션 편향 글과 잇는 2편.',
+    date: '2026-06-13',
+    categories: ['Targeting & Audience', 'Measurement & Modeling'],
+    tags: ['pCTR', 'Targeting', 'Segmentation', 'Lookalike', 'DMP'],
+    contentUrl: 'posts/kakao-ads-prediction-targeting.md',
+    readTime: '6 min read',
+    series: 'kakao-adtech'
+  },
+  {
+    id: 'kakao-ads-bidding-measurement',
+    title: '카카오에서 캠페인이 굴러가는 법: 자동입찰·예산 페이싱·성과 측정',
+    excerpt: '광고를 골랐으면 얼마를 입찰하고, 예산을 어떻게 나누며, 효과가 진짜였는지 재야 한다. 카카오의 자동입찰(=플랫폼이 대신 깎아주는 Bid Shading)·예산 페이싱·픽셀/SDK 전환 추적·증분효과 측정을, Auto-Bidding·로그 파이프라인·인과추론 글과 잇는 카카오 광고 3부작의 마지막 편.',
+    date: '2026-06-13',
+    categories: ['Bidding & Auction', 'Measurement & Modeling'],
+    tags: ['Auto-Bidding', 'Bid Shading', 'Attribution', 'Incrementality', 'eCPM'],
+    contentUrl: 'posts/kakao-ads-bidding-measurement.md',
+    readTime: '6 min read',
+    series: 'kakao-adtech'
+  },
+  {
     id: 'software-architecture-patterns',
     title: '소프트웨어 아키텍처 패턴 6가지 쉽게 이해하기: 이벤트 기반·계층형·모놀리식·마이크로서비스·MVC·마스터-슬레이브',
     excerpt: '집을 짓는 방식이 여러 가지이듯, 소프트웨어도 \'어떻게 짜맞출지\'의 정형화된 설계도가 있다. 컴포넌트가 \'사건\'으로 대화하는 이벤트 기반, 책임을 층층이 쌓는 계층형, 한 덩어리로 만드는 모놀리식, 잘게 쪼개는 마이크로서비스, 화면·로직·데이터를 나누는 MVC, 읽기/쓰기를 분산하는 마스터-슬레이브까지 — 6가지 대표 패턴을 일상 비유와 도식으로 풀고, 언제 무엇을 고를지까지 정리한다.',
@@ -359,7 +393,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['Thompson Sampling', 'MAB', 'Contextual Bandit'],
     contentUrl: 'posts/TS-linTS.md',
-    readTime: '3 min read'
+    readTime: '4 min read'
   },
   {
     id: 'mab-summary',
@@ -369,7 +403,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'LinUCB', 'Thompson Sampling', 'UCB'],
     contentUrl: 'posts/mab.md',
-    readTime: '3 min read'
+    readTime: '4 min read'
   },
   {
     id: 'ucb-vs-ts',
@@ -379,7 +413,7 @@ const posts = [
     categories: ['Bandits & Personalization'],
     tags: ['UCB', 'Thompson Sampling', 'MAB'],
     contentUrl: 'posts/ucb_ts.md',
-    readTime: '2 min read'
+    readTime: '3 min read'
   },
   {
     id: 'disjoint-linucb',
@@ -416,6 +450,11 @@ const posts = [
 
 // 읽는 순서(시리즈). 순서는 여기 한 곳에서만 관리한다(데모 learning-path와 동일 사상).
 const series = {
+  'kakao-adtech': {
+    title: '카카오 광고 사례 트랙',
+    desc: '비즈보드·모먼트·키워드광고 같은 실제 카카오 광고 상품을, 블로그가 다룬 광고 기술 개념과 하나씩 연결해 읽는 응용 트랙(상품 → 예측·타겟팅 → 입찰·측정)',
+    posts: ['kakao-ads-products', 'kakao-ads-prediction-targeting', 'kakao-ads-bidding-measurement'],
+  },
   'causal-inference-track': {
     title: '인과추론 트랙',
     desc: '상관과 인과의 차이부터, 실험을 못 할 때 효과를 캐내는 도구들(RCT·DiD·RDD·IV)까지',

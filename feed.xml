@@ -5,8 +5,34 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-06-07T00:00:00Z</updated>
+  <updated>2026-06-13T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>카카오 광고 상품 지도: 비즈보드·모먼트·키워드광고는 우리가 배운 무엇인가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products</id>
+    <updated>2026-06-13T00:00:00Z</updated>
+    <summary>카카오톡 채팅탭 위 비즈보드 배너 한 칸은, 우리가 배운 디스플레이 경매·eCPM 랭킹의 실물이다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지 같은 실제 상품을 하나씩 짚어, 각각이 블로그가 다룬 어떤 개념의 응용인지 연결하는 카카오 광고 3부작의 1편 — 무엇이 팔리고 어떻게 줄 세워지는가.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>카카오는 무엇으로 광고를 고르나: pCTR·톡 데이터·맞춤/유사타겟</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting</id>
+    <updated>2026-06-13T00:00:00Z</updated>
+    <summary>비즈보드·모먼트는 무엇으로 광고를 고르나? 줄 세우기의 심장인 pCTR·pCVR 예측, 돈과 직결되는 보정(Calibration), 데모·맞춤·유사타겟, 그리고 톡·다음·맵을 합친 1st-party 데이터의 힘까지 — 카카오의 예측·타겟팅 층을 Deep CTR·멀티태스크·세그멘테이션·룩얼라이크·포지션 편향 글과 잇는 2편.</summary>
+    <category term="Targeting &amp; Audience"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>카카오에서 캠페인이 굴러가는 법: 자동입찰·예산 페이싱·성과 측정</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement</id>
+    <updated>2026-06-13T00:00:00Z</updated>
+    <summary>광고를 골랐으면 얼마를 입찰하고, 예산을 어떻게 나누며, 효과가 진짜였는지 재야 한다. 카카오의 자동입찰(=플랫폼이 대신 깎아주는 Bid Shading)·예산 페이싱·픽셀/SDK 전환 추적·증분효과 측정을, Auto-Bidding·로그 파이프라인·인과추론 글과 잇는 카카오 광고 3부작의 마지막 편.</summary>
+    <category term="Bidding &amp; Auction"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
   <entry>
     <title>소프트웨어 아키텍처 패턴 6가지 쉽게 이해하기: 이벤트 기반·계층형·모놀리식·마이크로서비스·MVC·마스터-슬레이브</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns"/>
@@ -142,29 +168,5 @@
     <updated>2026-04-11T00:00:00Z</updated>
     <summary>Class Imbalance, Negative Downsampling, Log-odds Correction, IPS, Doubly Robust Estimator까지 — 광고 CTR 모델 학습 데이터의 구조적 편향과 보정 기법을 해부합니다.</summary>
     <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>Two-Tower Model &amp; 광고 후보 생성: 수백만 광고에서 10ms 안에 후보를 추리는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-retrieval"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-retrieval</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>Rule-based Retrieval의 한계부터 Two-Tower(DSSM) 아키텍처, Negative Sampling 전략, ANN 인덱스 비교, Multi-Interest Model까지 — 수백만 광고 후보에서 10ms 이내에 개인화된 후보를 추리는 Retrieval 시스템을 해부합니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>Multi-Task Learning: pCTR과 pCVR을 동시에 학습하면 왜 더 좋은가</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=multi-task-learning"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=multi-task-learning</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>Sample Selection Bias를 해결하는 ESMM, Negative Transfer를 완화하는 MMoE, Seesaw 현상을 해소하는 PLE까지 — 광고 시스템 Multi-Task Learning 아키텍처의 진화와 실무 선택 가이드를 해부합니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>탐색과 활용(Exploration &amp; Exploitation): 광고 시스템의 근본적 딜레마</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=exploration-exploitation"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=exploration-exploitation</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.</summary>
-    <category term="Bandits &amp; Personalization"/>
   </entry>
 </feed>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="광고 생태계 쉬운 버전 — 가상의 사용자 '민지'가 앱을 연 순간부터 광고가 뜨기까지 0.1초의 RTB 과정을, 어려운 약어 없이 카드 한 장씩 순서대로 따라가 봅니다.">
+  <meta name="keywords"
+    content="광고 생태계 쉽게, RTB 쉽게, 광고 입찰 과정, AdTech 입문, 광고가 뜨는 과정, DSP SSP 쉽게">
+  <meta name="author" content="Ad Tech Blog">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="광고가 뜨기까지, 0.1초 이야기 — 쉬운 버전">
+  <meta property="og:description"
+    content="민지가 앱을 연 순간부터 광고가 뜨기까지. 어려운 약어 없이 카드 한 장씩 따라가는 광고 생태계 쉬운 버전.">
+  <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/ecosystem-easy.html">
+
+  <title>쉬운 버전 — 0.1초 이야기 · Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="Ad Tech Blog Feed" href="/adtech-blog/feed.xml">
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo btn-demo-active">Ecosystem</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="main-content">
+    <!-- Hero -->
+    <section class="eco-hero">
+      <div class="container">
+        <span class="eco-hero-kicker">AD TECH · 처음 오신 분을 위한 쉬운 버전</span>
+        <h1 class="eco-hero-title">광고가 뜨기까지,<br>0.1초 이야기</h1>
+        <p class="eco-hero-dek">앱을 켠 사람 <strong>민지</strong>를 따라가 봅니다. 어려운 약어는 잠깐 접어두고,
+          광고가 화면에 뜨기까지 무슨 일이 벌어지는지 <strong>한 장씩</strong> 넘겨 보세요.</p>
+
+        <!-- 보기 방식 토글 -->
+        <div class="ecoeasy-toggle-wrap">
+          <div class="ecoeasy-toggle" role="group" aria-label="보기 방식">
+            <span class="ecoeasy-toggle-item is-active" aria-current="page">쉬운 버전</span>
+            <a class="ecoeasy-toggle-item" href="ecosystem.html">자세히</a>
+          </div>
+        </div>
+        <p class="ecoeasy-hint"><strong>다음 →</strong> 버튼이나 키보드 화살표(<kbd>←</kbd> <kbd>→</kbd>)로 넘겨 보세요.</p>
+      </div>
+    </section>
+
+    <!-- 슬라이드 무대 -->
+    <div id="ecoeasy-stage" class="ecoeasy-stage">
+      <div id="ecoeasy-card" class="ecoeasy-card" aria-live="polite">
+        <div id="ecoeasy-icon" class="ecoeasy-icon"></div>
+        <p id="ecoeasy-step" class="ecoeasy-step">STEP 1 / 9</p>
+        <h2 id="ecoeasy-title" class="ecoeasy-title"></h2>
+        <p id="ecoeasy-body" class="ecoeasy-body"></p>
+        <div id="ecoeasy-compare" class="ecoeasy-compare" hidden></div>
+        <div class="ecoeasy-meta">
+          <span id="ecoeasy-term" class="ecoeasy-term" hidden></span>
+          <span id="ecoeasy-example" class="ecoeasy-example" hidden></span>
+        </div>
+        <div id="ecoeasy-link" class="ecoeasy-link" hidden></div>
+        <div id="ecoeasy-cta" class="ecoeasy-cta" hidden></div>
+      </div>
+
+      <div class="ecoeasy-controls">
+        <button type="button" id="ecoeasy-prev" class="eco-ctrl-btn">← 이전</button>
+        <div id="ecoeasy-dots" class="ecoeasy-dots" role="group" aria-label="단계 바로가기"></div>
+        <button type="button" id="ecoeasy-next" class="eco-ctrl-btn is-primary">다음 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">
+        &copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/posts.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ecosystem-easy.js"></script>
+</body>
+
+</html>

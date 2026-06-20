@@ -4506,6 +4506,267 @@ body[data-demo-mode="easy"] .is-pro-only {
   .eco-categories { padding: 0 1rem; }
 }
 
+/* ========================================
+   Ecosystem 쉬운 버전 — 단계별 슬라이드
+   ======================================== */
+
+/* 보기 방식 토글 (쉬운 버전 | 자세히) */
+.ecoeasy-toggle-wrap { display: flex; justify-content: center; margin: 0.4rem 0 0.55rem; }
+.ecoeasy-toggle {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+}
+.ecoeasy-toggle-item {
+  padding: 0.42rem 1rem;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
+.ecoeasy-toggle-item.is-active { background: var(--accent-primary); color: #fff; }
+
+.ecoeasy-hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  margin: 0.25rem auto 0;
+  word-break: keep-all;
+}
+.ecoeasy-hint strong { color: var(--text-secondary); font-weight: 700; }
+.ecoeasy-hint a { color: var(--accent-primary); font-weight: 700; text-decoration: none; }
+.ecoeasy-hint a:hover { text-decoration: underline; }
+.ecoeasy-hint kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.05rem 0.35rem;
+  color: var(--text-secondary);
+}
+
+/* 무대 + 카드 */
+.ecoeasy-stage { max-width: 680px; margin: 1.5rem auto 4rem; padding: 0 1.5rem; }
+
+.ecoeasy-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+  padding: 2.6rem 2.4rem 2.4rem;
+  text-align: center;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ecoeasy-icon {
+  color: var(--text-primary);
+  width: 92px;
+  height: 92px;
+  margin-bottom: 1.2rem;
+}
+.ecoeasy-icon svg { width: 100%; height: 100%; display: block; }
+
+.ecoeasy-step {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  margin: 0 0 0.7rem;
+}
+
+.ecoeasy-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 0 0.9rem;
+  word-break: keep-all;
+}
+
+.ecoeasy-body {
+  color: var(--text-secondary);
+  font-size: 1.06rem;
+  line-height: 1.72;
+  margin: 0;
+  max-width: 42ch;
+  word-break: keep-all;
+}
+
+.ecoeasy-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+}
+
+.ecoeasy-term { font-size: 0.84rem; color: var(--text-muted); word-break: keep-all; }
+.ecoeasy-term[hidden] { display: none; }
+.ecoeasy-term-label {
+  display: inline-block;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.05rem 0.4rem;
+  margin-right: 0.35rem;
+}
+.ecoeasy-example {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  padding: 0.28rem 0.65rem;
+}
+.ecoeasy-example[hidden] { display: none; }
+
+/* 1등 vs 2등 비교 카드 */
+.ecoeasy-compare { width: 100%; margin-top: 1.3rem; }
+.ecoeasy-compare[hidden] { display: none; }
+.ecoeasy-compare-shared {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 0.7rem;
+  word-break: keep-all;
+  line-height: 1.5;
+}
+.ecoeasy-compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.ecoeasy-compare-col {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  padding: 1rem 0.8rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+.ecoeasy-compare-col.is-accent { border-color: var(--accent-primary); }
+.ecoeasy-compare-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--text-primary);
+}
+.ecoeasy-compare-sub {
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.ecoeasy-compare-pay {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--accent-primary);
+  margin-top: 0.15rem;
+}
+.ecoeasy-compare-desc { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; word-break: keep-all; }
+@media (max-width: 768px) { .ecoeasy-compare-grid { grid-template-columns: 1fr; } }
+
+/* 슬라이드별 보조 링크 (예: 경매 데모) */
+.ecoeasy-link { margin-top: 1rem; }
+.ecoeasy-link[hidden] { display: none; }
+.ecoeasy-link-a {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+.ecoeasy-link-a:hover { border-bottom-color: var(--accent-primary); }
+
+.ecoeasy-cta {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ecoeasy-cta[hidden] { display: none; }
+.ecoeasy-cta-btn {
+  display: inline-block;
+  padding: 0.6rem 1.3rem;
+  border-radius: 9px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: filter var(--transition-fast);
+}
+.ecoeasy-cta-btn:hover { filter: brightness(1.08); }
+.ecoeasy-cta-note { font-size: 0.82rem; color: var(--text-muted); max-width: 36ch; word-break: keep-all; }
+
+/* 컨트롤 + 점 */
+.ecoeasy-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+.ecoeasy-dots { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+.ecoeasy-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.ecoeasy-dot:hover { border-color: var(--accent-primary); }
+.ecoeasy-dot.is-active { background: var(--accent-primary); border-color: var(--accent-primary); transform: scale(1.25); }
+
+.eco-ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+@keyframes ecoeasyIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.ecoeasy-card.is-in { animation: ecoeasyIn 0.32s ease; }
+
+@media (max-width: 768px) {
+  .ecoeasy-stage { padding: 0 1rem; margin: 1rem auto 3rem; }
+  .ecoeasy-card { padding: 2rem 1.4rem; min-height: 0; }
+  .ecoeasy-body { font-size: 1rem; }
+  .ecoeasy-controls { gap: 0.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecoeasy-card.is-in { animation: none; }
+}
+
 /* ===== 공용 try/more 버튼 ===== */
 .btn-try {
   display: inline-block;

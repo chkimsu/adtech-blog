@@ -84,7 +84,9 @@
       body: '매체(앱·뉴스 사이트)는 빈 광고 자리를 직접 팔 손이 없다. SSP가 그 자리(지면)를 모아 거래소 경매에 올려, 가장 비싸게 사는 광고에 판다. 광고주가 아니라 ‘매체’ 편이다.',
       relation: { side: '파는 쪽 · 지면을 내놓는다', nodes: ['매체 (지면 주인)', 'SSP', '거래소 경매'], key: 1 },
       term: 'SSP = Supply-Side Platform · 매체(파는 쪽)의 대리인',
-      example: '예: Google Ad Manager · PubMatic · Magnite'
+      example: '해외: Google Ad Manager · PubMatic · Magnite',
+      exampleKr: '국내: 카카오 애드핏',
+      note: '네이버·카카오는 ‘울타리 친 생태계’ — 자기 지면을 자기 플랫폼에서 직접 판다.'
     },
     {
       icon: 'bidders',
@@ -92,7 +94,9 @@
       body: '광고주는 수많은 경매를 일일이 못 쫓는다. DSP가 광고주의 예산·타겟을 받아, 여러 거래소 경매에 동시에 입찰해 그 지면을 산다. SSP의 정반대 — ‘광고주’ 편이다.',
       relation: { side: '사는 쪽 · 값을 부른다', nodes: ['광고주', 'DSP', '거래소 경매'], key: 1 },
       term: 'DSP = Demand-Side Platform · 광고주(사는 쪽)의 대리인',
-      example: '예: The Trade Desk · Google DV360 · Criteo'
+      example: '해외: The Trade Desk · Google DV360 · Criteo',
+      exampleKr: '국내: 카카오모먼트 · 네이버 GFA',
+      note: '카카오모먼트·네이버 GFA는 닫힌 생태계의 ‘사는 쪽’ 도구 — 한 회사 안에서 사고팔린다.'
     },
     {
       icon: 'brainpct',
@@ -150,6 +154,8 @@
     var elBody = document.getElementById('ecoeasy-body');
     var elTerm = document.getElementById('ecoeasy-term');
     var elExample = document.getElementById('ecoeasy-example');
+    var elExampleKr = document.getElementById('ecoeasy-example-kr');
+    var elNote = document.getElementById('ecoeasy-note');
     var elRelation = document.getElementById('ecoeasy-relation');
     var elCompare = document.getElementById('ecoeasy-compare');
     var elLink = document.getElementById('ecoeasy-link');
@@ -217,13 +223,31 @@
         elTerm.innerHTML = '';
       }
 
-      // 예시 chip
+      // 예시 chip (해외)
       if (s.example) {
         elExample.hidden = false;
         elExample.textContent = s.example;
       } else {
         elExample.hidden = true;
         elExample.textContent = '';
+      }
+
+      // 예시 chip (국내)
+      if (s.exampleKr) {
+        elExampleKr.hidden = false;
+        elExampleKr.textContent = s.exampleKr;
+      } else {
+        elExampleKr.hidden = true;
+        elExampleKr.textContent = '';
+      }
+
+      // 보조 주석 (예: 울타리 친 생태계 설명)
+      if (s.note) {
+        elNote.hidden = false;
+        elNote.textContent = s.note;
+      } else {
+        elNote.hidden = true;
+        elNote.textContent = '';
       }
 
       // 슬라이드별 보조 링크 (예: 경매 데모)

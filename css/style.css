@@ -4640,6 +4640,18 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
   padding: 0.28rem 0.65rem;
 }
 .ecoeasy-example[hidden] { display: none; }
+.ecoeasy-example.is-kr { color: var(--accent-secondary); border-color: var(--accent-secondary); border-style: dashed; }
+
+/* 보조 주석 (울타리 친 생태계 등) */
+.ecoeasy-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0.85rem auto 0;
+  max-width: 42ch;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.ecoeasy-note[hidden] { display: none; }
 
 /* 관계 한 줄 (매체 → SSP → 거래소 등) */
 .ecoeasy-relation {

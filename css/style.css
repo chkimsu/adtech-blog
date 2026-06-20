@@ -4641,6 +4641,47 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 }
 .ecoeasy-example[hidden] { display: none; }
 
+/* 관계 한 줄 (매체 → SSP → 거래소 등) */
+.ecoeasy-relation {
+  width: 100%;
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+.ecoeasy-relation[hidden] { display: none; }
+.ecoeasy-relation-side {
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+.ecoeasy-relation-chain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ecoeasy-relation-node {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  white-space: nowrap;
+}
+.ecoeasy-relation-node.is-key {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+.ecoeasy-relation-arrow { color: var(--text-muted); font-size: 0.85rem; }
+
 /* 1등 vs 2등 비교 카드 */
 .ecoeasy-compare { width: 100%; margin-top: 1.3rem; }
 .ecoeasy-compare[hidden] { display: none; }

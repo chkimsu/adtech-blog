@@ -80,17 +80,19 @@
     },
     {
       icon: 'megaphone',
-      title: '파는 쪽엔 ‘SSP’라는 대리인이 있다',
-      body: '매체(앱)는 광고 자리를 직접 팔 손이 없다. 그래서 ‘SSP’가 대신 그 자리를 경매장에 내놓는다. SSP가 하는 일은 단 하나 — 최대한 비싸게 팔아주는 것.',
+      title: '파는 쪽엔 ‘SSP’ — 매체의 판매 대리인',
+      body: '매체(앱·뉴스 사이트)는 빈 광고 자리를 직접 팔 손이 없다. SSP가 그 자리(지면)를 모아 거래소 경매에 올려, 가장 비싸게 사는 광고에 판다. 광고주가 아니라 ‘매체’ 편이다.',
+      relation: { side: '파는 쪽 · 지면을 내놓는다', nodes: ['매체 (지면 주인)', 'SSP', '거래소 경매'], key: 1 },
       term: 'SSP = Supply-Side Platform · 매체(파는 쪽)의 대리인',
-      example: '최저 ₩800부터 경매 시작'
+      example: '예: Google Ad Manager · PubMatic · Magnite'
     },
     {
       icon: 'bidders',
-      title: '사는 쪽엔 ‘DSP’라는 대리인이 있다',
-      body: '광고주도 수많은 경매를 일일이 못 쫓는다. ‘DSP’가 대신 여러 경매장에서 동시에 입찰한다. SSP는 비싸게 팔려 하고 DSP는 싸게 사려 하니, 그 사이를 경매장이 잇는다.',
+      title: '사는 쪽엔 ‘DSP’ — 광고주의 구매 대리인',
+      body: '광고주는 수많은 경매를 일일이 못 쫓는다. DSP가 광고주의 예산·타겟을 받아, 여러 거래소 경매에 동시에 입찰해 그 지면을 산다. SSP의 정반대 — ‘광고주’ 편이다.',
+      relation: { side: '사는 쪽 · 값을 부른다', nodes: ['광고주', 'DSP', '거래소 경매'], key: 1 },
       term: 'DSP = Demand-Side Platform · 광고주(사는 쪽)의 대리인',
-      example: '이번 자리엔 DSP 12곳 참여'
+      example: '예: The Trade Desk · Google DV360 · Criteo'
     },
     {
       icon: 'brainpct',
@@ -148,6 +150,7 @@
     var elBody = document.getElementById('ecoeasy-body');
     var elTerm = document.getElementById('ecoeasy-term');
     var elExample = document.getElementById('ecoeasy-example');
+    var elRelation = document.getElementById('ecoeasy-relation');
     var elCompare = document.getElementById('ecoeasy-compare');
     var elLink = document.getElementById('ecoeasy-link');
     var elCta = document.getElementById('ecoeasy-cta');
@@ -180,6 +183,15 @@
       elStep.textContent = 'STEP ' + (i + 1) + ' / ' + N;
       elTitle.textContent = s.title;
       elBody.textContent = s.body;
+
+      // 관계 한 줄 (예: 매체 → SSP → 거래소)
+      if (s.relation) {
+        elRelation.hidden = false;
+        elRelation.innerHTML = renderRelation(s.relation);
+      } else {
+        elRelation.hidden = true;
+        elRelation.innerHTML = '';
+      }
 
       // 1등 vs 2등 비교 카드
       if (s.compare) {
@@ -290,6 +302,16 @@
       '<span class="ecoeasy-compare-pay">' + escapeHtml(col.pay) + '</span>' +
       '<span class="ecoeasy-compare-desc">' + escapeHtml(col.desc) + '</span>' +
     '</div>';
+  }
+
+  function renderRelation(rel) {
+    var chain = '';
+    for (var n = 0; n < rel.nodes.length; n++) {
+      if (n > 0) chain += '<span class="ecoeasy-relation-arrow">→</span>';
+      chain += '<span class="ecoeasy-relation-node' + (n === rel.key ? ' is-key' : '') + '">' + escapeHtml(rel.nodes[n]) + '</span>';
+    }
+    return '<span class="ecoeasy-relation-side">' + escapeHtml(rel.side) + '</span>' +
+      '<div class="ecoeasy-relation-chain">' + chain + '</div>';
   }
 
   if (document.readyState === 'loading') {

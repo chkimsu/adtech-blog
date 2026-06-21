@@ -614,6 +614,14 @@
           '<span class="ecoeasy-hub-count">' + st.slides.length + '장</span>' +
           '</a>';
       }
+      // 용어 사전 타일 (스토리가 아니라 참고 페이지로 이동)
+      html += '<a class="ecoeasy-hub-card is-terms" href="ecosystem-terms.html">' +
+        '<span class="ecoeasy-hub-icon">' + (ICONS.stack || '') + '</span>' +
+        '<span class="ecoeasy-hub-num">참고</span>' +
+        '<span class="ecoeasy-hub-title">한눈 용어 사전</span>' +
+        '<span class="ecoeasy-hub-dek">헷갈리는 약어·지표를 카드 한 장씩.</span>' +
+        '<span class="ecoeasy-hub-count">29개 용어</span>' +
+        '</a>';
       elHub.innerHTML = html;
       elHub.hidden = false;
       elStoryHeader.hidden = true;

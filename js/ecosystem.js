@@ -951,6 +951,7 @@
       <div class="eco-side-name">${n.name}</div>
       <div class="eco-side-sub">${n.sub}</div>
       <div class="eco-side-cat-tag" data-category="${n.cat}">${CAT_LABEL[n.cat]}</div>
+      <a class="eco-side-easy" href="ecosystem-terms.html#${id}">쉽게 보기 →</a>
       <div class="eco-side-definition">${n.def}</div>
       <div class="eco-side-section">
         <div class="eco-side-section-title">관련 데모</div>

@@ -8,6 +8,26 @@
 
 const posts = [
   {
+    id: 'pctr-prediction',
+    title: 'pCTR: ‘이 사람이 누를까?’를 맞히는 확률, 그리고 그게 왜 돈이 되나',
+    excerpt: 'DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. pCTR이 무엇이고, 왜 입찰가와 광고 줄 세우기를 모두 좌우하는 ‘광고의 심장’인지, 어떻게 그 확률을 맞히고 왜 보정(Calibration)이 필요한지를 수식 없이 예시로 푼다.',
+    date: '2026-06-21',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'pCVR', 'Calibration', 'Ad Ranking', '입문'],
+    contentUrl: 'posts/pctr-prediction.md',
+    readTime: '3 min read'
+  },
+  {
+    id: 'second-price-auction',
+    title: '2등 가격 경매(Second-Price): 이겨도 왜 2등 값만 낼까 — 그리고 광고판은 왜 1등 가격으로 옮겨갔나',
+    excerpt: '경매에서 이겼는데 왜 2등이 적어낸 값만 낼까? 솔직하게 부르는 게 이득이 되도록 설계된 2등 가격 경매(Vickrey)의 직관을 eBay 자동입찰·숫자 예시로 풀고, 광고판이 2019년 1등 가격으로 옮겨가며 Bid Shading이 등장한 이유까지 정리한다.',
+    date: '2026-06-21',
+    categories: ['Bidding & Auction'],
+    tags: ['RTB', 'Bid Shading', 'Ad Ecosystem', '입문'],
+    contentUrl: 'posts/second-price-auction.md',
+    readTime: '3 min read'
+  },
+  {
     id: 'dsp-ssp-exchange',
     title: 'DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로',
     excerpt: '광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 각각이 무슨 일을 하는지, 어떤 실제 회사(DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트…)가 그 역할인지, 그리고 0.1초 한 장면으로 어떻게 맞물리는지 수식 없이 풀고 한눈 비교표로 닫는다.',

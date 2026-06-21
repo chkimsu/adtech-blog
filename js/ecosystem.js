@@ -36,14 +36,14 @@
       name: 'Auction Engine', sub: '1st / 2nd Price',
       def: '여러 DSP의 입찰가 중 최고가를 결정하고 지불가를 산정. 1st Price=낙찰가 그대로, 2nd Price=차순위가만.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }, { name: 'UCB vs TS 비교', url: 'demo-compare-bandits.html' }],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
+      posts: [{ id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
     },
     'pctr-cvr': {
       x: 655, y: 70, w: 160, h: 56, cat: 'ml',
       name: 'pCTR / pCVR', sub: '예측 모델',
       def: '이 유저가 이 광고를 클릭할 확률(pCTR)과 전환할 확률(pCVR)을 예측. DeepFM·DIN 등 딥러닝 모델 활용.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: 'LinUCB', url: 'demo-linucb.html' }],
-      posts: [{ id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pCVR-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
+      posts: [{ id: 'pctr-prediction', title: 'pCTR이 뭐고 왜 돈이 되나' }, { id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pCVR-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
     },
     'brand': {
       x: 1060, y: 425, w: 160, h: 54, cat: 'buy',
@@ -78,7 +78,7 @@
       name: 'Ad Exchange', sub: '광고 거래소',
       def: 'SSP의 광고 슬롯과 DSP들의 입찰을 100ms 안에 매칭하는 실시간 거래소. RTB 경매의 무대.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'dsp': {
       x: 865, y: 210, w: 150, h: 64, cat: 'buy',

@@ -36,7 +36,7 @@
       name: 'Auction Engine', sub: '1st / 2nd Price',
       def: '여러 DSP의 입찰가 중 최고가를 결정하고 지불가를 산정. 1st Price=낙찰가 그대로, 2nd Price=차순위가만.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }, { name: 'UCB vs TS 비교', url: 'demo-compare-bandits.html' }],
-      posts: [{ id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
     },
     'pctr-cvr': {
       x: 655, y: 70, w: 160, h: 56, cat: 'ml',
@@ -71,14 +71,14 @@
       name: 'SSP', sub: '공급 측 플랫폼',
       def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price·Header Bidding으로 수익 최적화.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
-      posts: [{ id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'exchange': {
       x: 620, y: 210, w: 150, h: 64, cat: 'exchange',
       name: 'Ad Exchange', sub: '광고 거래소',
       def: 'SSP의 광고 슬롯과 DSP들의 입찰을 100ms 안에 매칭하는 실시간 거래소. RTB 경매의 무대.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }],
-      posts: [{ id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'dsp': {
       x: 865, y: 210, w: 150, h: 64, cat: 'buy',
@@ -93,7 +93,7 @@
         { name: 'pCTR Impact', url: 'demo-pctr-impact.html' },
         { name: 'Portfolio', url: 'demo-portfolio.html' }
       ],
-      posts: [{ id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }, { id: 'auto-bidding-pacing', title: 'Auto-Bidding & Pacing' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }, { id: 'auto-bidding-pacing', title: 'Auto-Bidding & Pacing' }]
     },
     'advertiser': {
       x: 1060, y: 210, w: 160, h: 64, cat: 'buy',

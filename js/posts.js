@@ -8,6 +8,16 @@
 
 const posts = [
   {
+    id: 'dsp-ssp-exchange',
+    title: 'DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로',
+    excerpt: '광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 각각이 무슨 일을 하는지, 어떤 실제 회사(DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트…)가 그 역할인지, 그리고 0.1초 한 장면으로 어떻게 맞물리는지 수식 없이 풀고 한눈 비교표로 닫는다.',
+    date: '2026-06-21',
+    categories: ['Bidding & Auction'],
+    tags: ['Ad Ecosystem', 'DSP', 'SSP', 'RTB', '입문'],
+    contentUrl: 'posts/dsp-ssp-exchange.md',
+    readTime: '5 min read'
+  },
+  {
     id: 'kakao-ads-products',
     title: '카카오 광고 상품 지도: 비즈보드·모먼트·키워드광고는 우리가 배운 무엇인가',
     excerpt: '카카오톡 채팅탭 위 비즈보드 배너 한 칸은, 우리가 배운 디스플레이 경매·eCPM 랭킹의 실물이다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지 같은 실제 상품을 하나씩 짚어, 각각이 블로그가 다룬 어떤 개념의 응용인지 연결하는 카카오 광고 3부작의 1편 — 무엇이 팔리고 어떻게 줄 세워지는가.',

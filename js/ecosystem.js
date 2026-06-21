@@ -71,7 +71,7 @@
       name: 'SSP', sub: '공급 측 플랫폼',
       def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price·Header Bidding으로 수익 최적화.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'header-bidding', title: '헤더비딩 쉽게' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'exchange': {
       x: 620, y: 210, w: 150, h: 64, cat: 'exchange',
@@ -107,21 +107,21 @@
       x: 45, y: 600, w: 200, h: 54, cat: 'measurement',
       name: 'MMP / Attribution', sub: '어트리뷰션',
       def: 'Impression·Click·Conversion 로그를 매칭해 어느 광고가 전환에 기여했는지 분석. ROAS 측정의 기반.',
-      demos: [], posts: [{ id: 'position-bias-ultr', title: 'Position Bias' }, { id: 'walled-garden', title: 'Walled Garden' }]
+      demos: [], posts: [{ id: 'attribution-basics', title: '어트리뷰션 — 누구 공인가' }, { id: 'position-bias-ultr', title: 'Position Bias' }, { id: 'walled-garden', title: 'Walled Garden' }]
     },
     'log-pipeline': {
       x: 300, y: 600, w: 170, h: 54, cat: 'measurement',
       name: 'Log Pipeline', sub: '로그 파이프라인',
       def: 'Bid·Win/Loss·Impression·Click·Conversion 10여 종 로그를 수집·조인·집계. 모델 학습과 측정의 토대.',
       demos: [{ name: 'Censored Data', url: 'demo-censored-data.html' }],
-      posts: [{ id: 'ad-log-system', title: '광고 로그 시스템' }, { id: 'ad-log-pipeline', title: '광고 로그 파이프라인' }, { id: 'online-learning-delayed-feedback', title: 'Online Learning & Delayed Feedback' }]
+      posts: [{ id: 'attribution-basics', title: '어트리뷰션 — 누구 공인가' }, { id: 'ad-log-system', title: '광고 로그 시스템' }, { id: 'ad-log-pipeline', title: '광고 로그 파이프라인' }, { id: 'online-learning-delayed-feedback', title: 'Online Learning & Delayed Feedback' }]
     },
     'header-bidding': {
       x: 300, y: 320, w: 170, h: 54, cat: 'sell',
       name: 'Header Bidding', sub: 'vs Waterfall',
       def: '여러 SSP를 동시(병렬) 호출해 최고가를 뽑는 방식. Waterfall(순차 호출)보다 평균 +10~30% 수익.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
-      posts: [{ id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'header-bidding', title: '헤더비딩 쉽게' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'dco': {
       x: 865, y: 320, w: 150, h: 54, cat: 'buy',

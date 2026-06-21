@@ -8,6 +8,26 @@
 
 const posts = [
   {
+    id: 'attribution-basics',
+    title: '어트리뷰션: 그 전환은 누구 공인가 — 라스트클릭부터 멀티터치·증분까지',
+    excerpt: '민지가 운동화를 샀다 — 며칠 전 인스타 광고, 어제 검색광고, 스쳐 간 유튜브 중 누구 공일까? 하나의 전환에 공을 나눠 주는 규칙(라스트클릭·멀티터치)과 어트리뷰션 윈도우, 실제 도구(AppsFlyer·Adjust·Airbridge)와 iOS ATT의 벽, 그리고 ‘공 나누기’와 ‘진짜 효과(증분)’가 왜 다른지를 예시로 푼다.',
+    date: '2026-06-21',
+    categories: ['Measurement & Modeling'],
+    tags: ['Attribution', 'Incrementality', 'Causal Inference', '입문'],
+    contentUrl: 'posts/attribution-basics.md',
+    readTime: '3 min read'
+  },
+  {
+    id: 'header-bidding',
+    title: '헤더비딩: 한 줄로 세우지 말고 동시에 — 매체 수익을 +10~30% 올리는 법',
+    excerpt: '같은 광고 자리를 파는 방법만 바꿔 매체 수익을 평균 +10~30% 올린 기술. 구매처를 순서대로 부르던 Waterfall의 손해, 페이지 머리(header)의 Prebid.js가 동시에 부르며 가격을 끌어올리는 원리, 클라이언트 vs 서버 사이드(Google Open Bidding·Amazon TAM), 그리고 1st-price 전환과의 관계까지 숫자 예시로 정리한다.',
+    date: '2026-06-21',
+    categories: ['Bidding & Auction'],
+    tags: ['RTB', 'SSP', 'Ad Ecosystem', '입문'],
+    contentUrl: 'posts/header-bidding.md',
+    readTime: '3 min read'
+  },
+  {
     id: 'pctr-prediction',
     title: 'pCTR: ‘이 사람이 누를까?’를 맞히는 확률, 그리고 그게 왜 돈이 되나',
     excerpt: 'DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. pCTR이 무엇이고, 왜 입찰가와 광고 줄 세우기를 모두 좌우하는 ‘광고의 심장’인지, 어떻게 그 확률을 맞히고 왜 보정(Calibration)이 필요한지를 수식 없이 예시로 푼다.',

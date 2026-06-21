@@ -5,8 +5,16 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-06-13T00:00:00Z</updated>
+  <updated>2026-06-21T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange</id>
+    <updated>2026-06-21T00:00:00Z</updated>
+    <summary>광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 각각이 무슨 일을 하는지, 어떤 실제 회사(DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트…)가 그 역할인지, 그리고 0.1초 한 장면으로 어떻게 맞물리는지 수식 없이 풀고 한눈 비교표로 닫는다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
   <entry>
     <title>카카오 광고 상품 지도: 비즈보드·모먼트·키워드광고는 우리가 배운 무엇인가</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products"/>
@@ -160,13 +168,5 @@
     <updated>2026-04-11T00:00:00Z</updated>
     <summary>타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.</summary>
     <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>Negative Sampling &amp; Sample Selection Bias: 광고 CTR 모델의 학습 데이터는 처음부터 편향되어 있다</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=negative-sampling-bias"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=negative-sampling-bias</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>Class Imbalance, Negative Downsampling, Log-odds Correction, IPS, Doubly Robust Estimator까지 — 광고 CTR 모델 학습 데이터의 구조적 편향과 보정 기법을 해부합니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

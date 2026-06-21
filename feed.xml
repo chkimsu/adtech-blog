@@ -8,6 +8,22 @@
   <updated>2026-06-21T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
+    <title>pCTR: ‘이 사람이 누를까?’를 맞히는 확률, 그리고 그게 왜 돈이 되나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction</id>
+    <updated>2026-06-21T00:00:00Z</updated>
+    <summary>DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. pCTR이 무엇이고, 왜 입찰가와 광고 줄 세우기를 모두 좌우하는 ‘광고의 심장’인지, 어떻게 그 확률을 맞히고 왜 보정(Calibration)이 필요한지를 수식 없이 예시로 푼다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>2등 가격 경매(Second-Price): 이겨도 왜 2등 값만 낼까 — 그리고 광고판은 왜 1등 가격으로 옮겨갔나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction</id>
+    <updated>2026-06-21T00:00:00Z</updated>
+    <summary>경매에서 이겼는데 왜 2등이 적어낸 값만 낼까? 솔직하게 부르는 게 이득이 되도록 설계된 2등 가격 경매(Vickrey)의 직관을 eBay 자동입찰·숫자 예시로 풀고, 광고판이 2019년 1등 가격으로 옮겨가며 Bid Shading이 등장한 이유까지 정리한다.</summary>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
     <title>DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange</id>
@@ -151,22 +167,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=ltv-ad-ranking</id>
     <updated>2026-04-11T00:00:00Z</updated>
     <summary>eCPM만으로 광고를 정렬하면 왜 위험한가? 사용자 비용(β), Squashing Function까지 — 광고 플랫폼이 &quot;돈&quot;과 &quot;경험&quot;을 동시에 최적화하는 LTV 랭킹의 원리를 해부합니다.</summary>
-    <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>광고 로그 시스템 완전 해부: Request Log에서 Candidate Log까지</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-system"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ad-log-system</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>Request, Impression, Click, Conversion, Candidate Log의 역할과 차이를 정리하고, 실시간 피처 파이프라인(Redis), Candidate Log 유무에 따른 모델 품질 차이, 멀티슬롯 rank=1 추론 문제까지 해부합니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>Ad Tech 개발 레이어 맵: 광고 요청 하나가 유저에게 도달하기까지</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=adtech-dev-layers"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=adtech-dev-layers</id>
-    <updated>2026-04-11T00:00:00Z</updated>
-    <summary>타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.</summary>
     <category term="Bidding &amp; Auction"/>
   </entry>
 </feed>

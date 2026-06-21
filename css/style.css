@@ -4963,6 +4963,51 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 }
 .eco-side-easy:hover { text-decoration: underline; }
 
+/* ========================================
+   로그 → ML 학습 루프 데모 (demo-log-to-model)
+   ======================================== */
+.logml-wrap { max-width: 720px; margin: 1rem auto 4rem; padding: 0 1.5rem; }
+.logml-diagram { width: 100%; overflow-x: auto; margin-top: 1.5rem; }
+.logml-svg { width: 100%; min-width: 480px; height: auto; display: block; }
+.logml-svg text { font-family: var(--font-sans); }
+
+.logml-node .box { fill: var(--bg-secondary); stroke: var(--border-color); stroke-width: 1.5; transition: stroke .25s ease, fill .25s ease; }
+.logml-node .bar { fill: var(--accent-secondary); opacity: .5; transition: opacity .25s ease, fill .25s ease; }
+.logml-node text.t { fill: var(--text-primary); font-weight: 700; font-size: 16px; }
+.logml-node text.s { fill: var(--text-muted); font-size: 12.5px; }
+.logml-node.is-future { opacity: .42; }
+.logml-node.is-active .box { stroke: var(--accent-primary); stroke-width: 2.5; }
+.logml-node.is-active .bar { fill: var(--accent-primary); opacity: 1; }
+.logml-node.is-done .bar { fill: var(--accent-secondary); opacity: 1; }
+
+.logml-chip rect { fill: var(--bg-tertiary); stroke: var(--border-color); stroke-width: 1; }
+.logml-chip text.lbl { fill: var(--text-secondary); font-size: 10.5px; }
+.logml-chip text.val { fill: var(--accent-primary); font-weight: 700; font-size: 14px; font-family: var(--font-mono); }
+
+.logml-edge { stroke: var(--border-color); stroke-width: 2; fill: none; transition: stroke .25s ease; }
+.logml-edge.is-done { stroke: var(--accent-secondary); }
+.logml-edge.is-active { stroke: var(--accent-primary); }
+.logml-tip { fill: none; stroke: var(--border-color); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.logml-loop { stroke: var(--accent-secondary); stroke-width: 2; fill: none; stroke-dasharray: 6 5; opacity: .55; transition: opacity .25s ease, stroke .25s ease; }
+.logml-loop.is-active { stroke: var(--accent-primary); opacity: 1; }
+#logml-ah path { fill: var(--accent-secondary); }
+.logml-loop-label { fill: var(--text-muted); font-size: 11px; }
+
+.logml-stepnum { text-align: center; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--accent-secondary); margin: 1.3rem 0 .4rem; }
+.logml-caption { text-align: center; color: var(--text-secondary); font-size: 1rem; line-height: 1.65; margin: 0 auto; max-width: 48ch; word-break: keep-all; min-height: 3.3em; }
+.logml-controls { display: flex; justify-content: center; gap: .6rem; margin: 1.1rem 0 .3rem; }
+.logml-dots { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; }
+.logml-more { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem .9rem; margin-top: 1.8rem; padding-top: 1.2rem; border-top: 1px solid var(--border-color); }
+.logml-more-label { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--text-muted); }
+.logml-more a { font-size: .84rem; font-weight: 600; color: var(--accent-primary); text-decoration: none; }
+.logml-more a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) { .logml-wrap { padding: 0 1rem; } .logml-caption { font-size: .94rem; } }
+@media (prefers-reduced-motion: reduce) {
+  .logml-node .box, .logml-edge, .logml-loop, .logml-node .bar { transition: none; }
+}
+
 /* ===== 공용 try/more 버튼 ===== */
 .btn-try {
   display: inline-block;

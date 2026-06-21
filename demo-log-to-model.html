@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="광고 로그(노출·클릭·전환)가 어떻게 쌓이고 조인·라벨링되어 ML 모델 학습→보정→배포로 이어지며, 그 입찰이 다시 새 로그를 만드는 순환을 한 단계씩 보여주는 인터랙티브 다이어그램.">
+  <meta name="keywords" content="광고 로그, 로그 파이프라인, ML 학습, pCTR, Feature Store, Calibration, 광고 모델 학습, 데이터 파이프라인">
+  <meta name="author" content="Ad Tech Blog">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="로그 → ML 학습 루프 — 인터랙티브 다이어그램">
+  <meta property="og:description" content="로그가 쌓여 모델이 되기까지, 그리고 다시 로그로 — 광고 ML의 순환을 한 장으로.">
+  <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/demo-log-to-model.html">
+
+  <title>로그 → ML 학습 루프 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">소개</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="main-content">
+    <section class="eco-hero">
+      <div class="container">
+        <span class="eco-hero-kicker">AD TECH · 인터랙티브 다이어그램</span>
+        <h1 class="eco-hero-title">로그가 모델이 되기까지</h1>
+        <p class="eco-hero-dek">광고에서 <strong>어떤 로그가 어떻게 쌓이고</strong> → <strong>ML 모델이 어떻게 학습</strong>하는지,
+          그리고 그 입찰이 다시 새 로그를 만드는 <strong>순환</strong>을 한 단계씩 따라가 봅니다.</p>
+        <p class="ecoeasy-hint"><strong>▶ 재생</strong> 또는 키보드 화살표(<kbd>←</kbd> <kbd>→</kbd>)로 단계를 넘겨 보세요.</p>
+      </div>
+    </section>
+
+    <div class="logml-wrap">
+      <p id="logml-step" class="logml-stepnum">STEP 1 / 9</p>
+      <p id="logml-caption" class="logml-caption" aria-live="polite"></p>
+      <div class="logml-controls">
+        <button type="button" id="logml-prev" class="eco-ctrl-btn">← 이전</button>
+        <button type="button" id="logml-play" class="eco-ctrl-btn is-primary">▶ 재생</button>
+        <button type="button" id="logml-next" class="eco-ctrl-btn">다음 →</button>
+      </div>
+      <div id="logml-dots" class="logml-dots" role="group" aria-label="단계 바로가기"></div>
+
+      <div id="logml-diagram" class="logml-diagram"></div>
+
+      <div class="logml-more">
+        <span class="logml-more-label">더 보기</span>
+        <a href="post.html?id=ad-log-system">광고 로그 시스템 (어떤 로그를)</a>
+        <a href="post.html?id=ad-log-pipeline">로그 파이프라인 (어떻게 조인)</a>
+        <a href="post.html?id=pctr-prediction">pCTR (무엇을 학습)</a>
+        <a href="post.html?id=online-learning-delayed-feedback">지연 피드백</a>
+        <a href="ecosystem-easy.html#modeling">쉬운 버전 ‘모델이 배우는 법’</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="about.html">소개</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/posts.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/demo-log-to-model.js"></script>
+</body>
+
+</html>

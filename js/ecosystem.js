@@ -14,19 +14,19 @@
       x: 300, y: 70, w: 150, h: 56, cat: 'ml',
       name: 'Feature Store', sub: '피처 저장소',
       def: '유저·지면·시간 등 광고 모델의 입력 피처를 실시간으로 공급하는 저장소. pCTR/pCVR이 매 요청마다 호출.',
-      demos: [], posts: [{ id: 'feature-store-serving', title: 'Feature Store 서빙' }]
+      demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'feature-store-serving', title: 'Feature Store 서빙' }]
     },
     'model-serving': {
       x: 475, y: 70, w: 160, h: 56, cat: 'ml',
       name: 'Model Serving', sub: 'Retrieval → Ranking',
       def: '수천 후보 광고를 Retrieval→Pre-Ranking→Ranking→Re-Ranking으로 좁히는 추론 파이프라인. 10ms 안에 끝나야 함.',
-      demos: [], posts: [{ id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }]
+      demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }]
     },
     'calibration': {
       x: 870, y: 70, w: 150, h: 56, cat: 'ml',
       name: 'Calibration', sub: '예측값 보정',
       def: '모델이 예측한 CTR을 실제 분포에 맞게 보정. 예측 평균을 실제 평균과 일치시켜 입찰가 왜곡 방지.',
-      demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }],
+      demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
       posts: [{ id: 'calibration', title: 'pCTR Calibration' }]
     },
 
@@ -113,7 +113,7 @@
       x: 300, y: 600, w: 170, h: 54, cat: 'measurement',
       name: 'Log Pipeline', sub: '로그 파이프라인',
       def: 'Bid·Win/Loss·Impression·Click·Conversion 10여 종 로그를 수집·조인·집계. 모델 학습과 측정의 토대.',
-      demos: [{ name: 'Censored Data', url: 'demo-censored-data.html' }],
+      demos: [{ name: 'Censored Data', url: 'demo-censored-data.html' }, { name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
       posts: [{ id: 'attribution-basics', title: '어트리뷰션 — 누구 공인가' }, { id: 'ad-log-system', title: '광고 로그 시스템' }, { id: 'ad-log-pipeline', title: '광고 로그 파이프라인' }, { id: 'online-learning-delayed-feedback', title: 'Online Learning & Delayed Feedback' }]
     },
     'header-bidding': {

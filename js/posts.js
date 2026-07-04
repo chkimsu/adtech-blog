@@ -21,7 +21,7 @@ const posts = [
   {
     id: 'header-bidding',
     world: 'open-rtb',
-    worldNote: '담장 안 자사매체는 외부 SSP·거래소 경쟁이 필요 없어 헤더비딩이 성립하지 않는다(내부 경매로 자체 수익화).',
+    worldNote: '닫힌 생태계의 자사매체는 외부 SSP·거래소 경쟁이 필요 없어 헤더비딩이 성립하지 않는다(내부 경매로 자체 수익화).',
     title: '헤더비딩: 한 줄로 세우지 말고 동시에 — 매체 수익을 +10~30% 올리는 법',
     excerpt: '같은 광고 자리를 파는 방법만 바꿔 매체 수익을 평균 +10~30% 올린 기술. 구매처를 순서대로 부르던 Waterfall의 손해, 페이지 머리(header)의 Prebid.js가 동시에 부르며 가격을 끌어올리는 원리, 클라이언트 vs 서버 사이드(Google Open Bidding·Amazon TAM), 그리고 1st-price 전환과의 관계까지 숫자 예시로 정리한다.',
     date: '2026-06-21',
@@ -44,7 +44,7 @@ const posts = [
   {
     id: 'second-price-auction',
     world: 'open-rtb',
-    worldNote: '담장 안은 플랫폼이 경매를 직접 열어 모든 입찰가 관측 — censored 없이 자동입찰이 대신 shade, 내부 GSP/1st-price로 운영.',
+    worldNote: '닫힌 생태계는 플랫폼이 경매를 직접 열어 모든 입찰가 관측 — censored 없이 자동입찰이 대신 shade, 내부 GSP/1st-price로 운영.',
     title: '2등 가격 경매(Second-Price): 이겨도 왜 2등 값만 낼까 — 그리고 광고판은 왜 1등 가격으로 옮겨갔나',
     excerpt: '경매에서 이겼는데 왜 2등이 적어낸 값만 낼까? 솔직하게 부르는 게 이득이 되도록 설계된 2등 가격 경매(Vickrey)의 직관을 eBay 자동입찰·숫자 예시로 풀고, 광고판이 2019년 1등 가격으로 옮겨가며 Bid Shading이 등장한 이유까지 정리한다.',
     date: '2026-06-21',
@@ -56,7 +56,7 @@ const posts = [
   {
     id: 'dsp-ssp-exchange',
     world: 'open-rtb',
-    worldNote: '담장 안은 세 대리인이 한 회사라 분리가 안 보인다. 네이버 GFA·카카오모먼트는 담장 안의 \'사는 쪽\' 도구.',
+    worldNote: '닫힌 생태계는 세 대리인이 한 회사라 분리가 안 보인다. 네이버 GFA·카카오모먼트는 닫힌 생태계의 \'사는 쪽\' 도구.',
     title: 'DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로',
     excerpt: '광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 각각이 무슨 일을 하는지, 어떤 실제 회사(DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트…)가 그 역할인지, 그리고 0.1초 한 장면으로 어떻게 맞물리는지 수식 없이 풀고 한눈 비교표로 닫는다.',
     date: '2026-06-21',
@@ -206,7 +206,7 @@ const posts = [
   {
     id: 'adtech-30min-primer',
     world: 'open-rtb',
-    worldNote: '이 개방형 경매 사슬은 담장 안에선 통째로 내부화된다 — 한 회사가 수요·경매·매체·데이터를 다 소유.',
+    worldNote: '이 개방형 경매 사슬은 닫힌 생태계에선 통째로 내부화된다 — 한 회사가 수요·경매·매체·데이터를 다 소유.',
     title: '30분만에 이해하는 광고 시스템: 생태계·경매·랭킹·측정 전체 지도 (입문 가이드)',
     excerpt: '완전 초보자를 위한 올인원 입문서. 생태계(DSP/SSP/Ad Exchange), 1st Price 경매와 Bid Shading, eCPM·pCTR·pCVR·Calibration, Attribution과 iOS ATT, 타겟팅·인프라까지 — 수식 없이 비유와 숫자로 한 번에 훑고, 이 블로그의 30편 포스트로 연결해 주는 허브입니다.',
     date: '2026-04-20',
@@ -220,7 +220,7 @@ const posts = [
   {
     id: 'audience-segmentation',
     world: 'both',
-    worldNote: '본문이 DMP(3rd-party/개방형)와 CDP(1st-party/담장 안)를 나눠 다룬다.',
+    worldNote: '본문이 DMP(3rd-party/개방형)와 CDP(1st-party/닫힌 생태계)를 나눠 다룬다.',
     title: '오디언스 세그멘테이션: 광고 타겟팅의 첫 번째 질문 — 누구에게 보여줄 것인가',
     excerpt: 'Demographic, Behavioral, RFM, Lifecycle 세그멘트 분류 체계부터 Rule-based SQL, ML Clustering(K-Means, GMM), 실시간 스트리밍 할당, Feature Store 연동, DMP vs CDP, GDPR/CCPA까지 — 세그멘테이션 전체를 해부합니다.',
     date: '2026-04-13',
@@ -256,7 +256,7 @@ const posts = [
   {
     id: 'ad-log-pipeline',
     world: 'both',
-    worldNote: '로그→학습데이터 본질은 매체무관이나 Bid/Win-Loss 로그는 열린 RTB 가정 — 담장 안은 단일 시스템에서 전 입찰 관측해 조인이 단순.',
+    worldNote: '로그→학습데이터 본질은 매체무관이나 Bid/Win-Loss 로그는 열린 RTB 가정 — 닫힌 생태계는 단일 시스템에서 전 입찰 관측해 조인이 단순.',
     title: '광고 시스템 로그 파이프라인: 한 번의 입찰에서 10개의 로그가 만들어지는 구조',
     excerpt: 'Request Log부터 Attribution Log까지 — 광고 시스템의 10가지 핵심 로그가 언제, 어디서, 무엇을 기록하고, ML 학습 데이터로 어떻게 합류하는지 전체 파이프라인을 해부합니다.',
     date: '2026-04-12',
@@ -291,7 +291,7 @@ const posts = [
   {
     id: 'adtech-dev-layers',
     world: 'open-rtb',
-    worldNote: '입찰 최적화 레이어는 담장 안에선 외부경매(shading·censored) 대신 내부 경매·랭킹으로 대체된다.',
+    worldNote: '입찰 최적화 레이어는 닫힌 생태계에선 외부경매(shading·censored) 대신 내부 경매·랭킹으로 대체된다.',
     title: 'Ad Tech 개발 레이어 맵: 광고 요청 하나가 유저에게 도달하기까지',
     excerpt: '타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.',
     date: '2026-04-11',
@@ -369,7 +369,7 @@ const posts = [
   {
     id: 'ad-network-vs-exchange',
     world: 'open-rtb',
-    worldNote: '담장 안(구글·메타·네이버·카카오)은 수요·인벤토리·경매를 한 회사가 소유해 Network/Exchange 구분·중개가 사라진다.',
+    worldNote: '닫힌 생태계(구글·메타·네이버·카카오)는 수요·인벤토리·경매를 한 회사가 소유해 Network/Exchange 구분·중개가 사라진다.',
     title: 'Ad Network vs Ad Exchange: 디지털 광고 유통 구조의 진화',
     excerpt: 'Waterfall에서 RTB, Header Bidding까지 — Ad Network과 Ad Exchange의 구조적 차이, 기술 아키텍처, 진화 과정을 해부합니다.',
     date: '2026-04-11',
@@ -381,7 +381,7 @@ const posts = [
   {
     id: 'position-bias-ultr',
     world: 'both',
-    worldNote: 'position bias 보정은 공통이나 담장 안(검색·피드 랭킹)에서 특히 핵심.',
+    worldNote: 'position bias 보정은 공통이나 닫힌 생태계(검색·피드 랭킹)에서 특히 핵심.',
     title: 'Position Bias & Unbiased Learning to Rank: 위치가 만드는 착각을 제거하는 법',
     excerpt: 'Examination Hypothesis, IPS(Inverse Propensity Scoring), DLA(Dual Learning Algorithm)로 Position Bias를 보정하고 광고 랭킹의 공정성을 확보하는 방법을 해부합니다.',
     date: '2026-04-10',
@@ -393,7 +393,7 @@ const posts = [
   {
     id: 'model-serving-architecture',
     world: 'both',
-    worldNote: '예시가 열린 RTB(10ms·Win Rate·shading) 톤 — 기법(멀티스테이지 랭킹·서빙)은 담장 안에도 그대로. \'패찰\' 대신 내부 응답예산이 제약.',
+    worldNote: '예시가 열린 RTB(10ms·Win Rate·shading) 톤 — 기법(멀티스테이지 랭킹·서빙)은 닫힌 생태계에도 그대로. \'패찰\' 대신 내부 응답예산이 제약.',
     title: '광고 모델 서빙 아키텍처: 10ms 안에 수백 개 광고를 스코어링하는 법',
     excerpt: 'Multi-Stage Ranking, 모델 경량화(Distillation/Quantization), Embedding 최적화, GPU/CPU 추론 전략, Canary 배포까지 — 프로덕션 광고 ML 서빙의 전체 아키텍처를 해부합니다.',
     date: '2026-04-10',
@@ -405,7 +405,7 @@ const posts = [
   {
     id: 'online-learning-delayed-feedback',
     world: 'both',
-    worldNote: '예시가 열린 RTB(경쟁 DSP·Win Rate·λ) 톤 — 담장 안은 자사 전환로그 직결로 지연·drift가 완화, 내부지표로 감시.',
+    worldNote: '예시가 열린 RTB(경쟁 DSP·Win Rate·λ) 톤 — 닫힌 생태계는 자사 전환로그 직결로 지연·drift가 완화, 내부지표로 감시.',
     title: 'Online Learning & Delayed Feedback: 광고 모델은 왜 매일 낡아지는가',
     excerpt: 'Concept Drift, Batch vs Online Learning, Delayed Feedback 보정(FSIW, Delay Model), 프로덕션 하이브리드 아키텍처, 모델 Staleness 모니터링까지 — 광고 ML 모델을 최신 상태로 유지하는 전체 파이프라인을 해부합니다.',
     date: '2026-04-10',
@@ -417,7 +417,7 @@ const posts = [
   {
     id: 'auto-bidding-pacing',
     world: 'open-rtb',
-    worldNote: '담장 안 managed 오토비딩은 플랫폼이 경매를 직접 통제 → Win Rate·시장분포 추정 없이 내부 신호로 pacing.',
+    worldNote: '닫힌 생태계의 managed 오토비딩은 플랫폼이 경매를 직접 통제 → Win Rate·시장분포 추정 없이 내부 신호로 pacing.',
     title: 'Auto-Bidding & Budget Pacing: 일 예산 제약 하에서 수십만 번 입찰을 최적화하는 법',
     excerpt: 'PID Controller, Lagrangian Dual, 강화학습(RL)으로 일 예산을 하루 전체에 걸쳐 균등하게 분배하는 Budget Pacing의 이론과 실전을 해부합니다.',
     date: '2026-04-10',
@@ -440,7 +440,7 @@ const posts = [
   {
     id: 'ecpm-ranking',
     world: 'both',
-    worldNote: '본문 §4가 Open RTB·CPC Exchange·담장 안 3시장의 랭킹을 나란히 비교.',
+    worldNote: '본문 §4가 Open RTB·CPC Exchange·닫힌 생태계 3시장의 랭킹을 나란히 비교.',
     title: 'eCPM과 광고 랭킹: 서로 다른 시장에서 1등을 결정하는 기준',
     excerpt: 'eCPM의 정의와 계산법을 정리하고, Open RTB·CPC Exchange·Walled Garden 세 가지 시장에서 광고 랭킹이 어떻게 달라지는지 구체적 시나리오로 비교합니다.',
     date: '2026-04-11',
@@ -452,7 +452,7 @@ const posts = [
   {
     id: 'walled-garden',
     world: 'walled-garden',
-    worldNote: '이 글이 담장 안 vs 열린 RTB의 기준 정의. 내부경매라 모든 입찰가 관측 → censored 없음.',
+    worldNote: '이 글이 닫힌 생태계 vs 열린 RTB의 기준 정의. 내부경매라 모든 입찰가 관측 → censored 없음.',
     title: 'Walled Garden: 네이버·카카오는 왜 DSP부터 Publisher까지 다 가지고 있는가',
     excerpt: 'Open RTB와 Walled Garden(폐쇄형 생태계)의 구조적 차이를 분석하고, pCTR 모델링·경매 구조·데이터 활용이 어떻게 달라지는지 해부합니다.',
     date: '2026-04-06',
@@ -464,7 +464,7 @@ const posts = [
   {
     id: 'adtech-ecosystem-map',
     world: 'open-rtb',
-    worldNote: '이 DSP↔Exchange↔SSP 사슬은 담장 안에선 한 회사로 접혀, censored·win/loss 없이 내부 데이터로 pCTR·랭킹을 돌린다.',
+    worldNote: '이 DSP↔Exchange↔SSP 사슬은 닫힌 생태계에선 한 회사로 접혀, censored·win/loss 없이 내부 데이터로 pCTR·랭킹을 돌린다.',
     title: 'pCTR 모델러를 위한 광고 기술 생태계 전체 지도',
     excerpt: '광고주의 캠페인 등록부터 유저의 전환까지 — DSP, SSP, Ad Exchange, pCTR, pCVR, 자동입찰, Bid Shading의 관계를 6개 다이어그램으로 완전 해부합니다.',
     date: '2026-04-06',
@@ -477,7 +477,7 @@ const posts = [
   {
     id: 'bid-shading-censored',
     world: 'open-rtb',
-    worldNote: '담장 안(플랫폼)은 모든 입찰을 실측하고 경매를 직접 열어, 시장분포 추정·shading·censoring 문제가 성립하지 않는다.',
+    worldNote: '닫힌 생태계에선 플랫폼이 모든 입찰을 실측하고 경매를 직접 열어, 시장분포 추정·shading·censoring 문제가 성립하지 않는다.',
     title: 'Bid Shading & Censored Data: 1st Price Auction에서 최적 입찰가를 찾는 법',
     excerpt: 'Right-Censored 데이터에서 시장 분포를 추정하고, Surplus를 극대화하는 최적 입찰가를 실시간으로 계산하는 End-to-End 파이프라인을 두 편의 논문과 함께 해부합니다.',
     date: '2026-04-06',
@@ -544,7 +544,7 @@ const posts = [
   {
     id: 'ad-serving-flow',
     world: 'open-rtb',
-    worldNote: '담장 안은 DSP·Exchange·SSP가 한 회사로 합쳐져 중개 없이 내부 랭킹·경매로 바로 노출한다.',
+    worldNote: '닫힌 생태계는 DSP·Exchange·SSP가 한 회사로 합쳐져 중개 없이 내부 랭킹·경매로 바로 노출한다.',
     title: 'Ad Serving Flow: 광고가 유저에게 도달하는 전체 과정',
     excerpt: 'DSP, SSP, Ad Exchange, DMP의 역할과 RTB Auction 플로우를 도식도와 함께 정리합니다.',
     date: '2026-01-25',
@@ -623,7 +623,7 @@ const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-fl
 // 'na'(광고 경매 무관)는 배지를 그리지 않으므로 여기 없음 → getWorldMeta 가 null 반환.
 const WORLD_META = {
   'open-rtb':      { label: '열린 RTB', short: '경매 바깥',    tip: '외부 DSP가 남의 실시간 경매에 입찰. 패찰하면 경쟁가를 못 봄(censored).' },
-  'walled-garden': { label: '담장 안',  short: '플랫폼 안',    tip: '한 회사가 인벤토리·경매·데이터를 소유. 경매를 직접 돌려 모든 입찰을 관측.' },
+  'walled-garden': { label: '닫힌 생태계',  short: '한 회사가 소유',    tip: '한 회사가 인벤토리·경매·데이터를 소유. 경매를 직접 돌려 모든 입찰을 관측.' },
   'both':          { label: '공통',     short: '두 세계 공통', tip: '두 세계 다 쓰는 기법. 데이터·전제만 다름.' },
 };
 function getWorldMeta(world) { return WORLD_META[world] || null; }

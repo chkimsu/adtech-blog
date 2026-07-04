@@ -380,8 +380,8 @@ const posts = [
   },
   {
     id: 'position-bias-ultr',
-    world: 'both',
-    worldNote: 'position bias 보정은 공통이나 닫힌 생태계(검색·피드 랭킹)에서 특히 핵심.',
+    world: 'walled-garden',
+    worldNote: '열린 RTB는 노출 광고가 보통 1개라 position bias가 덜 중요 — 검색·피드에 광고가 여러 개 줄 서는 닫힌 생태계의 핵심 보정 문제.',
     title: 'Position Bias & Unbiased Learning to Rank: 위치가 만드는 착각을 제거하는 법',
     excerpt: 'Examination Hypothesis, IPS(Inverse Propensity Scoring), DLA(Dual Learning Algorithm)로 Position Bias를 보정하고 광고 랭킹의 공정성을 확보하는 방법을 해부합니다.',
     date: '2026-04-10',
@@ -429,6 +429,7 @@ const posts = [
   {
     id: 'feature-store-serving',
     world: 'both',
+    worldNote: '예시는 열린 RTB(bid request·pCTR·낙찰) 톤이지만, Feature Store·실시간 서빙 기법은 닫힌 생태계에도 그대로.',
     title: 'Feature Store & Real-Time Serving: 광고 ML 시스템의 데이터 공급망 전체 지도',
     excerpt: 'Batch·Streaming·Real-Time 세 갈래 파이프라인이 Feature Store로 합류하고, 10ms 안에 Feature Vector로 조합되어 모델 추론에 공급되는 전체 아키텍처를 해부합니다.',
     date: '2026-04-10',

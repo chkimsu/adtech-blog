@@ -5092,10 +5092,22 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
   background: var(--world-dot, var(--text-muted));
   flex: 0 0 auto;
 }
-.world-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
-.world-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
-.world-badge[data-world="both"]          { --world-dot: var(--text-muted); }
+.world-dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--world-dot, var(--text-muted)); flex: 0 0 auto; }
+.world-badge[data-world="open-rtb"],      .world-dot[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
+.world-badge[data-world="walled-garden"], .world-dot[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
+.world-badge[data-world="both"],          .world-dot[data-world="both"]          { --world-dot: var(--text-secondary); }
 .world-badge-detail { font-size: 0.72rem; margin-bottom: 0.75rem; }
+
+/* 무대 범례(목록 페이지 상단) — hover 없이 항상 보이는 설명 */
+.world-legend {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.1rem;
+  margin: 0 0 1.5rem; padding: 0.6rem 0.9rem;
+  background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px;
+  font-size: 0.8rem; color: var(--text-secondary);
+}
+.world-legend-label { font-weight: 600; color: var(--text-primary); letter-spacing: 0.02em; }
+.world-legend-item { display: inline-flex; align-items: center; gap: 0.36rem; }
+.world-legend-item em { font-style: normal; color: var(--text-muted); }
 /* 글 상단 '반대 세계에선?' 한 줄 주석 */
 .post-world-note {
   max-width: 62ch;

@@ -624,7 +624,7 @@ const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-fl
 const WORLD_META = {
   'open-rtb':      { label: '열린 RTB', short: '경매 바깥',    tip: '외부 DSP가 남의 실시간 경매에 입찰. 패찰하면 경쟁가를 못 봄(censored).' },
   'walled-garden': { label: '닫힌 생태계',  short: '한 회사가 소유',    tip: '한 회사가 인벤토리·경매·데이터를 소유. 경매를 직접 돌려 모든 입찰을 관측.' },
-  'both':          { label: '공통',     short: '두 세계 공통', tip: '두 세계 다 쓰는 기법. 데이터·전제만 다름.' },
+  'both':          { label: '공통',     short: '두 세계',      tip: '두 세계 다 쓰는 기법. 데이터·전제만 다름.' },
 };
 function getWorldMeta(world) { return WORLD_META[world] || null; }
 

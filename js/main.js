@@ -289,6 +289,17 @@ function renderWorldBadge(post, context) {
   return `<span class="world-badge${detail ? ' world-badge-detail' : ''}" data-world="${post.world}" title="${tip}">${label}</span>`;
 }
 
+// 무대 범례(목록 페이지 상단). #world-legend 컨테이너가 있으면 WORLD_META로 채운다(없으면 no-op).
+function renderWorldLegend() {
+  const el = document.getElementById('world-legend');
+  if (!el || typeof WORLD_META === 'undefined') return;
+  const items = Object.keys(WORLD_META).map(id => {
+    const m = WORLD_META[id];
+    return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} <em>${m.short}</em></span>`;
+  }).join('');
+  el.innerHTML = `<span class="world-legend-label">무대</span>${items}`;
+}
+
 function renderPostCard(post) {
   const card = document.createElement('div');
   card.className = 'post-card';
@@ -1693,6 +1704,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Setup global post search modal (works on any page that has the modal DOM)
   setupSearchModal();
+
+  // 무대 범례(목록 페이지에 #world-legend 컨테이너가 있으면 채움)
+  renderWorldLegend();
 
   // Check if we're on the home page or post page
   const homeRoot = document.getElementById('home-root');

@@ -205,7 +205,7 @@ const posts = [
   },
   {
     id: 'adtech-30min-primer',
-    world: 'open-rtb',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '이 개방형 경매 사슬은 닫힌 생태계에선 통째로 내부화된다 — 한 회사가 수요·경매·매체·데이터를 다 소유.',
     title: '30분만에 이해하는 광고 시스템: 생태계·경매·랭킹·측정 전체 지도 (입문 가이드)',
     excerpt: '완전 초보자를 위한 올인원 입문서. 생태계(DSP/SSP/Ad Exchange), 1st Price 경매와 Bid Shading, eCPM·pCTR·pCVR·Calibration, Attribution과 iOS ATT, 타겟팅·인프라까지 — 수식 없이 비유와 숫자로 한 번에 훑고, 이 블로그의 30편 포스트로 연결해 주는 허브입니다.',
@@ -219,7 +219,7 @@ const posts = [
   },
   {
     id: 'audience-segmentation',
-    world: 'both',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '본문이 DMP(3rd-party/개방형)와 CDP(1st-party/닫힌 생태계)를 나눠 다룬다.',
     title: '오디언스 세그멘테이션: 광고 타겟팅의 첫 번째 질문 — 누구에게 보여줄 것인가',
     excerpt: 'Demographic, Behavioral, RFM, Lifecycle 세그멘트 분류 체계부터 Rule-based SQL, ML Clustering(K-Means, GMM), 실시간 스트리밍 할당, Feature Store 연동, DMP vs CDP, GDPR/CCPA까지 — 세그멘테이션 전체를 해부합니다.',
@@ -231,7 +231,7 @@ const posts = [
   },
   {
     id: 'lookalike-modeling',
-    world: 'both',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '본문이 Meta·네이버(1st-party)와 DSP(3rd-party 쿠키) 양쪽 유사확장을 비교.',
     title: 'Lookalike Modeling: 전환 유저 100명에서 100만 유사 유저를 발굴하는 법',
     excerpt: 'Seed Audience 선정부터 Embedding 유사도, Propensity Score, Graph Expansion까지 — 3대 접근법과 Expansion Ratio 트레이드오프, 멀티 플랫폼 비교, 프로덕션 아키텍처를 해부합니다.',
@@ -290,7 +290,7 @@ const posts = [
   },
   {
     id: 'adtech-dev-layers',
-    world: 'open-rtb',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '입찰 최적화 레이어는 닫힌 생태계에선 외부경매(shading·censored) 대신 내부 경매·랭킹으로 대체된다.',
     title: 'Ad Tech 개발 레이어 맵: 광고 요청 하나가 유저에게 도달하기까지',
     excerpt: '타겟팅, 서빙, 예측 모델링, 입찰 최적화, 소재 최적화, 측정까지 — 광고 시스템을 구성하는 8개 레이어의 역할과 요청 흐름을 전체 지도로 해부합니다.',
@@ -439,7 +439,7 @@ const posts = [
   },
   {
     id: 'ecpm-ranking',
-    world: 'both',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '본문 §4가 Open RTB·CPC Exchange·닫힌 생태계 3시장의 랭킹을 나란히 비교.',
     title: 'eCPM과 광고 랭킹: 서로 다른 시장에서 1등을 결정하는 기준',
     excerpt: 'eCPM의 정의와 계산법을 정리하고, Open RTB·CPC Exchange·Walled Garden 세 가지 시장에서 광고 랭킹이 어떻게 달라지는지 구체적 시나리오로 비교합니다.',
@@ -451,7 +451,7 @@ const posts = [
   },
   {
     id: 'walled-garden',
-    world: 'walled-garden',
+    world: ['walled-garden', 'open-rtb'],
     worldNote: '이 글이 닫힌 생태계 vs 열린 RTB의 기준 정의. 내부경매라 모든 입찰가 관측 → censored 없음.',
     title: 'Walled Garden: 네이버·카카오는 왜 DSP부터 Publisher까지 다 가지고 있는가',
     excerpt: 'Open RTB와 Walled Garden(폐쇄형 생태계)의 구조적 차이를 분석하고, pCTR 모델링·경매 구조·데이터 활용이 어떻게 달라지는지 해부합니다.',
@@ -463,7 +463,7 @@ const posts = [
   },
   {
     id: 'adtech-ecosystem-map',
-    world: 'open-rtb',
+    world: ['open-rtb', 'walled-garden'],
     worldNote: '이 DSP↔Exchange↔SSP 사슬은 닫힌 생태계에선 한 회사로 접혀, censored·win/loss 없이 내부 데이터로 pCTR·랭킹을 돌린다.',
     title: 'pCTR 모델러를 위한 광고 기술 생태계 전체 지도',
     excerpt: '광고주의 캠페인 등록부터 유저의 전환까지 — DSP, SSP, Ad Exchange, pCTR, pCVR, 자동입찰, Bid Shading의 관계를 6개 다이어그램으로 완전 해부합니다.',
@@ -627,6 +627,13 @@ const WORLD_META = {
   'both':          { label: '공통',     short: '두 세계',      tip: '두 세계 다 쓰는 기법. 데이터·전제만 다름.' },
 };
 function getWorldMeta(world) { return WORLD_META[world] || null; }
+// post.world 는 문자열('open-rtb') 또는 배열(['open-rtb','walled-garden']) 둘 다 허용.
+// 렌더용으로 항상 배열 반환('na'·미지정은 배지 없음 → 제외). 여러 세계를 다루는 글은 배지 여러 개.
+function getWorldList(post) {
+  if (!post || post.world == null) return [];
+  const arr = Array.isArray(post.world) ? post.world : [post.world];
+  return arr.filter(w => w && w !== 'na');
+}
 
 // Helper functions for data access
 function getAllPosts() {
@@ -707,5 +714,5 @@ function getSeriesForPost(post) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { posts, getAllPosts, getPostById, getAllCategories, getAllTags, filterPosts,
     sortPosts, readMinutes, getFeaturedPosts, getStartHerePosts, getSeries, getSeriesForPost, series, startHere,
-    WORLD_META, getWorldMeta };
+    WORLD_META, getWorldMeta, getWorldList };
 }

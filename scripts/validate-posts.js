@@ -26,7 +26,9 @@ for (const p of posts) {
   (Array.isArray(p.tags) ? p.tags : []).forEach(t => { if (!validTags.has(t)) errors.push(`${where}: 표준에 없는 tag "${t}"`); });
   if (p.contentUrl && !fs.existsSync(path.join(root, p.contentUrl))) errors.push(`${where}: contentUrl 파일 없음: ${p.contentUrl}`);
   if (p.series != null && typeof p.series !== 'string') errors.push(`${where}: series는 문자열이어야 함`);
-  if (p.world != null && !validWorlds.has(p.world)) errors.push(`${where}: 표준에 없는 world "${p.world}" (data/taxonomy.json worlds 확인)`);
+  const wlist = Array.isArray(p.world) ? p.world : (p.world != null ? [p.world] : []);
+  wlist.forEach(w => { if (!validWorlds.has(w)) errors.push(`${where}: 표준에 없는 world "${w}" (data/taxonomy.json worlds 확인)`); });
+  if (wlist.length > 1 && wlist.some(w => w === 'na' || w === 'both')) errors.push(`${where}: 'na'·'both'는 단독으로만 사용(여러 세계 배열엔 넣지 않음)`);
   if (p.worldNote != null && typeof p.worldNote !== 'string') errors.push(`${where}: worldNote는 문자열이어야 함`);
 }
 // 비치명 경고: posts/ 안에 contentUrl로 참조되지 않는 고아 .md

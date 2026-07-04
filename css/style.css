@@ -5064,6 +5064,7 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 /* 색은 전부 var() 토큰이라 다크/팔레트 전환에 자동 대응(하드코딩 hex 없음). */
 .post-card-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
@@ -5096,7 +5097,10 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 .world-badge[data-world="open-rtb"],      .world-dot[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .world-badge[data-world="walled-garden"], .world-dot[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .world-badge[data-world="both"],          .world-dot[data-world="both"]          { --world-dot: var(--text-secondary); }
-.world-badge-detail { font-size: 0.72rem; margin-bottom: 0.75rem; }
+.world-badge-detail { font-size: 0.72rem; }
+/* 여러 세계를 다루는 글: 배지 여러 개를 묶어서 배치(줄바꿈 허용) */
+.world-badge-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; }
+.world-badge-group { display: inline-flex; flex-wrap: wrap; gap: 0.3rem; justify-content: flex-end; }
 
 /* 무대 범례(목록 페이지 상단) — hover 없이 항상 보이는 설명 */
 .world-legend {

@@ -279,14 +279,19 @@ function setupMobileNav() {
 // Post Rendering
 // ========================================
 
-// 무대(경매 위치) 배지 HTML. world 가 'na'/미지정이면 빈 문자열(배지 없음).
+// 무대(경매 위치) 배지 HTML. world 는 문자열 또는 배열. 'na'/미지정이면 빈 문자열(배지 없음).
+// 여러 세계를 다루는 글은 배지 여러 개를 이어 붙인다.
 function renderWorldBadge(post, context) {
-  const meta = (typeof getWorldMeta === 'function') ? getWorldMeta(post && post.world) : null;
-  if (!meta) return '';
+  const list = (typeof getWorldList === 'function') ? getWorldList(post) : [];
+  if (!list.length) return '';
   const detail = context === 'detail';
-  const label = detail ? `${meta.label} · ${meta.short}` : meta.label;
-  const tip = String(meta.tip).replace(/"/g, '&quot;');
-  return `<span class="world-badge${detail ? ' world-badge-detail' : ''}" data-world="${post.world}" title="${tip}">${label}</span>`;
+  return list.map(w => {
+    const meta = getWorldMeta(w);
+    if (!meta) return '';
+    const label = detail ? `${meta.label} · ${meta.short}` : meta.label;
+    const tip = String(meta.tip).replace(/"/g, '&quot;');
+    return `<span class="world-badge${detail ? ' world-badge-detail' : ''}" data-world="${w}" title="${tip}">${label}</span>`;
+  }).join('');
 }
 
 // 무대 범례(목록 페이지 상단). #world-legend 컨테이너가 있으면 WORLD_META로 채운다(없으면 no-op).
@@ -307,10 +312,11 @@ function renderPostCard(post) {
   card.dataset.category = primaryCategory;
   card.onclick = () => navigateToPost(post.id);
 
+  const worldBadges = renderWorldBadge(post, 'card');
   card.innerHTML = `
     <div class="post-card-top">
       <div class="post-card-category" data-category="${primaryCategory}">${primaryCategory}</div>
-      ${renderWorldBadge(post, 'card')}
+      ${worldBadges ? `<span class="world-badge-group">${worldBadges}</span>` : ''}
     </div>
     <h3>${post.title}</h3>
     <div class="post-card-footer">
@@ -925,13 +931,14 @@ async function renderPostDetail() {
   // Render post header
   const headerContainer = document.getElementById('post-header');
   if (headerContainer) {
+    const worldBadges = renderWorldBadge(post, 'detail');
     headerContainer.innerHTML = `
       <div class="post-meta">
         <span class="post-date">${formatDate(post.date)}</span>
         <span class="post-read-time">${post.readTime}</span>
         <button id="bookmark-btn" class="bookmark-btn" type="button" aria-pressed="false">♢ 저장</button>
       </div>
-      ${renderWorldBadge(post, 'detail')}
+      ${worldBadges ? `<div class="world-badge-row">${worldBadges}</div>` : ''}
       <h1>${post.title}</h1>
       ${post.worldNote ? `<p class="post-world-note">${post.worldNote}</p>` : ''}
       <div class="post-header-tags">

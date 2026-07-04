@@ -5059,6 +5059,57 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
   padding: 0.1rem 0.55rem;
   margin-bottom: 0.6rem;
 }
+
+/* ===== 무대(경매 위치) 배지 — .series-badge 기반, 세계별 색 점만 다르게 ===== */
+/* 색은 전부 var() 토큰이라 다크/팔레트 전환에 자동 대응(하드코딩 hex 없음). */
+.post-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.post-card-top .post-card-category { margin-bottom: 0; }
+.world-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.16rem 0.5rem;
+  cursor: default;
+}
+.world-badge::before {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--world-dot, var(--text-muted));
+  flex: 0 0 auto;
+}
+.world-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
+.world-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
+.world-badge[data-world="both"]          { --world-dot: var(--text-muted); }
+.world-badge-detail { font-size: 0.72rem; margin-bottom: 0.75rem; }
+/* 글 상단 '반대 세계에선?' 한 줄 주석 */
+.post-world-note {
+  max-width: 62ch;
+  margin: 0.6rem auto 0;
+  padding: 0.5rem 0.8rem;
+  text-align: left;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border-left: 2px solid var(--accent-secondary);
+  border-radius: 4px;
+}
+
 /* 다중선택: 여러 칩이 동시에 .active 가능 — 기존 .active 스타일 재사용 */
 .category-tab, .filter-tag { cursor: pointer; }
 

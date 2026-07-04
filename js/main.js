@@ -279,6 +279,16 @@ function setupMobileNav() {
 // Post Rendering
 // ========================================
 
+// 무대(경매 위치) 배지 HTML. world 가 'na'/미지정이면 빈 문자열(배지 없음).
+function renderWorldBadge(post, context) {
+  const meta = (typeof getWorldMeta === 'function') ? getWorldMeta(post && post.world) : null;
+  if (!meta) return '';
+  const detail = context === 'detail';
+  const label = detail ? `${meta.label} · ${meta.short}` : meta.label;
+  const tip = String(meta.tip).replace(/"/g, '&quot;');
+  return `<span class="world-badge${detail ? ' world-badge-detail' : ''}" data-world="${post.world}" title="${tip}">${label}</span>`;
+}
+
 function renderPostCard(post) {
   const card = document.createElement('div');
   card.className = 'post-card';
@@ -287,7 +297,10 @@ function renderPostCard(post) {
   card.onclick = () => navigateToPost(post.id);
 
   card.innerHTML = `
-    <div class="post-card-category" data-category="${primaryCategory}">${primaryCategory}</div>
+    <div class="post-card-top">
+      <div class="post-card-category" data-category="${primaryCategory}">${primaryCategory}</div>
+      ${renderWorldBadge(post, 'card')}
+    </div>
     <h3>${post.title}</h3>
     <div class="post-card-footer">
       <div class="post-meta">
@@ -907,7 +920,9 @@ async function renderPostDetail() {
         <span class="post-read-time">${post.readTime}</span>
         <button id="bookmark-btn" class="bookmark-btn" type="button" aria-pressed="false">♢ 저장</button>
       </div>
+      ${renderWorldBadge(post, 'detail')}
       <h1>${post.title}</h1>
+      ${post.worldNote ? `<p class="post-world-note">${post.worldNote}</p>` : ''}
       <div class="post-header-tags">
         ${post.tags.map(tag =>
       `<span class="post-header-tag" data-tag="${tag}">${tag}</span>`

@@ -9,7 +9,8 @@ const taxonomy = JSON.parse(fs.readFileSync(path.join(root, 'data', 'taxonomy.js
 
 const validCats = new Set(taxonomy.categories.map(c => c.id));
 const validTags = new Set(taxonomy.tags);
-const REQUIRED = ['id', 'title', 'excerpt', 'date', 'categories', 'tags', 'contentUrl', 'readTime'];
+const validWorlds = new Set((taxonomy.worlds || []).map(w => w.id));
+const REQUIRED = ['id', 'title', 'excerpt', 'date', 'categories', 'tags', 'contentUrl', 'readTime', 'world'];
 
 const errors = [];
 const seen = new Set();
@@ -25,6 +26,8 @@ for (const p of posts) {
   (Array.isArray(p.tags) ? p.tags : []).forEach(t => { if (!validTags.has(t)) errors.push(`${where}: 표준에 없는 tag "${t}"`); });
   if (p.contentUrl && !fs.existsSync(path.join(root, p.contentUrl))) errors.push(`${where}: contentUrl 파일 없음: ${p.contentUrl}`);
   if (p.series != null && typeof p.series !== 'string') errors.push(`${where}: series는 문자열이어야 함`);
+  if (p.world != null && !validWorlds.has(p.world)) errors.push(`${where}: 표준에 없는 world "${p.world}" (data/taxonomy.json worlds 확인)`);
+  if (p.worldNote != null && typeof p.worldNote !== 'string') errors.push(`${where}: worldNote는 문자열이어야 함`);
 }
 // 비치명 경고: posts/ 안에 contentUrl로 참조되지 않는 고아 .md
 const referenced = new Set(posts.map(p => p.contentUrl && path.basename(p.contentUrl)));
@@ -33,4 +36,4 @@ fs.readdirSync(path.join(root, 'posts')).filter(f => f.endsWith('.md')).forEach(
 });
 
 if (errors.length) { errors.forEach(e => console.error('✗ ' + e)); process.exit(1); }
-console.log(`✓ ${posts.length}개 글 검증 통과 — 카테고리 ${validCats.size} · 태그 ${validTags.size}`);
+console.log(`✓ ${posts.length}개 글 검증 통과 — 카테고리 ${validCats.size} · 태그 ${validTags.size} · 무대 ${validWorlds.size}`);

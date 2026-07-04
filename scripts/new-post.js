@@ -3,7 +3,7 @@
 // git은 절대 실행하지 않는다(커밋은 사람이 chkimsu 계정으로).
 //
 // 인터랙티브:  node scripts/new-post.js
-// 인자 모드:   node scripts/new-post.js <slug> <title> <category(이름|번호)> <tags-csv>
+// 인자 모드:   node scripts/new-post.js <slug> <title> <category(이름|번호)> <tags-csv> <world(이름|번호)>
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
@@ -23,7 +23,7 @@ function fail(msg) { console.error('✗ ' + msg); if (rl) rl.close(); process.ex
 // idx번째 인자가 있으면 그걸, 없으면 (TTY면) 프롬프트, (아니면) 실패
 async function field(idx, promptFn) {
   if (args[idx] != null && args[idx] !== '') return String(args[idx]).trim();
-  if (!interactive) fail('인자 부족 — 사용법: node scripts/new-post.js <slug> <title> <category(이름|번호)> <tags-csv>');
+  if (!interactive) fail('인자 부족 — 사용법: node scripts/new-post.js <slug> <title> <category(이름|번호)> <tags-csv> <world(이름|번호)>');
   return (await promptFn()).trim();
 }
 
@@ -66,17 +66,35 @@ async function field(idx, promptFn) {
     }
   }
 
-  // 5) 오늘 날짜 (sitemap과 동일 방식)
+  // 5) world (무대: 경매 위치) — data/taxonomy.json 의 worlds
+  const validWorlds = new Set((taxonomy.worlds || []).map(w => w.id));
+  const worldRaw = await field(4, async () => {
+    console.log('\n무대(경매 위치) 선택:');
+    (taxonomy.worlds || []).forEach((w, i) => console.log(`  ${i + 1}. ${w.id}  (${w.label} — ${w.short})`));
+    return ask('번호: ');
+  });
+  let world;
+  if (/^\d+$/.test(worldRaw)) {
+    const i = parseInt(worldRaw, 10) - 1;
+    if (!(i >= 0 && i < (taxonomy.worlds || []).length)) fail(`잘못된 world 번호: ${worldRaw}`);
+    world = taxonomy.worlds[i].id;
+  } else {
+    if (!validWorlds.has(worldRaw)) fail(`표준에 없는 world: "${worldRaw}"`);
+    world = worldRaw;
+  }
+
+  // 6) 오늘 날짜 (sitemap과 동일 방식)
   const date = new Date().toISOString().split('T')[0];
 
-  // 6) .md stub (프론트매터 없는 콘텐츠 전용 — 기존 컨벤션)
+  // 7) .md stub (프론트매터 없는 콘텐츠 전용 — 기존 컨벤션)
   const stub = `# ${title}\n\n> 한 줄 요약(excerpt)을 적고 js/posts.js의 excerpt에도 복사하세요.\n> 수식 안에는 한글을 넣지 마세요(MARKDOWN_GUIDE.md). 코드 펜스는 \`\`\`언어 로 표기.\n\n## 개요\n\n(본문 시작)\n`;
   fs.writeFileSync(path.join(root, 'posts', slug + '.md'), stub);
 
-  // 7) posts.js 첫 요소로 엔트리 삽입 (excerpt 빈값 → 검증기가 작성 리마인드, readTime은 compute가 교정)
+  // 8) posts.js 첫 요소로 엔트리 삽입 (excerpt 빈값 → 검증기가 작성 리마인드, readTime은 compute가 교정)
   const entry =
 `  {
     id: '${slug}',
+    world: '${world}',
     title: '${title.replace(/'/g, "\\'")}',
     excerpt: '',
     date: '${date}',
@@ -93,7 +111,7 @@ async function field(idx, promptFn) {
   file = file.slice(0, at + anchor.length) + entry + file.slice(at + anchor.length);
   fs.writeFileSync(postsPath, file);
 
-  console.log(`\n✓ 생성됨:\n  - posts/${slug}.md\n  - js/posts.js 엔트리 (날짜 ${date}, 카테고리 ${category})\n`);
+  console.log(`\n✓ 생성됨:\n  - posts/${slug}.md\n  - js/posts.js 엔트리 (날짜 ${date}, 카테고리 ${category}, 무대 ${world})\n`);
   console.log('다음 단계:');
   console.log(`  1) posts/${slug}.md 본문 작성 + js/posts.js의 excerpt 채우기`);
   console.log('  2) node scripts/compute-read-time.js');

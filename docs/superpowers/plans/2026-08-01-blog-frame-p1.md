@@ -265,7 +265,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 /* ========================================
    P1 — 네비 ML 트랙 버튼 강조 (T2에서 마크업만 먼저 들어감)
    ======================================== */
-.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0 !important; font-weight: 700; }
+.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary) !important; font-weight: 700; }
 .btn-ml:hover { filter: brightness(1.08); }
 
 /* ========================================
@@ -286,7 +286,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 .rail-dot[data-category="Targeting & Audience"]      { background: #9a7d38; }
 .rail-dot[data-category="Software Engineering"]      { background: #6a7891; }
 .rail-count { margin-left: auto; font-size: 0.74rem; color: var(--text-muted); }
-.rail-ml { display: block; margin-top: 1rem; background: var(--accent-primary); color: #fdf9f0; border-radius: 8px; padding: 0.8rem 0.85rem; text-decoration: none; }
+.rail-ml { display: block; margin-top: 1rem; background: var(--accent-primary); color: var(--bg-primary); border-radius: 8px; padding: 0.8rem 0.85rem; text-decoration: none; }
 .rail-ml:hover { filter: brightness(1.06); }
 .rail-ml b { display: block; font-size: 0.88rem; margin-bottom: 0.15rem; }
 .rail-ml span { font-size: 0.74rem; opacity: 0.85; line-height: 1.5; display: block; }
@@ -491,7 +491,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 .cover-kicker { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--accent-primary); font-weight: 700; margin-bottom: 0.7rem; }
 .cover-head { font-family: var(--font-serif); font-size: clamp(2.2rem, 4.6vw, 3.4rem); line-height: 1.12; font-weight: 900; margin: 0 0 0.8rem; }
 .cover-dek { font-size: 1.02rem; color: var(--text-secondary); line-height: 1.65; max-width: 620px; margin-bottom: 1.1rem; }
-.cover-cta-primary { background: var(--accent-primary); color: #fdf9f0; border-color: var(--accent-primary); }
+.cover-cta-primary { background: var(--accent-primary); color: var(--bg-primary); border-color: var(--accent-primary); }
 
 .cover-map { display: block; margin-top: 1.6rem; background: var(--bg-secondary); border: 1px solid var(--border-color);
   border-radius: 10px; padding: 1.3rem 1.4rem 1rem; box-shadow: var(--shadow-md); text-decoration: none; color: var(--text-primary); }
@@ -503,8 +503,8 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 .cover-bnode { background: var(--bg-tertiary); border: 1px solid var(--accent-secondary); font-size: 0.74rem; padding: 0.45rem 0.7rem;
   border-radius: 5px; text-align: center; color: var(--text-secondary); line-height: 1.35; }
 .cover-bnode small { display: block; font-size: 0.6rem; color: var(--text-muted); }
-.cover-heart { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0; font-weight: 700; animation: cover-pulse 2s infinite; }
-.cover-heart small { color: rgba(253, 249, 240, 0.75); }
+.cover-heart { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); font-weight: 700; animation: cover-pulse 2s infinite; }
+.cover-heart small { color: var(--bg-primary); opacity: 0.78; }
 @keyframes cover-pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(176, 68, 44, 0.10); } 50% { box-shadow: 0 0 0 8px rgba(176, 68, 44, 0.18); } }
 .cover-vlink { display: flex; justify-content: center; height: 24px; position: relative; }
 .cover-vlink i { border-left: 2px dashed rgba(176, 68, 44, 0.5); }
@@ -522,7 +522,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 @keyframes cover-run { 0% { left: 3%; opacity: 0; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { left: 94%; opacity: 0; } }
 .cover-flows { display: flex; gap: 0.5rem; margin-top: 0.9rem; flex-wrap: wrap; }
 .cover-flow { font-size: 0.74rem; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.32rem 0.75rem; border-radius: 999px; color: var(--text-secondary); }
-.cover-flow.is-on { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0; font-weight: 600; }
+.cover-flow.is-on { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); font-weight: 600; }
 @media (max-width: 768px) {
   .cover-lane { flex-wrap: wrap; gap: 0.4rem; }
   .cover-node { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
@@ -641,7 +641,7 @@ new:
 .stage-card-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
 .stage-chip { font-size: 0.76rem; border: 1px solid var(--border-color); border-radius: 999px; padding: 0.26rem 0.7rem; color: var(--text-muted); opacity: 0.55; }
 .stage-chip em { font-style: normal; margin-left: 0.3rem; font-size: 0.68rem; opacity: 0.8; }
-.stage-chip.is-on { opacity: 1; color: #fdf9f0; background: var(--world-dot, var(--text-secondary)); border-color: transparent; font-weight: 600; }
+.stage-chip.is-on { opacity: 1; color: var(--bg-primary); background: var(--world-dot, var(--text-secondary)); border-color: transparent; font-weight: 600; }
 .stage-chip[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-chip[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .stage-chip[data-world="both"]          { --world-dot: #5f7a63; }
@@ -752,7 +752,7 @@ new:
    P1 — 본문 무대 전환 배지 (헤딩 옆)
    ======================================== */
 .stage-inline-badge { display: inline-block; vertical-align: middle; margin-left: 0.55rem; font-family: var(--font-sans);
-  font-size: 0.62em; font-weight: 600; letter-spacing: 0.02em; color: #fdf9f0; background: var(--world-dot, var(--text-secondary));
+  font-size: 0.62em; font-weight: 600; letter-spacing: 0.02em; color: var(--bg-primary); background: var(--world-dot, var(--text-secondary));
   border-radius: 999px; padding: 0.18em 0.75em; white-space: nowrap; }
 .stage-inline-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-inline-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
@@ -1106,7 +1106,7 @@ new:
 .track-item:hover { border-color: var(--accent-primary); }
 .track-num { flex: 0 0 auto; width: 1.7rem; height: 1.7rem; border-radius: 50%; border: 1px solid var(--accent-primary);
   color: var(--accent-primary); font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
-.track-item.is-read .track-num { background: var(--accent-primary); color: #fdf9f0; }
+.track-item.is-read .track-num { background: var(--accent-primary); color: var(--bg-primary); }
 .track-body { min-width: 0; }
 .track-body b { display: block; font-size: 0.95rem; line-height: 1.45; margin-bottom: 0.15rem; }
 .track-body span { display: block; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
@@ -1208,7 +1208,8 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
   - `css/style.css`의 `.post-meta-sep { ... }` 규칙 블록 삭제 (~737행)
   - `.post-date,` 와 선택자를 공유하는 `.post-read-time`을 선택자 목록에서만 제거 (`.post-date` 규칙은 유지)
   - `.nav-links` 참조 규칙 7곳(258·265·274·279·286·337·1911행 부근) 삭제 — T2에서 ul이 사라져 고아됨. 모바일 네비(setupMobileNav)는 `.nav-content`만 쓰므로 무관함을 grep으로 재확인 후 삭제
-  - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄
+  - `js/main.js`의 `renderWorldLegend` 함수와 DOMContentLoaded의 호출 제거 — T3에서 마지막 `#world-legend` 컨테이너가 사라져 전 사이트 dead code (레일이 같은 범례를 자체 렌더). ⚠ NUL 주의: Edit로만.
+  - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄, `grep -a -c "renderWorldLegend" js/main.js` → 0
 
 - [ ] **Step 10.3: 검색 색인 재생성**
 

@@ -398,7 +398,7 @@ function renderCover() {
   const featured = document.getElementById('cover-featured');
   if (featured && typeof getAllPosts === 'function') {
     featured.innerHTML = '';
-    getAllPosts().slice(0, 3).forEach(p => renderPostCard && featured.appendChild(renderPostCard(p)));
+    getAllPosts().slice(0, 3).forEach(p => featured.appendChild(renderPostCard(p)));
   }
 }
 

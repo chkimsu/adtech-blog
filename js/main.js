@@ -665,6 +665,28 @@ function initializeReadingProgress() {
 }
 
 // ========================================
+// 섹션 무대 배지 — 헤딩 끝 '[무대: 열린 RTB]' 마커를 색 배지로 치환.
+// TOC·슬러그가 마커를 포함하지 않도록 dataset.tocText에 깨끗한 제목을 남긴다.
+// ========================================
+
+const STAGE_MARKER_WORLDS = { '열린 RTB': 'open-rtb', '닫힌 생태계': 'walled-garden', '공통': 'both' };
+
+function applyStageMarkers(container) {
+  container.querySelectorAll('h2, h3').forEach(h => {
+    const m = h.textContent.match(/\s*\[무대:\s*(열린 RTB|닫힌 생태계|공통)\]\s*$/);
+    if (!m) return;
+    const clean = h.textContent.replace(m[0], '').trim();
+    h.textContent = clean;
+    h.dataset.tocText = clean;
+    const badge = document.createElement('span');
+    badge.className = 'stage-inline-badge';
+    badge.dataset.world = STAGE_MARKER_WORLDS[m[1]];
+    badge.textContent = m[1];
+    h.appendChild(badge);
+  });
+}
+
+// ========================================
 // Code Block Post-Processing
 // ========================================
 
@@ -770,7 +792,7 @@ function buildPostTOC(contentContainer) {
   // Assign IDs to headings
   const slugCount = {};
   headings.forEach(heading => {
-    let slug = heading.textContent
+    let slug = (heading.dataset.tocText || heading.textContent)
       .trim()
       .toLowerCase()
       .replace(/[^\w\s가-힣]/g, '')
@@ -787,7 +809,7 @@ function buildPostTOC(contentContainer) {
     const level = h.tagName === 'H2' ? 'toc-h2' : 'toc-h3';
     return `<a href="#${h.id}" class="toc-item ${level}">
       <span class="toc-dot" aria-hidden="true"></span>
-      <span class="toc-text">${h.textContent}</span>
+      <span class="toc-text">${h.dataset.tocText || h.textContent}</span>
     </a>`;
   }).join('');
 
@@ -1071,6 +1093,9 @@ async function renderPostDetail() {
       } else {
         contentContainer.innerHTML = content;
       }
+
+      // 섹션 무대 배지 — [무대: …] 마커를 배지로 (TOC 생성보다 먼저)
+      applyStageMarkers(contentContainer);
 
       // Enhance code blocks with language label + copy button
       enhanceCodeBlocks(contentContainer);

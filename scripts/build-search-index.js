@@ -7,6 +7,7 @@ const root = path.join(__dirname, '..');
 const { posts } = require(path.join(root, 'js', 'posts.js'));
 
 const strip = md => md
+  .replace(/\[무대:\s*[^\]]*\]/g, ' ')       // 무대 전환 마커 (렌더 전용 — 색인 제외)
   .replace(/```[\s\S]*?```/g, ' ')           // 코드 펜스
   .replace(/`[^`]*`/g, ' ')                  // 인라인 코드
   .replace(/\$\$[\s\S]*?\$\$/g, ' ')         // 블록 수식

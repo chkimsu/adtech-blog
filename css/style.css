@@ -5693,3 +5693,14 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .stage-card-note { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
 .stage-card-practical { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 0; padding-top: 0.5rem; border-top: 1px dotted var(--border-color); }
 .stage-card-practical b { color: var(--accent-primary); }
+
+/* ========================================
+   P1 — 본문 무대 전환 배지 (헤딩 옆)
+   ======================================== */
+.stage-inline-badge { display: inline-block; vertical-align: middle; margin-left: 0.55rem; font-family: var(--font-sans);
+  font-size: 0.62em; font-weight: 600; letter-spacing: 0.02em; color: var(--bg-primary); background: var(--world-dot, var(--text-secondary));
+  border-radius: 999px; padding: 0.18em 0.75em; white-space: nowrap; }
+.stage-inline-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
+.stage-inline-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
+.stage-inline-badge[data-world="both"]          { --world-dot: #5f7a63; }
+[data-theme="dark"] .stage-inline-badge[data-world="both"] { --world-dot: #7d9a80; } /* T5와 동일한 다크 대비 확보 */

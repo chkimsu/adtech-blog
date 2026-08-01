@@ -305,6 +305,28 @@ function renderWorldLegend() {
   el.innerHTML = `<span class="world-legend-label">무대</span>${items}`;
 }
 
+// 좌측 카테고리 레일 — #category-rail 컨테이너가 있는 목록성 페이지에서 렌더 (없으면 no-op)
+function renderCategoryRail() {
+  const el = document.getElementById('category-rail');
+  if (!el || typeof posts === 'undefined') return;
+  const counts = {};
+  posts.forEach(p => (p.categories || []).forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
+  const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  const catItems = cats.map(c =>
+    `<a class="rail-cat" href="posts-browse.html?category=${encodeURIComponent(c)}">
+      <span class="rail-dot" data-category="${c}"></span>${c}<span class="rail-count">${counts[c]}</span></a>`).join('');
+  const legend = (typeof WORLD_META !== 'undefined') ? Object.keys(WORLD_META).map(id => {
+    const m = WORLD_META[id];
+    return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} · ${m.short}</span>`;
+  }).join('') : '';
+  el.innerHTML = `<div class="category-rail-inner">
+    <div class="rail-title">주제로 찾기</div>
+    ${catItems}
+    <a class="rail-ml" href="ml-track.html"><b>▸ ML 엔지니어 트랙</b><span>pCTR/pCVR 실무 커리큘럼 — 입문→실무→심화</span></a>
+    <div class="rail-stage"><div class="rail-title">무대 — 이 글이 노는 곳</div>${legend}</div>
+  </div>`;
+}
+
 function renderPostCard(post) {
   const card = document.createElement('div');
   card.className = 'post-card';
@@ -1711,6 +1733,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 무대 범례(목록 페이지에 #world-legend 컨테이너가 있으면 채움)
   renderWorldLegend();
+
+  // 좌측 카테고리 레일(#category-rail 있는 페이지)
+  renderCategoryRail();
 
   // Check if we're on the home page or post page
   const homeRoot = document.getElementById('home-root');

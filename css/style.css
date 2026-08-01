@@ -5571,3 +5571,50 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 
 .demo-card-analogy::before { content: '“'; color: var(--accent-secondary); }
 .demo-card-analogy::after { content: '”'; color: var(--accent-secondary); }
+
+/* ========================================
+   P1 — Software Engineering 카테고리 색 (기존 매핑 보완)
+   ======================================== */
+.post-card-category[data-category="Software Engineering"] { background: #6a7891; }
+.post-card[data-category="Software Engineering"] { border-left: 3px solid #6a7891; }
+
+/* ========================================
+   P1 — 네비 ML 트랙 버튼 강조 (T2에서 마크업만 먼저 들어감)
+   ======================================== */
+.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0 !important; font-weight: 700; }
+.btn-ml:hover { filter: brightness(1.08); }
+
+/* ========================================
+   P1 — 좌측 카테고리 레일 (목록성 페이지)
+   ======================================== */
+.rail-layout { display: grid; grid-template-columns: 232px minmax(0, 1fr); max-width: 1400px; margin: 0 auto; }
+.category-rail { border-right: 1px solid var(--border-color); padding: 1.6rem 1.1rem 2rem; }
+.category-rail-inner { position: sticky; top: 84px; }
+.rail-title { font-size: 0.68rem; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; margin: 0 0 0.6rem; font-weight: 600; }
+.rail-cat { display: flex; align-items: center; gap: 0.5rem; padding: 0.42rem 0; font-size: 0.86rem; color: var(--text-primary); text-decoration: none; border-bottom: 1px dotted var(--border-color); }
+.rail-cat:hover { color: var(--accent-primary); }
+.rail-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--text-muted); flex: 0 0 auto; }
+.rail-dot[data-category="Bandits & Personalization"] { background: #9c5a44; }
+.rail-dot[data-category="Bidding & Auction"]         { background: #5a6b7a; }
+.rail-dot[data-category="ML Infrastructure"]         { background: #a8783a; }
+.rail-dot[data-category="Measurement & Modeling"]    { background: #5f7a63; }
+.rail-dot[data-category="DevOps & Tooling"]          { background: #7d5e72; }
+.rail-dot[data-category="Targeting & Audience"]      { background: #9a7d38; }
+.rail-dot[data-category="Software Engineering"]      { background: #6a7891; }
+.rail-count { margin-left: auto; font-size: 0.74rem; color: var(--text-muted); }
+.rail-ml { display: block; margin-top: 1rem; background: var(--accent-primary); color: #fdf9f0; border-radius: 8px; padding: 0.8rem 0.85rem; text-decoration: none; }
+.rail-ml:hover { filter: brightness(1.06); }
+.rail-ml b { display: block; font-size: 0.88rem; margin-bottom: 0.15rem; }
+.rail-ml span { font-size: 0.74rem; opacity: 0.85; line-height: 1.5; display: block; }
+.rail-stage { margin-top: 1.2rem; padding-top: 0.9rem; border-top: 1px solid var(--border-color); }
+.rail-stage .world-legend-item { display: flex; align-items: center; gap: 0.45rem; font-size: 0.76rem; color: var(--text-secondary); padding: 0.18rem 0; }
+@media (max-width: 1023px) {
+  .rail-layout { display: block; }
+  .category-rail { border-right: none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; }
+  .category-rail-inner { position: static; display: flex; gap: 0.55rem; overflow-x: auto; align-items: center; -webkit-overflow-scrolling: touch; }
+  .rail-title, .rail-count, .rail-stage { display: none; }
+  .rail-cat { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.3rem 0.7rem; white-space: nowrap; }
+  .rail-ml { margin-top: 0; padding: 0.32rem 0.7rem; border-radius: 999px; white-space: nowrap; }
+  .rail-ml b { display: inline; font-size: 0.8rem; margin: 0; }
+  .rail-ml span { display: none; }
+}

@@ -279,6 +279,24 @@ function setupMobileNav() {
 // Post Rendering
 // ========================================
 
+// 무대 카드 — 글 상단: 세 무대 중 어디 이야기인지 칩으로 + 이유 + (선택) 실무 안내.
+// world가 없거나 'na'면 빈 문자열(카드 없음).
+function renderStageCard(post) {
+  const list = (typeof getWorldList === 'function') ? getWorldList(post) : [];
+  if (!list.length) return '';
+  const chips = Object.keys(WORLD_META).map(id => {
+    const m = WORLD_META[id];
+    const on = list.includes(id);
+    return `<span class="stage-chip${on ? ' is-on' : ''}" data-world="${id}" title="${String(m.tip).replace(/"/g, '&quot;')}">${on ? '✓ ' : ''}${m.label}<em>${m.short}</em></span>`;
+  }).join('');
+  return `<div class="stage-card">
+    <div class="stage-card-label">이 글의 무대</div>
+    <div class="stage-card-chips">${chips}</div>
+    ${post.worldNote ? `<p class="stage-card-note">${post.worldNote}</p>` : ''}
+    ${post.worldPractical ? `<p class="stage-card-practical"><b>담장 안(네이버·카카오)에서 일한다면</b> — ${post.worldPractical}</p>` : ''}
+  </div>`;
+}
+
 // 무대(경매 위치) 배지 HTML. world 는 문자열 또는 배열. 'na'/미지정이면 빈 문자열(배지 없음).
 // 여러 세계를 다루는 글은 배지 여러 개를 이어 붙인다.
 function renderWorldBadge(post, context) {
@@ -950,15 +968,13 @@ async function renderPostDetail() {
   // Render post header
   const headerContainer = document.getElementById('post-header');
   if (headerContainer) {
-    const worldBadges = renderWorldBadge(post, 'detail');
     headerContainer.innerHTML = `
       <div class="post-meta">
         <span class="post-date">${formatDate(post.date)}</span>
         <button id="bookmark-btn" class="bookmark-btn" type="button" aria-pressed="false">♢ 저장</button>
       </div>
-      ${worldBadges ? `<div class="world-badge-row">${worldBadges}</div>` : ''}
       <h1>${post.title}</h1>
-      ${post.worldNote ? `<p class="post-world-note">${post.worldNote}</p>` : ''}
+      ${renderStageCard(post)}
       <div class="post-header-tags">
         ${post.tags.map(tag =>
       `<span class="post-header-tag" data-tag="${tag}">${tag}</span>`

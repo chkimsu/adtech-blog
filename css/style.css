@@ -5675,3 +5675,21 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 @media (prefers-reduced-motion: reduce) {
   .cover-dot, .cover-vdot, .cover-heart { animation: none; }
 }
+
+/* ========================================
+   P1 — 무대 카드 (글 상단)
+   ======================================== */
+.stage-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+  border-radius: 8px; padding: 0.95rem 1.1rem; margin: 1.1rem auto 0; max-width: 760px; text-align: left; }
+.stage-card-label { font-size: 0.66rem; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.55rem; }
+.stage-card-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.stage-chip { font-size: 0.76rem; border: 1px solid var(--border-color); border-radius: 999px; padding: 0.26rem 0.7rem; color: var(--text-muted); opacity: 0.55; }
+.stage-chip em { font-style: normal; margin-left: 0.3rem; font-size: 0.68rem; opacity: 0.8; }
+.stage-chip.is-on { opacity: 1; color: var(--bg-primary); background: var(--world-dot, var(--text-secondary)); border-color: transparent; font-weight: 600; }
+.stage-chip[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
+.stage-chip[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
+.stage-chip[data-world="both"]          { --world-dot: #5f7a63; }
+[data-theme="dark"] .stage-chip[data-world="both"] { --world-dot: #7d9a80; } /* 다크 잉크 텍스트 대비 확보(세이지 고정 hex는 다크에서 ~3.5:1) */
+.stage-card-note { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+.stage-card-practical { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 0; padding-top: 0.5rem; border-top: 1px dotted var(--border-color); }
+.stage-card-practical b { color: var(--accent-primary); }

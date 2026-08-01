@@ -259,14 +259,6 @@ nav {
   justify-content: flex-end;
 }
 
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  list-style: none;
-}
-
-.nav-links a,
 .nav-actions .btn-demo {
   color: var(--text-secondary);
   font-weight: 500;
@@ -275,19 +267,16 @@ nav {
   transition: color var(--transition-fast);
 }
 
-.nav-links a:hover,
 .nav-actions .btn-demo:hover {
   color: var(--accent-primary);
 }
 
-.nav-links a.active,
 .nav-actions .btn-demo-active,
 .nav-actions .btn-posts-active {
   color: var(--accent-primary);
   position: relative;
 }
 
-.nav-links a.active::after,
 .nav-actions .btn-demo-active::after,
 .nav-actions .btn-posts-active::after {
   content: "";
@@ -306,7 +295,7 @@ nav {
   gap: 1.5rem;
 }
 
-/* .btn-demo / .nav-links a 는 위에서 통일 텍스트 링크로 스타일됨 (박스 제거) */
+/* .btn-demo 는 위에서 통일 텍스트 링크로 스타일됨 (박스 제거) */
 
 /* Mobile hamburger toggle (button injected by main.js, hidden on desktop) */
 .nav-toggle {
@@ -338,12 +327,6 @@ nav {
     padding: 0.75rem 0 0.25rem;
   }
   .nav-content.is-open { display: flex; }
-  .nav-links {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    width: 100%;
-  }
   .nav-actions {
     flex-direction: column;
     align-items: flex-start;
@@ -738,13 +721,7 @@ nav {
   align-items: center;
 }
 
-.post-meta-sep {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
-.post-date,
-.post-read-time {
+.post-date {
   color: var(--text-muted);
   font-size: 0.75rem;
   display: flex;
@@ -1910,10 +1887,6 @@ footer {
 
   .post-content {
     padding: 2rem 1.5rem;
-  }
-
-  .nav-links {
-    gap: 1rem;
   }
 
   .nav-content {
@@ -5101,34 +5074,11 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 .world-badge[data-world="open-rtb"],      .world-dot[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .world-badge[data-world="walled-garden"], .world-dot[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .world-badge[data-world="both"],          .world-dot[data-world="both"]          { --world-dot: var(--text-secondary); }
-.world-badge-detail { font-size: 0.72rem; }
 /* 여러 세계를 다루는 글: 배지 여러 개를 묶어서 배치(줄바꿈 허용) */
-.world-badge-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; }
 .world-badge-group { display: inline-flex; flex-wrap: wrap; gap: 0.3rem; justify-content: flex-end; }
 
-/* 무대 범례(목록 페이지 상단) — hover 없이 항상 보이는 설명 */
-.world-legend {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.1rem;
-  margin: 0 0 1.5rem; padding: 0.6rem 0.9rem;
-  background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px;
-  font-size: 0.8rem; color: var(--text-secondary);
-}
-.world-legend-label { font-weight: 600; color: var(--text-primary); letter-spacing: 0.02em; }
 .world-legend-item { display: inline-flex; align-items: center; gap: 0.36rem; }
 .world-legend-item em { font-style: normal; color: var(--text-muted); }
-/* 글 상단 '반대 세계에선?' 한 줄 주석 */
-.post-world-note {
-  max-width: 62ch;
-  margin: 0.6rem auto 0;
-  padding: 0.5rem 0.8rem;
-  text-align: left;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
-  border-left: 2px solid var(--accent-secondary);
-  border-radius: 4px;
-}
 
 /* 다중선택: 여러 칩이 동시에 .active 가능 — 기존 .active 스타일 재사용 */
 .category-tab, .filter-tag { cursor: pointer; }
@@ -5688,7 +5638,7 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .stage-chip.is-on { opacity: 1; color: var(--bg-primary); background: var(--world-dot, var(--text-secondary)); border-color: transparent; font-weight: 600; }
 .stage-chip[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-chip[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
-.stage-chip[data-world="both"]          { --world-dot: #5f7a63; }
+.stage-chip[data-world="both"]          { --world-dot: #59745d; }
 [data-theme="dark"] .stage-chip[data-world="both"] { --world-dot: #7d9a80; } /* 다크 잉크 텍스트 대비 확보(세이지 고정 hex는 다크에서 ~3.5:1) */
 .stage-card-note { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
 .stage-card-practical { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 0; padding-top: 0.5rem; border-top: 1px dotted var(--border-color); }
@@ -5702,8 +5652,10 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
   border-radius: 999px; padding: 0.18em 0.75em; white-space: nowrap; }
 .stage-inline-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-inline-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
-.stage-inline-badge[data-world="both"]          { --world-dot: #5f7a63; }
+.stage-inline-badge[data-world="both"]          { --world-dot: #59745d; }
 [data-theme="dark"] .stage-inline-badge[data-world="both"] { --world-dot: #7d9a80; } /* T5와 동일한 다크 대비 확보 */
+[data-palette="slate"]:not([data-theme="dark"]) .stage-chip[data-world="walled-garden"],
+[data-palette="slate"]:not([data-theme="dark"]) .stage-inline-badge[data-world="walled-garden"] { --world-dot: #5e6b80; } /* slate 라이트 4.5:1 확보 */
 
 /* ========================================
    P1 — :::deep 접이식 심화 블록

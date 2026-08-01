@@ -312,17 +312,6 @@ function renderWorldBadge(post, context) {
   }).join('');
 }
 
-// 무대 범례(목록 페이지 상단). #world-legend 컨테이너가 있으면 WORLD_META로 채운다(없으면 no-op).
-function renderWorldLegend() {
-  const el = document.getElementById('world-legend');
-  if (!el || typeof WORLD_META === 'undefined') return;
-  const items = Object.keys(WORLD_META).map(id => {
-    const m = WORLD_META[id];
-    return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} <em>${m.short}</em></span>`;
-  }).join('');
-  el.innerHTML = `<span class="world-legend-label">무대</span>${items}`;
-}
-
 // 좌측 카테고리 레일 — #category-rail 컨테이너가 있는 목록성 페이지에서 렌더 (없으면 no-op).
 // 레일 링크는 '새로 탐색'이 의도라 posts-browse의 기존 필터 상태를 초기화한다(전체 리로드).
 // 카테고리명은 taxonomy.json 통제 값 — 콤마 없음을 전제(browse.js가 category를 콤마 다중값으로 파싱).
@@ -1775,9 +1764,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Setup global post search modal (works on any page that has the modal DOM)
   setupSearchModal();
-
-  // 무대 범례(목록 페이지에 #world-legend 컨테이너가 있으면 채움)
-  renderWorldLegend();
 
   // 좌측 카테고리 레일(#category-rail 있는 페이지)
   renderCategoryRail();

@@ -25,7 +25,7 @@ adtech-blog/
 ├── index.html              # 홈 — 시작하기·최신·시리즈 큐레이션 랜딩
 ├── posts-browse.html       # 전체 글 탐색 (카테고리·태그 다중필터·정렬·검색·더보기)
 ├── post.html               # 글 상세 템플릿 (TOC·시리즈 박스·관련 글)
-├── about.html / demos.html / ecosystem.html
+├── demos.html / ecosystem.html / ml-track.html
 ├── css/
 │   └── style.css           # 단일 스타일시트 (차분한 에디토리얼 토큰)
 ├── js/

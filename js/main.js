@@ -305,16 +305,20 @@ function renderWorldLegend() {
   el.innerHTML = `<span class="world-legend-label">무대</span>${items}`;
 }
 
-// 좌측 카테고리 레일 — #category-rail 컨테이너가 있는 목록성 페이지에서 렌더 (없으면 no-op)
+// 좌측 카테고리 레일 — #category-rail 컨테이너가 있는 목록성 페이지에서 렌더 (없으면 no-op).
+// 레일 링크는 '새로 탐색'이 의도라 posts-browse의 기존 필터 상태를 초기화한다(전체 리로드).
+// 카테고리명은 taxonomy.json 통제 값 — 콤마 없음을 전제(browse.js가 category를 콤마 다중값으로 파싱).
 function renderCategoryRail() {
   const el = document.getElementById('category-rail');
   if (!el || typeof posts === 'undefined') return;
   const counts = {};
   posts.forEach(p => (p.categories || []).forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
   const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-  const catItems = cats.map(c =>
-    `<a class="rail-cat" href="posts-browse.html?category=${encodeURIComponent(c)}">
-      <span class="rail-dot" data-category="${c}"></span>${c}<span class="rail-count">${counts[c]}</span></a>`).join('');
+  const catItems = cats.map(c => {
+    const cAttr = c.replace(/"/g, '&quot;');
+    return `<a class="rail-cat" href="posts-browse.html?category=${encodeURIComponent(c)}">
+      <span class="rail-dot" data-category="${cAttr}"></span>${c}<span class="rail-count">${counts[c]}</span></a>`;
+  }).join('');
   const legend = (typeof WORLD_META !== 'undefined') ? Object.keys(WORLD_META).map(id => {
     const m = WORLD_META[id];
     return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} · ${m.short}</span>`;

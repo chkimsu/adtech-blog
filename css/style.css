@@ -5581,7 +5581,7 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 /* ========================================
    P1 — 네비 ML 트랙 버튼 강조 (T2에서 마크업만 먼저 들어감)
    ======================================== */
-.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0 !important; font-weight: 700; }
+.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary) !important; font-weight: 700; }
 .btn-ml:hover { filter: brightness(1.08); }
 
 /* ========================================
@@ -5602,7 +5602,7 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .rail-dot[data-category="Targeting & Audience"]      { background: #9a7d38; }
 .rail-dot[data-category="Software Engineering"]      { background: #6a7891; }
 .rail-count { margin-left: auto; font-size: 0.74rem; color: var(--text-muted); }
-.rail-ml { display: block; margin-top: 1rem; background: var(--accent-primary); color: #fdf9f0; border-radius: 8px; padding: 0.8rem 0.85rem; text-decoration: none; }
+.rail-ml { display: block; margin-top: 1rem; background: var(--accent-primary); color: var(--bg-primary); border-radius: 8px; padding: 0.8rem 0.85rem; text-decoration: none; }
 .rail-ml:hover { filter: brightness(1.06); }
 .rail-ml b { display: block; font-size: 0.88rem; margin-bottom: 0.15rem; }
 .rail-ml span { font-size: 0.74rem; opacity: 0.85; line-height: 1.5; display: block; }

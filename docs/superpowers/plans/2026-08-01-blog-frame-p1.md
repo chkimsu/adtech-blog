@@ -1198,6 +1198,11 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
 
 - [ ] **Step 10.2: README 구조 트리 갱신** — 트리에서 `about.html / demos.html / ecosystem.html` 줄을 `demos.html / ecosystem.html / ml-track.html`로 수정.
 
+- [ ] **Step 10.2b: T1 잔여 정리 — 고아 CSS 제거** (T1 코드 리뷰 지적 반영):
+  - `css/style.css`의 `.post-meta-sep { ... }` 규칙 블록 삭제 (~737행)
+  - `.post-date,` 와 선택자를 공유하는 `.post-read-time`을 선택자 목록에서만 제거 (`.post-date` 규칙은 유지)
+  - 검증: `grep -n "post-meta-sep\|post-read-time" css/style.css` → 0줄
+
 - [ ] **Step 10.3: 검색 색인 재생성**
 
 ```bash

@@ -5726,3 +5726,10 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 @media (prefers-reduced-motion: reduce) {
   .eco-heart-pulse { animation: none; opacity: 0.3; }
 }
+
+/* 대표 흐름 칩 — 나머지보다 한 단계 앞선 것으로 보이게 */
+.eco-flow-chip.is-featured { border-color: var(--accent-primary); box-shadow: inset 3px 0 0 var(--accent-primary); }
+.eco-flow-chip.is-featured .eco-flow-chip-label { color: var(--accent-primary); font-weight: 700; }
+/* 재생 중(is-selected)엔 배경이 accent-primary로 채워진다 — 위 라벨 색을 그대로 두면
+   글자색==배경색이 되어 안 보인다. .is-selected 쪽 텍스트 규칙(#fff)과 동일하게 맞춘다. */
+.eco-flow-chip.is-featured.is-selected .eco-flow-chip-label { color: #fff; }

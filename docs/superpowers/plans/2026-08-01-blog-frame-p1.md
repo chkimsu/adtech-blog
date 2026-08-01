@@ -645,6 +645,7 @@ new:
 .stage-chip[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-chip[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .stage-chip[data-world="both"]          { --world-dot: #5f7a63; }
+[data-theme="dark"] .stage-chip[data-world="both"] { --world-dot: #7d9a80; } /* 다크 잉크 텍스트 대비 확보(세이지 고정 hex는 다크에서 ~3.5:1) */
 .stage-card-note { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
 .stage-card-practical { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 0; padding-top: 0.5rem; border-top: 1px dotted var(--border-color); }
 .stage-card-practical b { color: var(--accent-primary); }
@@ -757,6 +758,7 @@ new:
 .stage-inline-badge[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .stage-inline-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .stage-inline-badge[data-world="both"]          { --world-dot: #5f7a63; }
+[data-theme="dark"] .stage-inline-badge[data-world="both"] { --world-dot: #7d9a80; } /* T5와 동일한 다크 대비 확보 */
 ```
 
 - [ ] **Step 6.5: 검색 색인에서 마커 제외** — `scripts/build-search-index.js` Edit:

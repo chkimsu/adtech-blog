@@ -393,17 +393,12 @@ function renderPosts(postsToRender) {
   });
 }
 
-// 표지(랜딩) — 통계 + 최근 글 미리보기 (#cover-root 가드)
+// 표지(랜딩) — 살아있는 미니 지도 아래 '지금 읽을거리' 채움 (#cover-root 가드)
 function renderCover() {
-  const stats = document.getElementById('cover-stats');
-  if (stats && typeof posts !== 'undefined') {
-    const seriesCount = (typeof series !== 'undefined') ? Object.keys(series).length : 0;
-    stats.textContent = `글 ${posts.length}편 · 시리즈 ${seriesCount}개 · 인터랙티브 데모 12개`;
-  }
   const featured = document.getElementById('cover-featured');
   if (featured && typeof getAllPosts === 'function') {
     featured.innerHTML = '';
-    getAllPosts().slice(0, 3).forEach(p => featured.appendChild(renderPostCard(p)));
+    getAllPosts().slice(0, 3).forEach(p => renderPostCard && featured.appendChild(renderPostCard(p)));
   }
 }
 

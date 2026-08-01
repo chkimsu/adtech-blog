@@ -35,7 +35,6 @@
 </head>
 
 <body>
-  <!-- Header / Navigation -->
   <header>
     <nav>
       <a href="index.html" class="logo">AdTech Blog</a>
@@ -51,85 +50,60 @@
     </nav>
   </header>
 
-  <!-- Main Content Wrapper -->
+  <div class="rail-layout">
+  <aside id="category-rail" class="category-rail" aria-label="카테고리"></aside>
   <div id="main-content">
-    <!-- A. 표지 헤더 -->
-    <section class="hero" id="cover-root">
+    <section class="cover-hero" id="cover-root">
       <div class="container">
-        <h1>Ad Tech Blog</h1>
-        <p>한국어로 읽는 애드테크 — 광고가 어떻게 돌아가는지, 쉽고 깊게.</p>
-        <p class="cover-meta" id="cover-stats">글 · 시리즈 · 데모</p>
+        <div class="cover-kicker">한국어로 읽는 애드테크</div>
+        <h1 class="cover-head">0.1초 안에 벌어지는<br>광고 한 편의 여정</h1>
+        <p class="cover-dek">페이지가 뜨는 사이 경매가 열리고, 모델이 '누를 확률'을 찍고, 낙찰이 끝납니다.
+        그 안쪽을 그림·데모·코드로 풀어 쓴 글 — 심장은 pCTR/pCVR입니다.</p>
         <div class="cover-cta-row">
-          <a href="home.html" class="btn-try">글 보러 가기 →</a>
-          <a href="ecosystem.html" class="btn-try">광고 생태계 지도 →</a>
+          <a href="post.html?id=adtech-30min-primer" class="btn-try cover-cta-primary">30분 입문 가이드 →</a>
+          <a href="posts-browse.html" class="btn-try">글 전체 둘러보기 →</a>
         </div>
+
+        <a class="cover-map" href="ecosystem.html" aria-label="광고 생태계 지도로 이동">
+          <div class="cover-map-tag"><span>LIVE — 광고 생태계 미니 지도</span><b>클릭하면 전체 지도로 →</b></div>
+          <div class="cover-brain">
+            <span class="cover-layer-label">두뇌 층</span>
+            <div class="cover-bnode">Feature Store<small>피처 공급</small></div>
+            <div class="cover-bnode cover-heart">pCTR / pCVR<small>누를·살 확률 예측</small></div>
+            <div class="cover-bnode">Calibration<small>확률 보정</small></div>
+          </div>
+          <div class="cover-vlink"><i></i><span class="cover-vdot"></span></div>
+          <div class="cover-lane">
+            <span class="cover-layer-label">거래 층</span>
+            <div class="cover-wire"></div>
+            <div class="cover-dot"></div><div class="cover-dot d2"></div><div class="cover-dot d3"></div>
+            <div class="cover-node">사용자<small>페이지 열림</small></div>
+            <div class="cover-node">Publisher · SSP<small>지면 판매</small></div>
+            <div class="cover-node">Ad Exchange<small>경매장</small></div>
+            <div class="cover-node cover-dsp">DSP<small>입찰 — 두뇌에 질문</small></div>
+            <div class="cover-node">광고주<small>낙찰·집행</small></div>
+          </div>
+          <div class="cover-flows">
+            <span class="cover-flow is-on">▶ 100ms RTB</span>
+            <span class="cover-flow">▶ 모델 학습·서빙</span>
+            <span class="cover-flow">▶ 어트리뷰션</span>
+            <span class="cover-flow">▶ Header Bidding</span>
+            <span class="cover-flow">▶ 데이터·타겟팅</span>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- B. 소개 콜아웃 -->
-    <section class="eco-showcase">
-      <div class="container">
-        <div class="eco-showcase-inner">
-          <div class="eco-showcase-label">왜 이 블로그?</div>
-          <h2 class="eco-showcase-title">광고 기술, 쉽게 풀어 씁니다.</h2>
-          <p class="eco-showcase-desc">
-            RTB·DSP·pCTR… 용어만 쏟아지는 글은 많지만, 왜 그렇게 도는지 그림과 데모로
-            풀어주는 한국어 글은 드뭅니다. 처음 보는 사람도 큰 그림을 잡을 수 있게 썼습니다.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- C. 주제 맵 (6개 카테고리 → posts-browse 필터 진입) -->
     <section class="section">
       <div class="container">
-        <div class="home-section-head"><h2>무엇을 읽을 수 있나</h2><p>6개 주제로 묶었어요</p></div>
-        <div class="cover-topics">
-          <a class="cover-topic-card" href="posts-browse.html?category=Bidding%20%26%20Auction">
-            <span class="post-card-category" data-category="Bidding & Auction">Bidding &amp; Auction</span>
-            <h3>입찰·옥션</h3>
-            <p>RTB 경매, 입찰 최적화, bid shading, 페이싱.</p>
-          </a>
-          <a class="cover-topic-card" href="posts-browse.html?category=ML%20Infrastructure">
-            <span class="post-card-category" data-category="ML Infrastructure">ML Infrastructure</span>
-            <h3>ML 인프라</h3>
-            <p>로그 파이프라인, 피처 스토어, 모델 서빙, 온라인 러닝.</p>
-          </a>
-          <a class="cover-topic-card" href="posts-browse.html?category=Measurement%20%26%20Modeling">
-            <span class="post-card-category" data-category="Measurement & Modeling">Measurement &amp; Modeling</span>
-            <h3>측정·모델링</h3>
-            <p>어트리뷰션, 캘리브레이션, CTR/CVR 예측, LTV.</p>
-          </a>
-          <a class="cover-topic-card" href="posts-browse.html?category=Bandits%20%26%20Personalization">
-            <span class="post-card-category" data-category="Bandits & Personalization">Bandits &amp; Personalization</span>
-            <h3>밴딧·개인화</h3>
-            <p>탐색-활용, UCB·톰슨 샘플링, 추천·랭킹.</p>
-          </a>
-          <a class="cover-topic-card" href="posts-browse.html?category=Targeting%20%26%20Audience">
-            <span class="post-card-category" data-category="Targeting & Audience">Targeting &amp; Audience</span>
-            <h3>타겟팅·오디언스</h3>
-            <p>오디언스 세그먼트, 룩얼라이크 모델링.</p>
-          </a>
-          <a class="cover-topic-card" href="posts-browse.html?category=DevOps%20%26%20Tooling">
-            <span class="post-card-category" data-category="DevOps & Tooling">DevOps &amp; Tooling</span>
-            <h3>데브옵스·툴링</h3>
-            <p>광고 개발 레이어, 운영·도구.</p>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- D. 지금 읽을거리 (동적: renderCover가 최신 3개 채움) -->
-    <section class="section">
-      <div class="container">
-        <div class="home-section-head"><h2>지금 읽을거리</h2><a href="home.html">큐레이션 홈 전체 보기 →</a></div>
+        <div class="home-section-head"><h2>지금 읽을거리</h2><a href="home.html">큐레이션 홈 →</a></div>
         <div id="cover-featured" class="posts-grid"></div>
         <div class="home-browse-cta"><a href="demos.html" class="btn-try">인터랙티브 데모 둘러보기 →</a></div>
       </div>
     </section>
   </div><!-- End of main content wrapper -->
+  </div><!-- End of rail-layout -->
 
-  <!-- Footer -->
   <footer>
     <div class="footer-content">
       <div class="footer-links">
@@ -145,7 +119,6 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="js/posts.js"></script>
   <script src="js/reading-state.js"></script>

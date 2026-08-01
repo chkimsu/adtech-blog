@@ -1262,3 +1262,8 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 | §4 콘텐츠 | — | P3~P4 별도 계획 |
 
 placeholder 없음 · 타입/함수명 태스크 간 일치(renderStageCard·applyStageMarkers·renderCategoryRail·mlTrack) 확인.
+
+## P2 이관 메모 (P1 리뷰에서 나온 설계 판단 보류 항목)
+
+- **표지 세로 연결선(cover-vlink) 위치**: 스펙 §2는 "두뇌층 ↔ DSP 연결"이나, 구현(및 사용자 승인 목업)은 컨테이너 중앙(≈Ad Exchange 위)에 고정. 승인 목업과 동일 기하라 P1에서는 유지 — P2 생태계 2층 지도가 두 층의 연결 시각 문법을 확정할 때 표지도 함께 정렬할 것.
+- **표지 흐름 칩 딥링크**: 칩 5개가 현재 전부 ecosystem.html로만 이동(개별 흐름 지정 없음). P2에서 ecosystem이 URL 파라미터(?flow=)를 지원하게 되면 칩별 딥링크 연결.

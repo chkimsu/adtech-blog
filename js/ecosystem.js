@@ -195,7 +195,9 @@
     { from: 'training', to: 'model-serving' },        // 학습된 모델 배포
     { from: 'model-serving', to: 'monitoring' },      // 서빙 결과 감시(직선 수직)
     { from: 'monitoring', to: 'training' },           // 드리프트 → 재학습 트리거(루프 닫힘)
-    { from: 'feature-store', to: 'model-serving' },
+    // channel -85: 자동 라우팅의 세로 버스가 기본값(x=495)이면 training 박스를 관통한다.
+    // feature-store(…400)와 training(425…) 사이 틈(x≈410)으로 내려보낸다.
+    { from: 'feature-store', to: 'model-serving', channel: -85 },
     { from: 'model-serving', to: 'pctr-cvr' },
     { from: 'pctr-cvr', to: 'calibration' },
     { from: 'dsp', to: 'pctr-cvr', layer: true },     // ★ 2층 연결선 — 중심 x가 같아 직선 수직으로 그려진다

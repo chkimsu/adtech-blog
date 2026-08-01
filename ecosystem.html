@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="광고 생태계 한 장 지도 — DSP, SSP, Ad Exchange, DMP, pCTR, Feature Store, Attribution까지 18개 핵심 모듈을 인터랙티브 그래프로 한눈에. 100ms RTB 흐름 애니메이션도 함께.">
+    content="광고 생태계 한 장 지도 — 거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 21개 모듈을 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
   <meta name="keywords"
     content="광고 생태계, AdTech Ecosystem, DSP, SSP, Ad Exchange, DMP, CDP, pCTR, RTB, Attribution, Header Bidding, 광고 생태도">
   <meta name="author" content="Ad Tech Blog">
@@ -14,7 +14,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ad Tech Ecosystem Map — 광고 생태계 한 장 지도">
   <meta property="og:description"
-    content="DSP·SSP·Ad Exchange·pCTR·DMP까지 18개 모듈을 한 화면 인터랙티브 그래프로. 100ms RTB 흐름 애니메이션 포함.">
+    content="거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 21개 모듈을 한 화면 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
   <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/ecosystem.html">
 
   <title>Ecosystem Map — Ad Tech Blog</title>
@@ -46,9 +46,11 @@
     <section class="eco-hero">
       <div class="container">
         <span class="eco-hero-kicker">AD TECH · 한 장으로 읽는 지도</span>
-        <h1 class="eco-hero-title">0.1초 안에 벌어지는<br>광고 한 편의 여정</h1>
-        <p class="eco-hero-dek">사용자가 페이지를 연 순간부터 광고가 뜨기까지 — 요청·입찰가·소재·데이터가 어디로 흐르는지,
-          19개 모듈을 <strong>왼쪽(사용자)에서 오른쪽(광고주)으로</strong> 읽는 순서대로 따라가 봅니다.</p>
+        <h1 class="eco-hero-title">광고 생태계 한 장 지도<br>흐름을 직접 재생하며 따라가기</h1>
+        <p class="eco-hero-dek">21개 모듈을 <strong>두 층</strong>으로 놓았습니다 —
+          위는 모델이 사는 <strong>두뇌 층</strong>(피처→학습→서빙→예측→보정→감시),
+          아래는 돈과 소재가 흐르는 <strong>거래 층</strong>(사용자→매체→거래소→DSP→광고주).
+          두 층은 <strong>DSP와 pCTR/pCVR을 잇는 세로선</strong> 하나로 연결됩니다.</p>
         <p class="eco-hero-guide">아래에서 <strong>① 흐름을 고르고</strong> ▶ 재생하면, 지도 위 라벨 패킷이 움직이며
           각 단계의 <strong>설명과 예시</strong>가 옆 패널에 차곡차곡 쌓입니다. 노드를 클릭하면 정의·데모·포스트도 열려요.</p>
 
@@ -140,7 +142,7 @@
     <div class="eco-main-layout">
       <div class="eco-graph-wrap" id="eco-graph-wrap">
         <svg id="eco-graph" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid meet" role="img"
-             aria-label="광고 생태계 지도 — 사용자·판매·거래소·구매 레인으로 배치한 19개 모듈과 그 연결"></svg>
+             aria-label="광고 생태계 지도 — 위쪽 두뇌 층(ML 파이프라인)과 아래쪽 거래 층으로 나눈 21개 모듈과 그 연결"></svg>
         <div id="eco-tooltip" class="eco-tooltip"></div>
         <div class="eco-flow-bar" id="eco-flow-bar" hidden>
           <div id="eco-flow-caption" class="eco-flow-caption" aria-live="polite"></div>
@@ -176,8 +178,9 @@
 
     <!-- Category cards -->
     <section class="eco-categories">
-      <h2>6 카테고리로 묶은 광고 생태계</h2>
-      <p class="eco-categories-sub">각 카테고리는 광고 거래의 한 축을 담당합니다. 위 그래프의 색과 동일.</p>
+      <h2>6 카테고리 · 21개 모듈</h2>
+      <p class="eco-categories-sub">각 카테고리는 광고 거래의 한 축을 담당합니다. 위 그래프의 색과 동일 —
+        ML / Models가 지도의 <strong>두뇌 층</strong>, 나머지가 <strong>거래 층</strong>입니다.</p>
       <div class="eco-categories-grid">
         <div class="eco-cat-card" data-category="buy">
           <h3>Buy Side · 5개 모듈</h3>
@@ -195,9 +198,10 @@
             Header Bidding이 Waterfall 대비 +10~30% 더 비싸게 파는 기술.</p>
         </div>
         <div class="eco-cat-card" data-category="ml">
-          <h3>ML / Models · 4개 모듈</h3>
-          <p>예측·랭킹의 두뇌. Feature Store가 피처를 공급하고 Model Serving이 수천 후보를 좁힌다.
-            pCTR/pCVR이 확률을 예측, Calibration이 절댓값을 보정한다.</p>
+          <h3>ML / Models · 6개 모듈 (두뇌 층)</h3>
+          <p>예측·랭킹의 두뇌이자 이 지도의 위층. Feature Store가 피처를 공급하고 Training이 어제 로그로 모델을 만들며,
+            Model Serving이 수천 후보를 좁힌다. <strong>pCTR/pCVR</strong>이 확률을 찍고 Calibration이 절댓값을 바로잡고,
+            Monitoring이 예측이 현실에서 밀리는지 지켜본다.</p>
         </div>
         <div class="eco-cat-card" data-category="measurement">
           <h3>Measurement · 2개 모듈</h3>

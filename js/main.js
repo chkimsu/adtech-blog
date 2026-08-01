@@ -330,9 +330,11 @@ function renderCategoryRail() {
     const m = WORLD_META[id];
     return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} · ${m.short}</span>`;
   }).join('') : '';
+  // posts-browse에는 자체 다중선택 카테고리 필터(#browse-categories)가 있어 같은 목록을 중복 노출하지 않는다
+  const hasOwnCategoryFilter = !!document.getElementById('browse-categories');
   el.innerHTML = `<div class="category-rail-inner">
-    <div class="rail-title">주제로 찾기</div>
-    ${catItems}
+    ${hasOwnCategoryFilter ? '' : `<div class="rail-title">주제로 찾기</div>
+    ${catItems}`}
     <a class="rail-ml" href="ml-track.html"><b>▸ ML 엔지니어 트랙</b><span>pCTR/pCVR 실무 커리큘럼 — 입문→실무→심화</span></a>
     <div class="rail-stage"><div class="rail-title">무대 — 이 글이 노는 곳</div>${legend}</div>
   </div>`;
@@ -667,10 +669,18 @@ const STAGE_MARKER_WORLDS = { '열린 RTB': 'open-rtb', '닫힌 생태계': 'wal
 
 function applyStageMarkers(container) {
   container.querySelectorAll('h2, h3').forEach(h => {
-    const m = h.textContent.match(/\s*\[무대:\s*(열린 RTB|닫힌 생태계|공통)\]\s*$/);
+    const MARKER_RE = /\s*\[무대:\s*(열린 RTB|닫힌 생태계|공통)\]\s*$/;
+    const m = h.textContent.match(MARKER_RE);
     if (!m) return;
-    const clean = h.textContent.replace(m[0], '').trim();
-    h.textContent = clean;
+    // 인라인 마크업(<code>·<strong> 등)을 보존하기 위해 textContent 재할당 대신
+    // 마커가 통째로 들어 있는 '마지막 텍스트 노드'에서만 제거한다.
+    // 마커가 노드 경계에 걸쳐 있으면(비정상 작성) 변환하지 않고 리터럴로 노출해 저자가 알아채게 둔다.
+    const walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT);
+    let lastText = null;
+    while (walker.nextNode()) lastText = walker.currentNode;
+    if (!lastText || !MARKER_RE.test(lastText.nodeValue)) return;
+    lastText.nodeValue = lastText.nodeValue.replace(MARKER_RE, '');
+    const clean = h.textContent.trim();
     h.dataset.tocText = clean;
     const badge = document.createElement('span');
     badge.className = 'stage-inline-badge';
@@ -780,7 +790,8 @@ function buildPostTOC(contentContainer) {
   const sidebarNav = document.getElementById('sidebar-nav');
   if (!sidebarNav) return;
 
-  const headings = contentContainer.querySelectorAll('h2, h3');
+  // 접힌 :::deep 블록 안의 헤딩은 목차에서 제외 (펼치기 전엔 화면에 없는 섹션)
+  const headings = Array.from(contentContainer.querySelectorAll('h2, h3')).filter(h => !h.closest('details.deep-dive'));
   if (headings.length === 0) return;
 
   // Assign IDs to headings

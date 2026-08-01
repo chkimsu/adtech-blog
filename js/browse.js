@@ -12,7 +12,9 @@
     state.search = p.get('search') || '';
     (p.get('category') || '').split(',').filter(Boolean).forEach(c => state.categories.add(c));
     (p.get('tag') || '').split(',').filter(Boolean).forEach(t => state.tags.add(t));
-    state.sort = p.get('sort') || 'newest';
+    // 제거된 정렬 모드(readtime 등)가 북마크 URL로 들어와도 안전하게 newest로
+    const sortParam = p.get('sort');
+    state.sort = sortParam === 'oldest' ? 'oldest' : 'newest';
   }
   function syncUrl() {
     const p = new URLSearchParams();

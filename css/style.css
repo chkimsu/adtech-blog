@@ -5073,12 +5073,12 @@ a.ecoeasy-toggle-item:hover { color: var(--accent-primary); }
 .world-dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--world-dot, var(--text-muted)); flex: 0 0 auto; }
 .world-badge[data-world="open-rtb"],      .world-dot[data-world="open-rtb"]      { --world-dot: var(--accent-primary); }
 .world-badge[data-world="walled-garden"], .world-dot[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
-.world-badge[data-world="both"],          .world-dot[data-world="both"]          { --world-dot: var(--text-secondary); }
+.world-badge[data-world="both"],          .world-dot[data-world="both"]          { --world-dot: #59745d; }
+[data-theme="dark"] .world-badge[data-world="both"], [data-theme="dark"] .world-dot[data-world="both"] { --world-dot: #7d9a80; } /* stage-chip과 동일한 세이지 페어 */
 /* 여러 세계를 다루는 글: 배지 여러 개를 묶어서 배치(줄바꿈 허용) */
 .world-badge-group { display: inline-flex; flex-wrap: wrap; gap: 0.3rem; justify-content: flex-end; }
 
 .world-legend-item { display: inline-flex; align-items: center; gap: 0.36rem; }
-.world-legend-item em { font-style: normal; color: var(--text-muted); }
 
 /* 다중선택: 여러 칩이 동시에 .active 가능 — 기존 .active 스타일 재사용 */
 .category-tab, .filter-tag { cursor: pointer; }

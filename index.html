@@ -72,7 +72,6 @@
             <div class="cover-bnode cover-heart">pCTR / pCVR<small>누를·살 확률 예측</small></div>
             <div class="cover-bnode">Calibration<small>확률 보정</small></div>
           </div>
-          <div class="cover-vlink" aria-hidden="true"><i></i><span class="cover-vdot"></span></div>
           <div class="cover-lane" aria-hidden="true">
             <span class="cover-layer-label">거래 층</span>
             <div class="cover-wire"></div>
@@ -80,17 +79,19 @@
             <div class="cover-node">사용자<small>페이지 열림</small></div>
             <div class="cover-node">Publisher · SSP<small>지면 판매</small></div>
             <div class="cover-node">Ad Exchange<small>경매장</small></div>
-            <div class="cover-node cover-dsp">DSP<small>입찰 — 두뇌에 질문</small></div>
+            <div class="cover-node cover-dsp">DSP<small>입찰 — 두뇌에 질문</small><span class="cover-vlink-up"></span></div>
             <div class="cover-node">광고주<small>낙찰·집행</small></div>
           </div>
-          <div class="cover-flows" aria-hidden="true">
-            <span class="cover-flow is-on">▶ 100ms RTB</span>
-            <span class="cover-flow">▶ 모델 학습·서빙</span>
-            <span class="cover-flow">▶ 어트리뷰션</span>
-            <span class="cover-flow">▶ Header Bidding</span>
-            <span class="cover-flow">▶ 데이터·타겟팅</span>
-          </div>
         </a>
+        <!-- 흐름 칩은 지도 앵커 '밖'에 둔다 (중첩 링크 방지) — 각각 해당 흐름으로 딥링크 -->
+        <div class="cover-flows">
+          <a class="cover-flow is-on" href="ecosystem.html?flow=modeler">▶ 모델러의 눈으로 보는 0.1초</a>
+          <a class="cover-flow" href="ecosystem.html?flow=rtb">▶ 100ms RTB</a>
+          <a class="cover-flow" href="ecosystem.html?flow=modeling">▶ 모델 학습·서빙</a>
+          <a class="cover-flow" href="ecosystem.html?flow=attribution">▶ 어트리뷰션</a>
+          <a class="cover-flow" href="ecosystem.html?flow=hb">▶ Header Bidding</a>
+          <a class="cover-flow" href="ecosystem.html?flow=targeting">▶ 데이터·타겟팅</a>
+        </div>
       </div>
     </section>
 

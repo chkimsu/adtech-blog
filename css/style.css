@@ -5589,17 +5589,19 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .cover-map-tag { display: flex; justify-content: space-between; font-size: 0.66rem; letter-spacing: 0.14em; color: var(--text-secondary); margin-bottom: 1.1rem; }
 .cover-map-tag b { color: var(--accent-primary); }
 .cover-layer-label { position: absolute; left: 0; top: -1rem; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--text-secondary); }
-.cover-brain { position: relative; display: flex; justify-content: center; gap: 0.7rem; margin: 1rem 0 0.3rem; }
+.cover-brain { position: relative; display: flex; justify-content: center; gap: 0.7rem; margin: 1rem 0 1.9rem; }
 .cover-bnode { background: var(--bg-tertiary); border: 1px solid var(--accent-secondary); font-size: 0.74rem; padding: 0.45rem 0.7rem;
   border-radius: 5px; text-align: center; color: var(--text-secondary); line-height: 1.35; }
 .cover-bnode small { display: block; font-size: 0.6rem; color: var(--text-secondary); }
 .cover-heart { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); font-weight: 700; animation: cover-pulse 2s infinite; }
 .cover-heart small { color: var(--bg-primary); opacity: 0.78; }
 @keyframes cover-pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.10); } 50% { box-shadow: 0 0 0 8px rgba(var(--accent-primary-rgb), 0.18); } }
-.cover-vlink { display: flex; justify-content: center; height: 24px; position: relative; }
-.cover-vlink i { border-left: 2px dashed rgba(var(--accent-primary-rgb), 0.5); }
-.cover-vdot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-primary); left: calc(50% - 3px); animation: cover-updown 1.6s ease-in-out infinite; }
-@keyframes cover-updown { 0%, 100% { top: 2px; } 50% { top: 16px; } }
+/* 두뇌 층 ↔ DSP 통로 — DSP 노드에 붙여 두어 어떤 폭에서도 정확히 그 위에 선다 */
+.cover-vlink-up { position: absolute; left: calc(50% - 1px); bottom: 100%; width: 0; height: 26px;
+  border-left: 2px dashed rgba(var(--accent-primary-rgb), 0.55); }
+.cover-vlink-up::after { content: ''; position: absolute; left: -4px; top: 2px; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent-primary); animation: cover-updown 1.6s ease-in-out infinite; }
+@keyframes cover-updown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(16px); } }
 .cover-lane { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 1rem 0 0.3rem; }
 .cover-wire { position: absolute; top: 55%; left: 3%; right: 3%; height: 1px; background: var(--border-color); }
 .cover-node { position: relative; z-index: 2; background: var(--bg-tertiary); border: 1px solid var(--border-color); font-size: 0.78rem;
@@ -5610,8 +5612,10 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .cover-dot.d2 { animation-delay: 1.1s; background: var(--accent-secondary); }
 .cover-dot.d3 { animation-delay: 2.2s; background: #5f7a63; }
 @keyframes cover-run { 0% { left: 3%; opacity: 0; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { left: 94%; opacity: 0; } }
-.cover-flows { display: flex; gap: 0.5rem; margin-top: 0.9rem; flex-wrap: wrap; }
-.cover-flow { font-size: 0.74rem; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.32rem 0.75rem; border-radius: 999px; color: var(--text-secondary); }
+.cover-flows { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.cover-flow { font-size: 0.74rem; border: 1px solid var(--border-color); background: var(--bg-secondary);
+  padding: 0.32rem 0.75rem; border-radius: 999px; color: var(--text-secondary); text-decoration: none; }
+.cover-flow:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
 .cover-flow.is-on { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); font-weight: 600; }
 /* 레일로 좁아진 컨테이너(≈1104px)에서도 3열 유지 — 공용 minmax(350px)는 2+1로 떨어짐.
    min-width로 감싸는 이유: ID(1,0,0)가 768px 모바일 1열 오버라이드(.posts-grid, 0,1,0)를 이기지 않게 */
@@ -5624,7 +5628,7 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
   .cover-wire, .cover-dot { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cover-dot, .cover-vdot, .cover-heart { animation: none; }
+  .cover-dot, .cover-vlink-up::after, .cover-heart { animation: none; }
 }
 
 /* ========================================

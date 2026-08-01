@@ -823,6 +823,20 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(applyCompact, 150);
     });
+
+    openFlowFromUrl();
+  }
+
+  // ?flow=<이름> 으로 들어오면 그 흐름을 바로 재생한다(표지 칩 → 이 페이지 딥링크).
+  // 알 수 없는 이름이면 조용히 무시한다.
+  function openFlowFromUrl() {
+    let name = null;
+    try { name = new URLSearchParams(window.location.search).get('flow'); } catch (e) { return; }
+    if (!name || !FLOWS[name]) return;
+    const chip = flowChips.find(c => c.dataset.flow === name);
+    startFlow(name, chip || null);
+    const wrap = document.getElementById('eco-graph-wrap');
+    if (wrap && wrap.scrollIntoView) wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function applyCompact() {

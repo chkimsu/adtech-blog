@@ -263,6 +263,12 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 .post-card[data-category="Software Engineering"] { border-left: 3px solid #6a7891; }
 
 /* ========================================
+   P1 — 네비 ML 트랙 버튼 강조 (T2에서 마크업만 먼저 들어감)
+   ======================================== */
+.btn-ml { background: var(--accent-primary); border-color: var(--accent-primary); color: #fdf9f0 !important; font-weight: 700; }
+.btn-ml:hover { filter: brightness(1.08); }
+
+/* ========================================
    P1 — 좌측 카테고리 레일 (목록성 페이지)
    ======================================== */
 .rail-layout { display: grid; grid-template-columns: 232px minmax(0, 1fr); max-width: 1400px; margin: 0 auto; }
@@ -1198,10 +1204,11 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
 
 - [ ] **Step 10.2: README 구조 트리 갱신** — 트리에서 `about.html / demos.html / ecosystem.html` 줄을 `demos.html / ecosystem.html / ml-track.html`로 수정.
 
-- [ ] **Step 10.2b: T1 잔여 정리 — 고아 CSS 제거** (T1 코드 리뷰 지적 반영):
+- [ ] **Step 10.2b: T1·T2 잔여 정리 — 고아 CSS 제거** (T1·T2 코드 리뷰 지적 반영):
   - `css/style.css`의 `.post-meta-sep { ... }` 규칙 블록 삭제 (~737행)
   - `.post-date,` 와 선택자를 공유하는 `.post-read-time`을 선택자 목록에서만 제거 (`.post-date` 규칙은 유지)
-  - 검증: `grep -n "post-meta-sep\|post-read-time" css/style.css` → 0줄
+  - `.nav-links` 참조 규칙 7곳(258·265·274·279·286·337·1911행 부근) 삭제 — T2에서 ul이 사라져 고아됨. 모바일 네비(setupMobileNav)는 `.nav-content`만 쓰므로 무관함을 grep으로 재확인 후 삭제
+  - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄
 
 - [ ] **Step 10.3: 검색 색인 재생성**
 

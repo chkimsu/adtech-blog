@@ -1211,6 +1211,8 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
   - `.post-date,` 와 선택자를 공유하는 `.post-read-time`을 선택자 목록에서만 제거 (`.post-date` 규칙은 유지)
   - `.nav-links` 참조 규칙 7곳(258·265·274·279·286·337·1911행 부근) 삭제 — T2에서 ul이 사라져 고아됨. 모바일 네비(setupMobileNav)는 `.nav-content`만 쓰므로 무관함을 grep으로 재확인 후 삭제
   - `js/main.js`의 `renderWorldLegend` 함수와 DOMContentLoaded의 호출 제거 — T3에서 마지막 `#world-legend` 컨테이너가 사라져 전 사이트 dead code (레일이 같은 범례를 자체 렌더). ⚠ NUL 주의: Edit로만.
+  - (T5 잔여) `.world-badge-row`(~5106행)·`.post-world-note`(~5120행) 규칙 삭제 — 무대 카드로 대체돼 참조 0. `.world-badge-detail`은 renderWorldBadge 'detail' 분기가 더는 호출되지 않아 사실상 dead — CSS만 삭제(JS 분기는 유지).
+  - (T5·T6 잔여) 라이트 테마 'both' 세이지 대비 미세 미달(4.446:1): `.stage-chip[data-world="both"]`·`.stage-inline-badge[data-world="both"]`의 `--world-dot: #5f7a63` → `#59745d` (4.5:1 확보, 다크 오버라이드 #7d9a80은 유지)
   - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄, `grep -a -c "renderWorldLegend" js/main.js` → 0
 
 - [ ] **Step 10.3: 검색 색인 재생성**

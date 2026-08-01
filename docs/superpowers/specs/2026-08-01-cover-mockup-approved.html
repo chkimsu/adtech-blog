@@ -1,0 +1,194 @@
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap');
+
+  .cvB { font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif; background: #faf8f3; color: #201d1a; border: 1px solid rgba(32,29,26,.18); }
+  .cvB .serif { font-family: 'Newsreader', 'Noto Serif KR', Georgia, serif; }
+
+  /* 상단 네비 — '소개' 없음 */
+  .cvB-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 26px; border-bottom: 1px solid rgba(32,29,26,.14); }
+  .cvB-logo { font-size: 19px; font-weight: 700; color: #b0442c; }
+  .cvB-links { display: flex; gap: 18px; align-items: center; font-size: 13px; color: #4f4a42; }
+  .cvB-links .pill { border: 1px solid rgba(32,29,26,.22); padding: 5px 12px; border-radius: 999px; }
+  .cvB-links .pill.ml { background: #b0442c; border-color: #b0442c; color: #fdf9f0; font-weight: 700; }
+  .cvB-links .ico { width: 28px; height: 28px; border: 1px solid rgba(32,29,26,.22); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+
+  .cvB-wrap { display: flex; }
+
+  /* 좌측 카테고리 레일 */
+  .cvB-rail { width: 210px; flex-shrink: 0; border-right: 1px solid rgba(32,29,26,.14); padding: 22px 18px; }
+  .cvB-rail h6 { font-size: 10px; letter-spacing: .16em; color: #8a8176; margin: 0 0 10px; font-weight: 600; }
+  .cvB-rail a.cat { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #201d1a; padding: 7px 0; border-bottom: 1px dotted rgba(32,29,26,.14); text-decoration: none; }
+  .cvB-rail a.cat i { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .cvB-rail a.cat em { font-style: normal; color: #8a8176; font-size: 11px; margin-left: auto; }
+  .cvB-ml { margin-top: 16px; background: #b0442c; color: #fdf9f0; border-radius: 6px; padding: 12px 12px; }
+  .cvB-ml b { font-size: 13.5px; display: block; margin-bottom: 3px; }
+  .cvB-ml span { font-size: 11px; color: #f3d2c8; line-height: 1.5; display: block; }
+  .cvB-stage { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(32,29,26,.14); }
+  .cvB-stage .row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #4f4a42; padding: 3px 0; }
+  .cvB-stage .row i { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* 히어로 */
+  .cvB-main { flex: 1; padding: 34px 34px 26px; min-width: 0; }
+  .cvB-kicker { font-size: 11px; letter-spacing: .18em; color: #b0442c; font-weight: 700; margin-bottom: 10px; }
+  .cvB-head { font-size: 46px; line-height: 1.12; font-weight: 900; margin: 0 0 12px; }
+  .cvB-dek { font-size: 15px; color: #4f4a42; line-height: 1.6; margin-bottom: 16px; max-width: 620px; }
+  .cvB-cta { display: inline-block; font-size: 13px; padding: 8px 16px; border-radius: 4px; border: 1px solid #201d1a; margin-right: 8px; margin-bottom: 22px; }
+  .cvB-cta.brick { background: #b0442c; border-color: #b0442c; color: #fdf9f0; font-weight: 700; }
+
+  /* 살아있는 지도 패널 */
+  .cvB-map { background: #fffdf8; border: 1px solid rgba(32,29,26,.16); border-radius: 8px; padding: 20px 22px 16px; box-shadow: 0 4px 14px rgba(32,29,26,.06); }
+  .cvB-map-tag { font-size: 10.5px; letter-spacing: .14em; color: #8a8176; margin-bottom: 16px; display: flex; justify-content: space-between; }
+  .cvB-map-tag b { color: #b0442c; }
+
+  /* 두뇌 층 */
+  .cvB-brain { display: flex; justify-content: center; gap: 10px; margin-bottom: 6px; position: relative; }
+  .cvB-bnode { background: #f6efe2; border: 1px solid #c9a36b; font-size: 11px; padding: 7px 11px; border-radius: 4px; text-align: center; color: #6b5327; }
+  .cvB-bnode small { display: block; font-size: 9px; color: #a08a63; }
+  .cvB-bnode.heart { background: #b0442c; border-color: #b0442c; color: #fdf9f0; font-weight: 700; animation: cvB-pulse 2s infinite; }
+  .cvB-bnode.heart small { color: #f3d2c8; }
+  @keyframes cvB-pulse { 0%,100% { box-shadow: 0 0 0 3px rgba(176,68,44,.10);} 50% { box-shadow: 0 0 0 8px rgba(176,68,44,.18);} }
+  .cvB-brainlabel { position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 9.5px; letter-spacing: .12em; color: #a08a63; }
+
+  /* 세로 연결선 */
+  .cvB-vlink { display: flex; justify-content: center; height: 26px; position: relative; }
+  .cvB-vlink i { width: 0; border-left: 2px dashed rgba(176,68,44,.5); }
+  .cvB-vdot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #b0442c; left: calc(50% - 3px); animation: cvB-updown 1.6s ease-in-out infinite; }
+  @keyframes cvB-updown { 0%,100% { top: 2px; } 50% { top: 18px; } }
+
+  /* 거래 층 */
+  .cvB-lane { display: flex; justify-content: space-between; align-items: center; position: relative; padding: 4px 0; }
+  .cvB-lanelabel { position: absolute; left: 0; top: -14px; font-size: 9.5px; letter-spacing: .12em; color: #8a8176; }
+  .cvB-node { background: #efe9dd; border: 1px solid rgba(32,29,26,.22); font-size: 12px; padding: 10px 13px; border-radius: 5px; text-align: center; line-height: 1.35; position: relative; z-index: 2; }
+  .cvB-node small { display: block; font-size: 9.5px; color: #8a8176; }
+  .cvB-node.dsp { border-color: #b0442c; border-width: 2px; }
+  .cvB-wire { position: absolute; top: 50%; left: 3%; right: 3%; height: 1px; background: rgba(32,29,26,.28); z-index: 1; }
+  .cvB-dot { position: absolute; top: calc(50% - 3.5px); width: 8px; height: 8px; border-radius: 50%; background: #b0442c; z-index: 3; animation: cvB-run 3.4s linear infinite; }
+  .cvB-dot.d2 { animation-delay: 1.1s; background: #8a6a3a; }
+  .cvB-dot.d3 { animation-delay: 2.2s; background: #5d7052; }
+  @keyframes cvB-run { 0% { left: 3%; opacity: 0; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { left: 94%; opacity: 0; } }
+
+  /* 흐름 칩 */
+  .cvB-flows { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .cvB-flow { font-size: 11.5px; border: 1px solid rgba(32,29,26,.2); background: #faf8f3; padding: 6px 12px; border-radius: 999px; color: #4f4a42; }
+  .cvB-flow.on { background: #b0442c; border-color: #b0442c; color: #fdf9f0; font-weight: 600; }
+
+  /* 아래 섹션: 읽을거리 */
+  .cvB-sect { margin-top: 30px; }
+  .cvB-sect-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .cvB-sect-head h3 { font-size: 21px; font-weight: 800; margin: 0; }
+  .cvB-sect-head span { font-size: 12px; color: #b0442c; }
+  .cvB-posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cvB-post { background: #fffdf8; border: 1px solid rgba(32,29,26,.14); border-left: 3px solid #5d7052; border-radius: 6px; padding: 13px 14px; }
+  .cvB-post.rtb { border-left-color: #b0442c; }
+  .cvB-post.wg { border-left-color: #8a6a3a; }
+  .cvB-post .meta { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #8a8176; margin-bottom: 7px; }
+  .cvB-post .meta i { width: 7px; height: 7px; border-radius: 50%; }
+  .cvB-post b { font-size: 13.5px; line-height: 1.45; display: block; margin-bottom: 6px; }
+  .cvB-post p { font-size: 11.5px; color: #4f4a42; line-height: 1.55; margin: 0; }
+</style>
+
+<h2>실물 시안 — 새 표지 (index.html), '살아있는 지도' 방향</h2>
+<p class="subtitle">지난 결정 반영: 왼쪽 카테고리 레일 · '소개' 메뉴 제거 · 읽기시간 없음 · ML 엔지니어 트랙 진입점 · 무대 범례 상시 노출 ·
+지도는 <b>거래 층 + 두뇌 층(pCTR이 심장)</b>의 2층 구조 — 생태계 페이지 개편과 같은 문법입니다. 점(패킷)은 실제로 이렇게 움직입니다.</p>
+
+<div class="cvB" style="max-width: 1150px; margin: 0 auto;">
+  <div class="cvB-nav">
+    <span class="cvB-logo serif">AdTech Blog</span>
+    <div class="cvB-links">
+      <span>Posts</span>
+      <span>Ecosystem</span>
+      <span>데모</span>
+      <span class="pill ml">▸ ML 엔지니어 트랙</span>
+      <span class="ico">⌕</span>
+      <span class="ico">◐</span>
+    </div>
+  </div>
+
+  <div class="cvB-wrap">
+    <aside class="cvB-rail">
+      <h6>주제로 찾기</h6>
+      <a class="cat"><i style="background:#3f5b8b"></i>입찰·옥션 <em>11</em></a>
+      <a class="cat"><i style="background:#5d7052"></i>측정·모델링 <em>13</em></a>
+      <a class="cat"><i style="background:#8a4a5e"></i>밴딧·개인화 <em>8</em></a>
+      <a class="cat"><i style="background:#8a6a3a"></i>ML 인프라 <em>6</em></a>
+      <a class="cat"><i style="background:#6a7891"></i>타겟팅·오디언스 <em>3</em></a>
+      <a class="cat"><i style="background:#7c5f8d"></i>데브옵스·툴링 <em>5</em></a>
+
+      <div class="cvB-ml">
+        <b>▸ ML 엔지니어 트랙</b>
+        <span>pCTR/pCVR 실무 커리큘럼<br>입문 → 실무 → 심화 24편</span>
+      </div>
+
+      <div class="cvB-stage">
+        <h6>무대 — 이 글이 노는 곳</h6>
+        <div class="row"><i style="background:#b0442c"></i>열린 RTB — 경매 바깥</div>
+        <div class="row"><i style="background:#8a6a3a"></i>닫힌 생태계 — 한 회사 소유</div>
+        <div class="row"><i style="background:#5d7052"></i>공통 — 두 세계</div>
+      </div>
+    </aside>
+
+    <main class="cvB-main">
+      <div class="cvB-kicker">한국어로 읽는 애드테크</div>
+      <h1 class="cvB-head serif">0.1초 안에 벌어지는<br>광고 한 편의 여정</h1>
+      <p class="cvB-dek">페이지가 뜨는 사이 경매가 열리고, 모델이 '누를 확률'을 찍고, 낙찰이 끝납니다.
+      그 안쪽을 그림·데모·코드로 풀어 쓴 글 47편 — 심장은 pCTR/pCVR입니다.</p>
+      <span class="cvB-cta brick">30분 입문 가이드 →</span>
+      <span class="cvB-cta">글 전체 둘러보기 →</span>
+
+      <div class="cvB-map">
+        <div class="cvB-map-tag"><span>LIVE — 광고 생태계 미니 지도</span><b>클릭하면 전체 지도로 →</b></div>
+
+        <div class="cvB-brain">
+          <span class="cvB-brainlabel">두뇌 층</span>
+          <div class="cvB-bnode">Feature Store<small>피처 공급</small></div>
+          <div class="cvB-bnode heart">pCTR / pCVR<small>누를·살 확률 예측</small></div>
+          <div class="cvB-bnode">Calibration<small>확률 보정</small></div>
+        </div>
+        <div class="cvB-vlink"><i></i><span class="cvB-vdot"></span></div>
+
+        <div class="cvB-lane">
+          <span class="cvB-lanelabel">거래 층</span>
+          <div class="cvB-wire"></div>
+          <div class="cvB-dot"></div><div class="cvB-dot d2"></div><div class="cvB-dot d3"></div>
+          <div class="cvB-node">사용자<small>페이지 열림</small></div>
+          <div class="cvB-node">Publisher · SSP<small>지면 판매</small></div>
+          <div class="cvB-node">Ad Exchange<small>경매장</small></div>
+          <div class="cvB-node dsp">DSP<small>입찰 — 두뇌에 질문</small></div>
+          <div class="cvB-node">광고주<small>낙찰·집행</small></div>
+        </div>
+
+        <div class="cvB-flows">
+          <span class="cvB-flow on">▶ 100ms RTB</span>
+          <span class="cvB-flow">▶ 모델 학습·서빙</span>
+          <span class="cvB-flow">▶ 어트리뷰션</span>
+          <span class="cvB-flow">▶ Header Bidding</span>
+          <span class="cvB-flow">▶ 데이터·타겟팅</span>
+        </div>
+      </div>
+
+      <div class="cvB-sect">
+        <div class="cvB-sect-head"><h3 class="serif">지금 읽을거리</h3><span>전체 글 →</span></div>
+        <div class="cvB-posts">
+          <div class="cvB-post"><div class="meta"><i style="background:#5d7052"></i>공통 · 측정·모델링</div>
+            <b>어트리뷰션: 그 전환은 누구 공인가</b><p>민지의 운동화 구매는 인스타·검색·유튜브 중 누구 공일까 — 규칙이 바뀌면 성적표가 바뀐다.</p></div>
+          <div class="cvB-post rtb"><div class="meta"><i style="background:#b0442c"></i>열린 RTB · 입찰·옥션</div>
+            <b>헤더비딩: 한 줄로 세우지 말고 동시에</b><p>부르는 순서만 바꿔 매체 수익 +10~30% — Waterfall의 손해와 Prebid.js의 원리.</p></div>
+          <div class="cvB-post wg"><div class="meta"><i style="background:#8a6a3a"></i>닫힌 생태계 · 측정·모델링</div>
+            <b>pCTR: '누를 확률'이 돈이 되는 법</b><p>₩1,200이라는 입찰가는 단 하나의 숫자에서 나온다 — 광고 시스템의 심장 이야기.</p></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="options" style="max-width: 1150px; margin: 1.5rem auto 0;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content"><h3>이 시안으로 확정</h3><p>이 구성 그대로 스펙에 담고, 세부(간격·폰트 크기·반응형)는 구현 단계에서 다듬습니다.</p></div>
+  </div>
+  <div class="option" data-choice="revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content"><h3>조정하고 싶다</h3><p>바꾸고 싶은 부분(헤드라인 문구, 지도 크기, 레일 구성, 색 등)을 터미널로 말씀해 주세요 — 수정판을 다시 올릴게요.</p></div>
+  </div>
+</div>

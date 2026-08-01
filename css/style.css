@@ -5662,8 +5662,11 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .cover-flows { display: flex; gap: 0.5rem; margin-top: 0.9rem; flex-wrap: wrap; }
 .cover-flow { font-size: 0.74rem; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.32rem 0.75rem; border-radius: 999px; color: var(--text-secondary); }
 .cover-flow.is-on { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); font-weight: 600; }
-/* 레일로 좁아진 컨테이너(≈1104px)에서도 3열 유지 — 공용 minmax(350px)는 2+1로 떨어짐 */
-#cover-featured { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+/* 레일로 좁아진 컨테이너(≈1104px)에서도 3열 유지 — 공용 minmax(350px)는 2+1로 떨어짐.
+   min-width로 감싸는 이유: ID(1,0,0)가 768px 모바일 1열 오버라이드(.posts-grid, 0,1,0)를 이기지 않게 */
+@media (min-width: 769px) {
+  #cover-featured { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
 @media (max-width: 768px) {
   .cover-lane { flex-wrap: wrap; gap: 0.4rem; }
   .cover-node { font-size: 0.7rem; padding: 0.4rem 0.5rem; }

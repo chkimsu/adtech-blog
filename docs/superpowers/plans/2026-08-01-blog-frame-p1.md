@@ -1213,6 +1213,9 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
   - `js/main.js`의 `renderWorldLegend` 함수와 DOMContentLoaded의 호출 제거 — T3에서 마지막 `#world-legend` 컨테이너가 사라져 전 사이트 dead code (레일이 같은 범례를 자체 렌더). ⚠ NUL 주의: Edit로만.
   - (T5 잔여) `.world-badge-row`(~5106행)·`.post-world-note`(~5120행) 규칙 삭제 — 무대 카드로 대체돼 참조 0. `.world-badge-detail`은 renderWorldBadge 'detail' 분기가 더는 호출되지 않아 사실상 dead — CSS만 삭제(JS 분기는 유지).
   - (T5·T6 잔여) 라이트 테마 'both' 세이지 대비 미세 미달(4.446:1): `.stage-chip[data-world="both"]`·`.stage-inline-badge[data-world="both"]`의 `--world-dot: #5f7a63` → `#59745d` (4.5:1 확보, 다크 오버라이드 #7d9a80은 유지)
+  - (T6 리뷰) slate 라이트 팔레트 대비 미달(walled-garden 4.05 / both 4.28): style.css 무대 칩·배지 블록에 추가 —
+    `[data-palette="slate"]:not([data-theme="dark"]) .stage-chip[data-world="walled-garden"], [data-palette="slate"]:not([data-theme="dark"]) .stage-inline-badge[data-world="walled-garden"] { --world-dot: #5e6b80; }`
+  - (T6 리뷰) MARKDOWN_GUIDE.md 무대 배지 섹션에 사용 규칙 한 줄 추가: "헤딩당 마커는 1개, 제목 없이 마커만 쓰지 마세요 (TOC가 배지 텍스트로 대체됨)."
   - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄, `grep -a -c "renderWorldLegend" js/main.js` → 0
 
 - [ ] **Step 10.3: 검색 색인 재생성**

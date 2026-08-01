@@ -903,4 +903,6 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 **placeholder 없음.** 타입/식별자 태스크 간 일치 확인: `heart`(NODES 플래그) · `layer`(EDGES 플래그) · `is-heart`/`is-layer-link`/`eco-brain-band`/`eco-heart-pulse`(CSS) · `BRAIN_BAND` · `openFlowFromUrl` · `cover-vlink-up` · 흐름 키 `modeler`.
 
+**P2 진행 중 발견 (후속 폴리시 후보, 이번 스코프 아님):** 거래 층에 **기존부터** 있던 엣지-노드 관통이 13건 있다(T1 전후 동일 — 새 좌표 때문에 생긴 게 아님). 노드 배경이 반투명(`rgba(...,0.13)`)이라 선이 박스 안으로 비쳐 보인다. 가장 눈에 띄는 건 `mmp→advertiser`(log-pipeline·auction·exchange·dsp 4개 관통)와 `log-pipeline→feature-store`(publisher·header-bidding). 지도 가독성 폴리시를 따로 잡을 때 `channel`/`via`로 정리할 것. 전수 검사 스니펫은 이 계획의 T1 검증 기록 참고(경로를 4px 간격으로 샘플링해 노드 rect와 교차 판정).
+
 **P3 이관 메모:** 신규 노드의 `posts` 배열이 가리키는 글(negative-sampling-bias, online-learning-delayed-feedback, multi-task-learning, calibration)은 P3/P4 콘텐츠 보강 대상이다. 신규 글 12편(P5) 중 4·5번(지표·모니터링)이 나오면 `monitoring` 노드의 `posts`에 추가할 것.

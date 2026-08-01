@@ -1053,7 +1053,7 @@ nav {
 [data-theme="light"] .post-content .hljs-number,
 [data-theme="light"] .post-content .hljs-literal { color: #986801; }
 
-[data-theme="light"] .post-content .hljs-comment { color: #a0a1a7; }
+[data-theme="light"] .post-content .hljs-comment { color: #4e6b47; font-style: italic; } /* 세이지 — 주석이 본문 설명 역할을 하므로 잘 읽혀야 한다 */
 
 [data-theme="light"] .post-content .hljs-built_in,
 [data-theme="light"] .post-content .hljs-title { color: #4078f2; }
@@ -5719,3 +5719,9 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .post-content .deep-dive[open] > summary::after { content: '접기'; }
 .post-content .deep-dive > *:not(summary) { margin-left: 1.1rem; margin-right: 1.1rem; }
 .post-content .deep-dive > *:last-child { margin-bottom: 1rem; }
+
+/* ========================================
+   P1 — 코드 주석 색 (다크) — 주석이 설명 역할, 뚜렷하게
+   ======================================== */
+[data-theme="dark"] .post-content .hljs-comment,
+[data-theme="dark"] .post-content .hljs-quote { color: #93b58a; font-style: italic; }

@@ -32,6 +32,12 @@ for (const p of posts) {
   if (p.worldNote != null && typeof p.worldNote !== 'string') errors.push(`${where}: worldNote는 문자열이어야 함`);
   if (p.worldPractical != null && typeof p.worldPractical !== 'string') errors.push(`${where}: worldPractical은 문자열이어야 함`);
 }
+// mlTrack 커리큘럼이 참조하는 글 id가 실제로 존재하는지
+const { mlTrack } = require(path.join(root, 'js', 'posts.js'));
+const postIds = new Set(posts.map(p => p.id));
+(mlTrack && mlTrack.stages ? mlTrack.stages : []).forEach(s =>
+  (s.posts || []).forEach(id => { if (!postIds.has(id)) errors.push(`mlTrack "${s.id}": 존재하지 않는 글 id "${id}"`); }));
+
 // 비치명 경고: posts/ 안에 contentUrl로 참조되지 않는 고아 .md
 const referenced = new Set(posts.map(p => p.contentUrl && path.basename(p.contentUrl)));
 fs.readdirSync(path.join(root, 'posts')).filter(f => f.endsWith('.md')).forEach(f => {

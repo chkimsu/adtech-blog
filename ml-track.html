@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="pCTR/pCVR 실무 커리큘럼 — 광고 ML 엔지니어를 위한 읽기 트랙. 입문(예측이 돈이 되는 원리)부터 실무(피처·서빙·편향)와 심화까지.">
+  <title>ML 엔지니어 트랙 — Ad Tech Blog</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="Ad Tech Blog Feed" href="/adtech-blog/feed.xml">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml btn-demo-active">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="rail-layout">
+  <aside id="category-rail" class="category-rail" aria-label="카테고리"></aside>
+  <main>
+    <section class="hero">
+      <div class="container" id="ml-track-head"></div>
+    </section>
+    <section class="section">
+      <div class="container" id="ml-track-root"></div>
+    </section>
+  </main>
+  </div><!-- End of rail-layout -->
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/posts.js"></script>
+  <script src="js/reading-state.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ml-track.js"></script>
+</body>
+
+</html>

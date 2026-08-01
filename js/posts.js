@@ -594,6 +594,35 @@ const series = {
 // 홈 "시작하기" 레일 순서(큐레이션). featured와 독립적으로 시퀀스를 정한다.
 const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-flow'];
 
+// ML 엔지니어 트랙 — pCTR/pCVR 실무 커리큘럼 (ml-track.html 렌더용).
+// posts의 id만 참조한다(검증기가 존재 여부 확인). 3단계는 신규 글이 늘며 채워진다.
+// 주의: pCVR 글의 id는 레거시 'my-markdown-post' (URL 안정성 때문에 유지 — P3에서 별칭 처리 검토).
+const mlTrack = {
+  title: 'ML 엔지니어 트랙',
+  subtitle: 'pCTR/pCVR 실무 커리큘럼 — 광고 ML의 심장을 입문부터 심화까지. 일반 독자도 지도처럼 훑어보세요.',
+  stages: [
+    {
+      id: 'stage-1',
+      title: '1단계 · 입문 — 예측이 돈이 되는 원리',
+      goal: '이 단계를 마치면: pCTR/pCVR이 무엇이고, 왜 절대값(보정)이 중요하며, 어떤 모델로 맞히는지 큰 그림이 잡힙니다.',
+      posts: ['pctr-prediction', 'ecpm-ranking', 'calibration', 'my-markdown-post', 'deep-ctr-models'],
+    },
+    {
+      id: 'stage-2',
+      title: '2단계 · 실무 — 데이터에서 서빙까지',
+      goal: '이 단계를 마치면: 로그가 모델이 되기까지의 파이프라인과, 실서비스의 편향·지연 문제를 다룰 수 있습니다.',
+      posts: ['ad-log-pipeline', 'feature-store-serving', 'model-serving-architecture', 'negative-sampling-bias',
+        'online-learning-delayed-feedback', 'position-bias-ultr', 'multi-task-learning', 'two-tower-retrieval'],
+    },
+    {
+      id: 'stage-3',
+      title: '3단계 · 심화 — 탐색과 확장',
+      goal: '이 단계를 마치면: 탐색-활용부터 피처 실전·지표 운영·랭킹 캐스케이드까지 실무 전체가 이어집니다. (신규 글 12편이 이 단계를 채워갑니다)',
+      posts: ['exploration-exploitation'],
+    },
+  ],
+};
+
 // 글의 "무대"(경매 위치) 렌더용 메타. 값(id)은 data/taxonomy.json 의 worlds 와 동일(단일 소스).
 // 'na'(광고 경매 무관)는 배지를 그리지 않으므로 여기 없음 → getWorldMeta 가 null 반환.
 const WORLD_META = {
@@ -687,5 +716,5 @@ function getSeriesForPost(post) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { posts, getAllPosts, getPostById, getAllCategories, getAllTags, filterPosts,
     sortPosts, getFeaturedPosts, getStartHerePosts, getSeries, getSeriesForPost, series, startHere,
-    WORLD_META, getWorldMeta, getWorldList };
+    WORLD_META, getWorldMeta, getWorldList, mlTrack };
 }

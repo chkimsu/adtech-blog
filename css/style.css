@@ -5725,3 +5725,25 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
    ======================================== */
 [data-theme="dark"] .post-content .hljs-comment,
 [data-theme="dark"] .post-content .hljs-quote { color: #93b58a; font-style: italic; }
+
+/* ========================================
+   P1 — ML 엔지니어 트랙 (ml-track.html)
+   ======================================== */
+.track-title { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.6vw, 2.6rem); font-weight: 900; margin: 0 0 0.5rem; }
+.track-subtitle { color: var(--text-secondary); max-width: 640px; margin: 0 auto; }
+.track-stage { margin-bottom: 2.4rem; }
+.track-stage-title { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 800; margin: 0 0 0.35rem; }
+.track-stage-goal { font-size: 0.9rem; color: var(--text-secondary); background: var(--bg-tertiary); border-radius: 6px;
+  padding: 0.6rem 0.9rem; margin: 0 0 1rem; }
+.track-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.track-item { display: flex; align-items: center; gap: 0.9rem; background: var(--bg-secondary); border: 1px solid var(--border-color);
+  border-radius: 8px; padding: 0.8rem 1rem; text-decoration: none; color: var(--text-primary); transition: border-color var(--transition-fast); }
+.track-item:hover { border-color: var(--accent-primary); }
+.track-num { flex: 0 0 auto; width: 1.7rem; height: 1.7rem; border-radius: 50%; border: 1px solid var(--accent-primary);
+  color: var(--accent-primary); font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+.track-item.is-read .track-num { background: var(--accent-primary); color: var(--bg-primary); }
+.track-body { min-width: 0; }
+.track-body b { display: block; font-size: 0.95rem; line-height: 1.45; margin-bottom: 0.15rem; }
+.track-body span { display: block; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.track-read { margin-left: auto; flex: 0 0 auto; font-size: 0.74rem; color: var(--accent-primary); font-weight: 600; }

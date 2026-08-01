@@ -872,7 +872,7 @@ git status --short   # 산출물이 바뀌었으면 그대로 커밋(정상), �
 
 ```bash
 grep -c "aria-label" ecosystem.html          # 지도 aria-label 존재
-grep -n "cover-vdot\|cover-vlink\b" css/style.css index.html   # 구 선택자 잔존 0
+grep -rnE 'cover-vlink([^-a-zA-Z]|$)|cover-vdot' css/style.css index.html   # 구 선택자 잔존 0 (\b는 cover-vlink-up을 오탐)
 ```
 그리고 지도에서 Tab 키로 노드 포커스 이동 → Enter로 패널 열림이 여전히 동작하는지 1회 확인(신규 노드 training·monitoring 포함).
 

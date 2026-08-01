@@ -1,4 +1,4 @@
-/* 쉬운 용어 사전 — 21개 모듈 + 기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
+/* 쉬운 용어 사전 — 21개 모듈 + 개념·기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
 (function () {
   'use strict';
 
@@ -39,7 +39,8 @@
     { id: 'model-serving', cat: 'ml', name: 'Model Serving', full: '모델 서빙', easy: '수천 개 후보 광고를 10ms 안에 몇 개로 좁히는 ‘추리는 기계’.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
     { id: 'pctr-cvr', cat: 'ml', name: 'pCTR / pCVR', full: '클릭·전환 확률 예측', easy: '이 사람이 누를 확률·살 확률을 찍어 주는 예측 모델.', example: '예: pCTR 2.3%', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
     { id: 'calibration', cat: 'ml', name: 'Calibration', full: '예측값 보정', easy: '모델 예측이 전반적으로 높거나 낮으면 실제에 맞춰 눈금을 바로잡는 일.', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
-    { id: 'monitoring', cat: 'ml', name: 'Monitoring', full: '모니터링 (COPC·PSI)', easy: '배포한 예측 모델이 현실에서 밀리는지 지켜보는 일. COPC(Click Over Predicted Click)는 ‘실제 클릭 합 ÷ 예측 합’이라, 1보다 크면 모델이 낮게 보고 있다는 뜻이다. (이 블로그의 Calibration 글은 뒤집은 비율인 P/O Ratio = 예측÷실제로 설명하니, 어느 쪽인지 늘 확인하고 읽어야 한다.) PSI는 입력 데이터 분포가 얼마나 변했는지를 재는 값으로, 0.1 미만은 안정, 0.25를 넘으면 유의 신호다. 이 숫자가 튀면 다시 학습시킨다.' },
+    { id: 'training', cat: 'ml', name: 'Training', full: '모델 학습(오프라인)', easy: '어제까지 쌓인 기록으로 모델을 다시 가르치는 단계. 매일 밤 도는 ‘야간 자율학습’.', link: { text: '데모: 로그→학습 루프', href: 'demo-log-to-model.html' } },
+    { id: 'monitoring', cat: 'ml', name: 'Monitoring', full: '모니터링 (COPC·PSI)', easy: '배포한 모델이 현실에서 밀리는지 지켜보는 일. 숫자가 튀면 다시 학습시킨다.', example: 'COPC = 실제 클릭 ÷ 예측(1보다 크면 낮게 본 것) · PSI 0.25 초과면 데이터가 변한 신호', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
     { id: 'train-serve-skew', cat: 'ml', name: '학습-서빙 스큐', full: 'Training-Serving Skew', easy: '모델을 학습시킬 때 쓴 값과 실제 서비스에서 넣는 값이 어긋나는 문제. 예를 들어 학습에는 ‘지금 시점’의 값을 넣었는데 실제로는 ‘그때 시점’의 값이 들어오면, 시험 문제와 교재가 다른 셈이 되어 성능이 떨어진다.' },
 
     // ── 측정 (measurement) ──

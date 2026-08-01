@@ -5704,3 +5704,18 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .stage-inline-badge[data-world="walled-garden"] { --world-dot: var(--accent-secondary); }
 .stage-inline-badge[data-world="both"]          { --world-dot: #5f7a63; }
 [data-theme="dark"] .stage-inline-badge[data-world="both"] { --world-dot: #7d9a80; } /* T5와 동일한 다크 대비 확보 */
+
+/* ========================================
+   P1 — :::deep 접이식 심화 블록
+   ======================================== */
+.post-content .deep-dive { margin: 1.4rem 0; border: 1px solid var(--border-color); border-left: 3px solid var(--accent-secondary);
+  border-radius: 8px; background: var(--bg-secondary); }
+.post-content .deep-dive > summary { cursor: pointer; padding: 0.85rem 1.1rem; font-weight: 600; color: var(--text-primary);
+  list-style: none; position: relative; }
+.post-content .deep-dive > summary::before { content: '▸'; color: var(--accent-secondary); margin-right: 0.5rem; display: inline-block; transition: transform var(--transition-fast); }
+.post-content .deep-dive[open] > summary::before { transform: rotate(90deg); }
+.post-content .deep-dive > summary::-webkit-details-marker { display: none; }
+.post-content .deep-dive > summary::after { content: '펼쳐서 더 깊이'; float: right; font-size: 0.72rem; font-weight: 400; color: var(--text-muted); }
+.post-content .deep-dive[open] > summary::after { content: '접기'; }
+.post-content .deep-dive > *:not(summary) { margin-left: 1.1rem; margin-right: 1.1rem; }
+.post-content .deep-dive > *:last-child { margin-bottom: 1rem; }

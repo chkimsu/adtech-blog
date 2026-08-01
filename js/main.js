@@ -632,6 +632,11 @@ function preprocessMarkdown(text) {
   // 코드·수식을 제외한 본문의 정상 bold 쌍을 직접 <strong>으로 변환해 우회한다.
   text = text.replace(/\*\*(?!\s)([^\n]+?)(?<!\s)\*\*/g, '<strong>$1</strong>');
 
+  // ':::deep 제목' ~ ':::' → 접이식 심화 블록 (초심자는 건너뛰고, 실무자는 펼쳐 본다)
+  // 코드 펜스는 위에서 스태시로 보호된 뒤라 코드 안의 :::는 안전하다.
+  text = text.replace(/^:::deep[ \t]*(.*)\n([\s\S]*?)^:::[ \t]*$/gm,
+    (_, title, body) => `<details class="deep-dive"><summary>${(title || '').trim() || '더 깊이'}</summary>\n\n${body}\n</details>\n`);
+
   // 보호 해제
   text = text.replace(/ (\d+) /g, (_, i) => stash[+i]);
   return text;

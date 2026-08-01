@@ -36,7 +36,6 @@ adtech-blog/
 │   └── taxonomy.json       # 카테고리·태그 표준 목록 (단일 소스)
 ├── scripts/
 │   ├── new-post.js         # 새 글 스캐폴드
-│   ├── compute-read-time.js# 읽기시간 자동 계산 (.md 분량 기반)
 │   ├── validate-posts.js   # 분류·무결성 검증 (CI 게이트)
 │   └── generate-feed.js    # Atom feed.xml 생성
 ├── generate-sitemap.js     # sitemap.xml 생성
@@ -122,13 +121,10 @@ node scripts/new-post.js
 
 # 2) posts/<slug>.md 본문 작성 + js/posts.js 의 excerpt 채우기
 
-# 3) 읽기시간 자동 계산 (.md 분량 기반, 손으로 적지 않음)
-node scripts/compute-read-time.js
-
-# 4) 표준 분류·무결성 검증 (이게 통과해야 CI도 통과)
+# 3) 표준 분류·무결성 검증 (이게 통과해야 CI도 통과)
 node scripts/validate-posts.js
 
-# 5) chkimsu 계정으로 커밋·푸시 → GitHub Actions가 sitemap·feed·검색색인 자동 갱신
+# 4) chkimsu 계정으로 커밋·푸시 → GitHub Actions가 sitemap·feed·검색색인 자동 갱신
 ```
 
 - **카테고리·태그는 자유 입력이 아니라 `data/taxonomy.json` 표준 목록**에서만 씁니다. 새 분류가 필요하면 먼저 `taxonomy.json`에 추가하세요 — 검증기가 어긋난 값(`ML Infra` vs `ML Infrastructure` 같은 드리프트)을 막습니다.

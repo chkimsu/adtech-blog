@@ -10,7 +10,7 @@ const taxonomy = JSON.parse(fs.readFileSync(path.join(root, 'data', 'taxonomy.js
 const validCats = new Set(taxonomy.categories.map(c => c.id));
 const validTags = new Set(taxonomy.tags);
 const validWorlds = new Set((taxonomy.worlds || []).map(w => w.id));
-const REQUIRED = ['id', 'title', 'excerpt', 'date', 'categories', 'tags', 'contentUrl', 'readTime', 'world'];
+const REQUIRED = ['id', 'title', 'excerpt', 'date', 'categories', 'tags', 'contentUrl', 'world'];
 
 const errors = [];
 const seen = new Set();

@@ -90,7 +90,7 @@ async function field(idx, promptFn) {
   const stub = `# ${title}\n\n> 한 줄 요약(excerpt)을 적고 js/posts.js의 excerpt에도 복사하세요.\n> 수식 안에는 한글을 넣지 마세요(MARKDOWN_GUIDE.md). 코드 펜스는 \`\`\`언어 로 표기.\n\n## 개요\n\n(본문 시작)\n`;
   fs.writeFileSync(path.join(root, 'posts', slug + '.md'), stub);
 
-  // 8) posts.js 첫 요소로 엔트리 삽입 (excerpt 빈값 → 검증기가 작성 리마인드, readTime은 compute가 교정)
+  // 8) posts.js 첫 요소로 엔트리 삽입 (excerpt 빈값 → 검증기가 작성 리마인드)
   const entry =
 `  {
     id: '${slug}',
@@ -100,8 +100,7 @@ async function field(idx, promptFn) {
     date: '${date}',
     categories: ['${category}'],
     tags: [${tags.map(t => `'${t}'`).join(', ')}],
-    contentUrl: 'posts/${slug}.md',
-    readTime: '1 min read'
+    contentUrl: 'posts/${slug}.md'
   },
 `;
   let file = fs.readFileSync(postsPath, 'utf-8');
@@ -114,8 +113,7 @@ async function field(idx, promptFn) {
   console.log(`\n✓ 생성됨:\n  - posts/${slug}.md\n  - js/posts.js 엔트리 (날짜 ${date}, 카테고리 ${category}, 무대 ${world})\n`);
   console.log('다음 단계:');
   console.log(`  1) posts/${slug}.md 본문 작성 + js/posts.js의 excerpt 채우기`);
-  console.log('  2) node scripts/compute-read-time.js');
-  console.log('  3) node scripts/validate-posts.js');
-  console.log('  4) chkimsu 계정으로 커밋 (회사 이메일 금지)');
+  console.log('  2) node scripts/validate-posts.js');
+  console.log('  3) chkimsu 계정으로 커밋 (회사 이메일 금지)');
   if (rl) rl.close();
 })();

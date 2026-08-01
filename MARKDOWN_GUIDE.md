@@ -13,24 +13,20 @@ node scripts/new-post.js
 
 # 2) posts/<slug>.md 본문 작성 + js/posts.js 의 excerpt 채우기
 
-# 3) 읽기시간 자동 계산 (.md 분량 기반)
-node scripts/compute-read-time.js
-
-# 4) 표준 분류·무결성 검증 (통과해야 CI도 통과)
+# 3) 표준 분류·무결성 검증 (통과해야 CI도 통과)
 node scripts/validate-posts.js
 
-# 5) chkimsu 계정으로 커밋·푸시 → sitemap·feed 자동 갱신
+# 4) chkimsu 계정으로 커밋·푸시 → sitemap·feed 자동 갱신
 ```
 
 ## 메타데이터 & 분류 (중요)
 
 - 한 글의 메타데이터는 `js/posts.js`의 객체 하나입니다:
-  `id`(=slug), `title`, `excerpt`, `date`, `categories`, `tags`, `contentUrl`, `readTime`.
+  `id`(=slug), `title`, `excerpt`, `date`, `categories`, `tags`, `contentUrl`.
   (`featured`, `series`는 선택)
 - **`categories`·`tags`는 자유 입력이 아닙니다.** `data/taxonomy.json`의 표준 목록에 있는 값만 씁니다.
   새 분류가 필요하면 **먼저 `data/taxonomy.json`에 추가**하세요. 검증기(`scripts/validate-posts.js`)가
   표준에 없는 값(`ML Infra` ↔ `ML Infrastructure` 같은 드리프트)·빈 필드·없는 `.md`를 막습니다.
-- `readTime`은 손으로 적지 말고 `scripts/compute-read-time.js`가 채우게 둡니다.
 - 주제별 읽는 순서(시리즈)·"시작하기" 글은 `js/posts.js` 상단의 `series` / `startHere`에서 관리합니다.
 
 ## 마크다운 문법 치트시트

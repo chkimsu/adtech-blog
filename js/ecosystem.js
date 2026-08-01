@@ -11,19 +11,40 @@
   const NODES = {
     // ── Row 1 (y=120): ML / Models top ──
     'feature-store': {
-      x: 300, y: 70, w: 150, h: 56, cat: 'ml',
+      x: 250, y: 22, w: 150, h: 44, cat: 'ml',
       name: 'Feature Store', sub: '피처 저장소',
       def: '유저·지면·시간 등 광고 모델의 입력 피처를 실시간으로 공급하는 저장소. pCTR/pCVR이 매 요청마다 호출.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'feature-store-serving', title: 'Feature Store 서빙' }]
     },
+    'training': {
+      x: 425, y: 22, w: 130, h: 44, cat: 'ml',
+      name: 'Training', sub: '모델 학습(오프라인)',
+      def: '어제까지 쌓인 로그로 모델을 다시 학습시키는 오프라인 단계. 여기서 나온 새 모델은 오프라인 지표(AUC·LogLoss)를 통과해야 서빙으로 넘어간다.',
+      demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
+      posts: [
+        { id: 'negative-sampling-bias', title: 'Negative Sampling & Bias' },
+        { id: 'online-learning-delayed-feedback', title: 'Online Learning & 지연 피드백' },
+        { id: 'multi-task-learning', title: '멀티태스크 학습' }
+      ]
+    },
+    'monitoring': {
+      x: 595, y: 22, w: 150, h: 44, cat: 'ml',
+      name: 'Monitoring', sub: '드리프트 감시',
+      def: '배포한 모델이 현실에서 밀리는지 지켜보는 단계. 예측 평균과 실제의 비(COPC), 피처 분포 변화(PSI)를 보고 이상하면 재학습을 부른다.',
+      demos: [{ name: 'Calibration', url: 'demo-calibration.html' }],
+      posts: [
+        { id: 'calibration', title: 'pCTR Calibration' },
+        { id: 'online-learning-delayed-feedback', title: 'Online Learning & 지연 피드백' }
+      ]
+    },
     'model-serving': {
-      x: 475, y: 70, w: 160, h: 56, cat: 'ml',
+      x: 590, y: 84, w: 160, h: 46, cat: 'ml',
       name: 'Model Serving', sub: 'Retrieval → Ranking',
       def: '수천 후보 광고를 Retrieval→Pre-Ranking→Ranking→Re-Ranking으로 좁히는 추론 파이프라인. 10ms 안에 끝나야 함.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }]
     },
     'calibration': {
-      x: 870, y: 70, w: 150, h: 56, cat: 'ml',
+      x: 1055, y: 84, w: 150, h: 46, cat: 'ml',
       name: 'Calibration', sub: '예측값 보정',
       def: '모델이 예측한 CTR을 실제 분포에 맞게 보정. 예측 평균을 실제 평균과 일치시켜 입찰가 왜곡 방지.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
@@ -39,8 +60,8 @@
       posts: [{ id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
     },
     'pctr-cvr': {
-      x: 655, y: 70, w: 160, h: 56, cat: 'ml',
-      name: 'pCTR / pCVR', sub: '예측 모델',
+      x: 845, y: 76, w: 190, h: 62, cat: 'ml', heart: true,
+      name: 'pCTR / pCVR', sub: '광고의 심장 — 누를·살 확률',
       def: '이 유저가 이 광고를 클릭할 확률(pCTR)과 전환할 확률(pCVR)을 예측. DeepFM·DIN 등 딥러닝 모델 활용.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: 'LinUCB', url: 'demo-linucb.html' }],
       posts: [{ id: 'pctr-prediction', title: 'pCTR이 뭐고 왜 돈이 되나' }, { id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pCVR-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
@@ -169,10 +190,15 @@
     { from: 'publisher', to: 'user', via: 'bottom', channel: 0 },
     { from: 'advertiser', to: 'dsp', via: 'top', channel: 6 },
 
-    // ── ML 파이프라인 (상단 밴드, 좌→우) ──
+    // ── 두뇌 층: 학습(행A) · 서빙(행B) 파이프라인 ──
+    { from: 'feature-store', to: 'training' },        // 피처 → 학습셋
+    { from: 'training', to: 'model-serving' },        // 학습된 모델 배포
+    { from: 'model-serving', to: 'monitoring' },      // 서빙 결과 감시(직선 수직)
+    { from: 'monitoring', to: 'training' },           // 드리프트 → 재학습 트리거(루프 닫힘)
     { from: 'feature-store', to: 'model-serving' },
     { from: 'model-serving', to: 'pctr-cvr' },
     { from: 'pctr-cvr', to: 'calibration' },
+    { from: 'dsp', to: 'pctr-cvr', layer: true },     // ★ 2층 연결선 — 중심 x가 같아 직선 수직으로 그려진다
     { from: 'dsp', to: 'model-serving' },     // 점수 요청
     { from: 'auction', to: 'pctr-cvr' },       // 경매 → 예측
     { from: 'exchange', to: 'auction' },       // 거래소 → 경매 엔진
@@ -587,10 +613,15 @@
   ];
   const LANE_TOP = 186, LANE_BOT = 548, LANE_LABEL_Y = 150;
   // 가로 밴드 라벨(상단 ML / 하단 측정) — 스파인 위·아래 지원 레이어 표시
+  // 층·행 라벨. 두뇌 층은 2행(학습/서빙)이라 행 라벨을 왼쪽 여백(x<250)에 세로로 쌓는다.
   const BAND_LABELS = [
-    { text: 'ML · 모델 레이어', x: 44, y: 52 },
+    { text: '두뇌 층 — 모델이 사는 곳', x: 44, y: 16, cls: 'is-layer' },
+    { text: '① 학습 · 오프라인', x: 44, y: 44 },
+    { text: '② 서빙 · 0.1초', x: 44, y: 106 },
     { text: '측정 · 로그 데이터', x: 44, y: 590 },
   ];
+  // 두뇌 층 배경 밴드 (거래 층의 레인 컬럼과 대비되는 가로 밴드)
+  const BRAIN_BAND = { x: 30, y: 6, w: 1220, h: 140 };
 
   // ── state ──
   let svg, tooltip, captionEl, progressEl, wrapEl;
@@ -692,6 +723,17 @@
   function buildLanes() {
     const g = document.createElementNS(SVG_NS, 'g');
     g.setAttribute('class', 'eco-lanes');
+
+    // 두뇌 층 밴드 (가로) — 거래 층 레인(세로 컬럼)과 시각적으로 구분
+    const band = document.createElementNS(SVG_NS, 'rect');
+    band.setAttribute('class', 'eco-brain-band');
+    band.setAttribute('x', BRAIN_BAND.x);
+    band.setAttribute('y', BRAIN_BAND.y);
+    band.setAttribute('width', BRAIN_BAND.w);
+    band.setAttribute('height', BRAIN_BAND.h);
+    band.setAttribute('rx', 18);
+    g.appendChild(band);
+
     LANES.forEach(l => {
       const r = document.createElementNS(SVG_NS, 'rect');
       r.setAttribute('class', 'eco-lane-bg');
@@ -710,7 +752,7 @@
     });
     BAND_LABELS.forEach(b => {
       const t = document.createElementNS(SVG_NS, 'text');
-      t.setAttribute('class', 'eco-band-label');
+      t.setAttribute('class', b.cls ? `eco-band-label ${b.cls}` : 'eco-band-label');
       t.setAttribute('x', b.x);
       t.setAttribute('y', b.y);
       t.textContent = b.text;
@@ -735,7 +777,7 @@
 
   function createNodeGroup(id, n) {
     const g = document.createElementNS(SVG_NS, 'g');
-    g.setAttribute('class', 'eco-node');
+    g.setAttribute('class', n.heart ? 'eco-node is-heart' : 'eco-node');
     g.setAttribute('data-node', id);
     g.setAttribute('data-category', n.cat);
     g.setAttribute('tabindex', '0');
@@ -760,6 +802,20 @@
     accent.setAttribute('height', Math.max(8, n.h - 22));
     accent.setAttribute('rx', 2.5);
     g.appendChild(accent);
+
+    // 심장 노드는 맥박 링을 한 겹 덧그린다(장식 — 포인터 이벤트 없음)
+    if (n.heart) {
+      const pulse = document.createElementNS(SVG_NS, 'rect');
+      pulse.setAttribute('class', 'eco-heart-pulse');
+      pulse.setAttribute('x', n.x);
+      pulse.setAttribute('y', n.y);
+      pulse.setAttribute('width', n.w);
+      pulse.setAttribute('height', n.h);
+      pulse.setAttribute('rx', 12);
+      pulse.setAttribute('pointer-events', 'none');
+      pulse.setAttribute('transform-origin', `${n.x + n.w / 2} ${n.y + n.h / 2}`);
+      g.appendChild(pulse);
+    }
 
     const title = document.createElementNS(SVG_NS, 'text');
     title.setAttribute('class', 'eco-node-title');
@@ -850,7 +906,8 @@
 
   function createEdgePath(e) {
     const p = document.createElementNS(SVG_NS, 'path');
-    p.setAttribute('class', 'eco-edge');
+    // layer:true = 거래 층 ↔ 두뇌 층을 잇는 통로. 굵은 파선으로 따로 보이게 한다.
+    p.setAttribute('class', e.layer ? 'eco-edge is-layer-link' : 'eco-edge');
     p.setAttribute('data-from', e.from);
     p.setAttribute('data-to', e.to);
     const g = edgeGeometry(e);

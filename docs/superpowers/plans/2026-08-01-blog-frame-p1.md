@@ -1216,6 +1216,7 @@ new: (빈 문자열 — 블록과 뒤따르는 빈 줄 하나까지 삭제)
   - (T6 리뷰) slate 라이트 팔레트 대비 미달(walled-garden 4.05 / both 4.28): style.css 무대 칩·배지 블록에 추가 —
     `[data-palette="slate"]:not([data-theme="dark"]) .stage-chip[data-world="walled-garden"], [data-palette="slate"]:not([data-theme="dark"]) .stage-inline-badge[data-world="walled-garden"] { --world-dot: #5e6b80; }`
   - (T6 리뷰) MARKDOWN_GUIDE.md 무대 배지 섹션에 사용 규칙 한 줄 추가: "헤딩당 마커는 1개, 제목 없이 마커만 쓰지 마세요 (TOC가 배지 텍스트로 대체됨)."
+  - (T9 리뷰) ml-track.html 푸터에 `<a href="demos.html">데모</a>` 추가 (ML 트랙 링크 뒤) — posts-browse 등 목록성 페이지 푸터와 일관성.
   - 검증: `grep -n "post-meta-sep\|post-read-time\|nav-links" css/style.css` → 0줄, `grep -a -c "renderWorldLegend" js/main.js` → 0
 
 - [ ] **Step 10.3: 검색 색인 재생성**

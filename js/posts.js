@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'model-monitoring',
+    world: 'both',
+    worldNote: '층을 나눠 재고 세그먼트로 쪼개 보는 원칙은 양쪽 공통이다. 다른 건 라벨이 언제 도착하는지다. 담장 안은 전환이 자사 로그로 바로 들어와 라벨 기반 지표를 빨리 볼 수 있지만, 열린 RTB는 외부 포스트백을 기다려야 하고 일부는 아예 안 온다.',
+    worldPractical: '담장 안은 노출·클릭·전환 로그가 모두 자사에 있어 라벨이 빨리 도착하고 지면·세그먼트 구분도 확실해서 감시가 촘촘하다. 그래서 예측 분포와 라벨 지표를 나란히 놓고 볼 수 있고, 지면별로 쪼개 보는 것도 쿼리 한 줄이다. 열린 RTB의 DSP는 전환이 광고주·MMP 포스트백으로 늦게 들어오고 일부는 유실된다. 라벨 기반 지표를 믿기 전에 “며칠까지 기다릴지”를 먼저 정해야 하고, 그동안은 예측 분포 감시가 사실상 유일한 조기 신호가 된다.',
+    title: '모델 모니터링 — 조용히 나빠지는 것을 어떻게 알아채나',
+    excerpt: '서버가 죽으면 알람이 울리지만 모델이 나빠지면 아무 알람도 없습니다. 200 OK로 답하고 그럴듯한 숫자를 내놓는데 그 숫자가 틀린 것입니다. 60일 시뮬레이션에서 40일차에 사고를 넣어 보면, 예측 분포를 보는 쪽은 사고 1일 뒤에 알람이 울리고 라벨 확정을 기다리는 쪽은 8일 뒤에 울립니다. 세그먼트를 쪼개는 것도 필수입니다 — 전체 COPC가 1.000으로 완벽한데 지면별로는 0.42에서 1.50까지 흩어져, 예측 클릭의 7.1%가 엉뚱한 지면에 얹혀 있는 상황이 만들어집니다. PSI 임계값 0.1도 표본에 따라 뜻이 달라져서, 표본 300건이면 아무 문제 없어도 평균 0.029가 나옵니다.',
+    date: '2026-08-02',
+    categories: ['Measurement & Modeling', 'ML Infrastructure'],
+    tags: ['Calibration', 'ML Infra', 'Online Learning'],
+    contentUrl: 'posts/model-monitoring.md'
+  },
+  {
     id: 'ctr-feature-engineering',
     world: 'both',
     worldNote: '해싱·집계·라벨 누출은 양쪽 세계 공통의 문제다. 다른 건 시퀀스 피처가 성립하는지다. 담장 안은 로그인 ID로 행동이 한 줄로 이어지지만, 열린 RTB는 쿠키가 며칠 만에 바뀌어 시퀀스가 두세 개에 그친다.',
@@ -721,9 +733,8 @@ const mlTrack = {
       id: 'stage-3',
       title: '3단계 · 심화 — 탐색과 확장',
       goal: '이 단계를 마치면: 탐색-활용부터 피처 실전·지표 운영·실험 설계까지 실무 전체가 이어집니다. 앞 두 단계가 “무엇을 어떻게 만드나”였다면, 여기는 “만든 것을 어떻게 굴리고 판단하나”입니다.',
-      // TODO: model-monitoring 등록 후 여기에 추가
       posts: ['exploration-exploitation', 'cold-start-pctr', 'ctr-feature-engineering',
-        'embedding-table-ops',
+        'embedding-table-ops', 'model-monitoring',
         'model-ab-testing', 'conversion-definition',
         'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking'],
     },

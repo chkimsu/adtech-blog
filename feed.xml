@@ -36,7 +36,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction</id>
     <updated>2026-06-21T00:00:00Z</updated>
-    <summary>경매에서 이겼는데 왜 2등이 적어낸 값만 낼까? 솔직하게 부르는 게 이득이 되도록 설계된 2등 가격 경매(Vickrey)의 직관을 eBay 자동입찰·숫자 예시로 풀고, 광고판이 2019년 1등 가격으로 옮겨가며 Bid Shading이 등장한 이유까지 정리한다.</summary>
+    <summary>경매에서 이겼는데 왜 2등이 부른 값만 낼까. DSP 5곳의 가상 입찰표를 놓고 계산해 보면, 2등 가격 경매에서는 정직하게 부르는 쪽이 과대입찰(₩1,500을 불러 −₩400 손해)이나 과소입찰(놓친 이익 ₩250)보다 기대 이익이 항상 앞선다. 그런데 같은 데이터를 1등 가격으로 돌리면 정직 입찰의 이익이 정확히 0이 되고, 20% 낮춰 부르는 Bid Shading이 오히려 이긴다. 헤더비딩으로 ‘2등’이라는 개념 자체가 무의미해지며 2017년 무렵부터 주요 거래소가, 2019년 무렵엔 Google Ad Manager까지 1등 가격으로 갈아탄 배경까지 정리한다.</summary>
     <category term="Bidding &amp; Auction"/>
   </entry>
   <entry>
@@ -44,7 +44,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange</id>
     <updated>2026-06-21T00:00:00Z</updated>
-    <summary>광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 각각이 무슨 일을 하는지, 어떤 실제 회사(DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트…)가 그 역할인지, 그리고 0.1초 한 장면으로 어떻게 맞물리는지 수식 없이 풀고 한눈 비교표로 닫는다.</summary>
+    <summary>광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 노출 1건이 뜨기까지 데이터가 오가는 0.1초를 8단계 타임라인으로 재구성하고, 광고주가 낸 ₩1,000 중 매체에 도착하는 몫(예시 계산 ₩544, take rate 45.6%)을 파이썬으로 직접 계산해 본다. DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트 같은 실제 회사 이름과, 열린 RTB·닫힌 생태계에서 이 구조가 어떻게 달라지는지도 함께 짚는다.</summary>
     <category term="Bidding &amp; Auction"/>
   </entry>
   <entry>
@@ -52,7 +52,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products</id>
     <updated>2026-06-13T00:00:00Z</updated>
-    <summary>카카오톡 채팅탭 위 비즈보드 배너 한 칸은, 우리가 배운 디스플레이 경매·eCPM 랭킹의 실물이다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지 같은 실제 상품을 하나씩 짚어, 각각이 블로그가 다룬 어떤 개념의 응용인지 연결하는 카카오 광고 3부작의 1편 — 무엇이 팔리고 어떻게 줄 세워지는가.</summary>
+    <summary>카카오톡 채팅 목록 위 비즈보드 배너 한 칸은, 우리가 배운 eCPM 랭킹이 실제로 돌아가는 현장이다. 가상의 입찰 후보 5개로 낙찰자를 뽑아 보고, pCTR 예측이 단 10%만 틀려도 낙찰자가 통째로 바뀌는 걸 파이썬으로 확인한다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지를 상품 지도로 엮고, 같은 자리가 열린 RTB였다면 무엇이 달랐을지, 예약(CPT) 물량과 경매 물량은 어떻게 공존하는지까지 짚는 카카오 광고 3부작의 1편.</summary>
     <category term="Bidding &amp; Auction"/>
   </entry>
   <entry>
@@ -94,7 +94,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101</id>
     <updated>2026-06-07T00:00:00Z</updated>
-    <summary>아이스크림이 많이 팔린 날 익사 사고도 많다 — 그렇다고 아이스크림이 익사를 부르나? 상관과 인과를 가르는 &apos;숨은 원인(교란변수)&apos;, 같은 사람의 두 세계를 동시에 못 보는 반사실의 근본 난제, 두 무리가 원래 다를 때 생기는 선택편향까지. 광고 효과 측정이 왜 인과추론 문제인지, 그리고 그걸 푸는 두 갈래 길(랜덤 실험 vs 준실험)을 비유와 그림으로 풀어내는 인과추론 트랙의 출발점.</summary>
+    <summary>광고를 본 사람의 구매율(17.0%)이 안 본 사람(4.4%)보다 훨씬 높다 — 그런데 이 naive 비교, 참값보다 6~7배나 부풀려진 착시다. 유저를 ‘원래 구매 의향’ 층으로 나눠 보면 naive 효과는 +12.7%p지만, 층별 보정과 무작위 배정(RCT) 시뮬레이션은 둘 다 +2%p 근처로 수렴한다. 같은 사람의 ‘광고 안 본 세계’를 절대 볼 수 없다는 반사실의 근본 문제, 아이스크림-익사부터 계절성·프로모션·브랜드 검색량까지 교란변수의 실제 얼굴, 그리고 이 빈칸을 채우는 두 갈래 길(랜덤 실험 vs 준실험)까지 파이썬 시뮬레이션과 표로 풀어내는 인과추론 트랙의 출발점.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>

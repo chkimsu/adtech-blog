@@ -1,12 +1,16 @@
 DSP, SSP, RTB, Header Bidding... 광고 기술(Ad Tech) 생태계를 처음 접하면 약어의 홍수에 빠집니다. 하지만 이 모든 개념의 출발점은 하나의 질문입니다: **"매체(Publisher)의 광고 지면을 광고주(Advertiser)에게 어떻게 연결할 것인가?"**
 
-이 질문에 대한 답이 시대에 따라 **Ad Network**에서 **Ad Exchange**로 진화했고, 그 과정에서 Waterfall, RTB, Header Bidding이라는 기술이 등장했습니다. 이 글은 두 구조의 **기술적 차이, 아키텍처, 진화 과정**을 해부하고, 엔지니어 관점에서 왜 이 구분이 중요한지를 설명합니다.
+이 질문의 답은 시대에 따라 **Ad Network**에서 **Ad Exchange**로 진화했습니다. 그 과정에서 Waterfall, RTB, Header Bidding이라는 기술이 차례로 등장했습니다. 이 글은 그 **전환이 왜 일어났고 무엇을 바꿨는지**를 숫자로 따라갑니다.
 
-> 광고 생태계의 전체 조감도가 필요하다면 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)를, RTB 서빙 플로우의 상세가 궁금하다면 [Ad Serving Flow](post.html?id=ad-serving-flow)를 먼저 참고하세요.
+> 각 회사가 정확히 무슨 일을 하는지는 [DSP·SSP·Ad Exchange](post.html?id=dsp-ssp-exchange)에서 다룹니다. 전체 조감도는 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에 있습니다.
 
 ---
 
 ## 1. 핵심 비교 (Executive Summary)
+
+**Ad Network은 "묶음으로 파는 도매상", Ad Exchange는 "한 건씩 파는 거래소"입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
+
+아래 표는 위에서 아래로 읽으면 인과가 보입니다. 앞 세 줄(거래 단위·가격 결정·속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
 
 | 차원 | Ad Network | Ad Exchange |
 |------|-----------|-------------|
@@ -80,6 +84,55 @@ Ad Network의 가격은 **사전 협상 기반**입니다. 광고주와 Network�
 - **수요-공급 불일치**: 인벤토리가 넘쳐도 가격이 내려가지 않고, 경쟁이 치열해도 올라가지 않음
 - **매체 수익 최적화 불가**: 더 높은 가격을 지불할 의사가 있는 광고주가 있어도, 이미 계약된 가격으로 판매
 
+### 묶어 팔면 얼마를 흘리나
+
+**한 가격에 묶으면 프리미엄은 헐값에 넘기고 롱테일은 안 팔립니다.** 아래 **가상 데이터**는 어느 매체의 지면 5종입니다. 프리미엄(위 두 줄)이 노출의 20%, 롱테일이 80%입니다. "진짜 가치"는 광고주가 그 한 건에 낼 수 있는 최대 CPM입니다.
+
+| 지면 | 노출 비중 | 진짜 가치(CPM) |
+|---|---|---|
+| 메인 상단 | 5% | ₩4,200 |
+| 기사 상단 | 15% | ₩2,400 |
+| 기사 중간 | 25% | ₩1,100 |
+| 사이드바 | 30% | ₩620 |
+| 스크롤 하단 | 25% | ₩280 |
+
+```python
+# 가상 데이터: 지면 5종의 (이름, 노출 비중, 진짜 가치 CPM)
+INV = [("메인 상단", .05, 4200), ("기사 상단", .15, 2400), ("기사 중간", .25, 1100),
+       ("사이드바", .30, 620), ("스크롤 하단", .25, 280)]
+
+def bundle(price):
+    """고정 CPM 하나로 묶어 팔 때의 (실효 CPM, 헐값 손실, 유찰 손실).
+    진짜 가치가 그 값 이상인 지면만 팔리고, 나머지는 유찰된다."""
+    rev = cheap = unsold = 0.0
+    for _, share, v in INV:
+        if v >= price:
+            rev += share * price          # 매체가 실제로 받는 값
+            cheap += share * (v - price)  # 더 받을 수 있었는데 못 받은 몫
+        else:
+            unsold += share * v           # 팔 수 있었는데 못 판 몫
+    return rev, cheap, unsold
+
+# 노출마다 제 값으로 파는 경우 = 쪼갰을 때의 상한
+auc = sum(share * v for _, share, v in INV)
+print(f"노출 단위 경매   실효 CPM ₩{auc:,.0f}")
+for price in (620, 1100, 2400):
+    rev, cheap, unsold = bundle(price)
+    print(f"고정 ₩{price:>5,}    실효 ₩{rev:>3,.0f}"
+          f"  (헐값 {cheap:>3,.0f} · 유찰 {unsold:>3,.0f})  경매 대비 {rev/auc-1:+.0%}")
+best = max((bundle(v)[0], v) for _, _, v in INV)
+print(f"최선의 고정가 ₩{best[1]:,}조차 경매의 {best[0]/auc:.0%}밖에 못 번다")
+
+# 출력:
+# 노출 단위 경매   실효 CPM ₩1,101
+# 고정 ₩  620    실효 ₩465  (헐값 566 · 유찰  70)  경매 대비 -58%
+# 고정 ₩1,100    실효 ₩495  (헐값 350 · 유찰 256)  경매 대비 -55%
+# 고정 ₩2,400    실효 ₩480  (헐값  90 · 유찰 531)  경매 대비 -56%
+# 최선의 고정가 ₩1,100조차 경매의 45%밖에 못 번다
+```
+
+손실 두 열을 보세요. 고정가를 올리면 헐값 손실은 줄지만 유찰 손실이 커지고, 내리면 그 반대입니다. 값이 하나뿐이라 둘을 같이 줄일 수 없습니다. ₩1,101은 수수료를 뺀 상한이라 실제로 이만큼은 아닙니다. 방향만 보세요. **쪼갤수록 매체가 받는 값은 올라갑니다.**
+
 ### Waterfall: 순차 호출의 비효율
 
 매체는 수익을 극대화하기 위해 여러 Ad Network에 동시에 등록합니다. 이때 **Waterfall(폭포수)** 방식으로 Network를 순차 호출합니다:
@@ -117,6 +170,75 @@ Waterfall의 치명적 문제:
 | **불투명한 마진** | Network이 매체에 $2.00을 지불하면서 광고주에게 $5.00을 청구해도, 매체는 알 수 없음 |
 
 이 비효율성이 Ad Exchange 등장의 직접적 원인입니다.
+
+### 순서가 수익을 정한다 — 숫자로
+
+**Waterfall의 성적은 Network의 실력이 아니라 매체가 세운 순서가 정합니다.** 같은 5곳·같은 입찰가로 순서만 120가지 바꿔 봅니다.
+
+```python
+import itertools, random
+random.seed(42)
+
+FLOOR = 900   # 바닥값(CPM). 이 값을 못 넘는 응답은 No Fill로 센다.
+# 가상 데이터: Ad Network 5곳의 (평균 CPM, 표준편차). 평균은 비슷한데 노출마다 크게 흔들린다.
+NET = {"A": (1500, 700), "B": (1400, 900), "C": (1300, 400),
+       "D": (1250, 1100), "E": (1100, 600)}
+# 노출 2,000건. 매 건마다 5곳이 각자 값을 부른다(음수는 0).
+rounds = [{n: max(0.0, random.gauss(*p)) for n, p in NET.items()} for _ in range(2000)]
+
+def waterfall(bids, order):
+    """정한 순서로 한 곳씩 묻고, 바닥값을 넘는 첫 응답에서 판다. 뒤 순번은 안 묻는다."""
+    for n in order:
+        if bids[n] >= FLOOR:
+            return bids[n]
+    return 0.0   # 다섯 곳 다 못 넘기면 유찰
+
+# 동시에 물으면 그중 최고가가 낙찰가다. '순서'라는 개념 자체가 없다.
+auc = sum(t for t in (max(b.values()) for b in rounds) if t >= FLOOR) / len(rounds)
+# 5! = 120가지 순서를 전부 돌린다. 같은 수요인데 순서만으로 성적이 어디까지 갈리나?
+sc = {o: sum(waterfall(b, o) for b in rounds) / len(rounds)
+      for o in itertools.permutations(NET)}
+hi, lo = max(sc, key=sc.get), min(sc, key=sc.get)
+
+print(f"동시 입찰(경매)   평균 CPM ₩{auc:,.0f}")
+for tag, o in (("최선", hi), ("최악", lo)):
+    print(f"Waterfall {tag}  ₩{sc[o]:,.0f}  ({'·'.join(o)})  경매 대비 {sc[o]/auc-1:+.0%}")
+# '평균 CPM 1위' A를 맨 앞에 세운 24가지 순서의 평균 — 실무 관행
+print(f"A를 1순위로 세움  ₩{sum(v for o, v in sc.items() if o[0] == 'A')/24:,.0f}")
+
+# 출력:
+# 동시 입찰(경매)   평균 CPM ₩2,217
+# Waterfall 최선  ₩1,847  (D·B·A·E·C)  경매 대비 -17%
+# Waterfall 최악  ₩1,435  (C·E·A·D·B)  경매 대비 -35%
+# A를 1순위로 세움  ₩1,711
+```
+
+**최선의 순서(−17%)조차 경매를 못 이깁니다.** 순서를 아무리 맞춰도 1등이 뒷줄에 서는 노출은 남습니다. 마지막 줄이 더 반직관적입니다. 평균 1위 A를 앞세우면 최선(₩1,847)보다 낮은 ₩1,711입니다. **값이 크게 흔들리는 곳**(D)이 어쩌다 아주 높게 부르는데, 뒷줄이면 그 순간이 버려집니다.
+
+:::deep 더 깊이 — 순차 호출은 시간까지 잡아먹는다
+두 번째 대가는 시간입니다. 한 곳씩 물으면 응답 시간이 더해집니다.
+
+```python
+RESP, FILL, N = 120, 0.45, 5     # 한 곳 응답 ms · 한 곳이 채울 확률 · Network 수
+leave = lambda ms: 0.015 * ms / 100    # 100ms 기다릴수록 이탈 +1.5%p라는 가정
+# k번째에서 채워질 확률 × 그때까지 기다린 시간을 다 더하면 평균 대기 시간이 나온다
+wait = sum((1 - FILL) ** (k - 1) * FILL * k * RESP for k in range(1, N + 1))
+wait += (1 - FILL) ** N * N * RESP     # 다 실패해도 기다린 시간은 그대로 쓴다
+fill = 1 - (1 - FILL) ** N             # 채움 비율. 순차든 동시든 수요가 같으니 똑같다
+print(f"순차 대기 {wait:.0f}ms · 이탈 {leave(wait):.1%}"
+      f"   (최악 {N*RESP}ms · 이탈 {leave(N*RESP):.0%})")
+print(f"동시 대기 {RESP}ms · 이탈 {leave(RESP):.1%}   채움은 양쪽 다 {fill:.1%}")
+print(f"하루 1,000만 노출이면 사라지는 노출 "
+      f"{(leave(wait) - leave(RESP)) * fill * 1e7:,.0f}건")
+
+# 출력:
+# 순차 대기 253ms · 이탈 3.8%   (최악 600ms · 이탈 9%)
+# 동시 대기 120ms · 이탈 1.8%   채움은 양쪽 다 95.0%
+# 하루 1,000만 노출이면 사라지는 노출 189,810건
+```
+
+채움 비율은 두 방식이 같습니다. 갈리는 건 대기 시간뿐입니다. 253ms 대 120ms. 그 차이가 이탈로 바뀌어 하루 1,000만 노출에서 19만 건이 사라집니다. 이탈 계수는 가정치입니다.
+:::
 
 ---
 
@@ -203,11 +325,11 @@ graph TB
     style AN fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
-Ad Network이 Exchange의 바이어로 참여한다는 것은, **Network과 Exchange가 경쟁 관계가 아닌 보완 관계**임을 의미합니다. Network은 자체 광고주 풀의 수요를 모아 Exchange에서 입찰하고, Exchange는 Network에게 더 넓은 인벤토리 접근을 제공합니다.
+Ad Network이 Exchange의 바이어로 참여한다는 것은, **Network과 Exchange가 경쟁 관계가 아닌 보완 관계**임을 의미합니다. Network은 자체 광고주 풀의 수요를 모아 Exchange에서 입찰합니다. Exchange는 Network에게 더 넓은 인벤토리를 열어 줍니다.
 
 ### 경매 메커니즘: 1st Price vs 2nd Price
 
-Ad Exchange 초기에는 **2nd Price Auction**이 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 True Value 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st Price Auction**으로 전환되면서, DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 새로운 최적화 기법을 도입해야 했습니다.
+Ad Exchange 초기에는 **2nd Price Auction**이 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 True Value 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st Price Auction**으로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
 
 | 경매 방식 | 지불 금액 | DSP 전략 | 시기 |
 |-----------|----------|----------|------|
@@ -298,7 +420,7 @@ graph LR
 
 ---
 
-## 5. 진화의 역사: Waterfall에서 Header Bidding까지
+## 5. 진화의 역사: Waterfall에서 Header Bidding까지 [무대: 열린 RTB]
 
 ### 타임라인
 
@@ -356,6 +478,10 @@ Header Bidding의 핵심 효과:
 | **Network/Exchange 구분** | 명확 (순서대로 호출) | 모호 (모두 같은 경매에 참여) |
 
 마지막 행이 핵심입니다. Header Bidding 이후 **Ad Network와 Ad Exchange의 기술적 경계가 희미해졌습니다**. 둘 다 동일한 경매에 바이어로 참여하기 때문입니다.
+
+### 담장 안에는 Waterfall이 없었다 [무대: 닫힌 생태계]
+
+**위 타임라인은 열린 RTB의 역사입니다.** 네이버·카카오는 지면도 광고주도 자기 것이라 중개를 맡길 Network이 없었습니다. 순서를 정할 일이 없으니 Waterfall도, 그 뒤의 [헤더비딩](post.html?id=header-bidding)도 필요하지 않았습니다.
 
 ---
 
@@ -438,7 +564,7 @@ Exchange(RTB) 환경에서는 Bid Request에 포함된 **실시간 피처**를 �
 - **시간 컨텍스트**: 시간대, 요일, 계절성
 - **경매 컨텍스트**: Exchange ID, Floor Price, 경매 유형(1st/2nd Price)
 
-이 피처들이 pCTR 모델의 정확도를 결정하고, 정확한 pCTR이 True Value의 정확도를 결정하며, True Value가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 선순환 구조입니다.
+이 피처들이 pCTR 모델의 정확도를 결정합니다. 정확한 pCTR이 True Value를 정확하게 만들고, True Value가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 선순환 구조입니다.
 
 ---
 
@@ -455,6 +581,12 @@ Exchange(RTB) 환경에서는 Bid Request에 포함된 **실시간 피처**를 �
 5. **엔지니어에게 이 구분은 실무적으로 중요** — 학습 데이터 특성, 입찰 최적화 전략, Feature Engineering 전략이 트래픽 소스(Network vs Exchange)에 따라 달라집니다.
 
 ---
+
+## 더 깊이 보기
+
+- [헤더비딩](post.html?id=header-bidding) — Waterfall 다음 이야기
+- [2등 가격 경매](post.html?id=second-price-auction) — 경매 규칙 자체
+- [ML 엔지니어 트랙](ml-track.html) — pCTR·pCVR부터 서빙까지
 
 ### 참고 자료
 

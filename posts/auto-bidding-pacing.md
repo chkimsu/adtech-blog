@@ -1,5 +1,6 @@
 광고주가 "CPA $10, 일 예산 $1,000"을 설정하면, DSP는 하루 동안 수십만 번의 입찰 기회를 만납니다. 매번 최적의 입찰가를 결정하되, 하루가 끝나기 전에 예산이 소진되지 않아야 합니다. 이 글은 **Auto-Bidding(자동 입찰)**과 **Budget Pacing(예산 분배)**이 이 문제를 어떻게 푸는지 해부합니다.
 
+> "얼마를 부를까"는 두 층입니다 — 아래층은 경매 한 번의 최적가를 찾고, 위층은 목표·예산에 맞춰 그 값을 밉니다.
 > [Bid Shading 포스트](post.html?id=bid-shading-censored)에서는 "한 번의 입찰에서 최적 입찰가 b*를 계산하는 방법"을 다뤘습니다. 이 글은 그 다음 단계 — **수십만 번의 입찰을 하루 예산 안에서 어떻게 배분하는가**를 다룹니다.
 
 ---
@@ -55,7 +56,7 @@
   </div>
 </div>
 
-질문 1-2는 이전 포스트에서 다뤘습니다. 이 글은 **질문 3: Budget Pacing**에 집중합니다.
+질문 1-2는 이전 포스트에서 다뤘습니다. 가치 V의 재료는 [pCTR](post.html?id=pctr-prediction)·[pCVR](post.html?id=pcvr-modeling)이고, 그 값을 순위로 바꾸는 규칙은 [eCPM](post.html?id=ecpm-ranking)입니다. 이 글은 **질문 3: Budget Pacing**에 집중합니다.
 
 ### Bid Shading vs Budget Pacing: 스코프가 다르다
 
@@ -76,7 +77,7 @@ Bid Shading과 Budget Pacing은 모두 "입찰 최적화"에 속하지만, **최
 2. **Budget Pacer**가 현재 예산 상황에 따라 배수 $\lambda$를 결정
 3. **최종 입찰가** = $b^* \times \lambda$ (예산이 빨리 소진되면 $\lambda < 1$로 억제, 여유가 있으면 $\lambda > 1$로 공격적)
 
-> Bid Shading 없이 Pacing만 있으면 개별 경매에서 과다 지불하고, Pacing 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
+> Bid Shading 없이 Pacing만 있으면 개별 경매에서 매번 과다 지불합니다. 거꾸로 Pacing 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
 
 Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 Budget Pacing에 집중합니다.
 
@@ -94,6 +95,54 @@ Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적�
 | **결과** | | 오전에 예산 소진, **오후 최적 시간대 놓침** | 하루 전체에 걸쳐 균등하게 노출 |
 
 오후 14-18시는 전환율이 가장 높은 시간대인 경우가 많습니다. Pacing 없이 오전에 예산을 다 쓰면, **가장 좋은 기회를 놓치게 됩니다**.
+
+### 세 가지 배분안을 숫자로 — 가상 데이터
+
+하루 예산 100만 원을 세 방식으로 나눠 봅니다. 아래 **가상 데이터**는 클릭 단가 500원 고정, 시간대별 트래픽 두께와 전환율만 다릅니다. 예산으로는 시장 물량 4,000클릭의 절반만 살 수 있습니다.
+
+| 시간대 | 트래픽 비중 | 전환율 |
+|---|---|---|
+| 00-04 | 5% | 0.8% |
+| 04-08 | 10% | 1.0% |
+| 08-12 | 20% | 1.6% |
+| 12-16 | 25% | 2.6% |
+| 16-20 | 25% | **3.2%** |
+| 20-24 | 15% | 1.8% |
+
+**어느 절반을 고르느냐**가 성과를 정합니다.
+
+```python
+BUDGET, CPC, SUPPLY = 1000000, 500, 4000   # 예산 100만 원, 클릭 단가 500원, 시장 물량 4천 클릭
+# 가상 데이터: (트래픽 비중, 전환율) — 위 표와 같은 값
+SLOTS = [(0.05, 0.008), (0.10, 0.010), (0.20, 0.016),
+         (0.25, 0.026), (0.25, 0.032), (0.15, 0.018)]
+BUYABLE = BUDGET / CPC                  # 예산으로 살 수 있는 클릭 = 2,000
+CAP = [SUPPLY * s[0] for s in SLOTS]    # 구간마다 시장에 있는 클릭 상한
+
+# (a) 아침 몰빵: 이른 구간부터 살 수 있는 만큼 사고 예산이 떨어지면 종료
+left, rush = BUYABLE, []
+for cap in CAP:
+    rush.append(min(cap, left))
+    left -= rush[-1]
+# (b) 시간대 균등: 예산 6등분. 새벽엔 살 물량이 없어 상한에 걸린다
+even = [min(cap, BUYABLE / 6) for cap in CAP]
+# (c) 전환율 가중: 구간 가치 = 트래픽 비중 x 전환율. 그 비율대로 나눈다
+w = [s[0] * s[1] for s in SLOTS]
+smart = [min(cap, BUYABLE * wi / sum(w)) for cap, wi in zip(CAP, w)]
+
+for name, clicks in [("(a) 몰빵", rush), ("(b) 균등", even), ("(c) 가중", smart)]:
+    spend = sum(clicks) * CPC
+    conv = sum(c * s[1] for c, s in zip(clicks, SLOTS))  # 클릭 x 그 구간 전환율
+    print("%s 소진 %.1f%% / 전환 %.1f건 / CPA %d원"
+          % (name, spend / BUDGET * 100, conv, spend / conv))
+
+# 출력:
+# (a) 몰빵 소진 100.0% / 전환 34.0건 / CPA 29411원
+# (b) 균등 소진 93.3% / 전환 35.6건 / CPA 26217원
+# (c) 가중 소진 100.0% / 전환 49.4건 / CPA 20260원
+```
+
+몰빵과 균등이 34건 대 35.6건으로 비슷한 게 함정입니다. 몰빵은 예산을 다 쓰지만 전환율 3.2%인 저녁을 못 사고, 균등은 살 물량이 없는 새벽 몫 6.7%를 남깁니다. 전환율로 가중하면 같은 100만 원으로 CPA가 29,411원에서 20,260원으로 내려갑니다.
 
 ---
 
@@ -175,7 +224,7 @@ Budget Pacing에는 크게 두 가지 방식이 있습니다:
   </div>
 </div>
 
-프로덕션에서는 대부분 **Bid Modification**을 사용합니다. 모든 입찰에 참여하되, pacing multiplier $\lambda$로 입찰 강도를 조절하면 좋은 기회를 놓치지 않으면서 예산을 분배할 수 있습니다.
+프로덕션에서는 대부분 **Bid Modification**을 사용합니다. 모든 입찰에 참여하되 강도만 $\lambda$로 조절합니다. 그러면 좋은 기회를 버리지 않으면서 예산을 하루에 걸쳐 나눠 쓸 수 있습니다.
 
 ### 최종 입찰가 공식
 
@@ -194,6 +243,8 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
 가장 널리 사용되는 방식은 **PID Controller**입니다. 제어 이론에서 차용한 방법으로, 목표값과 현재값의 차이(오차)를 기반으로 조절합니다.
 
 ### 핵심 아이디어
+
+에어컨 온도 조절기와 같습니다. 목표를 24도로 걸어 두면 기계는 지금 몇 도인지만 재고, 그 차이만큼 세기를 올리거나 내립니다. 예산 페이서도 재는 값이 하나뿐입니다. 시간당 목표보다 많이 썼으면 $\lambda$를 내리고, 적게 썼으면 올립니다. 아래 그림이 그 네 단계입니다.
 
 <div class="chart-arch">
   <div class="chart-arch-section">
@@ -258,7 +309,7 @@ $$b_{\text{final}} = \underbrace{b^*}_{\text{Bid Shading}} \times \underbrace{\l
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
       <span class="chart-arch-section-icon">4</span>
-      <span class="chart-arch-section-title" style="color:#4bc0c0;">출력</span>
+      <span class="chart-arch-section-title" style="color:var(--accent-secondary);">출력</span>
     </div>
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
@@ -326,7 +377,16 @@ def pid_pacing_simulation(budget=1000, hours=24, Kp=0.04, Ki=0.01, Kd=0.02):
 
 np.random.seed(42)
 pid_pacing_simulation()
+
+# 출력:
+#   t= 0h  잔여=$   964  λ=1.000
+#   t= 6h  잔여=$   732  λ=0.100
+#   t=12h  잔여=$   505  λ=0.949
+#   t=18h  잔여=$   303  λ=1.000
+#   최종 소진율: 85.6%
 ```
+
+이 출력은 **잘 도는 예가 아닙니다**. 소진율 85.6%로 144달러가 남았습니다. 오차를 달러 그대로 곱한 탓에 t=6h에서 $\lambda$가 1.0에서 0.1로 곤두박질칩니다.
 
 ---
 
@@ -371,6 +431,11 @@ $$\lambda = \frac{1}{1 + \mu}$$
 - $\mu = 1$ → $\lambda = 0.5$ (예산 부족, 반값 입찰)
 - $\mu \to \infty$ → $\lambda \to 0$ (예산 위기, 입찰 포기)
 
+:::deep 더 깊이 — 왜 하필 1/(1+μ) 꼴인가
+
+위 목적함수는 전환 가치만 최대화했습니다. 여기에 "내가 낸 돈도 비용"을 넣어 $\sum (V_i - b_i)$를 최대화하면, $b_i$ 항이 두 번 나옵니다. 실제로 낸 돈 $b_i$와, 그 돈을 여기 써서 포기한 다른 기회의 값 $\mu b_i$입니다. 낙찰 하나의 순기여는 $V_i - (1+\mu) b_i$가 됩니다. 이게 0이 되는 지점이 부를 수 있는 상한, 즉 $V_i / (1+\mu)$입니다. 원래 입찰가에 $1/(1+\mu)$를 곱하는 것과 같은 결과입니다.
+:::
+
 PID는 $\lambda$를 경험적으로 조절하고, Lagrangian은 $\mu$를 수학적으로 풀지만, **결과적으로 같은 곳에 수렴합니다**.
 
 ```python
@@ -400,21 +465,69 @@ def lagrangian_dual_update(budget=1000, n_rounds=100, lr=0.05):
 
 np.random.seed(42)
 lagrangian_dual_update()
+
+# 출력:
+#   Round  25: μ=3.933, λ=0.205, 지출=$11.2 (목표=$10.0)
+#   Round  50: μ=3.795, λ=0.207, 지출=$9.4 (목표=$10.0)
+#   Round  75: μ=3.775, λ=0.215, 지출=$12.3 (목표=$10.0)
+#   Round 100: μ=4.164, λ=0.198, 지출=$12.1 (목표=$10.0)
+#   최종: μ=4.164 → λ=0.194
 ```
 
 ---
 
 ## 5. 실전 고려사항: 이론과 프로덕션의 간극
 
-### 트래픽 예측: Pacing의 숨은 전제
+### 목표 CPA를 조이면 어디가 무너지는가
 
-PID든 Lagrangian이든, "남은 시간에 얼마나 많은 입찰 기회가 올 것인가"를 예측해야 합니다. 이 예측이 빗나가면 Pacing도 실패합니다.
+목표 CPA 입찰의 정석은 **입찰가 = 전환확률 × 목표 CPA**입니다. 목표를 낮추면 무엇이 어디까지 버티는지 4만 건 **가상 데이터**로 돌려 봅니다.
+
+```python
+import math, random
+
+BUDGET, N = 1000000, 40000       # 예산 100만 원, 하루에 들어오는 입찰 기회 4만 건
+CVR_MED, MKT_MED = 0.015, 90.0   # 전환율 예측 중앙값 1.5%, 이겨야 하는 금액 중앙값 90원
+
+def day(target):
+    random.seed(42)              # 목표만 바꿔 비교하려면 같은 트래픽을 봐야 한다
+    left, wins, conv = BUDGET, 0, 0.0
+    for seen in range(1, N + 1):
+        pcvr = random.lognormvariate(math.log(CVR_MED), 0.6)
+        price = random.lognormvariate(math.log(MKT_MED), 0.5)
+        if price < pcvr * target:   # 입찰가 = 전환확률 x 목표 CPA. 넘겼으면 낙찰
+            left -= price           # 내는 건 입찰가가 아니라 이기는 데 드는 금액
+            wins, conv = wins + 1, conv + pcvr
+            if left <= 0:
+                break               # 예산 소진 — 하루가 끝나기 전에 문이 닫힌다
+    spend = BUDGET - max(left, 0)
+    print("목표 %5d원 승률 %4.1f%% 소진 %5.1f%% 전환 %5.1f건 CPA %5d원 소화 %3.0f%%"
+          % (target, wins / seen * 100, spend / BUDGET * 100, conv,
+             spend / conv, seen / N * 100))
+
+for t in (6000, 5000, 3000):
+    day(t)
+
+# 출력:
+# 목표  6000원 승률 50.4% 소진 100.0% 전환 317.5건 CPA  3149원 소화  65%
+# 목표  5000원 승률 41.0% 소진 100.0% 전환 357.0건 CPA  2801원 소화  84%
+# 목표  3000원 승률 18.8% 소진  46.4% 전환 239.1건 CPA  1941원 소화 100%
+```
+
+목표를 6,000원에서 3,000원으로 조이면 승률이 50.4%에서 18.8%로, 소진율이 100%에서 46.4%로 무너집니다. **CPA는 지켜지지만 물량이 사라집니다.** 실제 CPA가 늘 목표보다 낮은 이유도 같습니다 — 이기는 건 싼 경매뿐입니다. 반대로 6,000원은 예산이 하루 65% 지점에서 터져 전환이 357건에서 317건으로 줄어듭니다.
+
+### 트래픽 예측: Pacing의 숨은 전제 [무대: 열린 RTB]
+
+PID든 Lagrangian이든, "남은 시간에 얼마나 많은 입찰 기회가 올 것인가"를 예측해야 합니다. 이 예측이 빗나가면 Pacing도 실패합니다. 남의 인벤토리를 사는 쪽은 패찰하면 경쟁가도 못 보고, 총량도 남의 것이라 예측이 흔들립니다.
 
 | 상황 | 원인 | 결과 | 대응 |
 |------|------|------|------|
 | 트래픽 과대예측 | 평일 모델로 주말 예측 | 예산 잔여 (under-delivery) | 요일/시간대별 트래픽 모델 |
 | 트래픽 과소예측 | 이벤트 기간 미반영 | 예산 조기 소진 | 실시간 트래픽 모니터링 + 적응 |
 | 트래픽 급변 | 뉴스 이벤트, 서버 장애 | Pacing 진동 | PID의 D항(미분)으로 급변 감지 |
+
+### 담장 안은 계산으로 세운다 [무대: 닫힌 생태계]
+
+지면과 경매를 한 회사가 쥐고 있으면 총량이 이미 보입니다. 계획을 추정이 아니라 계산으로 세웁니다.
 
 ### 캠페인 간 경쟁: 내부 경매
 
@@ -551,7 +664,7 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
          → 모델이 "저가 지면 = 높은 CTR"이라고 잘못 학습할 위험
 ```
 
-이것이 **Bid-Learning Feedback Loop** 문제입니다. Auto-Bidding 시스템을 설계할 때, 학습 데이터의 다양성을 위한 **탐색(exploration) 예산**을 별도로 확보하는 것이 중요합니다.
+이것이 **Bid-Learning Feedback Loop** 문제입니다. Auto-Bidding 시스템을 설계할 때, 학습 데이터의 다양성을 위한 [탐색(exploration) 예산](post.html?id=exploration-exploitation)을 별도로 확보하는 것이 중요합니다.
 
 ---
 
@@ -568,3 +681,11 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
 5. **pCTR 정확도가 모든 것의 기초** — Auto-Bidding이 아무리 정교해도, 입력인 pCTR이 부정확하면 예산을 낭비합니다. 모델 정확도 → 입찰 정확도 → 예산 효율의 체인이 끊어집니다.
 
 > 이 글에서 다룬 Auto-Bidding은 [Bid Shading 포스트](post.html?id=bid-shading-censored)의 자연스러운 후속편입니다. Bid Shading이 "한 번의 b*"를 계산하고, Auto-Bidding이 "$\lambda$로 스케일링"하여 최종 입찰가가 결정됩니다. 다음 글에서는 이 모든 것을 지탱하는 **모델 서빙 아키텍처**(Multi-Stage Ranking, 모델 경량화, A/B 실험)를 다룰 예정입니다.
+
+---
+
+## 더 깊이 보기
+
+- 확률이 틀리면 CPA도 어긋난다 → [Calibration](post.html?id=calibration)
+- 카카오의 실제 입찰·측정 → [카카오 사례](post.html?id=kakao-ads-bidding-measurement)
+- 광고 ML 전체 지도 → [ML 엔지니어 트랙](ml-track.html)

@@ -68,8 +68,9 @@ for (const file of fs.readdirSync(path.join(root, 'posts')).filter(f => f.endsWi
   const orig = fs.readFileSync(abs, 'utf-8');
   const changes = [];
 
-  // 'style <id> ...' 로 시작하는 mermaid 스타일 줄만 건드린다.
-  const next = orig.replace(/^(\s*style\s+\S+\s+)(.+)$/gm, (whole, head, decls) => {
+  // mermaid의 색 지정 줄만 건드린다. style(노드) 외에 linkStyle(연결선)·classDef도 있다 —
+  // 처음엔 style만 잡아서 linkStyle에 네온이 남았다.
+  const next = orig.replace(/^(\s*(?:style|linkStyle|classDef)\s+\S+\s+)(.+)$/gm, (whole, head, decls) => {
     const parts = decls.split(',').map(s => s.trim()).filter(Boolean);
     let dropped = false;
     const out = [];

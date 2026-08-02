@@ -169,7 +169,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-timeline-labels">
     <span>0ms</span>
     <span>|</span>
-    <span style="color:#36a2eb; font-weight:600;">병렬 조회 구간 (~1ms)</span>
+    <span style="color:var(--accent-primary); font-weight:600;">병렬 조회 구간 (~1ms)</span>
     <span>|</span>
     <span>5ms</span>
     <span>|</span>

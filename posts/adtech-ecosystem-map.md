@@ -168,7 +168,7 @@ graph TB
 <div class="chart-timeline-labels">
 <span>0ms</span>
 <span>Bid Request</span>
-<span style="color:#ff6384; font-weight:600;">DSP: Feature &rarr; pCTR &rarr; Shading</span>
+<span style="color:var(--accent-primary); font-weight:600;">DSP: Feature &rarr; pCTR &rarr; Shading</span>
 <span>Auction</span>
 <span>노출</span>
 <span>~200ms</span>
@@ -421,7 +421,7 @@ for k in range(max(dist.values()) + 1):
 <div class="chart-arch-section">
 <div class="chart-arch-section-header">
 <span class="chart-arch-section-icon">5</span>
-<span class="chart-arch-section-title" style="color:#4bc0c0;">입찰 출력 (Output)</span>
+<span class="chart-arch-section-title" style="color:var(--accent-secondary);">입찰 출력 (Output)</span>
 </div>
 <div class="chart-arch-grid">
 <div class="chart-arch-node">

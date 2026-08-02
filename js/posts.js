@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'embedding-table-ops',
+    world: 'both',
+    worldNote: '테이블을 쪼개고 퇴출하고 정밀도를 줄이는 기술 자체는 양쪽 공통이다. 다른 건 어느 테이블에 예산을 쓰느냐다. 담장 안은 로그인 ID가 몇 년을 살아 유저 테이블이 값지지만, 열린 RTB는 쿠키가 매번 달라 유저 줄이 학습되지 않는다.',
+    worldPractical: '담장 안은 로그인 ID가 몇 년을 살아서 유저 줄이 수백 번 등장하며 제대로 학습되고, 미리 계산한 벡터를 찾아올 키도 흔들리지 않아 캐시에 얹어 둘 수 있다. 그래서 테이블 예산이 유저 쪽으로 쏠려 전체의 80% 이상을 먹고, 퇴출 기준도 트래픽이 아니라 탈퇴·장기 휴면 같은 계정 상태가 된다. 열린 RTB의 DSP는 쿠키가 매번 달라 유저 줄이 한두 번만 등장해 초기값에서 거의 안 움직이고, 서빙에서도 어제 만든 줄을 찾을 키가 없다. 그래서 수명이 긴 광고 소재·지면(도메인·슬롯)·문맥 테이블로 자원을 옮기는 편이 같은 메모리로 훨씬 많이 배우는 길이다.',
+    title: '대규모 임베딩 테이블 운영 — 수억 개 ID를 학습하고 서빙하기',
+    excerpt: '유저 2억 줄 × 32차원이면 서빙 테이블은 23.8GB인데, Adam으로 학습하면 옵티마이저 상태 때문에 83.2GB가 됩니다. 배치 1,024건이 건드리는 줄은 전체의 0.0005%뿐이라 희소 갱신이 전제인데, 밀집으로 짜면 하루치 스텝에 6.6일이 걸려 아예 못 돌립니다. 퇴출 정책은 빈도 컷·LRU·TTL의 커버율 차이가 0.7%p 이내라, 진짜 갈림은 남긴 줄이 아직 살아 있는지(81% vs 96.8%)와 크기를 통제할 수 있는지입니다. 사전과 행렬의 버전이 어긋나면 점수 평균·표준편차는 정상인데 Top-10 겹침이 0개가 되는, 에러 하나 없는 사고가 납니다.',
+    date: '2026-07-19',
+    categories: ['ML Infrastructure'],
+    tags: ['ML Infra', 'Model Serving', 'pCTR'],
+    contentUrl: 'posts/embedding-table-ops.md'
+  },
+  {
     id: 'conversion-definition',
     world: 'both',
     worldNote: '무엇을 전환으로 셀지는 양쪽 세계 공통의 정책 문제다. 다른 건 그 정의를 확인하고 통제할 수 있는지다. 담장 안은 결제 로그가 자사 것이라 정의와 확정 시점을 직접 정하지만, 열린 RTB는 광고주 포스트백으로 들어와 정의도 지연도 남이 정한다.',
@@ -697,8 +709,9 @@ const mlTrack = {
       id: 'stage-3',
       title: '3단계 · 심화 — 탐색과 확장',
       goal: '이 단계를 마치면: 탐색-활용부터 피처 실전·지표 운영·실험 설계까지 실무 전체가 이어집니다. 앞 두 단계가 “무엇을 어떻게 만드나”였다면, 여기는 “만든 것을 어떻게 굴리고 판단하나”입니다.',
-      posts: ['exploration-exploitation', 'cold-start-pctr', 'ctr-feature-engineering',
-        'embedding-table-ops', 'model-monitoring', 'model-ab-testing', 'conversion-definition',
+      // TODO: ctr-feature-engineering · model-monitoring 등록 후 여기에 추가
+      posts: ['exploration-exploitation', 'cold-start-pctr', 'embedding-table-ops',
+        'model-ab-testing', 'conversion-definition',
         'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking'],
     },
   ],

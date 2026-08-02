@@ -1,186 +1,276 @@
-MAB(Multi-Armed Bandit) 알고리즘들을 AdTech 엔지니어의 시각에서 정리한 치트 시트입니다. "어떤 상황에 뭘 써야 하지?" 헷갈릴 때 참고하세요.
+새 배너 소재 5개를 캠페인에 한꺼번에 올렸다. 사흘이 지나자 클릭이 조금씩 쌓였다. 그런데 어느 소재가 진짜 좋은지는 아직 모른다.
+
+방법은 두 가지가 먼저 떠오른다. 하나는 다섯 개를 계속 똑같이 나눠 보여주는 것이다. 공평해 보이지만, 나쁜 소재에도 계속 예산을 태운다는 뜻이다. 다른 하나는 지금까지 성적이 제일 좋아 보이는 소재 하나만 밀어주는 것이다. 그런데 사흘치 클릭 수는 너무 적다. 운 좋게 클릭이 몇 번 몰렸을 뿐인 소재를 1등이라 믿고 나머지 넷을 꺼버리면, 사실은 더 좋았을 소재를 영영 확인할 기회조차 사라진다.
+
+**그럼 어떻게 나눠야, 손해를 줄이면서도 진짜 좋은 소재를 놓치지 않을까?**
+
+이 질문에는 이름이 있다. 멀티암드 밴딧(Multi-Armed Bandit, MAB)이다. 이름은 카지노에서 왔다. 슬롯머신 손잡이 하나를 영어로 '외팔이 강도(one-armed bandit)'라 부른다. 손잡이 여러 개 중 어느 걸 당겨야 돈을 더 딸지 모르는 채로 계속 당겨야 하는 상황이라서 이런 이름이 붙었다. 이 글에서는 손잡이(팔, arm) 하나가 소재 하나이고, 당겼을 때 나오는 보상이 클릭이다. 아직 잘 모르는 팔도 한 번씩 당겨 보는 쪽을 탐색(Exploration)이라 부른다. 지금까지 제일 좋아 보인 팔만 계속 당기는 쪽은 활용(Exploitation)이다.
+
+> 한 줄 요약: 밴딧 문제는 **정보가 부족한 채로 계속 선택해야 할 때, 탐색과 활용 사이 균형을 알고리즘으로 정하는 문제**다. 이 글은 그 균형을 잡는 알고리즘들이 ε-greedy에서 출발해 UCB·톰슨 샘플링·컨텍스추얼로 어떻게 갈라졌는지 지도를 그린다.
 
 ---
 
-AdTech에서는 "탐색(Exploration)과 활용(Exploitation)의 균형"을 맞추기 위해 다음의 무기들을 사용합니다.
+## 1. 소재 5개, 세 가지 전략을 1,000번 붙여보면
 
-## 1. Context-Free Bandits (상황을 보지 않음)
+**균등분배·그리디·밴딧을 같은 조건에서 1,000회 돌리면, 손해(후회)와 총 클릭 수가 전략마다 크게 갈린다.** 아래는 그 결과다. 소재 5개의 진짜 클릭률(CTR)을 미리 정해 뒀지만, 세 전략 모두 이 숫자를 모르는 채로 시작한다.
 
-> "누가 오든 똑같이 대한다. 오직 광고의 '평균 실력'만 믿는다."
-> *사용처: 배너 A/B 테스트, 데이터가 적은 초기 단계, 단순 로테이션*
+| 소재 | 진짜 CTR (우리는 이 값을 모른다) |
+|---|---|
+| 소재1 | 3% |
+| 소재2 | 15% |
+| 소재3 | 8% |
+| 소재4 | 1% |
+| 소재5 | 5% |
 
-### ① ε-Greedy (입실론 그리디)
+진짜 1등은 소재2(15%)다. 하지만 알고리즘도, 광고 운영자도 이 표를 볼 수 없다. 오직 노출한 뒤 클릭이 오는지 지켜보는 것으로만 짐작해야 한다. 이 조건으로 1,000회를 굴린 결과가 아래다.
 
-* 별명: 동전 던지기
-* 로직: 동전을 던져서(확률 ) 앞면이면 아무거나 뽑고(탐색), 뒷면이면 1등을 뽑는다(활용).
-* 특징: 구현이 제일 쉽지만, 탐색할 때 최악의 광고를 보여줄 위험이 있음.
+| 전략 | 방식 | 총 클릭 수 | 누적 후회 | 최적 소재 선택률 |
+|---|---|---|---|---|
+| 균등분배 | 매번 5개에 똑같이 돌아가며 배정 | 60회 | 86.0 | 20.0% |
+| 그리디(100회 탐색 후 고정) | 처음 100회만 골고루, 이후 900회는 그때까지의 1등만 계속 | 37회 | 99.2 | 3.1% |
+| 밴딧: ε-greedy | 매번 10% 확률로 무작위, 나머지는 지금까지 1등 | 81회 | 60.5 | 49.1% |
+| 밴딧: UCB1 | 관측 평균 + 불확실성 보너스가 가장 큰 소재 | 96회 | 59.8 | 41.6% |
+| 밴딧: 톰슨 샘플링 | 베타 사후분포에서 뽑은 표본이 가장 큰 소재 | 144회 | 19.3 | 80.8% |
 
-AdTech 적용: "모델 마련 전까진 랜덤으로 임의의 ad를 1개 선택"하는 로직이 바로 이 방식의 가장 기초적인 형태(Pure Exploration)입니다.
+가장 놀라운 줄은 그리디다. 총 클릭 수가 37회로 다섯 전략 중 가장 적다. 심지어 아무 전략도 없이 그냥 나눠 돌린 균등분배(60회)보다도 못하다. 후회도 99.2로 가장 크다. 100회나 탐색해 놓고도 왜 이런 일이 생겼는지는 다음 절에서 숫자로 직접 확인한다.
+
+세 가지 밴딧(ε-greedy·UCB1·톰슨 샘플링)은 모두 균등분배·그리디보다 후회가 낮다. 그중 톰슨 샘플링이 이번 시뮬레이션에서는 가장 낮은 후회(19.3)와 가장 높은 최적 소재 선택률(80.8%)을 보였다. 다만 이 셋이 서로 얼마나, 왜 다른지는 이 글의 범위가 아니다. [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)이 그 비교를 전담한다. 이 글에서는 "밴딧이라 불리는 계열 전체가 순진한 두 전략보다 낫다"는 큰 그림만 본다.
+
+---
+
+## 2. 파이썬으로 직접 검증
+
+**위 표는 손으로 지어낸 숫자가 아니다.** 아래 코드를 그대로 돌리면 똑같은 표가 나온다. 다섯 전략은 "다음에 어떤 소재를 고를지(select)"와 "결과를 보고 뭘 기록해 둘지(update)" 두 함수만 다르다. 나머지 실행 흐름 — 1,000번 반복하며 클릭 여부를 뽑고, 후회를 누적하고, 최적 소재를 골랐는지 세는 것 — 은 다섯 전략이 전부 공유한다.
 
 ```python
-import numpy as np
+# 광고 소재 5개, '진짜' CTR은 아래처럼 정해 두지만 알고리즘은 이 값을 모른 채 시작한다.
+# 다섯 가지 배정 방법을 같은 1,000회에 붙여, 총 클릭 수·누적 후회·최적 소재 선택률을 비교한다.
+import random
+import math
 
-def epsilon_greedy(rewards_history, epsilon=0.1):
-    """ε-Greedy: 확률 ε로 랜덤 탐색, 1-ε로 최고 평균 선택"""
-    n_arms = len(rewards_history)
-    if np.random.rand() < epsilon:
-        return np.random.randint(n_arms)  # 탐색: 무작위 선택
-    means = [np.mean(r) if len(r) > 0 else 0 for r in rewards_history]
-    return np.argmax(means)  # 활용: 최고 평균 arm
+random.seed(19)  # 재현 가능하도록 고정 — 위 표의 숫자가 이 시드에서 나온 값이다
 
-# 시뮬레이션: 광고 3개, 실제 CTR = [2%, 5%, 3%]
-np.random.seed(42)
-true_ctrs = [0.02, 0.05, 0.03]
-history = [[] for _ in range(3)]
+TRUE_CTR = {"소재1": 0.03, "소재2": 0.15, "소재3": 0.08, "소재4": 0.01, "소재5": 0.05}
+ARMS = list(TRUE_CTR)
+BEST = max(ARMS, key=lambda a: TRUE_CTR[a])   # 소재2 — 우리는 이걸 모르는 채로 실험을 시작한다
+BEST_CTR = TRUE_CTR[BEST]
+ROUNDS = 1000
 
-for t in range(1000):
-    arm = epsilon_greedy(history, epsilon=0.1)
-    reward = np.random.binomial(1, true_ctrs[arm])
-    history[arm].append(reward)
+def simulate(select_arm, update):
+    """공통 실행 루프. 전략마다 다른 건 '고르는 법'과 '기록 갱신법'뿐이다."""
+    clicks = regret = optimal = 0
+    for t in range(1, ROUNDS + 1):
+        arm = select_arm(t)
+        reward = 1 if random.random() < TRUE_CTR[arm] else 0
+        update(arm, reward)
+        clicks += reward
+        regret += BEST_CTR - TRUE_CTR[arm]        # 최적을 알았다면 얻었을 CTR과의 차이를 누적
+        optimal += (arm == BEST)
+    return clicks, regret, optimal / ROUNDS * 100
 
-for i, h in enumerate(history):
-    print(f"  광고{i}: 노출 {len(h):4d}회, 추정CTR={np.mean(h):.3f} "
-          f"(실제={true_ctrs[i]:.3f})")
-# 광고1(CTR 5%)에 노출이 자연스럽게 집중됨
+def uniform_strategy():                            # 균등분배: 5개를 순서대로 그대로 반복
+    return (lambda t: ARMS[t % len(ARMS)]), (lambda arm, r: None)
+
+def greedy_strategy(explore=100):                   # 그리디: 첫 100회만 골고루, 이후 900회는 1등 고정
+    counts = {a: 0 for a in ARMS}
+    sums = {a: 0 for a in ARMS}
+    def select(t):
+        if t <= explore:
+            return ARMS[t % len(ARMS)]
+        return max(ARMS, key=lambda a: sums[a] / counts[a] if counts[a] else 0)
+    def update(arm, r):
+        counts[arm] += 1
+        sums[arm] += r
+    return select, update
+
+def epsilon_greedy_strategy(epsilon=0.1):           # 밴딧: 10% 확률로 무작위, 90%는 지금까지 1등
+    counts = {a: 0 for a in ARMS}
+    sums = {a: 0 for a in ARMS}
+    def select(t):
+        unseen = [a for a in ARMS if counts[a] == 0]
+        if unseen:
+            return unseen[0]
+        if random.random() < epsilon:
+            return random.choice(ARMS)
+        return max(ARMS, key=lambda a: sums[a] / counts[a])
+    def update(arm, r):
+        counts[arm] += 1
+        sums[arm] += r
+    return select, update
+
+def ucb1_strategy():                                # 밴딧: 관측 평균 + 탐색 보너스가 가장 큰 소재
+    counts = {a: 0 for a in ARMS}
+    sums = {a: 0 for a in ARMS}
+    def select(t):
+        unseen = [a for a in ARMS if counts[a] == 0]
+        if unseen:
+            return unseen[0]
+        return max(ARMS, key=lambda a: sums[a] / counts[a] + math.sqrt(2 * math.log(t) / counts[a]))
+    def update(arm, r):
+        counts[arm] += 1
+        sums[arm] += r
+    return select, update
+
+def thompson_strategy():                            # 밴딧: 베타 분포에서 뽑은 표본이 가장 큰 소재
+    alpha = {a: 1 for a in ARMS}
+    beta = {a: 1 for a in ARMS}
+    def select(t):
+        samples = {a: random.betavariate(alpha[a], beta[a]) for a in ARMS}
+        return max(samples, key=lambda a: samples[a])
+    def update(arm, r):
+        if r:
+            alpha[arm] += 1
+        else:
+            beta[arm] += 1
+    return select, update
+
+strategies = {
+    "균등분배":                 uniform_strategy(),
+    "그리디(100회 탐색 후 고정)":   greedy_strategy(),
+    "밴딧: ε-greedy":           epsilon_greedy_strategy(),
+    "밴딧: UCB1":               ucb1_strategy(),
+    "밴딧: 톰슨 샘플링":           thompson_strategy(),
+}
+
+print(f"실제 최적 소재: {BEST} ({BEST_CTR:.0%})")
+print()
+for name, (select, update) in strategies.items():
+    clicks, regret, optimal_pct = simulate(select, update)
+    print(f"{name:<22} 총 클릭 {clicks:3d}회   누적후회 {regret:5.1f}   최적소재 선택률 {optimal_pct:4.1f}%")
+
+# 출력:
+# 실제 최적 소재: 소재2 (15%)
+#
+# 균등분배                   총 클릭  60회   누적후회  86.0   최적소재 선택률 20.0%
+# 그리디(100회 탐색 후 고정)      총 클릭  37회   누적후회  99.2   최적소재 선택률  3.1%
+# 밴딧: ε-greedy           총 클릭  81회   누적후회  60.5   최적소재 선택률 49.1%
+# 밴딧: UCB1               총 클릭  96회   누적후회  59.8   최적소재 선택률 41.6%
+# 밴딧: 톰슨 샘플링             총 클릭 144회   누적후회  19.3   최적소재 선택률 80.8%
 ```
 
-### ② UCB (Upper Confidence Bound)
+왜 그리디가 이렇게 실패했는지는 100회 탐색 구간의 관측치를 들여다보면 바로 보인다. 소재당 표본은 20회뿐이라 우연이 끼어들기 쉬운 크기다. 소재1·소재2·소재3·소재5는 공교롭게 전부 2번씩 클릭돼 관측 CTR이 똑같이 10%로 동률이 났다(소재4만 클릭이 0번). 진짜 CTR은 3%·15%·8%·5%로 전혀 다른데도, 20번 표본에서는 우연히 똑같아 보인 것이다. 그리디는 이 동률 중 맨 처음(소재1, 진짜 3%)을 골라 나머지 900회를 그 소재 하나에 몰아줬다. 100회 탐색은 "충분히 탐색했다"는 안도감을 준다. 하지만 클릭률이 몇 퍼센트대뿐이면, 소재당 20번으로는 실력 차를 못 가려낸다.
 
-* 별명: 긍정왕 (낙관주의자)
-* 로직: `평균 + 신뢰 보너스(confidence bound)`. "데이터가 없어서 잘 모르는 광고? 운 좋으면 대박일 거야!"라고 믿고 점수를 퍼줌.
-* 특징: 수학적으로 증명된 알고리즘. 랜덤성이 없어서(Deterministic) 디버깅하기 좋음.
+같은 표본으로도 세 밴딧 알고리즘은 이 함정에 걸리지 않았다. 100회 이후에도 계속 조금씩 다른 소재를 찔러봤기 때문에, 처음의 동률이 착시였다는 걸 뒤늦게라도 알아챌 기회가 남아 있었다. 후회가 왜 이 차이를 재는 데 적합한 잣대인지는 다음 절에서 본다.
 
-### ③ Thompson Sampling (Basic / Beta)
+---
 
-* 별명: 도박사 (확률주의자)
-* 로직: 각 광고의 성공 확률을 Beta 분포로 그림. 매번 주사위를 굴려서(Sampling) 나온 값으로 1등을 정함.
-* 특징: 현업에서 A/B 테스트용으로 성능이 가장 좋음. 하지만 유저별 개인화는 불가능.
+## 3. 후회(Regret)가 좋은 알고리즘을 가르는 잣대인 이유
 
-"주사위를 굴린다"가 어떤 행위인지 아래에서 직접 굴려 보세요:
+**총 클릭 수만으로는 전략을 공정하게 비교할 수 없다.** 그날 클릭이 몰리고 안 몰리고는 운이 섞여 있어서다. 그래서 밴딧 세계에서는 후회(Regret)라는 별도의 잣대를 쓴다.
+
+후회는 "매 순간 만약 최적 소재를 알고 있었다면 얻었을 보상"과 "실제로 고른 소재가 준 보상"의 차이를 계속 더한 값이다. §1 표에서 그리디의 누적 후회는 99.2였다. 900번 동안 매번 진짜 1등(15%)과 실제로 고른 소재(3%) 사이의 12퍼센트포인트 차이가 계속 쌓인 결과다. 총 클릭 수는 그날그날 운에 따라 오르내리지만, 후회는 "이 전략이 정보를 얼마나 낭비했는가"를 운에 덜 휘둘리며 재는 값이다.
+
+좋은 밴딧 알고리즘의 목표는 후회를 아예 0으로 만드는 게 아니다. 처음엔 몰라서 손해를 보는 게 당연하고, 진짜 문제는 그 손해가 시간이 지나도 똑같은 속도로 계속 쌓이느냐다. ε-greedy는 매번 정해진 확률(10%)로 계속 무작위 탐색을 한다. 그래서 이미 최적 소재를 다 알아낸 뒤에도, 영원히 10% 확률로 나쁜 소재를 골라 손해를 반복한다. 후회가 라운드 수 $T$에 거의 비례해서, 즉 선형으로 계속 자란다는 뜻이다. 반면 UCB1이나 톰슨 샘플링은 데이터가 쌓일수록 탐색 자체가 자연스럽게 줄어들도록 설계돼 있다. 그래서 후회가 $T$가 아니라 $\log T$ 속도로만 자란다. 라운드가 10배 늘어도 후회는 10배가 아니라 아주 조금만 늘어난다는 뜻이다.
+
+:::deep 더 깊이 — 후회는 왜 로그 속도로만 자라는가
+후회를 소재별로 뜯어보면 그 이유가 보인다. 소재 $a$의 격차를 $\Delta_a = \mu^* - \mu_a$로 정의하자. 최적 CTR에서 이 소재의 CTR을 뺀 값이다. 전체 누적 후회는 이렇게 분해된다.
+
+$$R_T = \sum_{a \neq a^*} \Delta_a \cdot \mathbb{E}[n_a(T)]$$
+
+여기서 $n_a(T)$는 소재 $a$를 고른 횟수다. 후회는 결국 "격차 큰 소재를 얼마나 자주 잘못 골랐는가"의 합이다.
+
+이 식을 보면 좋은 알고리즘의 후회가 왜 로그 속도로만 자라는지 감이 온다. 나쁜 소재라도 표본이 적으면 좋은 소재와 관측값이 겹쳐 보일 수 있다. 이 글의 그리디가 겪은 일이 정확히 이거다. 다만 그 "겹쳐 보일 확률"은 시도 횟수가 늘수록 지수적으로 줄어든다(Hoeffding 부등식). 정확한 유도는 [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)의 심화 블록에 있다. 나쁜 소재를 걸러내는 데 필요한 시도 횟수는 대략 $\ln T / \Delta_a^2$면 충분하다(Lai & Robbins, 1985). 이걸 위 분해식에 대입하면 아래와 같다.
+
+$$R_T \approx \ln T \sum_{a \neq a^*} \frac{1}{\Delta_a}$$
+
+즉 $T$가 아니라 $\ln T$에 비례해서만 자란다. 반대로 고정된 $\epsilon$을 쓰는 ε-greedy는 다르다. 데이터가 아무리 쌓여도 매 라운드 $\epsilon$의 확률로 무조건 무작위 소재를 고르기 때문이다. 그래서 시도 횟수 자체가 $T$에 비례해 계속 늘어나고, 후회도 선형으로 자란다. 로그와 선형의 차이는 라운드가 늘어날수록 점점 크게 벌어진다.
+:::
+
+이 시뮬레이션은 시드 하나가 만든 결과다. 아래 데모에서 직접 라운드를 눌러 보자. 알고리즘마다 어떤 소재를 고르는지, 후회 곡선이 시간에 따라 어떻게 벌어지는지 눈으로 볼 수 있다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-beta-sampling.html?embed=1" height="560" loading="lazy" title="베타 분포 샘플링 미니 데모"></iframe>
-<a class="demo-embed-open" href="demo-beta-sampling.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+<iframe class="demo-embed" src="demo-compare-bandits.html?embed=1" height="560" loading="lazy" title="밴딧 알고리즘 비교 데모"></iframe>
+<a class="demo-embed-open" href="demo-compare-bandits.html" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
-```python
-import numpy as np
+---
 
-def thompson_sampling(alphas, betas):
-    """Thompson Sampling: Beta 분포에서 샘플링하여 arm 선택"""
-    samples = [np.random.beta(a, b) for a, b in zip(alphas, betas)]
-    return np.argmax(samples)
+## 4. 알고리즘 족보 지도 — ε-greedy에서 컨텍스추얼까지
 
-# 시뮬레이션: 광고 3개, 실제 CTR = [2%, 5%, 3%]
-np.random.seed(42)
-true_ctrs = [0.02, 0.05, 0.03]
-alphas = [1, 1, 1]  # 사전분포 Beta(1,1) = Uniform
-betas = [1, 1, 1]
+**밴딧 알고리즘은 한 뿌리에서 출발해, "탐색을 어떻게 할 것인가"에 대한 답이 다르게 갈리며 계보를 이뤘다.** ε-greedy가 가장 먼저 나온 원시적인 답이고, 그다음 두 갈래(UCB 계열·톰슨 샘플링)가 각자 다른 방식으로 더 똑똑한 탐색을 시도했으며, 마지막으로 두 갈래 모두 "사람마다 다른 정답"을 반영하는 컨텍스추얼 버전으로 확장됐다.
 
-for t in range(1000):
-    arm = thompson_sampling(alphas, betas)
-    reward = np.random.binomial(1, true_ctrs[arm])
-    if reward:
-        alphas[arm] += 1  # 클릭 → α 증가 (성공 누적)
-    else:
-        betas[arm] += 1   # 미클릭 → β 증가 (실패 누적)
+아래 표는 그 계보를 각 갈래가 풀려던 문제 중심으로 정리한 것이다. 상세 수식과 구현은 표 오른쪽 링크의 글들이 각각 전담한다.
 
-for i in range(3):
-    est = alphas[i] / (alphas[i] + betas[i])
-    n = alphas[i] + betas[i] - 2
-    print(f"  광고{i}: 노출 {n:4d}회, 추정CTR={est:.3f} (실제={true_ctrs[i]:.3f})")
-# Beta 분포가 자연스럽게 탐색/활용 균형을 잡아줌
-```
+| 갈래 | 풀려던 문제 | 방식 한 줄 | 남은 한계 | 상세 글 |
+|---|---|---|---|---|
+| ε-greedy | 탐색을 아예 안 하는 것보다는 낫게 만들자 | 정해진 확률로 무작위, 나머지는 지금까지 1등 | 탐색이 무차별적 — 잘 아는 소재도 전혀 모르는 소재도 같은 확률로 찔러본다 | 이 글 §2 코드 |
+| UCB 계열 | 무차별한 탐색을 "덜 아는 순서"로 똑똑하게 하자 | 관측 평균 + 불확실성 보너스 점수로 결정 | 계산이 결정적이라 재현엔 좋지만, 유저·상황을 구분 못 함 | [UCB 알고리즘 패밀리](post.html?id=ucb-family) |
+| 톰슨 샘플링 | 점수 계산 대신 확률적으로 자연스럽게 탐색을 분산하자 | 베타 사후분포에서 표본을 뽑아 가장 큰 값이 승자 | 역시 유저·상황을 구분 못 하고, 매번 다른 소재가 나올 수 있음 | [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts) |
+| 컨텍스추얼 — LinUCB | "이 사람에게는" 어떤 소재가 좋은지 반영하자 | UCB 점수에 유저·지면 피처의 선형모델을 결합 | 신규 소재는 여전히 콜드스타트를 겪음 | [UCB 알고리즘 패밀리](post.html?id=ucb-family) · [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb) |
+| 컨텍스추얼 — Linear TS | 톰슨 샘플링을 같은 방향으로 확장하자 | 가중치 자체를 가우시안 분포로 두고 표본을 뽑음 | Basic TS보다 계산·튜닝 비용이 커짐 | [Standard TS vs Linear TS](post.html?id=TS-linTS) |
+
+표에서 눈여겨볼 지점은 갈래가 둘로 나뉘는 대목이다. UCB 계열과 톰슨 샘플링은 "무차별 탐색을 똑똑하게 만들자"는 같은 목표를 전혀 다른 도구로 풀었다. 하나는 점수를 계산했고(결정적), 하나는 분포에서 제비를 뽑았다(확률적). 이 차이는 재현성·동시 요청 처리·피드백 지연 대응에서 실무 선택을 가른다. 그 비교가 [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)의 주제다.
+
+그리고 두 갈래 모두 "사람마다 다른 정답"이 필요해지는 순간 컨텍스추얼로 확장된다. 검색 광고나 개인화 피드는 유저·검색어에 따라 최적 소재가 달라진다. 모두에게 같은 순위를 매기는 방식만으로는 한계가 뚜렷하다. 이 확장이 왜 필요한지는 [A/B 테스트 vs 멀티암드 밴딧](post.html?id=ab-test-vs-mab)에서 다룬다. 탐색-활용 딜레마 배경은 [탐색과 활용](post.html?id=exploration-exploitation)에서 볼 수 있다.
 
 ---
 
-## 2. Contextual Bandits (상황을 봄)
+## 5. 닫힌 생태계 — 교과서적 밴딧에 가장 가까운 무대 [무대: 닫힌 생태계]
 
-> "들어온 손님(User)과 검색어(Query)에 따라 맞춤형으로 대한다."
-> *사용처: 검색 광고(파워링크), 추천 시스템, 개인화 피드*
+**노출을 플랫폼이 직접 배정하는 닫힌 생태계는, 밴딧 알고리즘이 원래 상정하는 조건에 가장 가까운 현실 무대다.** 네이버·밴드처럼 노출·클릭을 전부 자기 로그로 갖고 있는 서비스는, 사용자가 지면에 들어올 때마다 후보 소재 중 하나를 직접 골라 보여준다.
 
-이 단계부터는 "행렬(Matrix)"이 등장하며, Ad selection~pCTR 취득 단계에 들어가는 핵심 엔진입니다.
+이 무대의 특징은 세 가지다. 하나는 시도와 피드백이 분리되지 않는다는 것이다. 무엇을 노출했는지, 클릭했는지 안 했는지가 항상 관측된다. 둘은 탐색 비용을 플랫폼 스스로 감당한다는 것이다. 아직 데이터가 적은 소재를 시험 삼아 보여줘서 생기는 손해는, 이번 한 번의 노출이 최적 대비 조금 덜 벌었다는 정도에서 끝난다. 셋은 실험 설계의 자유도가 높다는 것이다. 어떤 유저에게 어떤 소재를 보여줄지 플랫폼이 전권을 쥐고 있으니, §1처럼 여러 전략을 나란히 비교하는 실험도 깔끔하게 짤 수 있다.
 
-### ④ Disjoint LinUCB
-
-* 별명: 각자도생 개인플레이
-* 로직:
-  * 광고마다 서로 다른 공책(Model)을 가짐.
-  * 점수 = (개별 예측) + (개별 불확실성)
-* 핵심:
-  * 역행렬($A^{-1}$)은 '내가 모르는 정도'를 의미함.
-  * 들어온 손님($x$)이 내가 잘 모르는 방향이면 역행렬 값이 커져서 탐색 점수가 올라감.
-* 한계: 신규 광고가 들어오면 기존 광고들의 지식을 못 빌려 써서 맨땅에 헤딩(Cold Start) 해야 함.
-
-```python
-import numpy as np
-
-def linucb_score(x, A_inv, b, alpha=1.0):
-    """LinUCB 점수 = 예측(활용) + 불확실성(탐색)"""
-    theta = A_inv @ b                             # 학습된 가중치
-    prediction = x @ theta                        # 개인화된 CTR 예측
-    uncertainty = alpha * np.sqrt(x @ A_inv @ x)  # 탐색 보너스
-    return prediction + uncertainty, prediction, uncertainty
-
-# 예시: context 차원 d=4, 광고 2개 비교
-d = 4
-A_inv = [np.eye(d) for _ in range(2)]  # 초기: 단위행렬 (최대 불확실성)
-b_vec = [np.zeros(d) for _ in range(2)]
-
-# 광고 0에만 데이터 10개 축적
-np.random.seed(42)
-for _ in range(10):
-    x_sample = np.random.randn(d)
-    reward = 0.5 + 0.3 * x_sample[0]  # feature[0]이 CTR에 영향
-    A = np.linalg.inv(A_inv[0]) + np.outer(x_sample, x_sample)
-    A_inv[0] = np.linalg.inv(A)
-    b_vec[0] += reward * x_sample
-
-# 새 유저 context로 두 광고 비교
-x_new = np.array([1.0, 0.5, -0.3, 0.1])
-for arm in range(2):
-    score, pred, unc = linucb_score(x_new, A_inv[arm], b_vec[arm])
-    status = "학습됨" if arm == 0 else "미학습"
-    print(f"  광고{arm}({status}): 점수={score:.3f} "
-          f"(예측={pred:.3f} + 보너스={unc:.3f})")
-# 미학습 광고는 보너스가 커서 탐색 기회를 얻음
-```
-
-### ⑤ Hybrid LinUCB
-
-* 별명: 지식공유 팀플레이
-* 로직:
-  * 모든 광고가 공유하는 공통 공책($A_0$)과, 각자의 개별 공책($A_a$)을 가짐.
-  * 점수 = (공통 지식 + 개별 지식) + (공통 불확실성 + 개별 불확실성)
-* 핵심:
-  * "나이키"나 "운동화" 같은 광고의 피쳐(Feature)를 통해 지식을 공유함.
-  * 판매량이 0인 신규 광고라도, "나이키니까 기본은 하겠지"라며 공통 지식 버프를 받아 노출 기회를 얻음.
-
-AdTech 적용: Broad match keyword처럼 다양한 키워드와 광고가 매칭될 때, 키워드의 속성을 공유하여 학습 속도를 높이는 데 필수적입니다.
-
-### ⑥ Linear Thompson Sampling
-
-* 별명: LinUCB의 확률 버전
-* 로직: LinUCB처럼 상한선(Upper Bound)을 계산하는 게 아니라, 가중치 분포(Gaussian)에서 임의의 가중치를 뽑아서 점수를 계산.
-* 특징: 딥러닝 모델의 마지막 레이어에 붙여서 탐색을 유도할 때 자주 쓰임.
+그래서 이 무대에서는 이 글에서 다룬 다섯 전략 모두 그대로 작동한다. 다만 그렇다고 밴딧이 광고의 모든 문제를 푸는 건 아니다. 교과서가 은근히 깔고 가는 전제 자체가 광고 현실에서 몇 군데 깨지기 때문이다. 다음 절이 그 지점들이다.
 
 ---
 
-## 3. 한눈에 보는 비교표
+## 6. 그래도 안 통하는 지점 셋 — 지연 보상 · 비정상성 · 예산 제약
 
-| 알고리즘 | 정보 활용 (Context) | 지식 공유 (Sharing) | 탐색 방식 | 추천 상황 |
-| --- | --- | --- | --- | --- |
-| ε-Greedy | X | X | Random | 로직 검증, 단순 롤링 |
-| Basic TS (Beta) | X | X | Sampling | 배너 A/B 테스트 |
-| Disjoint LinUCB | O (User) | X | Deterministic | 광고 개수가 적고 고정적일 때 |
-| Hybrid LinUCB | O (User + Ad) | O | Deterministic | 신규 광고가 많은 커머스/검색광고 |
+**밴딧 알고리즘은 보상이 바로 오고, 소재 실력이 안 변하고, 시도가 거의 공짜라고 가정한다.** 광고 현실은 이 셋을 자주 깬다.
+
+첫째는 지연 보상이다. 클릭은 즉시 관측되지만, 광고주가 진짜 원하는 결과인 전환은 며칠 뒤에나 확정된다. 알고리즘이 방금 고른 소재가 정말 좋았는지는 한참 지나야 알 수 있는데, 그사이에도 다음 노출에 대한 결정은 계속 내려야 한다. 클릭만 보고 최적화하면, 클릭은 잘 받지만 전환은 낮은 소재가 과대평가되기 쉽다. 이 시차는 온라인 학습 전반이 겪는 오래된 난제이기도 하다(더 깊이 보기 참고).
+
+둘째는 비정상성이다. 밴딧은 소재의 진짜 CTR이 고정된 값이라고 가정한다. 하지만 실제로는 요일·시즌·경쟁 소재 물갈이에 따라 어제 좋았던 소재가 오늘 나빠진다. 문제는 알고리즘이 데이터를 충분히 쌓아 확신이 굳어질수록, 역설적으로 새로운 변화에 더 둔감해진다는 점이다. 활용 비중이 높아질수록 탐색이 줄고, 탐색이 줄면 소재가 변했다는 신호를 늦게 알아챈다.
+
+셋째는 예산 제약이다. 탐색도 결국 광고주의 돈으로 이뤄진다. 하루 예산이 정해진 캠페인에서 "혹시 몰라서" 탐색에 예산의 30%를 쓸 수는 없다. 그래서 실무에서는 탐색 비율에 상한을 두거나, 최소 품질 기준을 넘는 소재만 탐색 대상에 넣는다. 밴딧의 이론적 최적 탐색량을 그대로 쓰지 못하고 깎아서 쓰는 셈이다.
 
 ---
 
-## 4. 마무리 (AdTech Engineer's View)
+## 7. 열린 RTB — 패찰하면 데이터 자체가 없다 [무대: 열린 RTB]
 
-* 학습(Learning): 유저가 클릭하면($r=1$), 해당 광고의 행렬($A_a$)에 그 유저의 특징($x$)을 더해줍니다. 이것이 "경험치를 쌓는 과정"입니다.
-* 탐색(Exploration): 경험치가 쌓이면 역행렬($A_a^{-1}$)이 작아집니다. 즉, "이제 다 아니까 모험 안 해" 상태가 됩니다.
-* 진화: 처음엔 Basic TS로 시작해서 유저를 구분하는 Disjoint LinUCB로 신규 광고까지 챙기는 Hybrid LinUCB로 고도화하는 것이 정석 테크트리입니다.
+**열린 RTB에서는 시도와 피드백이 아예 분리된다.** 입찰에서 이겨야만 비로소 무슨 일이 일어났는지 알 수 있다. DSP가 초 단위로 쏟아지는 입찰 요청 중 어디에 응찰할지 정하는 문제도 밴딧으로 풀 수 있지만, 여기서는 소재의 자리에 입찰 기회나 세그먼트가 들어간다.
 
-이 알고리즘들의 전체 구조를 이해했다면, 실제 Ad Serving Engine 구현에 필요한 기초가 갖춰진 것입니다.
+문제는 팔을 당겨도, 즉 응찰해도 결과가 안 나올 수 있다는 점이다. 닫힌 생태계는 노출을 직접 배정하니 결과가 항상 관측된다. 반면 열린 RTB에서 응찰했는데 다른 광고주에게 낙찰이 넘어가면(패찰), 그 라운드는 노출도 클릭도 생기지 않는다. §6의 지연 보상은 "늦게라도 온다"는 뜻이지만, 이건 "영영 안 올 수도 있다"는 뜻이라 성격이 다르다.
+
+동시에 비용 구조도 다르다. 닫힌 생태계에서 데이터 적은 소재를 한번 보여주는 탐색은, 최적 대비 손해를 조금 감수하는 정도다. 열린 RTB에서 패찰은 비용이 전혀 들지 않는다. 이겨야 광고비를 쓰고 데이터도 얻는다. 져 봤자 데이터가 없고 돈도 안 나가니 얼핏 밑질 게 없어 보이지만, 그만큼 시도 횟수 자체를 늘리기도 쉽지 않다. 인기 있는 입찰 기회일수록 경쟁이 치열해 패찰이 잦다. 그 결과 정보가 잘 모이는 세그먼트와 안 모이는 세그먼트의 격차가, 닫힌 생태계보다 훨씬 크게 벌어진다.
+
+---
+
+## 8. 한눈 정리
+
+| 개념 | 뜻 | 이 글에서 본 숫자 | 핵심 |
+|---|---|---|---|
+| 멀티암드 밴딧 | 정보 부족 속에서 탐색·활용 균형을 정하는 문제 | 소재 5개, 진짜 CTR 1~15% | 탐색을 안 해도, 탐색만 해도 손해 |
+| 균등분배 | 계속 똑같이 나눠 배정 | 1,000회 후 누적 후회 86.0 | 정직하지만 나쁜 소재에도 계속 손해 |
+| 그리디(100회 후 고정) | 초반만 탐색, 이후 1등 고정 | 후회 99.2 — 균등분배보다도 나쁨 | 표본이 적으면 동률·역전이 흔해 위험 |
+| 밴딧(ε-greedy·UCB1·TS) | 계속 조금씩 탐색 비중을 조절 | 후회 60.5 · 59.8 · 19.3 | 셋 다 순진한 두 전략보다 후회가 낮음 |
+| 후회(Regret) | 최적을 알았을 때와의 누적 차이 | 좋은 알고리즘은 로그 속도로 증가 | 고정 ε의 ε-greedy는 선형으로 계속 증가 |
+| 알고리즘 계보 | ε-greedy → UCB·TS → LinUCB·LinTS | 4개 갈래 표 | 갈래마다 풀려던 문제·남은 한계가 다름 |
+| 닫힌 생태계 | 노출 직접 배정, 피드백 항상 관측 | — | 교과서 밴딧에 가장 가까운 무대 |
+| 열린 RTB | 패찰하면 데이터 자체가 없음 | — | 시도해도 피드백이 안 올 수 있음 |
+
+---
+
+## 9. 헷갈리기 쉬운 점
+
+- **"100회나 탐색했으니 안전하다"는 착각.** 표본이 적으면(이 글에서는 소재당 20회) 동률·역전이 흔하다. 이 글의 시뮬레이션에서 그리디는 균등분배보다도 나쁜 결과를 냈다.
+- **총 클릭 수만으로 전략을 비교하면 안 된다.** 그날의 운이 섞여 있다. 후회(Regret)가 운에 덜 휘둘리는 잣대다.
+- **후회가 0이 되는 게 목표가 아니다.** 처음엔 몰라서 손해 보는 게 정상이다. 관건은 그 손해가 로그 속도로 느려지는가, 아니면 라운드 수에 비례해 계속 자라는가다.
+- **UCB와 톰슨 샘플링은 같은 문제를 다르게 푼 형제지, 상하관계가 아니다.** 어느 쪽이 항상 이기는 게 아니라, 재현성·동시 요청·피드백 지연 같은 실무 조건에 따라 유리한 쪽이 갈린다.
+- **컨텍스추얼은 Non-Contextual의 업그레이드가 아니라 다른 질문에 대한 답이다.** "전체적으로 뭐가 제일 좋은가"에서 "이 사람에게는 뭐가 좋은가"로 질문 자체가 바뀐다.
+- **닫힌 생태계·열린 RTB 둘 다 밴딧을 쓰지만, 시도하면 항상 피드백이 오는지가 근본적으로 다르다.** 이 차이가 탐색 전략 자체보다 더 큰 실무 제약이 될 때가 많다.
+
+---
+
+## 더 깊이 보기
+
+- 탐색-활용 딜레마 자체가 궁금하다면 → [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
+- A/B 테스트와 밴딧이 근본적으로 어떻게 다른가 → [A/B 테스트 vs 멀티암드 밴딧](post.html?id=ab-test-vs-mab)
+- 클릭과 전환 사이의 시차가 만드는 문제를 더 깊이 → [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)
+- UCB와 톰슨 샘플링, 결정적 vs 확률적 상세 비교 → [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)
+- UCB 계열 3종(UCB1·LinUCB·Hybrid LinUCB) 상세 → [UCB 알고리즘 패밀리](post.html?id=ucb-family)
+- 톰슨 샘플링을 컨텍스트로 확장하면 → [Standard TS vs Linear TS](post.html?id=TS-linTS)
+- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)
+- 두 알고리즘을 직접 돌려보기 → [밴딧 비교 데모](demo-compare-bandits.html)
+- 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

@@ -69,7 +69,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement</id>
     <updated>2026-06-13T00:00:00Z</updated>
-    <summary>광고를 골랐으면 얼마를 입찰하고, 예산을 어떻게 나누며, 효과가 진짜였는지 재야 한다. 카카오의 자동입찰(=플랫폼이 대신 깎아주는 Bid Shading)·예산 페이싱·픽셀/SDK 전환 추적·증분효과 측정을, Auto-Bidding·로그 파이프라인·인과추론 글과 잇는 카카오 광고 3부작의 마지막 편.</summary>
+    <summary>광고를 골랐으면 얼마를 부를지, 하루 예산을 언제 쓸지, 그리고 그 성과가 진짜인지 정해야 한다. 가상의 시간대별 전환율 데이터로 예산 페이싱 세 전략(아침 몰빵·균등·성과 가중)을 비교하면 같은 100만 원으로 22건에서 37.8건까지 벌어진다. 목표 CPA를 3,000원까지 조이면 승률 3.7%, 예산의 1.5%만 쓰고 마는 것도 파이썬 시뮬레이션으로 확인한다. 자동입찰이 결국 목표(CPA·ROAS)를 받아 매 요청의 입찰가를 정하는 일이라는 것, 그리고 픽셀·SDK가 잡은 전환 수는 어트리뷰션이지 증분이 아니라는 것까지 — 카카오 광고 3부작을 완결하는 마지막 편.</summary>
     <category term="Bidding &amp; Auction"/>
     <category term="Measurement &amp; Modeling"/>
   </entry>
@@ -110,7 +110,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences</id>
     <updated>2026-06-07T00:00:00Z</updated>
-    <summary>광고를 켠 뒤 매출이 올랐다 — 광고 덕분일까, 그냥 성수기일까? 단순 전후 비교는 시간 효과에, 단순 그룹 비교는 원래 차이에 속는다. 광고를 안 한 옆 동네를 &apos;대역 배우&apos;로 세워 (처치군 변화)−(대조군 변화)로 자연 증가를 걷어내는 이중차분의 직관을, 서울/부산 숫자와 평행추세 그림으로 풀어낸다. 교차항 회귀식의 β₃가 왜 곧 효과인지, 그리고 A/B를 못 돌릴 때 증분효과(incrementality)를 재는 도구로서의 DiD까지.</summary>
+    <summary>서울·경기에만 배너 광고 캠페인을 켜고 나머지 지역은 그대로 뒀다 — 캠페인 후 매출이 뛰었다면, 광고 효과일까 계절 효과일까 원래 지역 차이일까? 같은 2×2 가데이터에서 단순 전후비교(+19.79억)·단순 지역비교(+35.36억)·이중차분(+15.40억) 세 값을 나란히 계산해, 참값(15억)을 잡는 건 DiD뿐임을 보인다. 광고 전 넉 달의 추이로 평행추세를 확인하고, 그 추세가 깨진 가짜 데이터를 파이썬으로 만들어 DiD가 27% 과대추정으로 틀리는 과정까지 시뮬레이션한다. 회귀식의 교차항 계수가 왜 정확히 DiD 추정량인지, 그리고 유저를 가를 수 없는 플랫폼 정책 변경처럼 담장 안에서도 DiD가 필요해지는 예외까지 다룬다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -134,7 +134,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ab-test-vs-mab"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=ab-test-vs-mab</id>
     <updated>2026-06-05T00:00:00Z</updated>
-    <summary>50:50으로 나눠 기다리는 A/B 테스트와, 데이터가 쌓이는 대로 트래픽을 옮기는 밴딧은 무엇이 다른가? 광고 3개·하루 100노출·10일이라는 구체적 숫자와 일상 비유로 고정 트래픽 vs 적응형, 그리고 같은 광고라도 사람마다 다르게 보여주는 Contextual Bandit까지 쉽게 풀어냅니다.</summary>
+    <summary>소재 2개(진짜 CTR 2.0%·3.0%)에 노출 10만 건을 쓰면, A/B 테스트(50:50 고정)는 2,521클릭에 그치지만 두 소재 모두 ±0.15%p 안팎의 깨끗한 신뢰구간을 남긴다. 밴딧(적응형)은 2,980클릭까지 벌지만, 진 소재의 신뢰구간은 ±0.453%p로 3.7배 넓어진다. 진짜 차이가 2.0%에서 2.1%로 작아지면 밴딧은 트래픽의 94%를 오히려 열세 소재에 몰아주며 A/B보다도 못한 결과를 낸다. 목적·소재 수·트래픽 규모·효과 크기·보고 대상·비정상성 여섯 기준으로 무엇을 고를지 정리하고, ‘전체 1등’ 하나로는 부족해 Contextual Bandit이 필요해지는 지점까지 다룬다.</summary>
     <category term="Bandits &amp; Personalization"/>
   </entry>
   <entry>

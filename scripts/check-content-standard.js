@@ -18,9 +18,12 @@ const MAX_SENTENCE = 80;       // 표준 7: 한 문장 = 한 생각
 function prose(md) {
   return md
     .replace(/```[\s\S]*?```/g, '')
+    .replace(/\$\$[\s\S]*?\$\$/g, '')   // 블록 수식은 '문장'이 아니다 — 길이 계산에서 뺀다
     .replace(/^:::.*$/gm, '')
     .replace(/^\|.*$/gm, '')
-    .replace(/<[^>]+>/g, '')
+    // 진짜 HTML 태그만 지운다. 수식의 맨 '<'(예: $b < v$)를 태그 시작으로 오인하면
+    // 다음 '>'까지 본문을 통째로 삼켜 섹션 길이가 잘못 나온다.
+    .replace(/<\/?[a-zA-Z][^>]*>/g, '')
     .replace(/^>\s?/gm, '');
 }
 
@@ -42,7 +45,11 @@ function longSentences(md) {
   const text = prose(md)
     .split('\n')
     .filter(l => !/^\s*(#|-|\d+\.|\*)/.test(l))
-    .join(' ');
+    .join(' ')
+    // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
+    // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
+    .replace(/\*\*/g, '')
+    .replace(/`[^`]*`/g, '…');
   return text
     .split(/(?<=[.!?])\s+/)
     .map(s => s.replace(/\s+/g, ' ').trim())

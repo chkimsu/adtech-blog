@@ -216,7 +216,7 @@ import math, random, statistics
 
 V = 1000
 random.seed(42)
-TRUE = [random.lognormvariate(6.2, 0.45) for _ in range(20000)]  # §1과 같은 시장(진짜 평균 546원)
+TRUE = [random.lognormvariate(6.2, 0.45) for _ in range(20000)]  # 1절과 같은 시장(진짜 평균 546원)
 
 def best_bid(win_prob):
     """승률 함수를 받아 기대이익이 가장 큰 입찰가를 10원 단위로 고른다."""
@@ -705,7 +705,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 ## 9. 담장 안에서는 이 추정 문제가 없다 [무대: 닫힌 생태계]
 
-**여기까지는 열린 RTB 이야기입니다. 담장 안에서는 §2의 잘린 데이터 문제가 아예 생기지 않습니다.**
+**여기까지는 열린 RTB 이야기입니다. 담장 안에서는 2절의 잘린 데이터 문제가 아예 생기지 않습니다.**
 
 네이버·카카오처럼 지면과 경매를 한 회사가 다 가진 구조를 담장 안이라 부릅니다. 경매를 직접 열기 때문에 누가 얼마를 불렀는지 전부 로그에 남습니다. 분포를 추정할 이유가 없습니다. 이미 다 보고 있으니까요.
 
@@ -715,7 +715,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 ## 마무리
 
-1. **1st Price Auction에서 Bid Shading은 선택이 아니라 필수** — True Value 그대로 입찰하면 이익이 0. §1③ 표의 첫 줄과 [데모](demo-bid-shading.html)의 No Shade가 같은 얘기입니다.
+1. **1st Price Auction에서 Bid Shading은 선택이 아니라 필수** — True Value 그대로 입찰하면 이익이 0. 1절③ 표의 첫 줄과 [데모](demo-bid-shading.html)의 No Shade가 같은 얘기입니다.
 
 2. **Censored Data를 무시하면 시장 가격을 체계적으로 과소추정** — Naive 추정의 위험성. 반드시 Censored Regression 또는 Survival Analysis 기법이 필요합니다.
 

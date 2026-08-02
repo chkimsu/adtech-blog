@@ -218,7 +218,7 @@ graph LR
     style RANK fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
-이 그림도 결국 §2에서 본 것과 같은 계산이다. 입찰가만으로 순위가 정해지지 않는다. 품질(pCTR류 지표)이 곱해져야 순위가 나온다. 그 산수는 이미 [eCPM과 광고 랭킹](post.html?id=ecpm-ranking)에 자세히 있다.
+이 그림도 결국 2절에서 본 것과 같은 계산이다. 입찰가만으로 순위가 정해지지 않는다. 품질(pCTR류 지표)이 곱해져야 순위가 나온다. 그 산수는 이미 [eCPM과 광고 랭킹](post.html?id=ecpm-ranking)에 자세히 있다.
 
 ---
 

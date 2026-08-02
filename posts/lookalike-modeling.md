@@ -1,6 +1,6 @@
-광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike Modeling**의 핵심 질문이며, 리타겟팅 다음으로 가장 높은 ROI를 보이는 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발하여 "아직 발견되지 않은 좋은 유저"로 확장하는 것 — 개념은 단순하지만, 실제 구현은 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 여러 기술적 결정이 얽혀 있습니다.
+광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike Modeling**의 핵심 질문이며, 리타겟팅 다음으로 가장 높은 ROI를 보이는 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발해 "아직 발견되지 않은 좋은 유저"로 넓히는 일입니다. 개념은 단순합니다. 하지만 구현은 까다롭습니다. 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 얽혀 있습니다.
 
-[오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만들어진 세그먼트가 Lookalike의 Seed가 되고, [Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)에서 Lookalike는 타겟팅 레이어의 핵심 모듈로 작동합니다. 특히 [Two-Tower Model](post.html?id=two-tower-retrieval)이 생성하는 유저 임베딩은 Lookalike를 위한 유사도 계산의 기반이 됩니다. 이 글은 Lookalike의 세 가지 핵심 접근법(Embedding 유사도, Propensity Model, Graph Expansion)을 해부하고, Seed 구성부터 프로덕션 파이프라인까지 — Lookalike Modeling의 전체 스펙트럼을 엔지니어 관점에서 다룹니다.
+Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 해부합니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
 
 ---
 
@@ -18,7 +18,7 @@ Lookalike Modeling에는 크게 세 가지 접근법이 있습니다. 각각의 
 
 ### 멀티 플랫폼 Lookalike 비교
 
-플랫폼마다 Lookalike의 기반 기술과 제어 수준이 크게 다릅니다:
+플랫폼마다 Lookalike의 기반 기술과 제어 수준이 크게 다릅니다.
 
 | 플랫폼 | 기술 기반 | 데이터 소스 | Expansion 옵션 | 광고주 제어 | 한계 |
 |--------|---------|-----------|---------------|-----------|------|
@@ -42,7 +42,7 @@ graph TD
 
 ### Lookalike vs 다른 타겟팅 전략 비교
 
-Lookalike의 위치를 다른 타겟팅 전략과 비교하면 그 가치가 더 명확해집니다:
+Lookalike의 위치를 다른 타겟팅 전략과 비교하면 그 가치가 더 명확해집니다.
 
 | 타겟팅 전략 | 대상 | 도달 범위 | 전환율 | CPA | 주요 한계 |
 |-----------|------|---------|-------|-----|---------|
@@ -74,7 +74,7 @@ Lookalike의 성능은 모델 아키텍처보다 **Seed의 품질**에 더 크�
 
 ### 2-1. Seed 선정 전략
 
-Seed를 어떻게 정의하느냐에 따라 Lookalike의 방향이 완전히 달라집니다:
+Seed를 어떻게 정의하느냐에 따라 Lookalike의 방향이 완전히 달라집니다.
 
 | Seed 유형 | 정의 | 장점 | 위험 |
 |----------|------|------|------|
@@ -89,7 +89,7 @@ Seed를 어떻게 정의하느냐에 따라 Lookalike의 방향이 완전히 달
 - **너무 큰 Seed (> 100만 명)**: 시그널이 희석됩니다. "전환 유저"라는 레이블이 너무 다양한 행동 패턴을 포함하면, Centroid는 아무 유저도 대표하지 못하는 "평균의 함정"에 빠집니다.
 - **1만~10만 명**: 충분한 통계적 안정성을 확보하면서도, 전환 유저의 핵심 패턴이 살아 있는 구간입니다.
 
-[오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 다룬 SQL Rule-based 세그먼트, RFM 스코어링, ML 클러스터링이 바로 이 Seed를 구축하는 방법론입니다. Lookalike는 세그멘테이션의 결과물을 입력으로 받는 **하류(Downstream) 프로세스**입니다.
+SQL Rule-based 세그먼트, RFM 스코어링, ML 클러스터링이 바로 이 Seed를 만드는 방법입니다. 셋 다 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 다뤘습니다. Lookalike는 세그멘테이션의 결과물을 입력으로 받는 **하류(Downstream) 프로세스**입니다.
 
 > Seed 정의에서 가장 흔한 실수는 "전환 유저 전체"를 무조건 Seed로 사용하는 것입니다. 프로모션 기간 중 가입한 유저, 1회성 체험 구매 유저, 환불 유저를 포함하면 Seed의 동질성(Homogeneity)이 급격히 떨어집니다. **전환의 "질"을 기준으로 Seed를 필터링**하는 것이 첫 번째 최적화입니다.
 
@@ -130,11 +130,11 @@ $$c_{\text{weighted}} = \frac{\sum_{i \in S} w_i \cdot u_i}{\sum_{i \in S} w_i}$
 
 여기서 $w_i$는 유저 $i$의 LTV(Lifetime Value) 또는 구매 금액입니다. 고가치 유저의 임베딩에 더 높은 가중치를 부여하므로, Centroid가 고가치 유저 쪽으로 편향됩니다. 이는 "전환 유저와 유사한 유저"가 아니라 "**고가치 전환 유저**와 유사한 유저"를 찾는 것으로, ROAS 최적화 캠페인에서 특히 효과적입니다.
 
-[LTV(Long Term Value)](post.html?id=ltv-ad-ranking)에서 다룬 LTV 예측 모델의 출력을 가중치로 사용할 수 있습니다. LTV 예측의 정확도가 Value-Based Lookalike의 성능을 직접 결정하므로, LTV 모델 개선이 Lookalike 성능 개선으로 이어지는 선순환 구조가 형성됩니다.
+가중치는 [LTV(Long Term Value)](post.html?id=ltv-ad-ranking)의 예측 출력을 씁니다. LTV 예측이 정확할수록 Value-Based Lookalike도 정확해집니다. 그래서 LTV 모델을 개선하면 Lookalike 성능도 함께 올라가는 선순환이 생깁니다.
 
 **Propensity 모델에서의 Value-Based 접근**:
 
-Propensity 모델에서는 이진 분류 대신 **회귀(Regression)**로 재정의할 수 있습니다:
+Propensity 모델에서는 이진 분류 대신 **회귀(Regression)**로 재정의할 수 있습니다.
 
 $$\hat{v}(x) = f(x; \theta)$$
 
@@ -149,19 +149,19 @@ $$\hat{v}(x) = f(x; \theta)$$
 
 ## 3. Embedding 기반 Lookalike
 
-가장 직관적이고 구현이 빠른 접근법입니다. 유저를 벡터 공간에 임베딩하고, Seed 유저의 중심(Centroid)에서 가까운 유저를 Lookalike로 선정합니다. 이미 [Two-Tower Model](post.html?id=two-tower-retrieval)에서 학습된 유저 임베딩을 재활용할 수 있다는 것이 가장 큰 장점입니다.
+가장 직관적이고 구현이 빠른 접근법입니다. 유저를 벡터 공간에 임베딩하고, Seed 유저의 중심(Centroid)에서 가까운 유저를 Lookalike로 선정합니다. 가장 큰 장점은 재활용입니다. [Two-Tower Model](post.html?id=two-tower-retrieval)이 이미 학습해 둔 유저 임베딩을 그대로 씁니다.
 
 ### 3-1. Two-Tower 임베딩 공간 활용
 
-Two-Tower Model의 User Tower는 유저의 행동 데이터(클릭 이력, 검색 쿼리, 구매 패턴 등)를 입력받아 고밀도 벡터(Dense Vector)를 출력합니다. 이 벡터 공간에서 **유사한 행동 패턴을 가진 유저는 가까이 위치**합니다.
+Two-Tower Model의 User Tower는 유저의 행동 데이터를 입력받습니다. 클릭 이력, 검색 쿼리, 구매 패턴 같은 것들입니다. 출력은 고밀도 벡터(Dense Vector)입니다. 이 벡터 공간에서 **유사한 행동 패턴을 가진 유저는 가까이 위치**합니다.
 
 $$u_i = f_{\text{user}}(x_i; \theta_{\text{user}}) \in \mathbb{R}^d$$
 
-여기서 $f_{\text{user}}$는 Two-Tower의 User Tower, $x_i$는 유저 $i$의 피처, $\theta_{\text{user}}$는 학습된 파라미터, $d$는 임베딩 차원(보통 128~256)입니다.
+여기서 $f_{\text{user}}$는 Two-Tower의 User Tower입니다. $x_i$는 유저 $i$의 피처, $\theta_{\text{user}}$는 학습된 파라미터입니다. $d$는 임베딩 차원이며 보통 128~256입니다.
 
 핵심 인사이트는 **새로운 모델이 필요 없다**는 것입니다. 광고 Retrieval을 위해 이미 학습된 Two-Tower 모델이 생성하는 유저 임베딩에는 광고 반응 패턴이 이미 인코딩되어 있습니다. Lookalike를 위한 별도 모델 학습 없이, 이 임베딩을 그대로 활용하면 됩니다.
 
-물론 한계도 존재합니다. Two-Tower 임베딩은 광고 클릭/전환 예측에 최적화되었으므로, "유저 간 유사도"를 직접 목적 함수로 학습한 것은 아닙니다. 따라서 Lookalike 전용 임베딩(예: Contrastive Learning으로 전환 유저 간 유사도를 극대화한 모델)이 더 나은 결과를 줄 수 있습니다. 하지만 실무에서 이 차이는 대개 Seed 품질의 영향보다 작으므로, **첫 버전은 Two-Tower 임베딩으로 시작**하는 것이 합리적입니다.
+물론 한계도 존재합니다. Two-Tower 임베딩은 광고 클릭/전환 예측에 최적화되었으므로, "유저 간 유사도"를 직접 목적 함수로 학습한 것은 아닙니다. 따라서 Lookalike 전용 임베딩이 더 나은 결과를 줄 수 있습니다. 예를 들어 Contrastive Learning으로 전환 유저 간 유사도를 극대화한 모델입니다. 하지만 실무에서 이 차이는 대개 Seed 품질의 영향보다 작으므로, **첫 버전은 Two-Tower 임베딩으로 시작**하는 것이 합리적입니다.
 
 ### 3-2. Seed Centroid 계산과 ANN 검색
 
@@ -183,7 +183,7 @@ $$\text{sim}(u, c) = \frac{u^T c}{\|u\| \cdot \|c\|}$$
 
 $$\text{Lookalike}(S, k) = \text{TopK}_{u \notin S}\left(\text{sim}(u, c)\right)$$
 
-수억 명의 유저 풀에서 Top-K를 brute-force로 계산하면 시간이 너무 오래 걸립니다. [Two-Tower Model](post.html?id=two-tower-retrieval)에서 다룬 FAISS, ScaNN 같은 ANN(Approximate Nearest Neighbor) 인덱스를 사용하면 수밀리초 만에 Top-K를 추출할 수 있습니다.
+수억 명의 유저 풀에서 Top-K를 brute-force로 계산하면 시간이 너무 오래 걸립니다. 대신 ANN(Approximate Nearest Neighbor) 인덱스를 씁니다. FAISS, ScaNN 같은 것들이며 수밀리초 만에 Top-K를 뽑습니다. 이 인덱스는 [Two-Tower Model](post.html?id=two-tower-retrieval)에서 다뤘습니다.
 
 ```mermaid
 graph LR
@@ -219,23 +219,28 @@ $$\{c_1, c_2, \ldots, c_K\} = \text{K-Means}(\{u_i\}_{i \in S}, K)$$
 
 $$\text{Lookalike}_{\text{multi}}(S, k) = \bigcup_{j=1}^{K} \text{TopK}_{u \notin S}\left(\text{sim}(u, c_j)\right)$$
 
-각 Centroid에서 독립적으로 ANN 검색을 수행한 후, 결과를 합집합하고 중복을 제거합니다. 최종 순위는 모든 Centroid 중 최대 유사도를 기준으로 정합니다:
+각 Centroid에서 독립적으로 ANN 검색을 수행한 후, 결과를 합집합하고 중복을 제거합니다. 최종 순위는 모든 Centroid 중 최대 유사도를 기준으로 정합니다.
 
 $$\text{score}(u) = \max_{j=1}^{K} \text{sim}(u, c_j)$$
 
 **K 선택**: 보통 K=3~5로 시작합니다. K가 너무 크면 각 서브클러스터의 Seed가 너무 작아져서 의미 없는 Centroid가 생기고, K=1이면 단순 Mean Centroid와 동일합니다. Silhouette Score를 기반으로 최적 K를 자동 탐색할 수도 있지만, 실무에서는 K=3으로 시작한 후 Lookalike 성과를 보면서 조정하는 것이 일반적입니다.
 
-다음은 Multi-Centroid Lookalike의 전체 구현 예시입니다:
+다음은 Multi-Centroid Lookalike의 전체 구현 예시입니다.
 
 ```python
 import numpy as np
 import faiss
 from sklearn.cluster import KMeans
 
-# 1. Seed 임베딩 로드
-seed_embeddings = np.load('seed_embeddings.npy').astype('float32')  # (n_seed, 128)
-all_embeddings = np.load('all_user_embeddings.npy').astype('float32')  # (N, 128)
-all_user_ids = np.load('all_user_ids.npy')
+# 1. Seed 임베딩 로드 — 실전에서는 np.load(...), 여기서는 재현 가능한 가짜 데이터
+rng = np.random.default_rng(42)
+N, DIM, N_SEED = 200_000, 128, 3_000
+centers = rng.normal(size=(3, DIM)).astype('float32')      # 숨어 있는 3개 취향 군집
+all_embeddings = rng.normal(size=(N, DIM)).astype('float32')
+all_embeddings[:12_000] += 2.0 * centers[rng.integers(0, 3, 12_000)]
+all_user_ids = np.arange(N)
+seed_user_ids = np.arange(N_SEED)                          # 앞 3,000명이 전환 유저
+seed_embeddings = all_embeddings[seed_user_ids].copy()
 
 # 2. 정규화 (cosine similarity → inner product)
 faiss.normalize_L2(seed_embeddings)
@@ -266,7 +271,7 @@ for j in range(K_SUB):
         all_scores[idx] = max(all_scores[idx], score)
 
 # 6. Seed 제외 + 상위 K 추출
-seed_user_set = set(np.load('seed_user_ids.npy'))
+seed_user_set = set(seed_user_ids)
 candidates = [
     (all_user_ids[i], all_scores[i])
     for i in range(len(all_scores))
@@ -278,6 +283,11 @@ lookalike_audience = candidates[:TOP_K]
 print(f"Lookalike audience size: {len(lookalike_audience)}")
 print(f"Top similarity: {lookalike_audience[0][1]:.4f}")
 print(f"Bottom similarity: {lookalike_audience[-1][1]:.4f}")
+
+# 출력:
+# Lookalike audience size: 50000
+# Top similarity: 0.9435
+# Bottom similarity: 0.1246
 ```
 
 **코드 설명**:
@@ -286,7 +296,9 @@ print(f"Bottom similarity: {lookalike_audience[-1][1]:.4f}")
 3. 유저별로 모든 Centroid에 대한 유사도의 최대값을 저장합니다 (Multi-Centroid의 핵심).
 4. Seed 유저를 제외하고 유사도 내림차순으로 정렬하여 최종 Lookalike 오디언스를 생성합니다.
 
-프로덕션에서는 `IndexFlatIP` 대신 `IndexIVFPQ` 등 근사 인덱스를 사용하여 수억 유저 규모에서도 효율적으로 검색합니다. 인덱스 선택에 대한 상세는 [Two-Tower Model](post.html?id=two-tower-retrieval)의 ANN 섹션을 참고하세요.
+출력의 맨 위는 0.9435, 맨 아래는 0.1246입니다. 같은 오디언스 안에서도 뒤로 갈수록 유사도가 이렇게 무너집니다. 6절의 Expansion 트레이드오프가 바로 이 숫자입니다.
+
+프로덕션에서는 `IndexFlatIP` 대신 `IndexIVFPQ` 등 근사 인덱스를 사용하여 수억 유저 규모에서도 효율적으로 검색합니다. 자세한 인덱스 선택은 [Two-Tower Model](post.html?id=two-tower-retrieval)의 ANN 절에 있습니다.
 
 ### 3-4. Embedding Lookalike의 장단점 정리
 
@@ -302,7 +314,7 @@ print(f"Bottom similarity: {lookalike_audience[-1][1]:.4f}")
 - **Centroid 함정**: Seed가 이질적이면 Mean Centroid가 무의미해집니다. Multi-Centroid로 완화할 수 있지만 완전한 해결은 아닙니다.
 - **비선형 관계 미포착**: cosine similarity는 선형 거리 메트릭이므로, "Seed와 비선형적으로 유사한" 패턴을 놓칠 수 있습니다.
 
-이러한 한계를 극복하기 위해, 많은 프로덕션 시스템에서는 Embedding 기반을 **1차 필터(Retrieval)**로 사용하고, Propensity 기반을 **2차 정렬(Ranking)**로 사용하는 Two-Stage 구조를 채택합니다.
+많은 프로덕션 시스템은 이 한계를 Two-Stage 구조로 우회합니다. Embedding 기반이 **1차 필터(Retrieval)**, Propensity 기반이 **2차 정렬(Ranking)**입니다.
 
 ```mermaid
 graph LR
@@ -313,13 +325,13 @@ graph LR
   PROP_SCORE --> FINAL["최종 Lookalike<br/>(Top 50K)"]
 ```
 
-이 Two-Stage 구조는 ANN으로 빠르게 후보를 줄이고(10M → 100K), Propensity로 정밀하게 순위를 매겨(100K → 50K) 속도와 정밀도를 동시에 달성합니다.
+ANN이 후보를 10M에서 100K로 빠르게 줄입니다. 그다음 Propensity가 100K에서 50K로 정밀하게 순위를 매깁니다. 속도와 정밀도를 함께 얻는 구조입니다.
 
 ---
 
 ## 4. Propensity 기반 Lookalike
 
-Embedding 기반이 "거리"를 활용한다면, Propensity 기반은 "확률"을 활용합니다. "이 유저가 Seed에 포함될 확률"을 예측하는 이진 분류기(Binary Classifier)를 학습하고, 높은 확률의 유저를 Lookalike로 선정합니다. 대부분의 프로덕션 환경에서 **Embedding보다 높은 Precision**을 달성하는 것으로 알려져 있습니다.
+Embedding 기반이 "거리"를 활용한다면, Propensity 기반은 "확률"을 활용합니다. "이 유저가 Seed에 포함될 확률"을 예측하는 이진 분류기(Binary Classifier)를 학습합니다. 그리고 확률이 높은 유저를 Lookalike로 뽑습니다. 대부분의 프로덕션 환경에서 **Embedding보다 높은 Precision**을 달성하는 것으로 알려져 있습니다.
 
 ```mermaid
 graph LR
@@ -341,7 +353,7 @@ graph LR
 
 ### 4-1. Seed vs Non-Seed 이진 분류
 
-Lookalike를 이진 분류 문제로 재정의합니다:
+Lookalike를 이진 분류 문제로 재정의합니다.
 
 - **Positive (label = 1)**: Seed 유저
 - **Negative (label = 0)**: 일반 모집단에서 샘플링한 유저
@@ -350,7 +362,7 @@ $$P(\text{seed} \mid x) = \sigma(f(x; \theta))$$
 
 여기서 $\sigma$는 sigmoid 함수, $f$는 분류 모델, $x$는 유저 피처 벡터입니다. 모든 유저에 대해 이 확률(Propensity Score)을 계산하고, 높은 순서대로 Lookalike 오디언스를 구성합니다.
 
-Embedding 기반과의 핵심 차이는 **입력 데이터의 풍부함**입니다. Embedding 기반은 미리 학습된 고정 차원의 벡터만 사용하지만, Propensity 기반은 원시 피처(demographics, 행동 집계, 디바이스 정보, 시간대 패턴 등) 전체를 활용합니다. 모델이 "어떤 피처가 Seed와 Non-Seed를 구분하는 데 중요한지"를 직접 학습하므로, 임베딩에 포착되지 않은 패턴도 활용할 수 있습니다.
+Embedding 기반과의 핵심 차이는 **입력 데이터의 풍부함**입니다. Embedding 기반은 미리 학습된 고정 차원의 벡터만 씁니다. Propensity 기반은 원시 피처를 전부 씁니다. demographics, 행동 집계, 디바이스 정보, 시간대 패턴 같은 것들입니다. 모델이 "무엇이 Seed와 Non-Seed를 가르는지"를 직접 학습합니다. 그래서 임베딩에 포착되지 않은 패턴도 쓸 수 있습니다.
 
 **Feature Set 구성** (예시):
 - **Demographics**: 연령대, 성별, 지역
@@ -370,9 +382,9 @@ Embedding 기반과의 핵심 차이는 **입력 데이터의 풍부함**입니�
 | **XGBoost / LightGBM** | Feature interaction 자동 학습, 높은 성능, 빠른 학습 | 고차원 임베딩 활용 제한적 | 대부분의 프로덕션 환경 |
 | **DNN (DeepFM 등)** | 임베딩 + 피처 동시 학습, 풍부한 high-order interaction | 학습 시간 길고 해석 어려움 | 임베딩 풍부 + 대규모 데이터 |
 
-[Deep CTR Models](post.html?id=deep-ctr-models)에서 다룬 DeepFM, DCN의 아키텍처가 여기서도 그대로 적용됩니다. CTR 예측과 Lookalike의 모델 구조가 유사한 이유는 — 둘 다 "유저 피처 → 이진 확률"을 예측하는 문제이기 때문입니다. 차이는 레이블의 정의(클릭 vs Seed 소속)뿐입니다.
+DeepFM, DCN의 아키텍처가 여기서도 그대로 적용됩니다. 둘은 [Deep CTR Models](post.html?id=deep-ctr-models)에서 다뤘습니다. CTR 예측과 Lookalike의 모델 구조가 유사한 이유는 — 둘 다 "유저 피처 → 이진 확률"을 예측하는 문제이기 때문입니다. 차이는 레이블의 정의(클릭 vs Seed 소속)뿐입니다.
 
-다음은 XGBoost 기반 Propensity Lookalike의 구현 예시입니다:
+다음은 XGBoost 기반 Propensity Lookalike의 구현 예시입니다.
 
 ```python
 import xgboost as xgb
@@ -381,8 +393,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 
 # 1. 데이터 구성: Seed (label=1) + Random Sample (label=0)
-seed_features = np.load('seed_features.npy')       # (n_seed, d)
-population_features = np.load('population_features.npy')  # (n_pop, d)
+#    실전에서는 np.load(...), 여기서는 재현 가능한 가짜 피처
+np.random.seed(42)
+rng = np.random.default_rng(42)
+population_features = rng.normal(size=(200_000, 32))  # (n_pop, d)
+seed_features = rng.normal(size=(3_000, 32))          # (n_seed, d)
+seed_features[:, :8] += 0.8      # 32개 중 8개 피처가 Seed와 일반 유저를 가른다
 
 # Negative sampling: 1:10 비율 (seed 대비 10배)
 n_neg = len(seed_features) * 10
@@ -392,7 +408,7 @@ neg_features = population_features[neg_indices]
 X = np.vstack([seed_features, neg_features])
 y = np.array([1] * len(seed_features) + [0] * n_neg)
 
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
 # 2. XGBoost 학습
 dtrain = xgb.DMatrix(X_train, label=y_train)
@@ -417,7 +433,7 @@ model = xgb.train(
 )
 
 # 3. 전체 유저 스코어링
-all_features = np.load('all_user_features.npy')
+all_features = population_features
 dall = xgb.DMatrix(all_features)
 propensity_scores = model.predict(dall)
 
@@ -429,6 +445,13 @@ lookalike_indices = [i for i in ranked_indices if i not in seed_index_set][:top_
 
 print(f"AUC: {roc_auc_score(y_val, model.predict(dval)):.4f}")
 print(f"Lookalike top propensity: {propensity_scores[lookalike_indices[0]]:.4f}")
+
+# 출력:
+# [0]	val-auc:0.82460
+# [50]	val-auc:0.93412
+# [82]	val-auc:0.93408
+# AUC: 0.9341
+# Lookalike top propensity: 0.9900
 ```
 
 **코드 설명**:
@@ -448,9 +471,9 @@ Propensity Lookalike에서 **Negative 세트 구성은 모델 성능을 결정�
 | **Stratified Sampling** | 인구통계 분포를 유지하며 샘플 | Demographic 편향 방지 | 구현 약간 복잡 |
 | **Hard Negative Mining** | Seed 근처지만 전환하지 않은 유저 샘플 | 미세한 차이 학습, 높은 Precision | 모델이 과도하게 보수적으로 학습할 위험 |
 
-[Negative Sampling & Bias](post.html?id=negative-sampling-bias)에서 다룬 선택 편향(Selection Bias) 문제가 여기서도 동일하게 적용됩니다.
+선택 편향(Selection Bias) 문제가 여기서도 똑같이 적용됩니다. [Negative Sampling & Bias](post.html?id=negative-sampling-bias)에서 다룬 그 문제입니다.
 
-> Negative 샘플이 Seed와 너무 유사하면 모델이 미세한 차이만 학습하고, 너무 이질적이면 피상적 규칙만 학습합니다. 최적의 Negative는 **"Seed에 가까우면서도 전환하지 않은" 유저**입니다. 실무에서는 Random Sampling으로 시작한 후, Feature Importance를 분석하여 Demographic 피처가 상위를 차지하면 → Stratified로 전환, Precision이 부족하면 → Hard Negative를 추가하는 단계적 접근이 가장 효과적입니다.
+> Negative 샘플이 Seed와 너무 유사하면 모델이 미세한 차이만 학습하고, 너무 이질적이면 피상적 규칙만 학습합니다. 최적의 Negative는 **"Seed에 가까우면서도 전환하지 않은" 유저**입니다. 실무에서는 Random Sampling으로 시작합니다. 그다음 Feature Importance를 봅니다. Demographic 피처가 상위를 차지하면 Stratified로 바꿉니다. Precision이 부족하면 Hard Negative를 추가합니다. 이 단계적 접근이 가장 효과적입니다.
 
 **실무 Tip: Negative Ratio의 영향**
 
@@ -461,11 +484,11 @@ Propensity Lookalike에서 **Negative 세트 구성은 모델 성능을 결정�
 | 1:50 | 약간 높음 | 약간 낮음 (false negative 영향) | 느림 |
 | 1:100 | 높음 | 낮음 (과도한 불균형) | 매우 느림 |
 
-대부분의 경우 **1:10 비율**이 최적 균형점입니다. 비율이 너무 높으면 Negative 중에 실제로 Seed와 유사한 유저(잠재적 Lookalike)가 많이 포함되어, 모델이 이들을 "Negative"로 학습하는 역설이 발생합니다.
+대부분의 경우 **1:10 비율**이 최적 균형점입니다. 비율이 너무 높으면 Negative 안에 Seed와 유사한 유저가 많이 섞입니다. 잠재적 Lookalike인데 모델은 이들을 "Negative"로 배웁니다. 역설이 생기는 지점입니다.
 
 ---
 
-## 5. Graph 기반 Lookalike
+## 5. Graph 기반 Lookalike [무대: 닫힌 생태계]
 
 ### 5-1. 소셜/행동 그래프 확장
 
@@ -513,13 +536,13 @@ graph TD
   C --> E
 ```
 
-User B가 Seed 1과 Seed 2 모두와 연결되어 있으므로 f=0.65로 높은 스코어를 받습니다. User D는 Hop 2이지만 A와 B 두 경로를 통해 Seed와 연결되므로 f=0.41을 받습니다. 이처럼 **다중 경로(Multi-path)**를 통해 연결된 유저가 단일 경로 유저보다 높은 스코어를 받는 것이 Label Propagation의 핵심 특성입니다.
+User B가 Seed 1과 Seed 2 모두와 연결되어 있으므로 f=0.65로 높은 스코어를 받습니다. User D는 Hop 2이지만 A와 B 두 경로를 통해 Seed와 연결되므로 f=0.41을 받습니다. **다중 경로(Multi-path)**로 연결된 유저는 단일 경로 유저보다 높은 스코어를 받습니다. 이것이 Label Propagation의 핵심 특성입니다.
 
 **Meta(Facebook) Lookalike가 강력한 이유**: Meta는 세계 최대의 소셜 그래프(친구 연결), 관심사 그래프(페이지 좋아요, 그룹 멤버십), 인게이지먼트 그래프(포스트 반응, 댓글)를 보유하고 있습니다. 이 다층적 그래프 구조가 전파 경로를 풍부하게 만들어, 단일 채널 데이터로는 발견할 수 없는 유사 유저를 찾아냅니다. [Walled Garden](post.html?id=walled-garden)에서 다룬 것처럼, 이 그래프 데이터는 플랫폼 외부로 유출되지 않으므로 — Meta의 Lookalike 품질은 외부에서 복제가 불가능합니다.
 
 ### 5-2. GNN Embedding + Lookalike
 
-전통적 Label Propagation의 한계를 넘어, **Graph Neural Network(GNN)**를 사용하면 그래프 구조와 노드 피처를 동시에 활용하는 임베딩을 학습할 수 있습니다.
+전통적 Label Propagation에는 한계가 있습니다. **Graph Neural Network(GNN)**를 쓰면 그래프 구조와 노드 피처를 함께 쓰는 임베딩을 학습할 수 있습니다.
 
 **GraphSAGE** (대표적 GNN 아키텍처):
 
@@ -537,7 +560,7 @@ Multi-hop 이웃 집계를 통해 **커뮤니티 구조(Community Structure)**�
 
 $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 
-두 임베딩을 concatenation하면, 개인 행동 패턴(Two-Tower)과 네트워크 위치(GNN)를 동시에 고려하는 Lookalike가 가능합니다. 다만 GNN 학습에는 대규모 그래프 처리 인프라가 필요하므로, 대부분의 in-house 팀에서는 Two-Tower 임베딩으로 시작하고 GNN은 성숙 단계에서 도입합니다.
+두 임베딩을 이어 붙이면(concatenation) 개인 행동 패턴과 네트워크 위치를 함께 봅니다. 앞이 Two-Tower, 뒤가 GNN입니다. 다만 GNN 학습에는 대규모 그래프 처리 인프라가 필요합니다. 그래서 대부분의 in-house 팀은 Two-Tower로 시작하고 GNN은 성숙 단계에서 도입합니다.
 
 ### 5-3. Graph 기반의 장단점과 적용 조건
 
@@ -554,7 +577,7 @@ $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 3. **Embedding 부재**: Two-Tower 모델이 없는 초기 시스템에서 관계 데이터만으로 Lookalike 구현
 4. **Cross-domain**: 여러 서비스 간 유저 관계를 통합할 때 (카카오톡 + 카카오쇼핑 + 카카오맵)
 
-> Graph 기반 Lookalike의 현실적 장벽은 **"그래프 데이터 확보"**입니다. Meta처럼 소셜 그래프를 직접 보유한 플랫폼은 극소수이며, 대부분의 광고 시스템에서는 행동 기반 공동 출현(Co-occurrence) 그래프를 직접 구축해야 합니다. 이 구축 비용이 Embedding/Propensity 대비 높기 때문에, Graph 기반은 **플랫폼 사업자가 아닌 한 ROI가 낮은 접근법**일 수 있습니다.
+> Graph 기반 Lookalike의 현실적 장벽은 **"그래프 데이터 확보"**입니다. Meta처럼 소셜 그래프를 직접 가진 플랫폼은 극소수입니다. 나머지는 행동 기반 공동 출현(Co-occurrence) 그래프를 직접 만들어야 합니다. 이 구축 비용이 Embedding/Propensity보다 높습니다. 그래서 Graph 기반은 **플랫폼 사업자가 아닌 한 ROI가 낮은 접근법**일 수 있습니다.
 
 ---
 
@@ -562,7 +585,7 @@ $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 
 ### 6-1. 1% / 5% / 10% 확장 비교
 
-Expansion Ratio는 전체 모집단 중 Lookalike에 포함할 비율입니다. Facebook의 "1~10% 슬라이더"가 대표적입니다. 모집단 10M(천만 명) 기준으로 구체적인 수치를 비교합니다:
+Expansion Ratio는 전체 모집단 중 Lookalike에 포함할 비율입니다. Facebook의 "1~10% 슬라이더"가 대표적입니다. 모집단 10M(천만 명) 기준으로 구체적인 수치를 비교합니다.
 
 | Expansion | 오디언스 크기 (10M 기준) | Incremental Lift | CPA 변화 | Seed 대비 CVR | 권장 사용처 |
 |-----------|------------------------|-----------------|----------|--------------|-----------|
@@ -571,9 +594,11 @@ Expansion Ratio는 전체 모집단 중 Lookalike에 포함할 비율입니다. 
 | **5%** | 500K | +50% | +40% | 35~45% | 도달 + 퍼포먼스 혼합 |
 | **10%** | 1M | +20% | +70% | 20~30% | 브랜드 인지도 캠페인 |
 
-> Expansion을 1%에서 10%로 늘리면 도달(Reach)은 **10배 증가**하지만, Incremental Lift는 **1/6로 감소**합니다. 이것이 Lookalike의 근본적 트레이드오프입니다. "더 넓게 확장하면 더 좋은 것 아닌가?"라는 직관은 틀렸습니다 — 확장할수록 Seed와의 유사성이 급격히 감소하고, 결국 Broad Targeting과 구분이 없어집니다.
+> Expansion을 1%에서 10%로 늘리면 도달(Reach)은 **10배 증가**하지만, Incremental Lift는 **1/6로 감소**합니다. 이것이 Lookalike의 근본적 트레이드오프입니다. "더 넓게 확장하면 더 좋은 것 아닌가?"라는 직관은 틀렸습니다. 확장할수록 Seed와의 유사성이 급격히 떨어집니다. 결국 Broad Targeting과 구분이 없어집니다.
 
-**수학적 직관**: 임베딩 공간에서 Centroid 주변의 유저 밀도는 대략 거리의 역제곱에 비례합니다. 1% 확장은 Centroid에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 128차원 공간에서 볼륨은 $r^{128}$에 비례하므로, 10배 많은 유저를 포함하려면 반경이 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역에 있는 유저가 대량으로 유입되어 평균 품질이 크게 하락합니다.
+:::deep 더 깊이 — 반경이 1.8%만 늘어도 품질이 무너지는 이유
+임베딩 공간에서 Centroid 주변의 유저 밀도는 대략 거리의 역제곱에 비례합니다. 1% 확장은 Centroid에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 128차원 공간에서 볼륨은 $r^{128}$에 비례합니다. 그래서 10배 많은 유저를 담으려면 반경은 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역 유저가 대량으로 들어옵니다. 그래서 평균 품질이 크게 하락합니다.
+:::
 
 ### 6-2. 광고주 목표별 최적 Expansion
 
@@ -597,7 +622,7 @@ Expansion 5% → CPA $9.5 (목표 초과) → 3%로 롤백
 
 ### 6-3. Tiered Lookalike 전략
 
-하나의 Expansion을 고르는 대신, **여러 Expansion 레벨을 동시에 운영**하면서 각각에 다른 입찰/예산 전략을 적용하는 방법입니다:
+하나의 Expansion을 고르는 대신 **여러 Expansion 레벨을 동시에 운영**하는 방법입니다. 각 레벨에 다른 입찰·예산 전략을 적용합니다.
 
 | Tier | Expansion | 입찰 전략 | 일 예산 비중 | 목적 |
 |------|-----------|---------|------------|------|
@@ -607,7 +632,7 @@ Expansion 5% → CPA $9.5 (목표 초과) → 3%로 롤백
 
 핵심은 **Tier 간 유저 중복을 제거**하는 것입니다. Tier 2에서 Tier 1 유저를 제외하고, Tier 3에서 Tier 1+2 유저를 제외합니다. 이렇게 하면 동일 유저에게 두 번 입찰하는 카니발리제이션을 방지하고, 각 Tier의 순수 Incremental 효과를 측정할 수 있습니다.
 
-이 전략은 Facebook 광고에서 특히 많이 사용되며, 각 Tier를 별도 Ad Set으로 설정하고 "Custom Audience 제외" 기능으로 중복을 관리합니다.
+이 전략은 Facebook 광고에서 특히 많이 씁니다. 각 Tier를 별도 Ad Set으로 만들고, "Custom Audience 제외" 기능으로 중복을 관리합니다.
 
 ---
 
@@ -624,13 +649,15 @@ Lookalike 기능은 대부분의 주요 광고 플랫폼에서 제공하지만, 
 | **Cross-device** | 결정론적 (로그인 기반 ID 매칭) | 결정론적 (Google Account ID) | 확률론적 (Device Graph 추정) | 결정론적 (네이버/카카오 계정 ID) |
 | **한계** | Walled Garden 내부 활성화만 가능 | Similar Audiences 폐지, 자동화 위주 | Cookie 폐지로 데이터 품질 급감 | 각 플랫폼 생태계 내부로 제한 |
 
-[Walled Garden](post.html?id=walled-garden)에서 다룬 것처럼, Walled Garden 플랫폼(Meta, Google, 네이버, 카카오)은 풍부한 1st-party 로그인 데이터를 기반으로 본질적으로 더 높은 품질의 Lookalike를 제공합니다. Open Web DSP는 3rd-party cookie 의존도가 높아 데이터 품질에서 구조적 열위에 있으며, cookie 폐지와 함께 이 격차가 더 벌어지고 있습니다.
+Walled Garden 플랫폼은 풍부한 1st-party 로그인 데이터를 갖고 있습니다. Meta, Google, 네이버, 카카오입니다. 그래서 본질적으로 더 높은 품질의 Lookalike를 제공합니다. 자세한 배경은 [Walled Garden](post.html?id=walled-garden)에 있습니다. Open Web DSP는 3rd-party cookie 의존도가 높습니다. 데이터 품질에서 구조적으로 열위이고, cookie 폐지로 격차가 더 벌어지고 있습니다.
+
+같은 확장 비율이어도 두 무대의 정확도가 다릅니다. 담장 안(닫힌 생태계)은 로그인 ID로 씨앗을 결정론적으로 붙입니다. 열린 RTB는 쿠키·MAID 같은 확률적 신호에 기댑니다. 그래서 같은 5% 확장에서도 열린 RTB의 정확도가 더 빨리 무너집니다.
 
 > Google은 2023년 **Similar Audiences를 폐지**하고 Performance Max의 자동 타겟팅으로 대체했습니다. 이는 Lookalike의 "수동 제어"가 "알고리즘 자동화"로 전환되는 업계 트렌드를 반영합니다. 광고주가 직접 Expansion 비율을 조절하는 대신, 플랫폼 알고리즘이 캠페인 목표(전환, ROAS)에 맞춰 자동으로 오디언스를 확장합니다. 이 전환은 광고주의 제어권을 축소하지만, 동시에 "잘못된 Expansion 설정"으로 인한 성능 저하를 방지하는 효과도 있습니다.
 
 **한국 플랫폼 특수성**:
 
-네이버와 카카오는 각각 검색/쇼핑 데이터와 메시징/소셜 데이터를 기반으로 Lookalike를 제공합니다. 네이버의 강점은 **검색 의도(Intent) 기반 유사 유저 확장**이고, 카카오의 강점은 **메시지/소셜 관계 기반 확장**입니다. 두 플랫폼 모두 로그인 기반 결정론적 식별이 가능하므로 cross-device 매칭 품질이 높지만, 플랫폼 외부(오픈 웹)에서의 활용이 불가능하다는 제한이 있습니다.
+네이버와 카카오는 각각 검색/쇼핑 데이터와 메시징/소셜 데이터를 기반으로 Lookalike를 제공합니다. 네이버의 강점은 **검색 의도(Intent) 기반 유사 유저 확장**이고, 카카오의 강점은 **메시지/소셜 관계 기반 확장**입니다. 두 플랫폼 모두 로그인 기반 결정론적 식별이 가능합니다. 그래서 cross-device 매칭 품질이 높습니다. 다만 플랫폼 외부(오픈 웹)에서는 쓸 수 없습니다.
 
 ---
 
@@ -807,7 +834,7 @@ Seed를 갱신하지 않으면, 시간이 지남에 따라 Lookalike 성능이 �
 
 **Monitoring Dashboard 설계**:
 
-Lookalike 시스템의 건강 상태를 실시간으로 파악하기 위한 대시보드 구성 요소:
+Lookalike 시스템의 건강 상태를 실시간으로 보려면 다음 요소를 대시보드에 올립니다.
 
 ```mermaid
 graph TD
@@ -827,7 +854,7 @@ graph TD
   Metrics --> Alerts
 ```
 
-실무에서는 Airflow/Prefect 등의 오케스트레이션 도구로 Batch 파이프라인을 스케줄링하고, 각 단계의 메트릭을 DataDog/Prometheus 등에 기록합니다. 임계값 위반 시 Slack/PagerDuty 알림을 발송하여 빠른 대응을 유도합니다.
+실무에서는 Airflow/Prefect 같은 도구로 Batch 파이프라인을 스케줄링합니다. 각 단계의 메트릭은 DataDog/Prometheus에 기록합니다. 임계값을 넘으면 Slack/PagerDuty로 알려 빠르게 대응합니다.
 
 **일반적인 장애 시나리오와 대응**:
 
@@ -840,7 +867,7 @@ graph TD
 
 **A/B 테스트 프레임워크**:
 
-Lookalike 모델이나 Seed 정의를 변경할 때는 반드시 A/B 테스트로 검증합니다:
+Lookalike 모델이나 Seed 정의를 변경할 때는 반드시 A/B 테스트로 검증합니다.
 
 - **Treatment**: 새로운 Lookalike 모델/Seed
 - **Control**: 현재 Lookalike 모델/Seed
@@ -850,9 +877,9 @@ Lookalike 모델이나 Seed 정의를 변경할 때는 반드시 A/B 테스트�
 
 ---
 
-## 10. Privacy & 미래: Cookieless 시대의 Lookalike
+## 10. Privacy & 미래: Cookieless 시대의 Lookalike [무대: 열린 RTB]
 
-Lookalike Modeling의 미래를 논의할 때 빠뜨릴 수 없는 주제가 **프라이버시 규제와 3rd-party cookie 폐지**입니다. GDPR, CCPA, 그리고 Apple의 ATT(App Tracking Transparency) 정책은 Lookalike의 기반 데이터를 근본적으로 변화시키고 있습니다.
+Lookalike Modeling의 미래를 논의할 때 빠뜨릴 수 없는 주제가 **프라이버시 규제와 3rd-party cookie 폐지**입니다. GDPR, CCPA, Apple의 ATT(App Tracking Transparency) 정책이 있습니다. 이들이 Lookalike의 기반 데이터를 근본적으로 바꾸고 있습니다.
 
 ### 10-1. Cookie 폐지가 Lookalike에 미치는 영향
 
@@ -873,13 +900,13 @@ Open Web에서 활동하는 DSP(The Trade Desk, DV360 등)의 Lookalike는 가�
 
 **Clean Room 활용**: 광고주와 플랫폼이 데이터를 직접 공유하지 않고, 암호화된 환경(Clean Room)에서 Seed 매칭과 Lookalike 확장을 수행합니다. AWS Clean Rooms, Snowflake Data Clean Room, Google Ads Data Hub가 대표적입니다.
 
-> Cookieless 시대에 Lookalike의 핵심 경쟁력은 **"얼마나 풍부한 1st-party 데이터를 가지고 있는가"**로 전환됩니다. 3rd-party cookie에 의존하던 Lookalike는 소멸하고, 로그인 기반 플랫폼과 1st-party 데이터가 풍부한 광고주만이 고품질 Lookalike를 유지할 수 있습니다.
+> Cookieless 시대에 Lookalike의 핵심 경쟁력은 **"얼마나 풍부한 1st-party 데이터를 가지고 있는가"**로 전환됩니다. 3rd-party cookie에 의존하던 Lookalike는 소멸합니다. 로그인 기반 플랫폼과 1st-party 데이터가 풍부한 광고주만 고품질 Lookalike를 유지합니다.
 
 ---
 
 ## 마무리
 
-Lookalike Modeling은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장 문제입니다. 이 글에서 다룬 핵심 내용을 5가지로 정리합니다:
+Lookalike Modeling은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장 문제입니다. 이 글에서 다룬 핵심 내용을 5가지로 정리합니다.
 
 1. **Embedding 기반은 빠르고, Propensity 기반은 정밀하다** — 첫 버전은 Two-Tower 임베딩 + Centroid ANN으로 빠르게 론칭하고, 성능 개선이 필요하면 Propensity Model(XGBoost/DNN)로 전환합니다. 두 접근법을 결합하면 속도와 정밀도를 동시에 달성할 수 있습니다.
 
@@ -891,7 +918,7 @@ Lookalike Modeling은 "알려진 좋은 유저"에서 "아직 모르는 좋은 �
 
 5. **Lookalike는 "만들고 끝"이 아니다** — Seed Refresh(일 1회), Overlap 모니터링(vs 리타겟팅 < 15%), Incremental Lift 측정(Ghost Ad / PSA Control)이 지속적으로 필요합니다. 갱신 없이 30일이 지나면 CVR이 30% 이상 하락할 수 있습니다.
 
-> Lookalike Modeling의 본질은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장이다. 이 확장의 품질은 [세그멘테이션](post.html?id=audience-segmentation)의 정밀도, [임베딩](post.html?id=two-tower-retrieval)의 표현력, 그리고 Expansion 비율의 절제가 함께 결정한다. 세 요소 중 하나라도 부족하면, Lookalike는 "비슷한 유저"가 아니라 "그냥 아무 유저"를 타겟팅하는 비싼 Broad Targeting이 된다.
+> Lookalike Modeling의 본질은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장이다. 확장의 품질은 세 가지가 함께 결정한다. 첫째 [세그멘테이션](post.html?id=audience-segmentation)의 정밀도. 둘째 [임베딩](post.html?id=two-tower-retrieval)의 표현력. 셋째 Expansion 비율의 절제다. 셋 중 하나라도 부족하면 Lookalike는 비싼 Broad Targeting이 된다. "비슷한 유저"가 아니라 "그냥 아무 유저"를 타겟팅하게 된다.
 
 ---
 

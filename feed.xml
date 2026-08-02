@@ -60,7 +60,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting</id>
     <updated>2026-06-13T00:00:00Z</updated>
-    <summary>비즈보드·모먼트는 무엇으로 광고를 고르나? 줄 세우기의 심장인 pCTR·pCVR 예측, 돈과 직결되는 보정(Calibration), 데모·맞춤·유사타겟, 그리고 톡·다음·맵을 합친 1st-party 데이터의 힘까지 — 카카오의 예측·타겟팅 층을 Deep CTR·멀티태스크·세그멘테이션·룩얼라이크·포지션 편향 글과 잇는 2편.</summary>
+    <summary>카카오는 로그인 데이터로 pCTR을 어떻게 다르게 맞히나? 익명 트래픽과 로그인 기반 피처가 붙었을 때 pCTR이 어떻게 갈리는지, 데모·관심사·맞춤·유사타겟의 도달-전환율 트레이드오프를 가상 데이터로 뜯어본다. CPA만 보면 맞춤타겟이 1등이지만 도달이 8만 명뿐이라 예산 2,000만 원 중 96만 원밖에 못 쓴다 — ‘가장 정확한 타겟이 최선은 아닌’ 이유와 고정 예산의 최적 배분을 파이썬으로 계산한다. 유사타겟이 씨앗에서 확장되는 원리, 예측이 좋아도 보정이 없으면 낙찰자가 바뀌는 이유까지 잇는 카카오 광고 3부작의 2편.</summary>
     <category term="Targeting &amp; Audience"/>
     <category term="Measurement &amp; Modeling"/>
   </entry>
@@ -102,7 +102,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment</id>
     <updated>2026-06-07T00:00:00Z</updated>
-    <summary>약을 먹은 사람이 빨리 나았다 — 약 덕분인가, 원래 건강해서인가? 누가 처치를 받을지 동전 던지기로 정하면 교란변수가 양쪽에 골고루 섞여 두 그룹이 &apos;쌍둥이&apos;가 된다. 그래서 차이가 곧 순수 효과다. A/B 테스트가 왜 인과추론의 황금기준인지, 랜덤화가 편향을 없애는 원리와 그 한계(못 하는 경우)를 비유와 수식으로 풀어낸다.</summary>
+    <summary>약을 먹은 사람이 빨리 나았다 — 약 덕분인가, 원래 건강해서인가? 무작위 배정은 동전 던지기 하나로 이 질문에 답한다. 배정을 특성과 무관하게 만들면, 아는 특성도 모르는 특성도 두 집단에서 평균적으로 같아진다. 기저 전환율 2.0%에서 리프트 +5%·+10%·+20%를 잡으려면 각각 315,207명·80,680명·21,106명이 필요하고, 표본을 반으로 줄이면 검출력이 80.5%에서 50.8%로 급락한다는 걸 5,000회 반복 실험으로 실측한다. 아무 차이 없는 A/A 테스트에서도 5.1%는 ‘유의하다’고 나온다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -118,7 +118,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity</id>
     <updated>2026-06-07T00:00:00Z</updated>
-    <summary>79점과 80점, 사실상 같은 사람인데 한 명만 합격선을 넘었다. 이 &apos;컷오프 바로 위/아래&apos;를 비교하면 거의 실험에 가까운 비교가 된다. 어떤 기준선에서 처치가 갈릴 때 그 경계의 점프로 인과효과를 읽어내는 회귀불연속 설계 — 직관, 컷오프 국소효과 수식, 조작 없음 가정과 국소성 한계, 그리고 입찰가·빈도 캡 같은 광고 임계값 사례까지.</summary>
+    <summary>품질점수 6.95점과 7.00점, 광고 실력은 사실상 같은데 한쪽만 프리미엄 지면을 받는다. 이 컷오프 바로 위·아래를 비교하면 거의 실험에 가까운 비교가 된다. 품질점수 컷·예산 소진율·입찰 바닥값처럼 광고 시스템 곳곳의 칼같은 규칙이 만드는 자연 실험 — 컷 근처 가데이터로 보는 점프, 밴드폭을 넓힐수록 단순 평균차의 편향이 0.05에서 1.20으로 커지는 반면 local linear는 0.01 근처에 머무는 파이썬 시뮬레이션, 조작(manipulation)과 밀도 검정, 그리고 sharp RDD와 fuzzy RDD가 도구변수(IV)로 이어지는 지점까지.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -126,7 +126,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=instrumental-variables"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=instrumental-variables</id>
     <updated>2026-06-07T00:00:00Z</updated>
-    <summary>교란변수 때문에 X가 Y에 주는 진짜 효과를 못 볼 때, X를 &apos;우연히&apos; 흔드는 외부 손잡이(도구변수 Z)를 찾는다. 직접 못 미는 그네를 바람이 밀어준 만큼만 보고 효과를 추정하는 셈. 2SLS와 Wald 추정량의 직관, 도구가 갖춰야 할 세 조건(관련성·배제·독립성)과 약한 도구 문제, 그리고 광고 노출을 무작위화 못 할 때의 encouragement design 사례까지.</summary>
+    <summary>캠페인을 10만 명에게 배정해도 실제로 광고를 본 건 4만 명뿐이다 — 나머지는 앱을 안 열었거나 노출에 실패했다. 실제로 본 사람과 안 본 사람을 그냥 비교하면 naive 효과가 참값(2.5%p)의 거의 두 배(+4.86%p)로 부풀지만, 배정 효과(ITT, +1.0%p)를 실제 노출 비율(순응률 40%)로 나누면 실제 노출자에 대한 참 효과(LATE, +2.5%p)가 그대로 복원된다. 이게 도구변수(IV)의 핵심 트릭이다. 좋은 도구가 갖춰야 할 조건(관련성·배제 제약·독립성), 순응률이 10%로 떨어지면 추정치의 흩어짐이 6배 넘게 커지는 약한 도구 문제, 2SLS가 이 나눗셈의 일반형이라는 사실까지 파이썬으로 확인한다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>

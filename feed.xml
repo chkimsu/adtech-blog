@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-07-26T00:00:00Z</updated>
+  <updated>2026-08-02T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>모델 모니터링 — 조용히 나빠지는 것을 어떻게 알아채나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=model-monitoring"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=model-monitoring</id>
+    <updated>2026-08-02T00:00:00Z</updated>
+    <summary>서버가 죽으면 알람이 울리지만 모델이 나빠지면 아무 알람도 없습니다. 200 OK로 답하고 그럴듯한 숫자를 내놓는데 그 숫자가 틀린 것입니다. 60일 시뮬레이션에서 40일차에 사고를 넣어 보면, 예측 분포를 보는 쪽은 사고 1일 뒤에 알람이 울리고 라벨 확정을 기다리는 쪽은 8일 뒤에 울립니다. 세그먼트를 쪼개는 것도 필수입니다 — 전체 COPC가 1.000으로 완벽한데 지면별로는 0.42에서 1.50까지 흩어져, 예측 클릭의 7.1%가 엉뚱한 지면에 얹혀 있는 상황이 만들어집니다. PSI 임계값 0.1도 표본에 따라 뜻이 달라져서, 표본 300건이면 아무 문제 없어도 평균 0.029가 나옵니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>CTR 피처 엔지니어링 실전: 무엇을 모델에 넣나 — 해싱·시퀀스·집계 피처를 만드는 법</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ctr-feature-engineering"/>
@@ -160,14 +169,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity</id>
     <updated>2026-06-07T00:00:00Z</updated>
     <summary>품질점수 6.95점과 7.00점, 광고 실력은 사실상 같은데 한쪽만 프리미엄 지면을 받는다. 이 컷오프 바로 위·아래를 비교하면 거의 실험에 가까운 비교가 된다. 품질점수 컷·예산 소진율·입찰 바닥값처럼 광고 시스템 곳곳의 칼같은 규칙이 만드는 자연 실험 — 컷 근처 가데이터로 보는 점프, 밴드폭을 넓힐수록 단순 평균차의 편향이 0.05에서 1.20으로 커지는 반면 local linear는 0.01 근처에 머무는 파이썬 시뮬레이션, 조작(manipulation)과 밀도 검정, 그리고 sharp RDD와 fuzzy RDD가 도구변수(IV)로 이어지는 지점까지.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>도구변수(IV): 직접 못 흔드는 원인을, 바람을 빌려 미는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=instrumental-variables"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=instrumental-variables</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>캠페인을 10만 명에게 배정해도 실제로 광고를 본 건 4만 명뿐이다 — 나머지는 앱을 안 열었거나 노출에 실패했다. 실제로 본 사람과 안 본 사람을 그냥 비교하면 naive 효과가 참값(2.5%p)의 거의 두 배(+4.86%p)로 부풀지만, 배정 효과(ITT, +1.0%p)를 실제 노출 비율(순응률 40%)로 나누면 실제 노출자에 대한 참 효과(LATE, +2.5%p)가 그대로 복원된다. 이게 도구변수(IV)의 핵심 트릭이다. 좋은 도구가 갖춰야 할 조건(관련성·배제 제약·독립성), 순응률이 10%로 떨어지면 추정치의 흩어짐이 6배 넘게 커지는 약한 도구 문제, 2SLS가 이 나눗셈의 일반형이라는 사실까지 파이썬으로 확인한다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

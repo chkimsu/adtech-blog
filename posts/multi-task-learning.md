@@ -6,7 +6,7 @@
 
 > **문제 정의**는 [pCVR 모델링](post.html?id=pcvr-modeling)에 있습니다. SSB, 지연 전환, 중복 전환이 거기 있습니다. 이 글은 그 문제를 **구조로 푸는 방법**만 다룹니다. 각 Tower 내부의 구조는 [Deep CTR 모델](post.html?id=deep-ctr-models)로 넘깁니다. 태스크가 여러 개면 [보정](post.html?id=calibration)도 태스크별로 따로 해야 합니다. 후보 생성 단계는 [Two-Tower 리트리벌](post.html?id=two-tower-retrieval)이 맡습니다.
 
-> **골라 읽는 법** — 긴 글입니다(약 47분). 처음부터 다 읽지 않아도 됩니다.
+> **골라 읽는 법** — 절이 15개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
 > - 왜 pCVR을 따로 학습하면 안 되는지만 → 1~3절
 > - 구조 계보(Shared-Bottom·MMoE·PLE)만 → 5·7·8절

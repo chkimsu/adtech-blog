@@ -12,7 +12,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=attribution-basics"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=attribution-basics</id>
     <updated>2026-06-21T00:00:00Z</updated>
-    <summary>민지가 운동화를 샀다 — 며칠 전 인스타 광고, 어제 검색광고, 스쳐 간 유튜브 중 누구 공일까? 하나의 전환에 공을 나눠 주는 규칙(라스트클릭·멀티터치)과 어트리뷰션 윈도우, 실제 도구(AppsFlyer·Adjust·Airbridge)와 iOS ATT의 벽, 그리고 ‘공 나누기’와 ‘진짜 효과(증분)’가 왜 다른지를 예시로 푼다.</summary>
+    <summary>민지가 ₩89,000 운동화를 샀다. 2주간 인스타 노출 3번, 검색광고 클릭, 브랜드검색 클릭 — 이 매출은 누구 공일까? 실제 여정 로그에 라스트클릭·퍼스트클릭·선형·시간감쇠·U자형 다섯 규칙을 그대로 적용해 보면, 같은 여정에서 네이버 검색광고의 성과가 ₩0과 ₩89,000 사이를 오간다. 윈도우를 7일에서 2일로 줄이면 또 달라지고, 홀드아웃으로 재 보면 어트리뷰션이 말하는 2,500건 중 실제 광고가 만든 건 500건뿐이다(5배 과대). 파이썬 코드로 직접 나눠 보고, 겉보기 CPA ₩4,000과 증분 CPA ₩20,000이 왜 정반대 결론을 주는지까지.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -20,7 +20,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=header-bidding"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=header-bidding</id>
     <updated>2026-06-21T00:00:00Z</updated>
-    <summary>같은 광고 자리를 파는 방법만 바꿔 매체 수익을 평균 +10~30% 올린 기술. 구매처를 순서대로 부르던 Waterfall의 손해, 페이지 머리(header)의 Prebid.js가 동시에 부르며 가격을 끌어올리는 원리, 클라이언트 vs 서버 사이드(Google Open Bidding·Amazon TAM), 그리고 1st-price 전환과의 관계까지 숫자 예시로 정리한다.</summary>
+    <summary>매체가 광고 자리 하나를 파는데, 6개 SSP의 입찰가 중 가장 비싼 ₩1,420짜리는 순서에 밀려 아예 질문도 받지 못한다 — Waterfall이 흘리는 돈은 정확히 ₩420, 42%다. 페이지 머리(header)의 Prebid.js가 SSP들을 동시에 불러 그 손실을 되찾는 원리, 타임아웃을 100ms에서 300ms로 늘릴 때 낙찰가가 ₩980에서 ₩1,420까지 움직이는 트레이드오프, 클라이언트 vs 서버 사이드(Google Open Bidding·Amazon TAM), 그리고 1st-price 전환과 Bid Shading까지 파이썬 시뮬레이터로 직접 확인한다.</summary>
     <category term="Bidding &amp; Auction"/>
   </entry>
   <entry>
@@ -28,7 +28,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction</id>
     <updated>2026-06-21T00:00:00Z</updated>
-    <summary>DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. pCTR이 무엇이고, 왜 입찰가와 광고 줄 세우기를 모두 좌우하는 ‘광고의 심장’인지, 어떻게 그 확률을 맞히고 왜 보정(Calibration)이 필요한지를 수식 없이 예시로 푼다.</summary>
+    <summary>DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. 가장 비싸게 부른 광고(₩2,000)가 꼴찌, 가장 싸게 부른 광고(₩600)가 1등이 되는 eCPM 랭킹 표로 pCTR이 왜 돈인지 보이고, 순위는 완벽한데 전 구간에서 13% 낮게 보는 보정(Calibration) 사례(COPC 1.13)를 짚는다. 그리고 모든 예측에 0.5를 곱해도 AUC는 소수점까지 그대로인데 LogLoss만 나빠진다는 걸 파이썬으로 직접 증명해, 순위 지표만으로는 이 사고를 못 잡는 이유를 보인다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>

@@ -2683,6 +2683,17 @@ footer {
   .mobile-next-cta { display: none !important; }
 }
 
+/* 이 바는 화면 아래에 고정되어 문서의 마지막 부분을 영구히 덮는다.
+   푸터 저작권 줄이 바 뒤에 숨어 아예 볼 수 없었다(600px에서 확인).
+   바 높이(약 56px) + 아래 여백(1rem)만큼 푸터 밑을 비워 둔다.
+   바가 실제로 뜨는 시점(스크롤 80%)에 여백을 주면 그때 화면이 튀므로,
+   바가 있는 페이지(post.html)에서는 처음부터 자리를 비워 둔다. */
+@media (max-width: 768px) {
+  body:has(#mobile-next-cta) footer {
+    padding-bottom: calc(56px + 2rem);
+  }
+}
+
 /* ========================================
    Post Search Modal
    ======================================== */
@@ -3260,12 +3271,16 @@ body[data-demo-mode="easy"] .is-pro-only {
 }
 
 .demo-term-pop {
+  /* 화면 밖으로 나가지 않게 JS(clampTermPopovers)가 좌우로 밀어 주는 양.
+     숨어 있어도(visibility:hidden) 레이아웃 폭은 차지하므로, 이걸 안 잡으면
+     오른쪽 여백에 걸린 용어 하나가 문서 전체에 가로 스크롤을 만든다. */
+  --pop-shift: 0px;
   visibility: hidden;
   opacity: 0;
   position: absolute;
   bottom: calc(100% + 10px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--pop-shift)));
   z-index: 100;
   width: min(320px, 80vw);
   padding: 0.85rem 1rem;
@@ -3295,17 +3310,27 @@ body[data-demo-mode="easy"] .is-pro-only {
   content: '';
   position: absolute;
   top: 100%;
-  left: 50%;
+  /* 말풍선이 옆으로 밀렸어도 꼬리는 원래 용어를 계속 가리켜야 한다 → 반대로 되민다 */
+  left: calc(50% - var(--pop-shift));
   transform: translateX(-50%);
   border: 6px solid transparent;
   border-top-color: var(--accent-primary);
 }
 
-.demo-term-pop strong {
+/* 말풍선의 첫 <strong>만 제목이다(makePop이 '용어 · 풀이말'로 넣는다).
+   용어 사전 본문에도 강조용 <strong>이 23곳 있는데, 여기에 display:block이 걸리면
+   문장 중간에서 줄이 끊겨 "…DSP들이 / 100ms 이내에 / 실시간으로…"처럼 토막난다. */
+.demo-term-pop > strong:first-child {
   color: var(--accent-primary);
   display: block;
   margin-bottom: 0.3rem;
   font-size: 0.92rem;
+}
+
+/* 본문 안 강조는 문장 흐름을 끊지 않고 굵게만 */
+.demo-term-pop strong {
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .demo-term-pop code {

@@ -182,6 +182,46 @@ function setupDemoTermPopover() {
   });
 }
 
+// 용어 말풍선을 화면 안으로 붙잡는다.
+//
+// 말풍선은 용어 위에 가운데 정렬(left:50% + translateX(-50%))로 뜬다. 오른쪽 여백에
+// 걸린 용어에서는 320px 상자가 화면 밖으로 삐져나가는데, visibility:hidden 상태에서도
+// 레이아웃 폭은 그대로 차지한다. 그래서 용어 하나가 문서 전체에 가로 스크롤을 만든다.
+// (600px 화면에서 문서 폭이 585 → 643으로 늘어나는 걸 확인했다.)
+// 보이기 전에 미리 밀어 둬야 하므로 렌더 직후와 리사이즈 때 계산한다.
+function clampTermPopovers() {
+  const pops = document.querySelectorAll('.demo-term-pop');
+  if (!pops.length) return;
+  const MARGIN = 12;
+  const vw = document.documentElement.clientWidth;
+
+  // 두 번에 나눠 돈다: 먼저 전부 원위치로(측정 기준을 같게), 그 다음 한꺼번에 측정.
+  // 하나씩 쓰고-읽으면 요소마다 레이아웃을 다시 계산하게 된다.
+  pops.forEach(pop => pop.style.setProperty('--pop-shift', '0px'));
+  const shifts = [...pops].map(pop => {
+    const r = pop.getBoundingClientRect();
+    if (r.width === 0) return 0;                       // 아직 렌더 안 됨
+    if (r.right > vw - MARGIN) return Math.round(vw - MARGIN - r.right);
+    if (r.left < MARGIN) return Math.round(MARGIN - r.left);
+    return 0;
+  });
+  pops.forEach((pop, i) => {
+    if (shifts[i]) pop.style.setProperty('--pop-shift', `${shifts[i]}px`);
+  });
+}
+
+// 리사이즈는 연속으로 쏟아지므로 다음 프레임에 한 번만 계산한다.
+let clampQueued = false;
+function queueClampTermPopovers() {
+  if (clampQueued) return;
+  clampQueued = true;
+  requestAnimationFrame(() => {
+    clampQueued = false;
+    clampTermPopovers();
+  });
+}
+window.addEventListener('resize', queueClampTermPopovers);
+
 // 본문 adtech 용어를 GLOSSARY 정의와 연결 → .demo-term 툴팁(용어당 글 1회).
 // 코드/링크/헤딩/KaTeX/수식($) 텍스트는 건드리지 않는다.
 function autoLinkGlossary(container) {
@@ -223,6 +263,7 @@ function autoLinkGlossary(container) {
   }
   walk(container);
   setupDemoTermPopover();                                         // 새 .demo-term에 모바일 탭/접근성
+  queueClampTermPopovers();                                       // 말풍선을 화면 안으로 (가로 스크롤 방지)
 }
 
 // Add aria-current to active nav links based on current page

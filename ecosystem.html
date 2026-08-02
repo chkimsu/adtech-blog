@@ -141,7 +141,11 @@
     <!-- Main layout: Graph + Side panel -->
     <div class="eco-main-layout">
       <div class="eco-graph-wrap" id="eco-graph-wrap">
-        <svg id="eco-graph" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid meet" role="img"
+        <!-- role="group"이어야 안쪽 21개 노드(role="button", tabindex=0)가 스크린리더에 노출된다.
+             role="img"는 하위 트리를 하나의 그림으로 뭉개서, 키보드로는 탭이 되는데
+             읽어 주는 내용은 없는 상태가 된다. -->
+        <svg id="eco-graph" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid meet" role="group"
+             aria-roledescription="다이어그램"
              aria-label="광고 생태계 지도 — 위쪽 두뇌 층(ML 파이프라인)과 아래쪽 거래 층으로 나눈 21개 모듈과 그 연결"></svg>
         <div id="eco-tooltip" class="eco-tooltip"></div>
         <div class="eco-flow-bar" id="eco-flow-bar" hidden>

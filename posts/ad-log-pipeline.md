@@ -502,10 +502,10 @@ graph LR
   CLK -->|click_id| CONV
   CONV -->|conversion_id| ATTR
 
-  style REQ fill:#36a2eb,stroke:#36a2eb,color:#fff
-  style IMP fill:#36a2eb,stroke:#36a2eb,color:#fff
-  style CLK fill:#ff6384,stroke:#ff6384,color:#fff
-  style CONV fill:#ff9f40,stroke:#ff9f40,color:#fff
+  style REQ fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+  style IMP fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+  style CLK fill:#b0442c,stroke:#b0442c,color:#fff
+  style CONV fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
 핵심 JOIN key 체인: `request_id` → `impression_id` → `click_id` → `conversion_id`. 이 체인이 끊어지면 학습 데이터를 만들 수 없습니다.
@@ -597,7 +597,7 @@ training_data = (
   </div>
 </div>
 
-실시간 로그(녹색)는 DSP 내부에서 동기적으로 기록할 수 있지만, 지연 로그(주황/분홍)는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [Delayed Feedback](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
+노출·클릭까지의 실시간 로그는 DSP 내부에서 동기적으로 기록할 수 있습니다. 하지만 전환·어트리뷰션 같은 지연 로그는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [Delayed Feedback](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
 
 ---
 

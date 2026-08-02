@@ -245,15 +245,15 @@ graph TD
     F --> H
     H --> I["광고주 ROI 악화<br/>플랫폼 신뢰도 하락"]
 
-    style A fill:#ff6384,stroke:#ff6384,color:#fff
-    style B fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style C fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style D fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style E fill:#ffce56,stroke:#ffce56,color:#333
-    style F fill:#ffce56,stroke:#ffce56,color:#333
-    style G fill:#ff6384,stroke:#ff6384,color:#fff
-    style H fill:#ff6384,stroke:#ff6384,color:#fff
-    style I fill:#9966ff,stroke:#9966ff,color:#fff
+    style A fill:#b0442c,stroke:#b0442c,color:#fff
+    style B fill:#8f6231,stroke:#8f6231,color:#fff
+    style C fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style D fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style E fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style F fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style G fill:#b0442c,stroke:#b0442c,color:#fff
+    style H fill:#b0442c,stroke:#b0442c,color:#fff
+    style I fill:#8a6a3a,stroke:#8a6a3a,color:#fff
 ```
 
 핵심은 이것입니다. **AUC가 높은 모델의 Miscalibration은 오히려 더 위험합니다.** AUC가 높으면 팀은 자신감을 갖고 배포합니다. 그런데 Calibration이 틀어져 있으면, 잘못된 확률값이 그 자신감을 타고 시스템 전체로 퍼집니다.
@@ -568,14 +568,14 @@ graph LR
         RECAL --> CAL
     end
 
-    style TRAIN fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style RAW fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style CAL fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style CALMODEL fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style DEPLOY fill:#ffce56,stroke:#ffce56,color:#333
-    style MONITOR fill:#ffce56,stroke:#ffce56,color:#333
-    style DRIFT fill:#ff6384,stroke:#ff6384,color:#fff
-    style RECAL fill:#9966ff,stroke:#9966ff,color:#fff
+    style TRAIN fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style RAW fill:#8f6231,stroke:#8f6231,color:#fff
+    style CAL fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style CALMODEL fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style DEPLOY fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style MONITOR fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style DRIFT fill:#b0442c,stroke:#b0442c,color:#fff
+    style RECAL fill:#8a6a3a,stroke:#8a6a3a,color:#fff
 ```
 
 ### 학습-보정 분리 원칙
@@ -642,13 +642,13 @@ graph TD
     F --> G["Online Recalibration<br/>최근 데이터로 Calibrator 갱신"]
     F --> H["모델 재학습 트리거<br/>Calibration 깨짐이 심각한 경우"]
 
-    style A fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style B fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style D fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style E fill:#ffce56,stroke:#ffce56,color:#333
-    style F fill:#ff6384,stroke:#ff6384,color:#fff
-    style G fill:#9966ff,stroke:#9966ff,color:#fff
-    style H fill:#ff6384,stroke:#ff6384,color:#fff
+    style A fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style B fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style D fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style E fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style F fill:#b0442c,stroke:#b0442c,color:#fff
+    style G fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style H fill:#b0442c,stroke:#b0442c,color:#fff
 ```
 
 | 수준 | P/O Ratio 범위 | 조치 |

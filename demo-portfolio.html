@@ -291,7 +291,7 @@
 
     .po-summary-value.accent { color: var(--accent-primary); }
     .po-summary-value.warn { color: #a8783a; }
-    .po-summary-value.good { color: #5f7a63; }
+    .po-summary-value.good { color: var(--state-good); }
   </style>
 
   <!-- KaTeX -->
@@ -492,8 +492,8 @@
     const SLOTS = [
       { name: 'Slot A · 프리미엄 지면',   desc: '고가치·빨리 포화 (전환 단가 높음)', V: 3.5, K: 60,  color: '#5a6b7a' },
       { name: 'Slot B · 메인 지면',       desc: '균형형 (중간 V, 중간 K)',          V: 2.4, K: 90,  color: '#7d5e72' },
-      { name: 'Slot C · 리테일 지면',     desc: '낮은 V, 큰 용량(느린 포화)',       V: 1.5, K: 140, color: '#9c5a44' },
-      { name: 'Slot D · 리마케팅',        desc: '중간 V, 좁은 타겟(빠른 포화)',     V: 2.2, K: 45,  color: '#5f7a63' },
+      { name: 'Slot C · 리테일 지면',     desc: '낮은 V, 큰 용량(느린 포화)',       V: 1.5, K: 140, color: 'var(--state-bad)' },
+      { name: 'Slot D · 리마케팅',        desc: '중간 V, 좁은 타겟(빠른 포화)',     V: 2.2, K: 45,  color: 'var(--state-good)' },
       { name: 'Slot E · 디스커버리',      desc: '낮은 V, 매우 큰 용량',             V: 1.1, K: 200, color: '#a8783a' }
     ];
     // Start budget equally split
@@ -609,7 +609,7 @@
               </div>
               <div class="po-slot-stat">
                 <div class="po-slot-stat-label">Marginal</div>
-                <div class="po-slot-stat-value" style="color:${mp >= 0 ? '#5f7a63' : '#9c5a44'}">$${mp.toFixed(3)}</div>
+                <div class="po-slot-stat-value" style="color:${mp >= 0 ? 'var(--state-good)' : 'var(--state-bad)'}">$${mp.toFixed(3)}</div>
               </div>
               <div class="po-slot-stat">
                 <div class="po-slot-stat-label">ROAS</div>

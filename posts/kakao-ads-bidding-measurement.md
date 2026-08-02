@@ -24,7 +24,7 @@ graph LR
     PCVR["pCVR 예측<br/>(2편)"] --> BID
     PACE["예산 페이싱<br/>(다음 절)"] --> BID
     BID --> FINAL["요청 1건의 입찰가"]
-    style BID fill:#b026ff,stroke:#b026ff,color:#fff
+    style BID fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 흥미로운 대조가 하나 있다. 열린 RTB에서는 광고주 쪽 DSP가 이 계산을 직접 짜야 한다. [Bid Shading](post.html?id=bid-shading-censored)에서 다룬 문제 그대로다. 경쟁자가 얼마를 부를지 몰라 분포를 추정해야 한다. 카카오 같은 담장 안에서는 이 추정 자체가 필요 없다. 플랫폼이 모든 입찰가를 직접 보고 있기 때문이다. 광고주는 목표만 말하면 나머지는 시스템이 안다. 이 대비는 §6·§7에서 자세히 다룬다.
@@ -243,7 +243,7 @@ graph LR
     IMP["노출·클릭 로그"] --> JOIN["로그 조인"]
     CONV["전환 로그<br/>(픽셀·SDK)"] --> JOIN
     JOIN --> REPORT["전환 84건"]
-    style JOIN fill:#5f7a63,stroke:#5f7a63,color:#fff
+    style JOIN fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 이 로그들을 사람 단위로 잇는 일은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에 있다. 그런데 이 84건은 **어트리뷰션 규칙**이 만든 숫자다. 마지막 클릭에 몰아줄지, 거쳐 간 접점에 나눌지 — 규칙에 따라 같은 로그에서도 다른 숫자가 나온다. 이 규칙과 그 함정은 [어트리뷰션 입문](post.html?id=attribution-basics)에서 자세히 다뤘다. **이 글에서 그 계산을 다시 하지 않는다.**

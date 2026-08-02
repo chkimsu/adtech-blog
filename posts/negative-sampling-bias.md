@@ -72,14 +72,14 @@ graph TD
     G --> H["새 모델이 광고 B에 대해<br/>불확실한 예측 유지"]
     H --> E
 
-    style A fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style B fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style C fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style D fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style E fill:#ff6384,stroke:#ff6384,color:#fff
-    style F fill:#ff6384,stroke:#ff6384,color:#fff
-    style G fill:#ff6384,stroke:#ff6384,color:#fff
-    style H fill:#ff6384,stroke:#ff6384,color:#fff
+    style A fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style B fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style C fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style D fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style E fill:#b0442c,stroke:#b0442c,color:#fff
+    style F fill:#b0442c,stroke:#b0442c,color:#fff
+    style G fill:#b0442c,stroke:#b0442c,color:#fff
+    style H fill:#b0442c,stroke:#b0442c,color:#fff
 ```
 
 왼쪽 루프(파란색)는 인기 광고의 데이터가 갈수록 풍부해지는 **Rich-Get-Richer** 현상입니다. 오른쪽 루프(빨간색)는 비인기 광고가 기회조차 얻지 못하는 **Cold-Start 고착** 현상입니다. 두 루프가 동시에 돌면 모델은 탐색(Exploration) 없이 활용(Exploitation)만 반복합니다. 이것이 [탐색과 활용](post.html?id=exploration-exploitation) 문제의 데이터 쪽 얼굴입니다.
@@ -547,15 +547,15 @@ graph LR
         H --> I["Calibration<br/>검증 (P/O Ratio)"]
     end
 
-    style A fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style B fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style C fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style D fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style E fill:#9966ff,stroke:#9966ff,color:#fff
-    style F fill:#9966ff,stroke:#9966ff,color:#fff
-    style G fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style H fill:#ff6384,stroke:#ff6384,color:#fff
-    style I fill:#ff6384,stroke:#ff6384,color:#fff
+    style A fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style B fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style C fill:#8f6231,stroke:#8f6231,color:#fff
+    style D fill:#8f6231,stroke:#8f6231,color:#fff
+    style E fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style F fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style G fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style H fill:#b0442c,stroke:#b0442c,color:#fff
+    style I fill:#b0442c,stroke:#b0442c,color:#fff
 ```
 
 ### 각 단계별 실무 선택지

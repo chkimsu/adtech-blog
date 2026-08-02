@@ -35,9 +35,9 @@ graph LR
   REQ --> CAND --> FEAT --> FILT --> SCORE --> RANK --> CREA --> RESP
   RESP -.->|"응답 막지 않음"| LOG
 
-  style FILT fill:#ffce56,stroke:#ffce56,color:#333
-  style SCORE fill:#ff6384,stroke:#ff6384,color:#fff
-  style LOG fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+  style FILT fill:#c9a961,stroke:#c9a961,color:#201d1a
+  style SCORE fill:#b0442c,stroke:#b0442c,color:#fff
+  style LOG fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 이 그림에서 눈여겨볼 곳은 두 가지다. 하나는 **필터링과 점수 계산이 색으로 강조된 이유**다. 이 둘이 각각 후보 수와 계산 시간을 가장 크게 좌우한다. §3과 §7에서 이 두 단계를 집중적으로 다룬다.

@@ -30,8 +30,8 @@ graph LR
     PCTR --> SCORE["eCPM<br/>= 입찰가 × 예측"]
     PCVR --> SCORE
     SCORE --> WIN["노출 결정"]
-    style M fill:#ff6384,stroke:#ff6384,color:#fff
-    style SCORE fill:#b026ff,stroke:#b026ff,color:#fff
+    style M fill:#b0442c,stroke:#b0442c,color:#fff
+    style SCORE fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 그런데 같은 모델 구조라도 어디서 돌리느냐에 따라 결과가 달라진다. 재료, 즉 데이터가 다르기 때문이다. 다음 절에서 그 차이를 숫자로 본다.
@@ -218,8 +218,8 @@ graph LR
     CUSTOM --> EXPAND["닮은 사람 찾기<br/>(임베딩 유사도)"]
     POOL["카카오 사용자 풀"] --> EXPAND
     EXPAND --> LAL["유사타겟<br/>(확장 비율 1%·5%·10%)"]
-    style CUSTOM fill:#9a7d38,stroke:#9a7d38,color:#fff
-    style LAL fill:#9a7d38,stroke:#9a7d38,color:#fff
+    style CUSTOM fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style LAL fill:#8a6a3a,stroke:#8a6a3a,color:#fff
 ```
 
 여기서 씨앗의 크기가 결정적이다. 씨앗이 너무 적으면 무슨 일이 생길까. 수백 명 이하라고 하자. 그 사람들의 공통점이 진짜 패턴인지 우연인지 구분이 안 된다. 씨앗 300명 중 다수가 우연히 같은 시간대에 접속했다고 하자. 모델이 그 시간대를 "닮음"의 기준으로 잘못 배울 수 있다. 반대로 씨앗이 너무 많으면 얘기가 달라진다. 수백만 명이라고 하자. 서로 다른 유형이 섞여 평균 자체가 흐려진다. 럭셔리 구매자와 초특가 사냥꾼이 한 씨앗에 섞였다고 하자. 평균은 둘 중 누구도 대표하지 못하는 지점에 놓인다. 그래서 실무에서는 씨앗 크기를 수만에서 수십만 명 사이로 맞추는 게 흔한 기준이다.

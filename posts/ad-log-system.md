@@ -26,11 +26,11 @@ graph LR
     D --> E["Click Log<br/><small>클릭 이벤트</small>"]
     E --> F["Conversion Log<br/><small>전환 이벤트</small>"]
 
-    style B fill:#172554,stroke:#2563eb,color:#93c5fd
-    style C fill:#2e1065,stroke:#7c3aed,color:#c4b5fd
-    style D fill:#1c1917,stroke:#d97706,color:#fcd34d
-    style E fill:#064e3b,stroke:#059669,color:#6ee7b7
-    style F fill:#500724,stroke:#db2777,color:#f9a8d4
+    style B stroke:#4a6b8a
+    style C stroke:#8a6a3a
+    style D stroke:#8f6231
+    style E stroke:#5b7d6a
+    style F stroke:#b0442c
 ```
 
 ### Request Log
@@ -243,11 +243,11 @@ graph TD
     C --> D["경매 낙찰<br/><small>→ 1개</small>"]
     D --> E["Impression Log<br/><small>이것만 기록</small>"]
 
-    style A fill:#1e293b,stroke:#475569,color:#94a3b8
-    style E fill:#500724,stroke:#db2777,color:#f9a8d4
+    style A stroke:#4a6b8a
+    style E stroke:#b0442c
 
     F["나머지 999,999개는?<br/><small>학습 데이터에서 사라짐</small>"]
-    style F fill:#450a0a,stroke:#dc2626,color:#fca5a5
+    style F stroke:#b0442c
 ```
 
 Impression Log만으로 학습하면, 모델은 **"이미 경쟁력 있는 광고들 사이의 미세한 차이"**만 학습합니다. 애초에 Retrieval에서 걸러진 광고, 랭킹에서 탈락한 광고의 패턴은 학습하지 못합니다. 이것이 [Negative Sampling & Sample Selection Bias](post.html?id=negative-sampling-bias)에서 다룬 구조적 편향의 원인입니다.
@@ -269,8 +269,8 @@ graph LR
     E --> F["피처 추출<br/><small>user × ad × context</small>"]
     F --> G["학습 데이터셋"]
 
-    style D fill:#2e1065,stroke:#7c3aed,color:#c4b5fd
-    style G fill:#064e3b,stroke:#059669,color:#6ee7b7
+    style D stroke:#8a6a3a
+    style G stroke:#5b7d6a
 ```
 
 ### pCTR 학습 데이터 생성
@@ -314,9 +314,9 @@ graph LR
     F["Batch 파이프라인<br/><small>Spark / Hive</small>"] --> G["Feature Store<br/><small>배치 피처</small>"]
     G --> E
 
-    style B fill:#172554,stroke:#2563eb,color:#93c5fd
-    style D fill:#064e3b,stroke:#059669,color:#6ee7b7
-    style E fill:#2e1065,stroke:#7c3aed,color:#c4b5fd
+    style B stroke:#4a6b8a
+    style D stroke:#5b7d6a
+    style E stroke:#8a6a3a
 ```
 
 ### 실시간 피처 예시
@@ -376,7 +376,7 @@ graph TD
     end
 
     T1 --> I1
-    style I1 fill:#450a0a,stroke:#dc2626,color:#fca5a5
+    style I1 stroke:#b0442c
 ```
 
 **학습 시**: 모델은 실제 position을 피처로 사용합니다. Position=1에 노출된 광고는 CTR이 높고, Position=3은 낮습니다. 모델은 이 차이를 학습합니다.

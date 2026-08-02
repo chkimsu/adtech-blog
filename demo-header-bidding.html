@@ -231,7 +231,7 @@
       font-family: 'Fira Code', monospace;
       color: var(--text-primary);
     }
-    .hb-result-value.winner { color: #5f7a63; }
+    .hb-result-value.winner { color: var(--state-good); }
     .hb-result-value.loser  { color: var(--text-muted); }
 
     /* Aggregate chart card */
@@ -484,8 +484,8 @@
     const SSPS = [
       { name: 'SSP A · Premium', color: '#5a6b7a', cpmMean: 3.20, cpmStd: 1.00, latMean: 180, latStd: 40, fillRate: 0.75 },
       { name: 'SSP B · Open',    color: '#7d5e72', cpmMean: 2.40, cpmStd: 0.80, latMean: 140, latStd: 30, fillRate: 0.85 },
-      { name: 'SSP C · Regional',color: '#9c5a44', cpmMean: 1.80, cpmStd: 0.60, latMean: 120, latStd: 35, fillRate: 0.80 },
-      { name: 'SSP D · Backup',  color: '#5f7a63', cpmMean: 1.10, cpmStd: 0.40, latMean: 200, latStd: 25, fillRate: 0.90 }
+      { name: 'SSP C · Regional',color: 'var(--state-bad)', cpmMean: 1.80, cpmStd: 0.60, latMean: 120, latStd: 35, fillRate: 0.80 },
+      { name: 'SSP D · Backup',  color: 'var(--state-good)', cpmMean: 1.10, cpmStd: 0.40, latMean: 200, latStd: 25, fillRate: 0.90 }
     ];
     const TIMELINE_MAX = 900; // ms
 
@@ -592,7 +592,7 @@
           : '';
         const bg = d.filled ? s.color : '#555';
         const isWinner = outcome.winnerIdx === i;
-        const border = isWinner ? 'box-shadow: 0 0 0 2px #5f7a63, 0 0 15px rgba(95,122,99,0.6);' : '';
+        const border = isWinner ? 'box-shadow: 0 0 0 2px var(--state-good), 0 0 15px rgba(95,122,99,0.6);' : '';
         return `
           <div class="hb-bar">
             ${(end - start) > 0 ? `

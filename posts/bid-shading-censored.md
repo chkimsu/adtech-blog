@@ -157,10 +157,10 @@ graph LR
         OPT --> BID["Optimal Bid b*"]
     end
 
-    style DATA fill:#ff6384,stroke:#ff6384,color:#fff
-    style MODEL fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style OPT fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style BID fill:#ffce56,stroke:#ffce56,color:#333
+    style DATA fill:#b0442c,stroke:#b0442c,color:#fff
+    style MODEL fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style OPT fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style BID fill:#c9a961,stroke:#c9a961,color:#201d1a
 ```
 
 - **Step 1 (분포 추정)**: 과거 경매 데이터에서 시장 가격 분포 $F(b \mid x)$를 학습
@@ -195,7 +195,7 @@ $$\hat{\mu}_{\text{naive}} = \mathbb{E}[W \mid W < b] \;<\; \mathbb{E}[W] = \mu_
 
 관측된 데이터는 모두 "내가 이긴 경매" = **경쟁자 가격이 낮았던 경매**에서만 추출됩니다. 따라서 시장 가격의 평균과 중앙값을 **체계적으로 과소추정**합니다.
 
-데모에서 Censored View를 켜면 나타나는 **분홍 점선**이 바로 이 Naive 추정입니다. 실제 분포(God View)와 비교했을 때:
+데모에서 Censored View를 켜면 나타나는 **벽돌색 점선**이 바로 이 Naive 추정입니다. 실제 분포(God View)와 비교했을 때:
 
 - Mean이 20~40% 과소추정됨
 - Shading을 과도하게 적용 → 낙찰률 급감 → 전체 수익 하락

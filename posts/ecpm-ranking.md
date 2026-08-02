@@ -98,10 +98,10 @@ graph LR
         RANK --> WINNER["승자 결정"]
     end
 
-    style CPM_C fill:#ff6384,stroke:#ff6384,color:#fff
-    style CPC_C fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style CPA_C fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style WINNER fill:#ffce56,stroke:#ffce56,color:#333
+    style CPM_C fill:#b0442c,stroke:#b0442c,color:#fff
+    style CPC_C fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style CPA_C fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style WINNER fill:#c9a961,stroke:#c9a961,color:#201d1a
 ```
 
 이 정규화가 **공정한 비교**를 가능하게 하는 이유는 간단합니다. 모든 캠페인을 "1,000회 노출당 플랫폼 기대 수익"이라는 동일한 단위로 변환했기 때문입니다. 과금 모델이 무엇이든, 플랫폼은 **가장 높은 기대 수익을 주는 광고**를 선택합니다.
@@ -157,9 +157,9 @@ graph TB
     CPCE --> R2["Exchange의<br/>eCPM 환산"]
     WG --> R3["pCTR x Bid<br/>품질 점수"]
 
-    style RTB fill:#ff6384,stroke:#ff6384,color:#fff
-    style CPCE fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style WG fill:#b026ff,stroke:#b026ff,color:#fff
+    style RTB fill:#b0442c,stroke:#b0442c,color:#fff
+    style CPCE fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style WG fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 ### 4.1 Open RTB: 최종 CPM 입찰가 기준 [무대: 열린 RTB]

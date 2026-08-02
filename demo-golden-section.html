@@ -106,8 +106,8 @@
 
         .btn-control.playing {
             background: rgba(156, 90, 68, 0.15);
-            border-color: #9c5a44;
-            color: #9c5a44;
+            border-color: var(--state-bad);
+            color: var(--state-bad);
         }
 
         .btn-control.primary {
@@ -155,7 +155,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), #5f7a63);
+            background: linear-gradient(90deg, var(--accent-primary), var(--state-good));
             border-radius: 3px;
             transition: width 0.3s ease;
             width: 0%;
@@ -222,7 +222,7 @@
         }
 
         .result-box h4 {
-            color: #5f7a63;
+            color: var(--state-good);
             margin-bottom: 0.75rem;
             font-size: 0.9rem;
         }
@@ -250,7 +250,7 @@
         }
 
         .result-highlight {
-            color: #5f7a63 !important;
+            color: var(--state-good) !important;
         }
 
         /* === Subtitle === */
@@ -480,9 +480,9 @@
                         <span><span class="legend-dot" style="background:rgba(90,107,122,0.4)"></span> <strong>Bracket</strong> — 현재 탐색 구간 [a, b]</span>
                     </div>
                     <div class="legend-inline" style="margin-bottom:0.75rem;">
-                        <span><span class="legend-dot" style="background:#9c5a44"></span> <strong>x&#x2081;</strong> — 왼쪽 비교점 (황금비 위치)</span>
-                        <span><span class="legend-dot" style="background:#ffce56"></span> <strong>x&#x2082;</strong> — 오른쪽 비교점 (황금비 위치)</span>
-                        <span><span class="legend-dot" style="background:#5f7a63"></span> <strong>b*</strong> — 수렴 후 최적 입찰가</span>
+                        <span><span class="legend-dot" style="background:var(--state-bad)"></span> <strong>x&#x2081;</strong> — 왼쪽 비교점 (황금비 위치)</span>
+                        <span><span class="legend-dot" style="background:var(--state-warn)"></span> <strong>x&#x2082;</strong> — 오른쪽 비교점 (황금비 위치)</span>
+                        <span><span class="legend-dot" style="background:var(--state-good)"></span> <strong>b*</strong> — 수렴 후 최적 입찰가</span>
                     </div>
                     <div class="chart-wrap">
                         <canvas id="surplusChart"></canvas>
@@ -589,8 +589,8 @@
             <h3>알고리즘 단계</h3>
             <ol>
                 <li><strong>초기화</strong>: 탐색 구간 [a, b]를 설정 (a &approx; 0, b &approx; V)</li>
-                <li>구간 내에 두 점 <span style="color:#9c5a44;font-weight:600;">x₁</span>,
-                    <span style="color:#ffce56;font-weight:600;">x₂</span>를 황금 비율로 배치:
+                <li>구간 내에 두 점 <span style="color:var(--state-bad);font-weight:600;">x₁</span>,
+                    <span style="color:var(--state-warn);font-weight:600;">x₂</span>를 황금 비율로 배치:
                     <br>x₁ = b &minus; (b&minus;a)/&phi;, &nbsp; x₂ = a + (b&minus;a)/&phi;</li>
                 <li>두 점의 Surplus를 비교: s(x₁) vs s(x₂)</li>
                 <li>s(x₁) > s(x₂)이면 최대값은 x₂ 왼쪽에 있으므로 b = x₂로 축소</li>

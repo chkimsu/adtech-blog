@@ -26,11 +26,11 @@ graph LR
         DMP1["DMP<br/>(Oracle BlueKai)"] -.-> DSP1
     end
 
-    style DSP1 fill:#ff6384,stroke:#ff6384,color:#fff
-    style ADEX1 fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style SSP1 fill:#ffce56,stroke:#ffce56,color:#333
-    style PUB1 fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style DMP1 fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style DSP1 fill:#b0442c,stroke:#b0442c,color:#fff
+    style ADEX1 fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style SSP1 fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style PUB1 fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style DMP1 fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
 ### Walled Garden 생태계 (통합형)
@@ -46,7 +46,7 @@ graph LR
         PLATFORM --> USER2["유저"]
     end
 
-    style PLATFORM fill:#b026ff,stroke:#b026ff,color:#fff
+    style PLATFORM fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 ```mermaid
@@ -88,9 +88,9 @@ graph TB
         SEARCH_N -.->|유저 피드백| Data_N
     end
 
-    style RANK_N fill:#ff6384,stroke:#ff6384,color:#fff
-    style AUCTION_N fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style LOGIN_N fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style RANK_N fill:#b0442c,stroke:#b0442c,color:#fff
+    style AUCTION_N fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style LOGIN_N fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 ---
@@ -136,8 +136,8 @@ graph TD
         RANK --> W2["1위: A (₩500×3.2%=16.0)<br/>2위: C (₩300×5.1%=15.3)<br/>3위: B (₩800×1.5%=12.0)"]
     end
 
-    style EX fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style RANK fill:#b026ff,stroke:#b026ff,color:#fff
+    style EX fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style RANK fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 **Walled Garden 경매의 특징:**
@@ -295,11 +295,11 @@ graph TB
         DATA -.->|피드백| GFA
     end
 
-    style SEARCH fill:#b026ff,stroke:#b026ff,color:#fff
-    style SOCIAL fill:#b026ff,stroke:#b026ff,color:#fff
-    style GFA fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style HB fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style DATA fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style SEARCH fill:#7a5a30,stroke:#7a5a30,color:#fff
+    style SOCIAL fill:#7a5a30,stroke:#7a5a30,color:#fff
+    style GFA fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style HB fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style DATA fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 - **네이버**: 파워링크(Walled Garden) + GFA 성과형 디스플레이(외부 매체 네트워크)

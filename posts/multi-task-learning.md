@@ -56,11 +56,11 @@ graph LR
     CLK -.-> D2
     IMP -.-> D3
 
-    style IMP fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style CLK fill:#ff6384,stroke:#ff6384,color:#fff
-    style CVR fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style D2 fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style D3 fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style IMP fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style CLK fill:#b0442c,stroke:#b0442c,color:#fff
+    style CVR fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style D2 fill:#8f6231,stroke:#8f6231,color:#fff
+    style D3 fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
 > 위 숫자는 설명용 **가상 예시**입니다. 노출 1억 건에 CTR 1%, CVR 1%를 가정했습니다. 실제 값은 매체와 상품에 따라 크게 다릅니다.
@@ -132,9 +132,9 @@ graph TD
     L1 -.->|"Loss_CTR: BCE"| PCTR
     L2 -.->|"Loss_CTCVR: BCE"| CTCVR
 
-    style CTR_T fill:#ff6384,stroke:#ff6384,color:#fff
-    style CVR_T fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style CTCVR fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style CTR_T fill:#b0442c,stroke:#b0442c,color:#fff
+    style CVR_T fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style CTCVR fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 ### Loss 함수
@@ -330,11 +330,11 @@ graph TD
     S3 --> T1 --> O1
     S3 --> T2 --> O2
 
-    style S1 fill:#9966ff,stroke:#9966ff,color:#fff
-    style S2 fill:#9966ff,stroke:#9966ff,color:#fff
-    style S3 fill:#9966ff,stroke:#9966ff,color:#fff
-    style T1 fill:#ff6384,stroke:#ff6384,color:#fff
-    style T2 fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style S1 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style S2 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style S3 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style T1 fill:#b0442c,stroke:#b0442c,color:#fff
+    style T2 fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 ### 장점
@@ -568,14 +568,14 @@ graph TD
     C1 --> T1 --> O1
     C2 --> T2 --> O2
 
-    style E1 fill:#9966ff,stroke:#9966ff,color:#fff
-    style E2 fill:#9966ff,stroke:#9966ff,color:#fff
-    style E3 fill:#9966ff,stroke:#9966ff,color:#fff
-    style En fill:#9966ff,stroke:#9966ff,color:#fff
-    style G1 fill:#ff6384,stroke:#ff6384,color:#fff
-    style G2 fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style T1 fill:#ff6384,stroke:#ff6384,color:#fff
-    style T2 fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style E1 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style E2 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style E3 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style En fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style G1 fill:#b0442c,stroke:#b0442c,color:#fff
+    style G2 fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style T1 fill:#b0442c,stroke:#b0442c,color:#fff
+    style T2 fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 ### 수식
@@ -674,14 +674,14 @@ graph TD
     G2A --> TA --> OA
     G2B --> TB --> OB
 
-    style SE1 fill:#9966ff,stroke:#9966ff,color:#fff
-    style SE2 fill:#9966ff,stroke:#9966ff,color:#fff
-    style TE1A fill:#ff6384,stroke:#ff6384,color:#fff
-    style TE2A fill:#ff6384,stroke:#ff6384,color:#fff
-    style TE1B fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style TE2B fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style TA fill:#ff6384,stroke:#ff6384,color:#fff
-    style TB fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style SE1 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style SE2 fill:#8a6a3a,stroke:#8a6a3a,color:#fff
+    style TE1A fill:#b0442c,stroke:#b0442c,color:#fff
+    style TE2A fill:#b0442c,stroke:#b0442c,color:#fff
+    style TE1B fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style TE2B fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style TA fill:#b0442c,stroke:#b0442c,color:#fff
+    style TB fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 ### 핵심 혁신: Progressive Layered Extraction

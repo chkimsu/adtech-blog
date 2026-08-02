@@ -65,10 +65,10 @@ graph LR
     RR -->|"git pull<br/>(fetch+merge)"| WD
     LR -->|"git checkout"| WD
 
-    style WD fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style SA fill:#4d3800,stroke:#ff9f40,color:#ff9f40
-    style LR fill:#1a3a5c,stroke:#36a2eb,color:#36a2eb
-    style RR fill:#5c1a2a,stroke:#ff6384,color:#ff6384
+    style WD stroke:#5b7d6a
+    style SA stroke:#8f6231
+    style LR stroke:#4a6b8a
+    style RR stroke:#b0442c
 ```
 
 > **핵심:** 모든 Git 명령은 결국 이 4개 공간 사이의 데이터 이동입니다. 아래 모든 섹션에서 "이 명령은 어디에서 어디로 데이터를 옮기는가?"를 기억하세요.
@@ -84,11 +84,11 @@ graph LR
     C3 -->|"parent"| C2["commit C2"]
     C2 -->|"parent"| C1["commit C1"]
 
-    style HEAD fill:#5c1a2a,stroke:#ff6384,color:#ff6384
-    style MAIN fill:#1a3a5c,stroke:#36a2eb,color:#36a2eb
-    style C3 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style C2 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style C1 fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
+    style HEAD stroke:#b0442c
+    style MAIN stroke:#4a6b8a
+    style C3 stroke:#5b7d6a
+    style C2 stroke:#5b7d6a
+    style C1 stroke:#5b7d6a
 ```
 
 **HEAD는 "지금 내가 어디에 있는가"를 알려주는 포인터입니다.** 보통은 브랜치를 가리키고, 그 브랜치가 다시 최신 커밋을 가리킵니다.
@@ -197,9 +197,9 @@ graph LR
     SA ---|"git diff --staged"| HC["HEAD<br/>Commit"]
     WD ---|"git diff HEAD"| HC
 
-    style WD fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style SA fill:#4d3800,stroke:#ff9f40,color:#ff9f40
-    style HC fill:#1a3a5c,stroke:#36a2eb,color:#36a2eb
+    style WD stroke:#5b7d6a
+    style SA stroke:#8f6231
+    style HC stroke:#4a6b8a
 
     linkStyle 0 stroke:#4bc0c0
     linkStyle 1 stroke:#ff9f40
@@ -687,10 +687,10 @@ flowchart TD
     L --> M["git commit (merge 시)<br/>git rebase --continue (rebase 시)"]
     M --> N["충돌 해결 완료"]
 
-    style C fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style D fill:#5c1a2a,stroke:#ff6384,color:#ff6384
-    style N fill:#0d4f4f,stroke:#4bc0c0,color:#4bc0c0
-    style K fill:#4d3800,stroke:#ff9f40,color:#ff9f40
+    style C stroke:#5b7d6a
+    style D stroke:#b0442c
+    style N stroke:#5b7d6a
+    style K stroke:#8f6231
 ```
 
 ### 충돌 마커 읽는 법

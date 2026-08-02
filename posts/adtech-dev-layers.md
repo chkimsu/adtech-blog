@@ -38,9 +38,9 @@ graph LR
     G --> H["측정<br/><small>로그 수집</small>"]
     H -.->|"피드백 루프"| D
 
-    style A fill:#0c4a6e,stroke:#0ea5e9,color:#7dd3fc
-    style G fill:#0c4a6e,stroke:#0ea5e9,color:#7dd3fc
-    style H fill:#083344,stroke:#0891b2,color:#67e8f9
+    style A stroke:#4a6b8a
+    style G stroke:#4a6b8a
+    style H stroke:#54736f
 ```
 
 각 단계에서 내려지는 핵심 결정:
@@ -89,11 +89,11 @@ graph LR
     C --> D["경매<br/><small>eCPM 기반</small>"]
     D --> E["Pacing<br/><small>예산 분배</small>"]
 
-    style A fill:#172554,stroke:#2563eb,color:#93c5fd
-    style B fill:#172554,stroke:#2563eb,color:#93c5fd
-    style C fill:#172554,stroke:#2563eb,color:#93c5fd
-    style D fill:#172554,stroke:#2563eb,color:#93c5fd
-    style E fill:#172554,stroke:#2563eb,color:#93c5fd
+    style A stroke:#4a6b8a
+    style B stroke:#4a6b8a
+    style C stroke:#4a6b8a
+    style D stroke:#4a6b8a
+    style E stroke:#4a6b8a
 ```
 
 ### Multi-Stage Ranking
@@ -169,8 +169,8 @@ graph TD
     C --> D
     D --> E
 
-    style A fill:#064e3b,stroke:#059669,color:#6ee7b7
-    style E fill:#064e3b,stroke:#059669,color:#6ee7b7
+    style A stroke:#5b7d6a
+    style E stroke:#5b7d6a
 ```
 
 **관련 포스트:**
@@ -224,8 +224,8 @@ graph LR
     F --> G["매출 ↑"]
     G --> A
 
-    style D fill:#2e1065,stroke:#7c3aed,color:#c4b5fd
-    style E fill:#2e1065,stroke:#7c3aed,color:#c4b5fd
+    style D stroke:#8a6a3a
+    style E stroke:#8a6a3a
 ```
 
 이 루프가 빠르게 돌수록(모델이 빨리 업데이트될수록) 시스템 성능이 향상됩니다. 이것이 [Online Learning](post.html?id=online-learning-delayed-feedback)이 중요한 이유입니다.

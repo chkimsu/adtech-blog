@@ -41,8 +41,8 @@ graph TB
     MOMENT --> NET
     KW --> DAUM
 
-    style MOMENT fill:#b026ff,stroke:#b026ff,color:#fff
-    style NET fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style MOMENT fill:#7a5a30,stroke:#7a5a30,color:#fff
+    style NET fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 이 그림에 이미 익숙한 모양이 보인다. 광고주 → (입찰을 대신 거는) 콘솔 → (자사가 소유한) 지면. [Ad Serving Flow](post.html?id=ad-serving-flow)에서 본 흐름의 카카오 버전이다. 다만 그 사이의 거래소·SSP가 **하나의 회사 안**에 들어와 있다. 그게 [Walled Garden](post.html?id=walled-garden)의 핵심이었다.
@@ -215,7 +215,7 @@ graph LR
     A1["광고주 A<br/>CPC 500 · 품질 높음"] --> RANK
     A2["광고주 B<br/>CPC 900 · 품질 낮음"] --> RANK
     RANK --> OUT["상위 노출 결정"]
-    style RANK fill:#b026ff,stroke:#b026ff,color:#fff
+    style RANK fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 이 그림도 결국 §2에서 본 것과 같은 계산이다. 입찰가만으로 순위가 정해지지 않는다. 품질(pCTR류 지표)이 곱해져야 순위가 나온다. 그 산수는 이미 [eCPM과 광고 랭킹](post.html?id=ecpm-ranking)에 자세히 있다.

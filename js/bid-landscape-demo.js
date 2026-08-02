@@ -1,3 +1,9 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 /**
  * Bid Landscape Explorer Demo Implementation
  * Visualizes Win Rate, Expected Cost, and Expected Profit curves
@@ -119,7 +125,7 @@ function createChart() {
                 {
                     label: 'Expected Cost ($)',
                     data: [],
-                    borderColor: '#FF6384',
+                    borderColor: cssVar('--state-bad'),
                     backgroundColor: 'rgba(156, 90, 68, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
@@ -130,7 +136,7 @@ function createChart() {
                 {
                     label: 'Expected Profit ($)',
                     data: [],
-                    borderColor: '#5f7a63',
+                    borderColor: cssVar('--state-good'),
                     backgroundColor: 'rgba(95, 122, 99, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
@@ -249,9 +255,9 @@ function updateStats(params, data) {
     var profitEl = document.getElementById('stat-profit');
     profitEl.textContent = '$' + profit.toFixed(2);
     if (profit >= 0) {
-        profitEl.style.color = '#5f7a63';
+        profitEl.style.color = 'var(--state-good)';
     } else {
-        profitEl.style.color = '#FF6384';
+        profitEl.style.color = 'var(--state-bad)';
     }
 
     document.getElementById('stat-optimal').textContent = '$' + optimalBid.toFixed(2);

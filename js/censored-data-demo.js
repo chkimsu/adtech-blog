@@ -1,3 +1,9 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 /**
  * Censored Data in RTB — Interactive Demo
  * ML 엔지니어 관점에서 Right-Censoring 문제를 단계별로 이해하기 위한 시뮬레이션.
@@ -477,7 +483,7 @@ function createDistributionChart() {
                     label: '실제 분포 (God View)',
                     data: [],
                     type: 'line',
-                    borderColor: '#5f7a63',
+                    borderColor: cssVar('--state-good'),
                     borderWidth: 2,
                     borderDash: [6, 3],
                     pointRadius: 0,
@@ -489,7 +495,7 @@ function createDistributionChart() {
                     label: 'Naive 추정 (Win 데이터만)',
                     data: [],
                     type: 'line',
-                    borderColor: '#9c5a44',
+                    borderColor: cssVar('--state-bad'),
                     borderWidth: 2.5,
                     borderDash: [4, 4],
                     pointRadius: 0,
@@ -501,7 +507,7 @@ function createDistributionChart() {
                     label: 'Censored Regression 보정',
                     data: [],
                     type: 'line',
-                    borderColor: '#FFD700',
+                    borderColor: cssVar('--state-warn'),
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: false,
@@ -651,9 +657,9 @@ function updateAuctionTable() {
         let priceDisplay;
 
         if (a.win || !isEngineer) {
-            priceDisplay = `<span style="color: ${a.win ? '#5f7a63' : '#FF6384'}">$${a.marketPrice.toFixed(3)}</span>`;
+            priceDisplay = `<span style="color: ${a.win ? 'var(--state-good)' : 'var(--state-bad)'}">$${a.marketPrice.toFixed(3)}</span>`;
         } else {
-            priceDisplay = `<span class="censored-price" style="color: #FF6384;">??? (&gt; $${a.myBid.toFixed(2)})</span>`;
+            priceDisplay = `<span class="censored-price" style="color: var(--state-bad);">??? (&gt; $${a.myBid.toFixed(2)})</span>`;
         }
 
         html += `<tr class="auction-row ${resultClass}" id="auction-row-${a.id}">
@@ -683,7 +689,7 @@ function revealOneCensored() {
     if (row) {
         row.classList.add('revealing');
         const priceCell = row.querySelector('.price-cell');
-        priceCell.innerHTML = `<span style="color: #FFD700; font-weight: 700;">$${auction.marketPrice.toFixed(3)}</span>`;
+        priceCell.innerHTML = `<span style="color: var(--state-warn); font-weight: 700;">$${auction.marketPrice.toFixed(3)}</span>`;
 
         // Show tooltip
         const tooltip = document.getElementById('reveal-tooltip');
@@ -694,7 +700,7 @@ function revealOneCensored() {
 
         setTimeout(() => {
             row.classList.remove('revealing');
-            priceCell.innerHTML = `<span class="censored-price" style="color: #FF6384;">??? (&gt; $${auction.myBid.toFixed(2)})</span>`;
+            priceCell.innerHTML = `<span class="censored-price" style="color: var(--state-bad);">??? (&gt; $${auction.myBid.toFixed(2)})</span>`;
             auction.revealed = false;
             if (tooltip) tooltip.style.display = 'none';
         }, 3000);
@@ -773,15 +779,15 @@ function updateStep3Stats() {
 
     if (s3nm) s3nm.textContent = '$' + naiveMean.toFixed(3);
     if (s3tm) s3tm.textContent = '$' + trueMean.toFixed(3);
-    if (s3me) { s3me.textContent = meanErr.toFixed(1) + '%'; s3me.style.color = '#FF6384'; }
+    if (s3me) { s3me.textContent = meanErr.toFixed(1) + '%'; s3me.style.color = 'var(--state-bad)'; }
     if (s3nmed) s3nmed.textContent = '$' + naiveMedian.toFixed(3);
     if (s3tmed) s3tmed.textContent = '$' + trueMedian.toFixed(3);
-    if (s3mede) { s3mede.textContent = medianErr.toFixed(1) + '%'; s3mede.style.color = '#FF6384'; }
+    if (s3mede) { s3mede.textContent = medianErr.toFixed(1) + '%'; s3mede.style.color = 'var(--state-bad)'; }
 
     // Dynamic insight
     const insight = el('step3-insight-text');
     if (insight) {
-        insight.innerHTML = `Naive 추정은 시장 평균을 <strong style="color:#FF6384;">${Math.abs(meanErr).toFixed(1)}%</strong> 과소추정합니다.
+        insight.innerHTML = `Naive 추정은 시장 평균을 <strong style="color:var(--state-bad);">${Math.abs(meanErr).toFixed(1)}%</strong> 과소추정합니다.
             이것이 <strong>Selection Bias</strong>입니다 — 관측된 데이터는 모두 "내가 이긴 경매"이므로, 경쟁자 가격이 낮은 쪽에 편향됩니다.`;
     }
 }
@@ -808,25 +814,25 @@ function updateStep4Stats() {
 
     s4('stat4-true-mean', '$' + trueMean.toFixed(3));
     s4('stat4-naive-mean', '$' + naiveMean.toFixed(3));
-    s4c('stat4-naive-mean-err', naiveMeanErr.toFixed(1) + '%', '#FF6384');
+    s4c('stat4-naive-mean-err', naiveMeanErr.toFixed(1) + '%', 'var(--state-bad)');
     s4('stat4-censored-mean', '$' + censoredMean.toFixed(3));
     s4c('stat4-censored-mean-err', censoredMeanErr.toFixed(1) + '%',
-        Math.abs(censoredMeanErr) < Math.abs(naiveMeanErr) ? '#5f7a63' : '#FF6384');
+        Math.abs(censoredMeanErr) < Math.abs(naiveMeanErr) ? 'var(--state-good)' : 'var(--state-bad)');
 
     s4('stat4-true-median', '$' + trueMedian.toFixed(3));
     s4('stat4-naive-median', '$' + naiveMedian.toFixed(3));
-    s4c('stat4-naive-median-err', naiveMedianErr.toFixed(1) + '%', '#FF6384');
+    s4c('stat4-naive-median-err', naiveMedianErr.toFixed(1) + '%', 'var(--state-bad)');
     s4('stat4-censored-median', '$' + censoredMedian.toFixed(3));
     s4c('stat4-censored-median-err', censoredMedianErr.toFixed(1) + '%',
-        Math.abs(censoredMedianErr) < Math.abs(naiveMedianErr) ? '#5f7a63' : '#FF6384');
+        Math.abs(censoredMedianErr) < Math.abs(naiveMedianErr) ? 'var(--state-good)' : 'var(--state-bad)');
 
     // Dynamic insight
     const insight = el('step4-insight-text');
     if (insight) {
         const improvement = Math.abs(naiveMeanErr) - Math.abs(censoredMeanErr);
         insight.innerHTML = `Censored Regression은 평균 추정 오차를
-            <strong style="color:#FF6384;">${Math.abs(naiveMeanErr).toFixed(1)}%</strong>에서
-            <strong style="color:#5f7a63;">${Math.abs(censoredMeanErr).toFixed(1)}%</strong>로 줄였습니다.
+            <strong style="color:var(--state-bad);">${Math.abs(naiveMeanErr).toFixed(1)}%</strong>에서
+            <strong style="color:var(--state-good);">${Math.abs(censoredMeanErr).toFixed(1)}%</strong>로 줄였습니다.
             Lose 데이터의 "하한(lower bound) 정보"를 활용하여 잃어버린 정보의 대부분을 복구합니다.`;
     }
 }
@@ -1016,18 +1022,18 @@ function updateImpactChart() {
 
     const s5 = el('stat5-surplus-loss-naive');
     const s5c = el('stat5-surplus-loss-censored');
-    if (s5) { s5.textContent = surplusLossNaive.toFixed(1) + '%'; s5.style.color = '#FF6384'; }
+    if (s5) { s5.textContent = surplusLossNaive.toFixed(1) + '%'; s5.style.color = 'var(--state-bad)'; }
     if (s5c) {
         s5c.textContent = surplusLossCensored.toFixed(1) + '%';
-        s5c.style.color = Math.abs(surplusLossCensored) < Math.abs(surplusLossNaive) ? '#5f7a63' : '#FF6384';
+        s5c.style.color = Math.abs(surplusLossCensored) < Math.abs(surplusLossNaive) ? 'var(--state-good)' : 'var(--state-bad)';
     }
 
     const insight = el('step5-insight-text');
     if (insight) {
         insight.innerHTML = `Naive 추정 기반 입찰은 Oracle 대비 Surplus를
-            <strong style="color:#FF6384;">${Math.abs(surplusLossNaive).toFixed(1)}%</strong> 손실합니다.
+            <strong style="color:var(--state-bad);">${Math.abs(surplusLossNaive).toFixed(1)}%</strong> 손실합니다.
             Censored Regression을 사용하면 손실이
-            <strong style="color:#5f7a63;">${Math.abs(surplusLossCensored).toFixed(1)}%</strong>로 줄어듭니다.
+            <strong style="color:var(--state-good);">${Math.abs(surplusLossCensored).toFixed(1)}%</strong>로 줄어듭니다.
             Lose 데이터를 버리지 않는 것만으로도 대부분의 정보를 복구할 수 있습니다.`;
     }
 }

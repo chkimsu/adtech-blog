@@ -1,10 +1,16 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 // A/B vs Bandit traffic simulator
 // A/B = fixed 1/3 split each day. Bandit = Thompson Sampling (Beta posterior).
 (function () {
   const ADS = [
     { name: '광고 A', color: '#b0442c' },
     { name: '광고 B', color: '#5a6b7a' },
-    { name: '광고 C', color: '#5f7a63' }
+    { name: '광고 C', color: cssVar('--state-good') }
   ];
   const INIT_CTR = [2, 6, 3];      // % (slider default) — B clearly best so the gap is visible
   const PER_DAY = 150;

@@ -59,9 +59,9 @@ graph LR
         BETA --> RESULT
     end
 
-    style ECPM fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style BETA fill:#ff6384,stroke:#ff6384,color:#fff
-    style RESULT fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style ECPM fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style BETA fill:#b0442c,stroke:#b0442c,color:#fff
+    style RESULT fill:#5b7d6a,stroke:#5b7d6a,color:#fff
     style MINUS fill:#333,stroke:#333,color:#fff
 ```
 
@@ -136,11 +136,11 @@ flowchart TD
     E -->|No| G["노출 제외"]
     F --> H["상위 K개 노출"]
 
-    style A fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style D fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style E fill:#ffce56,stroke:#ffce56,color:#333
-    style G fill:#ff6384,stroke:#ff6384,color:#fff
-    style H fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style A fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style D fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style E fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style G fill:#b0442c,stroke:#b0442c,color:#fff
+    style H fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 ### 숫자 예제: 세 광고의 경쟁
@@ -444,8 +444,8 @@ graph LR
 
     Before -->|"f(x) = x^α"| After
 
-    style B1 fill:#ff6384,stroke:#ff6384,color:#fff
-    style A1 fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style B1 fill:#b0442c,stroke:#b0442c,color:#fff
+    style A1 fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 ### 왜 오목 함수인가

@@ -102,38 +102,38 @@ graph TB
   AUCTION -.->|Win/Lose 피드백| SHADE
 
   %% 서브그래프 배경색
-  style Advertiser fill:#1a1230,stroke:#ff9f40,stroke-width:2px,color:#fff
-  style DSP_System fill:#0d1a2d,stroke:#36a2eb,stroke-width:2px,color:#fff
-  style ML_Models fill:#1a0a2e,stroke:#ff6384,stroke-width:2px,color:#fff
-  style Bid_Optimization fill:#0a1a2e,stroke:#36a2eb,stroke-width:1px,color:#fff
-  style DMP_CDP fill:#1a1230,stroke:#b026ff,stroke-width:2px,color:#fff
-  style Exchange fill:#0d1a2d,stroke:#36a2eb,stroke-width:2px,color:#fff
-  style SSP_System fill:#0a1f1a,stroke:#4bc0c0,stroke-width:2px,color:#fff
-  style Publisher fill:#0a1f1a,stroke:#4bc0c0,stroke-width:1px,color:#fff
-  style User_Side fill:#0d1a2d,stroke:#00e5ff,stroke-width:2px,color:#fff
+  style Advertiser stroke:#8f6231,stroke-width:2px
+  style DSP_System stroke:#4a6b8a,stroke-width:2px
+  style ML_Models stroke:#b0442c,stroke-width:2px
+  style Bid_Optimization stroke:#4a6b8a,stroke-width:1px
+  style DMP_CDP stroke:#7a5a30,stroke-width:2px
+  style Exchange stroke:#4a6b8a,stroke-width:2px
+  style SSP_System stroke:#5b7d6a,stroke-width:2px
+  style Publisher stroke:#5b7d6a,stroke-width:1px
+  style User_Side stroke:#54736f,stroke-width:2px
 
   %% 노드 스타일
-  style PCTR fill:#ff6384,stroke:#ff6384,color:#fff
-  style PCVR fill:#ff6384,stroke:#ff6384,color:#fff
-  style SHADE fill:#36a2eb,stroke:#2196f3,color:#fff
-  style TV fill:#b026ff,stroke:#9c27b0,color:#fff
-  style ADEX fill:#36a2eb,stroke:#2196f3,color:#fff
-  style AUCTION fill:#2979ff,stroke:#2962ff,color:#fff
-  style USER fill:#4bc0c0,stroke:#26a69a,color:#fff
-  style ADV fill:#ff9f40,stroke:#ff8f00,color:#fff
-  style BUDGET fill:#ffce56,stroke:#ffc107,color:#333
-  style FEAT fill:#00e5ff,stroke:#00bcd4,color:#111
-  style BIDDER fill:#1565c0,stroke:#0d47a1,color:#fff
-  style CAMP fill:#ff9f40,stroke:#ff8f00,color:#fff
-  style CREATIVE fill:#ffab91,stroke:#ff8a65,color:#333
-  style SSP fill:#4bc0c0,stroke:#26a69a,color:#fff
-  style HB fill:#26a69a,stroke:#009688,color:#fff
-  style IMP fill:#80deea,stroke:#4dd0e1,color:#333
-  style CLICK fill:#4fc3f7,stroke:#29b6f6,color:#333
-  style CONV fill:#00e5ff,stroke:#00bcd4,color:#111
+  style PCTR fill:#b0442c,stroke:#b0442c,color:#fff
+  style PCVR fill:#b0442c,stroke:#b0442c,color:#fff
+  style SHADE fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+  style TV fill:#7a5a30,stroke:#7a5a30,color:#fff
+  style ADEX fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+  style AUCTION fill:#3f5c78,stroke:#3f5c78,color:#fff
+  style USER fill:#5b7d6a,stroke:#4f6f5f,color:#fff
+  style ADV fill:#8f6231,stroke:#8f6231,color:#fff
+  style BUDGET fill:#c9a961,stroke:#c9a961,color:#201d1a
+  style FEAT fill:#54736f,stroke:#54736f,color:#fff
+  style BIDDER fill:#3f5c78,stroke:#3f5c78,color:#fff
+  style CAMP fill:#8f6231,stroke:#8f6231,color:#fff
+  style CREATIVE fill:#dcc0ae,stroke:#8f6231,color:#201d1a
+  style SSP fill:#5b7d6a,stroke:#4f6f5f,color:#fff
+  style HB fill:#4f6f5f,stroke:#4f6f5f,color:#fff
+  style IMP fill:#b8cdc4,stroke:#b8cdc4,color:#201d1a
+  style CLICK fill:#b8cdc4,stroke:#b8cdc4,color:#201d1a
+  style CONV fill:#54736f,stroke:#54736f,color:#fff
 ```
 
-이 다이어그램에서 **빨간색(pCTR, pCVR)**이 pCTR 모델러의 영역입니다. 보라색(True Value)과 파란색(Bid Shading)은 모델 출력이 실제 입찰로 전환되는 지점입니다.
+이 다이어그램에서 **벽돌색(pCTR, pCVR)**이 pCTR 모델러의 영역입니다. 황동색(True Value)과 파란색(Bid Shading)은 모델 출력이 실제 입찰로 전환되는 지점입니다.
 
 ### 이 그림의 살아 있는 버전 — 지도 페이지
 

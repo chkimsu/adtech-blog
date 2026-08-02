@@ -1,3 +1,9 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 /**
  * RTB Auction Simulator Demo Implementation
  * Visualizes First Price vs Second Price auctions with DSP bidding strategies
@@ -198,7 +204,7 @@ const clearingPricePlugin = {
 
         // Draw clearing price horizontal line
         ctx.beginPath();
-        ctx.strokeStyle = '#5f7a63';
+        ctx.strokeStyle = cssVar('--state-good');
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 4]);
         ctx.moveTo(chartArea.left, yPixel);
@@ -207,7 +213,7 @@ const clearingPricePlugin = {
         ctx.setLineDash([]);
 
         // Label
-        ctx.fillStyle = '#5f7a63';
+        ctx.fillStyle = cssVar('--state-good');
         ctx.font = 'bold 11px "Fira Code", monospace';
         ctx.textAlign = 'right';
         ctx.fillText('Paid: $' + cp.toFixed(2), chartArea.right - 4, yPixel - 6);
@@ -415,7 +421,7 @@ function renderStats() {
         const avgSpend = s.wins > 0 ? (s.totalSpend / s.wins) : 0;
         const avgSavings = s.wins > 0 ? ((s.totalBidWhenWon - s.totalSpend) / s.wins) : 0;
         const surplus = s.totalValueWhenWon - s.totalSpend;
-        const savingsColor = avgSavings > 0.005 ? '#5f7a63' : 'inherit';
+        const savingsColor = avgSavings > 0.005 ? 'var(--state-good)' : 'inherit';
 
         html += `
             <tr>
@@ -674,7 +680,7 @@ function deltaRow(label, v1, v2, delta, prefix, lowerIsBetter) {
     const fmt = (v) => prefix + (typeof v === 'number' ? v.toFixed(2) : v);
     const sign = delta > 0.005 ? '+' : (delta < -0.005 ? '' : '');
     const color = Math.abs(delta) < 0.005 ? 'var(--text-muted)' :
-        (lowerIsBetter ? (delta < 0 ? '#5f7a63' : '#9c5a44') : (delta > 0 ? '#5f7a63' : '#9c5a44'));
+        (lowerIsBetter ? (delta < 0 ? 'var(--state-good)' : 'var(--state-bad)') : (delta > 0 ? 'var(--state-good)' : 'var(--state-bad)'));
     return `<tr>
         <td style="padding-left: 1rem; font-size: 0.8rem;">${label}</td>
         <td>${fmt(v1)}</td>

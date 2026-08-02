@@ -21,6 +21,11 @@
   --accent-primary: #b0442c;    /* brick */
   --accent-primary-rgb: 176, 68, 44;   /* rgba() 합성용 — --accent-primary와 항상 동기 */
   --accent-secondary: #8a6a3a;  /* bronze/ochre (replaces purple) */
+  /* 데모·차트의 상태색 (크림 배경 기준). 하드코딩 hex 하나로는 라이트·다크 양쪽에서
+     4.5:1을 못 맞춘다 — 그래서 테마별로 따로 정한다. */
+  --state-bad: #9c3b26;
+  --state-good: #3f6248;
+  --state-warn: #7d5529;
   --accent-gradient: var(--accent-primary);  /* solid — 12 fill consumers go solid for free */
   --accent-glow: transparent;
 
@@ -63,6 +68,11 @@
   --accent-secondary: #c9a36b;
   --accent-gradient: var(--accent-primary);
   --accent-glow: transparent;
+  /* 데모·차트의 상태색 (다크 배경 기준). 하드코딩 hex 하나로는 라이트·다크 양쪽에서
+     4.5:1을 못 맞춘다 — 그래서 테마별로 따로 정한다. */
+  --state-bad: #e8917c;
+  --state-good: #9dc4a8;
+  --state-warn: #e0c88a;
 
   --text-primary: #f1ece3;
   --text-secondary: #c6bdae;
@@ -87,6 +97,11 @@
   --accent-primary: #3f5b8b;
   --accent-primary-rgb: 63, 91, 139;
   --accent-secondary: #6a7891;
+  /* 데모·차트의 상태색 (slate 라이트). 하드코딩 hex 하나로는 라이트·다크 양쪽에서
+     4.5:1을 못 맞춘다 — 그래서 테마별로 따로 정한다. */
+  --state-bad: #9c3b26;
+  --state-good: #3f6248;
+  --state-warn: #7d5529;
   --accent-gradient: var(--accent-primary);
   --text-primary: #1e2430;
   --text-secondary: #454d5c;
@@ -104,6 +119,11 @@
   --accent-primary: #7fa0d4;
   --accent-primary-rgb: 127, 160, 212;
   --accent-secondary: #9aa8c0;
+  /* 데모·차트의 상태색 (slate 다크). 하드코딩 hex 하나로는 라이트·다크 양쪽에서
+     4.5:1을 못 맞춘다 — 그래서 테마별로 따로 정한다. */
+  --state-bad: #e8917c;
+  --state-good: #9dc4a8;
+  --state-warn: #e0c88a;
   --accent-gradient: var(--accent-primary);
   --text-primary: #e8ecf3;
   --text-secondary: #b3bccb;

@@ -1,3 +1,9 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 /**
  * Bid Shading Interactive Demo
  * pCTR 모델러 관점에서 bid shading 개념을 직관적으로 이해하기 위한 시뮬레이션.
@@ -227,7 +233,7 @@ function createDistChart() {
                     label: 'True Value (pCTR × ConvValue)',
                     data: [],
                     type: 'line',
-                    borderColor: '#FFD700',
+                    borderColor: cssVar('--state-warn'),
                     borderWidth: 2.5,
                     borderDash: [8, 4],
                     pointRadius: 0,
@@ -248,7 +254,7 @@ function createDistChart() {
                     label: '잘못된 추정 분포 (관측 데이터만 사용)',
                     data: [],
                     type: 'line',
-                    borderColor: '#9c5a44',
+                    borderColor: cssVar('--state-bad'),
                     borderWidth: 2,
                     borderDash: [4, 4],
                     pointRadius: 0,
@@ -515,7 +521,7 @@ function createSweepChart() {
                 {
                     label: 'E[Profit] / Auction ($)',
                     data: [],
-                    borderColor: '#5f7a63',
+                    borderColor: cssVar('--state-good'),
                     backgroundColor: 'rgba(95, 122, 99, 0.15)',
                     borderWidth: 2.5,
                     pointRadius: 0,
@@ -651,7 +657,7 @@ function updateStats(result) {
     const savings = fp.expectedProfit - ns.expectedProfit;
     const savingsEl = document.getElementById('stat-savings');
     savingsEl.textContent = (savings >= 0 ? '+$' : '-$') + Math.abs(savings).toFixed(4);
-    savingsEl.style.color = savings >= 0 ? '#5f7a63' : '#FF6384';
+    savingsEl.style.color = savings >= 0 ? 'var(--state-good)' : 'var(--state-bad)';
 }
 
 // ==========================================
@@ -712,13 +718,13 @@ function updateCensoredStats(result, allBids) {
                         <td>Mean</td>
                         <td>$${naiveMean.toFixed(3)}</td>
                         <td>$${trueMean.toFixed(3)}</td>
-                        <td style="color: #FF6384;">${((naiveMean - trueMean) / trueMean * 100).toFixed(1)}%</td>
+                        <td style="color: var(--state-bad);">${((naiveMean - trueMean) / trueMean * 100).toFixed(1)}%</td>
                     </tr>
                     <tr>
                         <td>Median</td>
                         <td>$${naiveMedian.toFixed(3)}</td>
                         <td>$${trueMedian.toFixed(3)}</td>
-                        <td style="color: #FF6384;">${((naiveMedian - trueMedian) / trueMedian * 100).toFixed(1)}%</td>
+                        <td style="color: var(--state-bad);">${((naiveMedian - trueMedian) / trueMedian * 100).toFixed(1)}%</td>
                     </tr>
                     <tr>
                         <td>관측 건수</td>
@@ -729,7 +735,7 @@ function updateCensoredStats(result, allBids) {
                 </tbody>
             </table>
             <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
-                Naive 추정은 시장가를 <strong style="color: #FF6384;">과소추정</strong>합니다.
+                Naive 추정은 시장가를 <strong style="color: var(--state-bad);">과소추정</strong>합니다.
                 관측 가능한 데이터는 모두 "내가 이긴 경매"이므로, 시장가가 낮은 쪽에 편향됩니다.
                 이 편향을 보정하지 않으면 bid shading을 과도하게 적용하여 낙찰 기회를 놓칩니다.
             </div>
@@ -753,12 +759,12 @@ function toggleCensoredMode() {
         btn.textContent = 'God View로 전환';
         btn.classList.add('active');
         indicator.textContent = 'Censored View 활성';
-        indicator.style.color = '#FF6384';
+        indicator.style.color = 'var(--state-bad)';
     } else {
         btn.textContent = 'Censored View로 전환';
         btn.classList.remove('active');
         indicator.textContent = 'God View 활성';
-        indicator.style.color = '#5f7a63';
+        indicator.style.color = 'var(--state-good)';
     }
 
     // 차트만 다시 그리기 (시뮬레이션 재실행 불필요)

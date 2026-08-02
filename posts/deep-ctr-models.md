@@ -404,9 +404,9 @@ graph TD
     W_LINEAR --> COMBINE
     H3 --> COMBINE
 
-    style Wide fill:#ff6384,stroke:#ff6384,color:#fff
-    style Deep fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style Output fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style Wide fill:#b0442c,stroke:#b0442c,color:#fff
+    style Deep fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style Output fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 - **Wide (Memorization)**: Cross-product feature 변환을 통해 **특정 패턴을 직접 기억**합니다. "남성 AND 25-34세 AND 게임 앱 → 높은 설치율"과 같은 직접적 패턴을 기억합니다.
@@ -480,10 +480,10 @@ graph TD
     FM_INNER --> SIG
     DNN_OUT --> SIG
 
-    style FM_Component fill:#ff6384,stroke:#ff6384,color:#fff
-    style DNN_Component fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style EmbeddingLayer fill:#ffce56,stroke:#ffce56,color:#333
-    style Output fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style FM_Component fill:#b0442c,stroke:#b0442c,color:#fff
+    style DNN_Component fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style EmbeddingLayer fill:#c9a961,stroke:#c9a961,color:#201d1a
+    style Output fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 $$\hat{y} = \sigma(y_{FM} + y_{DNN})$$
@@ -553,8 +553,8 @@ graph LR
     CL3 --> OUT["Combine + Sigmoid"]
     D3 --> OUT
 
-    style CrossNetwork fill:#ff6384,stroke:#ff6384,color:#fff
-    style DeepNetwork fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style CrossNetwork fill:#b0442c,stroke:#b0442c,color:#fff
+    style DeepNetwork fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 #### DCN-v2 (2021)
@@ -646,9 +646,9 @@ graph TD
     A4 --> VU
     A5 --> VU
 
-    style AttentionLayer fill:#ff6384,stroke:#ff6384,color:#fff
-    style CandidateAd fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style WeightedSum fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style AttentionLayer fill:#b0442c,stroke:#b0442c,color:#fff
+    style CandidateAd fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style WeightedSum fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 **직관**: 러닝화 광고를 볼 때, 유저의 과거 러닝화/운동화/운동복 구매 이력에 높은 weight가 부여되고, 노트북이나 여행 상품에는 거의 0에 가까운 weight가 부여됩니다. 동일한 유저라도 **후보 광고가 바뀌면 유저 표현 $v_U$가 달라집니다** -- 이것이 DIN의 핵심 혁신입니다.
@@ -786,9 +786,9 @@ graph TD
     AD_Q --> AU1
     AU1 --> FINAL
 
-    style InterestExtractor fill:#ff6384,stroke:#ff6384,color:#fff
-    style InterestEvolution fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style BehaviorSeq fill:#ffce56,stroke:#ffce56,color:#333
+    style InterestExtractor fill:#b0442c,stroke:#b0442c,color:#fff
+    style InterestEvolution fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style BehaviorSeq fill:#c9a961,stroke:#c9a961,color:#201d1a
 ```
 
 #### Interest Extractor Layer

@@ -59,10 +59,10 @@ graph LR
     PKG --> A1
     PKG --> A2
 
-    style Network fill:#0d1a2d,stroke:#36a2eb,stroke-width:2px,color:#fff
-    style AGG fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style SEG fill:#36a2eb,stroke:#2196f3,color:#fff
-    style PKG fill:#36a2eb,stroke:#2196f3,color:#fff
+    style Network stroke:#4a6b8a,stroke-width:2px
+    style AGG fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style SEG fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style PKG fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 동작 방식:
@@ -100,11 +100,11 @@ graph TD
     N3 -->|Fill| DONE3["광고 노출<br/>CPM $1.00"]
     N3 -->|No Fill| PASS["Passback<br/>(광고 없음)"]
 
-    style REQ fill:#ff6384,stroke:#ff6384,color:#fff
-    style DONE1 fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style DONE2 fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style DONE3 fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style PASS fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style REQ fill:#b0442c,stroke:#b0442c,color:#fff
+    style DONE1 fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style DONE2 fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style DONE3 fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style PASS fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
 Waterfall의 치명적 문제:
@@ -198,9 +198,9 @@ graph TB
     SSP1 -->|인벤토리 공급| AUCTION
     SSP2 -->|인벤토리 공급| AUCTION
 
-    style Exchange fill:#0d1a2d,stroke:#36a2eb,stroke-width:2px,color:#fff
-    style AUCTION fill:#36a2eb,stroke:#36a2eb,color:#fff
-    style AN fill:#ff9f40,stroke:#ff9f40,color:#fff
+    style Exchange stroke:#4a6b8a,stroke-width:2px
+    style AUCTION fill:#4a6b8a,stroke:#4a6b8a,color:#fff
+    style AN fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
 Ad Network이 Exchange의 바이어로 참여한다는 것은, **Network과 Exchange가 경쟁 관계가 아닌 보완 관계**임을 의미합니다. Network은 자체 광고주 풀의 수요를 모아 Exchange에서 입찰하고, Exchange는 Network에게 더 넓은 인벤토리 접근을 제공합니다.
@@ -253,10 +253,10 @@ graph LR
         LOOKUP --> SERVE["광고 서빙"]
     end
 
-    style Offline fill:#0d1a2d,stroke:#ff9f40,stroke-width:2px,color:#fff
-    style Online fill:#0d1a2d,stroke:#4bc0c0,stroke-width:2px,color:#fff
-    style MATCH fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style LOOKUP fill:#4bc0c0,stroke:#4bc0c0,color:#fff
+    style Offline stroke:#8f6231,stroke-width:2px
+    style Online stroke:#5b7d6a,stroke-width:2px
+    style MATCH fill:#8f6231,stroke:#8f6231,color:#fff
+    style LOOKUP fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
 - 매칭은 **사전에 계산**: "스포츠 카테고리 Premium 지면 → 나이키 캠페인" 같은 규칙
@@ -285,11 +285,11 @@ graph LR
         TRAIN --> PCVR
     end
 
-    style RTB fill:#0d1a2d,stroke:#36a2eb,stroke-width:2px,color:#fff
-    style Offline_Train fill:#0d1a2d,stroke:#ff9f40,stroke-width:2px,color:#fff
-    style PCTR fill:#ff6384,stroke:#ff6384,color:#fff
-    style PCVR fill:#ff6384,stroke:#ff6384,color:#fff
-    style BS fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style RTB stroke:#4a6b8a,stroke-width:2px
+    style Offline_Train stroke:#8f6231,stroke-width:2px
+    style PCTR fill:#b0442c,stroke:#b0442c,color:#fff
+    style PCVR fill:#b0442c,stroke:#b0442c,color:#fff
+    style BS fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 - **Bid Request마다 ML 추론**: 유저 특성, 지면 특성, 시간대 등을 입력으로 pCTR/pCVR을 실시간 예측
@@ -338,11 +338,11 @@ graph TB
         H_AUCTION --> H_WIN["낙찰"]
     end
 
-    style W_REQ fill:#ff6384,stroke:#ff6384,color:#fff
-    style H_REQ fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style W_WIN fill:#ff9f40,stroke:#ff9f40,color:#fff
-    style H_WIN fill:#4bc0c0,stroke:#4bc0c0,color:#fff
-    style H_AUCTION fill:#36a2eb,stroke:#36a2eb,color:#fff
+    style W_REQ fill:#b0442c,stroke:#b0442c,color:#fff
+    style H_REQ fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style W_WIN fill:#8f6231,stroke:#8f6231,color:#fff
+    style H_WIN fill:#5b7d6a,stroke:#5b7d6a,color:#fff
+    style H_AUCTION fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
 Header Bidding의 핵심 효과:
@@ -402,9 +402,9 @@ graph TB
     P_SSP -.->|"Exchange 기능<br/>통합"| C_SSP_AX
     P_DSP -.->|"Exchange 접근<br/>통합"| C_DSP_AX
 
-    style Past fill:#1a1230,stroke:#ff9f40,stroke-width:2px,color:#fff
-    style Present fill:#0d1a2d,stroke:#4bc0c0,stroke-width:2px,color:#fff
-    style C_WG fill:#b026ff,stroke:#b026ff,color:#fff
+    style Past stroke:#8f6231,stroke-width:2px
+    style Present stroke:#5b7d6a,stroke-width:2px
+    style C_WG fill:#7a5a30,stroke:#7a5a30,color:#fff
 ```
 
 ---

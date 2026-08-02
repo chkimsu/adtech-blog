@@ -199,10 +199,10 @@
     }
 
     .demo-card-badge[data-badge="Auction"]      { background: #5a6b7a; }
-    .demo-card-badge[data-badge="Bidding"]      { background: #5f7a63; }
+    .demo-card-badge[data-badge="Bidding"]      { background: var(--state-good); }
     .demo-card-badge[data-badge="Bandits"]      { background: #7d5e72; }
     .demo-card-badge[data-badge="ML · Stats"]   { background: #a8783a; }
-    .demo-card-badge[data-badge="Optimization"] { background: #9c5a44; }
+    .demo-card-badge[data-badge="Optimization"] { background: var(--state-bad); }
     .demo-card-badge[data-badge="Measurement"]  { background: #4f6d6a; }
 
     .demo-card-level {
@@ -216,19 +216,19 @@
 
     .level-beginner {
       background: rgba(95, 122, 99, 0.15);
-      color: #5f7a63;
+      color: var(--state-good);
       border: 1px solid rgba(95, 122, 99, 0.4);
     }
 
     .level-intermediate {
       background: rgba(168, 120, 58, 0.15);
-      color: #FF9F40;
+      color: var(--state-warn);
       border: 1px solid rgba(168, 120, 58, 0.4);
     }
 
     .level-advanced {
       background: rgba(156, 90, 68, 0.15);
-      color: #FF6384;
+      color: var(--state-bad);
       border: 1px solid rgba(156, 90, 68, 0.4);
     }
 
@@ -448,9 +448,9 @@
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
           <!-- 입문 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #5f7a63; border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-good); border-radius:12px; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
-              <strong style="font-size:0.95rem; color:#5f7a63;">1단계 · 입문</strong>
+              <strong style="font-size:0.95rem; color:var(--state-good);">1단계 · 입문</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">선수지식 거의 없음</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:0.35rem;">
@@ -464,9 +464,9 @@
             </div>
           </div>
           <!-- 중급 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #FF9F40; border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-warn); border-radius:12px; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
-              <strong style="font-size:0.95rem; color:#FF9F40;">2단계 · 중급</strong>
+              <strong style="font-size:0.95rem; color:var(--state-warn);">2단계 · 중급</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">입문 4개 후</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:0.35rem;">
@@ -479,9 +479,9 @@
             </div>
           </div>
           <!-- 고급 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid #FF6384; border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-bad); border-radius:12px; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
-              <strong style="font-size:0.95rem; color:#FF6384;">3단계 · 고급</strong>
+              <strong style="font-size:0.95rem; color:var(--state-bad);">3단계 · 고급</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">중급 후</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:0.35rem;">

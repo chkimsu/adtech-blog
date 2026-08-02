@@ -455,10 +455,10 @@ flowchart LR
     OFF --> TR
     ON --> INF
 
-    style 수집 fill:#1a1a3e,stroke:#36a2eb,color:#36a2eb
-    style 파이프라인 fill:#1a1a3e,stroke:#ffce56,color:#ffce56
-    style 저장 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
-    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+    style 수집 stroke:#4a6b8a
+    style 파이프라인 stroke:#c9a961
+    style 저장 stroke:#5b7d6a
+    style 소비 stroke:#b0442c
 ```
 
 **Batch 피처의 핵심:** 학습과 추론에서 **같은 피처 정의**를 사용하지만, 읽는 저장소가 다릅니다 — 학습은 Offline Store(과거 시점 복원), 추론은 Online Store(최신 값).
@@ -498,10 +498,10 @@ flowchart LR
     LOG --> TR2
     ON2 --> INF2
 
-    style 수집 fill:#1a1a3e,stroke:#ff9f40,color:#ff9f40
-    style 파이프라인 fill:#1a1a3e,stroke:#ff9f40,color:#ff9f40
-    style 저장 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
-    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+    style 수집 stroke:#8f6231
+    style 파이프라인 stroke:#8f6231
+    style 저장 stroke:#5b7d6a
+    style 소비 stroke:#b0442c
 ```
 
 **Streaming 피처의 핵심:** 추론 시에는 Flink가 실시간으로 계산한 값을 Redis에서 읽지만, 학습 시에는 원본 이벤트 로그를 다시 읽어서 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
@@ -555,10 +555,10 @@ flowchart LR
     NS --> INF3
     BR -->|"Request Log<br/>로 기록"| TR3
 
-    style 수집 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
-    style 파이프라인 fill:#1a1a3e,stroke:#4bc0c0,color:#4bc0c0
-    style 저장 fill:#1a1a3e,stroke:#7a8ba3,color:#7a8ba3
-    style 소비 fill:#1a1a3e,stroke:#ff6384,color:#ff6384
+    style 수집 stroke:#5b7d6a
+    style 파이프라인 stroke:#5b7d6a
+    style 저장 stroke:#4a6b8a
+    style 소비 stroke:#b0442c
 ```
 
 **Real-Time 피처의 핵심:** 저장소를 거치지 않습니다. 추론 시에는 Bid Request를 직접 파싱하고, 학습 시에는 Request Log에 기록된 같은 필드를 파싱합니다.

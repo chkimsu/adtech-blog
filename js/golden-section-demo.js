@@ -1,3 +1,9 @@
+// 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
+// stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
+// 그래서 폴백을 둔다(라이트 테마 값 기준).
+const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
+                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
 /**
  * Golden Section Search Interactive Demo
  * 황금 비율 탐색으로 1st Price Auction에서 최적 입찰가 b*를 찾는 과정을 시각화.
@@ -133,9 +139,9 @@ function getChartColors() {
         curveFill: 'rgba(90, 107, 122, 0.08)',
         bracketFill: 'rgba(90, 107, 122, 0.15)',
         bracketBorder: 'rgba(90, 107, 122, 0.6)',
-        x1: '#9c5a44',
-        x2: '#ffce56',
-        optimal: '#5f7a63',
+        x1: cssVar('--state-bad'),
+        x2: cssVar('--state-warn'),
+        optimal: cssVar('--state-good'),
         grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)',
         text: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
         textMuted: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)',
@@ -383,8 +389,8 @@ function updateIterationLog() {
             <td>${h.iter}</td>
             <td>${h.a.toFixed(3)}</td>
             <td>${h.b.toFixed(3)}</td>
-            <td style="color:#9c5a44">${h.x1.toFixed(3)}</td>
-            <td style="color:#ffce56">${h.x2.toFixed(3)}</td>
+            <td style="color:var(--state-bad)">${h.x1.toFixed(3)}</td>
+            <td style="color:var(--state-warn)">${h.x2.toFixed(3)}</td>
             <td>${h.bracket.toFixed(4)}</td>
         `;
         if (engine.converged && h.iter === engine.iteration) {

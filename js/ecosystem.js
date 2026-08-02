@@ -209,20 +209,28 @@
     // ── Buy/Sell 부속 ──
     { from: 'dmp', to: 'dsp' },
     { from: 'dco', to: 'dsp' },
-    { from: 'brand', to: 'advertiser' },
+    // 사이에 DMP가 있어 오른쪽으로 비켜 올라간다(DMP 오른변 1220 밖).
+    { from: 'brand', to: 'advertiser', detour: [[1245, 452], [1245, 242]] },
     { from: 'publisher', to: 'header-bidding' },  // HB 컨테이너 실행
     { from: 'header-bidding', to: 'ssp' },        // HB가 여러 SSP를 동시 호출
 
     // ── Measurement 흐름 ──
-    { from: 'publisher', to: 'log-pipeline' },
-    { from: 'user', to: 'log-pipeline' },
+    // 아래 넷은 왼쪽 빈 통로(x 245~290)와 아래 여백(y 654~)을 타고 돈다.
+    // 직선으로 두면 Header Bidding·User Journey·CMP·Auction 라벨을 뚫는다.
+    { from: 'publisher', to: 'log-pipeline', detour: [[267, 242], [267, 627]] },
+    { from: 'user', to: 'log-pipeline', detour: [[255, 242], [255, 627]] },
     { from: 'log-pipeline', to: 'mmp' },
-    { from: 'log-pipeline', to: 'feature-store' },  // 로그 → 피처
-    { from: 'mmp', to: 'advertiser' },              // 어트리뷰션 리포트
-    { from: 'user-journey', to: 'log-pipeline' },
+    { from: 'log-pipeline', to: 'feature-store',    // 로그 → 피처
+      detour: [[279, 627], [279, 90], [325, 90]] },
+    // 어트리뷰션 리포트. 아래 여백 → 거래소·DSP 사이 통로(x 770~865) → 행간(y 274~320)
+    { from: 'mmp', to: 'advertiser',
+      detour: [[145, 682], [817, 682], [817, 295], [1140, 295]] },
+    { from: 'user-journey', to: 'log-pipeline',
+      detour: [[285, 347], [285, 540], [385, 540]] },
 
     // ── Privacy ──
-    { from: 'cmp', to: 'dmp' },
+    // Auction·DCO 아래(y 425~479)로 지나 DMP 왼변으로 들어간다.
+    { from: 'cmp', to: 'dmp', detour: [[1030, 452], [1030, 347]] },
     { from: 'user-journey', to: 'cmp' },
   ];
 
@@ -1018,6 +1026,25 @@
     const ac = rectCenter(a), bc = rectCenter(b);
     const channel = e.channel || 0;
     let pts;
+
+    // e.detour = [[x,y], …] — 손으로 지정한 우회 경유점.
+    // 자동 라우팅(아래 로직)은 두 노드만 보고 길을 내므로, 사이에 다른 노드가
+    // 있으면 그 상자를 관통한다. 노드 채움이 rgba(...,0.13)이라 선이 그대로 보여
+    // 라벨 위로 줄이 지나간다. 빈 통로를 아는 건 사람이므로 여기서 지정한다.
+    // 고친 뒤에는 반드시 `node scripts/check-map.js` 로 새 교차가 없는지 확인한다.
+    //
+    // 출발·도착 변은 경유점이 알려 준다. 첫 경유점의 x가 출발 노드 중심과 같으면
+    // 위/아래 변에서 나가고, 다르면 좌/우 변에서 나간다(도착도 같은 규칙).
+    if (Array.isArray(e.detour) && e.detour.length) {
+      const first = e.detour[0], last = e.detour[e.detour.length - 1];
+      const start = Math.abs(first[0] - ac.x) < 1
+        ? [ac.x, first[1] > ac.y ? a.y + a.h : a.y]
+        : [first[0] > ac.x ? a.x + a.w : a.x, ac.y];
+      const end = Math.abs(last[0] - bc.x) < 1
+        ? [bc.x, last[1] > bc.y ? b.y + b.h : b.y]
+        : [last[0] > bc.x ? b.x + b.w : b.x, bc.y];
+      return { points: [start, ...e.detour, end], r: 11 };
+    }
 
     if (e.via === 'top' || e.via === 'bottom') {
       const sign = e.via === 'bottom' ? 1 : -1;

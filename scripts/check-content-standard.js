@@ -43,21 +43,36 @@ function shortSections(md) {
     .filter(s => s.len < MIN_SECTION_CHARS && !/더 깊이 보기|한눈 정리|참고문헌/.test(s.title));
 }
 
-// 문장 분리는 완벽할 수 없다. 볼드·헤딩 경계에서 오탐이 나므로
-// 헤딩·리스트·인용은 잘라내고, 마침표+공백만 경계로 쓴다.
+// 문장 분리는 완벽할 수 없다. 아래 세 가지는 실제로 오탐을 냈고,
+// 그 오탐을 없애려는 엉뚱한 수정(차트 라벨마다 마침표 붙이기, 산문을 불릿으로 바꾸기,
+// 따옴표 지우기)까지 유발했다. 그래서 원인을 여기서 막는다. 되돌리지 말 것.
+//
+//  1) 문단 경계를 문장 경계로 봐야 한다. 예전엔 모든 줄을 공백으로 이어붙여서,
+//     '…드러납니다:' 로 끝난 줄이 다음 문단과 한 문장으로 합쳐졌다.
+//  2) 콜론도 문장 경계다. 한국어 기술 문서는 '…입니다:' 뒤에 표·코드·목록이 오고,
+//     그 콜론에서 문장이 실제로 끝난다.
+//  3) 마크다운 링크의 URL은 길이에서 빼야 한다. 독자는 표시 텍스트만 읽는데
+//     '(post.html?id=online-learning-delayed-feedback)' 같은 주소가 40~50자를 얹는다.
+//
+// 이 셋을 적용하면 전체 장문 경고가 112개 → 50개가 된다(62개가 오탐이었다).
 function longSentences(md) {
-  const text = prose(md)
-    .split('\n')
-    .filter(l => !/^\s*(#|-|\d+\.|\*)/.test(l))
-    .join(' ')
-    // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
-    // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
-    .replace(/\*\*/g, '')
-    .replace(/`[^`]*`/g, '…');
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map(s => s.replace(/\s+/g, ' ').trim())
-    .filter(s => s.length > MAX_SENTENCE);
+  const out = [];
+  for (const para of prose(md).split(/\n\s*\n/)) {
+    const text = para
+      .split('\n')
+      .filter(l => !/^\s*(#|-|\d+\.|\*)/.test(l))
+      .join(' ')
+      // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
+      // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
+      .replace(/\*\*/g, '')
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')   // 링크 → 표시 텍스트만
+      .replace(/`[^`]*`/g, '…');
+    out.push(...text
+      .split(/(?<=[.!?:])\s+/)
+      .map(s => s.replace(/\s+/g, ' ').trim())
+      .filter(s => s.length > MAX_SENTENCE));
+  }
+  return out;
 }
 
 // 글이 가리키는 내부 주소가 실제로 존재하는지. 파일명(pCVR-modeling)과 id(pcvr-modeling)를

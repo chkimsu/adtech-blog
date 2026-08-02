@@ -5794,3 +5794,22 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 /* 재생 중(is-selected)엔 배경이 accent-primary로 채워진다 — 위 라벨 색을 그대로 두면
    글자색==배경색이 되어 안 보인다. .is-selected 쪽 텍스트 규칙(#fff)과 동일하게 맞춘다. */
 .eco-flow-chip.is-featured.is-selected .eco-flow-chip-label { color: var(--bg-primary); }
+
+/* ========================================
+   스크린리더 전용 텍스트
+   ======================================== */
+
+/* 눈으로는 안 보이고 스크린리더만 읽는다.
+   display:none / visibility:hidden 은 스크린리더도 못 읽으므로 쓸 수 없다.
+   1px로 줄이고 clip-path로 잘라내는 표준 방식을 쓴다. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

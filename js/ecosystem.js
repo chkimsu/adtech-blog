@@ -820,6 +820,9 @@
     returnStrip = document.getElementById('eco-flow-return');
     returnBtn = document.getElementById('eco-flow-return-btn');
     flowChips = Array.from(document.querySelectorAll('.eco-flow-chip'));
+    // 토글 버튼임을 처음부터 알려 준다. 이 속성이 없으면 스크린리더가 그냥 버튼으로 읽어
+    // "지금 어느 흐름이 재생 중인지"를 알 방법이 없다.
+    flowChips.forEach(c => c.setAttribute('aria-pressed', 'false'));
 
     buildSVG();
     bindInteractions();
@@ -854,7 +857,61 @@
   }
 
   // ── SVG build ──
+  // 지도의 텍스트 대안. 눈으로는 안 보이고 스크린리더만 읽는다.
+  //
+  // 왜 필요한가: SVG에 role="group"을 주어 노드 21개가 버튼으로 노출되긴 하지만,
+  // 탭으로 하나씩 지나가는 것만으로는 "이게 2층 구조다", "무엇이 무엇과 이어진다"를
+  // 알 수 없다. 그림을 보는 사람은 한눈에 아는 것을 못 얻는 셈이다.
+  //
+  // 내용을 하드코딩하지 않고 NODES·EDGES에서 만든다. 노드를 옮기거나 추가할 때
+  // 요약이 저절로 따라오게 하려는 것이다(직접 쓰면 반드시 어긋난다).
+  function buildTextAlternative() {
+    // 어느 층인지는 '어디에 그려지는가'로 판단한다. BRAIN_BAND 안이면 두뇌 층이다.
+    const inBrain = (n) => {
+      const cy = n.y + n.h / 2;
+      return cy >= BRAIN_BAND.y && cy <= BRAIN_BAND.y + BRAIN_BAND.h;
+    };
+    const brain = [], trade = [];
+    for (const [id, n] of Object.entries(NODES)) (inBrain(n) ? brain : trade).push([id, n]);
+
+    // 각 노드가 어디로 이어지는지 from 기준으로 묶는다.
+    const outgoing = new Map();
+    for (const e of EDGES) {
+      if (!outgoing.has(e.from)) outgoing.set(e.from, []);
+      outgoing.get(e.from).push(e.to);
+    }
+    const nameOf = (id) => (NODES[id] ? NODES[id].name : id);
+    const line = ([id, n]) => {
+      const to = outgoing.get(id);
+      const heart = n.heart ? ' (이 지도의 심장)' : '';
+      const arrow = to && to.length ? ` → ${to.map(nameOf).join(', ')}` : '';
+      return `${n.name} — ${n.sub}${heart}${arrow}`;
+    };
+
+    const box = document.createElement('div');
+    box.className = 'sr-only';
+    // 인라인 스타일은 보험이다. 이 스크립트만 새로 받고 style.css는 캐시된 방문자에게
+    // .sr-only 규칙이 없으면 이 요약이 지도 위에 텍스트 덩어리로 그대로 보인다.
+    // display:none 은 쓰지 않는다 — 그러면 스크린리더도 못 읽어 목적이 사라진다.
+    box.style.cssText = 'position:absolute;width:1px;height:1px;margin:-1px;padding:0;' +
+      'overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0';
+    box.innerHTML =
+      '<h2>광고 생태계 지도 — 글로 읽는 요약</h2>' +
+      `<p>모듈 ${Object.keys(NODES).length}개가 두 층으로 나뉩니다. ` +
+      '위쪽은 예측 모델이 사는 두뇌 층이고, 아래쪽은 광고가 거래되는 거래 층입니다. ' +
+      '두 층은 DSP와 pCTR/pCVR을 잇는 세로선에서 만납니다. ' +
+      '아래 목록에서 각 모듈 뒤의 화살표는 그 모듈이 무엇으로 이어지는지를 뜻합니다.</p>' +
+      `<h3>두뇌 층 (${brain.length}개) — 모델이 사는 곳</h3>` +
+      '<ul>' + brain.map(x => `<li>${line(x)}</li>`).join('') + '</ul>' +
+      `<h3>거래 층 (${trade.length}개) — 광고가 거래되는 곳</h3>` +
+      '<ul>' + trade.map(x => `<li>${line(x)}</li>`).join('') + '</ul>' +
+      '<p>아래 그래프에서는 같은 모듈을 버튼으로 하나씩 짚어 볼 수 있습니다. ' +
+      '모듈을 고르면 정의와 관련 글이 옆 패널에 열립니다.</p>';
+    svg.parentNode.insertBefore(box, svg);
+  }
+
   function buildSVG() {
+    buildTextAlternative();
     svg.appendChild(createDefs());
     svg.appendChild(buildLanes());
 
@@ -1253,7 +1310,13 @@
     fs.ended = false;
     fs.playing = !REDUCED;
 
-    flowChips.forEach(c => c.classList.toggle('is-selected', c === chip));
+    // 시각 상태(is-selected)와 스크린리더 상태(aria-pressed)를 같은 자리에서 함께 바꾼다.
+    // 따로 관리하면 어긋나서, 눈에는 켜져 보이는데 읽어 주지는 않는 상태가 생긴다.
+    flowChips.forEach(c => {
+      const on = c === chip;
+      c.classList.toggle('is-selected', on);
+      c.setAttribute('aria-pressed', String(on));
+    });
     svg.classList.add('is-flowing');
     flowBar.hidden = false;
     buildStepList(flow);
@@ -1506,7 +1569,10 @@
     flowPanel.hidden = true;
     returnStrip.hidden = true;
     nodePanel.hidden = false;
-    flowChips.forEach(c => c.classList.remove('is-selected'));
+    flowChips.forEach(c => {
+      c.classList.remove('is-selected');
+      c.setAttribute('aria-pressed', 'false');
+    });
   }
 
   if (document.readyState === 'loading') {

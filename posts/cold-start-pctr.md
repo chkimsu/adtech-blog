@@ -247,6 +247,13 @@ print("→ 그래서 강도는 '이 계층 안에서 광고들이 얼마나 비�
 
 ---
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-beta-sampling.html?embed=1" height="520" loading="lazy" title="베타 분포 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-beta-sampling.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+위 수축 공식이 바로 이 베타 분포입니다. α와 β를 끌어 보면 봉우리가 움직이고 폭이 좁아집니다. **α+β가 사전 강도이고 봉우리의 위치가 사전 CTR**입니다. 노출이 쌓일 때 분포가 어떻게 좁아지는지 눈으로 보입니다.
+
 ## 3. 사전 강도를 손으로 찍지 않는 법
 
 앞 절에서 강도를 500, 2000처럼 임의로 넣었습니다. 실무에서 이 숫자를 어떻게 정할까요.

@@ -522,4 +522,6 @@ for n in (40, 80, 160):
 - [pCTR: 이 사람이 누를까](post.html?id=pctr-prediction) — 이 모델의 출력이 왜 돈이 되나
 - [Calibration](post.html?id=calibration) — 확률의 절댓값을 맞추는 문제
 - [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 10ms 예산을 어떻게 쪼개 쓰나
+- [대규모 임베딩 테이블 운영](post.html?id=embedding-table-ops) — 정해진 테이블을 실제로 굴리는 법
+- [Cold Start](post.html?id=cold-start-pctr) — 콘텐츠 피처가 이력 없는 광고를 어떻게 구하나
 - [ML 엔지니어 트랙](ml-track.html) — 광고 ML을 순서대로 읽는 길

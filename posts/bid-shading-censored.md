@@ -139,6 +139,13 @@ for label, mu in [("평상시", 6.2), ("경쟁 과열", 7.0)]:
 
 경쟁이 과열되면 최적점이 움직입니다. 시장 평균이 546원에서 1,215원으로 오르자 최적 깎기가 40%에서 20%로 내려왔습니다. 비싼 시장에서는 덜 깎아야 이깁니다. 꼭대기가 평평한 것도 눈여겨보세요. 과열 시장의 20%와 30%는 0.1원 차이입니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-bid-landscape.html?embed=1" height="560" loading="lazy" title="입찰 지형 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-bid-landscape.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+위 계산을 손으로 움직여 보는 데모입니다. 깎기 비율을 끌면 승률과 기대이익이 함께 변하고, **최적점이 양 끝이 아니라 가운데에 있다**는 것이 곡선으로 보입니다. 경쟁 분포를 바꾸면 그 꼭대기가 옆으로 이동합니다.
+
 ### ④ End-to-End 파이프라인 개요
 
 최적 입찰가를 실시간으로 계산하려면 **2단계 파이프라인**이 필요합니다:
@@ -336,6 +343,13 @@ print("→ 그래서 실무는 일부 트래픽에 일부러 높게 입찰해 �
 **아래쪽 — 전체 시장 평균.** 이긴 것만 보면 591원을 356원으로, **40% 싸게** 봅니다. 그런데 KM도 이 숫자는 못 맞힙니다. 내 입찰가 위쪽에는 관측이 하나도 없기 때문입니다. **거기는 데이터가 아니라 가정의 영역입니다.**
 
 여기서 실무의 요령이 하나 나옵니다. 꼬리를 알고 싶으면 **사 와야 합니다.** 일부 트래픽에 일부러 높게 입찰해 비싼 경매의 낙찰가를 관측하는 것입니다. 그 입찰은 대체로 손해입니다. 손해를 내고 정보를 사는 셈이니, 탐색 비용입니다([탐색과 활용](post.html?id=exploration-exploitation)에서 다루는 그 저울과 같은 구조입니다).
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-censored-data.html?embed=1" height="600" loading="lazy" title="Censored Data 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-censored-data.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (5단계 가이드 투어)</a>
+</div>
+
+God View에서 Engineer View로 전환해 보면 위 계산이 눈으로 보입니다. 내 입찰가 위쪽이 물음표로 가려지고, 그 상태로 추정한 분포가 실제보다 왼쪽에 서는 모습입니다.
 
 ### ④ Censored Regression의 핵심 아이디어
 

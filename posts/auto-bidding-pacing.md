@@ -476,6 +476,13 @@ lagrangian_dual_update()
 
 ---
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-portfolio.html?embed=1" height="580" loading="lazy" title="예산 배분 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-portfolio.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+여러 캠페인에 한정된 예산을 나누는 문제를 손으로 만져 보는 데모입니다. **한 곳에 몰아주면 그 캠페인의 한계 효용이 떨어져 전체가 손해**라는 것이 곡선으로 보입니다. 앞 절의 페이싱이 시간 축에서 하는 일을 여기서는 캠페인 축에서 합니다.
+
 ## 5. 실전 고려사항: 이론과 프로덕션의 간극
 
 ### 목표 CPA를 조이면 어디가 무너지는가

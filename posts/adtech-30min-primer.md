@@ -248,7 +248,7 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 - "돈만 보지 말고 유저 경험도" — 랭킹의 상위 개념: [LTV 기반 광고 랭킹](post.html?id=ltv-ad-ranking)
 - CTR 모델의 전체 진화 가계도: [Deep CTR 모델의 진화 — LR에서 DIN까지](post.html?id=deep-ctr-models)
 - 두 모델을 한 번에 학습하는 기법: [Multi-Task Learning — pCTR과 pCVR을 동시에](post.html?id=multi-task-learning)
-- pCVR 특유의 지연 전환 문제: [pCVR 모델링 & Deduplication 이슈](post.html?id=my-markdown-post)
+- pCVR 특유의 지연 전환 문제: [pCVR 모델링 & Deduplication 이슈](post.html?id=pcvr-modeling)
 - AUC만 믿으면 왜 위험한가: [Calibration — AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
 - 위치 편향을 제거하는 법: [Position Bias & Unbiased Learning to Rank](post.html?id=position-bias-ultr)
 - 탐색/활용의 근본 딜레마: [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)

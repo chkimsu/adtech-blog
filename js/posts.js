@@ -269,10 +269,11 @@ const posts = [
   },
   {
     id: 'ltv-ad-ranking',
+    worldPractical: '담장 안에서 일한다면 이 글의 LTV 계산 대부분이 실무 그대로다. 재구매·이탈을 자체 로그로 실측할 수 있어 90일 LTV를 실제로 예측 모델에 태울 수 있기 때문이다. 다만 그 예측이 가입 후 7일 신호에 기댈 수밖에 없어 오차가 랭킹에 그대로 번진다는 점, 할인율이라는 정책 다이얼이 랭킹을 또 바꾼다는 점은 직접 챙겨야 한다. 열린 RTB의 value-based bidding 절은 직접 만질 일은 없지만, 광고주가 넘기는 전환값의 신빙성을 가늠할 때 참고가 된다.',
     world: 'walled-garden',
     worldNote: '노출당 수익만 보면 광고를 자꾸 띄워 유저가 떠나는 손해가 안 보인다. 지면·유저를 다 가진 닫힌 생태계만 그 손해까지 빼서 ‘오래 남을 유저’ 기준으로 순위를 매길 수 있다.',
     title: 'LTV(Long Term Value): eCPM 너머, 광고 랭킹의 진짜 기준',
-    excerpt: 'eCPM만으로 광고를 정렬하면 왜 위험한가? 사용자 비용(β), Squashing Function까지 — 광고 플랫폼이 "돈"과 "경험"을 동시에 최적화하는 LTV 랭킹의 원리를 해부합니다.',
+    excerpt: '단기 eCPM 1위였던 ‘반값특가 이어폰’ 광고가, 재구매율을 반영한 90일 LTV 기준으로는 4위까지 밀립니다. 대신 5위였던 기저귀 정기배송이 1위로 올라옵니다. 사용자 비용(β)과 Squashing Function부터, 월 5% 할인율로 미래 가치를 현재가치로 환산하면 3·4위가 또 한 번 뒤집히는 과정까지 파이썬으로 직접 계산합니다. 90일을 기다릴 수 없어 가입 후 7일 신호로 LTV를 예측하면 5개 중 4개의 순위가 틀리고, 그 오차가 랭킹에 그대로 번지는 것도 시뮬레이션으로 확인합니다.',
     date: '2026-04-11',
     categories: ['Bidding & Auction'],
     tags: ['eCPM', 'Ad Ranking', 'Ad Ecosystem', 'pCTR'],
@@ -335,10 +336,11 @@ const posts = [
   },
   {
     id: 'exploration-exploitation',
+    worldPractical: '담장 안에서는 탐색 비율을 정책으로 직접 정할 수 있다. 소재 수·트래픽 규모·소재 수명별로 탐색 비율을 다르게 세팅하는 실무가 가능하고, 실제로 필요하다(하나의 숫자로 고정하면 어떤 캠페인은 과소, 어떤 캠페인은 과다 탐색이 된다). 다만 계산대로 실행하는 건 또 다른 문제다. 캠페인 담당자가 분기 성과 때문에 탐색 비율을 낮춰 달라고 요청하는 조직 인센티브 문제가, 실무에서는 알고리즘 튜닝보다 자주 발목을 잡는다.',
     world: 'both',
     worldNote: '‘잘 되는 광고를 더 쓸까, 새 광고를 시험할까’라는 딜레마는 양쪽 공통이다. 닫힌 생태계는 자기 트래픽으로 새 광고에 노출을 직접 배정해 시험하고, 열린 RTB의 광고주는 노출을 못 줘 입찰가·소재 안에서만 시험한다.',
     title: '탐색과 활용(Exploration & Exploitation): 광고 시스템의 근본적 딜레마',
-    excerpt: 'Epsilon-Greedy, UCB, Thompson Sampling, Contextual Bandit의 탐색 전략을 비교하고, 새 광고·새 유저의 Cold-Start 문제 해법과 프로덕션 탐색 시스템 설계까지 다룹니다.',
+    excerpt: '신규 소재 하나를 검증하려면 최소 몇 번의 노출이 필요할까요? 10% 향상을 확인하려면 80,679회가 필요하고, 실패하면 80,679원 손해지만 안 해보면 연 1,200만원을 놓칩니다. 탐색 비율을 0%·5%·20%·50%로 시뮬레이션하면 수익이 가장 높은 지점은 20%이고, 이 최적값은 소재 수·트래픽 규모·소재 수명에 따라 5%~50%까지 움직입니다. Cold-Start 해법과 함께, 조직의 인센티브·브랜드 리스크처럼 알고리즘으로는 안 풀리는 탐색의 한계까지 다룹니다.',
     date: '2026-04-11',
     categories: ['Bandits & Personalization'],
     tags: ['MAB', 'Contextual Bandit', 'UCB', 'Thompson Sampling'],
@@ -481,7 +483,7 @@ const posts = [
     contentUrl: 'posts/bid-shading-censored.md',
   },
   {
-    id: 'my-markdown-post',
+    id: 'pcvr-modeling',
     world: 'both',
     worldNote: '클릭한 것만 학습해 생기는 편향, 같은 전환이 여러 번 잡히는 문제는 양쪽 공통이다. 닫힌 생태계는 전환을 자사 로그로 직접 봐 걸러내기 쉽고, 열린 RTB는 전환이 외부 여러 경로로 들어와 중복 걸러내기가 훨씬 어렵다.',
     worldPractical: '담장 안에서는 결제 시스템이 발급한 주문번호를 그대로 신뢰할 수 있어 중복 제거 자체는 상대적으로 깨끗하다. 그래서 실무 자원은 지연 전환 보정(라벨이 아직 안 붙은 클릭을 어떻게 다룰지)과 ESMM류 구조로 클릭 편향(SSB)을 우회하는 쪽에 더 쏠린다.',
@@ -621,7 +623,6 @@ const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-fl
 
 // ML 엔지니어 트랙 — pCTR/pCVR 실무 커리큘럼 (ml-track.html 렌더용).
 // posts의 id만 참조한다(검증기가 존재 여부 확인). 3단계는 신규 글이 늘며 채워진다.
-// 주의: pCVR 글의 id는 레거시 'my-markdown-post' (URL 안정성 때문에 유지 — P3에서 별칭 처리 검토).
 const mlTrack = {
   title: 'ML 엔지니어 트랙',
   subtitle: 'pCTR/pCVR 실무 커리큘럼 — 광고 ML의 심장을 입문부터 심화까지. 일반 독자도 지도처럼 훑어보세요.',
@@ -630,7 +631,7 @@ const mlTrack = {
       id: 'stage-1',
       title: '1단계 · 입문 — 예측이 돈이 되는 원리',
       goal: '이 단계를 마치면: pCTR/pCVR이 무엇이고, 왜 절대값(보정)이 중요하며, 어떤 모델로 맞히는지 큰 그림이 잡힙니다.',
-      posts: ['pctr-prediction', 'ecpm-ranking', 'calibration', 'my-markdown-post', 'deep-ctr-models'],
+      posts: ['pctr-prediction', 'ecpm-ranking', 'calibration', 'pcvr-modeling', 'deep-ctr-models'],
     },
     {
       id: 'stage-2',
@@ -669,8 +670,15 @@ function getAllPosts() {
   return posts.slice().sort((a, b) => new Date(b.date) - new Date(a.date)); // slice로 원본 보존
 }
 
+// 옛 주소 → 현재 id. 한번 밖으로 나간 링크는 계속 살려 둔다(북마크·검색엔진 인덱스).
+// 'my-markdown-post'는 템플릿 기본 id가 그대로 굳어 버린 자리였다.
+const POST_ID_ALIASES = {
+  'my-markdown-post': 'pcvr-modeling',
+};
+
 function getPostById(id) {
-  return posts.find(post => post.id === id);
+  const resolved = POST_ID_ALIASES[id] || id;
+  return posts.find(post => post.id === resolved);
 }
 
 function getAllCategories() {

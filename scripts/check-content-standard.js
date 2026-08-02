@@ -56,6 +56,21 @@ function longSentences(md) {
     .filter(s => s.length > MAX_SENTENCE);
 }
 
+// 글이 가리키는 내부 주소가 실제로 존재하는지. 파일명(pCVR-modeling)과 id(pcvr-modeling)를
+// 헷갈려 죽은 링크를 심는 일이 반복돼서 기계가 잡게 했다.
+const POST_IDS = new Set(posts.map(p => p.id));
+const PAGES = new Set(fs.readdirSync(root).filter(f => f.endsWith('.html')));
+function deadLinks(md) {
+  const out = [];
+  for (const m of md.matchAll(/post\.html\?id=([A-Za-z0-9_-]+)/g)) {
+    if (!POST_IDS.has(m[1])) out.push(`?id=${m[1]}`);
+  }
+  for (const m of md.matchAll(/(?:\]\(|src=")(?!https?:|post\.html|#)([a-zA-Z0-9_-]+\.html)/g)) {
+    if (!PAGES.has(m[1])) out.push(m[1]);
+  }
+  return [...new Set(out)];
+}
+
 function check(post) {
   const abs = path.join(root, post.contentUrl);
   if (!fs.existsSync(abs)) return null;
@@ -85,6 +100,7 @@ function check(post) {
     badBadge,
     tildeTrap,
     mathKorean,
+    dead: deadLinks(md),
   };
 }
 
@@ -101,6 +117,7 @@ if (args.length) {
     if (r.badBadge.length) console.log(`   ✗ 잘못된 무대 마커: ${r.badBadge.join(', ')}`);
     if (r.tildeTrap.length) console.log(`   ✗ 물결표 2개 문장(취소선 오파싱): ${r.tildeTrap.length}개`);
     if (r.mathKorean.length) console.log(`   ✗ 수식 안 한글: ${r.mathKorean.length}개`);
+    if (r.dead.length) console.log(`   ✗ 죽은 링크: ${r.dead.join(', ')}`);
   }
 } else {
   const flag = r => [
@@ -113,6 +130,7 @@ if (args.length) {
     r.badBadge.length ? '✗마커' : '',
     r.tildeTrap.length ? '✗물결표' : '',
     r.mathKorean.length ? '✗수식한글' : '',
+    r.dead.length ? `✗죽은링크${r.dead.length}` : '',
   ].filter(Boolean).join(' ');
 
   rows.sort((a, b) => a.bytes - b.bytes);

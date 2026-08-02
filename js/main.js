@@ -1667,7 +1667,9 @@ function initializeSidebar() {
 
 function highlightActivePost() {
   const urlParams = new URLSearchParams(window.location.search);
-  const currentPostId = urlParams.get('id');
+  // 옛 주소(별칭)로 들어와도 현재 id로 맞춰야 사이드바가 하이라이트된다.
+  const resolved = getPostById(urlParams.get('id'));
+  const currentPostId = resolved ? resolved.id : null;
 
   if (currentPostId) {
     const activeLink = document.querySelector(`.sidebar-post-link[data-post-id="${currentPostId}"]`);

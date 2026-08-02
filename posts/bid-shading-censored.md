@@ -506,6 +506,15 @@ b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
 
 이 효율성이 **수십억 건/일의 실시간 서빙**을 가능하게 합니다. CDF 평가($F(b \mid x)$)만 빠르면 bid 최적화가 $O(\log(1/\varepsilon))$에 끝납니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-golden-section.html?embed=1" height="560" loading="lazy" title="황금 비율 탐색 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-golden-section.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+한 걸음씩 눌러 보면 위 코드가 하는 일이 그대로 보입니다. 탐색 구간의 양 끝이 안쪽으로 좁혀지고, 매번 **평가를 한 번만 더 하고도 구간이 0.618배로 줄어듭니다.** 위 코드는 13회 반복에서 구간이 0.01보다 작아져 멈췄습니다.
+
+눈여겨볼 것은 **버리는 쪽**입니다. 두 지점을 비교해 낮은 쪽이 있는 구간을 통째로 버립니다. 단봉이라는 전제가 있어서 이 과격한 버리기가 안전합니다. 만약 극대값이 둘이면 잘못된 봉우리에 갇힙니다 — 앞 절의 단봉성 증명이 왜 필요했는지가 여기서 드러납니다.
+
 ### ③ 실시간 서빙 아키텍처
 
 Zhou et al.은 VerizonMedia DSP에서 이 파이프라인을 프로덕션 배포한 아키텍처를 공개합니다:

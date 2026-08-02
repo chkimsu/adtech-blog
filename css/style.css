@@ -5813,3 +5813,30 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
   white-space: nowrap;
   border: 0;
 }
+
+/* ========================================
+   KaTeX 수식 — 좁은 화면에서 넘치지 않게
+   ======================================== */
+
+/* 디스플레이 수식($$…$$)은 폭이 고정이라 모바일에서 화면 밖으로 나간다.
+   375px 화면에서 문서 폭이 569px가 되어 페이지 전체가 가로로 스크롤됐다.
+   수식 자체를 스크롤 상자로 만들어, 넘치는 건 그 안에서만 넘치게 한다. */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 스크롤바가 아래첨자를 가리지 않도록 여유를 둔다 */
+  padding-top: 0.2em;
+  padding-bottom: 0.6em;
+}
+
+/* 인라인 수식도 문단 폭을 넘길 수 있다(긴 시그마 식 등).
+   인라인은 스크롤 상자로 만들면 글 흐름이 깨지므로, 줄바꿈을 허용한다. */
+.post-content .katex {
+  max-width: 100%;
+}
+
+/* 수식을 감싼 문단이 넘침을 만들지 않게 한다 — 마지막 방어선 */
+.post-content p:has(> .katex-display),
+.post-content .katex-display > .katex {
+  max-width: 100%;
+}

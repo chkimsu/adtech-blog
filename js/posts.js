@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'ctr-feature-engineering',
+    world: 'both',
+    worldNote: '해싱·집계·라벨 누출은 양쪽 세계 공통의 문제다. 다른 건 시퀀스 피처가 성립하는지다. 담장 안은 로그인 ID로 행동이 한 줄로 이어지지만, 열린 RTB는 쿠키가 며칠 만에 바뀌어 시퀀스가 두세 개에 그친다.',
+    worldPractical: '담장 안은 로그인 ID가 있어 유저 행동이 한 줄로 이어진다. 시퀀스 중앙값이 23개라 “최근 본 20개” 피처가 실제로 이득을 낸다. 열린 RTB는 쿠키가 며칠 만에 바뀌어 79%가 3개 이하이고 중앙값이 2개라, 20칸을 만들면 대부분이 패딩이다. 그래서 무게 중심이 입찰 요청에 그대로 담겨 오는 지면·도메인·문맥 피처와 세그먼트로 옮겨간다.',
+    title: 'CTR 피처 엔지니어링 실전: 무엇을 모델에 넣나 — 해싱·시퀀스·집계 피처를 만드는 법',
+    excerpt: '광고 ID 100만 개를 one-hot으로 넣으면 배치 하나가 3.8GB, 해싱 2^18과 16차원 임베딩으로 접으면 테이블 전체가 16MB입니다. 100만 개를 26만 칸에 밀어 넣으면 ID의 97.8%가 남과 칸을 나눠 쓰는데, 노출로 가중한 예측 오차는 상위 1만 광고에서 1.59%뿐입니다. 진짜 사고는 머리끼리 부딪친 200쌍에서 나고(오차 19.0%), 전용 칸 0.6MB를 주면 0.00%로 사라집니다. “같은 날 CTR”을 피처로 쓰면 오프라인 AUC가 0.8938까지 부풀지만 실서빙에서는 0.7786으로 무너집니다.',
+    date: '2026-07-26',
+    categories: ['Measurement & Modeling', 'ML Infrastructure'],
+    tags: ['pCTR', 'ML Infra', 'Model Serving'],
+    contentUrl: 'posts/ctr-feature-engineering.md'
+  },
+  {
     id: 'embedding-table-ops',
     world: 'both',
     worldNote: '테이블을 쪼개고 퇴출하고 정밀도를 줄이는 기술 자체는 양쪽 공통이다. 다른 건 어느 테이블에 예산을 쓰느냐다. 담장 안은 로그인 ID가 몇 년을 살아 유저 테이블이 값지지만, 열린 RTB는 쿠키가 매번 달라 유저 줄이 학습되지 않는다.',
@@ -709,8 +721,9 @@ const mlTrack = {
       id: 'stage-3',
       title: '3단계 · 심화 — 탐색과 확장',
       goal: '이 단계를 마치면: 탐색-활용부터 피처 실전·지표 운영·실험 설계까지 실무 전체가 이어집니다. 앞 두 단계가 “무엇을 어떻게 만드나”였다면, 여기는 “만든 것을 어떻게 굴리고 판단하나”입니다.',
-      // TODO: ctr-feature-engineering · model-monitoring 등록 후 여기에 추가
-      posts: ['exploration-exploitation', 'cold-start-pctr', 'embedding-table-ops',
+      // TODO: model-monitoring 등록 후 여기에 추가
+      posts: ['exploration-exploitation', 'cold-start-pctr', 'ctr-feature-engineering',
+        'embedding-table-ops',
         'model-ab-testing', 'conversion-definition',
         'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking'],
     },

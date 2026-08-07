@@ -1069,6 +1069,189 @@ window.DEMO_EDU = {
                     '슬라이더만으로 자동 최적화에 도전해 보세요!'
             }
         ]
+    },
+
+    // ==========================================
+    // 요청 경로 시뮬레이터 (입문)
+    // ==========================================
+    'request-path': {
+        analogy: '부품을 하나씩 꺼 보면, 그 부품이 무엇을 막고 있었는지가 보인다',
+        anchor: '.rp-controls',
+        embedKeep: ['.rp-controls', '.rp-path', '.rp-verdict', '.rp-cost'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.rp-intro', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 토글은 <label>이 <input>을 감싸고 있다. 그래서 셀렉터를 체크박스(#rp-lb 등)에
+            // 걸면 해설이 한 번도 안 나온다 — 엔진의 click 룰은 input 을 건너뛰고,
+            // input 룰은 체크박스의 value 가 늘 "on" 이라 "값이 바뀌었나" 검사를 통과 못 한다.
+            // 라벨에 걸면 나오지만, 라벨 글자를 누르면 click 이 두 번 온다(라벨에 한 번,
+            // 라벨이 넘겨준 체크박스에 한 번). 앞의 것은 아직 체크가 안 바뀐 시점이라
+            // 그대로 쓰면 반대로 말한다. 그래서 이미 말한 상태를 라벨에 적어 두고,
+            // 상태가 실제로 바뀐 뒤에만 한 번 말한다.
+            '.rp-toggles label': ({ el }) => {
+                const input = el.querySelector('input');
+                if (!input) return '';
+                const said = el.dataset.eduSaid !== undefined ? el.dataset.eduSaid : String(input.defaultChecked);
+                if (said === String(input.checked)) return '';
+                el.dataset.eduSaid = String(input.checked);
+                const on = input.checked;
+                switch (input.id) {
+                    case 'rp-lb':
+                        return on
+                            ? 'LB를 켰습니다. 매체는 대표 주소 하나만 알면 되고, 죽은 서버는 LB가 빼 줍니다.'
+                            : 'LB를 껐습니다. 매체가 서버 주소를 직접 들고 있어야 하고, <strong>배포하는 동안 그 요청은 사라집니다</strong>.';
+                    case 'rp-ingress':
+                        return on
+                            ? 'Ingress를 켰습니다. 매체가 아는 주소가 <strong>하나</strong>로 줄고, 대상 그룹 설정도 한 벌이면 됩니다.'
+                            : 'Ingress를 껐습니다. 서비스마다 대표 주소와 대상 그룹 설정이 하나씩 필요해집니다. 서비스가 2개 이상이면 요청이 여기서 멈춥니다.';
+                    case 'rp-gateway':
+                        return on
+                            ? 'API Gateway를 켰습니다. 인증·쿼터를 <strong>한 곳에서</strong> 처리합니다.'
+                            : 'API Gateway를 껐습니다. 같은 정책을 서비스마다 따로 구현해야 하고, 정책이 바뀌면 그만큼 배포합니다.';
+                    case 'rp-mesh':
+                        return on
+                            ? '서비스 메시를 켰습니다. 재시도·타임아웃·추적을 코드 없이 얻는 대신, 요청마다 사이드카 지연이 붙습니다.'
+                            : '서비스 메시를 껐습니다. 사이드카 지연이 0이 됩니다.';
+                    default:
+                        return '';
+                }
+            },
+            '#rp-svc': ({ value, prev }) =>
+                `서비스를 <strong>${prev}개 → ${value}개</strong>로 바꿨습니다. ` +
+                (value > 1
+                    ? '2개가 넘는 순간부터 경로로 갈라 줄 수단이 필요합니다 — Ingress를 꺼 보면 요청이 거기서 멈춥니다.'
+                    : '1개면 Ingress 없이도 요청이 지나갑니다. 갈라 줄 것이 없으니까요.'),
+            '#rp-media': ({ value, prev }) =>
+                `매체를 <strong>${prev}곳 → ${value}곳</strong>으로 바꿨습니다. ` +
+                (value > 1
+                    ? '2곳이 넘는 순간부터 누가 보냈는지 확인하고 초당 허용량을 걸 자리가 필요합니다 — API Gateway를 꺼 보면 요청이 거기서 멈춥니다.'
+                    : '1곳이면 API Gateway 없이도 요청이 지나갑니다. 나눠 걸 일이 없으니까요.'),
+            '#rp-fire': () =>
+                document.querySelector('#rp-verdict.is-stop')
+                    ? '요청 한 건을 보냈습니다. 칸이 순서대로 켜지다가 <strong>✕ 표시된 칸에서 멈춥니다</strong> — 그 뒤 칸에는 요청이 오지 않습니다.'
+                    : '요청 한 건을 보냈습니다. 칸이 순서대로 켜지며 <strong>bidder까지 도착</strong>합니다.'
+        },
+        tour: [
+            {
+                el: '.rp-path',
+                title: '요청이 지나는 길',
+                body: '매체가 보낸 입찰 요청 한 건이 왼쪽에서 오른쪽으로 지나갑니다. ' +
+                    '<strong>✓</strong>는 지나간 칸, <strong>–</strong>는 지금 구성에서는 없어도 되는 칸입니다.'
+            },
+            {
+                el: '.rp-toggles',
+                title: '부품을 하나 꺼 보기',
+                body: '<strong>Ingress</strong>를 꺼 보세요. 서비스가 4개인 채로 끄면 요청이 어디서 멈추는지 바로 보입니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.rp-cost',
+                title: '일은 사라지지 않는다',
+                body: '부품을 빼면 그 일이 없어지는 게 아니라 사람 쪽으로 옮겨옵니다. ' +
+                    '관리할 주소·설정·정책 벌수에 <strong>▲</strong>가 붙어 늘어난 것을 보세요.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '토글과 슬라이더를 움직일 때마다 여기에 "지금 일어난 일"이 표시됩니다. ' +
+                    '이제 자유롭게 꺼 보세요!'
+            }
+        ]
+    },
+
+    // ==========================================
+    // Kafka Partition 놀이터 (입문)
+    // ==========================================
+    'kafka-partition': {
+        analogy: 'partition 수가 처리량 상한이고, key가 순서 보장 범위를 정한다',
+        anchor: '.kp-controls',
+        embedKeep: ['.kp-controls', '.kp-verdict', '.kp-shuffle', '.kp-legend', '.kp-grid'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.kp-intro', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            '#kp-part': ({ value, prev }) => {
+                const total = document.querySelectorAll('#kp-grid .kp-rec').length;
+                const moved = document.querySelectorAll('#kp-grid .kp-rec.is-moved').length;
+                const shuffle = document.querySelector('#kp-shuffle');
+                const head = `partition을 <strong>${prev}칸 → ${value}칸</strong>으로 바꿨습니다. `;
+                // 칸 수 알림이 숨어 있으면 지금 칸 수가 비교 기준과 같다는 뜻이다.
+                // 이때 옮겨간 줄이 0인 것은 우연이 아니라 기준으로 되돌아왔기 때문이므로,
+                // 아래의 "우연히 제자리를 지켰다" 를 그대로 쓰면 반대로 말하게 된다.
+                if (shuffle && shuffle.hidden) {
+                    return head + '비교 기준으로 잡아 둔 칸 수로 되돌아왔습니다. ' +
+                        '배정도 기준과 같아져 <strong>↰</strong> 표시가 사라집니다.';
+                }
+                if (moved) {
+                    return head + `같은 ${total}줄인데 <strong>${moved}줄</strong>이 다른 칸으로 옮겨갔습니다(<strong>↰</strong> 표시). ` +
+                        '칸 수가 나눗셈에 들어가니, <strong>칸 수를 나중에 바꾸면 그 시점에서 순서 보장이 끊깁니다.</strong>';
+                }
+                return head + `이번에는 옮겨간 줄이 없습니다. 표본 ${total}줄이 우연히 제자리를 지킨 것이지, 칸 수를 바꿔도 안전하다는 뜻은 아닙니다.`;
+            },
+            '#kp-cons': ({ value, prev }) => {
+                const parts = document.querySelectorAll('#kp-grid .kp-card').length;
+                const idle = document.querySelectorAll('#kp-legend .kp-legend-item.is-idle').length;
+                return `consumer를 <strong>${prev}명 → ${value}명</strong>으로 바꿨습니다. ` +
+                    (idle
+                        ? `칸이 ${parts}개뿐이라 <strong>${idle}명은 아무 칸도 못 맡습니다</strong> — 범례에 "맡은 칸 없음"으로 나옵니다. 사람을 더 붙여도 처리량은 그대로입니다.`
+                        : `${value}명이 칸 ${parts}개를 나눠 맡았습니다. ` +
+                          (value < parts
+                              ? '아직 칸이 남아 있어 사람을 더 붙이면 처리량이 늘어납니다.'
+                              : '칸 수와 인원이 딱 맞았습니다 — 여기서 더 늘리려면 칸부터 늘려야 합니다.'));
+            },
+            // 라디오도 <label>이 <input>을 감싸고 있다. 위 .rp-toggles label 과 같은 이유로
+            // input 에 직접 걸면 해설이 안 나오고, 라벨에 걸면 라벨 글자를 누를 때 두 번 온다.
+            // 앞의 것은 아직 선택이 안 바뀐 시점이라, 이미 말한 값을 fieldset 에 적어 두고
+            // 값이 실제로 바뀐 뒤에만 한 번 말한다.
+            '.kp-key-row label': ({ el }) => {
+                const row = el.closest('.kp-key-row');
+                if (!row) return '';
+                const inputs = Array.prototype.slice.call(row.querySelectorAll('input[name="kp-key"]'));
+                const checked = inputs.filter((i) => i.checked)[0];
+                const first = inputs.filter((i) => i.defaultChecked)[0];
+                const now = checked ? checked.value : '';
+                const said = row.dataset.eduSaid !== undefined ? row.dataset.eduSaid : (first ? first.value : '');
+                if (said === now) return '';
+                row.dataset.eduSaid = now;
+                if (now === 'none') {
+                    return 'key를 <strong>없음</strong>으로 바꿨습니다. 줄이 칸에 차례대로 들어가 가장 고르게 퍼집니다. ' +
+                        '대신 <strong>같은 요청의 노출과 클릭이 다른 칸으로 흩어져</strong> 순서를 맞출 수 없습니다.';
+                }
+                if (now === 'ad_id') {
+                    return 'key를 <strong>ad_id</strong>로 바꿨습니다. 같은 광고는 늘 같은 칸으로 가서 광고별 집계를 한 칸 안에서 끝낼 수 있습니다. ' +
+                        '대신 <strong>4건짜리 인기 광고 9931이 있는 칸만 부풀고</strong>, 그 칸을 맡은 consumer만 밀립니다.';
+                }
+                return 'key를 <strong>req_id</strong>로 바꿨습니다. 같은 요청의 노출과 클릭이 같은 칸에 모여 순서대로 읽힙니다 — 둘을 이어 붙이기 좋은 상태입니다.';
+            },
+            '#kp-shuffle-reset': () =>
+                '지금 배정을 새 기준으로 삼았습니다. <strong>↰</strong> 표시와 칸 수가 바뀌었다는 알림이 사라지고, ' +
+                '이제부터 칸 수를 바꾸면 방금 이 배정과 비교합니다. 옮겨간 줄이 제자리로 돌아온 것은 아닙니다.'
+        },
+        tour: [
+            {
+                el: '.kp-grid',
+                title: '12줄이 칸에 나뉜 모습',
+                body: '칸 하나가 partition 하나입니다. 칸마다 그 칸을 맡은 consumer 이름과 줄 수가 적혀 있어요. ' +
+                    '한 칸은 그룹 안에서 <strong>언제나 한 명만</strong> 맡습니다.'
+            },
+            {
+                el: '#kp-cons',
+                title: '사람을 늘려 보기',
+                body: 'consumer를 칸 수보다 많게 밀어 보세요. 범례에 <strong>"맡은 칸 없음"</strong>이 나타납니다 — ' +
+                    '사람을 늘려도 처리량이 안 느는 지점입니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#kp-part',
+                title: '칸 수를 바꿔 보기',
+                body: 'partition 수를 움직여 보세요. 같은 key가 다른 칸으로 옮겨간 줄에 <strong>↰</strong>가 붙습니다 — ' +
+                    '순서 보장이 끊기는 순간입니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더와 key를 바꿀 때마다 여기에 "지금 일어난 일"이 표시됩니다. ' +
+                    '이제 자유롭게 돌려 보세요!'
+            }
+        ]
     }
 
 };

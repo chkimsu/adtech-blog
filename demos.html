@@ -443,7 +443,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 17개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 19개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -461,6 +461,8 @@
               <a href="demo-beta-sampling.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 베타 분포 샘플링</a>
               <a href="demo-ab-vs-bandit.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ A/B vs Bandit</a>
               <a href="demo-frequency-capping.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Frequency Capping</a>
+              <a href="demo-request-path.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 요청 경로 시뮬레이터</a>
+              <a href="demo-kafka-partition.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Kafka Partition 놀이터</a>
             </div>
           </div>
           <!-- 중급 -->
@@ -576,10 +578,40 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">17개 · 카테고리별</span>
+          <span class="count">20개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
+
+          <!-- 요청 경로 시뮬레이터 (신규) -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>요청 경로 시뮬레이터</h3>
+            <p>LB·Ingress·API Gateway·서비스 메시를 하나씩 끄고 요청을 던져 봅니다. 없는 부품 때문에 요청이 어디서 멈추는지, 관리할 주소·설정·정책 벌수가 얼마나 늘어나는지 바로 보입니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-request-path.html" class="btn-try">체험하기</a>
+          </div>
+
+          <!-- Kafka Partition 놀이터 (신규) -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>Kafka Partition 놀이터</h3>
+            <p>노출 로그 12줄이 partition에 나뉘고 consumer가 그 칸을 나눠 맡습니다. 칸 수·읽는 사람 수·key를 바꾸면 쏠림·노는 consumer·순서 깨짐이 각각 어떻게 나타나는지 바로 보입니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-kafka-partition.html" class="btn-try">체험하기</a>
+          </div>
 
           <!-- 로그 → ML 학습 루프 (신규) -->
           <div class="demo-card">

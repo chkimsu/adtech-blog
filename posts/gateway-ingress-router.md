@@ -40,22 +40,22 @@ bidders:
 문제는 배포할 때 드러난다. 새 버전을 올리려면 `bidder` 프로세스를 내리고 새 프로세스를 띄워야 한다. 그 사이 `10.0.3.14:8080` 은 아무도 듣지 않는 포트가 된다. 이때 매체가 보낸 요청은 느린 응답을 받는 게 아니다. 연결 자체가 거부된다(`connection refused`). 12ms 예산 안에서는 재시도할 여유도 없다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 150" role="img" aria-label="매체 한 곳이 bidder 서버 한 대의 IP를 직접 호출하는 구조. 그 서버 한 칸이 배포 중에 사라지면 대신 부를 곳이 없다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 180" role="img" aria-label="매체 한 곳이 bidder 서버 한 대의 IP를 직접 호출하는 구조. 그 서버 한 칸이 배포 중에 사라지면 대신 부를 곳이 없다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw1-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="20" y="46" width="130" height="58" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="85" y="71" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
-<text x="85" y="89" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">설정에 IP가 박혀 있다</text>
-<line x1="150" y1="75" x2="244" y2="75" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw1-arr)"/>
-<text x="197" y="66" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14:8080</text>
-<rect x="248" y="40" width="162" height="70" rx="13" style="fill:none; stroke:var(--state-bad); stroke-width:1.4; stroke-dasharray:5 4"/>
-<rect x="254" y="46" width="150" height="58" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:1.8"/>
-<text x="329" y="71" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">bidder</text>
-<text x="329" y="89" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">서버 1대</text>
-<line x1="434" y1="75" x2="414" y2="75" style="stroke:var(--state-bad); stroke-width:1.4; stroke-dasharray:5 4"/>
-<text x="440" y="70" style="font-size:11px; fill:var(--state-bad)">배포하면 이 칸이 잠깐 사라진다</text>
-<text x="440" y="88" style="font-size:11px; fill:var(--state-bad)">그동안 요청은 전부 실패</text>
+<rect x="6" y="44" width="140" height="60" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="70" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
+<text x="76" y="90" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 IP가 박혀 있다</text>
+<line x1="152" y1="74" x2="330" y2="74" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw1-arr)"/>
+<text x="241" y="64" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14:8080</text>
+<rect x="336" y="38" width="142" height="72" rx="13" style="fill:none; stroke:var(--state-bad); stroke-width:1.6; stroke-dasharray:5 4"/>
+<rect x="342" y="44" width="130" height="60" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="407" y="70" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">bidder</text>
+<text x="407" y="90" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">서버 1대</text>
+<line x1="407" y1="110" x2="407" y2="134" style="stroke:var(--state-bad); stroke-width:1.6; stroke-dasharray:5 4"/>
+<text x="407" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">배포하면 이 칸이 잠깐 사라진다</text>
+<text x="407" y="171" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">그동안 요청은 전부 실패</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">실선이 하나뿐인 게 이 그림의 전부다. 그 하나가 끊기면 매체 쪽에 대안이 없다.</figcaption>
 </figure>
@@ -123,39 +123,39 @@ LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다.
 둘 다 AWS NLB의 기본값이다. 그래서 배포에는 앞의 길을 쓴다. 헬스체크 실패는 서버가 진짜 죽었을 때 빨리 걷어 내라고 있는 것이지, 멀쩡한 서버를 뺄 때 쓰는 방법이 아니다. 이것도 제품마다 다르다 — HAProxy는 `on-marked-down shutdown-sessions` 를 켜야 연결을 끊고, nginx는 안 끊는다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 240" role="img" aria-label="매체가 LB 대표 주소 하나만 호출하고, LB가 헬스체크로 살아 있는 bidder 서버 두 대에만 요청을 넘기는 구조. 헬스체크에 실패한 서버 한 대는 대상에서 빠져 있지만 헬스체크는 계속 받는다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 258" role="img" aria-label="매체가 LB 대표 주소 하나만 호출하고, LB가 헬스체크로 살아 있는 bidder 서버 두 대에만 요청을 넘기는 구조. 헬스체크에 실패한 서버 한 대는 대상에서 빠져 있지만 헬스체크는 계속 받는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw2-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 <marker id="gw2-hc" markerWidth="8" markerHeight="8" refX="6.5" refY="2.5" orient="auto"><path d="M0,0 L6.5,2.5 L0,5 Z" style="fill:var(--text-muted)"/></marker>
 </defs>
-<rect x="14" y="86" width="120" height="58" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="74" y="111" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
-<text x="74" y="129" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">설정에 주소 1개</text>
-<line x1="134" y1="115" x2="214" y2="115" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<text x="174" y="106" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<text x="293" y="66" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="218" y="78" width="150" height="74" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="293" y="104" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">LB</text>
-<text x="293" y="122" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">대표 IP 1개</text>
-<text x="293" y="138" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">IP·포트만 본다 (L4)</text>
-<text x="293" y="174" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz · 5s</text>
-<text x="293" y="191" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">점선 화살표 = 헬스체크</text>
-<rect x="470" y="40" width="214" height="180" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="577" y="58" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">대상 그룹 — bidder 3대</text>
-<rect x="486" y="68" width="182" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="577" y="87" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
-<text x="577" y="102" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14</text>
-<rect x="486" y="120" width="182" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="577" y="139" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
-<text x="577" y="154" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.15</text>
-<rect x="486" y="172" width="182" height="42" rx="9" style="fill:var(--bg-secondary); stroke:var(--text-muted); stroke-width:1.5; stroke-dasharray:5 4"/>
-<text x="577" y="190" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">헬스체크 실패 — 빠짐</text>
-<text x="577" y="205" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.16</text>
-<line x1="368" y1="100" x2="482" y2="84" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<line x1="368" y1="108" x2="482" y2="102" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
-<line x1="368" y1="116" x2="482" y2="136" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<line x1="368" y1="124" x2="482" y2="152" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
-<line x1="368" y1="132" x2="482" y2="202" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<rect x="6" y="24" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="46" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
+<text x="76" y="65" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 주소 1개</text>
+<line x1="76" y1="76" x2="76" y2="96" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<text x="86" y="92" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<text x="76" y="120" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="6" y="126" width="140" height="76" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="76" y="150" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">LB</text>
+<text x="76" y="170" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대표 IP 1개</text>
+<text x="76" y="190" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP·포트만 본다 (L4)</text>
+<text x="76" y="224" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz · 5s</text>
+<text x="76" y="244" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">점선 화살표 = 헬스체크</text>
+<rect x="330" y="20" width="164" height="228" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="412" y="40" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대상 그룹 — bidder 3대</text>
+<rect x="342" y="54" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="412" y="76" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
+<text x="412" y="96" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14</text>
+<rect x="342" y="118" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="412" y="140" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
+<text x="412" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.15</text>
+<rect x="342" y="182" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--text-muted); stroke-width:1.5; stroke-dasharray:5 4"/>
+<text x="412" y="204" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">헬스체크 실패 — 빠짐</text>
+<text x="412" y="224" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.16</text>
+<line x1="150" y1="140" x2="338" y2="74" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<line x1="150" y1="152" x2="338" y2="92" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<line x1="150" y1="166" x2="338" y2="136" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<line x1="150" y1="178" x2="338" y2="156" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<line x1="150" y1="192" x2="338" y2="208" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">LB가 끼어들면서 "누가 살아 있나"를 아는 주체가 매체에서 우리 쪽으로 넘어왔다. 빠진 서버에도 헬스체크는 계속 간다 — 그래야 돌아올 수 있다.</figcaption>
 </figure>
@@ -198,37 +198,37 @@ LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다.
 대신 매체 설정을 한 번 더 고쳐야 한다. Ingress는 요청 헤더에 실린 호스트 이름을 보고 규칙을 고르기 때문이다. 그래서 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고, 사내 DNS에 그 이름을 같은 IP로 등록한다. 이 부탁은 이번이 마지막이다. 포트는 서비스마다 하나씩 늘지만 이름은 하나로 끝난다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 236" role="img" aria-label="매체가 이름 하나로 LB를 부르고, LB 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 갈라 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 LB를 부르고, LB 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 갈라 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="6" y="90" width="104" height="60" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="58" y="112" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
-<text x="58" y="128" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">설정에 주소 1개</text>
-<text x="58" y="142" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
-<line x1="110" y1="120" x2="144" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<text x="204" y="84" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">2절 그대로</text>
-<rect x="148" y="92" width="112" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="204" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
-<text x="204" y="131" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<line x1="260" y1="120" x2="292" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<text x="372" y="72" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="296" y="88" width="152" height="64" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="372" y="116" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
-<text x="372" y="135" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">규칙표 — host · path 를 본다</text>
-<rect x="482" y="20" width="210" height="200" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="587" y="36" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
-<rect x="498" y="44" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="587" y="68" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="498" y="88" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="587" y="112" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="498" y="132" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="587" y="156" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="498" y="176" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="587" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<line x1="450" y1="102" x2="494" y2="64" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<line x1="450" y1="126" x2="494" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<line x1="450" y1="138" x2="494" y2="194" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<rect x="6" y="30" width="170" height="72" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="91" y="52" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
+<text x="91" y="72" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 주소 1개</text>
+<text x="91" y="92" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
+<line x1="180" y1="66" x2="206" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<text x="266" y="32" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">2절 그대로</text>
+<rect x="210" y="40" width="112" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="266" y="62" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="266" y="82" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<path d="M266,92 L266,124 L350,124 L350,150" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw3-arr)"/>
+<text x="250" y="142" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="110" y="154" width="280" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="250" y="176" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
+<text x="250" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">규칙표 — host · path 를 본다</text>
+<rect x="12" y="250" width="476" height="76" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<rect x="24" y="260" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="77.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="139" y="260" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="192.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="254" y="260" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="307.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="369" y="260" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="422.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<text x="250" y="318" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
+<line x1="180" y1="208" x2="77.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<line x1="250" y1="208" x2="307.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<line x1="320" y1="208" x2="422.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나다. LB는 2절에서 하던 일을 그대로 하고, 화살표는 pctr 에 닿지 않는다.</figcaption>
 </figure>
@@ -344,51 +344,51 @@ routes:
 `timeout` 을 12로 적고 싶겠지만 그러면 늦는다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. Ingress를 지나는 데 0.3ms, Gateway가 인증키와 쿼터를 보는 데 1.1ms가 든다(가상 수치). LB는 연결을 넘기기만 하니 셈에서 뺀다. 그래서 `bidder` 를 기다리는 시간은 10ms로 잡는다. 남는 0.6ms가 여유분이다. v1 매체는 여기에 응답 변환이 더 붙는데, 그 몫은 이 0.6ms 안에서 쓴다. v1을 쓰는 곳은 C제휴 500과 D앱 1,200, 초당 3만 건 중 1,700건이다. `bidder` 가 평소 쓰는 건 8ms 안팎이고, 10ms는 그 위에 얹은 상한이다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 240" role="img" aria-label="조건이 서로 다른 매체 10곳의 요청이 LB와 Ingress를 지나 API Gateway 한 칸에 모여 인증·쿼터를 거친 뒤, 서비스 넷 중 셋으로 나뉘는 구조." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 416" role="img" aria-label="조건이 서로 다른 매체 10곳의 요청이 LB와 Ingress를 지나 API Gateway 한 칸에 모여 인증·쿼터를 거친 뒤, 서비스 넷 중 셋으로 나뉘는 구조." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw4-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="2" y="30" width="118" height="172" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="61" y="46" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">매체 10곳</text>
-<rect x="12" y="56" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="61" y="75" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">A앱</text>
-<text x="61" y="90" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">API 키 · 3,000</text>
-<rect x="12" y="106" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="61" y="125" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">B웹</text>
-<text x="61" y="140" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">HMAC · 8,000</text>
-<rect x="12" y="156" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="61" y="175" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">…외 8곳</text>
-<text x="61" y="190" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">합계 19,000</text>
-<line x1="110" y1="77" x2="146" y2="105" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="110" y1="127" x2="146" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="110" y1="177" x2="146" y2="135" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="235" y="78" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">3절까지 그대로</text>
-<rect x="150" y="92" width="62" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="181" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
-<text x="181" y="131" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<line x1="212" y1="120" x2="232" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<rect x="236" y="92" width="106" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
-<text x="289" y="114" text-anchor="middle" style="font-size:13px; fill:var(--accent-secondary)">Ingress</text>
-<text x="289" y="131" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">host · path</text>
-<line x1="342" y1="120" x2="362" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="445" y="64" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="366" y="82" width="158" height="76" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="445" y="106" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">API Gateway</text>
-<text x="445" y="126" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">매체 인증 · 쿼터</text>
-<text x="445" y="142" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">버전 라우팅</text>
-<rect x="536" y="20" width="162" height="200" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="617" y="36" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
-<rect x="547" y="44" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="617" y="68" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="547" y="88" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="617" y="112" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="547" y="132" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="617" y="156" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="547" y="176" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="617" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<line x1="524" y1="104" x2="544" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="524" y1="124" x2="544" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="524" y1="136" x2="544" y2="192" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<rect x="6" y="16" width="150" height="196" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="81" y="36" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">매체 10곳</text>
+<rect x="16" y="48" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="81" y="68" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">A앱</text>
+<text x="81" y="88" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">API 키 · 3,000</text>
+<rect x="16" y="104" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="81" y="124" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">B웹</text>
+<text x="81" y="144" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">HMAC · 8,000</text>
+<rect x="16" y="160" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="81" y="180" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">…외 8곳</text>
+<text x="81" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">합계 19,000</text>
+<line x1="150" y1="72" x2="212" y2="94" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="150" y1="128" x2="212" y2="110" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="150" y1="184" x2="212" y2="126" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<text x="278" y="78" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">3절까지 그대로</text>
+<rect x="216" y="86" width="124" height="48" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="278" y="106" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="278" y="126" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<line x1="278" y1="134" x2="278" y2="148" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<rect x="216" y="152" width="124" height="48" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
+<text x="278" y="172" text-anchor="middle" style="font-size:13px; fill:var(--accent-secondary)">Ingress</text>
+<text x="278" y="192" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">host · path</text>
+<line x1="310" y1="200" x2="310" y2="226" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<text x="220" y="218" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="140" y="230" width="200" height="72" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="240" y="254" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">API Gateway</text>
+<text x="240" y="276" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">매체 인증 · 쿼터</text>
+<text x="240" y="294" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">버전 라우팅</text>
+<rect x="12" y="334" width="476" height="76" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<rect x="24" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="77.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="139" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="192.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="254" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="307.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="369" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="422.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<text x="250" y="402" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
+<line x1="180" y1="304" x2="77.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="240" y1="304" x2="307.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="300" y1="304" x2="422.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">화살표가 pctr 에 닿지 않는 것은 3절과 같다. 왼쪽이 스무 줄이 돼도 오른쪽 절반은 그대로다.</figcaption>
 </figure>
@@ -504,62 +504,62 @@ Gateway가 그것까지 물어보게 만들 수는 있다. 그러면 홉이 하�
 4절 Gateway와 같은 해법이다. 다른 것은 모으는 자리다 — Gateway는 클러스터에 하나, 사이드카는 서비스마다 하나다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 326" role="img" aria-label="밖에서 안으로 들어온 요청이 서비스 사이를 여러 번 오가고, 그때마다 사이드카를 지나는 구조." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 282" role="img" aria-label="밖에서 안으로 들어온 요청이 서비스 사이를 여러 번 오가고, 그때마다 사이드카를 지나는 구조." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw5-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 <marker id="gw5-dim" markerWidth="8" markerHeight="8" refX="6.5" refY="2.5" orient="auto"><path d="M0,0 L6.5,2.5 L0,5 Z" style="fill:var(--text-muted)"/></marker>
 </defs>
-<text x="83" y="27" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">여기까지가 밖에서 안으로</text>
-<rect x="8" y="34" width="150" height="206" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<rect x="22" y="44" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="83" y="65" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">매체 10곳</text>
-<line x1="83" y1="78" x2="83" y2="92" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="22" y="94" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="83" y="115" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">LB</text>
-<line x1="83" y1="128" x2="83" y2="142" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="22" y="144" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="83" y="165" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">Ingress</text>
-<line x1="83" y1="178" x2="83" y2="192" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="22" y="194" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="83" y="215" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">API Gateway</text>
-<text x="434" y="27" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">서비스 12개 중 6개만 그렸다</text>
-<rect x="182" y="34" width="504" height="260" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<line x1="314" y1="99" x2="374" y2="99" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="492" y1="99" x2="552" y2="99" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="255" y1="122" x2="255" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="433" y1="122" x2="433" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="611" y1="122" x2="611" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="314" y1="114" x2="374" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="374" y1="114" x2="314" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="492" y1="114" x2="552" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="552" y1="114" x2="492" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="144" y1="206" x2="196" y2="206" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
-<path d="M196,224 L188,224 L188,266 L338,266 L338,224 L374,224" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
-<path d="M374,200 L350,200 L350,155 L528,155 L528,200 L552,200" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
-<rect x="196" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="199" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="260" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">budget</text>
-<rect x="374" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="377" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="438" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">frequency</text>
-<rect x="552" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="555" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="616" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<rect x="196" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="199" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="260" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="374" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="377" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="438" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="552" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="555" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="616" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="196" y="304" width="10" height="14" rx="2" style="fill:var(--accent-secondary)"/>
-<text x="212" y="315" style="font-size:10px; fill:var(--text-muted)">사이드카</text>
-<line x1="280" y1="311" x2="306" y2="311" style="stroke:var(--border-color); stroke-width:1"/>
-<text x="312" y="315" style="font-size:10px; fill:var(--text-muted)">서로 부를 수 있는 사이</text>
-<line x1="452" y1="311" x2="478" y2="311" style="stroke:var(--accent-primary); stroke-width:2"/>
-<text x="484" y="315" style="font-size:10px; fill:var(--text-muted)">요청 하나가 지나는 길</text>
+<text x="6" y="18" style="font-size:12.5px; fill:var(--text-muted)">여기까지가 밖에서 안으로</text>
+<rect x="6" y="26" width="112" height="226" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<rect x="14" y="40" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="62" y="63" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">매체 10곳</text>
+<line x1="62" y1="76" x2="62" y2="90" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="14" y="94" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="62" y="117" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">LB</text>
+<line x1="62" y1="130" x2="62" y2="144" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="14" y="148" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="62" y="171" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">Ingress</text>
+<line x1="62" y1="184" x2="62" y2="198" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="14" y="202" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="62" y="225" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">API Gateway</text>
+<text x="488" y="18" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">서비스 12개 중 6개만 그렸다</text>
+<rect x="140" y="26" width="354" height="226" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<line x1="248" y1="75" x2="269" y2="75" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="365" y1="75" x2="386" y2="75" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="200" y1="98" x2="200" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="317" y1="98" x2="317" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="434" y1="98" x2="434" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="248" y1="98" x2="269" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="269" y1="98" x2="248" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="365" y1="98" x2="386" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="386" y1="98" x2="365" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
+<rect x="152" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="156" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="207" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">budget</text>
+<rect x="269" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="273" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="324" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">frequency</text>
+<rect x="386" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="390" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="441" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<rect x="152" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="156" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="207" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="269" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="273" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="324" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="386" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="390" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="441" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<line x1="114" y1="220" x2="148" y2="191" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
+<path d="M200,214 L200,232 L317,232 L317,216" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
+<path d="M300,168 L300,140 L450,140 L450,164" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
+<rect x="6" y="259" width="10" height="15" rx="2" style="fill:var(--accent-secondary)"/>
+<text x="22" y="272" style="font-size:12.5px; fill:var(--text-muted)">사이드카</text>
+<line x1="82" y1="267" x2="108" y2="267" style="stroke:var(--border-color); stroke-width:1"/>
+<text x="114" y="272" style="font-size:12.5px; fill:var(--text-muted)">서로 부를 수 있는 사이</text>
+<line x1="240" y1="267" x2="266" y2="267" style="stroke:var(--accent-primary); stroke-width:2"/>
+<text x="272" y="272" style="font-size:12.5px; fill:var(--text-muted)">요청 하나가 지나는 길</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">앞 네 절 전부가 왼쪽 한 덩어리로 줄었다. 오른쪽은 여섯 개만 그렸는데도 선이 상자보다 많다.</figcaption>
 </figure>
@@ -692,42 +692,42 @@ print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ �
 **다섯 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 된다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 연다.**
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 272" role="img" aria-label="매체에서 시작해 LB·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 LB·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw6-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="4" y="88" width="110" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="59" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 10곳</text>
-<text x="59" y="161" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
-<line x1="114" y1="116" x2="130" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<rect x="134" y="88" width="74" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="171" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
-<text x="171" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">IP · 포트</text>
-<line x1="208" y1="116" x2="224" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<rect x="228" y="88" width="104" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="280" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">Ingress</text>
-<text x="280" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">호스트 · 경로</text>
-<line x1="332" y1="116" x2="348" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<rect x="352" y="88" width="150" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="427" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">API Gateway</text>
-<text x="427" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">+ 헤더 · 인증키 · 매체</text>
-<rect x="522" y="28" width="174" height="216" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="609" y="45" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">서비스 메시 (선택)</text>
-<line x1="502" y1="108" x2="530" y2="83" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<line x1="502" y1="120" x2="530" y2="172" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<line x1="502" y1="130" x2="530" y2="210" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<rect x="534" y="56" width="150" height="54" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="609" y="76" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="542" y="82" width="134" height="22" rx="6" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="609" y="97" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">라우터 · 코드 경로</text>
-<rect x="534" y="118" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="609" y="139" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="534" y="156" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="609" y="177" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="534" y="194" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="609" y="215" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<text x="609" y="237" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">…외 8개</text>
-<text x="609" y="261" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">메시 — 서비스 사이 호출</text>
+<rect x="6" y="20" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="42" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 10곳</text>
+<text x="76" y="62" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
+<line x1="76" y1="72" x2="76" y2="90" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="6" y="92" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="76" y="134" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP · 포트</text>
+<line x1="76" y1="144" x2="76" y2="162" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="6" y="164" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="186" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">Ingress</text>
+<text x="76" y="206" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">호스트 · 경로</text>
+<line x1="76" y1="216" x2="76" y2="234" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="6" y="236" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="258" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">API Gateway</text>
+<text x="76" y="278" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">+ 헤더 · 인증키 · 매체</text>
+<rect x="334" y="20" width="160" height="250" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">서비스 메시 (선택)</text>
+<line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="150" y1="262" x2="330" y2="185" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="150" y1="276" x2="330" y2="227" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="346" y="54" width="136" height="62" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="414" y="74" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="354" y="82" width="120" height="26" rx="6" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="414" y="100" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">라우터 · 코드 경로</text>
+<rect x="346" y="126" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="414" y="147" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="346" y="168" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="414" y="189" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="346" y="210" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="414" y="231" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<text x="414" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">…외 8개</text>
+<text x="414" y="290" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">메시 — 서비스 사이 호출</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">점선은 메시 하나뿐이다. 나머지 넷은 앞 절에서 이미 켜졌고, 메시만 5절의 나눗셈을 통과해야 켜진다.</figcaption>
 </figure>

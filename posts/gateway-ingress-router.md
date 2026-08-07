@@ -230,7 +230,7 @@ LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다.
 <line x1="450" y1="126" x2="494" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 <line x1="450" y1="138" x2="494" y2="194" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나다. LB 칸은 2절에서 한 글자도 안 바뀌었고, 화살표는 pctr 에 닿지 않는다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나다. LB는 2절에서 하던 일을 그대로 하고, 화살표는 pctr 에 닿지 않는다.</figcaption>
 </figure>
 
 규칙표는 실제로 이런 모양이다.
@@ -659,7 +659,7 @@ print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ �
 
 첫째, 더 빠른 사이드카. 통과 0.15ms면 합이 딱 12.0ms인데 여유가 0이다. 위에서 가정한 0.3ms의 절반을 요구하는 셈이다.
 
-둘째, 통과 횟수 줄이기. 받는 쪽 프록시만 지나게 하면 호출당 1회, 모두 2회다. 예산이 0.15ms에서 0.30ms로 두 배가 되는데, 실측 통과도 0.30ms다. 합은 또 정확히 12.0ms이고 여유는 여전히 0이다. 부르는 쪽에서 걸던 재시도와 타임아웃은 코드로 돌아간다. 이건 새로 지어야 하는 구조가 아니다. Istio ambient 모드(1.24부터 정식)의 waypoint 프록시가 이미 그렇게 돈다. 목적지 쪽에만 서서 L7을 한 번만 지나게 한다.
+둘째, 통과 횟수 줄이기. 받는 쪽 프록시만 지나게 하면 호출당 1회, 모두 2회다. 예산이 0.15ms에서 0.30ms로 두 배가 되는데, 위에서 가정한 통과 비용도 0.30ms다. 합은 또 정확히 12.0ms이고 여유는 여전히 0이다. 부르는 쪽에서 걸던 재시도와 타임아웃은 코드로 돌아간다. 이건 새로 지어야 하는 구조가 아니다. Istio ambient 모드(1.24부터 정식)의 waypoint 프록시가 이미 그렇게 돈다. 목적지 쪽에만 서서 L7을 한 번만 지나게 한다.
 
 셋째, 세는 방법 바꾸기. `bidder` 앞단까지 세면 5회이고 상한은 12.9ms다. 어느 쪽으로 세도 넘는 것은 같다.
 

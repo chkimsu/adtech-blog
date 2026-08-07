@@ -5,8 +5,25 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-02T00:00:00Z</updated>
+  <updated>2026-08-07T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kafka-log-pipeline"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kafka-log-pipeline</id>
+    <updated>2026-08-07T00:00:00Z</updated>
+    <summary>광고가 한 번 노출되면 그 사실을 알아야 하는 곳이 네 군데다 — 학습팀·정산팀·대시보드·광고주 리포트. bidder가 네 곳에 직접 알리면 한 팀이 배포할 때마다 광고가 느려진다. Kafka는 이 문제를 &quot;한 번 쓰고 각자 읽는&quot; 구조로 푼다. producer가 무엇인지, partition이 왜 있는지, offset이 무엇을 기억하는지를 노출 로그 한 줄이 pCTR 학습 데이터가 되는 과정으로 따라간다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>광고 요청 하나가 서비스까지 가는 길 — LB · Ingress · API Gateway · 라우터</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=gateway-ingress-router"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=gateway-ingress-router</id>
+    <updated>2026-08-07T00:00:00Z</updated>
+    <summary>매체가 보낸 입찰 요청 한 건은 12ms 안에 bidder까지 도착해야 한다. 그 길에 LB·Ingress·API Gateway·라우터가 차례로 서 있는데, 넷 다 &quot;요청을 어디로 보낼지 정하는&quot; 일을 한다. 왜 넷으로 나뉘어 있을까. 서버 한 대에서 시작해 서비스 12개까지 키우면서, 각 부품이 어떤 문제 때문에 생겼는지를 실제 설정과 숫자로 따라간다.</summary>
+    <category term="Software Engineering"/>
+  </entry>
   <entry>
     <title>모델 모니터링 — 조용히 나빠지는 것을 어떻게 알아채나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=model-monitoring"/>
@@ -153,22 +170,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment</id>
     <updated>2026-06-07T00:00:00Z</updated>
     <summary>약을 먹은 사람이 빨리 나았다 — 약 덕분인가, 원래 건강해서인가? 무작위 배정은 동전 던지기 하나로 이 질문에 답한다. 배정을 특성과 무관하게 만들면, 아는 특성도 모르는 특성도 두 집단에서 평균적으로 같아진다. 기저 전환율 2.0%에서 리프트 +5%·+10%·+20%를 잡으려면 각각 315,207명·80,680명·21,106명이 필요하고, 표본을 반으로 줄이면 검출력이 80.5%에서 50.8%로 급락한다는 걸 5,000회 반복 실험으로 실측한다. 아무 차이 없는 A/A 테스트에서도 5.1%는 ‘유의하다’고 나온다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>이중차분법(DiD) 쉽게 이해하기: 차이를 두 번 빼서 &apos;진짜 효과&apos;만 남기는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=difference-in-differences</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>서울·경기에만 배너 광고 캠페인을 켜고 나머지 지역은 그대로 뒀다 — 캠페인 후 매출이 뛰었다면, 광고 효과일까 계절 효과일까 원래 지역 차이일까? 같은 2×2 가데이터에서 단순 전후비교(+19.79억)·단순 지역비교(+35.36억)·이중차분(+15.40억) 세 값을 나란히 계산해, 참값(15억)을 잡는 건 DiD뿐임을 보인다. 광고 전 넉 달의 추이로 평행추세를 확인하고, 그 추세가 깨진 가짜 데이터를 파이썬으로 만들어 DiD가 27% 과대추정으로 틀리는 과정까지 시뮬레이션한다. 회귀식의 교차항 계수가 왜 정확히 DiD 추정량인지, 그리고 유저를 가를 수 없는 플랫폼 정책 변경처럼 담장 안에서도 DiD가 필요해지는 예외까지 다룬다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>회귀불연속(RDD): 합격컷 1점 차이가 만드는 자연 실험</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=regression-discontinuity</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>품질점수 6.95점과 7.00점, 광고 실력은 사실상 같은데 한쪽만 프리미엄 지면을 받는다. 이 컷오프 바로 위·아래를 비교하면 거의 실험에 가까운 비교가 된다. 품질점수 컷·예산 소진율·입찰 바닥값처럼 광고 시스템 곳곳의 칼같은 규칙이 만드는 자연 실험 — 컷 근처 가데이터로 보는 점프, 밴드폭을 넓힐수록 단순 평균차의 편향이 0.05에서 1.20으로 커지는 반면 local linear는 0.01 근처에 머무는 파이썬 시뮬레이션, 조작(manipulation)과 밀도 검정, 그리고 sharp RDD와 fuzzy RDD가 도구변수(IV)로 이어지는 지점까지.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

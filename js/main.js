@@ -1183,13 +1183,57 @@ async function renderPostDetail() {
       // Render Chart.js charts identified by data-chart attribute
       renderChartJsCharts(contentContainer);
 
+      // mermaid 팔레트 — 라이브 CSS 변수(css/style.css :root)를 읽는다.
+      // var(...) 문자열은 mermaid themeVariables 안에서 안 먹는다(canvas와 같은 처지) —
+      // 그래서 getComputedStyle로 실제 색을 읽어 넣는다. 크림/슬레이트 팔레트 전환이
+      // 이렇게 자동으로 맞는다. isDark는 변수가 빈 값일 때 쓸 fallback만 고른다 —
+      // 라이브 값에는 이미 테마가 반영돼 있다.
+      // theme:'base' 여야 themeVariables가 먹는다. 'neutral'/'dark'는 무시한다.
+      // post.html 에도 같은 값을 복제한 인라인 fallback 이 있다 — 색을 고치면 거기도 같이 고칠 것.
+      function mermaidPalette(isDark) {
+        const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const fallback = isDark ? {
+          bgPrimary: '#1a1715', bgSecondary: '#232020', bgTertiary: '#2e2a26',
+          text: '#f1ece3', border: 'rgba(241,236,227,0.26)', accentSecondary: '#c9a36b'
+        } : {
+          bgPrimary: '#faf8f3', bgSecondary: '#fffdf8', bgTertiary: '#efe9dd',
+          text: '#201d1a', border: 'rgba(32,29,26,0.22)', accentSecondary: '#8a6a3a'
+        };
+
+        const background = cssVar('--bg-primary') || fallback.bgPrimary;
+        const surface = cssVar('--bg-secondary') || fallback.bgSecondary;
+        const tertiary = cssVar('--bg-tertiary') || fallback.bgTertiary;
+        const text = cssVar('--text-primary') || fallback.text;
+        const border = cssVar('--border-color') || fallback.border;
+        const lineColor = cssVar('--accent-secondary') || fallback.accentSecondary;
+        const fontFamily = cssVar('--font-sans') || "'Pretendard Variable','Pretendard',system-ui,sans-serif";
+
+        return {
+          background,
+          primaryColor: surface,          // 노드 배경
+          primaryTextColor: text,
+          primaryBorderColor: border,
+          secondaryColor: tertiary,
+          tertiaryColor: tertiary,
+          lineColor,                       // --accent-secondary: 크림은 브론즈, 슬레이트는 슬레이트그레이
+          textColor: text,
+          mainBkg: surface,
+          clusterBkg: tertiary,
+          clusterBorder: border,
+          edgeLabelBackground: background,
+          fontFamily,
+          fontSize: '14px'
+        };
+      }
+
       // Render Mermaid diagrams
       const mermaidInstance = window.mermaidLib || (typeof mermaid !== 'undefined' ? mermaid : null);
       if (mermaidInstance) {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         mermaidInstance.initialize({
           startOnLoad: false,
-          theme: currentTheme === 'dark' ? 'dark' : 'neutral'
+          theme: 'base',
+          themeVariables: mermaidPalette(currentTheme === 'dark')
         });
         mermaidInstance.run();
       }

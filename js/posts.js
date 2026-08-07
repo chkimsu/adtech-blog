@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'gateway-ingress-router',
+    world: 'na',
+    title: '광고 요청 하나가 서비스까지 가는 길 — LB · Ingress · API Gateway · 라우터',
+    excerpt: '매체가 보낸 입찰 요청 한 건은 12ms 안에 bidder까지 도착해야 한다. 그 길에 LB·Ingress·API Gateway·라우터가 차례로 서 있는데, 넷 다 "요청을 어디로 보낼지 정하는" 일을 한다. 왜 넷으로 나뉘어 있을까. 서버 한 대에서 시작해 서비스 12개까지 키우면서, 각 부품이 어떤 문제 때문에 생겼는지를 실제 설정과 숫자로 따라간다.',
+    date: '2026-08-07',
+    categories: ['Software Engineering'],
+    tags: ['Microservices', 'Networking', 'System Design'],
+    contentUrl: 'posts/gateway-ingress-router.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'model-monitoring',
     world: 'both',
     worldNote: '층을 나눠 재고 세그먼트로 쪼개 보는 원칙은 양쪽 공통이다. 다른 건 라벨이 언제 도착하는지다. 담장 안은 전환이 자사 로그로 바로 들어와 라벨 기반 지표를 빨리 볼 수 있지만, 열린 RTB는 외부 포스트백을 기다려야 하고 일부는 아예 안 온다.',

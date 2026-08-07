@@ -19,10 +19,11 @@
 > - Kafka가 왜 필요한지만 → 1절
 > - producer가 무엇인지 → 2절
 > - partition을 몇 개로 잡을지 → 3절
-> - 여러 팀이 같은 로그를 읽는 구조 → 4~5절
+> - 여러 팀이 같은 로그를 읽는 구조 → 4절
+> - commit 을 언제 하나 → 5절
 > - 보존 기간을 며칠로 잡을지 → 6절
 > - 로그가 학습 데이터가 되는 부분 → 7절
-> - 흔한 오해만 → 8절
+> - 자주 밟는 것만 → 8절
 
 ---
 
@@ -181,7 +182,7 @@
 
 셋은 끊기는 자리가 다른데 원인은 하나다. **보내는 쪽이 받는 쪽 사정을 알아야 한다는 것이다.**
 
-①은 받는 쪽 넷의 주소와 상태와 재시도 정책을 `bidder` 가 들고 있다. ②는 파일 이름과 옮기는 주기를 양쪽이 맞춰 놓아야 한다. ③은 인덱스와 보관 기간을 네 팀이 합의해야 한다. 받는 쪽이 하나 늘 때마다 보내는 쪽이 따라 바뀐다.
+①은 받는 쪽 넷의 주소와 상태와 재시도 정책을 `bidder` 가 들고 있다. ②는 파일 이름과 옮기는 주기를 양쪽이 맞춰 놓아야 한다. ③은 인덱스와 보존 기간을 네 팀이 합의해야 한다. 받는 쪽이 하나 늘 때마다 보내는 쪽이 따라 바뀐다.
 
 ### 이미 셋 중 하나를 쓰고 있다면
 
@@ -195,7 +196,7 @@
 
 셋 다 "평소에는 멀쩡한데 특정 순간에만 사라진다"는 공통점이 있다. 그래서 평균값 그래프로는 안 보인다. 배포 시각, 축소 시각, 마감 시각에 맞춰서 봐야 보인다.
 
-그러면 답은 무엇인가. 새 저장소를 하나 더 사는 것이 아니다. 보내는 쪽과 받는 쪽 **사이에 놓을 자리** 하나가 필요하다. 보내는 쪽은 그 자리에만 쓰고, 받는 쪽은 그 자리에서만 읽는다. 서로를 모르게 하는 것이다. Kafka가 하는 일이 정확히 이것이다.
+그러면 답은 무엇인가. 받는 쪽을 하나 더 만드는 것이 아니다. 보내는 쪽과 받는 쪽 **사이에 놓을 자리** 하나가 필요하다. 보내는 쪽은 그 자리에만 쓰고, 받는 쪽은 그 자리에서만 읽는다. 서로를 모르게 하는 것이다. Kafka가 하는 일이 정확히 이것이다.
 
 그러면 보내는 쪽 코드는 어떻게 생겼나. 12ms 예산 안에서 무엇을 하고 무엇을 안 하나. 그게 2절이다.
 
@@ -205,7 +206,7 @@
 
 **producer 는 별도 서버가 아니다. `bidder` 프로세스 안의 라이브러리다. 보내는 코드가 12ms 예산 위에서 돈다.**
 
-Kafka 를 쓴다고 "로그 서버"가 새로 뜨는 게 아니다. `bidder` 의존성에 라이브러리 한 줄이 늘고, 프로세스 안에 producer 객체가 생긴다.
+`bidder` 의존성에 라이브러리 한 줄이 늘고, 프로세스 안에 producer 객체가 생긴다. 그게 전부다.
 
 1절의 그 줄을 그대로 보낸다.
 
@@ -216,7 +217,7 @@ Kafka 를 쓴다고 "로그 서버"가 새로 뜨는 게 아니다. `bidder` 의
 `bidder` 가 응찰 직후 만든다. 이렇게 넘긴다.
 
 ```python
-# (의사코드 — 브로커가 있어야 돌아갑니다. 호출 모양만 봅니다.)
+# (의사코드 — 브로커가 있어야 돈다. 호출 모양만 본다.)
 producer.send(
     topic="ad.impression",
     key=req_id.encode(),          # 이 값으로 어느 partition 에 들어갈지 정해진다 (3절)
@@ -268,51 +269,11 @@ producer.send(
 
 topic 은 이름표다. 셋으로 나눈다 — `ad.impression` · `ad.click` · `ad.conversion`. 하나로 합치면 노출만 필요한 대시보드도 클릭·전환까지 읽어 걸러야 한다.
 
-partition 은 그 topic 안을 세로로 가른 것이다. 데모 화면은 "칸"이라고도 부른다. 설정에 적히는 이름이 `partitions` 라 이 글은 `partition` 으로 쓴다. 줄은 그중 한 곳에 붙고, 붙은 자리마다 offset 이라는 번호가 매겨진다.
+가르는 기준은 사건 종류지 읽는 팀이 아니다. 정산용으로 `ad.impression.billing` 을 따로 만들면 안 되나. 같은 줄이 팀 수만큼 복사되니 디스크와 쓰기가 그만큼 늘고, 네 벌이 어긋나기 시작하면 어느 벌이 맞는지 아무도 모른다. 값은 그다음이 더 크다. topic 이름에 받는 팀 이름이 들어가는 순간 보내는 쪽이 다시 받는 쪽을 알게 된다. 1절이 없앤 것이 그대로 돌아온다.
 
-<figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 308" role="img" aria-label="topic ad.impression 하나가 partition 12개로 갈라져 있고, partition 마다 줄이 왼쪽부터 차례로 붙어 있는 그림. 줄마다 0부터 세는 offset 번호가 붙어 있고 partition 마다 붙은 줄 수가 다르다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
-<defs>
-<marker id="kf3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
-</defs>
-<text x="8" y="20" style="font-size:11px; fill:var(--text-muted)">topic</text>
-<text x="46" y="20" style="font-size:13px; fill:var(--text-primary); font-family:var(--font-mono)">ad.impression</text>
-<text x="692" y="20" text-anchor="end" style="font-size:9.5px; fill:var(--text-muted)">네모 하나가 줄 하나 · 숫자는 offset</text>
-<rect x="6" y="28" width="688" height="272" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5">
-<rect x="96" y="38" width="30" height="14" rx="4"/><rect x="130" y="38" width="30" height="14" rx="4"/><rect x="164" y="38" width="30" height="14" rx="4"/><rect x="198" y="38" width="30" height="14" rx="4"/><rect x="232" y="38" width="30" height="14" rx="4"/><rect x="266" y="38" width="30" height="14" rx="4"/><rect x="300" y="38" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="48" style="font-size:10px; text-anchor:start">partition 0</text><text x="111" y="48">0</text><text x="145" y="48">1</text><text x="179" y="48">2</text><text x="213" y="48">3</text><text x="247" y="48">4</text><text x="281" y="48">5</text><text x="315" y="48">6</text></g>
-<rect x="96" y="59" width="30" height="14" rx="4"/><rect x="130" y="59" width="30" height="14" rx="4"/><rect x="164" y="59" width="30" height="14" rx="4"/><rect x="198" y="59" width="30" height="14" rx="4"/><rect x="232" y="59" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="69" style="font-size:10px; text-anchor:start">partition 1</text><text x="111" y="69">0</text><text x="145" y="69">1</text><text x="179" y="69">2</text><text x="213" y="69">3</text><text x="247" y="69">4</text></g>
-<rect x="96" y="80" width="30" height="14" rx="4"/><rect x="130" y="80" width="30" height="14" rx="4"/><rect x="164" y="80" width="30" height="14" rx="4"/><rect x="198" y="80" width="30" height="14" rx="4"/><rect x="232" y="80" width="30" height="14" rx="4"/><rect x="266" y="80" width="30" height="14" rx="4"/><rect x="300" y="80" width="30" height="14" rx="4"/><rect x="334" y="80" width="30" height="14" rx="4"/><rect x="368" y="80" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="90" style="font-size:10px; text-anchor:start">partition 2</text><text x="111" y="90">0</text><text x="145" y="90">1</text><text x="179" y="90">2</text><text x="213" y="90">3</text><text x="247" y="90">4</text><text x="281" y="90">5</text><text x="315" y="90">6</text><text x="349" y="90">7</text><text x="383" y="90">8</text></g>
-<rect x="96" y="101" width="30" height="14" rx="4"/><rect x="130" y="101" width="30" height="14" rx="4"/><rect x="164" y="101" width="30" height="14" rx="4"/><rect x="198" y="101" width="30" height="14" rx="4"/><rect x="232" y="101" width="30" height="14" rx="4"/><rect x="266" y="101" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="111" style="font-size:10px; text-anchor:start">partition 3</text><text x="111" y="111">0</text><text x="145" y="111">1</text><text x="179" y="111">2</text><text x="213" y="111">3</text><text x="247" y="111">4</text><text x="281" y="111">5</text></g>
-<rect x="96" y="122" width="30" height="14" rx="4"/><rect x="130" y="122" width="30" height="14" rx="4"/><rect x="164" y="122" width="30" height="14" rx="4"/><rect x="198" y="122" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="132" style="font-size:10px; text-anchor:start">partition 4</text><text x="111" y="132">0</text><text x="145" y="132">1</text><text x="179" y="132">2</text><text x="213" y="132">3</text></g>
-<rect x="96" y="143" width="30" height="14" rx="4"/><rect x="130" y="143" width="30" height="14" rx="4"/><rect x="164" y="143" width="30" height="14" rx="4"/><rect x="198" y="143" width="30" height="14" rx="4"/><rect x="232" y="143" width="30" height="14" rx="4"/><rect x="266" y="143" width="30" height="14" rx="4"/><rect x="300" y="143" width="30" height="14" rx="4"/><rect x="334" y="143" width="30" height="14" rx="4" style="stroke:var(--accent-primary); stroke-width:2"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="153" style="font-size:10px; text-anchor:start">partition 5</text><text x="111" y="153">0</text><text x="145" y="153">1</text><text x="179" y="153">2</text><text x="213" y="153">3</text><text x="247" y="153">4</text><text x="281" y="153">5</text><text x="315" y="153">6</text><text x="349" y="153">7</text></g>
-<rect x="96" y="164" width="30" height="14" rx="4"/><rect x="130" y="164" width="30" height="14" rx="4"/><rect x="164" y="164" width="30" height="14" rx="4"/><rect x="198" y="164" width="30" height="14" rx="4"/><rect x="232" y="164" width="30" height="14" rx="4"/><rect x="266" y="164" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="174" style="font-size:10px; text-anchor:start">partition 6</text><text x="111" y="174">0</text><text x="145" y="174">1</text><text x="179" y="174">2</text><text x="213" y="174">3</text><text x="247" y="174">4</text><text x="281" y="174">5</text></g>
-<rect x="96" y="185" width="30" height="14" rx="4"/><rect x="130" y="185" width="30" height="14" rx="4"/><rect x="164" y="185" width="30" height="14" rx="4"/><rect x="198" y="185" width="30" height="14" rx="4"/><rect x="232" y="185" width="30" height="14" rx="4"/><rect x="266" y="185" width="30" height="14" rx="4"/><rect x="300" y="185" width="30" height="14" rx="4"/><rect x="334" y="185" width="30" height="14" rx="4"/><rect x="368" y="185" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="195" style="font-size:10px; text-anchor:start">partition 7</text><text x="111" y="195">0</text><text x="145" y="195">1</text><text x="179" y="195">2</text><text x="213" y="195">3</text><text x="247" y="195">4</text><text x="281" y="195">5</text><text x="315" y="195">6</text><text x="349" y="195">7</text><text x="383" y="195">8</text></g>
-<rect x="96" y="206" width="30" height="14" rx="4"/><rect x="130" y="206" width="30" height="14" rx="4"/><rect x="164" y="206" width="30" height="14" rx="4"/><rect x="198" y="206" width="30" height="14" rx="4"/><rect x="232" y="206" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="216" style="font-size:10px; text-anchor:start">partition 8</text><text x="111" y="216">0</text><text x="145" y="216">1</text><text x="179" y="216">2</text><text x="213" y="216">3</text><text x="247" y="216">4</text></g>
-<rect x="96" y="227" width="30" height="14" rx="4"/><rect x="130" y="227" width="30" height="14" rx="4"/><rect x="164" y="227" width="30" height="14" rx="4"/><rect x="198" y="227" width="30" height="14" rx="4"/><rect x="232" y="227" width="30" height="14" rx="4"/><rect x="266" y="227" width="30" height="14" rx="4"/><rect x="300" y="227" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="237" style="font-size:10px; text-anchor:start">partition 9</text><text x="111" y="237">0</text><text x="145" y="237">1</text><text x="179" y="237">2</text><text x="213" y="237">3</text><text x="247" y="237">4</text><text x="281" y="237">5</text><text x="315" y="237">6</text></g>
-<rect x="96" y="248" width="30" height="14" rx="4"/><rect x="130" y="248" width="30" height="14" rx="4"/><rect x="164" y="248" width="30" height="14" rx="4"/><rect x="198" y="248" width="30" height="14" rx="4"/><rect x="232" y="248" width="30" height="14" rx="4"/><rect x="266" y="248" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="258" style="font-size:10px; text-anchor:start">partition 10</text><text x="111" y="258">0</text><text x="145" y="258">1</text><text x="179" y="258">2</text><text x="213" y="258">3</text><text x="247" y="258">4</text><text x="281" y="258">5</text></g>
-<rect x="96" y="269" width="30" height="14" rx="4"/><rect x="130" y="269" width="30" height="14" rx="4"/><rect x="164" y="269" width="30" height="14" rx="4"/><rect x="198" y="269" width="30" height="14" rx="4"/><rect x="232" y="269" width="30" height="14" rx="4"/><rect x="266" y="269" width="30" height="14" rx="4"/><rect x="300" y="269" width="30" height="14" rx="4"/><rect x="334" y="269" width="30" height="14" rx="4"/>
-<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="279" style="font-size:10px; text-anchor:start">partition 11</text><text x="111" y="279">0</text><text x="145" y="279">1</text><text x="179" y="279">2</text><text x="213" y="279">3</text><text x="247" y="279">4</text><text x="281" y="279">5</text><text x="315" y="279">6</text><text x="349" y="279">7</text></g>
-</g>
-<line x1="520" y1="150" x2="370" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf3-arr)"/>
-<text x="526" y="147" style="font-size:10px; fill:var(--accent-primary); font-family:var(--font-mono)">r-8f21</text>
-<text x="526" y="160" style="font-size:9.5px; fill:var(--text-muted)">offset 7 — 여덟 번째 줄</text>
-</svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">offset 은 partition 마다 0부터 따로 센다. partition 3 의 4번과 partition 8 의 4번은 아무 관계가 없는 두 줄이다.</figcaption>
-</figure>
+partition 은 그 topic 안을 세로로 가른 것이다. 설정에 적히는 이름이 `partitions` 라 이 글은 `partition` 으로 쓴다. 줄은 그중 한 곳에 붙고, 붙은 자리마다 offset 이라는 번호가 매겨진다.
 
-**한 partition 은 consumer group 안에서 한 명만 맡는다.** consumer 를 partition 보다 많이 띄우면 남는 사람은 논다. partition 수가 처리량 상한인 이유다.
+**한 partition 은 consumer group 안에서 한 명만 맡는다.** consumer group 은 같은 로그를 읽는 팀 하나다(4절에서 자세히 본다). consumer 를 partition 보다 많이 띄우면 남는 사람은 논다. partition 수가 처리량 상한인 이유다.
 
 ### 몇 개로 잡나
 
@@ -327,9 +288,55 @@ consumer 한 명이 초당 800줄을 처리한다고 하자. 지어낸 값이다
 | 평시 | 2,639 | 3.30 | 4개 |
 | 저녁 피크 (평균의 3배) | 7,917 | 9.90 | 10개 |
 
-평시로 재면 4개고, 피크에 6개가 모자란다. 재야 하는 쪽은 피크고 답은 10개다. **우리는 12개로 잡는다.**
+평시로 재면 4개고, 피크에 6개가 모자란다. 재야 하는 쪽은 피크고 답은 10개다. **우리는 12개로 잡는다.** 답보다 둘을 더 얹는 이유는 이 절 끝에서 센다.
 
-100개로 잡아 두면 되지 않나. 값이 붙는다. producer 는 partition 마다 배치 버퍼를 하나씩 든다. `bidder` 30대에 100개면 버퍼가 3,000개고, 한 버퍼에 모이는 줄은 그만큼 잘게 쪼개진다.
+100개로 잡아 두면 되지 않나. 값이 두 자리에 붙는다.
+
+보내는 쪽부터. producer 는 partition 마다 배치 버퍼를 하나씩 든다. `bidder` 30대에 100개면 버퍼가 3,000개다. 한 대가 초당 88줄을 만드는데(1절 ②) 그걸 100개로 나누면 한 버퍼에 초당 0.88줄이다. 배치가 줄 하나짜리가 된다. 줄마다 헤더가 따로 붙고 압축도 한 줄씩 하게 된다. 12개면 한 버퍼에 초당 7.3줄이라 그나마 묶인다.
+
+브로커 쪽도 센다. partition 하나는 복제본까지 세면 파일 묶음 셋이다. topic 이 셋이고 복제가 3벌이면 12개일 때 파일 묶음이 108개고, 브로커 6대가 나눠 들어 대당 18개다(둘 다 6절 값이다). 100개면 900개, 대당 150개다. 브로커 한 대가 죽으면 그 대가 리더로 들고 있던 것을 전부 다시 뽑는데, 그 수가 여덟 배가 된다.
+
+12개로 정한 `ad.impression` 은 이렇게 생겼다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 500 310" role="img" aria-label="topic ad.impression 하나가 partition 12개로 갈라져 있고, partition 마다 줄이 왼쪽부터 차례로 붙어 있는 그림. 줄마다 0부터 세는 offset 번호가 붙어 있고 partition 마다 붙은 줄 수가 다르다. partition 5 의 offset 7 자리에 r-8f21 이 굵게 표시돼 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="kf3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+</defs>
+<text x="6" y="20" style="font-size:12.5px; fill:var(--text-muted)">topic</text>
+<text x="52" y="20" style="font-size:13px; fill:var(--text-primary); font-family:var(--font-mono)">ad.impression</text>
+<rect x="4" y="28" width="492" height="276" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5">
+<rect x="92" y="38" width="28" height="18" rx="4"/><rect x="124" y="38" width="28" height="18" rx="4"/><rect x="156" y="38" width="28" height="18" rx="4"/><rect x="188" y="38" width="28" height="18" rx="4"/><rect x="220" y="38" width="28" height="18" rx="4"/><rect x="252" y="38" width="28" height="18" rx="4"/><rect x="284" y="38" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="51.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 0</text><text x="106" y="51.5">0</text><text x="138" y="51.5">1</text><text x="170" y="51.5">2</text><text x="202" y="51.5">3</text><text x="234" y="51.5">4</text><text x="266" y="51.5">5</text><text x="298" y="51.5">6</text></g>
+<rect x="92" y="60" width="28" height="18" rx="4"/><rect x="124" y="60" width="28" height="18" rx="4"/><rect x="156" y="60" width="28" height="18" rx="4"/><rect x="188" y="60" width="28" height="18" rx="4"/><rect x="220" y="60" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="73.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 1</text><text x="106" y="73.5">0</text><text x="138" y="73.5">1</text><text x="170" y="73.5">2</text><text x="202" y="73.5">3</text><text x="234" y="73.5">4</text></g>
+<rect x="92" y="82" width="28" height="18" rx="4"/><rect x="124" y="82" width="28" height="18" rx="4"/><rect x="156" y="82" width="28" height="18" rx="4"/><rect x="188" y="82" width="28" height="18" rx="4"/><rect x="220" y="82" width="28" height="18" rx="4"/><rect x="252" y="82" width="28" height="18" rx="4"/><rect x="284" y="82" width="28" height="18" rx="4"/><rect x="316" y="82" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="95.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 2</text><text x="106" y="95.5">0</text><text x="138" y="95.5">1</text><text x="170" y="95.5">2</text><text x="202" y="95.5">3</text><text x="234" y="95.5">4</text><text x="266" y="95.5">5</text><text x="298" y="95.5">6</text><text x="330" y="95.5">7</text></g>
+<rect x="92" y="104" width="28" height="18" rx="4"/><rect x="124" y="104" width="28" height="18" rx="4"/><rect x="156" y="104" width="28" height="18" rx="4"/><rect x="188" y="104" width="28" height="18" rx="4"/><rect x="220" y="104" width="28" height="18" rx="4"/><rect x="252" y="104" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="117.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 3</text><text x="106" y="117.5">0</text><text x="138" y="117.5">1</text><text x="170" y="117.5">2</text><text x="202" y="117.5">3</text><text x="234" y="117.5">4</text><text x="266" y="117.5">5</text></g>
+<rect x="92" y="126" width="28" height="18" rx="4"/><rect x="124" y="126" width="28" height="18" rx="4"/><rect x="156" y="126" width="28" height="18" rx="4"/><rect x="188" y="126" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="139.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 4</text><text x="106" y="139.5">0</text><text x="138" y="139.5">1</text><text x="170" y="139.5">2</text><text x="202" y="139.5">3</text></g>
+<rect x="92" y="148" width="28" height="18" rx="4"/><rect x="124" y="148" width="28" height="18" rx="4"/><rect x="156" y="148" width="28" height="18" rx="4"/><rect x="188" y="148" width="28" height="18" rx="4"/><rect x="220" y="148" width="28" height="18" rx="4"/><rect x="252" y="148" width="28" height="18" rx="4"/><rect x="284" y="148" width="28" height="18" rx="4"/><rect x="316" y="148" width="28" height="18" rx="4" style="stroke:var(--accent-primary); stroke-width:2"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="161.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 5</text><text x="106" y="161.5">0</text><text x="138" y="161.5">1</text><text x="170" y="161.5">2</text><text x="202" y="161.5">3</text><text x="234" y="161.5">4</text><text x="266" y="161.5">5</text><text x="298" y="161.5">6</text><text x="330" y="161.5">7</text></g>
+<rect x="92" y="170" width="28" height="18" rx="4"/><rect x="124" y="170" width="28" height="18" rx="4"/><rect x="156" y="170" width="28" height="18" rx="4"/><rect x="188" y="170" width="28" height="18" rx="4"/><rect x="220" y="170" width="28" height="18" rx="4"/><rect x="252" y="170" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="183.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 6</text><text x="106" y="183.5">0</text><text x="138" y="183.5">1</text><text x="170" y="183.5">2</text><text x="202" y="183.5">3</text><text x="234" y="183.5">4</text><text x="266" y="183.5">5</text></g>
+<rect x="92" y="192" width="28" height="18" rx="4"/><rect x="124" y="192" width="28" height="18" rx="4"/><rect x="156" y="192" width="28" height="18" rx="4"/><rect x="188" y="192" width="28" height="18" rx="4"/><rect x="220" y="192" width="28" height="18" rx="4"/><rect x="252" y="192" width="28" height="18" rx="4"/><rect x="284" y="192" width="28" height="18" rx="4"/><rect x="316" y="192" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="205.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 7</text><text x="106" y="205.5">0</text><text x="138" y="205.5">1</text><text x="170" y="205.5">2</text><text x="202" y="205.5">3</text><text x="234" y="205.5">4</text><text x="266" y="205.5">5</text><text x="298" y="205.5">6</text><text x="330" y="205.5">7</text></g>
+<rect x="92" y="214" width="28" height="18" rx="4"/><rect x="124" y="214" width="28" height="18" rx="4"/><rect x="156" y="214" width="28" height="18" rx="4"/><rect x="188" y="214" width="28" height="18" rx="4"/><rect x="220" y="214" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="227.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 8</text><text x="106" y="227.5">0</text><text x="138" y="227.5">1</text><text x="170" y="227.5">2</text><text x="202" y="227.5">3</text><text x="234" y="227.5">4</text></g>
+<rect x="92" y="236" width="28" height="18" rx="4"/><rect x="124" y="236" width="28" height="18" rx="4"/><rect x="156" y="236" width="28" height="18" rx="4"/><rect x="188" y="236" width="28" height="18" rx="4"/><rect x="220" y="236" width="28" height="18" rx="4"/><rect x="252" y="236" width="28" height="18" rx="4"/><rect x="284" y="236" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="249.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 9</text><text x="106" y="249.5">0</text><text x="138" y="249.5">1</text><text x="170" y="249.5">2</text><text x="202" y="249.5">3</text><text x="234" y="249.5">4</text><text x="266" y="249.5">5</text><text x="298" y="249.5">6</text></g>
+<rect x="92" y="258" width="28" height="18" rx="4"/><rect x="124" y="258" width="28" height="18" rx="4"/><rect x="156" y="258" width="28" height="18" rx="4"/><rect x="188" y="258" width="28" height="18" rx="4"/><rect x="220" y="258" width="28" height="18" rx="4"/><rect x="252" y="258" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="271.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 10</text><text x="106" y="271.5">0</text><text x="138" y="271.5">1</text><text x="170" y="271.5">2</text><text x="202" y="271.5">3</text><text x="234" y="271.5">4</text><text x="266" y="271.5">5</text></g>
+<rect x="92" y="280" width="28" height="18" rx="4"/><rect x="124" y="280" width="28" height="18" rx="4"/><rect x="156" y="280" width="28" height="18" rx="4"/><rect x="188" y="280" width="28" height="18" rx="4"/><rect x="220" y="280" width="28" height="18" rx="4"/><rect x="252" y="280" width="28" height="18" rx="4"/><rect x="284" y="280" width="28" height="18" rx="4"/><rect x="316" y="280" width="28" height="18" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:12.5px; text-anchor:middle"><text x="6" y="293.5" style="font-size:12.5px; text-anchor:start; font-family:var(--font-sans)">partition 11</text><text x="106" y="293.5">0</text><text x="138" y="293.5">1</text><text x="170" y="293.5">2</text><text x="202" y="293.5">3</text><text x="234" y="293.5">4</text><text x="266" y="293.5">5</text><text x="298" y="293.5">6</text><text x="330" y="293.5">7</text></g>
+</g>
+<line x1="430" y1="157" x2="352" y2="157" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf3-arr)"/>
+<text x="434" y="161.5" style="font-size:12.5px; fill:var(--accent-primary); font-family:var(--font-mono)">r-8f21</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">네모 하나가 줄 하나고 그 안의 숫자가 offset 이다. offset 은 partition 마다 0부터 따로 센다. partition 3 의 4번과 partition 8 의 4번은 아무 관계가 없는 두 줄이다. 굵게 두른 것이 r-8f21 — partition 5 의 offset 7, 여덟 번째 줄이다.</figcaption>
+</figure>
 
 ### 어느 partition 으로 가나
 
@@ -426,7 +433,7 @@ print("→ partition 수는 나눗셈에 들어간다. 늘리는 순간 절반�
 
 마지막 줄이 12개를 지금 정해야 하는 이유다. `% 12` 와 `% 24` 는 같은 key 를 다른 곳에 보낸다. 10만 줄 중 49,936줄이 옮겨갔고, 그 줄들은 예전 자리에 남은 같은 key 의 줄과 더는 한 줄에 안 선다. 줄이지도 못한다. partition 은 늘릴 수만 있다. 답이 10개인데 12개로 잡은 건 그래서다.
 
-아래에서 직접 바꿔 보자. key 를 `ad_id` 로 바꾸면 쏠린 곳이, partition 을 4에서 8로 밀면 옮겨간 줄이 표시된다.
+아래에서 직접 바꿔 보자. 위 코드가 안 보여 준 것이 하나 있다. 누가 그 partition 을 맡느냐다. consumer 수를 partition 수보다 크게 밀면 아무것도 못 맡고 노는 사람이 생기고, 작게 밀면 한 명이 둘씩 든다. 데모 화면은 partition 을 "칸"이라고도 부른다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-kafka-partition.html?embed=1" height="620" loading="lazy" title="Kafka Partition 놀이터"></iframe>
@@ -441,16 +448,20 @@ partition 12개와 key `req_id` 가 정해졌다. 남은 것은 읽는 쪽이다
 
 **consumer group 은 읽는 팀 하나다. group 이 다르면 같은 줄을 각자 통째로 읽고, 한 group 안에서는 partition 12개를 나눠 맡는다.**
 
-읽는 쪽 설정에 `group.id` 가 있다. 이 값이 같으면 한 팀이고 다르면 다른 팀이다. 1절의 넷이 네 값을 쓴다.
+읽는 쪽 설정에 `group.id` 가 있다. 이 값이 같으면 한 팀이고 다르면 다른 팀이다. 1절의 넷이 네 값을 쓴다 — `train-daily` · `billing` · `dash-live` · `advertiser-report`.
 
-| 읽는 곳 | `group.id` | consumer 수 | 한 명이 맡는 partition |
-|---|---|---|---|
-| 학습팀 | `train-daily` | 4 | 3개 |
-| 정산팀 | `billing` | 12 | 1개 |
-| 대시보드 | `dash-live` | 6 | 2개 |
-| 광고주 리포트 | `advertiser-report` | 2 | 6개 |
+| 읽는 곳 | consumer | 한 명당 partition |
+|---|---|---|
+| 학습팀 | 4 | 3개 |
+| 정산팀 | 12 | 1개 |
+| 대시보드 | 6 | 2개 |
+| 광고주 리포트 | 2 | 6개 |
 
-이름도 인원도 지어낸 값이다. 맨 오른쪽 칸은 3절이 정한 12를 consumer 수로 나눈 것이라, 어느 줄이든 다시 곱하면 12로 돌아온다.
+이름도 인원도 지어낸 값이다. 맨 오른쪽 열은 3절이 정한 12를 consumer 수로 나눈 것이라, 어느 줄이든 다시 곱하면 12로 돌아온다.
+
+인원을 정하는 규칙은 3절과 같다. **그 group 이 감당해야 할 초당 줄 수 ÷ 그 group 한 명의 초당 처리량**, 상한은 partition 수다. 3절의 800줄은 무거운 처리 기준이라 group 마다 다르다.
+
+다르게 나오는 건 무엇에 맞추느냐 때문이다. 1절이 넷의 요구를 이미 적어 뒀다. 정산팀은 마감이 밀리면 안 되니 상한인 12까지 채웠다. 대시보드는 몇 초 안에 숫자가 올라가야 해서 6명이다. 광고주 리포트는 몇 분 늦어도 되니 2명이다. 학습팀 4명은 하루 한 번 몰아 읽어 평시 유입만 따라가면 된다는 판단이다. 그 4명이 밀렸을 때 며칠에 따라잡는지는 6절에서 센다.
 
 정산팀에 13번째를 붙이면 어떻게 되나. 3절의 한 문장이 여기서 값을 낸다 — 한 partition 은 group 안에서 한 명만 맡는다. 13번째는 아무것도 못 받고 논다. **group 안 consumer 수의 상한이 partition 수다.**
 
@@ -519,10 +530,10 @@ REVENUE = ROWS * PRICE
 PER_SEC = ROWS / 86_400 / CONSUMERS    # consumer 한 명이 초당 받는 줄
 AUTO_SEC = 5                           # auto commit 간격. 자바 기본값이다
 
-def w(s):                              # 한글은 모노스페이스에서 두 칸을 먹는다
+def w(s):                              # 앞 블록과 같다 — 표를 찍는 두 줄이니 건너뛰어도 된다
     return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
 
-def row(*cells):                       # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
+def row(*cells):
     print("".join(" " * (n - w(c)) + c for c, n in cells))
 
 # ── 죽는 순간 아직 확정 안 된 구간이 방식마다 다르다 ──
@@ -561,6 +572,8 @@ print(f"→ auto commit 은 셋째 선택지가 아니다. 중복을 {auto / man
 # → auto commit 은 셋째 선택지가 아니다. 중복을 2.2배로 키운 '처리 후' 다.
 ```
 
+표의 750건은 하루 세 번 죽는 몫을 합친 값이다. 한 번은 배치 절반인 250건이고, auto commit 은 5초치 절반인 550건이다. 아래는 이 250과 550을 쓴다.
+
 표에 안 들어간 것이 하나 있다. 위 계산은 하나가 죽었을 때 그 한 명 몫만 밀린다고 본 것이다. 실제로는 consumer 하나가 빠지면 group 이 partition 을 다시 나눈다. 이때 12개를 전부 놓았다 다시 받는 방식이면 미확정 구간이 12개 몫이 된다. 250 × 12 = 3,000건이다. 하루 세 번이면 9,000건, 1,641.6원이다. 옮겨가는 것만 놓는 방식이면 250건 그대로다. **어느 쪽인지는 클라이언트 버전과 설정에 달렸다.** 3,000건은 상한이기도 하다. 놓기 직전에 commit 을 한 번 하면 그만큼 줄고, 자바는 `enable.auto.commit=true` 면 그 자리에서 알아서 한다. 직접 적는 쪽은 `onPartitionsRevoked` 에서 한다. 둘 다 안 할 때가 3,000건이다. 정산팀이 못 견디는 자리가 여기다. 금액이 작은 게 문제가 아니라 그 금액을 미리 못 정하는 게 문제다.
 
 중복은 학습 쪽에도 닿는다. 같은 노출이 두 줄이면 그 광고의 클릭률 분모만 늘어 추정이 아래로 밀린다.
@@ -596,7 +609,7 @@ print(f"→ auto commit 은 셋째 선택지가 아니다. 중복을 {auto / man
 |---|---|---|
 | 대시보드 | 처리 전 | 최근 5분만 보는 화면이라 750건 유실은 다음 갱신에 사라진다 |
 | 학습팀 | 처리 후 | 중복이 클릭률을 아래로 밀지만 2.28억 줄에 750건이면 소수점 아래다 |
-| 광고주 리포트 | 처리 후 | 중복이 수치를 위로 민다. 광고별로 갈라 보니 정산 결과를 다시 읽는 편이 낫다 |
+| 광고주 리포트 | 처리 후 | 중복은 수치를 위로 밀어 광고주가 먼저 알아채지만, 유실은 아무도 못 알아챈다. 그래서 처리 후다. 월 마감 수치만 정산 결과로 덮는다 |
 | 정산팀 | 처리 후 + `req_id` 유니크 키 | 유실도 중복도 안 되니 둘 중 하나를 고르는 대신 처리 쪽에서 막는다 |
 
 **정산팀만 다르게 하는 게 아니라, 정산팀만 commit 시점으로 정하지 않는다.** 나머지 셋은 무엇을 잃어도 되는지가 정해져 있어서 한 줄로 끝난다.
@@ -605,7 +618,7 @@ commit 시점이 정해져도 되감기에는 조건이 하나 붙는다. 4절�
 
 ---
 
-## 6. 보관 기간 — 왜 지나간 것도 읽을 수 있나
+## 6. 보존 기간 — 왜 지나간 것도 읽을 수 있나
 
 **Kafka 는 읽혔다고 지우지 않는다. 나이나 크기로 지운다. 그래서 학습이 사흘 멈춰도 되감을 수 있다.**
 
@@ -633,10 +646,10 @@ KEEP_DAYS = [3, 7, 14, 30]
 IN_SEC = TOPICS["ad.impression"] / 86_400       # 초당 들어오는 줄 — 하루 평균이다
 ONE, MAX_N = 800, 12                            # 한 명 초당 처리량 · partition 수
 
-def w(s):                              # 한글은 모노스페이스에서 두 칸을 먹는다
+def w(s):                              # 앞 블록과 같다 — 표를 찍는 두 줄이니 건너뛰어도 된다
     return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
 
-def row(*cells):                       # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
+def row(*cells):
     print("".join(" " * (n - w(c)) + c for c, n in cells))
 
 # ── 보존일수별 디스크. 복제가 3벌이라 실제로 차지하는 건 원본의 3배다 ──
@@ -745,6 +758,14 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 
 노출의 `ts` 가 1786000101 이었으니 2,400초, 40분 뒤다. 이 줄이 있으면 y=1 이고 없으면 y=0 이다.
 
+이어 붙이면 도입에서 시작한 그 줄이 이렇게 끝난다.
+
+```json
+{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","bid":182.4,"y":1}
+```
+
+`pctr` 0.0213 이 빠진 것이 눈에 띈다. 그건 그때 모델이 낸 예측이라 X 에 그대로 넣지 않는다. 예측을 다시 넣고 학습하면 모델이 자기 출력을 따라 도는 셈이 된다. 대신 따로 들고 있다가 맞혔는지를 재는 데 쓴다.
+
 | topic | 학습에서 무엇이 되나 | 하루 줄 수 |
 |---|---|---|
 | `ad.impression` | X — 그 요청의 피처 | 2억 2,800만 |
@@ -761,6 +782,19 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 ### 얼마나 기다렸다 이어 붙이나
 
 클릭이 40분 뒤에 온다면 노출을 40분 넘게 들고 있어야 짝이 맞는다. 얼마나 들고 있을지가 조인 창이다.
+
+창을 넘겨 온 클릭도 버려지지는 않는다. 과금도 리포트도 그대로 센다. 다만 학습 데이터에서는 그 노출이 이미 y=0 으로 확정된 뒤다.
+
+| 조인 창 | 놓치는 클릭 | 학습이 보는 클릭률 |
+|---|---|---|
+| 5분 | 205,200 | 0.910% |
+| 1시간 | 41,040 | 0.982% |
+| 3시간 | 13,680 | 0.994% |
+| 24시간 | 2,280 | 0.999% |
+
+지어낸 분포다. 창 안에 들어오는 클릭을 5분 91.0%, 1시간 98.2%, 3시간 99.4%, 24시간 99.9%로 잡았다. 놓치는 클릭은 그 나머지를 하루 228만에 곱한 값이고, 클릭률은 1.00%에서 그만큼 깎인 값이다.
+
+**우리 답은 3시간이다.** 24시간으로 늘리면 11,400건을 더 건진다. 228만의 0.5%다. 그 0.5%를 사려고 학습 데이터 확정이 21시간 늦어진다.
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 520 206" role="img" aria-label="노출 한 줄에서 화살표 둘이 아래 클릭 줄 두 개로 내려가는 그림. 왼쪽 클릭은 조인 창 세로선 안쪽에 있고, 오른쪽 클릭은 세로선 바깥에 점선 상자로 놓여 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
@@ -788,26 +822,15 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">가로축은 노출 시각부터 잰 시간이다. 화살표 둘은 같은 노출에 딸린 클릭이고, 도착 시각만 다르다.</figcaption>
 </figure>
 
-창을 넘겨 온 클릭도 버려지지는 않는다. 과금도 리포트도 그대로 센다. 다만 학습 데이터에서는 그 노출이 이미 y=0 으로 확정된 뒤다.
-
-| 조인 창 | 그 안에 들어온 클릭 | 놓치는 클릭 | 학습이 보는 클릭률 |
-|---|---|---|---|
-| 5분 | 91.0% | 205,200건 | 0.910% |
-| 1시간 | 98.2% | 41,040건 | 0.982% |
-| 3시간 | 99.4% | 13,680건 | 0.994% |
-| 24시간 | 99.9% | 2,280건 | 0.999% |
-
-지어낸 분포다. 놓치는 클릭은 하루 228만에 남은 비율을 곱한 값이고, 클릭률은 1.00%에서 그만큼 깎인 값이다.
-
-**우리 답은 3시간이다.** 24시간으로 늘리면 11,400건을 더 건진다. 228만의 0.5%다. 그 0.5%를 사려고 학습 데이터 확정이 21시간 늦어진다.
-
 반대로 5분으로 줄이면 클릭률이 0.910%로 보인다. 9%가 깎인 값이다. 모델은 그 깎인 값을 맞히도록 학습한다. **조인 창은 파이프라인 설정이 아니라 라벨 정의다.**
 
-마지막은 여기서 자주 밟는 것들이다.
+이것으로 이 글이 정할 값 일곱이 다 나왔다. 그 일곱을 두고 현장에서 자주 밟는 것 다섯이 8절이다.
 
 ---
 
 ## 8. 자주 밟는 지뢰
+
+**다섯 가지다. 앞 셋은 자주 반대로 알고 있는 것이고, 뒤 둘은 이 글이 어디까지 답했는지다.**
 
 **"Kafka 는 큐다" — 반만 맞다.**
 
@@ -827,9 +850,11 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 
 key 를 빼면 가장 고르게 퍼지긴 한다(3절의 1.00배). 고름과 순서 중 하나를 고르는 자리이고, 우리는 순서를 골랐다.
 
+골랐으면 양쪽을 같이 지켜야 한다. 노출과 클릭은 key 만 같아서는 안 되고 partition 수도, 넣는 쪽 partitioner 도 같아야 한다(7절). 한쪽만 늘리면 조인이 조용히 깨진다. 에러가 안 나고 y=0 만 늘어나서 모델 성능이 떨어진 뒤에야 보인다.
+
 **consumer lag 을 봐야 한다.**
 
-초당 3,200줄을 처리한다는 그래프는 정상인지 아닌지를 말해 주지 않는다. 유입이 2,639면 줄어드는 중이고 7,917이면 밀리는 중이다.
+초당 3,200줄을 처리한다는 그래프는(6절 코드의 4명 × 800줄) 정상인지 아닌지를 말해 주지 않는다. 유입이 2,639면 줄어드는 중이고 7,917이면 밀리는 중이다.
 
 lag 은 partition 마다 마지막 offset 에서 commit 된 offset 을 뺀 값이다. group 합만 보면 한 곳만 밀리는 3절의 쏠림을 못 본다. 재는 방법은 도구마다 다르다.
 

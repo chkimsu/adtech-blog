@@ -1221,6 +1221,11 @@ async function renderPostDetail() {
           clusterBkg: tertiary,
           clusterBorder: border,
           edgeLabelBackground: background,
+          // sequenceDiagram 의 Note. 안 주면 mermaid 기본값이 노란색(#fff5ad)이라
+          // 크림·잉크 팔레트에서 혼자 튄다. cluster 와 같은 톤으로 맞춘다.
+          noteBkgColor: tertiary,
+          noteTextColor: text,
+          noteBorderColor: border,
           fontFamily,
           fontSize: '14px'
         };

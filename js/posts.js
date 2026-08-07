@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'kafka-log-pipeline',
+    world: 'na',
+    title: 'Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지',
+    excerpt: '광고가 한 번 노출되면 그 사실을 알아야 하는 곳이 네 군데다 — 학습팀·정산팀·대시보드·광고주 리포트. bidder가 네 곳에 직접 알리면 한 팀이 배포할 때마다 광고가 느려진다. Kafka는 이 문제를 "한 번 쓰고 각자 읽는" 구조로 푼다. producer가 무엇인지, partition이 왜 있는지, offset이 무엇을 기억하는지를 노출 로그 한 줄이 pCTR 학습 데이터가 되는 과정으로 따라간다.',
+    date: '2026-08-07',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['Event-Driven', 'System Design', 'ML Infra', 'Kafka'],
+    contentUrl: 'posts/kafka-log-pipeline.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'gateway-ingress-router',
     world: 'na',
     title: '광고 요청 하나가 서비스까지 가는 길 — LB · Ingress · API Gateway · 라우터',

@@ -205,6 +205,16 @@ git commit -m "chore(taxonomy): Kafka 태그 추가"
 
 **기존 26편의 mermaid 그림이 전부 바뀐다.** 사용자가 승인한 변경이다.
 
+> **실행 중 수정됨 (2026-08-07).** 아래 Step 2·4의 원안은 크림 팔레트의 hex를 하드코딩한다. 그런데 이 블로그에는 팔레트가 **둘**이다 — `css/style.css` 에 `[data-palette="slate"]` 가 따로 있어서, 팔레트×테마 조합이 넷이다(크림 라이트·크림 다크·슬레이트 라이트·슬레이트 다크). 하드코딩하면 슬레이트 독자는 슬레이트 배경 위에 크림 그림을 보게 된다.
+>
+> **그래서 하드코딩 대신 CSS 변수를 런타임에 읽는다.** 저장소에 이미 그 관례가 있다 — `js/*-demo.js` 9개 파일이 `const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()` + 폴백 상수를 쓴다. hex 상수는 **토큰이 빈 값으로 돌아올 때만** 쓰는 폴백으로 남긴다.
+>
+> 토큰 대응: `background`·`edgeLabelBackground` ← `--bg-primary` / `primaryColor`·`mainBkg` ← `--bg-secondary` / `primaryTextColor`·`textColor` ← `--text-primary` / `primaryBorderColor`·`clusterBorder` ← `--border-color` / `secondaryColor`·`tertiaryColor`·`clusterBkg` ← `--bg-tertiary` / `lineColor` ← `--accent-secondary` / `fontFamily` ← `--font-sans`. `fontSize` 만 `'14px'` 리터럴.
+>
+> `isDark` 인자는 **폴백 상수를 고르는 용도로만** 남는다. 실제 테마·팔레트는 읽어 온 값이 이미 담고 있다.
+>
+> 실제 구현은 커밋 `fada548` 이다. 아래 Step 2·4의 코드 블록은 원안 기록으로 남겨 둔다.
+
 **Files:**
 - Modify: `post.html:60`
 - Modify: `js/main.js:1189-1193`

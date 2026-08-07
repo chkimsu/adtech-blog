@@ -16,7 +16,7 @@
     "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
     "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
     "Git", "DevOps", "Workflow", "Collaboration",
-    "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking"
+    "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking", "Kafka"
   ],
   "_worlds_comment": "글의 '무대' — 내가 경매를 돌리는 안쪽(담장 안)이냐, 밖에서 입찰만 넣느냐(열린 RTB)냐. na는 광고 경매 무관(배지 없음).",
   "worlds": [

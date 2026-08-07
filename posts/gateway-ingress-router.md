@@ -474,7 +474,7 @@ Gateway가 그것까지 물어보게 만들 수는 있다. 그러면 홉이 하�
 
 **안쪽 호출에는 아직 아무 부품도 없다. 메시가 그 자리를 채우는데, 12ms 예산에서는 그 값을 낼 수 있는지부터 계산해야 한다.**
 
-서비스가 여덟 개 더 생겨 열둘이 됐다. `pcvr`·`budget`·`frequency`·`creative`·`audience`·`pacing`·`model-registry`·`report` 다. 매체는 이 이름을 하나도 모른다 — 전부 안에서만 부른다.
+서비스가 여덟 개 더 생겨 열둘이 됐다. `pcvr` · `budget` · `frequency` · `creative` · `audience` · `pacing` · `model-registry` · `report` 다. 매체는 이 이름을 하나도 모른다 — 전부 안에서만 부른다.
 
 1절부터 4절까지 쌓은 부품은 밖에서 안으로 들어오는 길 위에 있다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 LB도 Ingress도 Gateway도 지나지 않는다.
 
@@ -653,3 +653,109 @@ print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ �
 전부 아니면 전무는 아니다. 사이드카를 붙일 대상은 고를 수 있다. 입찰 경로는 빼고 `report`·`model-registry`·`log-collector` 쪽만 넣으면 된다. 대신 재시도와 타임아웃이 가장 급한 곳이 12ms를 다투는 입찰 경로다. 값을 못 치르는 자리와 얻을 것이 가장 큰 자리가 겹친다.
 
 부품은 여기까지다. 다섯 절에서 하나씩 생긴 것을 한 장에 겹쳐 놓으면 경계가 보인다. 그게 6절이다.
+
+---
+
+## 6. 완성된 지도
+
+**다섯 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 된다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 연다.**
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 700 272" role="img" aria-label="매체에서 시작해 LB·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="gw6-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+</defs>
+<rect x="4" y="88" width="110" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="59" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 10곳</text>
+<text x="59" y="161" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
+<line x1="114" y1="116" x2="130" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="134" y="88" width="74" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="171" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="171" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">IP · 포트</text>
+<line x1="208" y1="116" x2="224" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="228" y="88" width="104" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="280" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">Ingress</text>
+<text x="280" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">호스트 · 경로</text>
+<line x1="332" y1="116" x2="348" y2="116" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="352" y="88" width="150" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="427" y="121" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">API Gateway</text>
+<text x="427" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">+ 헤더 · 인증키 · 매체</text>
+<rect x="522" y="28" width="174" height="216" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="609" y="45" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">서비스 메시 (선택)</text>
+<line x1="502" y1="108" x2="530" y2="83" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="502" y1="120" x2="530" y2="172" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="502" y1="130" x2="530" y2="210" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<rect x="534" y="56" width="150" height="54" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="609" y="76" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="542" y="82" width="134" height="22" rx="6" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="609" y="97" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">라우터 · 코드 경로</text>
+<rect x="534" y="118" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="609" y="139" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="534" y="156" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="609" y="177" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="534" y="194" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="609" y="215" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<text x="609" y="237" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">…외 8개</text>
+<text x="609" y="261" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">메시 — 서비스 사이 호출</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">점선은 메시 하나뿐이다. 나머지 넷은 앞 절에서 이미 켜졌고, 메시만 5절의 나눗셈을 통과해야 켜진다.</figcaption>
+</figure>
+
+| 부품 | 어디서 도나 | 무엇을 보고 나누나 | 없으면 무엇이 늘어나나 |
+|---|---|---|---|
+| LB | 클러스터 밖 | IP · 포트 (L4) | 서버 한 대가 죽으면 대안이 없다 |
+| Ingress | 클러스터 입구 | 호스트 · 경로 (L7) | 서비스마다 대표 주소와 헬스체크 설정이 한 벌씩 붙는다 |
+| API Gateway | 앱 계층 | 경로 + 헤더 · 인증키 · 매체 | 인증 · 쿼터 · 타임아웃이 서비스 수만큼 복제된다 |
+| 라우터 | 앱 안 | 코드 경로 | 한 서비스 안에서 요청을 구분 못 한다 |
+| 서비스 메시 | 서비스 사이 | 서비스 간 호출 | 재시도 · 타임아웃을 서비스마다 짠다 |
+
+표의 마지막 칸이 이 글의 줄거리다. 부품은 기능을 더하려고 들어온 것이 아니다. 없을 때 사람이 관리할 것이 몇 벌로 불어나느냐가 먼저였고, 부품은 그 뒤에 왔다.
+
+셋째 칸은 아래로 갈수록 조건이 하나씩 붙는다. 다섯 줄이 다 "나눈다"는 같은 말을 쓰는데, 보는 것이 전부 다르다. 넷을 헷갈리는 이유가 여기 있다.
+
+넷째 줄만 생긴 순서가 다르다. 라우터는 어느 절에서 새로 생긴 것이 아니다. 1절의 서버 한 대에도 `POST /v1/bid` 를 함수에 잇는 코드는 있었다.
+
+이 글은 부품을 하나씩 켜면서 왔고, 아래 데모는 그것을 거꾸로 돌린다. Ingress를 끈 채 서비스 수를 1로 내리면 요청이 다시 통과한다 — 3절이 시작되기 전 자리다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-request-path.html?embed=1" height="560" loading="lazy" title="요청 경로 시뮬레이터"></iframe>
+<a class="demo-embed-open" href="demo-request-path.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+---
+
+## 7. 헷갈리기 쉬운 점
+
+**"Ingress랑 API Gateway랑 같은 것 아닌가."**
+
+둘 다 L7에서 경로를 본다. 3절 규칙표도 `/v1/bid` 를 보고 갈랐고, 4절 Gateway도 같은 경로를 본다. 겹치는 것은 여기까지다.
+
+갈리는 곳은 정책이다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없다. Gateway에는 인증·쿼터·타임아웃·응답 변환이 설정 항목으로 있다. 그래서 바뀌는 이유가 다르다 — 규칙표는 서비스가 늘 때, Gateway는 매체가 늘 때 바뀐다.
+
+경계가 고정된 것은 아니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API는 헤더 조건과 트래픽 분할을 규격 안에 갖고 있다. 4절에서 구현체마다 다르게 밀어 넣던 것이 표준이 된 셈이다. 다만 인증·쿼터·응답 변환은 아직 규격 밖이라 지금은 둘이다.
+
+**"LB가 있으면 Ingress는 필요 없나."**
+
+Ingress도 앞에 LB가 하나 필요하다. 규칙표를 실행하는 프로세스도 여러 개 뜨기 때문이다. 3절에서 LB는 없어지지 않았고, 그 대상만 `bidder` 서버 3대에서 Ingress로 바뀌었다.
+
+클라우드에서는 이게 잘 안 보인다. Ingress를 만들면 LB가 자동으로 딸려 오는 구성이 흔해서 없는 것처럼 느껴질 뿐이다. 요금 항목에는 남는다.
+
+대체가 아니라 덧붙임이다. 2절 LB는 IP와 포트만 보고 연결을 넘기고, 3절 Ingress는 그 연결에 실린 요청을 열어 호스트와 경로를 본다. 하는 일이 다르니 한쪽이 다른 쪽을 지우지 못한다.
+
+**"Gateway를 넣으면 느려지지 않나."**
+
+느려진다. 4절에서 인증키와 쿼터를 보는 데 1.1ms를 잡았다(가상 수치). 12ms의 9%다. 공짜가 아니다.
+
+견줄 대상은 3절 끝의 사고다. A앱 한 곳이 초당 3만 건을 쏟는 동안 쿼터를 볼 자리가 없으면, 나머지 아홉 곳이 같이 12ms를 넘긴다. 모든 요청에 1.1ms를 얹는 쪽과, 그동안 열 곳이 다 같이 넘기는 쪽 중 하나를 고른다.
+
+인증과 쿼터를 계속하려면 그 1.1ms는 없애는 것이 아니라 옮기는 것이다. `bidder` 안에서 같은 검사를 하면 10ms 상한 안에서 그 시간을 쓴다. 4절에서 센 대로 구현은 12벌이 되고, 값 하나 고치는 데 배포가 네 번이다.
+
+---
+
+## 8. 더 깊이 보기
+
+- [쿠버네티스 네트워킹 쉽게 이해하기](post.html?id=kubernetes-networking) — 이 글이 Ingress에서 멈춘 아래쪽, Pod와 Service의 주소
+- [소프트웨어 아키텍처 패턴 6가지](post.html?id=software-architecture-patterns) — 3절에서 서비스를 넷으로 쪼갠 판단
+- [모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 이 경로 끝의 `pctr` 이 남은 시간에 실제로 하는 일
+- [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 경로로 들어온 입찰 한 건이 로그를 몇 줄 남기는지
+- [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) — `log-collector` 가 받은 그 로그가 다음에 어디로 가는지

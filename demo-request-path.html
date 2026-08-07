@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="LB · Ingress · API Gateway · 서비스 메시를 하나씩 꺼 보면서 매체가 보낸 입찰 요청 한 건이 어디서 멈추는지 확인하는 인터랙티브 데모. 부품이 없을 때 사람이 관리해야 하는 주소·설정·정책이 몇 개로 늘어나는지도 함께 센다.">
+  <title>요청 경로 시뮬레이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .rp-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+    @media (max-width: 700px) { .rp-container { padding: 1rem 1rem 0; } }
+
+    .rp-hero { text-align: center; padding: 2rem 0 1rem; }
+    .rp-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .rp-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .rp-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .rp-intro strong { color: var(--accent-primary); }
+    .rp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+
+    /* ---------- 컨트롤 ---------- */
+    .rp-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+    }
+    .rp-toggles { display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; margin-bottom: 1.1rem; }
+    .rp-toggles label {
+      display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
+      font-size: 0.88rem; color: var(--text-muted);
+      padding: 0.4rem 0.85rem; border: 1px solid var(--border-color); border-radius: 999px;
+      border-style: dashed; transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .rp-toggles label.is-on {
+      color: var(--accent-primary); border-color: var(--accent-primary); border-style: solid; font-weight: 600;
+    }
+    .rp-toggles input { accent-color: var(--accent-primary); margin: 0; }
+
+    .rp-slider-row {
+      margin-bottom: 0.75rem; display: grid; grid-template-columns: 110px 1fr 54px;
+      align-items: center; gap: 0.8rem; font-size: 0.88rem; color: var(--text-secondary);
+    }
+    @media (max-width: 700px) { .rp-slider-row { grid-template-columns: 92px 1fr 44px; gap: 0.5rem; } }
+    .rp-slider-row input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; min-width: 0;
+      height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none;
+    }
+    .rp-slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 50%; cursor: pointer;
+    }
+    .rp-slider-row input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 50%; cursor: pointer; border: none;
+    }
+    .rp-slider-row span:last-child {
+      text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary);
+    }
+
+    .rp-fire-btn {
+      margin-top: 0.5rem; font-family: var(--font-sans); font-size: 0.86rem; font-weight: 600;
+      padding: 0.5rem 1.15rem; cursor: pointer; border-radius: 999px;
+      background: var(--accent-primary); color: var(--bg-secondary); border: 1px solid var(--accent-primary);
+      transition: opacity var(--transition-fast);
+    }
+    .rp-fire-btn:hover { opacity: 0.86; }
+
+    /* ---------- 경로 ---------- */
+    .rp-path {
+      max-width: 980px; margin: 0 auto 1.1rem;
+      display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.45rem;
+    }
+    /* 화살표 + 뒤따르는 칸 한 묶음 — 줄바꿈될 때 같이 넘어간다 */
+    .rp-link { display: flex; align-items: stretch; gap: 0.45rem; flex: 1 1 166px; min-width: 0; }
+    .rp-link > .rp-step { flex: 1 1 auto; }
+    .rp-step {
+      flex: 1 1 148px; min-width: 0; padding: 0.75rem 0.85rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px;
+      transition: background var(--transition-fast);
+    }
+    .rp-step-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.35rem; }
+    .rp-step-mark { font-family: var(--font-mono); font-size: 0.88rem; color: var(--text-muted); }
+    .rp-step-name { font-weight: 600; font-size: 0.92rem; color: var(--text-primary); }
+    .rp-step-note {
+      display: block; margin-top: 0.35rem; font-size: 0.75rem; line-height: 1.55; color: var(--text-muted);
+      overflow-wrap: anywhere;
+    }
+    .rp-step.is-lit { background: var(--bg-tertiary); }
+
+    /* 통과 — 실선 + 왼쪽 굵은 선 + ✓ */
+    .rp-step.is-pass { border-left: 3px solid var(--state-good); }
+    .rp-step.is-pass .rp-step-mark { color: var(--state-good); }
+    /* 아직 없어도 되는 칸 — 점선 테두리 + – */
+    .rp-step.is-skip { border-style: dashed; }
+    /* 멈춤 — 굵은 점선 + ✕ + 칩 (색만으로 알리지 않는다) */
+    .rp-step.is-stop {
+      border: 2px dashed var(--state-bad); background: var(--bg-tertiary);
+    }
+    .rp-step.is-stop .rp-step-mark, .rp-step.is-stop .rp-step-name { color: var(--state-bad); }
+    .rp-step.is-stop .rp-step-note { color: var(--text-secondary); }
+    .rp-step-stop {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
+      padding: 0.1rem 0.4rem; border: 1px solid var(--state-bad); border-radius: 4px; color: var(--state-bad);
+    }
+    /* 도달하지 못한 칸 — 옅은 점선 */
+    .rp-step.is-ghost { border-style: dotted; background: transparent; opacity: 0.6; }
+    .rp-step.is-ghost .rp-step-name { color: var(--text-muted); font-weight: 500; }
+
+    .rp-arrow {
+      align-self: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.9rem;
+    }
+    .rp-arrow::before { content: '→'; }
+    .rp-arrow.is-dead { opacity: 0.45; }
+    .rp-arrow.is-dead::before { content: '⇢'; }
+    @media (max-width: 700px) {
+      .rp-path { flex-direction: column; gap: 0.3rem; }
+      .rp-link { flex-direction: column; gap: 0.3rem; flex: 0 0 auto; }
+      /* 세로로 세울 때 flex-grow가 높이로 작동해 칸이 늘어나는 것을 막는다 */
+      .rp-step, .rp-link > .rp-step { flex: 0 0 auto; }
+      .rp-arrow { align-self: flex-start; margin-left: 1.1rem; }
+      .rp-arrow::before { content: '↓'; }
+      .rp-arrow.is-dead::before { content: '⇣'; }
+    }
+
+    /* ---------- 판정 한 줄 ---------- */
+    .rp-verdict {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 0.85rem 1.2rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px;
+      color: var(--text-secondary); font-size: 0.93rem; line-height: 1.65;
+    }
+    .rp-verdict.is-pass { border-left: 4px solid var(--state-good); }
+    .rp-verdict.is-stop { border-left: 4px dashed var(--state-bad); }
+    .rp-verdict strong { color: var(--text-primary); }
+    .rp-verdict.is-stop strong { color: var(--state-bad); }
+
+    /* ---------- 사람이 관리해야 하는 것 ---------- */
+    .rp-cost {
+      max-width: 980px; margin: 0 auto 2rem; padding: 1.15rem 1.4rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+    }
+    .rp-cost h3 { font-size: 1rem; margin: 0 0 0.15rem; }
+    .rp-cost-sub { font-size: 0.76rem; color: var(--text-muted); margin: 0 0 0.6rem; line-height: 1.5; }
+    .rp-cost-row {
+      display: grid; grid-template-columns: 132px 84px 1fr; align-items: baseline; gap: 0.9rem;
+      padding: 0.55rem 0; border-top: 1px solid var(--border-color);
+    }
+    .rp-cost-label { font-size: 0.85rem; color: var(--text-secondary); }
+    .rp-cost-value {
+      font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem;
+      color: var(--text-muted); text-align: right; white-space: nowrap;
+    }
+    .rp-cost-value em { font-style: normal; font-size: 0.7rem; font-weight: 400; margin-left: 0.15rem; }
+    .rp-cost-value.is-many { color: var(--state-warn); }
+    .rp-cost-value.is-many::after { content: ' ▲'; font-size: 0.62em; }
+    .rp-cost-note { font-size: 0.77rem; color: var(--text-muted); line-height: 1.55; }
+    @media (max-width: 700px) {
+      .rp-cost-row { grid-template-columns: 1fr auto; gap: 0.4rem 0.7rem; }
+      .rp-cost-note { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="rp-hero">
+      <div class="rp-container">
+        <h1>요청 경로 시뮬레이터</h1>
+        <p>LB · Ingress · API Gateway · 서비스 메시는 한꺼번에 설계된 것이 아닙니다.
+          부품을 하나씩 꺼 보면 각자 어떤 문제 때문에 생겼는지가 드러납니다 — 없으면 무엇이 터지나.</p>
+      </div>
+    </section>
+
+    <div class="rp-container">
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>매체가 보낸 입찰 요청 한 건이 <code>bidder</code> 까지 가는 길에 네 부품이 서 있습니다. 하나를 끄고 요청을 보내면 어느 칸에서 멈추는지, 그리고 그 부품이 하던 일이 사람 쪽으로 몇 개 옮겨오는지 확인합니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>넷 다 "요청을 어디로 보낼지 정하는" 일을 해서 경계가 헷갈립니다. 끄고 켜 보면 <strong>각자 답하는 문제가 다르다</strong>는 게 드러납니다. 도입 순서를 정할 때 쓰는 판단이 이것입니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text">기본값에서 <strong>요청 한 건 보내기</strong> — 칸이 하나씩 켜지며 <code>bidder</code> 까지 도착합니다.</span></li>
+        <li><span class="step-text"><strong>Ingress</strong> 를 끄면 서비스 4개에서 멈춥니다. 서비스 수를 1로 내리면 다시 통과합니다.</span></li>
+        <li><span class="step-text"><strong>API Gateway</strong> 를 끄면 매체 3곳에서 멈춥니다. 매체 수를 1로 내리면 다시 통과합니다.</span></li>
+        <li><span class="step-text"><strong>서비스 메시</strong> 를 켜면 요청은 그대로 도착하지만 12ms 예산이 사이드카만큼 깎입니다.</span></li>
+      </ol>
+
+      <div class="rp-intro">
+        <strong>설정</strong> — 매체와 이 DSP는 같은 데이터센터 안에서 전용 회선으로 붙어 있습니다.
+        주소는 사설 <code>10.0.x.x</code>, 평문 <code>http</code>, 응답 예산은 <code>12ms</code>.
+        그래서 여기서 세는 것에 공인 IP도 TLS 인증서도 없습니다.
+        <strong>세는 것</strong>은 매체가 알아야 하는 주소, 대상 그룹 설정, 정책을 구현한 벌수, 그리고 사이드카가 먹는 시간입니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="rp-controls">
+        <div class="rp-toggles">
+          <label><input type="checkbox" id="rp-lb" checked> LB</label>
+          <label><input type="checkbox" id="rp-ingress" checked> Ingress</label>
+          <label><input type="checkbox" id="rp-gateway" checked> API Gateway</label>
+          <label><input type="checkbox" id="rp-mesh"> 서비스 메시</label>
+        </div>
+        <div class="rp-slider-row">
+          <span>서비스 수</span><input id="rp-svc" type="range" min="1" max="12" value="4"><span id="rp-svc-v">4</span>
+        </div>
+        <div class="rp-slider-row">
+          <span>매체 수</span><input id="rp-media" type="range" min="1" max="10" value="3"><span id="rp-media-v">3</span>
+        </div>
+        <button id="rp-fire" class="rp-fire-btn">요청 한 건 보내기</button>
+      </div>
+
+      <div id="rp-path" class="rp-path"></div>
+      <div id="rp-verdict" class="rp-verdict" aria-live="polite"></div>
+      <div id="rp-cost" class="rp-cost"></div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>없어도 되는 구간이 있다</strong> — 서비스가 1개, 매체가 1곳이면 Ingress도 API Gateway도 없이 요청이 통과한다. 부품이 처음부터 필요했던 게 아니다.</li>
+            <li><strong>숫자가 늘 때 터진다</strong> — 서비스가 2개가 되는 순간 경로로 나눌 수단이, 매체가 2곳이 되는 순간 인증·쿼터를 한곳에서 볼 자리가 필요해진다. 부품은 그 자리에 들어온다.</li>
+            <li><strong>부품을 빼도 일은 안 사라진다</strong> — 사람이 관리하는 주소·설정·정책 벌수로 옮겨갈 뿐이다. 서비스 4개면 1벌이 4벌이 된다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "우리도 API Gateway 넣어야 하나" 같은 질문은 부품 이름으로는 답이 안 나옵니다.
+          지금 서비스가 몇 개인지, 매체가 몇 곳인지를 넣어 보고 어디서 먼저 터지는지를 보는 쪽이 빠릅니다.
+        </p>
+        <ul>
+          <li><strong>도입 순서 정하기:</strong> 서비스를 쪼개기 전에 Ingress를 먼저 넣을 필요는 없습니다. 반대로 매체를 한 곳 더 붙이기로 했다면 인증·쿼터를 서비스마다 복사하기 전에 게이트웨이 자리를 먼저 잡는 게 쌉니다.</li>
+          <li><strong>배포 손실 점검:</strong> LB만 붙였다고 배포 손실이 0이 되지는 않습니다. LB는 새 연결만 돌리므로, 앱이 종료할 때 남은 연결을 스스로 닫아 줘야(graceful shutdown) 마지막 몇백 건이 안 샙니다.</li>
+          <li><strong>메시는 저울로 봅니다:</strong> 재시도·타임아웃·mTLS를 앱 밖으로 빼는 대신 홉마다 사이드카 왕복이 붙습니다. 12ms 예산의 입찰 경로에서는 이 숫자를 먼저 재고 결정합니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=gateway-ingress-router" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">광고 요청 하나가 서비스까지 가는 길</span>
+              <span class="demo-next-excerpt">LB · Ingress · API Gateway · 라우터가 각각 어떤 문제 때문에 생겼는지를 서버 한 대에서부터 따라간다</span>
+            </a>
+            <a href="post.html?id=kubernetes-networking" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">쿠버네티스 네트워킹 쉽게 이해하기</span>
+              <span class="demo-next-excerpt">Pod · Service · Ingress 사이로 트래픽이 실제로 어떻게 흐르는가</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/request-path-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

@@ -28,7 +28,7 @@
 
 **로그를 넷에게 나르는 방법은 Kafka 말고도 셋이 있다. 셋 다 돌아가긴 하는데, 각자 다른 자리에서 줄이 사라진다.**
 
-셋을 차례로 놓고 어디서 끊기는지 센다. 앞으로 나오는 볼륨은 하나로 고정한다. 노출 로그는 하루 2억 2,800만 줄이고, 초로 나누면 초당 2,639건이다. `bidder` 는 12대로 띄워 둔다. 전부 가상 수치다.
+셋을 차례로 놓고 어디서 끊기는지 센다. 앞으로 나오는 볼륨은 하나로 고정한다. 노출 로그는 하루 2억 2,800만 줄이고, 초로 나누면 초당 2,639건이다. 응찰 요청은 매체 열 곳을 합쳐 초당 30,000건이고, `bidder` 는 대당 1,000건을 받아 30대다. 노출 2,639건은 그중 낙찰돼 실제로 뜬 것만 센 수다. 전부 가상 수치다.
 
 ### ① `bidder` 가 네 팀 서버를 직접 부른다
 
@@ -70,9 +70,9 @@
 
 사라지는 자리는 옮기기 전이다.
 
-초당 2,639줄을 12대가 나눠 받으면 대당 약 220줄이다. 5분은 300초이니 대당 66,000줄이 로컬에 쌓인다. 아직 아무 데도 안 옮겨진 줄이다.
+초당 2,639줄을 30대가 나눠 받으면 대당 약 88줄이다. 5분은 300초이니 대당 26,400줄이 로컬에 쌓인다. 아직 아무 데도 안 옮겨진 줄이다.
 
-저녁 피크가 끝나면 오토스케일이 12대를 4대로 줄인다. 8대가 내려간다. 내려가는 시점은 옮기는 주기와 아무 상관이 없다. 평균 절반인 33,000줄이 남아 있다고 보면 8대에서 264,000줄이다.
+저녁 피크가 끝나면 오토스케일이 30대를 10대로 줄인다. 20대가 내려간다. 내려가는 시점은 옮기는 주기와 아무 상관이 없다. 평균 절반인 13,200줄이 남아 있다고 보면 20대에서 264,000줄이다.
 
 종료 훅에서 마지막으로 한 번 옮기면 되지 않느냐. 정상 종료에는 된다. 디스크가 차거나 커널이 패닉을 내면 훅이 안 돈다. 훅에게 주어지는 시간도 정해져 있고, 그 시간을 넘기면 강제로 종료된다.
 
@@ -143,7 +143,7 @@
 <line x1="326" y1="142" x2="338" y2="154" style="stroke:var(--state-bad); stroke-width:2.4"/>
 <line x1="338" y1="142" x2="326" y2="154" style="stroke:var(--state-bad); stroke-width:2.4"/>
 <line x1="348" y1="148" x2="556" y2="148" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
-<text x="450" y="143" text-anchor="middle" style="font-size:9.5px; fill:var(--state-bad)">8대 축소 · 264,000줄 유실</text>
+<text x="450" y="143" text-anchor="middle" style="font-size:9.5px; fill:var(--state-bad)">20대 축소 · 264,000줄 유실</text>
 <text x="8" y="206" style="font-size:11px; fill:var(--text-primary)">③ DB 한 테이블에 바로 넣는다</text>
 <rect x="8" y="214" width="84" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="50" y="239" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
@@ -165,7 +165,7 @@
 | 방법 | 어디서 줄이 사라지나 | 한 번에 얼마나 |
 |---|---|---|
 | ① 직접 HTTP | 예산 초과 · 받는 쪽이 멈춰 있는 동안 | 학습팀 배포 20초당 52,780줄 |
-| ② 파일 + 옮기기 | 옮기기 전에 인스턴스가 내려갈 때 | 8대 축소 1회당 264,000줄 |
+| ② 파일 + 옮기기 | 옮기기 전에 인스턴스가 내려갈 때 | 20대 축소 1회당 264,000줄 |
 | ③ DB 직행 | 무거운 읽기가 도는 동안 쓰기가 밀려서 | 마감 스캔이 도는 시간만큼 |
 
 셋은 끊기는 자리가 다른데 원인은 하나다. **보내는 쪽이 받는 쪽 사정을 알아야 한다는 것이다.**
@@ -208,7 +208,7 @@ Kafka 를 쓴다고 "로그 서버"가 새로 뜨는 게 아니다. `bidder` 의
 # (의사코드 — 브로커가 있어야 돌아갑니다. 호출 모양만 봅니다.)
 producer.send(
     topic="ad.impression",
-    key=req_id.encode(),          # 이 값으로 어느 칸에 들어갈지 정해진다 (3절)
+    key=req_id.encode(),          # 이 값으로 어느 partition 에 들어갈지 정해진다 (3절)
     value=json.dumps(record).encode(),
 )
 # send()는 기다리지 않는다. 버퍼에 넣고 바로 돌아온다.
@@ -219,7 +219,7 @@ producer.send(
 
 ### `send()` 가 안 기다린다
 
-1절 ①은 네 팀을 부르느라 8.0ms 를 더 써서 합계 17.4ms, 예산 12ms 를 넘겼다. `send()` 는 그 자리에 네트워크 왕복을 안 놓는다. 직렬화와 메모리 복사만 남아 합계 9.4ms, 여유 2.6ms 다.
+1절 ①은 네 팀을 부르느라 8.0ms 를 더 써서 합계 17.4ms, 예산 12ms 를 넘겼다. `send()` 는 그 자리에 네트워크 왕복을 안 놓는다. 직렬화와 메모리 복사만 남아 합계 9.4ms, 여유 2.6ms 다. 이건 `bidder` 평소 8.0ms 로 잰 값이다. 상한 10.0ms 로 재면 11.4ms 에 여유 0.6ms 다.
 
 1절 ①도 응답을 안 기다리면 12ms 는 지켜졌다. 대신 큐가 `bidder` 안으로 들어왔고, 얼마나 쌓을지·넘치면 어쩔지·재시도는 몇 번일지를 받는 쪽마다 정해야 했다. producer 는 답이 한 벌이다.
 
@@ -235,11 +235,11 @@ producer.send(
 | `1` | 리더가 받았으면 | 리더가 죽고 복제 전이면 사라진다 | 중간 |
 | `all` | 복제본까지 받았으면 | 거의 없다 | 가장 길다 |
 
-지연 열은 `send()` 가 아니라 백그라운드 전송 시간이다. 입찰 경로는 어느 줄이든 9.4ms 다.
+지연 열은 `send()` 가 아니라 백그라운드 전송 시간이다. 입찰 경로는 어느 줄이든 평소 9.4ms · 상한 11.4ms 로 같다.
 
 관행은 노출·클릭에 `1`, 정산·전환에 `all` 이다. 법이 아니라 판단이고 근거는 잃으면 무엇을 잃느냐다. 2억 2,800만 줄에서 몇 줄 빠져도 pCTR 은 그대로지만 정산은 매체에 줄 돈이 틀린다.
 
-그런데 우리 `ad.impression` 은 `1` 로 두면 안 된다. 이 토픽을 정산팀이 읽기 때문이다(1절). **한 토픽을 여러 팀이 읽으면 `acks` 는 가장 엄한 읽는 쪽에 맞춘다.**
+그런데 우리 `ad.impression` 은 `1` 로 두면 안 된다. 이 topic 을 정산팀이 읽기 때문이다(1절). **한 topic 을 여러 팀이 읽으면 `acks` 는 가장 엄한 읽는 쪽에 맞춘다.**
 
 `all` 의 "거의 없다"에도 조건이 붙는다. 따라잡은 복제본(ISR)이 리더 하나로 줄면 `all` 이 `1` 과 같아지니 `min.insync.replicas` 를 2 이상으로 둔다. 중복은 `acks` 밖의 일이라 `enable.idempotence` 몫이다.
 
@@ -247,4 +247,179 @@ producer.send(
 
 **우리 `ad.impression` 의 답은 `acks=all`, `min.insync.replicas=2`, 종료 시 `flush` 다.**
 
-남은 것은 코드에서 지나친 `key` 다. 초당 2,639건이 들어오는데 읽는 쪽이 하나면 못 따라간다. 나눠 읽으려면 토픽 안이 갈라져 있어야 하고 `key` 가 어디로 갈지를 정한다. 칸을 몇 개로 잡을지가 3절이다.
+남은 것은 코드에서 지나친 `key` 다. 초당 2,639건이 들어오는데 읽는 쪽이 하나면 못 따라간다. 나눠 읽으려면 topic 안이 갈라져 있어야 하고 `key` 가 어디로 갈지를 정한다. partition 을 몇 개로 잡을지가 3절이다.
+
+---
+
+## 3. topic과 partition — 어디에 쌓이나
+
+**topic 은 이름표고, 그 안은 partition 여러 개로 갈라져 있다. partition 수가 처리량 상한이고, key 가 순서 보장 범위다.**
+
+topic 은 이름표다. 셋으로 나눈다 — `ad.impression` · `ad.click` · `ad.conversion`. 하나로 합치면 노출만 필요한 대시보드도 클릭·전환까지 읽어 걸러야 한다.
+
+partition 은 그 topic 안을 세로로 가른 것이다. 데모 화면은 "칸"이라고도 부른다. 설정에 적히는 이름이 `partitions` 라 이 글은 `partition` 으로 쓴다. 줄은 그중 한 곳에 붙고, 붙은 자리마다 offset 이라는 번호가 매겨진다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 700 308" role="img" aria-label="topic ad.impression 하나가 partition 12개로 갈라져 있고, partition 마다 줄이 왼쪽부터 차례로 붙어 있는 그림. 줄마다 0부터 세는 offset 번호가 붙어 있고 partition 마다 붙은 줄 수가 다르다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="kf3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+</defs>
+<text x="8" y="20" style="font-size:11px; fill:var(--text-muted)">topic</text>
+<text x="46" y="20" style="font-size:13px; fill:var(--text-primary); font-family:var(--font-mono)">ad.impression</text>
+<text x="692" y="20" text-anchor="end" style="font-size:9.5px; fill:var(--text-muted)">네모 하나가 줄 하나 · 숫자는 offset</text>
+<rect x="6" y="28" width="688" height="272" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5">
+<rect x="96" y="38" width="30" height="14" rx="4"/><rect x="130" y="38" width="30" height="14" rx="4"/><rect x="164" y="38" width="30" height="14" rx="4"/><rect x="198" y="38" width="30" height="14" rx="4"/><rect x="232" y="38" width="30" height="14" rx="4"/><rect x="266" y="38" width="30" height="14" rx="4"/><rect x="300" y="38" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="48" style="font-size:10px; text-anchor:start">partition 0</text><text x="111" y="48">0</text><text x="145" y="48">1</text><text x="179" y="48">2</text><text x="213" y="48">3</text><text x="247" y="48">4</text><text x="281" y="48">5</text><text x="315" y="48">6</text></g>
+<rect x="96" y="59" width="30" height="14" rx="4"/><rect x="130" y="59" width="30" height="14" rx="4"/><rect x="164" y="59" width="30" height="14" rx="4"/><rect x="198" y="59" width="30" height="14" rx="4"/><rect x="232" y="59" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="69" style="font-size:10px; text-anchor:start">partition 1</text><text x="111" y="69">0</text><text x="145" y="69">1</text><text x="179" y="69">2</text><text x="213" y="69">3</text><text x="247" y="69">4</text></g>
+<rect x="96" y="80" width="30" height="14" rx="4"/><rect x="130" y="80" width="30" height="14" rx="4"/><rect x="164" y="80" width="30" height="14" rx="4"/><rect x="198" y="80" width="30" height="14" rx="4"/><rect x="232" y="80" width="30" height="14" rx="4"/><rect x="266" y="80" width="30" height="14" rx="4"/><rect x="300" y="80" width="30" height="14" rx="4"/><rect x="334" y="80" width="30" height="14" rx="4"/><rect x="368" y="80" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="90" style="font-size:10px; text-anchor:start">partition 2</text><text x="111" y="90">0</text><text x="145" y="90">1</text><text x="179" y="90">2</text><text x="213" y="90">3</text><text x="247" y="90">4</text><text x="281" y="90">5</text><text x="315" y="90">6</text><text x="349" y="90">7</text><text x="383" y="90">8</text></g>
+<rect x="96" y="101" width="30" height="14" rx="4"/><rect x="130" y="101" width="30" height="14" rx="4"/><rect x="164" y="101" width="30" height="14" rx="4"/><rect x="198" y="101" width="30" height="14" rx="4"/><rect x="232" y="101" width="30" height="14" rx="4"/><rect x="266" y="101" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="111" style="font-size:10px; text-anchor:start">partition 3</text><text x="111" y="111">0</text><text x="145" y="111">1</text><text x="179" y="111">2</text><text x="213" y="111">3</text><text x="247" y="111">4</text><text x="281" y="111">5</text></g>
+<rect x="96" y="122" width="30" height="14" rx="4"/><rect x="130" y="122" width="30" height="14" rx="4"/><rect x="164" y="122" width="30" height="14" rx="4"/><rect x="198" y="122" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="132" style="font-size:10px; text-anchor:start">partition 4</text><text x="111" y="132">0</text><text x="145" y="132">1</text><text x="179" y="132">2</text><text x="213" y="132">3</text></g>
+<rect x="96" y="143" width="30" height="14" rx="4"/><rect x="130" y="143" width="30" height="14" rx="4"/><rect x="164" y="143" width="30" height="14" rx="4"/><rect x="198" y="143" width="30" height="14" rx="4"/><rect x="232" y="143" width="30" height="14" rx="4"/><rect x="266" y="143" width="30" height="14" rx="4"/><rect x="300" y="143" width="30" height="14" rx="4"/><rect x="334" y="143" width="30" height="14" rx="4" style="stroke:var(--accent-primary); stroke-width:2"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="153" style="font-size:10px; text-anchor:start">partition 5</text><text x="111" y="153">0</text><text x="145" y="153">1</text><text x="179" y="153">2</text><text x="213" y="153">3</text><text x="247" y="153">4</text><text x="281" y="153">5</text><text x="315" y="153">6</text><text x="349" y="153">7</text></g>
+<rect x="96" y="164" width="30" height="14" rx="4"/><rect x="130" y="164" width="30" height="14" rx="4"/><rect x="164" y="164" width="30" height="14" rx="4"/><rect x="198" y="164" width="30" height="14" rx="4"/><rect x="232" y="164" width="30" height="14" rx="4"/><rect x="266" y="164" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="174" style="font-size:10px; text-anchor:start">partition 6</text><text x="111" y="174">0</text><text x="145" y="174">1</text><text x="179" y="174">2</text><text x="213" y="174">3</text><text x="247" y="174">4</text><text x="281" y="174">5</text></g>
+<rect x="96" y="185" width="30" height="14" rx="4"/><rect x="130" y="185" width="30" height="14" rx="4"/><rect x="164" y="185" width="30" height="14" rx="4"/><rect x="198" y="185" width="30" height="14" rx="4"/><rect x="232" y="185" width="30" height="14" rx="4"/><rect x="266" y="185" width="30" height="14" rx="4"/><rect x="300" y="185" width="30" height="14" rx="4"/><rect x="334" y="185" width="30" height="14" rx="4"/><rect x="368" y="185" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="195" style="font-size:10px; text-anchor:start">partition 7</text><text x="111" y="195">0</text><text x="145" y="195">1</text><text x="179" y="195">2</text><text x="213" y="195">3</text><text x="247" y="195">4</text><text x="281" y="195">5</text><text x="315" y="195">6</text><text x="349" y="195">7</text><text x="383" y="195">8</text></g>
+<rect x="96" y="206" width="30" height="14" rx="4"/><rect x="130" y="206" width="30" height="14" rx="4"/><rect x="164" y="206" width="30" height="14" rx="4"/><rect x="198" y="206" width="30" height="14" rx="4"/><rect x="232" y="206" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="216" style="font-size:10px; text-anchor:start">partition 8</text><text x="111" y="216">0</text><text x="145" y="216">1</text><text x="179" y="216">2</text><text x="213" y="216">3</text><text x="247" y="216">4</text></g>
+<rect x="96" y="227" width="30" height="14" rx="4"/><rect x="130" y="227" width="30" height="14" rx="4"/><rect x="164" y="227" width="30" height="14" rx="4"/><rect x="198" y="227" width="30" height="14" rx="4"/><rect x="232" y="227" width="30" height="14" rx="4"/><rect x="266" y="227" width="30" height="14" rx="4"/><rect x="300" y="227" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="237" style="font-size:10px; text-anchor:start">partition 9</text><text x="111" y="237">0</text><text x="145" y="237">1</text><text x="179" y="237">2</text><text x="213" y="237">3</text><text x="247" y="237">4</text><text x="281" y="237">5</text><text x="315" y="237">6</text></g>
+<rect x="96" y="248" width="30" height="14" rx="4"/><rect x="130" y="248" width="30" height="14" rx="4"/><rect x="164" y="248" width="30" height="14" rx="4"/><rect x="198" y="248" width="30" height="14" rx="4"/><rect x="232" y="248" width="30" height="14" rx="4"/><rect x="266" y="248" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="258" style="font-size:10px; text-anchor:start">partition 10</text><text x="111" y="258">0</text><text x="145" y="258">1</text><text x="179" y="258">2</text><text x="213" y="258">3</text><text x="247" y="258">4</text><text x="281" y="258">5</text></g>
+<rect x="96" y="269" width="30" height="14" rx="4"/><rect x="130" y="269" width="30" height="14" rx="4"/><rect x="164" y="269" width="30" height="14" rx="4"/><rect x="198" y="269" width="30" height="14" rx="4"/><rect x="232" y="269" width="30" height="14" rx="4"/><rect x="266" y="269" width="30" height="14" rx="4"/><rect x="300" y="269" width="30" height="14" rx="4"/><rect x="334" y="269" width="30" height="14" rx="4"/>
+<g style="stroke:none; fill:var(--text-muted); font-family:var(--font-mono); font-size:9px; text-anchor:middle"><text x="16" y="279" style="font-size:10px; text-anchor:start">partition 11</text><text x="111" y="279">0</text><text x="145" y="279">1</text><text x="179" y="279">2</text><text x="213" y="279">3</text><text x="247" y="279">4</text><text x="281" y="279">5</text><text x="315" y="279">6</text><text x="349" y="279">7</text></g>
+</g>
+<line x1="520" y1="150" x2="370" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf3-arr)"/>
+<text x="526" y="147" style="font-size:10px; fill:var(--accent-primary); font-family:var(--font-mono)">r-8f21</text>
+<text x="526" y="160" style="font-size:9.5px; fill:var(--text-muted)">offset 7 — 여덟 번째 줄</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">offset 은 partition 마다 0부터 따로 센다. partition 3 의 4번과 partition 8 의 4번은 아무 관계가 없는 두 줄이다.</figcaption>
+</figure>
+
+**한 partition 은 consumer group 안에서 한 명만 맡는다.** consumer 를 partition 보다 많이 띄우면 남는 사람은 논다. partition 수가 처리량 상한인 이유다.
+
+### 몇 개로 잡나
+
+2절이 남긴 질문이다. 초당 2,639건을 나눠 읽으려면 몇 개여야 하나.
+
+**partition 최소치 = 초당 들어오는 줄 ÷ consumer 한 명의 초당 처리량**
+
+consumer 한 명이 초당 800줄을 처리한다고 하자. 지어낸 값이다. 피크는 평균의 3배다(1절).
+
+| 언제 | 초당 들어오는 줄 | ÷ 800 | 필요한 partition |
+|---|---|---|---|
+| 평시 | 2,639 | 3.30 | 4개 |
+| 저녁 피크 (평균의 3배) | 7,917 | 9.90 | 10개 |
+
+평시로 재면 4개고, 피크에 6개가 모자란다. 재야 하는 쪽은 피크고 답은 10개다. **우리는 12개로 잡는다.**
+
+100개로 잡아 두면 되지 않나. 값이 붙는다. producer 는 partition 마다 배치 버퍼를 하나씩 든다. `bidder` 30대에 100개면 버퍼가 3,000개고, 한 버퍼에 모이는 줄은 그만큼 잘게 쪼개진다.
+
+### 어느 partition 으로 가나
+
+2절 코드에서 지나친 `key` 가 정한다.
+
+**partition 번호 = hash(key) % partition 수**
+
+해시 함수도, key 를 안 넘겼을 때의 동작도 클라이언트와 버전마다 다르다. 자바 클라이언트는 murmur2 를 쓰고, 2.4부터는 key 가 없으면 배치 하나를 한 partition 에 몰아 보낸다.
+
+**Kafka 는 topic 전체의 순서를 지켜 주지 않는다. 순서는 한 partition 안에서만 지켜진다.** partition 이 12개면 줄이 12개로 따로 서고, 그 12개 사이에는 아무 약속이 없다.
+
+key 를 고르는 일은 "무엇 단위로 순서가 지켜지나"를 고르는 일이다. 후보 셋을 10만 줄에 넣어 보자.
+
+```python
+# "key 를 무엇으로 잡아야 하나" — 10만 줄을 partition 12개에 넣고 세어 본다.
+#
+# 상황: ad.impression 을 partition 12개로 만들었다. key 후보가 셋이다.
+#   req_id  전부 다른 값 / ad_id  500종에 상위 5개가 40% / 없음  라운드로빈
+# 이 글의 볼륨은 하루 2억 2,800만 줄(초당 2,639건)이다. 아래 10만 줄은 분포만
+#   보려고 뽑은 표본이고, ad_id 쏠림도 partition 12도 전부 지어낸 값이다.
+# 해시는 재현되라고 직접 짠 것이다. 자바 클라이언트 기본 partitioner 는 murmur2 를
+#   쓰고, key 가 없을 때도 2.4부터 라운드로빈이 아니라 배치 단위 sticky 다.
+from unicodedata import east_asian_width
+import random
+
+P, ROWS = 12, 100_000
+random.seed(7)
+
+def h(s):                       # 어느 클라이언트의 것도 아닌, 재현만 되는 해시
+    n = 0
+    for ch in s:
+        n = (n * 31 + ord(ch)) & 0xFFFFFFFF
+    return n
+
+def w(s):                       # 한글은 모노스페이스에서 두 칸을 먹는다
+    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
+
+def row(*cells):                # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
+    print("".join(" " * (n - w(c)) + c for c, n in cells))
+
+# ── 노출 로그 10만 줄. 상위 5개 광고가 40%, 나머지 495개가 60% ──
+HOT = [9931, 1204, 5510, 3388, 7702]
+COLD = list(range(10000, 10495))
+REQ = random.sample(range(16 ** 8), ROWS)        # req_id 10만 개, 전부 다른 값
+logs = [(f"r-{q:08x}", random.choice(HOT) if random.random() < 0.4 else random.choice(COLD))
+        for q in REQ]
+
+# ── key 종류별로 어느 partition 에 들어가는지 센다 ──
+def spread(kind):
+    bins = [0] * P
+    for i, (req, ad) in enumerate(logs):
+        if kind == "req_id":  bins[h(req) % P] += 1
+        elif kind == "ad_id": bins[h(str(ad)) % P] += 1
+        else:                 bins[i % P] += 1          # key 없음
+    return bins
+
+KEEPS = {"req_id": "같은 req_id 안에서만", "ad_id": "같은 ad_id 안에서만", "없음": "없다"}
+
+print(f"{ROWS:,}줄을 partition {P}개에 넣었을 때 한 곳이 받은 줄 수")
+row(("key", 8), ("가장 많은 곳", 16), ("가장 적은 곳", 16), ("최대÷최소", 12), ("순서 보장", 24))
+for kind, keep in KEEPS.items():
+    b = spread(kind)
+    row((kind, 8), (f"{max(b):,}", 16), (f"{min(b):,}", 16),
+        (f"{max(b) / min(b):.2f}배", 12), (keep, 24))
+print()
+
+# ── 나중에 partition 을 12개에서 24개로 늘리면 같은 req_id 가 어디로 가나 ──
+moved = sum(1 for req, _ in logs if h(req) % 24 != h(req) % P)
+print(f"partition 을 {P}개 → 24개로 늘리면: {ROWS:,}줄 중 {moved:,}줄({moved / ROWS:.0%})이 다른 곳으로 간다")
+print()
+print("→ req_id 가 약속하는 건 고름이 아니다. 같은 req_id 가 늘 같은 곳이라는 것뿐이다.")
+print("→ ad_id 는 쏠린다. 전체가 밀리는 게 아니라 몰린 곳을 맡은 consumer 하나만 밀린다.")
+print("→ key 를 빼면 가장 고른데, 같은 요청의 노출과 클릭이 갈라진다.")
+print("→ partition 수는 나눗셈에 들어간다. 늘리는 순간 절반이 옮겨가고 거기서 순서가 끊긴다.")
+
+# 출력:
+# 100,000줄을 partition 12개에 넣었을 때 한 곳이 받은 줄 수
+#      key    가장 많은 곳    가장 적은 곳   최대÷최소               순서 보장
+#   req_id           8,496           8,174      1.04배    같은 req_id 안에서만
+#    ad_id          21,191           4,690      4.52배     같은 ad_id 안에서만
+#     없음           8,334           8,333      1.00배                    없다
+#
+# partition 을 12개 → 24개로 늘리면: 100,000줄 중 49,936줄(50%)이 다른 곳으로 간다
+#
+# → req_id 가 약속하는 건 고름이 아니다. 같은 req_id 가 늘 같은 곳이라는 것뿐이다.
+# → ad_id 는 쏠린다. 전체가 밀리는 게 아니라 몰린 곳을 맡은 consumer 하나만 밀린다.
+# → key 를 빼면 가장 고른데, 같은 요청의 노출과 클릭이 갈라진다.
+# → partition 수는 나눗셈에 들어간다. 늘리는 순간 절반이 옮겨가고 거기서 순서가 끊긴다.
+```
+
+`ad_id` 는 4.52배로 갈렸다. 21,191줄이 몰린 partition 을 맡은 consumer 하나만 밀리고, 사람을 더 붙여도 그 자리는 한 명이 맡는다. key 없음은 1.00배로 가장 고른 대신 순서가 어디서도 안 지켜진다.
+
+**우리 답은 `req_id` 다.** 1.04배로 고르게 퍼진 건 값이 전부 달라서 따라온 결과지 약속이 아니다. 약속하는 건 하나다. 같은 요청의 노출과 클릭이 같은 partition 에 간다. 7절 조인이 그 partition 안에서 끝난다.
+
+마지막 줄이 12개를 지금 정해야 하는 이유다. `% 12` 와 `% 24` 는 같은 key 를 다른 곳에 보낸다. 10만 줄 중 49,936줄이 옮겨갔고, 그 줄들은 예전 자리에 남은 같은 key 의 줄과 더는 한 줄에 안 선다. 줄이지도 못한다. partition 은 늘릴 수만 있다. 답이 10개인데 12개로 잡은 건 그래서다.
+
+아래에서 직접 바꿔 보자. key 를 `ad_id` 로 바꾸면 쏠린 곳이, partition 을 4에서 8로 밀면 옮겨간 줄이 표시된다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-kafka-partition.html?embed=1" height="620" loading="lazy" title="Kafka Partition 놀이터"></iframe>
+<a class="demo-embed-open" href="demo-kafka-partition.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+partition 12개와 key `req_id` 가 정해졌다. 남은 것은 읽는 쪽이다. 12개를 누가 나눠 맡고, 학습팀과 정산팀이 같은 줄을 각자 읽나. 그게 4절이다.

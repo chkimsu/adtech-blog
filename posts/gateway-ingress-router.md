@@ -280,7 +280,7 @@ flowchart TD
 
 **Ingress 규칙표에는 "누가 보냈나"를 적을 칸이 없다. 매체를 가려야 하는 일이 쌓이면 그 칸을 가진 부품이 뒤에 하나 더 생긴다.**
 
-매체가 열 곳이 됐다. 조건이 다 다르다. 아래는 그중 다섯 곳만 옮긴 것이고, 값은 전부 설명을 위해 지어낸 가상 수치다.
+매체가 열 곳이 됐다. 조건이 다 다르다. 아래 값은 전부 설명을 위해 지어낸 가상 수치다.
 
 | 매체 | 인증 방식 | 초당 허용 | 쓰는 버전 |
 |---|---|---|---|
@@ -289,82 +289,93 @@ flowchart TD
 | C제휴 | API 키 | 500 | v1 |
 | D앱 | OAuth 토큰 | 1,200 | v1 |
 | E웹 | API 키 | 4,500 | v2 |
+| 나머지 5곳 (합계) | — | 12,800 | — |
 
-열 곳을 다 더하면 초당 3만 건이다. 3절 끝에서 A앱이 설정을 잘못 올려 3,000이 아니라 30,000을 보내기 시작했다. 그러면 전체가 두 배 가까이 된다. A앱만 느려지는 게 아니라 나머지 아홉 곳이 같이 느려진다.
+열 곳을 다 더하면 초당 3만 건이다. 3절 끝에서 A앱 한 곳이 3,000이 아니라 30,000 — 열 곳 전체와 맞먹는 양 — 을 보내기 시작했다. A앱만 느려지는 게 아니라 나머지 아홉 곳이 같이 느려진다. 3만 건을 감당하는 것과 한 곳이 3만 건을 쏟는 것을 막는 것은 다른 문제다.
 
-이 표를 규칙표로 옮길 방법이 없다. 규칙표에는 `host` 칸과 `path` 칸뿐이다. 그래서 다음 넷이 전부 안 된다.
+이 표를 규칙표로 옮길 방법이 없다. 규칙표에는 `host` 와 `path` 칸뿐이다. 다음 넷이 전부 안 된다.
 
 - **매체별 인증키 확인** — 요청을 누가 보냈는지 규칙표가 모른다.
 - **초당 호출 제한** — 매체를 구분 못 하니 500과 8,000을 따로 걸 수 없다.
 - **`v1`/`v2` 분기** — 버전은 `x-api-version` 헤더로 온다. 규칙표는 헤더를 안 본다.
 - **응답 형식 변환** — v1 매체는 옛 필드 이름을 기대하는데 `bidder` 는 v2 형식만 만든다.
 
-구현체에 따라 애너테이션으로 헤더 조건을 밀어 넣을 수는 있다. 그러면 규칙표가 아니라 그 구현체 전용 설정이 되고, nginx에서 traefik으로 갈아탈 때 통째로 다시 써야 한다.
+구현체에 따라 애너테이션으로 헤더 조건을 밀어 넣을 수는 있지만, nginx에서 traefik으로 갈아탈 때 통째로 다시 써야 한다.
 
-**API Gateway** 는 Ingress 뒤에 서서 이 넷을 맡는다. 설정에 `header` 칸과 `policies` 칸이 있는 것이 규칙표와 다른 점이다.
+**API Gateway** 는 Ingress 뒤에 서서 이 넷을 맡는다. 규칙표와 다른 점은 `header` 조건과 정책 칸(`common`·`policies`)이다.
 
 ```yaml
-# API Gateway 설정 — 규칙표에 없던 두 칸이 있다: header 조건과 policies
-common:                                    # 모든 라우트에 먼저 적용된다
+# API Gateway 설정 — 규칙표에 없던 것: header 조건과 정책
+# 위에서부터 처음 맞는 라우트가 이긴다. 가장 긴 것이 이기던 3절 규칙표와 다르다.
+common:                                    # 모든 라우트가 먼저 지나간다
   - auth:      { type: api-key, header: x-media-key }
-  - ratelimit: { key: media_id, per_second: from_media_table }
+  - ratelimit: { key: media_id, per_second: media_quota }   # 값은 위 표의 초당 허용 열
   - timeout:   { ms: 10 }
 routes:
-  - id: bid-v2
-    match: { host: ads.example.com, path: /v1/bid, header: { x-api-version: "2" } }
-    target: bidder-service:8080
-  - id: bid-v1
+  - id: bid-v1                             # 버전 헤더를 보낸 매체만 여기로
     match: { host: ads.example.com, path: /v1/bid, header: { x-api-version: "1" } }
     target: bidder-service:8080
     policies:
-      - response: { transform: v2_to_v1 } # 옛 필드 이름으로 되돌려 준다
+      - response: { transform: v2_to_v1 }  # 옛 필드 이름으로 되돌려 준다
+  - id: bid-v2                             # 헤더가 없으면 여기. v3를 내도 이 기본값은 v2에 둔다
+    match: { host: ads.example.com, path: /v1/bid }
+    target: bidder-service:8080
 ```
 
-버전을 경로로 나눌 수도 있다. `/v2/bid` 를 새로 파면 된다. 그러면 v2를 쓰는 매체 전부에 주소를 고쳐 달라고 해야 한다. 3절에서 그 부탁은 이번이 마지막이라고 했다. 그래서 경로는 `/v1/bid` 로 두고 버전은 헤더로 받는다.
+버전을 경로로 나눌 수도 있다 — `/v2/bid` 를 새로 파면 된다. 그러면 v2를 쓰는 매체 전부에 주소를 고쳐 달라고 해야 한다. 3절에서 그 부탁은 이번이 마지막이라고 했다. 그래서 경로는 `/v1/bid` 로 두고, 옛 버전을 쓰는 매체만 헤더로 알린다.
 
-주소는 그대로다. 대신 A앱은 `x-media-key` 헤더 한 줄을 새로 넣어야 한다. 부탁이 하나 늘긴 했다. 성격은 다르다. 주소는 우리 안쪽이 바뀔 때마다 따라 바뀌었다 — 서버가 늘어서 한 번, 서비스를 쪼개서 또 한 번. 인증키는 A앱이 A앱인 한 그대로다. 새로 붙는 아홉 곳은 처음 연동할 때 주소와 키를 같이 받는다.
+주소는 그대로다. 대신 A앱은 `x-media-key` 헤더 한 줄을 새로 넣는다. 버전 헤더는 안 보내도 된다. 한 줄 늘긴 했지만 성격이 다르다. 주소는 우리 안쪽이 바뀔 때마다 따라 바뀌었다 — 서버가 늘어서 한 번, 서비스를 쪼개서 또 한 번. 인증키는 A앱이 A앱인 한 그대로다. 새로 붙는 아홉 곳은 처음 연동할 때 주소와 키를 같이 받는다.
 
-`timeout` 을 12로 적고 싶겠지만 그러면 늦는다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. Ingress를 지나는 데 0.3ms, Gateway가 인증키와 쿼터를 보는 데 1.1ms가 든다(가상 수치). LB는 연결을 넘기기만 하니 셈에서 뺀다. 그래서 `bidder` 를 기다리는 시간은 10ms로 잡는다. 남는 0.6ms가 여유분이다.
+`timeout` 을 12로 적고 싶겠지만 그러면 늦는다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. Ingress를 지나는 데 0.3ms, Gateway가 인증키와 쿼터를 보는 데 1.1ms가 든다(가상 수치). v1 매체는 여기에 응답 변환이 더 붙는다. LB는 연결을 넘기기만 하니 셈에서 뺀다. 그래서 `bidder` 를 기다리는 시간은 10ms로 잡는다. 남는 0.6ms가 여유분이다. `bidder` 가 평소 쓰는 건 8ms 안팎이고, 10ms는 그 위에 얹은 상한이다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 240" role="img" aria-label="매체 10곳의 요청이 LB와 Ingress를 지나 API Gateway에서 인증·쿼터를 거친 뒤 서비스 넷 중 셋으로 나뉘는 구조." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 700 240" role="img" aria-label="조건이 서로 다른 매체 10곳의 요청이 LB와 Ingress를 지나 API Gateway 한 칸에 모여 인증·쿼터를 거친 뒤, 서비스 넷 중 셋으로 나뉘는 구조." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw4-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="2" y="88" width="96" height="64" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="50" y="110" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 10곳</text>
-<text x="50" y="126" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">앱 · 웹 · 제휴</text>
-<text x="50" y="141" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
-<line x1="98" y1="120" x2="118" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="213" y="78" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">3절까지 그대로</text>
-<rect x="122" y="92" width="68" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="156" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
-<text x="156" y="131" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<line x1="190" y1="120" x2="210" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<rect x="214" y="92" width="112" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
-<text x="270" y="114" text-anchor="middle" style="font-size:13px; fill:var(--accent-secondary)">Ingress</text>
-<text x="270" y="131" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">host · path</text>
-<line x1="326" y1="120" x2="346" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="433" y="64" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="350" y="82" width="166" height="76" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="433" y="106" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">API Gateway</text>
-<text x="433" y="126" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">매체 인증 · 쿼터</text>
-<text x="433" y="142" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">버전 라우팅</text>
-<rect x="528" y="20" width="170" height="200" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="613" y="36" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
-<rect x="540" y="44" width="146" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="613" y="68" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="540" y="88" width="146" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="613" y="112" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="540" y="132" width="146" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="613" y="156" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="540" y="176" width="146" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="613" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<line x1="516" y1="104" x2="536" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="516" y1="124" x2="536" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="516" y1="136" x2="536" y2="192" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<rect x="2" y="30" width="118" height="172" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="61" y="46" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">매체 10곳</text>
+<rect x="12" y="56" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="61" y="75" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">A앱</text>
+<text x="61" y="90" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">API 키 · 3,000</text>
+<rect x="12" y="106" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="61" y="125" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">B웹</text>
+<text x="61" y="140" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">HMAC · 8,000</text>
+<rect x="12" y="156" width="98" height="42" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="61" y="175" text-anchor="middle" style="font-size:11.5px; fill:var(--text-primary)">…외 8곳</text>
+<text x="61" y="190" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">합계 19,000</text>
+<line x1="110" y1="77" x2="146" y2="105" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="110" y1="127" x2="146" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="110" y1="177" x2="146" y2="135" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<text x="235" y="78" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">3절까지 그대로</text>
+<rect x="150" y="92" width="62" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="181" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="181" y="131" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<line x1="212" y1="120" x2="232" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<rect x="236" y="92" width="106" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
+<text x="289" y="114" text-anchor="middle" style="font-size:13px; fill:var(--accent-secondary)">Ingress</text>
+<text x="289" y="131" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">host · path</text>
+<line x1="342" y1="120" x2="362" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<text x="445" y="64" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="366" y="82" width="158" height="76" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="445" y="106" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">API Gateway</text>
+<text x="445" y="126" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">매체 인증 · 쿼터</text>
+<text x="445" y="142" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">버전 라우팅</text>
+<rect x="536" y="20" width="162" height="200" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="617" y="36" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
+<rect x="547" y="44" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="617" y="68" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="547" y="88" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="617" y="112" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="547" y="132" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="617" y="156" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="547" y="176" width="140" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="617" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<line x1="524" y1="104" x2="544" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="524" y1="124" x2="544" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
+<line x1="524" y1="136" x2="544" y2="192" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">화살표가 pctr 에 닿지 않는 것은 3절과 같다. 매체가 직접 부르지 않는 서비스는 앞단 어디에도 등록되지 않는다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">화살표가 pctr 에 닿지 않는 것은 3절과 같다. 왼쪽이 스무 줄이 돼도 오른쪽 절반은 그대로다.</figcaption>
 </figure>
 
 정책을 서비스마다 따로 두면 어떻게 되는지 개수로 세어 보자.
@@ -439,19 +450,19 @@ print("→ 벌수가 늘수록 '어딘가 한 곳만 다르게 구현돼 있는'
 # → 벌수가 늘수록 '어딘가 한 곳만 다르게 구현돼 있는' 상태가 기본값이 된다.
 ```
 
-눈여겨볼 줄은 세 번째다. 쿼터 하나를 고치는 데 방식 A는 배포가 네 번 필요하다. 네 번 중 하나만 늦어도 그동안은 서비스마다 다른 값이 걸린다. 그리고 넷이 애초에 같게 구현돼 있을 확률이 72.9%다. 나머지 27.1%는 사고가 날 때까지 아무 표시도 내지 않는다.
+눈여겨볼 줄은 세 번째다. 쿼터 하나를 고치는 데 방식 A는 배포가 네 번 필요하다. 네 번 중 하나만 늦어도 그동안은 서비스마다 다른 값이 걸린다. 넷이 애초에 같게 구현돼 있을 확률은 72.9%다. 나머지 27.1%는 사고가 날 때까지 아무 표시도 내지 않는다.
 
-이제 무엇을 Gateway에 두고 무엇을 서비스에 남길지가 남는다. 선은 여기다. **요청만 보고 정할 수 있으면 Gateway.** 인증키가 맞나, 이 매체가 초당 몇 건을 넘겼나, 헤더의 버전이 몇인가 — 셋 다 우리 데이터를 안 봐도 답이 나온다. **우리 데이터를 봐야 정해지면 서비스.** 이 캠페인에 예산이 남았나, 이 사용자에게 이 광고를 이미 보였나는 `bidder` 만 안다.
+무엇을 Gateway에 두고 무엇을 서비스에 남기나. **우리 광고 데이터를 안 봐도 정해지면 Gateway. 봐야 정해지면 서비스.** 인증키가 맞나, 이 매체가 이번 초에 몇 건을 넘겼나, 버전이 몇인가 — 셋 다 광고 데이터를 안 본다. 쿼터 계수는 인스턴스마다 따로 세고 주기적으로 맞춘다. 반대로 이 캠페인에 예산이 남았나, 이 사용자에게 이 광고를 이미 보였나는 `bidder` 만 안다.
 
-Gateway가 그것까지 외부에 물어보게 만들 수는 있다. 그러면 홉이 하나 더 붙고, 그 홉은 매체 열 곳의 모든 요청에 붙는다. 위에서 잡은 0.6ms 여유가 거기서 없어진다.
+Gateway가 그것까지 물어보게 만들 수는 있다. 그러면 홉이 하나 더 붙고, 그 홉은 매체 열 곳의 모든 요청에 붙는다. 위에서 잡은 0.6ms 여유가 거기서 없어진다.
 
 경계를 표로 못 박으면 이렇다.
 
 | | Ingress | API Gateway |
 |---|---|---|
 | 무엇을 보고 나누나 | 호스트 · 경로 | 호스트 · 경로 + 헤더 · 인증키 · 매체 |
-| 정책을 갖나 | 아니오 (규칙표뿐) | 예 — 인증 · 쿼터 · 변환 · 타임아웃 |
-| 누가 관리하나 | 인프라팀 | 서비스팀 |
-| 없으면 무엇이 터지나 | 서비스마다 대표 주소와 헬스체크 설정이 한 벌씩 붙는다 | 인증·쿼터·타임아웃이 서비스 수만큼 복제된다 |
+| 정책을 갖나 | 아니오 (규칙표뿐 — 애너테이션은 구현체 전용) | 예 — 인증 · 쿼터 · 변환 · 타임아웃 |
+| 설정이 바뀌는 이유 | 서비스가 늘거나 줄 때 | 매체가 늘거나 정책이 바뀔 때 |
+| 없으면 무엇이 늘어나나 | 서비스마다 대표 주소와 헬스체크 설정이 한 벌씩 붙는다 | 인증·쿼터·타임아웃이 서비스 수만큼 복제된다 |
 
-방금 센 것을 안쪽 호출에 그대로 다시 대 보면 다음 문제가 나온다. Gateway가 걷어 간 것은 매체가 보낸 요청뿐이다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 그 앞을 지나지 않는다. 그 사이의 재시도와 타임아웃은 지금도 서비스마다 각자 코드에 적혀 있다. 서비스가 넷일 때는 손으로 넣을 만했다. 열둘이 되면 그 "사이"가 몇 개인지부터 세어 봐야 한다. 그게 5절이다.
+방금 센 것을 안쪽 호출에 그대로 대 보자. Gateway가 걷어 간 것은 매체가 보낸 요청뿐이다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 그 앞을 지나지 않는다. 그 사이의 재시도와 타임아웃은 지금도 서비스마다 각자 코드에 적혀 있다. 넷일 때는 손으로 넣을 만했다. 열둘이 되면 그 "사이"가 몇 개인지부터 세어 봐야 한다. 그게 5절이다.

@@ -160,8 +160,10 @@
       color: var(--text-muted); text-align: right; white-space: nowrap;
     }
     .rp-cost-value em { font-style: normal; font-size: 0.7rem; font-weight: 400; margin-left: 0.15rem; }
+    /* 늘어난 값(▲)과 아예 못 하게 된 것(✕) — 색이 아니라 모양이 뜻을 나른다 */
+    .rp-cost-flag { font-size: 0.62em; margin-left: 0.2rem; }
     .rp-cost-value.is-many { color: var(--state-warn); }
-    .rp-cost-value.is-many::after { content: ' ▲'; font-size: 0.62em; }
+    .rp-cost-value.is-lost { color: var(--state-bad); }
     .rp-cost-note { font-size: 0.77rem; color: var(--text-muted); line-height: 1.55; }
     @media (max-width: 700px) {
       .rp-cost-row { grid-template-columns: 1fr auto; gap: 0.4rem 0.7rem; }
@@ -235,7 +237,12 @@
 
       <div id="rp-path" class="rp-path"></div>
       <div id="rp-verdict" class="rp-verdict" aria-live="polite"></div>
-      <div id="rp-cost" class="rp-cost" aria-live="polite"></div>
+      <div id="rp-cost" class="rp-cost">
+        <h3>사람이 관리해야 하는 것</h3>
+        <p class="rp-cost-sub">부품을 빼면 그 일이 사라지는 게 아니라 사람 쪽으로 옮겨온다.
+          기본값보다 늘어난 값에 ▲, 부품이 없어져 아예 못 하게 된 것에 ✕ 가 붙는다.</p>
+        <div id="rp-cost-rows" aria-live="polite"></div>
+      </div>
 
       <!-- TL;DR -->
       <section class="demo-tldr">

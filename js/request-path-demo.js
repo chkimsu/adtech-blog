@@ -58,11 +58,13 @@
     return steps;
   }
 
-  // 한 입찰 요청이 실제로 지나는 서비스 간 홉의 상한.
-  // 서비스를 12개로 쪼개도 요청 하나가 12곳을 다 지나지는 않는다.
-  // bidder → pctr, bidder → feature-store 가 입찰 경로이고 log-collector 는
-  // 그 밖이다. 그래서 쪼갠 수와 무관하게 3번에서 멈추는 것으로 본다.
-  var HOP_CAP = 3;
+  // 입찰 경로의 서비스 간 호출은 bidder → pctr 과 bidder → feature-store 두 개다.
+  // log-collector 는 입찰 경로 밖이라 세지 않는다. 그래서 서비스를 12개로 쪼개도
+  // 요청 하나가 지나는 홉은 2번에서 멈춘다.
+  var HOP_CAP = 2;
+  // 사이드카 1회 통과 비용(Envoy p50 하단). 한 홉에서 나갈 때·들어올 때 두 번 지난다.
+  // 기본값(서비스 4개)에서 2홉 × 2회 × 0.3 = 1.2ms — 글 5절의 숫자와 같다.
+  var SIDECAR_MS = 0.3;
 
   // 지금 구성에서 사람이 관리해야 하는 것의 개수.
   // 반환: [{label, value, unit, note}] — 화면에 그대로 찍는 표기까지 여기서 정한다.
@@ -75,11 +77,14 @@
     // 대상 그룹·헬스체크는 LB의 설정이다. LB가 없으면 설정할 것도 없다.
     var targets = !cfg.lb ? 0 : (cfg.ingress ? 1 : cfg.services);
     var policy = cfg.gateway ? 1 : cfg.services;   // Gateway가 없으면 서비스마다 각자 구현
+    // 매체별 인증키·쿼터·버전 분기를 거는 자리. 게이트웨이가 없으면 그 자리가 아예 없다.
+    var quota = cfg.gateway ? 1 : 0;
+    var quotaLost = !cfg.gateway && cfg.media > 1;
     var hops = Math.max(Math.min(cfg.services - 1, HOP_CAP), 0);
-    var sidecar = cfg.mesh ? +(0.5 * 2 * hops).toFixed(1) : 0;
+    var sidecar = cfg.mesh ? +(SIDECAR_MS * 2 * hops).toFixed(1) : 0;
 
     var addrNote;
-    if (!cfg.lb) addrNote = '대표 주소가 없다. 매체가 서버 주소를 직접 들고 있어서, 서버가 바뀔 때마다 매체 설정을 고쳐야 한다';
+    if (!cfg.lb) addrNote = '묶어 줄 LB가 없다. 매체가 서버 주소를 하나씩 직접 들고 있어야 하고, 서버가 바뀔 때마다 매체 설정을 고쳐야 한다';
     else if (cfg.ingress) addrNote = '이름 하나로 끝난다. 뒤에서 규칙표가 갈라 준다';
     else if (cfg.services === 1) addrNote = '서비스가 1개라 대표 주소도 하나로 끝난다';
     else addrNote = '서비스마다 대표 주소를 하나씩 세워야 한다. 그중 매체가 직접 부르는 것은 일부다';
@@ -87,24 +92,31 @@
     var targetNote;
     if (!cfg.lb) targetNote = '설정할 것이 없는 대신, 죽은 서버를 빼 주는 것도 없다';
     else if (cfg.ingress) targetNote = 'LB 하나에 대상 그룹·헬스체크 한 벌';
+    else if (cfg.services === 1) targetNote = '서비스가 1개라 LB도 하나, 대상 그룹도 한 벌이다';
     else targetNote = 'LB를 서비스 수만큼 세우면 대상 그룹·헬스체크도 그만큼 늘어난다';
+
+    var quotaNote;
+    if (cfg.gateway) quotaNote = '게이트웨이 한 곳에서 매체 ' + cfg.media + '곳의 인증키·초당 허용량을 건다';
+    else if (quotaLost) quotaNote = '걸 자리가 없다. 규칙표에는 누가 보냈는지 적을 칸이 없어, 한 매체가 몰아쳐도 막지 못한다';
+    else quotaNote = '매체가 1곳이라 나눠 걸 일이 없다';
 
     var meshNote;
     if (!cfg.mesh) meshNote = '메시를 안 쓰면 사이드카가 없다';
     else if (hops === 0) meshNote = '서비스가 1개라 서비스 간 홉이 없다';
-    else if (hops < HOP_CAP) meshNote = '서비스 간 홉 ' + hops + '번 × 사이드카 2번 × 0.5ms — 12ms 예산에서 깎인다';
-    else meshNote = '홉 ' + HOP_CAP + '번 × 사이드카 2번 × 0.5ms — 한 요청이 지나는 홉은 ' + HOP_CAP +
+    else if (hops < HOP_CAP) meshNote = '서비스 간 홉 ' + hops + '번 × 사이드카 2번 × ' + SIDECAR_MS + 'ms — 12ms 예산에서 깎인다';
+    else meshNote = '홉 ' + HOP_CAP + '번 × 사이드카 2번 × ' + SIDECAR_MS + 'ms — 한 요청이 지나는 홉은 ' + HOP_CAP +
       '번까지로 본다. 더 쪼개도 나머지는 입찰 경로 밖이라 늘지 않는다';
 
     return [
       { label: '관리할 대표 주소', value: addresses, unit: '개', note: addrNote },
-      { label: '대상 그룹 설정', value: targets, unit: '벌', note: targetNote },
+      { label: '대상 그룹 설정', value: targets, unit: '벌', lost: !cfg.lb, note: targetNote },
       {
         label: '정책 구현 벌수', value: policy, unit: '벌',
         note: cfg.gateway
           ? '인증·쿼터·버전 분기를 게이트웨이 한 곳에서 고친다'
           : '서비스마다 각자 구현하고, 정책이 바뀌면 그 수만큼 따로 고친다'
       },
+      { label: '매체별 쿼터', value: quota, unit: '벌', lost: quotaLost, note: quotaNote },
       { label: '사이드카 지연', value: sidecar, unit: 'ms', note: meshNote }
     ];
   }
@@ -190,18 +202,24 @@
   }
 
   function renderCost(rows) {
-    var html = '<h3>사람이 관리해야 하는 것</h3>' +
-      '<p class="rp-cost-sub">부품을 빼면 그 일이 사라지는 게 아니라 사람 쪽으로 옮겨온다. 기본값보다 늘어난 값에 ▲ 가 붙는다.</p>';
-    html += rows.map(function (r) {
+    // 제목·설명문은 HTML에 고정으로 두고 여기서는 줄만 다시 그린다.
+    // (aria-live 영역이 안 바뀌는 문구까지 매번 다시 읽지 않게)
+    var html = rows.map(function (r) {
       // 기본값은 개수 항목이 1, 시간 항목이 0이다
       var many = r.unit === 'ms' ? r.value > 0 : r.value > 1;
+      var cls = r.lost ? ' is-lost' : (many ? ' is-many' : '');
+      // 표시는 글자가 아니라 모양으로 — 색만으로는 알리지 않는다.
+      // 글자로는 뜻이 안 통하므로 읽기에서는 빼고, 뜻은 오른쪽 설명문이 그대로 담는다.
+      var flag = r.lost ? '✕' : (many ? '▲' : '');
       return '<div class="rp-cost-row">' +
         '<span class="rp-cost-label">' + r.label + '</span>' +
-        '<span class="rp-cost-value' + (many ? ' is-many' : '') + '">' + r.value + '<em>' + r.unit + '</em></span>' +
+        '<span class="rp-cost-value' + cls + '">' + r.value + '<em>' + r.unit + '</em>' +
+          (flag ? '<span class="rp-cost-flag" aria-hidden="true">' + flag + '</span>' : '') +
+        '</span>' +
         '<span class="rp-cost-note">' + r.note + '</span>' +
         '</div>';
     }).join('');
-    $('rp-cost').innerHTML = html;
+    $('rp-cost-rows').innerHTML = html;
   }
 
   function syncToggles() {

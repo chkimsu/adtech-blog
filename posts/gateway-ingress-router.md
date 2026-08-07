@@ -467,3 +467,189 @@ Gateway가 그것까지 물어보게 만들 수는 있다. 그러면 홉이 하�
 | 없으면 무엇이 늘어나나 | 서비스마다 대표 주소와 헬스체크 설정이 한 벌씩 붙는다 | 인증·쿼터·타임아웃이 서비스 수만큼 복제된다 |
 
 방금 센 것을 안쪽 호출에 그대로 대 보자. Gateway가 걷어 간 것은 매체가 보낸 요청뿐이다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 그 앞을 지나지 않는다. 그 사이의 재시도와 타임아웃은 지금도 서비스마다 각자 코드에 적혀 있다. 넷일 때는 손으로 넣을 만했다. 열둘이 되면 그 "사이"가 몇 개인지부터 세어 봐야 한다. 그게 5절이다.
+
+---
+
+## 5. 서비스가 열둘이 됐다 — 메시를 써야 하나
+
+**안쪽 호출에는 아직 아무 부품도 없다. 메시가 그 자리를 채우는데, 12ms 예산에서는 그 값을 낼 수 있는지부터 계산해야 한다.**
+
+서비스가 여덟 개 더 생겨 열둘이 됐다. `pcvr`·`budget`·`frequency`·`creative`·`audience`·`pacing`·`model-registry`·`report` 다. 매체는 이 이름을 하나도 모른다 — 전부 안에서만 부른다.
+
+1절부터 4절까지 쌓은 부품은 밖에서 안으로 들어오는 길 위에 있다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 LB도 Ingress도 Gateway도 지나지 않는다.
+
+그런데 이 호출에도 같은 것이 필요하다. `pctr` 이 답을 안 주면 몇 ms에 포기하나. 한 번 더 부르나, pCTR 없이 응찰하나. 12ms를 넘긴 요청은 어디서 늦었나. 지금은 이 답이 서비스마다 각자 코드에 들어 있다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 700 326" role="img" aria-label="밖에서 안으로 들어온 요청이 서비스 사이를 여러 번 오가고, 그때마다 사이드카를 지나는 구조." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="gw5-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+<marker id="gw5-dim" markerWidth="8" markerHeight="8" refX="6.5" refY="2.5" orient="auto"><path d="M0,0 L6.5,2.5 L0,5 Z" style="fill:var(--text-muted)"/></marker>
+</defs>
+<text x="83" y="27" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">여기까지가 밖에서 안으로</text>
+<rect x="8" y="34" width="150" height="206" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<rect x="22" y="44" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="83" y="65" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">매체 10곳</text>
+<line x1="83" y1="78" x2="83" y2="92" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="22" y="94" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="83" y="115" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">LB</text>
+<line x1="83" y1="128" x2="83" y2="142" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="22" y="144" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="83" y="165" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">Ingress</text>
+<line x1="83" y1="178" x2="83" y2="192" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
+<rect x="22" y="194" width="122" height="34" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="83" y="215" text-anchor="middle" style="font-size:11px; fill:var(--text-primary)">API Gateway</text>
+<text x="434" y="27" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">서비스 12개 중 6개만 그렸다</text>
+<rect x="182" y="34" width="504" height="260" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<line x1="314" y1="99" x2="374" y2="99" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="492" y1="99" x2="552" y2="99" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="255" y1="122" x2="255" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="433" y1="122" x2="433" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="611" y1="122" x2="611" y2="188" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="314" y1="114" x2="374" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="374" y1="114" x2="314" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="492" y1="114" x2="552" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="552" y1="114" x2="492" y2="194" style="stroke:var(--border-color); stroke-width:1"/>
+<line x1="144" y1="206" x2="196" y2="206" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
+<path d="M196,224 L188,224 L188,266 L338,266 L338,224 L374,224" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
+<path d="M374,200 L350,200 L350,155 L528,155 L528,200 L552,200" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
+<rect x="196" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="199" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="260" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">budget</text>
+<rect x="374" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="377" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="438" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">frequency</text>
+<rect x="552" y="76" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="555" y="82" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="616" y="104" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<rect x="196" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="199" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="260" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="374" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="377" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="438" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="552" y="188" width="118" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="555" y="194" width="10" height="34" rx="3" style="fill:var(--accent-secondary)"/>
+<text x="616" y="216" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="196" y="304" width="10" height="14" rx="2" style="fill:var(--accent-secondary)"/>
+<text x="212" y="315" style="font-size:10px; fill:var(--text-muted)">사이드카</text>
+<line x1="280" y1="311" x2="306" y2="311" style="stroke:var(--border-color); stroke-width:1"/>
+<text x="312" y="315" style="font-size:10px; fill:var(--text-muted)">서로 부를 수 있는 사이</text>
+<line x1="452" y1="311" x2="478" y2="311" style="stroke:var(--accent-primary); stroke-width:2"/>
+<text x="484" y="315" style="font-size:10px; fill:var(--text-muted)">요청 하나가 지나는 길</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">앞 네 절 전부가 왼쪽 한 덩어리로 줄었다. 오른쪽은 여섯 개만 그렸는데도 선이 상자보다 많다.</figcaption>
+</figure>
+
+**서비스 메시** 는 이 답을 코드 밖으로 꺼낸다. 서비스마다 프록시를 하나씩 붙이고, 나가고 들어오는 호출을 전부 그 프록시가 받게 한다. 이 프록시가 사이드카(sidecar)다. 재시도 횟수, 타임아웃, 추적 ID 이어 붙이기, 서비스 간 mTLS — 넷 다 사이드카 설정에 적는다. `bidder` 코드는 한 줄도 안 바뀐다.
+
+4절에서 Gateway가 정책을 한 곳에 모은 것과 같은 해법인데, 모을 곳이 서비스마다 하나다.
+
+무는 값이 있다. 호출 하나가 프록시를 두 번 지난다. 나갈 때 부르는 쪽, 들어갈 때 받는 쪽이다. 한 번 지나는 데 0.3ms로 잡는다. 4절의 Ingress 통과와 값만 같고 잰 대상이 다르다. 12ms에서 이게 얼마인지 세어 보자. 아래 값은 4절에서 쓴 것 그대로이고, 전부 설명을 위한 가상 수치다.
+
+```python
+# "서비스가 열둘이 되면 사이드카를 넣을 수 있나" — 12ms 예산으로 답한다.
+#
+# 상황: 4절까지 서비스는 4개였다. 이제 12개다. 안쪽 호출의 재시도·타임아웃을
+#   서비스 코드에서 빼내 사이드카에 맡길 수 있는지 두 가지로 잰다.
+#     (가) 손볼 '사이'가 몇 곳으로 늘어나나
+#     (나) 사이드카가 12ms 예산을 얼마나 먹나
+#   앞단 0.3·1.1ms 와 bidder 8/10ms 는 4절에서 쓴 값 그대로다. 전부 가상 데이터다.
+from unicodedata import east_asian_width
+
+def w(s):                       # 한글은 모노스페이스에서 두 칸을 먹는다
+    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
+
+def row(*cells):                # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
+    print("".join(" " * (n - w(c)) + c for c, n in cells))
+
+# ── (가) 서비스가 늘면 '사이'가 몇 곳이 되나 ──
+# 한 서비스가 평균 2곳을 부른다고 두자. 실제 호출은 가능한 조합보다 훨씬 적다.
+row(("서비스", 8), ("가능한 호출 방향", 20), ("실제 호출(평균 2곳)", 22))
+for n in (1, 4, 8, 12, 20):
+    row((f"{n}개", 8), (f"{n*(n-1)}곳", 20), (f"{0 if n == 1 else 2*n}곳", 22))
+print()
+
+# ── (나) 12ms 예산에서 사이드카가 먹는 몫 ──
+BUDGET = 12.0
+FRONT  = 0.3 + 1.1      # Ingress + Gateway (4절)
+BIDDER = {"평소": 8.0, "상한": 10.0}   # 평소 8.0 = 자체 3.0 + pctr 3.0 + feature-store 2.0
+HOPS   = 4              # 안쪽 호출 2개 × 양 끝. bidder 앞단은 빼고 센 값이다
+HOP    = 0.3            # 사이드카 1회 통과 (Envoy p50 하단). 위 Ingress 0.3 과는 값만 같다
+
+def verdict(t):
+    return f"여유 {BUDGET-t:.2f}ms" if t <= BUDGET else f"초과 {t-BUDGET:.2f}ms"
+
+row(("", 8), ("메시 전", 12), ("메시 후", 12), ("예산 12ms", 18))
+for name, ms in BIDDER.items():
+    row((name, 8), (f"{FRONT+ms:.1f}ms", 12), (f"{FRONT+ms+HOPS*HOP:.1f}ms", 12),
+        (verdict(FRONT + ms + HOPS * HOP), 18))
+print()
+
+row(("1회 통과", 12), ("평소", 22), ("상한", 22))   # 통과 지연을 바꿔 가며
+for hop in (0.15, 0.3, 0.5, 1.0):
+    cells = [(f"{hop:.2f}ms", 12)]
+    for ms in BIDDER.values():
+        t = FRONT + ms + HOPS * hop
+        cells.append((f"{t:.1f}ms  {verdict(t)}", 22))
+    row(*cells)
+print()
+
+for name, ms in BIDDER.items():   # 한 번 통과에 쓸 수 있는 시간
+    print(f"{name} 기준  ({BUDGET:.0f} - {FRONT+ms:.1f}) / {HOPS}회 = 한 번에 {(BUDGET-FRONT-ms)/HOPS:.2f}ms")
+print(f"bidder 앞단까지 5회로 세면   평소 {FRONT+8.0+5*HOP:.1f}ms · 상한 {FRONT+10.0+5*HOP:.1f}ms")
+print()
+print("→ 평소값으로 재면 들어간다. 상한으로 재면 0.15ms를 넘는 순간 넘친다.")
+print("→ 12ms에서 재야 하는 쪽은 상한이다. 늦은 응답은 버려지니 평소값은 답이 못 된다.")
+print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ 통과 횟수'다.")
+
+# 출력:
+#   서비스    가능한 호출 방향   실제 호출(평균 2곳)
+#      1개                 0곳                   0곳
+#      4개                12곳                   8곳
+#      8개                56곳                  16곳
+#     12개               132곳                  24곳
+#     20개               380곳                  40곳
+#
+#              메시 전     메시 후         예산 12ms
+#     평소       9.4ms      10.6ms       여유 1.40ms
+#     상한      11.4ms      12.6ms       초과 0.60ms
+#
+#     1회 통과                  평소                  상한
+#       0.15ms   10.0ms  여유 2.00ms   12.0ms  여유 0.00ms
+#       0.30ms   10.6ms  여유 1.40ms   12.6ms  초과 0.60ms
+#       0.50ms   11.4ms  여유 0.60ms   13.4ms  초과 1.40ms
+#       1.00ms   13.4ms  초과 1.40ms   15.4ms  초과 3.40ms
+#
+# 평소 기준  (12 - 9.4) / 4회 = 한 번에 0.65ms
+# 상한 기준  (12 - 11.4) / 4회 = 한 번에 0.15ms
+# bidder 앞단까지 5회로 세면   평소 10.9ms · 상한 12.9ms
+#
+# → 평소값으로 재면 들어간다. 상한으로 재면 0.15ms를 넘는 순간 넘친다.
+# → 12ms에서 재야 하는 쪽은 상한이다. 늦은 응답은 버려지니 평소값은 답이 못 된다.
+# → 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ 통과 횟수'다.
+```
+
+평소로 재면 들어가고 상한으로 재면 넘친다. 어느 쪽으로 재야 하나. 1절에서 늦은 응답은 없던 일이 된다고 했다. 매체는 12ms를 넘긴 응답을 봐주지 않는다. 상한이 기준이고, 0.6ms가 모자란다.
+
+빠져나갈 길은 셋이다. 첫째, 더 빠른 사이드카. 통과 0.15ms면 합이 딱 12.0ms인데 여유가 0이다. Envoy p50 하단의 절반을 요구하는 셈이다. 둘째, 통과 횟수 줄이기. 받는 쪽 프록시만 지나게 하면 호출당 1회, 모두 2회다. 한 번에 쓸 수 있는 시간이 0.30ms로 두 배가 되지만 합은 또 정확히 12.0ms다. 부르는 쪽에서 걸던 재시도와 타임아웃은 코드로 돌아간다. 셋째, 세는 방법 바꾸기. `bidder` 앞단까지 세면 5회이고 상한은 12.9ms다. 어느 쪽으로 세도 넘는 것은 같다.
+
+### 전용선 평문인데 mTLS가 값어치를 하나
+
+메시가 주는 넷 중 mTLS는 이 글의 전제와 부딪힌다. 매체와 우리 사이는 같은 데이터센터의 전용 회선이고 평문이다(1절). 클러스터 안도 같은 사설망이라 도청을 막으려고 켤 자리가 아니다.
+
+값어치는 다른 데 있다. 지금 `feature-store` 는 자기를 부르는 것이 `pctr` 인지 IP로만 안다. 그 IP는 파드가 다시 뜰 때마다 바뀐다. mTLS는 IP 대신 서비스 이름에 신원을 건다. 그래야 "`feature-store` 는 `pctr` 만 부를 수 있다"를 적을 수 있다. 열둘이면 이걸 적을 곳이 스물넷이다.
+
+값은 위 사이드카 0.3ms 안에 이미 들어 있다. 연결을 붙여 두므로(2절) 핸드셰이크는 요청마다 붙지 않고, 매번 붙는 것은 암·복호화뿐이다.
+
+### 언제 넣나
+
+기준은 서비스가 몇 개냐가 아니다. 나눗셈 한 번이다.
+
+**한 번 통과에 쓸 수 있는 시간 = 남은 여유 ÷ 통과 횟수.**
+
+우리 입찰 경로는 (12 − 11.4) ÷ 4 = 0.15ms다. 실측 사이드카가 그보다 느리면 못 넣는다. 여유가 5ms인 경로라면 5 ÷ 4 = 1.25ms까지 쓰니 넣는다. 서비스가 열둘이어도 입찰 경로에는 못 넣고, 넷이어도 리포트 경로에는 넣는다.
+
+전부 아니면 전무는 아니다. 사이드카를 붙일 대상은 고를 수 있다. 입찰 경로는 빼고 `report`·`model-registry`·`log-collector` 쪽만 넣으면 된다. 대신 재시도와 타임아웃이 가장 급한 곳이 12ms를 다투는 입찰 경로다. 값을 못 치르는 자리와 얻을 것이 가장 큰 자리가 겹친다.
+
+부품은 여기까지다. 다섯 절에서 하나씩 생긴 것을 한 장에 겹쳐 놓으면 경계가 보인다. 그게 6절이다.

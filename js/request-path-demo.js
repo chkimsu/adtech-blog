@@ -58,34 +58,47 @@
     return steps;
   }
 
+  // 한 입찰 요청이 실제로 지나는 서비스 간 홉의 상한.
+  // 서비스를 12개로 쪼개도 요청 하나가 12곳을 다 지나지는 않는다.
+  // bidder → pctr, bidder → feature-store 가 입찰 경로이고 log-collector 는
+  // 그 밖이다. 그래서 쪼갠 수와 무관하게 3번에서 멈추는 것으로 본다.
+  var HOP_CAP = 3;
+
   // 지금 구성에서 사람이 관리해야 하는 것의 개수.
   // 반환: [{label, value, unit, note}] — 화면에 그대로 찍는 표기까지 여기서 정한다.
   // 이 글의 입찰 경로는 같은 데이터센터 안 전용 회선 위 평문(10.0.x.x)이라
   // 공인 IP도 TLS 인증서도 세지 않는다.
   function burden(cfg) {
-    var perService = cfg.ingress ? 1 : cfg.services;   // Ingress가 없으면 서비스 수만큼 늘어난다
-    var policy = cfg.gateway ? 1 : cfg.services;       // Gateway가 없으면 서비스마다 각자 구현
-    var hops = Math.max(Math.min(cfg.services - 1, 3), 0);
+    // LB가 없으면 대표 주소라는 게 아예 없다 — 매체가 서버 주소를 직접 든다.
+    // LB가 있으면 Ingress 유무가 대표 주소 개수를 정한다.
+    var addresses = !cfg.lb ? cfg.services : (cfg.ingress ? 1 : cfg.services);
+    // 대상 그룹·헬스체크는 LB의 설정이다. LB가 없으면 설정할 것도 없다.
+    var targets = !cfg.lb ? 0 : (cfg.ingress ? 1 : cfg.services);
+    var policy = cfg.gateway ? 1 : cfg.services;   // Gateway가 없으면 서비스마다 각자 구현
+    var hops = Math.max(Math.min(cfg.services - 1, HOP_CAP), 0);
     var sidecar = cfg.mesh ? +(0.5 * 2 * hops).toFixed(1) : 0;
+
+    var addrNote;
+    if (!cfg.lb) addrNote = '대표 주소가 없다. 매체가 서버 주소를 직접 들고 있어서, 서버가 바뀔 때마다 매체 설정을 고쳐야 한다';
+    else if (cfg.ingress) addrNote = '이름 하나로 끝난다. 뒤에서 규칙표가 갈라 준다';
+    else if (cfg.services === 1) addrNote = '서비스가 1개라 대표 주소도 하나로 끝난다';
+    else addrNote = '서비스마다 대표 주소를 하나씩 세워야 한다. 그중 매체가 직접 부르는 것은 일부다';
+
+    var targetNote;
+    if (!cfg.lb) targetNote = '설정할 것이 없는 대신, 죽은 서버를 빼 주는 것도 없다';
+    else if (cfg.ingress) targetNote = 'LB 하나에 대상 그룹·헬스체크 한 벌';
+    else targetNote = 'LB를 서비스 수만큼 세우면 대상 그룹·헬스체크도 그만큼 늘어난다';
 
     var meshNote;
     if (!cfg.mesh) meshNote = '메시를 안 쓰면 사이드카가 없다';
     else if (hops === 0) meshNote = '서비스가 1개라 서비스 간 홉이 없다';
-    else meshNote = '서비스 간 홉 ' + hops + '번 × 사이드카 2번 × 0.5ms — 12ms 예산에서 깎인다';
+    else if (hops < HOP_CAP) meshNote = '서비스 간 홉 ' + hops + '번 × 사이드카 2번 × 0.5ms — 12ms 예산에서 깎인다';
+    else meshNote = '홉 ' + HOP_CAP + '번 × 사이드카 2번 × 0.5ms — 한 요청이 지나는 홉은 ' + HOP_CAP +
+      '번까지로 본다. 더 쪼개도 나머지는 입찰 경로 밖이라 늘지 않는다';
 
     return [
-      {
-        label: '매체가 아는 주소', value: perService, unit: '개',
-        note: cfg.ingress
-          ? '이름 하나로 끝난다. 뒤에서 규칙표가 갈라 준다'
-          : '서비스마다 대표 주소를 세우고, 그 목록을 매체가 들고 있어야 한다'
-      },
-      {
-        label: '대상 그룹 설정', value: perService, unit: '벌',
-        note: cfg.ingress
-          ? 'LB 하나에 대상 그룹·헬스체크 한 벌'
-          : 'LB를 서비스 수만큼 세우면 대상 그룹·헬스체크도 그만큼 늘어난다'
-      },
+      { label: '관리할 대표 주소', value: addresses, unit: '개', note: addrNote },
+      { label: '대상 그룹 설정', value: targets, unit: '벌', note: targetNote },
       {
         label: '정책 구현 벌수', value: policy, unit: '벌',
         note: cfg.gateway
@@ -178,8 +191,9 @@
 
   function renderCost(rows) {
     var html = '<h3>사람이 관리해야 하는 것</h3>' +
-      '<p class="rp-cost-sub">부품을 빼면 그 일이 사라지는 게 아니라 사람 쪽으로 옮겨온다. 1보다 큰 값에 ▲ 가 붙는다.</p>';
+      '<p class="rp-cost-sub">부품을 빼면 그 일이 사라지는 게 아니라 사람 쪽으로 옮겨온다. 기본값보다 늘어난 값에 ▲ 가 붙는다.</p>';
     html += rows.map(function (r) {
+      // 기본값은 개수 항목이 1, 시간 항목이 0이다
       var many = r.unit === 'ms' ? r.value > 0 : r.value > 1;
       return '<div class="rp-cost-row">' +
         '<span class="rp-cost-label">' + r.label + '</span>' +

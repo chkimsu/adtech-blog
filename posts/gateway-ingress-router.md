@@ -159,3 +159,117 @@ LB가 실제로 하는 일은 두 가지다. 하나는 들어온 연결을 대�
 포트를 나누면 되지 않느냐 — 8080은 입찰, 8081은 트래킹으로. 그러면 매체 설정을 다시 고쳐 달라고 부탁해야 한다. 지금은 두 개지만 서비스가 열둘이 되면 포트도 열두 개다. 2절에서 막 벗어난 자리로 되돌아가는 것이다.
 
 경로를 보고 갈라 보내려면 요청 안을 열어 보는 부품이 필요하다. 그게 3절이다.
+
+---
+
+## 3. 서비스를 넷으로 쪼갰다 — Ingress가 생긴다
+
+**서비스를 넷으로 나누면 앞에 세울 대표 주소도 넷이 된다. Ingress는 주소를 다시 하나로 되돌리고, 대신 경로를 보고 갈라 보낸다.**
+
+이 절에 나오는 숫자도 전부 설명을 위해 지어낸 값이다.
+
+`bidder` 한 프로세스에 네 가지가 같이 들어 있었다. 입찰 응답 만들기, pCTR 예측, 피처 조회, 노출·클릭 기록이다. 이걸 `bidder`·`pctr`·`feature-store`·`log-collector` 넷으로 갈랐다. pCTR 모델만 하루 세 번 올리고 싶은데, 그때마다 입찰 프로세스까지 같이 내려야 했기 때문이다.
+
+서비스마다 LB를 하나씩 세우면 2절을 네 번 반복하는 꼴이 된다. 안에서만 부르는 `pctr` 과 `feature-store` 도 여러 대로 띄우니 대표 주소는 넷 다 필요하다.
+
+| 항목 | LB를 넷 세우면 | Ingress 하나면 |
+|---|---|---|
+| 대표 주소 | 4개 | 1개 |
+| 대상 그룹·헬스체크 설정 | 4벌 | 1벌 |
+| 매체가 알아야 할 주소 | 2개 (입찰·트래킹) | 1개 |
+| 월 LB 비용 | 4배 | 1배 |
+
+보통 여기에 TLS 인증서 4장이 한 줄 더 붙는다. 이 글의 입찰 경로는 전용 회선 위 평문이라 그 줄이 없다.
+
+**Ingress** 는 이 자리에 규칙표 하나를 놓는다. 주소는 다시 하나로 돌아가고, 그 뒤에서 요청을 열어 보고 갈라 보낸다. 2절의 LB가 없어지는 것은 아니다. LB는 그대로 대표 주소를 들고 있고, 그 대상이 `bidder` 서버 3대에서 Ingress로 바뀐다. `/v1/track` 이 이제 `log-collector` 로 빠지니 입찰 슬롯을 더 이상 먹지 않는다. 2절에서 12ms를 넘기게 만들던 원인이 여기서 사라진다.
+
+대신 매체 설정을 한 번 더 고쳐야 한다. Ingress는 요청 헤더에 실린 호스트 이름을 보고 규칙을 고르기 때문이다. 그래서 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고, 사내 DNS에 그 이름을 같은 IP로 등록한다. 이 부탁은 이번이 마지막이다. 포트는 서비스마다 하나씩 늘지만 이름은 하나로 끝난다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 700 236" role="img" aria-label="매체가 이름 하나로 LB를 부르고, LB 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 갈라 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="gw3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+</defs>
+<rect x="6" y="90" width="104" height="60" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="58" y="112" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
+<text x="58" y="128" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">설정에 주소 1개</text>
+<text x="58" y="142" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
+<line x1="110" y1="120" x2="144" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<text x="204" y="84" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">2절 그대로</text>
+<rect x="148" y="92" width="112" height="56" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="204" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="204" y="131" text-anchor="middle" style="font-size:10px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<line x1="260" y1="120" x2="292" y2="120" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<text x="372" y="72" text-anchor="middle" style="font-size:10.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="296" y="88" width="152" height="64" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="372" y="116" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
+<text x="372" y="135" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">규칙표 — host · path 를 본다</text>
+<rect x="482" y="20" width="210" height="200" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="587" y="36" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
+<rect x="498" y="44" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="587" y="68" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<rect x="498" y="88" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="587" y="112" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
+<rect x="498" y="132" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="587" y="156" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
+<rect x="498" y="176" width="178" height="38" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="587" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
+<line x1="450" y1="102" x2="494" y2="64" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<line x1="450" y1="126" x2="494" y2="150" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+<line x1="450" y1="138" x2="494" y2="194" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">2절의 LB는 없어지지 않았다. 바뀐 건 그 대상이 bidder 3대에서 Ingress로 옮겨간 것뿐이다.</figcaption>
+</figure>
+
+규칙표는 실제로 이런 모양이다.
+
+```yaml
+# Ingress 규칙 — 네 줄 다 pathType: Prefix 다. 맞는 줄을 전부 찾은 뒤 가장 긴 것을 고른다. 적힌 순서는 상관없다.
+rules:
+  - host: ads.example.com
+    paths:
+      - path: /v1/bid      →  bidder-service:8080
+      - path: /v1/track    →  log-collector:8080
+      - path: /v1/feature  →  feature-store:8080
+  - host: admin.example.com
+    paths:
+      - path: /            →  admin-service:3000
+# 맞는 줄이 하나도 없으면 404.
+```
+
+서비스는 넷인데 줄은 셋이다. `pctr` 은 매체가 아니라 `bidder` 가 부르므로 규칙표에 없다. 규칙표는 클러스터 바깥에서 들어오는 요청만 다룬다. `/v1/feature` 도 매체용이 아니라 사내 운영 도구가 피처 값을 볼 때 쓴다.
+
+요청 하나가 이 표를 지나는 길은 이렇다.
+
+```mermaid
+flowchart TD
+  R["요청 도착<br/>ads.example.com/v1/bid"] --> H{"host로 규칙을 먼저 추린다"}
+  H -- "ads.example.com" --> M["맞는 경로를 <b>전부</b> 모은다<br/>/v1/bid ✓ · /v1/track ✗ · /v1/feature ✗"]
+  H -- "admin.example.com" --> A["/ ✓"]
+  H -- "맞는 host 없음" --> E["404"]
+  M --> L{"모인 게 몇 개인가"}
+  L -- "0개" --> E
+  L -- "1개 이상" --> P["<b>가장 긴 것</b>을 고른다<br/>순서는 안 본다"]
+  P --> S1["bidder-service:8080"]
+  A --> S3["admin-service:3000"]
+  classDef hit stroke:#b0442c,stroke-width:2px
+  class P,S1 hit
+```
+
+순서가 상관없다는 말이 곧 안전하다는 뜻은 아니다. 언젠가 `/v1` 아래를 통째로 한곳에 보내는 규칙을 하나 넣게 된다. `/v1/bid` 는 안 뺏긴다. 더 길게 맞는 줄이 어디에 적혀 있든 이기기 때문이다. 대신 `/v1` 아래에서 404로 떨어지던 것이 전부 그 새 규칙으로 빨려 들어간다. `/v1/report` 도, `/v1/status` 도, 오타로 들어온 `/v1/bidd` 도. 문법 오류도 없고, 배포도 성공하고, 헬스체크도 전부 초록이다.
+
+규칙표에서 이기는 것은 위치가 아니라 길이다. **가장 길게 맞는 줄이 이긴다.** 그래서 짧은 경로를 새로 추가할 때는 그 아래로 무엇이 딸려 들어오는지부터 세어 봐야 한다. `pathType` 은 `Prefix` 면 `/v1/bid` 아래 경로까지 같이 걸리고, `Exact` 면 딱 그 경로만 걸린다. 단, 글자 단위가 아니라 `/` 로 끊은 조각 단위다 — `/v1/bid` 는 `/v1/bid/test` 를 잡지만 `/v1/bidder` 는 안 잡는다.
+
+### "라우터"가 가리키는 세 가지
+
+지금까지 Ingress라고 부른 것은 규칙표, 곧 적어 놓은 설정이다. 그 표를 읽고 실제로 요청을 넘기는 것은 따로 도는 프로세스다. 그 프로세스를 "라우터"라고들 부르는데, 이 말이 문맥마다 다른 것을 가리킨다.
+
+| 어디서 쓰는 말인가 | 무엇을 가리키나 | 실제 이름 |
+|---|---|---|
+| 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx·traefik) |
+| OpenShift | 규칙표에 해당하는 자체 리소스 (라우터 프로세스가 읽는 대상) | `Route` 오브젝트 |
+| 앱 코드 안 | 들어온 경로를 함수에 연결하는 것 | `@app.route("/v1/bid")` |
+
+셋이 하는 일은 같다. 경로를 보고 어디로 보낼지 정한다. 다른 것은 **어느 층에서 도느냐**다. 그런데 **셋은 두 층이다.** 1·2행은 같은 층이고 플랫폼이 다를 뿐이다. 쿠버네티스를 쓰면 1행, OpenShift를 쓰면 2행이지 둘을 같이 지나가지 않는다. 3행만 다른 층이다. 그래서 `POST /v1/bid` 한 건은 두 층을 지난다. 바깥에서 Ingress Controller가 `bidder-service` 를 고르고, 그 안에서 `@app.route("/v1/bid")` 함수가 실행된다.
+
+이제 매체가 열 곳으로 늘었다. 그중 한 곳이 설정을 잘못 올려 초당 3,000건이 아니라 30,000건을 보내기 시작한다. 규칙표에는 이걸 막을 칸이 없다. `host` 와 `path` 밖에 안 보기 때문이다. 어느 매체가 보낸 요청인지조차 모른다. 그게 4절이다.

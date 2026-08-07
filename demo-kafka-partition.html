@@ -29,15 +29,29 @@
     .kp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
 
     /* ---------- 흙톤 6색 — consumer 구분에만 쓴다 ----------
-       css/style.css 의 .chart-layer-item 규칙에 있는 값 그대로.
-       팔레트·테마를 안 타는 색이라 여기서만 예외로 rgba를 쓴다.
-       쓰는 자리는 카드 왼쪽 테두리와 작은 사각형 표식뿐 — 글자에는 절대 안 쓴다. */
+       쓰는 자리는 카드 왼쪽 테두리와 작은 사각형 표식뿐 — 글자에는 절대 안 쓴다.
+       뜻은 색이 아니라 글자가 담는다(카드와 범례 양쪽에 consumer 이름이 적혀 있다).
+       색은 "같은 사람이 맡은 칸"을 한눈에 묶어 주는 보조 표시다.
+
+       라이트값은 css/style.css 의 .chart-layer-item 색과 같은 여섯 색이다.
+       거기서는 알파 0.2 의 배경 얼룩으로 쓰지만 여기서는 알파 1 의 표식 자체로 쓴다 —
+       알파가 해 주던 보호가 없어져서, 하나의 값으로는 다크 배경에서 3:1 을 못 넘긴다.
+       그래서 --state-bad / --state-good / --state-warn 과 같은 방식으로 테마별로 따로 정한다.
+       (측정: 라이트 3.82~5.65, 다크 5.00~5.30 — 네 조합 모두 3:1 위) */
     .kp-tone-0 { --kp-tone: rgba(156, 90, 68, 1); }
     .kp-tone-1 { --kp-tone: rgba(90, 107, 122, 1); }
     .kp-tone-2 { --kp-tone: rgba(95, 122, 99, 1); }
     .kp-tone-3 { --kp-tone: rgba(168, 120, 58, 1); }
     .kp-tone-4 { --kp-tone: rgba(125, 94, 114, 1); }
     .kp-tone-5 { --kp-tone: rgba(154, 125, 56, 1); }
+    /* 다크 — 같은 여섯 색조를 어두운 카드 위에서 보이도록 올린 값.
+       크림 다크(#232020)와 slate 다크(#1f2530) 둘 다 이 한 벌로 덮는다. */
+    [data-theme="dark"] .kp-tone-0 { --kp-tone: rgba(193, 133, 112, 1); }
+    [data-theme="dark"] .kp-tone-1 { --kp-tone: rgba(132, 150, 165, 1); }
+    [data-theme="dark"] .kp-tone-2 { --kp-tone: rgba(126, 154, 130, 1); }
+    [data-theme="dark"] .kp-tone-3 { --kp-tone: rgba(190, 137, 67, 1); }
+    [data-theme="dark"] .kp-tone-4 { --kp-tone: rgba(168, 139, 157, 1); }
+    [data-theme="dark"] .kp-tone-5 { --kp-tone: rgba(176, 143, 64, 1); }
 
     /* ---------- 컨트롤 ---------- */
     .kp-controls {
@@ -61,7 +75,9 @@
       width: 18px; height: 18px; background: var(--accent-primary);
       border-radius: 50%; cursor: pointer; border: none;
     }
-    .kp-slider-row output {
+    /* 값 표시는 <output> 이 아니라 <span> 이다 — <output> 은 암묵적으로 role=status,
+       즉 aria-live 영역이라 슬라이더가 이미 읽어 준 숫자를 한 번 더 읽는다. */
+    .kp-slider-row > span {
       text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary);
     }
 
@@ -103,6 +119,14 @@
     .kp-verdict.is-good .kp-verdict-badge { color: var(--state-good); }
     .kp-verdict.is-warn .kp-verdict-badge { color: var(--state-warn); }
     .kp-verdict.is-bad .kp-verdict-badge { color: var(--state-bad); }
+    /* 문제가 두 가지 겹칠 때 붙는 둘째 줄.
+       첫 줄 뒤에 이어 붙이면 묻히므로 줄을 떼고, 칸에 붙는 것과 똑같은 "쏠림" 배지를 앞에 세운다.
+       그래야 카드의 배지와 이 설명이 같은 것을 가리킨다는 게 보인다. */
+    .kp-verdict-extra {
+      display: block; margin-top: 0.5rem; padding-top: 0.5rem;
+      border-top: 1px dashed var(--border-color); color: var(--text-secondary);
+    }
+    .kp-verdict-extra .kp-verdict-hot { margin-right: 0.4rem; vertical-align: 0.08em; }
 
     /* ---------- 칸 수를 바꿨을 때의 알림 ---------- */
     .kp-shuffle {
@@ -160,7 +184,9 @@
     .kp-card-name { font-family: var(--font-mono); font-size: 0.79rem; font-weight: 700; color: var(--text-primary); }
     .kp-card-owner { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--text-secondary); }
     .kp-card-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.71rem; color: var(--text-muted); }
-    .kp-card-hot {
+    /* 카드에 붙는 "쏠림" 배지. 판정문 둘째 줄도 같은 모양을 쓴다(.kp-verdict-hot) */
+    .kp-card-hot, .kp-verdict-hot {
+      display: inline-block; white-space: nowrap;
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em; color: var(--state-warn);
       border: 1px solid var(--state-warn); border-radius: 4px; padding: 0.02rem 0.3rem;
     }
@@ -221,7 +247,7 @@
 
       <div class="kp-intro">
         <strong>설정</strong> — bidder가 노출 한 건마다 로그 한 줄을 <code>ad.impression</code> 토픽에 씁니다.
-        한 줄에 들어 있는 것은 요청 식별자 <code>req_id</code>, 광고 소재 번호 <code>ad_id</code>, 지면 이름 세 가지입니다.
+        한 줄에 들어 있는 것은 요청 식별자 <code>req_id</code>와 광고 소재 번호 <code>ad_id</code> 두 가지입니다 — 아래 칸에서 한 줄마다 이 둘이 나란히 찍히고, key로 고를 수 있는 것도 그 둘입니다.
         표본 12줄은 실제 트래픽처럼 <strong>일부러 한쪽으로 쏠려</strong> 있습니다 — 광고 <code>9931</code>이 혼자 4건입니다.
         읽는 쪽은 <strong>같은 consumer group에 속한 consumer들</strong>입니다. 한 칸은 그 그룹 안에서 언제나 한 명만 맡습니다.
       </div>
@@ -231,12 +257,12 @@
         <div class="kp-slider-row">
           <label for="kp-part">partition 수</label>
           <input id="kp-part" type="range" min="1" max="12" value="4">
-          <output id="kp-part-v" for="kp-part">4</output>
+          <span id="kp-part-v">4</span>
         </div>
         <div class="kp-slider-row">
           <label for="kp-cons">consumer 수</label>
           <input id="kp-cons" type="range" min="1" max="6" value="2">
-          <output id="kp-cons-v" for="kp-cons">2</output>
+          <span id="kp-cons-v">2</span>
         </div>
         <fieldset class="kp-key-row">
           <legend class="sr-only">key로 무엇을 쓰나</legend>

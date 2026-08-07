@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="노출 로그 12줄을 Kafka partition에 직접 나눠 보는 인터랙티브 데모. partition 수가 처리량 상한을 정하고, key 선택이 순서 보장 범위를 정한다. 칸 수를 나중에 바꾸면 같은 key가 다른 칸으로 옮겨가는 것까지 표시한다.">
+  <title>Kafka Partition 놀이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .kp-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+    @media (max-width: 700px) { .kp-container { padding: 1rem 1rem 0; } }
+
+    .kp-hero { text-align: center; padding: 2rem 0 1rem; }
+    .kp-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .kp-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .kp-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .kp-intro strong { color: var(--accent-primary); }
+    .kp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+
+    /* ---------- 흙톤 6색 — consumer 구분에만 쓴다 ----------
+       css/style.css 의 .chart-layer-item 규칙에 있는 값 그대로.
+       팔레트·테마를 안 타는 색이라 여기서만 예외로 rgba를 쓴다.
+       쓰는 자리는 카드 왼쪽 테두리와 작은 사각형 표식뿐 — 글자에는 절대 안 쓴다. */
+    .kp-tone-0 { --kp-tone: rgba(156, 90, 68, 1); }
+    .kp-tone-1 { --kp-tone: rgba(90, 107, 122, 1); }
+    .kp-tone-2 { --kp-tone: rgba(95, 122, 99, 1); }
+    .kp-tone-3 { --kp-tone: rgba(168, 120, 58, 1); }
+    .kp-tone-4 { --kp-tone: rgba(125, 94, 114, 1); }
+    .kp-tone-5 { --kp-tone: rgba(154, 125, 56, 1); }
+
+    /* ---------- 컨트롤 ---------- */
+    .kp-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+    }
+    .kp-slider-row {
+      margin-bottom: 0.75rem; display: grid; grid-template-columns: 148px 1fr 54px;
+      align-items: center; gap: 0.8rem; font-size: 0.88rem; color: var(--text-secondary);
+    }
+    @media (max-width: 700px) { .kp-slider-row { grid-template-columns: 112px 1fr 40px; gap: 0.5rem; } }
+    .kp-slider-row input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; min-width: 0;
+      height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none;
+    }
+    .kp-slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 50%; cursor: pointer;
+    }
+    .kp-slider-row input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 50%; cursor: pointer; border: none;
+    }
+    .kp-slider-row output {
+      text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary);
+    }
+
+    /* fieldset 기본 테두리·여백을 걷어내고 위쪽 구분선만 남긴다 */
+    .kp-key-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.6rem;
+      min-width: 0; margin: 1rem 0 0; padding: 1rem 0 0;
+      border: 0; border-top: 1px solid var(--border-color);
+      font-size: 0.88rem; color: var(--text-secondary);
+    }
+    .kp-key-row label {
+      display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
+      font-size: 0.86rem; color: var(--text-muted);
+      padding: 0.4rem 0.85rem; border: 1px dashed var(--border-color); border-radius: 999px;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .kp-key-row label.is-on {
+      color: var(--accent-primary); border-color: var(--accent-primary); border-style: solid; font-weight: 600;
+    }
+    .kp-key-row label code { font-family: var(--font-mono); font-size: 0.95em; }
+    .kp-key-row input { accent-color: var(--accent-primary); margin: 0; }
+
+    /* ---------- 판정 한 줄 ---------- */
+    .kp-verdict {
+      max-width: 980px; margin: 0 auto 0.8rem; padding: 0.85rem 1.2rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color);
+      border-left: 3px solid var(--border-color); border-radius: 10px;
+      color: var(--text-primary); font-size: 0.93rem; line-height: 1.65;
+    }
+    /* 색만으로 알리지 않는다 — 왼쪽 선의 굵기·실선/점선, 그리고 글자 배지가 함께 바뀐다 */
+    .kp-verdict.is-good { border-left: 3px solid var(--state-good); }
+    .kp-verdict.is-warn { border-left: 3px dashed var(--state-warn); }
+    .kp-verdict.is-bad { border-left: 5px double var(--state-bad); }
+    .kp-verdict-badge {
+      display: inline-block; margin-right: 0.5rem; padding: 0.08rem 0.42rem;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
+      border: 1px solid currentColor; border-radius: 4px;
+    }
+    .kp-verdict.is-good .kp-verdict-badge { color: var(--state-good); }
+    .kp-verdict.is-warn .kp-verdict-badge { color: var(--state-warn); }
+    .kp-verdict.is-bad .kp-verdict-badge { color: var(--state-bad); }
+
+    /* ---------- 칸 수를 바꿨을 때의 알림 ---------- */
+    .kp-shuffle {
+      max-width: 980px; margin: 0 auto 1rem; padding: 0.8rem 1.15rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-left: 3px solid var(--accent-primary); border-radius: 10px;
+      color: var(--text-secondary); font-size: 0.87rem; line-height: 1.65;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem;
+    }
+    .kp-shuffle[hidden] { display: none; }
+    .kp-shuffle strong { color: var(--accent-primary); }
+    .kp-shuffle-text { flex: 1 1 320px; min-width: 0; }
+    .kp-shuffle-btn {
+      flex: 0 0 auto; font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600;
+      padding: 0.36rem 0.8rem; cursor: pointer; border-radius: 999px;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border-color); transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .kp-shuffle-btn:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+
+    /* ---------- consumer 범례 ---------- */
+    .kp-legend { max-width: 980px; margin: 0 auto 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; }
+    .kp-legend-item {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.7rem; font-size: 0.78rem; color: var(--text-secondary);
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+    }
+    /* 아무 칸도 못 맡은 consumer — 점선 + 옅은 글자 + "맡은 칸 없음" 이라는 말까지 함께 */
+    .kp-legend-item.is-idle { border-style: dashed; color: var(--text-muted); }
+    .kp-swatch { width: 0.62rem; height: 0.62rem; border-radius: 2px; background: var(--kp-tone); flex: none; }
+    .kp-legend-item.is-idle .kp-swatch { background: transparent; border: 1px dashed var(--text-muted); }
+
+    /* ---------- 칸 ---------- */
+    /* align-items:start — 칸 높이를 내용에 맞춘다. 그래야 많이 들어간 칸이 눈에 띈다 */
+    .kp-grid {
+      max-width: 980px; margin: 0 auto 1.8rem; align-items: start;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 0.6rem;
+    }
+    @media (max-width: 700px) {
+      .kp-grid { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 0.45rem; }
+    }
+    .kp-card {
+      min-width: 0; padding: 0.6rem 0.7rem 0.65rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color);
+      border-left: 3px solid var(--kp-tone); border-radius: 10px;
+    }
+    /* 빈 칸 — 점선 (색을 안 쓴다) */
+    .kp-card.is-empty { border-style: dashed; }
+    /* 가장 많이 몰린 칸 — 테두리를 굵게 + 머리에 "쏠림" 글자 */
+    .kp-card.is-hot { border-width: 2px; border-left-width: 5px; }
+    .kp-card-head {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0.3rem 0.4rem;
+      padding-bottom: 0.4rem; margin-bottom: 0.4rem; border-bottom: 1px solid var(--border-color);
+    }
+    .kp-card-name { font-family: var(--font-mono); font-size: 0.79rem; font-weight: 700; color: var(--text-primary); }
+    .kp-card-owner { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--text-secondary); }
+    .kp-card-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.71rem; color: var(--text-muted); }
+    .kp-card-hot {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em; color: var(--state-warn);
+      border: 1px solid var(--state-warn); border-radius: 4px; padding: 0.02rem 0.3rem;
+    }
+    .kp-rec {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.4rem;
+      padding: 0.17rem 0; font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-primary); overflow-wrap: anywhere;
+    }
+    .kp-rec-ad { color: var(--text-muted); }
+    /* 칸 수가 바뀌면서 다른 칸으로 옮겨온 줄 — 왼쪽 굵은 선 + ↰ 표시 + 예전 칸 번호 */
+    .kp-rec.is-moved {
+      margin-left: -0.7rem; padding-left: 0.5rem;
+      border-left: 2px solid var(--accent-primary);
+    }
+    .kp-rec-from { font-size: 0.67rem; color: var(--accent-primary); white-space: nowrap; }
+    .kp-empty { font-size: 0.72rem; color: var(--text-muted); }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="kp-hero">
+      <div class="kp-container">
+        <h1>Kafka Partition 놀이터</h1>
+        <p>토픽 하나에 노출 로그 12줄이 들어옵니다. 칸을 몇 개로 쪼갤지, 몇 명이 나눠 읽을지,
+          무엇을 key로 삼을지 — 이 세 가지가 처리량과 순서를 각각 어떻게 묶어 두는지 직접 돌려서 봅니다.</p>
+      </div>
+    </section>
+
+    <div class="kp-container">
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>노출 로그 12줄을 <code>ad.impression</code> 토픽에 넣습니다. partition 수 · consumer 수 · key를 바꾸면 12줄이 어느 칸으로 들어가고 누가 그 칸을 맡는지 바로 다시 그려집니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>"Kafka를 쓴다"는 말로는 아무것도 안 정해집니다. 실제로 정해지는 것은 <strong>partition 수가 처리량 상한</strong>이라는 것, 그리고 <strong>key가 순서 보장 범위</strong>라는 것 둘입니다. 둘 다 나중에 바꾸면 대가가 따릅니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text">partition을 <strong>3</strong>, consumer를 <strong>5</strong>로 — 두 명이 아무 칸도 못 맡습니다. 사람을 늘려도 처리량이 안 늘어나는 지점입니다.</span></li>
+        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 보세요. 인기 광고 <code>9931</code>이 있는 칸만 부풀고 빈 칸이 생깁니다.</span></li>
+        <li><span class="step-text">key를 <strong>없음</strong>으로 — 가장 고르게 퍼지지만, 같은 요청의 노출과 클릭이 다른 칸으로 흩어집니다.</span></li>
+        <li><span class="step-text">key를 <code>req_id</code>로 되돌리고 partition을 <strong>4 → 8</strong>로 밀어 보세요. 옮겨간 줄에 <code>↰</code> 가 붙습니다 — 순서 보장이 끊기는 순간입니다.</span></li>
+      </ol>
+
+      <div class="kp-intro">
+        <strong>설정</strong> — bidder가 노출 한 건마다 로그 한 줄을 <code>ad.impression</code> 토픽에 씁니다.
+        한 줄에 들어 있는 것은 요청 식별자 <code>req_id</code>, 광고 소재 번호 <code>ad_id</code>, 지면 이름 세 가지입니다.
+        표본 12줄은 실제 트래픽처럼 <strong>일부러 한쪽으로 쏠려</strong> 있습니다 — 광고 <code>9931</code>이 혼자 4건입니다.
+        읽는 쪽은 <strong>같은 consumer group에 속한 consumer들</strong>입니다. 한 칸은 그 그룹 안에서 언제나 한 명만 맡습니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="kp-controls">
+        <div class="kp-slider-row">
+          <label for="kp-part">partition 수</label>
+          <input id="kp-part" type="range" min="1" max="12" value="4">
+          <output id="kp-part-v" for="kp-part">4</output>
+        </div>
+        <div class="kp-slider-row">
+          <label for="kp-cons">consumer 수</label>
+          <input id="kp-cons" type="range" min="1" max="6" value="2">
+          <output id="kp-cons-v" for="kp-cons">2</output>
+        </div>
+        <fieldset class="kp-key-row">
+          <legend class="sr-only">key로 무엇을 쓰나</legend>
+          <span aria-hidden="true">key로 무엇을 쓰나</span>
+          <label><input type="radio" name="kp-key" value="req_id" checked> <code>req_id</code></label>
+          <label><input type="radio" name="kp-key" value="ad_id"> <code>ad_id</code></label>
+          <label><input type="radio" name="kp-key" value="none"> 없음</label>
+        </fieldset>
+      </div>
+
+      <div id="kp-verdict" class="kp-verdict" aria-live="polite"></div>
+
+      <div id="kp-shuffle" class="kp-shuffle" aria-live="polite" hidden>
+        <span id="kp-shuffle-text" class="kp-shuffle-text"></span>
+        <button id="kp-shuffle-reset" class="kp-shuffle-btn" type="button">지금 배정을 기준으로</button>
+      </div>
+
+      <div id="kp-legend" class="kp-legend"></div>
+      <div id="kp-grid" class="kp-grid"></div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>처리량 상한은 partition 수가 정한다</strong> — 한 칸은 그룹 안에서 한 명만 맡는다. consumer를 칸 수보다 많이 두면 남는 사람은 놀기만 한다. 사람을 늘려서 밀린 것을 따라잡으려면 칸부터 늘려야 한다.</li>
+            <li><strong>순서 보장 범위는 key가 정한다</strong> — 같은 key는 늘 같은 칸으로 가고, 한 칸 안에서만 순서가 지켜진다. key를 빼면 가장 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 갈라진다. <code>ad_id</code>로 잡으면 순서는 광고 단위로 묶이지만 인기 광고 칸만 부푼다.</li>
+            <li><strong>칸 수는 나중에 바꾸기 어렵다</strong> — 칸이 몇 개냐가 나눗셈에 들어가므로, 칸 수를 바꾸는 순간 같은 key가 다른 칸으로 옮겨간다. 옮겨간 줄은 예전 칸에 남은 줄과 순서가 더 이상 이어지지 않는다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          토픽을 새로 만들 때 정해야 하는 것은 사실상 이 데모의 세 칸입니다.
+          그중 되돌리기 가장 비싼 것이 partition 수라서, 보통 지금 필요한 수보다 넉넉하게 잡고 시작합니다.
+        </p>
+        <ul>
+          <li><strong>칸 수 정하기:</strong> 초당 들어오는 줄 수를 consumer 한 명이 감당하는 처리량으로 나눈 값이 최소치입니다. 여기에 앞으로 늘어날 몫을 얹습니다. 칸은 늘릴 수 있지만, 늘리는 순간 기존 key의 배정이 흔들립니다.</li>
+          <li><strong>key 정하기:</strong> "무엇 단위로 순서가 지켜져야 하나"를 먼저 답합니다. 노출과 클릭을 이어 붙일 거라면 <code>req_id</code>, 광고별 카운터를 갱신할 거라면 <code>ad_id</code>입니다. 쏠림이 걱정되면 key 뒤에 작은 번호를 붙여 몇 갈래로 쪼개고, 대신 그만큼 순서 보장 범위가 좁아지는 것을 받아들입니다.</li>
+          <li><strong>밀릴 때 진단:</strong> 특정 consumer만 밀린다면 사람을 늘리기 전에 칸별 줄 수부터 봅니다. 한 칸만 부풀어 있으면 원인은 인원이 아니라 key입니다. 모든 칸이 고르게 밀려 있을 때만 칸과 인원을 함께 늘리는 것이 답이 됩니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=ad-log-system" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">광고 로그 시스템 완전 해부</span>
+              <span class="demo-next-excerpt">로그를 잃지 않고 옮기는 수집 계층과, 필드가 바뀌어도 어제 로그가 안 깨지는 스키마 규칙</span>
+            </a>
+            <a href="post.html?id=ad-log-pipeline" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">광고 시스템 로그 파이프라인</span>
+              <span class="demo-next-excerpt">요청 하나가 남기는 로그 10종과, <code>request_id</code>가 그 전부를 잇는 유일한 끈이라는 것</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/kafka-partition-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

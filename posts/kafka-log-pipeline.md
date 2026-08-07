@@ -30,26 +30,35 @@
 
 **로그를 넷에게 나르는 방법은 Kafka 말고도 셋이 있다. 셋 다 돌아가긴 하는데, 각자 다른 자리에서 줄이 사라진다.**
 
-셋을 차례로 놓고 어디서 끊기는지 센다. 앞으로 나오는 볼륨은 하나로 고정한다. 노출 로그는 하루 2억 2,800만 줄이고, 초로 나누면 초당 2,639건이다. 응찰 요청은 매체 열 곳을 합쳐 초당 30,000건이고, `bidder` 는 대당 1,000건을 받아 30대다. 노출 2,639건은 그중 낙찰돼 실제로 뜬 것만 센 수다. 전부 가상 수치다.
+셋을 차례로 놓고 어디서 끊기는지 센다. 앞으로 나오는 볼륨은 하나로 고정한다. 노출 로그는 하루 2억 2,800만 줄이고, 초로 나누면 평시 초당 2,639건이다. 응찰 요청은 매체 열 곳을 합쳐 평시 초당 30,000건이고, `bidder` 는 대당 1,000건을 받으니 평시 30대다. 두 값은 같은 순간을 잰 것이다. 노출 2,639건은 응찰 30,000건 중 낙찰돼 실제로 뜬 것만 센 수다. 전부 가상 수치다.
 
 ### ① `bidder` 가 네 팀 서버를 직접 부른다
 
 가장 먼저 떠오르는 방법이다. 줄이 생기면 그 자리에서 네 곳에 HTTP로 알린다. 새 팀이 생기면 주소를 한 줄 더 넣으면 된다.
 
-문제는 시간이다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. 앞단(Ingress·API Gateway)이 1.4ms를 쓰고 `bidder` 의 응찰 계산이 8ms를 쓴다고 하자. 사내망 왕복과 받는 쪽 처리를 합쳐 한 호출을 2ms로 잡는다.
+문제는 시간이다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. 앞단(Ingress·API Gateway)이 1.4ms를 쓴다. `bidder` 의 응찰 계산은 평소 8ms 안팎이고, 그 위에 상한을 10ms 로 잡는다.
+
+**재는 쪽은 상한이다.** 12ms를 넘긴 응답은 매체가 버린다. 평소값으로 재면 버려지는 건이 셈에 안 들어온다. 사내망 왕복과 받는 쪽 처리를 합쳐 한 호출을 2ms로 잡는다.
 
 | 이 요청 한 건이 쓰는 시간 | ms |
 |---|---|
 | 앞단 (Ingress · API Gateway) | 1.4 |
-| `bidder` 응찰 계산 | 8.0 |
+| `bidder` 응찰 계산 (상한) | 10.0 |
 | 학습팀 서버 호출 | 2.0 |
 | 정산팀 서버 호출 | 2.0 |
 | 대시보드 서버 호출 | 2.0 |
 | 광고주 리포트 서버 호출 | 2.0 |
-| **합계** | **17.4** |
+| **합계** | **19.4** |
 | **예산** | **12.0** |
 
-2ms가 과하다고 볼 수도 있다. 한 호출이 0.6ms로 아주 빠르다고 해 보자. 그러면 1.4 + 8.0 + 0.6×4 = 11.8ms로 겨우 들어간다. 남는 여유가 0.2ms다. 받는 쪽 넷 중 하나만 조금 느려져도 그 여유가 없어진다. 우리 응답 시간이 우리가 관리하지 않는 서버 넷에 매달린다.
+2ms가 과하다고 볼 수도 있다. 한 호출이 0.4ms로 아주 빠르다고 해 보자. 네 번이면 1.6ms다.
+
+| 무엇으로 재나 | 합계 | 예산 12ms |
+|---|---|---|
+| 평소 8.0ms | 1.4 + 8.0 + 1.6 = 11.0ms | 여유 1.0ms |
+| 상한 10.0ms | 1.4 + 10.0 + 1.6 = 13.0ms | 초과 1.0ms |
+
+평소로 재면 들어가고 상한으로 재면 넘친다. 재는 쪽이 상한이니 답은 "안 들어간다" 다. 한 호출을 0.4ms까지 깎아도 그렇다. 게다가 0.4ms는 받는 쪽 넷이 다 빠를 때의 값이다. 우리 응답 시간이 우리가 관리하지 않는 서버 넷에 매달린다.
 
 응답을 안 기다리면 되지 않느냐고 물을 수 있다. 실제로 그렇게 만든다. 그러면 12ms는 지켜진다. 대신 다른 것이 `bidder` 안으로 들어온다.
 
@@ -74,7 +83,7 @@
 
 초당 2,639줄을 30대가 나눠 받으면 대당 약 88줄이다. 5분은 300초이니 대당 26,400줄이 로컬에 쌓인다. 아직 아무 데도 안 옮겨진 줄이다.
 
-저녁 피크가 끝나면 오토스케일이 30대를 10대로 줄인다. 20대가 내려간다. 내려가는 시점은 옮기는 주기와 아무 상관이 없다. 평균 절반인 13,200줄이 남아 있다고 보면 20대에서 264,000줄이다.
+밤에 트래픽이 평시 아래로 내려가면 오토스케일이 30대를 20대로 줄인다. 10대가 내려간다. 내려가는 시점은 옮기는 주기와 아무 상관이 없다. 평균 절반인 13,200줄이 남아 있다고 보면 10대에서 132,000줄이다.
 
 종료 훅에서 마지막으로 한 번 옮기면 되지 않느냐. 정상 종료에는 된다. 디스크가 차거나 커널이 패닉을 내면 훅이 안 돈다. 훅에게 주어지는 시간도 정해져 있고, 그 시간을 넘기면 강제로 종료된다.
 
@@ -104,62 +113,62 @@
 그리고 이건 튜닝으로 안 없어진다. 요구가 정면으로 충돌하기 때문이다. 정산팀은 이 테이블을 1년 남기길 원한다. 대시보드는 최근 5분만 빠르면 되는데, 테이블이 커질수록 그 5분 쿼리가 느려진다. 한쪽을 맞추면 다른 쪽이 나빠진다. 한 테이블이 네 팀의 요구를 동시에 만족할 수 없다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 700 274" role="img" aria-label="Kafka 없이 로그를 나르는 세 방법을 위아래로 나란히 놓은 그림. 세 줄 다 왼쪽의 bidder 에서 출발하지만 각각 다른 지점에서 끊겨, 오른쪽의 학습팀·정산팀·대시보드·광고주 리포트 네 칸에 실선이 하나도 닿지 않는다." style="width:100%; max-width:680px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 294" role="img" aria-label="Kafka 없이 로그를 나르는 세 방법을 위아래로 나란히 놓은 그림. 세 줄 다 왼쪽의 bidder 에서 출발하지만 각각 다른 지점에서 끊겨, 오른쪽의 학습팀·정산팀·대시보드·광고주 리포트 네 상자에 실선이 하나도 닿지 않는다. 줄마다 아래에 끊긴 이유가 숫자로 적혀 있다 — 합계 19.4ms 로 예산 12ms 초과, 10대 축소에 132,000줄 유실, 마감 스캔 중 쓰기 실패." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="kf1-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<rect x="558" y="16" width="136" height="244" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="626" y="32" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">이 줄을 읽어야 하는 곳</text>
-<rect x="568" y="42" width="116" height="44" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="626" y="62" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">학습팀</text>
-<text x="626" y="77" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">하루 1회면 된다</text>
-<rect x="568" y="94" width="116" height="44" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="626" y="114" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">정산팀</text>
-<text x="626" y="129" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">한 건도 못 버린다</text>
-<rect x="568" y="146" width="116" height="44" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="626" y="166" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">대시보드</text>
-<text x="626" y="181" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">몇 초 안</text>
-<rect x="568" y="198" width="116" height="44" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="626" y="218" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">광고주 리포트</text>
-<text x="626" y="233" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">몇 분 안</text>
-<text x="8" y="34" style="font-size:11px; fill:var(--text-primary)">① 네 팀 서버를 직접 부른다</text>
-<rect x="8" y="42" width="84" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="50" y="67" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<line x1="92" y1="62" x2="114" y2="62" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
-<rect x="120" y="42" width="150" height="40" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="195" y="61" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">HTTP 호출 4번</text>
-<text x="195" y="75" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">한 번 2ms · 넷이면 8ms</text>
-<line x1="270" y1="62" x2="306" y2="62" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
-<line x1="312" y1="56" x2="324" y2="68" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="324" y1="56" x2="312" y2="68" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="334" y1="62" x2="556" y2="62" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
-<text x="440" y="57" text-anchor="middle" style="font-size:9.5px; fill:var(--state-bad)">합계 17.4ms · 예산 12ms 초과</text>
-<text x="8" y="120" style="font-size:11px; fill:var(--text-primary)">② 파일에 쓰고 나중에 옮긴다</text>
-<rect x="8" y="128" width="84" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="50" y="153" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<line x1="92" y1="148" x2="110" y2="148" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
-<rect x="114" y="128" width="170" height="40" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="199" y="147" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">인스턴스 안 로컬 파일</text>
-<text x="199" y="161" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">5분마다 한 번 옮긴다</text>
-<line x1="284" y1="148" x2="320" y2="148" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
-<line x1="326" y1="142" x2="338" y2="154" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="338" y1="142" x2="326" y2="154" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="348" y1="148" x2="556" y2="148" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
-<text x="450" y="143" text-anchor="middle" style="font-size:9.5px; fill:var(--state-bad)">20대 축소 · 264,000줄 유실</text>
-<text x="8" y="206" style="font-size:11px; fill:var(--text-primary)">③ DB 한 테이블에 바로 넣는다</text>
-<rect x="8" y="214" width="84" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="50" y="239" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<line x1="92" y1="234" x2="110" y2="234" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
-<rect x="114" y="214" width="200" height="40" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="214" y="233" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">DB 한 테이블</text>
-<text x="214" y="247" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">인덱스 4개 · 초당 13,195군데</text>
-<line x1="314" y1="234" x2="350" y2="234" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
-<line x1="356" y1="228" x2="368" y2="240" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="368" y1="228" x2="356" y2="240" style="stroke:var(--state-bad); stroke-width:2.4"/>
-<line x1="378" y1="234" x2="556" y2="234" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
-<text x="467" y="229" text-anchor="middle" style="font-size:9.5px; fill:var(--state-bad)">마감 스캔 중 쓰기 실패</text>
+<rect x="350" y="18" width="146" height="268" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="423" y="38" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">읽어야 하는 곳</text>
+<rect x="356" y="52" width="134" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="423" y="71" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">학습팀</text>
+<text x="423" y="88" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">하루 1회면 된다</text>
+<rect x="356" y="110" width="134" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="423" y="129" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">정산팀</text>
+<text x="423" y="146" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">한 건도 못 버린다</text>
+<rect x="356" y="168" width="134" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="423" y="187" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">대시보드</text>
+<text x="423" y="204" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">몇 초 안</text>
+<rect x="356" y="226" width="134" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="423" y="245" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">광고주 리포트</text>
+<text x="423" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">몇 분 안</text>
+<text x="6" y="30" style="font-size:12.5px; fill:var(--text-primary)">① 네 팀 서버를 직접 부른다</text>
+<rect x="6" y="38" width="68" height="32" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="40" y="58" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<line x1="74" y1="54" x2="90" y2="54" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
+<rect x="94" y="38" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="169" y="58" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">HTTP 호출 4번</text>
+<line x1="244" y1="54" x2="252" y2="54" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
+<line x1="256" y1="48" x2="268" y2="60" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="268" y1="48" x2="256" y2="60" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="274" y1="54" x2="348" y2="54" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
+<text x="6" y="86" style="font-size:12.5px; fill:var(--text-muted)">한 번 2ms · 넷이면 8ms</text>
+<text x="6" y="104" style="font-size:12.5px; fill:var(--state-bad)">합계 19.4ms · 예산 12ms 초과</text>
+<text x="6" y="122" style="font-size:12.5px; fill:var(--text-primary)">② 파일에 쓰고 나중에 옮긴다</text>
+<rect x="6" y="130" width="68" height="32" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="40" y="150" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<line x1="74" y1="146" x2="90" y2="146" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
+<rect x="94" y="130" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="169" y="150" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">로컬 파일</text>
+<line x1="244" y1="146" x2="252" y2="146" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
+<line x1="256" y1="140" x2="268" y2="152" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="268" y1="140" x2="256" y2="152" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="274" y1="146" x2="348" y2="146" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
+<text x="6" y="178" style="font-size:12.5px; fill:var(--text-muted)">5분마다 한 번 옮긴다</text>
+<text x="6" y="196" style="font-size:12.5px; fill:var(--state-bad)">10대 축소 · 132,000줄 유실</text>
+<text x="6" y="214" style="font-size:12.5px; fill:var(--text-primary)">③ DB 한 테이블에 바로 넣는다</text>
+<rect x="6" y="222" width="68" height="32" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="40" y="242" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
+<line x1="74" y1="238" x2="90" y2="238" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf1-arr)"/>
+<rect x="94" y="222" width="150" height="32" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="169" y="242" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">DB 한 테이블</text>
+<line x1="244" y1="238" x2="252" y2="238" style="stroke:var(--state-bad); stroke-width:2.4; stroke-dasharray:5 4"/>
+<line x1="256" y1="232" x2="268" y2="244" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="268" y1="232" x2="256" y2="244" style="stroke:var(--state-bad); stroke-width:2.4"/>
+<line x1="274" y1="238" x2="348" y2="238" style="stroke:var(--text-muted); stroke-width:1; stroke-dasharray:2 5"/>
+<text x="6" y="270" style="font-size:12.5px; fill:var(--text-muted)">인덱스 4개 · 초당 13,195군데</text>
+<text x="6" y="288" style="font-size:12.5px; fill:var(--state-bad)">마감 스캔 중 쓰기 실패</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">굵은 실선은 실제로 도는 길, 가는 점선은 가야 하는데 못 가는 길이다. 방법을 셋 다 바꿔 봐도 맨 왼쪽 bidder 칸과 맨 오른쪽 네 칸은 그대로다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">굵은 실선은 실제로 도는 길, 가는 점선은 가야 하는데 못 가는 길이다. 줄마다 아래 두 줄이 그 방법이 쓰는 값과 끊기는 이유다. 방법을 셋 다 바꿔 봐도 맨 왼쪽 bidder 상자와 맨 오른쪽 네 상자는 그대로다.</figcaption>
 </figure>
 
 세 방법을 한 표에 놓으면 이렇다.
@@ -167,7 +176,7 @@
 | 방법 | 어디서 줄이 사라지나 | 한 번에 얼마나 |
 |---|---|---|
 | ① 직접 HTTP | 예산 초과 · 받는 쪽이 멈춰 있는 동안 | 학습팀 배포 20초당 52,780줄 |
-| ② 파일 + 옮기기 | 옮기기 전에 인스턴스가 내려갈 때 | 20대 축소 1회당 264,000줄 |
+| ② 파일 + 옮기기 | 옮기기 전에 인스턴스가 내려갈 때 | 10대 축소 1회당 132,000줄 |
 | ③ DB 직행 | 무거운 읽기가 도는 동안 쓰기가 밀려서 | 마감 스캔이 도는 시간만큼 |
 
 셋은 끊기는 자리가 다른데 원인은 하나다. **보내는 쪽이 받는 쪽 사정을 알아야 한다는 것이다.**
@@ -221,11 +230,11 @@ producer.send(
 
 ### `send()` 가 안 기다린다
 
-1절 ①은 네 팀을 부르느라 8.0ms 를 더 써서 합계 17.4ms, 예산 12ms 를 넘겼다. `send()` 는 그 자리에 네트워크 왕복을 안 놓는다. 직렬화와 메모리 복사만 남아 합계 9.4ms, 여유 2.6ms 다. 이건 `bidder` 평소 8.0ms 로 잰 값이다. 상한 10.0ms 로 재면 11.4ms 에 여유 0.6ms 다.
+1절 ①은 네 팀 호출에 2.0ms씩 8.0ms 를 얹어 합계 19.4ms, 예산 12ms 를 넘겼다. `send()` 는 그 자리에 네트워크 왕복을 안 놓는다. 직렬화와 메모리 복사만 남는데 둘 다 0.1ms 아래라 셈에서 뺀다. 1절이 정한 대로 상한으로 재면 합계 11.4ms 에 여유 0.6ms 다. 평소 8.0ms 로 재면 9.4ms 에 여유 2.6ms 다.
 
 1절 ①도 응답을 안 기다리면 12ms 는 지켜졌다. 대신 큐가 `bidder` 안으로 들어왔고, 얼마나 쌓을지·넘치면 어쩔지·재시도는 몇 번일지를 받는 쪽마다 정해야 했다. producer 는 답이 한 벌이다.
 
-기다리는 건 버퍼가 꽉 찼을 때뿐이다. 동작은 클라이언트마다 다르다 — 자바 클라이언트는 `max.block.ms` 만큼 기다렸다 예외를 던진다. 기본값 60초는 지어낸 값이 아니고, 12ms 위에서는 멈춘 것과 같다.
+기다리는 건 버퍼가 꽉 찼을 때, 그리고 topic 메타데이터가 아직 없을 때다. 둘째 쪽이 더 위험하다. 첫 전송이거나 메타데이터를 새로 받아 오는 중이거나 브로커에 못 닿으면, 버퍼가 텅 비어 있어도 `send()` 가 붙잡힌다. 동작은 클라이언트마다 다르다 — 자바 클라이언트는 두 경우를 합쳐 `max.block.ms` 만큼 기다렸다 예외를 던진다. 기본값 60초는 지어낸 값이 아니고, 12ms 위에서는 멈춘 것과 같다.
 
 ### `acks` — 무엇을 성공으로 칠까
 
@@ -239,11 +248,11 @@ producer.send(
 
 지연 열은 `send()` 가 아니라 백그라운드 전송 시간이다. 입찰 경로는 어느 줄이든 평소 9.4ms · 상한 11.4ms 로 같다.
 
-관행은 노출·클릭에 `1`, 정산·전환에 `all` 이다. 법이 아니라 판단이고 근거는 잃으면 무엇을 잃느냐다. 2억 2,800만 줄에서 몇 줄 빠져도 pCTR 은 그대로지만 정산은 매체에 줄 돈이 틀린다.
+관행은 노출·클릭에 `1`, 정산·전환에 `all` 이다. 법이 아니라 판단이고 근거는 잃으면 무엇을 잃느냐다. 2억 2,800만 줄에서 몇 줄 빠져도 pCTR 은 그대로지만 정산은 매체에 줄 돈이 틀린다. 다만 자바 클라이언트는 3.0부터 기본값이 `acks=all` 이다. `1` 을 적는 건 이제 기본값을 내리는 쪽이다.
 
 그런데 우리 `ad.impression` 은 `1` 로 두면 안 된다. 이 topic 을 정산팀이 읽기 때문이다(1절). **한 topic 을 여러 팀이 읽으면 `acks` 는 가장 엄한 읽는 쪽에 맞춘다.**
 
-`all` 의 "거의 없다"에도 조건이 붙는다. 따라잡은 복제본(ISR)이 리더 하나로 줄면 `all` 이 `1` 과 같아지니 `min.insync.replicas` 를 2 이상으로 둔다. 중복은 `acks` 밖의 일이라 `enable.idempotence` 몫이다.
+`all` 의 "거의 없다"에도 조건이 붙는다. 따라잡은 복제본(ISR)이 리더 하나로 줄면 `all` 이 `1` 과 같아지니 `min.insync.replicas` 를 2 이상으로 둔다. 중복은 `acks` 밖의 일이라 `enable.idempotence` 몫이다. 다만 이 둘이 붙어 있다. 자바 3.0부터 `enable.idempotence` 도 기본값이 `true` 인데, `acks=1` 만 적으면 그것이 말없이 꺼진다. 둘을 같이 적으면 `ConfigException` 이 난다. `1` 로 내리는 순간 중복 방지도 같이 내려간다는 뜻이다.
 
 버퍼에 남은 줄은 `bidder` 가 죽으면 브로커에 닿은 적이 없다. `flush` 로 비우고 내려가되, 1절 ②처럼 정상 종료에만 된다.
 
@@ -328,7 +337,7 @@ consumer 한 명이 초당 800줄을 처리한다고 하자. 지어낸 값이다
 
 **partition 번호 = hash(key) % partition 수**
 
-해시 함수도, key 를 안 넘겼을 때의 동작도 클라이언트와 버전마다 다르다. 자바 클라이언트는 murmur2 를 쓰고, 2.4부터는 key 가 없으면 배치 하나를 한 partition 에 몰아 보낸다.
+해시 함수도, key 를 안 넘겼을 때의 동작도 클라이언트와 버전마다 다르다. 자바 클라이언트는 murmur2 를 쓰고, 2.4부터는 key 가 없으면 한 partition 에 몰아 보낸다. 3.3부터 그 "몰아 보내는" 단위가 배치 하나에서 `batch.size` 를 채울 때까지로 바뀌었고, `partitioner.class` 기본값도 빈 값이 됐다.
 
 **Kafka 는 topic 전체의 순서를 지켜 주지 않는다. 순서는 한 partition 안에서만 지켜진다.** partition 이 12개면 줄이 12개로 따로 서고, 그 12개 사이에는 아무 약속이 없다.
 
@@ -342,7 +351,7 @@ key 를 고르는 일은 "무엇 단위로 순서가 지켜지나"를 고르는 
 # 이 글의 볼륨은 하루 2억 2,800만 줄(초당 2,639건)이다. 아래 10만 줄은 분포만
 #   보려고 뽑은 표본이고, ad_id 쏠림도 partition 12도 전부 지어낸 값이다.
 # 해시는 재현되라고 직접 짠 것이다. 자바 클라이언트 기본 partitioner 는 murmur2 를
-#   쓰고, key 가 없을 때도 2.4부터 라운드로빈이 아니라 배치 단위 sticky 다.
+#   쓰고, key 가 없을 때도 2.4부터 라운드로빈이 아니라 sticky 다(3.3부터 batch.size 단위).
 from unicodedata import east_asian_width
 import random
 
@@ -455,7 +464,7 @@ sequenceDiagram
   participant T as 학습팀
   participant D as 대시보드
   B->>K: send(key=req_id)
-  Note over K: hash(key) → partition 7<br/>offset 8,412
+  Note over K: hash(key) → partition 5<br/>offset 8,412
   T->>K: poll()
   K-->>T: 500건 8,412~8,911
   T->>K: commit 8,912
@@ -464,7 +473,7 @@ sequenceDiagram
   Note over D: group이 달라서<br/>학습팀과 무관
 ```
 
-학습팀이 partition 7 을 8,912 까지 읽었다고 적어도 대시보드가 적어 둔 번호는 그대로다. 브로커는 읽혔다고 줄을 지우지 않는다. 지우는 기준은 따로 있고 6절에서 센다.
+학습팀이 partition 5 를 8,912 까지 읽었다고 적어도 대시보드가 적어 둔 번호는 그대로다. 브로커는 읽혔다고 줄을 지우지 않는다. 지우는 기준은 따로 있고 6절에서 센다.
 
 그래서 되감기가 된다. 학습팀이 피처를 하나 바꿔 3일치를 다시 읽는다고 하자. 2.28억 × 3 = 6.84억 줄이다. 그동안 정산팀이 적어 둔 번호는 자기 자리에 그대로 있다. 1절 ③의 DB 였다면 이 6.84억 줄 스캔이 정산팀 쿼리와 같은 테이블 위에서 돌았다.
 
@@ -499,7 +508,8 @@ flowchart TD
 # 상황: 정산팀 group 이 ad.impression 을 읽는다. consumer 는 12명이다(4절 표).
 #   한 번에 500건씩 받아 처리하고 offset 을 올린다. 하루 456,000번 받는다.
 #   consumer 는 하루 3번 죽는다 — 배포 2회 + 장애 1회. 죽는 자리는 배치 중간이다.
-# 하루 2.28억 줄과 bid 182.4 만 1절에서 가져왔고 나머지는 전부 지어낸 값이다.
+# 하루 2.28억 줄과 bid 182.4 는 1절에서 가져왔다. 500 과 5초는 자바 클라이언트
+#   기본값이고(max.poll.records · auto.commit.interval.ms) 나머지는 지어낸 값이다.
 from unicodedata import east_asian_width
 
 ROWS, BATCH, CONSUMERS, DEATHS = 228_000_000, 500, 12, 3
@@ -507,7 +517,7 @@ POLLS = ROWS // BATCH                  # 456,000번
 PRICE = 182.4 / 1000                   # bid 는 1,000회 노출 기준 가격이다
 REVENUE = ROWS * PRICE
 PER_SEC = ROWS / 86_400 / CONSUMERS    # consumer 한 명이 초당 받는 줄
-AUTO_SEC = 5                           # auto commit 간격. 가정값이다
+AUTO_SEC = 5                           # auto commit 간격. 자바 기본값이다
 
 def w(s):                              # 한글은 모노스페이스에서 두 칸을 먹는다
     return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
@@ -551,7 +561,7 @@ print(f"→ auto commit 은 셋째 선택지가 아니다. 중복을 {auto / man
 # → auto commit 은 셋째 선택지가 아니다. 중복을 2.2배로 키운 '처리 후' 다.
 ```
 
-표에 안 들어간 것이 하나 있다. 위 계산은 하나가 죽었을 때 그 한 명 몫만 밀린다고 본 것이다. 실제로는 consumer 하나가 빠지면 group 이 partition 을 다시 나눈다. 이때 12개를 전부 놓았다 다시 받는 방식이면 미확정 구간이 12개 몫이 된다. 250 × 12 = 3,000건이다. 하루 세 번이면 9,000건, 1,641.6원이다. 옮겨가는 것만 놓는 방식이면 250건 그대로다. **어느 쪽인지는 클라이언트 버전과 설정에 달렸다.** 정산팀이 못 견디는 자리가 여기다. 금액이 작은 게 문제가 아니라 그 금액을 미리 못 정하는 게 문제다.
+표에 안 들어간 것이 하나 있다. 위 계산은 하나가 죽었을 때 그 한 명 몫만 밀린다고 본 것이다. 실제로는 consumer 하나가 빠지면 group 이 partition 을 다시 나눈다. 이때 12개를 전부 놓았다 다시 받는 방식이면 미확정 구간이 12개 몫이 된다. 250 × 12 = 3,000건이다. 하루 세 번이면 9,000건, 1,641.6원이다. 옮겨가는 것만 놓는 방식이면 250건 그대로다. **어느 쪽인지는 클라이언트 버전과 설정에 달렸다.** 3,000건은 상한이기도 하다. 놓기 직전에 commit 을 한 번 하면 그만큼 줄고, 자바는 `enable.auto.commit=true` 면 그 자리에서 알아서 한다. 직접 적는 쪽은 `onPartitionsRevoked` 에서 한다. 둘 다 안 할 때가 3,000건이다. 정산팀이 못 견디는 자리가 여기다. 금액이 작은 게 문제가 아니라 그 금액을 미리 못 정하는 게 문제다.
 
 중복은 학습 쪽에도 닿는다. 같은 노출이 두 줄이면 그 광고의 클릭률 분모만 늘어 추정이 아래로 밀린다.
 
@@ -565,7 +575,7 @@ print(f"→ auto commit 은 셋째 선택지가 아니다. 중복을 {auto / man
 
 셋째, 그 시점을 코드가 못 정한다. 언제 올라갈지가 시계에 달려 있어서 "이 500건을 다 넣었으니 이제 올린다"를 쓸 수 없다. 정산팀에 필요한 건 그 문장이다.
 
-처리를 다른 스레드에 넘기면 방향까지 뒤집힌다. 아직 처리 중인 줄의 번호가 먼저 올라가 중복이 아니라 유실이 된다. `enable.auto.commit` 도 간격도 기본값이 클라이언트와 버전마다 다르니 쓰는 것을 열어 확인한다.
+처리를 다른 스레드에 넘기면 방향까지 뒤집힌다. 아직 처리 중인 줄의 번호가 먼저 올라가 중복이 아니라 유실이 된다. 기본값은 대체로 같다 — 자바·librdkafka·kafka-python 이 셋 다 켜짐에 5초다. Go 의 Sarama 만 1초라 미확정 구간이 5분의 1이다.
 
 ### 2절이 미뤄 둔 중복
 
@@ -601,7 +611,9 @@ commit 시점이 정해져도 되감기에는 조건이 하나 붙는다. 4절�
 
 4절이 미뤄 둔 기준이 이것이다. 네 group 이 다 읽어도 줄은 그 자리에 있다. 브로커가 보는 것은 둘뿐이다 — 얼마나 오래됐나, 얼마나 쌓였나.
 
-설정 이름은 `log.retention.ms` 와 `log.retention.bytes` 다. 크기 쪽은 partition 마다 센다. 아파치 카프카 브로커 기본값은 나이 7일인데, 배포판과 매니지드 서비스는 다르게 잡아 두니 쓰는 것을 열어 확인한다. key 마다 마지막 값만 남기는 `cleanup.policy=compact` 도 있지만 우리 topic 에는 안 맞는다. 노출은 한 건 한 건이 다 필요한 줄이다.
+설정 이름은 `log.retention.ms` 와 `log.retention.bytes` 다. 크기 쪽은 partition 마다 센다. 아파치 카프카 브로커 기본값은 나이 7일이다. 그 7일은 `log.retention.ms` 에 적혀 있지 않다. `log.retention.ms` 자체의 기본값은 비어 있고, 7일은 `log.retention.hours=168` 에서 나온다. 셋이 다 적혀 있으면 ms · minutes · hours 순으로 이긴다. topic 하나만 다르게 두려면 이름이 `retention.ms` · `retention.bytes` 로 바뀐다. 배포판과 매니지드 서비스는 또 다르게 잡아 두니 쓰는 것을 열어 확인한다.
+
+`cleanup.policy=compact` 도 있다. key 마다 마지막 값이 반드시 남는 방식이다. 옛 값이 곧바로 없어진다는 뜻은 아니다 — 지금 쓰고 있는 구간과 아직 청소 안 한 구간에는 그대로 있고, 청소를 언제 도는지는 `min.cleanable.dirty.ratio` 가 정한다. key 없는 줄은 아예 거부한다. 어느 쪽이든 우리 topic 에는 안 맞는다. 노출은 한 건 한 건이 다 필요한 줄이다.
 
 그래서 며칠인가. 5절이 넘긴 질문이다. 디스크와 되감기를 같이 센다.
 
@@ -647,8 +659,9 @@ print(f"보존 {KEEP}일 · 학습팀이 멈췄다 돌아왔을 때")
 row(("멈춘 기간", 11), ("되감기", 17), ("4명이면", 12), (f"{MAX_N}명이면", 12))
 for d in [1, 3, 7, 10]:
     verdict = "전부 된다" if d < KEEP else ("경계에 걸린다" if d == KEEP else f"앞 {d - KEEP}일치가 없다")
+    readable = min(d, KEEP)            # 보존 창 밖은 이미 지워졌다. 읽을 수 있는 만큼만 센다
     row((f"{d}일", 11), (verdict, 17),
-        (f"{catch_up(d, 4):.1f}일", 12), (f"{catch_up(d, MAX_N):.1f}일", 12))
+        (f"{catch_up(readable, 4):.1f}일", 12), (f"{catch_up(readable, MAX_N):.1f}일", 12))
 print()
 
 big = sum(n * BYTES * RF * 30 / GB for n in TOPICS.values()) / BROKERS
@@ -672,7 +685,7 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 #         1일        전부 된다       4.7일       0.4일
 #         3일        전부 된다      14.1일       1.1일
 #         7일    경계에 걸린다      32.9일       2.7일
-#        10일  앞 3일치가 없다      47.0일       3.8일
+#        10일  앞 3일치가 없다      32.9일       2.7일
 #
 # → 7일을 30일로 늘리면 디스크가 4.3배다. 브로커 한 대가 690.8GB 를 들어야 해서 500GB 에 안 들어간다.
 # → 지우는 기준은 나이지 읽혔는지가 아니다. 네 group 이 다 읽어도 7일은 그대로 남는다.
@@ -739,7 +752,11 @@ print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {
 
 228만 ÷ 2억 2,800만 = 1.00%다. 이 값이 pCTR 모델이 맞히려는 것이다.
 
-**3절이 `req_id` 를 고른 이유가 여기서 값을 낸다.** 두 topic 이 같은 key 를 쓰고 partition 수도 같은 12다. `hash("r-8f21") % 12` 는 양쪽에서 같은 번호를 낸다. 노출과 클릭이 같은 자리에 있으니 조인이 partition 하나 안에서 끝난다. key 를 안 넣었으면 클릭 한 건마다 partition 12개를 다 뒤져야 한다.
+**3절이 `req_id` 를 고른 이유가 여기서 값을 낸다.** 다만 조건이 셋이다. 두 topic 이 같은 key 를 쓸 것, partition 수가 둘 다 12일 것, 그리고 **보내는 쪽이 같은 partitioner 를 쓸 것.**
+
+셋째가 잘 빠진다. `ad.impression` 은 `bidder` 가 넣고 `ad.click` 은 매체를 거쳐 `log-collector` 가 넣는다(도입). 서비스가 둘이면 클라이언트도 둘일 수 있고, 해시 함수는 클라이언트마다 다르다(3절). 자바의 murmur2 와 librdkafka 의 CRC32 는 같은 `r-8f21` 을 다른 번호로 보낸다.
+
+셋이 다 맞을 때만 `hash("r-8f21") % 12` 가 양쪽에서 같은 번호를 낸다. 그러면 노출과 클릭이 같은 자리에 있으니 조인이 partition 하나 안에서 끝난다. key 를 안 넣었으면 클릭 한 건마다 partition 12개를 다 뒤져야 한다.
 
 ### 얼마나 기다렸다 이어 붙이나
 

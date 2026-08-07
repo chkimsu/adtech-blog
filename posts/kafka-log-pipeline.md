@@ -20,7 +20,9 @@
 > - producer가 무엇인지 → 2절
 > - partition을 몇 개로 잡을지 → 3절
 > - 여러 팀이 같은 로그를 읽는 구조 → 4~5절
+> - 보존 기간을 며칠로 잡을지 → 6절
 > - 로그가 학습 데이터가 되는 부분 → 7절
+> - 흔한 오해만 → 8절
 
 ---
 
@@ -590,3 +592,241 @@ print(f"→ auto commit 은 셋째 선택지가 아니다. 중복을 {auto / man
 **정산팀만 다르게 하는 게 아니라, 정산팀만 commit 시점으로 정하지 않는다.** 나머지 셋은 무엇을 잃어도 되는지가 정해져 있어서 한 줄로 끝난다.
 
 commit 시점이 정해져도 되감기에는 조건이 하나 붙는다. 4절의 3일치가 아직 브로커에 남아 있어야 한다. 얼마나 남겨 두나가 6절이다.
+
+---
+
+## 6. 보관 기간 — 왜 지나간 것도 읽을 수 있나
+
+**Kafka 는 읽혔다고 지우지 않는다. 나이나 크기로 지운다. 그래서 학습이 사흘 멈춰도 되감을 수 있다.**
+
+4절이 미뤄 둔 기준이 이것이다. 네 group 이 다 읽어도 줄은 그 자리에 있다. 브로커가 보는 것은 둘뿐이다 — 얼마나 오래됐나, 얼마나 쌓였나.
+
+설정 이름은 `log.retention.ms` 와 `log.retention.bytes` 다. 크기 쪽은 partition 마다 센다. 아파치 카프카 브로커 기본값은 나이 7일인데, 배포판과 매니지드 서비스는 다르게 잡아 두니 쓰는 것을 열어 확인한다. key 마다 마지막 값만 남기는 `cleanup.policy=compact` 도 있지만 우리 topic 에는 안 맞는다. 노출은 한 건 한 건이 다 필요한 줄이다.
+
+그래서 며칠인가. 5절이 넘긴 질문이다. 디스크와 되감기를 같이 센다.
+
+```python
+# "보존 기간을 며칠로 잡나" — 디스크와 되감기를 같이 센다.
+#
+# 상황: ad.impression 하루 2.28억 줄, ad.click 하루 228만 줄. 한 줄 200바이트.
+#   복제 3벌, 브로커 6대, 대당 디스크 500GB. partition 은 12개고(3절)
+#   consumer 한 명은 초당 800줄을 처리한다(3절). 학습팀 평시 인원은 4명이다(4절).
+# 하루 2.28억 줄만 1절에서 가져왔고 나머지는 전부 지어낸 값이다.
+from unicodedata import east_asian_width
+
+BYTES, RF, BROKERS, DISK = 200, 3, 6, 500       # 한 줄 바이트 · 복제 · 브로커 · 대당 GB
+GB = 10 ** 9
+TOPICS = {"ad.impression": 228_000_000, "ad.click": 2_280_000}
+KEEP_DAYS = [3, 7, 14, 30]
+IN_SEC = TOPICS["ad.impression"] / 86_400       # 초당 들어오는 줄 — 하루 평균이다
+ONE, MAX_N = 800, 12                            # 한 명 초당 처리량 · partition 수
+
+def w(s):                              # 한글은 모노스페이스에서 두 칸을 먹는다
+    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
+
+def row(*cells):                       # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
+    print("".join(" " * (n - w(c)) + c for c, n in cells))
+
+# ── 보존일수별 디스크. 복제가 3벌이라 실제로 차지하는 건 원본의 3배다 ──
+print(f"한 줄 {BYTES}바이트 · 복제 {RF}벌 · 브로커 {BROKERS}대 (대당 디스크 {DISK}GB)")
+row(("보존", 6), *[(t, 16) for t in TOPICS], ("합계", 13), ("브로커 한 대", 26))
+for d in KEEP_DAYS:
+    each = [n * BYTES * RF * d / GB for n in TOPICS.values()]
+    tot = sum(each)
+    row((f"{d}일", 6), *[(f"{g:,.1f}GB", 16) for g in each], (f"{tot:,.1f}GB", 13),
+        (f"{tot / BROKERS:,.1f}GB (디스크의 {tot / BROKERS / DISK:.0%})", 26))
+print()
+
+# ── 멈췄다 돌아왔을 때. 밀린 줄의 나이가 보존 창을 넘으면 그만큼은 이미 없다 ──
+KEEP = 7
+def catch_up(days, n):                 # 밀린 나이가 0이 되기까지 걸리는 날
+    drain = n * ONE - IN_SEC           # 읽는 동안에도 새 줄이 IN_SEC 만큼 들어온다
+    return days * IN_SEC / drain if drain > 0 else float("inf")
+
+print(f"보존 {KEEP}일 · 학습팀이 멈췄다 돌아왔을 때")
+row(("멈춘 기간", 11), ("되감기", 17), ("4명이면", 12), (f"{MAX_N}명이면", 12))
+for d in [1, 3, 7, 10]:
+    verdict = "전부 된다" if d < KEEP else ("경계에 걸린다" if d == KEEP else f"앞 {d - KEEP}일치가 없다")
+    row((f"{d}일", 11), (verdict, 17),
+        (f"{catch_up(d, 4):.1f}일", 12), (f"{catch_up(d, MAX_N):.1f}일", 12))
+print()
+
+big = sum(n * BYTES * RF * 30 / GB for n in TOPICS.values()) / BROKERS
+print(f"→ 7일을 30일로 늘리면 디스크가 {30 / 7:.1f}배다. 브로커 한 대가 {big:,.1f}GB 를 들어야 해서 {DISK}GB 에 안 들어간다.")
+print("→ 지우는 기준은 나이지 읽혔는지가 아니다. 네 group 이 다 읽어도 7일은 그대로 남는다.")
+print(f"→ 보존 안이라고 끝은 아니다. 3일 멈춤을 4명이면 {catch_up(3, 4):.1f}일, "
+      f"{MAX_N}명이면 {catch_up(3, MAX_N):.1f}일에 따라잡는다.")
+print(f"→ 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 {IN_SEC * 3:,.0f}건에서는 "
+      f"4명({4 * ONE:,}건)이 배수는커녕 더 밀린다.")
+
+# 출력:
+# 한 줄 200바이트 · 복제 3벌 · 브로커 6대 (대당 디스크 500GB)
+#   보존   ad.impression        ad.click         합계              브로커 한 대
+#    3일         410.4GB           4.1GB      414.5GB     69.1GB (디스크의 14%)
+#    7일         957.6GB           9.6GB      967.2GB    161.2GB (디스크의 32%)
+#   14일       1,915.2GB          19.2GB    1,934.4GB    322.4GB (디스크의 64%)
+#   30일       4,104.0GB          41.0GB    4,145.0GB   690.8GB (디스크의 138%)
+#
+# 보존 7일 · 학습팀이 멈췄다 돌아왔을 때
+#   멈춘 기간           되감기     4명이면    12명이면
+#         1일        전부 된다       4.7일       0.4일
+#         3일        전부 된다      14.1일       1.1일
+#         7일    경계에 걸린다      32.9일       2.7일
+#        10일  앞 3일치가 없다      47.0일       3.8일
+#
+# → 7일을 30일로 늘리면 디스크가 4.3배다. 브로커 한 대가 690.8GB 를 들어야 해서 500GB 에 안 들어간다.
+# → 지우는 기준은 나이지 읽혔는지가 아니다. 네 group 이 다 읽어도 7일은 그대로 남는다.
+# → 보존 안이라고 끝은 아니다. 3일 멈춤을 4명이면 14.1일, 12명이면 1.1일에 따라잡는다.
+# → 위 둘은 하루 평균 유입으로 잰 값이다. 피크 유입 7,917건에서는 4명(3,200건)이 배수는커녕 더 밀린다.
+```
+
+**우리 답은 7일이다.** 4절이 든 3일치 되감기에 나흘이 남는다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 520 214" role="img" aria-label="시간축 위에 보존 창 7일을 놓은 그림. 첫 줄은 브로커에 남아 있는 구간, 둘째 줄은 학습이 3일 멈춘 구간, 셋째 줄은 10일 멈춘 구간이다. 셋째 줄의 앞 3일치만 보존 창 왼쪽으로 넘어가 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="kf6-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--text-muted)"/></marker>
+</defs>
+<text x="8" y="24" style="font-size:13px; fill:var(--text-primary)">① 브로커에 남아 있는 것</text>
+<rect x="44" y="32" width="133" height="26" rx="9" style="fill:none; stroke:var(--state-bad); stroke-width:1.8; stroke-dasharray:6 4"/>
+<text x="110" y="50" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">지워짐</text>
+<rect x="177" y="32" width="311" height="26" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="332" y="50" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">보존 7일 — 그대로 있다</text>
+<text x="8" y="84" style="font-size:13px; fill:var(--text-primary)">② 학습이 3일 멈췄다</text>
+<text x="345" y="106" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">전부 보존 창 안</text>
+<rect x="355" y="90" width="133" height="22" rx="9" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="421" y="106" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">3일치</text>
+<text x="8" y="138" style="font-size:13px; fill:var(--text-primary)">③ 학습이 10일 멈췄다</text>
+<rect x="44" y="144" width="133" height="22" rx="9" style="fill:none; stroke:var(--state-bad); stroke-width:1.8; stroke-dasharray:6 4"/>
+<text x="110" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">앞 3일치가 없다</text>
+<rect x="177" y="144" width="311" height="22" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="332" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">뒤 7일치만 남았다</text>
+<line x1="36" y1="186" x2="510" y2="186" style="stroke:var(--text-muted); stroke-width:1.2" marker-end="url(#kf6-arr)"/>
+<g style="stroke:var(--text-muted); stroke-width:1.2"><line x1="44" y1="182" x2="44" y2="190"/><line x1="177" y1="182" x2="177" y2="190"/><line x1="355" y1="182" x2="355" y2="190"/><line x1="488" y1="182" x2="488" y2="190"/></g>
+<g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle"><text x="44" y="204">10일 전</text><text x="177" y="204">7일 전</text><text x="355" y="204">3일 전</text><text x="488" y="204">지금</text></g>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">세 줄 다 오른쪽 끝이 지금이고 왼쪽으로 갈수록 오래된 줄이다. 점선 상자는 브로커에 이미 없는 구간이다.</figcaption>
+</figure>
+
+둘째 표에 조건이 하나 더 붙어 있다. 보존 창 안이라고 저절로 복구되지 않는다. 밀린 것을 읽는 동안에도 새 줄은 초당 2,639건씩 들어온다. 4명으로 3일치를 따라잡으면 14.1일이 걸린다. 12명까지 늘려야 1.1일이다. **되감는 속도의 상한도 partition 수다.**
+
+### "그냥 30일 남기면 되잖아"
+
+디스크가 4.3배가 된다. 브로커 한 대가 690.8GB 를 들어야 하는데 대당 500GB 다. 14일은 대당 322.4GB 로 들어가긴 한다. 그러면 그 이레를 더 사서 막을 사고가 무엇인지 답할 수 있어야 한다.
+
+오래 두는 것이 필요한 자리는 따로 있다. 정산이 이 줄을 1년 들고 있어야 하는 것은 Kafka 가 아니라 뒤쪽 웨어하우스의 몫이다(1절 ③). **Kafka 의 보존 기간은 장기 보관 기간이 아니라 읽는 쪽이 늦어도 되는 기한이다.**
+
+남은 것은 이 줄이 무엇이 되느냐다. 2절이 보낸 한 줄이 학습 데이터가 되는 자리가 7절이다.
+
+---
+
+## 7. 로그 한 줄이 학습 데이터가 되기까지
+
+**노출 줄이 X 고 클릭 줄이 y 다. 둘을 `req_id` 로 이어 붙이면 학습 한 줄이 된다. 어려운 건 클릭이 늦게 온다는 것이다.**
+
+2절이 보낸 `ad.impression` 한 줄에는 클릭했는지가 없다. 그건 같은 `req_id` 를 달고 `ad.click` 에 따로 온다.
+
+```json
+{"req_id":"r-8f21","ad_id":9931,"click_ts":1786002501}
+```
+
+노출의 `ts` 가 1786000101 이었으니 2,400초, 40분 뒤다. 이 줄이 있으면 y=1 이고 없으면 y=0 이다.
+
+| topic | 학습에서 무엇이 되나 | 하루 줄 수 |
+|---|---|---|
+| `ad.impression` | X — 그 요청의 피처 | 2억 2,800만 |
+| `ad.click` | y — 클릭했는가 | 228만 |
+
+228만 ÷ 2억 2,800만 = 1.00%다. 이 값이 pCTR 모델이 맞히려는 것이다.
+
+**3절이 `req_id` 를 고른 이유가 여기서 값을 낸다.** 두 topic 이 같은 key 를 쓰고 partition 수도 같은 12다. `hash("r-8f21") % 12` 는 양쪽에서 같은 번호를 낸다. 노출과 클릭이 같은 자리에 있으니 조인이 partition 하나 안에서 끝난다. key 를 안 넣었으면 클릭 한 건마다 partition 12개를 다 뒤져야 한다.
+
+### 얼마나 기다렸다 이어 붙이나
+
+클릭이 40분 뒤에 온다면 노출을 40분 넘게 들고 있어야 짝이 맞는다. 얼마나 들고 있을지가 조인 창이다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 520 206" role="img" aria-label="노출 한 줄에서 화살표 둘이 아래 클릭 줄 두 개로 내려가는 그림. 왼쪽 클릭은 조인 창 세로선 안쪽에 있고, 오른쪽 클릭은 세로선 바깥에 점선 상자로 놓여 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="kf7-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
+</defs>
+<text x="270" y="20" text-anchor="middle" style="font-size:13px; fill:var(--accent-primary)">조인 창 3시간</text>
+<line x1="270" y1="26" x2="270" y2="166" style="stroke:var(--accent-primary); stroke-width:2; stroke-dasharray:6 4"/>
+<text x="8" y="44" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ad.impression</text>
+<rect x="22" y="50" width="76" height="26" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="60" y="68" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">노출</text>
+<line x1="60" y1="76" x2="104" y2="104" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf7-arr)"/>
+<line x1="62" y1="76" x2="358" y2="104" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kf7-arr)"/>
+<text x="8" y="102" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ad.click</text>
+<rect x="69" y="108" width="76" height="26" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="107" y="126" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">클릭</text>
+<rect x="325" y="108" width="76" height="26" rx="9" style="fill:none; stroke:var(--state-bad); stroke-width:1.8; stroke-dasharray:6 4"/>
+<text x="363" y="126" text-anchor="middle" style="font-size:13px; fill:var(--state-bad)">클릭</text>
+<text x="107" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">창 안 · y = 1</text>
+<text x="363" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">창 밖 · y = 0</text>
+<line x1="30" y1="178" x2="500" y2="178" style="stroke:var(--text-muted); stroke-width:1.2"/>
+<g style="stroke:var(--text-muted); stroke-width:1.2"><line x1="60" y1="174" x2="60" y2="182"/><line x1="270" y1="174" x2="270" y2="182"/><line x1="480" y1="174" x2="480" y2="182"/></g>
+<g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle"><text x="60" y="198">노출 시각</text><text x="270" y="198">3시간 뒤</text><text x="480" y="198">6시간 뒤</text></g>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">가로축은 노출 시각부터 잰 시간이다. 화살표 둘은 같은 노출에 딸린 클릭이고, 도착 시각만 다르다.</figcaption>
+</figure>
+
+창을 넘겨 온 클릭도 버려지지는 않는다. 과금도 리포트도 그대로 센다. 다만 학습 데이터에서는 그 노출이 이미 y=0 으로 확정된 뒤다.
+
+| 조인 창 | 그 안에 들어온 클릭 | 놓치는 클릭 | 학습이 보는 클릭률 |
+|---|---|---|---|
+| 5분 | 91.0% | 205,200건 | 0.910% |
+| 1시간 | 98.2% | 41,040건 | 0.982% |
+| 3시간 | 99.4% | 13,680건 | 0.994% |
+| 24시간 | 99.9% | 2,280건 | 0.999% |
+
+지어낸 분포다. 놓치는 클릭은 하루 228만에 남은 비율을 곱한 값이고, 클릭률은 1.00%에서 그만큼 깎인 값이다.
+
+**우리 답은 3시간이다.** 24시간으로 늘리면 11,400건을 더 건진다. 228만의 0.5%다. 그 0.5%를 사려고 학습 데이터 확정이 21시간 늦어진다.
+
+반대로 5분으로 줄이면 클릭률이 0.910%로 보인다. 9%가 깎인 값이다. 모델은 그 깎인 값을 맞히도록 학습한다. **조인 창은 파이프라인 설정이 아니라 라벨 정의다.**
+
+마지막은 여기서 자주 밟는 것들이다.
+
+---
+
+## 8. 자주 밟는 지뢰
+
+**"Kafka 는 큐다" — 반만 맞다.**
+
+큐는 꺼내면 없어진다. Kafka 는 읽어도 남는다(6절). 그래서 넷이 같은 줄을 각자 읽고, 학습팀이 되감아도 정산팀 자리는 그대로다(4절).
+
+맞는 자리는 한 group 안이다. `train-daily` 안에서는 한 줄을 한 명만 가져가고 commit 하면 다시 안 온다.
+
+**partition 수가 최대 병렬도다.**
+
+정산팀에 13번째 consumer 를 붙이면 그 사람은 논다(4절). 사람을 붙였는데 그래프가 안 움직이면 여기부터 본다.
+
+늘려서 빠져나갈 수도 없다. 12를 24로 바꾸면 같은 key 의 절반이 다른 자리로 간다(3절의 10만 줄 중 49,936줄). partition 수는 처음에 피크로 잡는 값이다.
+
+**key 없이 보내면 순서가 안 지켜진다.**
+
+같은 요청의 노출과 클릭이 다른 partition 으로 흩어진다. 7절의 조인이 partition 하나에서 끝나던 것이 12개를 다 뒤지는 일이 된다.
+
+key 를 빼면 가장 고르게 퍼지긴 한다(3절의 1.00배). 고름과 순서 중 하나를 고르는 자리이고, 우리는 순서를 골랐다.
+
+**consumer lag 을 봐야 한다.**
+
+초당 3,200줄을 처리한다는 그래프는 정상인지 아닌지를 말해 주지 않는다. 유입이 2,639면 줄어드는 중이고 7,917이면 밀리는 중이다.
+
+lag 은 partition 마다 마지막 offset 에서 commit 된 offset 을 뺀 값이다. group 합만 보면 한 곳만 밀리는 3절의 쏠림을 못 본다. 재는 방법은 도구마다 다르다.
+
+**브로커 운영은 이 글 밖이다.**
+
+복제 계수·ISR·리밸런싱·컨트롤러는 이름만 짚고 넘어갔다. 브로커를 몇 대 어느 랙에 둘지, ISR 이 리더 하나로 줄었을 때 무엇을 할지는 다른 글의 몫이다.
+
+이 글이 답한 것은 우리가 정하는 값 일곱이다. `acks` 와 `key` 와 `partitions` 는 보내는 쪽에서 정한다(2·3절). `group.id` · commit 시점 · 보존 기간 · 조인 창은 읽는 쪽 사정으로 정한다(4~7절). 매니지드 Kafka 를 쓰든 직접 운영하든 이 일곱은 우리 몫이다.
+
+## 더 깊이 보기
+
+- [광고 요청 하나가 서비스까지 가는 길](post.html?id=gateway-ingress-router) — 이 로그를 만든 요청이 `bidder` 까지 온 길. 12ms 중 1.4ms 를 앞단이 쓴다
+- [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 글은 topic 셋만 봤다. 입찰 한 건이 실제로 남기는 로그는 열 종이다
+- [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) — 필드를 하나 더 넣어야 할 때. 스키마가 바뀌는 동안 읽는 넷을 안 깨는 방법
+- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 7절이 만든 X 쪽. 학습에 쓴 피처와 서빙에서 쓰는 피처가 어긋나는 자리
+- [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 조인 창의 확대판. 클릭은 3시간이지만 전환은 며칠이 걸린다
+- [로그가 모델이 되기까지 데모](demo-log-to-model.html) — 6·7절이 한 일을 아홉 단계로 넘겨 보는 화면

@@ -724,8 +724,8 @@ const series = {
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',
-    desc: '협업 도구(Git)부터 시스템 설계(아키텍처 패턴)와 운영(쿠버네티스)까지 — 백엔드/인프라 엔지니어의 기본기',
-    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking'],
+    desc: '협업 도구(Git)부터 시스템 설계·운영(아키텍처 패턴·쿠버네티스), 요청이 서비스까지 가는 길과 로그가 학습 데이터가 되는 길까지 — 백엔드/인프라 엔지니어의 기본기',
+    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router', 'kafka-log-pipeline'],
   },
 };
 

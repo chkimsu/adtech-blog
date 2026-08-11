@@ -854,7 +854,7 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-log-hops.html?embed=1" height="890" loading="lazy" title="로그 여섯 층 흐름 데모"></iframe>
-<a class="demo-embed-open" href="demo-log-hops.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+<a class="demo-embed-open" href="demo-log-hops.html" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
 **그래서 보존 7일이 필요하다.** 학습이 읽으러 올 때 그 줄이 아직 있어야 한다. 10.2시간은 학습이 제때 돌았을 때의 값이다. 사흘 멈추면 사흘치를 한꺼번에 읽는다. 7일이 어디서 나온 값인지는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 6절이 잰다.

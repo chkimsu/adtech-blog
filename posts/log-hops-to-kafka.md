@@ -866,7 +866,7 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 
 ## 8. 읽는 쪽 — poll 이 돌려주는 것
 
-**`poll()` 이 돌려주는 것은 값이 아니라 봉투째다. 값은 그중 한 칸이다.**
+**`poll()` 이 돌려주는 것은 값이 아니라 객체 하나다. 값은 그중 한 칸이다.**
 
 | 지금 어디 | 무슨 모양 | 몇 바이트 | 얼마나 머무나 |
 |---|---|---|---|
@@ -885,9 +885,9 @@ ConsumerRecord(
 )
 ```
 
-**값은 `value` 한 칸뿐이다.** 6절이 만든 308 B 가 그 칸에 그대로 들어 있다. `serialized_value_size=308` 이 그 숫자다. 나머지 칸은 값이 아니라 값에 붙은 꼬리표다.
+**값은 `value` 한 칸뿐이다.** 6절이 만든 308 B 가 그 칸에 그대로 들어 있다. `serialized_value_size=308` 이 그 숫자다. 나머지 칸은 값이 아니라 그 값이 어디에 어떻게 놓였는지다.
 
-꼬리표를 누가 만들었는지로 가르면 셋이다.
+나머지 칸을 누가 채웠는지로 가르면 셋이다.
 
 | 칸 | 누가 만드나 | 이 줄에서는 |
 |---|---|---|
@@ -962,18 +962,18 @@ ConsumerRecord(
 | ⑧ | consumer 프로세스 | `ConsumerRecord` | 308 B | poll 주기 | commit 시점에 따라 유실 또는 중복 |
 | ⑨ | S3 Parquet · 조인 | 열로 누운 컬럼 | 더 줄어든다 | 수개월 | 조인 창 3시간을 넘긴 클릭은 `y=0` |
 
-**이 표가 세는 아홉은 한 건이 놓였다 떠난 자리다.** 4절 파이썬 표가 센 일곱에 브로커 뒤의 둘을 더한 것이다. ⑧과 ⑨가 그 둘이다.
+**이 표가 세는 아홉은 한 건이 놓였다 떠난 자리다.** 4절 파이썬 표가 센 일곱에 브로커 뒤의 둘을 더한 것이다. ⑧과 ⑨가 그 둘이다. ③의 크기 칸이 빈 것은 그 줄의 169 B 를 ④에서 한 번만 세기 때문이다.
 
 앞에서 다르게 센 것이 셋 더 있다. 도입의 다섯은 모양이 바뀐 곳만 셌다. 4절 파이썬 표의 일곱은 Kafka 에 닿기까지 시간이 쌓인 곳이다. 4절 대비 표의 셋은 액세스 로그 줄이 찍힌 뒤에 거치는 곳이다. 같은 경로인데 기준이 넷이라 수가 다 다르다.
 
-**⑦의 7일은 다른 시계다.** 나머지 여덟 칸의 시간은 다음 자리로 가기까지 기다린 값이다. ⑦의 7일은 놓인 뒤에 안 지워지고 남아 있는 기한이다. 재는 것이 다르니 더하면 안 된다.
+**⑦의 7일과 ⑨의 수개월은 다른 시계다.** 나머지 일곱 칸의 시간은 다음 자리로 가기까지 기다린 값이다. 그 둘은 놓인 뒤에 안 지워지고 남아 있는 기한이다. 재는 것이 다르니 앞의 일곱과 섞어 더하면 안 된다.
 
-더할 수 있는 것은 ①부터 ⑦ 도달까지다.
+더할 수 있는 것은 ①부터 ⑦ 도달까지다. 표의 '머문다' 열을 ①부터 ⑥까지 더하면 1,076 ms 다. 거기에 ⑥에서 브로커로 보내는 36 ms 를 더해야 한다. 그 36 ms 는 홉이 아니라 두 홉 사이라 표에 줄이 없다. 다 더한 값이 아래 첫 줄이다.
 
 - 탭 → Kafka 도달: **1,112 ms**
 - 탭 → 학습 데이터: **10.2시간**
 
-두 값이 3만 3천 배쯤 차이 난다. 앞의 1,112 ms 는 홉 일곱을 더한 값이고, 뒤의 10.2시간은 거기에 학습이 오기를 기다린 시간을 얹은 값이다. 대시보드가 보는 시각은 그 사이인 2,012 ms 다. 같은 한 줄인데 읽는 쪽마다 나이가 다르다.
+두 값이 3만 3천 배쯤 차이 난다. 뒤의 10.2시간은 1,112 ms 에 학습이 오기를 기다린 시간을 얹은 값이다. 대시보드가 보는 시각은 그 사이인 2,012 ms 다. 같은 한 줄인데 읽는 쪽마다 나이가 다르다.
 
 **⑧ 칸의 유실·중복은 이 글이 다루지 않는다.** offset 을 처리 전에 적느냐 후에 적느냐가 그것을 가른다. [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 5절이 하루 몇 건인지까지 센다.
 
@@ -1014,7 +1014,7 @@ ConsumerRecord(
 </g>
 <text x="506" y="355" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">더 줄어든다</text>
 <line x1="6" y1="280" x2="506" y2="280" style="stroke:var(--accent-secondary); stroke-width:1.5; stroke-dasharray:6 4"/>
-<text x="30" y="296" style="font-size:12.5px; fill:var(--accent-secondary)">탭 → ⑦ 도달 1,112 ms</text>
+<text x="30" y="296" style="font-size:12.5px; fill:var(--accent-secondary)">탭 → ⑦ 도달 1,112 ms = 1,076 + 보내는 36</text>
 <text x="506" y="296" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">아래 둘은 놓인 뒤의 이야기</text>
 <text x="30" y="394" style="font-size:12.5px; fill:var(--text-muted)">학습이 이 줄을 읽는 것은 탭에서 10.2시간 뒤다</text>
 </svg>
@@ -1072,6 +1072,6 @@ ConsumerRecord(
 - [Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지](post.html?id=kafka-log-pipeline) — 이 글이 끝나는 자리에서 시작한다. acks·partition·offset·보존 기간
 - [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) — 수집 계층의 나머지. 스키마가 바뀌는 동안 읽는 넷을 안 깨는 방법
 - [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 글은 클릭 하나를 따라갔다. 입찰 한 건이 남기는 로그는 열 종이다
-- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 8절이 만든 X 쪽. 학습 피처와 서빙 피처가 어긋나는 자리
+- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 8절이 조인한 X 쪽. 학습 피처와 서빙 피처가 어긋나는 자리
 - [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 조인 창의 확대판. 클릭은 3시간이지만 전환은 며칠이 걸린다
 - [로그가 모델이 되기까지 데모](demo-log-to-model.html) — 이 글 뒤의 아홉 단계를 넘겨 보는 화면

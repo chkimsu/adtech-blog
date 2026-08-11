@@ -861,3 +861,217 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 읽는 쪽이 가장 오래 멈춰도 되는 시간이 그 값이다. 압축을 세면 디스크에 여유가 더 있다는 것이 달라지는 전부다.
 
 브로커에 놓이기까지가 여기까지다. 읽는 쪽이 무엇을 받는지가 8절이다.
+
+---
+
+## 8. 읽는 쪽 — poll 이 돌려주는 것
+
+**`poll()` 이 돌려주는 것은 값이 아니라 봉투째다. 값은 그중 한 칸이다.**
+
+| 지금 어디 | 무슨 모양 | 몇 바이트 | 얼마나 머무나 |
+|---|---|---|---|
+| consumer 프로세스 | `ConsumerRecord` 객체 | 308 B | poll 주기 |
+
+7절이 브로커에 놓은 그 줄을 읽는 쪽이 받으면 이렇게 생겼다.
+
+```text
+ConsumerRecord(
+    topic='ad.click', partition=5, offset=8412,
+    timestamp=1786002502310, timestamp_type=0,
+    key=b'r-8f21',
+    value=b'{"req_id":"r-8f21","event":"click","ad_id":9931,…}',
+    headers=[('schema', b'click.v3'), ('src', b'collector-07')],
+    serialized_key_size=6, serialized_value_size=308,
+)
+```
+
+**값은 `value` 한 칸뿐이다.** 6절이 만든 308 B 가 그 칸에 그대로 들어 있다. `serialized_value_size=308` 이 그 숫자다. 나머지 칸은 값이 아니라 값에 붙은 꼬리표다.
+
+꼬리표를 누가 만들었는지로 가르면 셋이다.
+
+| 칸 | 누가 만드나 | 이 줄에서는 |
+|---|---|---|
+| `value` · `key` · `headers` | 보내는 쪽 | 6·7절이 넘긴 것 그대로 |
+| `topic` · `partition` | 보내는 쪽이 정하고 브로커가 확정한다 | `ad.click` · 5 |
+| `offset` · `timestamp` | 브로커 | 8412 · 16:48:22.310 |
+
+`timestamp_type=0` 은 `CREATE_TIME` 이다. producer 가 `send()` 를 부른 시각이 박혔다는 뜻이고, 그 값이 6절의 `process_ts` 다. 설정을 `LogAppendTime` 으로 바꾸면 이 칸이 36 ms 뒤 값이 된다고 7절이 짚었다.
+
+**`offset` 은 보내는 쪽이 만든 적 없는 값이다.** producer 에 넘긴 것은 topic·key·value·headers 넷이었다. 8412 는 그 넷에 없다. 브로커가 partition 5 끝에 붙이면서 매긴 번호다.
+
+이 번호가 5절의 `pos.db` 와 같은 일을 한다. 어디까지 읽었는지를 적어 두는 값이다. 다른 것은 있는 자리다. `pos.db` 는 에이전트가 붙은 인스턴스의 디스크에 있다. 인스턴스가 사라지면 그 파일도 사라진다. offset 은 브로커 쪽에 남아서 consumer 가 통째로 죽어도 안 없어진다.
+
+4절이 미뤄 둔 문장이 여기서 값을 낸다. 파일은 종착지가 아니라 686 ms 짜리 중간 기착이라고 했다. 되감아 읽는 일은 이 번호가 맡는다.
+
+언제 적느냐는 또 다른 문제다. 처리 전에 적으면 유실이 되고 처리 후에 적으면 중복이 된다. 그 갈림은 이 글이 다루지 않는다. 9절 표에서 한 번 더 짚고 넘긴다.
+
+**위 필드 이름은 kafka-python 것이다.** 클라이언트마다 이름이 다르다. 자바에서 같은 값은 `serializedValueSize` 로 적힌다. 담긴 것은 같고 표기만 다르다.
+
+### 받은 다음에 갈래가 둘이다
+
+| 갈래 | 하는 일 | 결과 모양 |
+|---|---|---|
+| 그대로 쌓기 | 시간으로 잘라 S3 에 쓴다 | `s3://adlog/ad.click/dt=2026-08-06/hour=16/part-00005-….parquet` |
+| 조인해서 라벨 만들기 | 노출을 왼쪽에 두고 클릭을 붙인다. 창은 3시간 | 학습 한 줄 |
+
+**자르는 값은 `collect_ts` 다.** 6절이 정한 것이다. 우리 클릭의 `collect_ts` 는 16:48:21.402 라 `dt=2026-08-06/hour=16` 에 앉는다.
+
+`event_ts` 로 자르면 1절의 디스크 큐가 걸린다. 지하철에서 못 나간 클릭이 사흘 뒤에 온다. 그 줄이 사흘 전 파티션에 붙는다. 집계가 끝난 날의 파일이 다시 커진다.
+
+경로 끝의 `part-00005` 는 쓴 쪽의 태스크 번호다. Kafka 의 partition 5 와 다른 것을 센다. 두 숫자가 같아 보이는 것은 우연이다. 이 이름 모양은 Spark·Hive 계열이 파일을 쓸 때 붙이는 것이다.
+
+**Parquet 은 줄이 아니라 열로 눕는다.** 한 파일에 300줄을 쓰면 `req_id` 300개가 한 덩어리로 모인다. `ad_id` 300개가 그다음 덩어리로 모인다. 줄 단위로 쓰면 17개 필드가 섞여 이어지지만 여기서는 같은 필드끼리 붙어 있다.
+
+붙어 있으면 압축이 잘 먹는다. `os` 열은 값이 `iOS` 와 `Android` 둘뿐이다. `region` 열도 종류가 열일곱 개다. 같은 글자가 바로 옆에 되풀이되니 지울 것이 많다.
+
+7절 예제의 JSON 배치 gzip 과 같은 원리다. 거기서는 500건을 묶어 눌러 건당 36.6 B 가 됐다. 되풀이되는 필드 이름과 값이 지워진 결과다. Parquet 은 그 묶음을 열로 나눠 놓고 누른다. 열 하나 안에서는 값의 종류가 더 좁으니 대개 더 준다.
+
+**얼마나 더 주는지는 이 글이 세지 않았다.** Parquet 파일은 표준 라이브러리로 못 만든다. 이 글의 바이트는 전부 직접 세어 적은 값이다. 못 센 숫자는 안 적는다. 방향만 말하면 36.6 B 보다 작고, 얼마나 작은지는 데이터에 따라 다르다.
+
+읽을 때도 값이 난다. 학습이 `req_id` 와 `ad_id` 두 열만 쓴다고 하자. 열로 누워 있으면 그 두 덩어리만 읽는다. 나머지 열은 아예 안 건드린다. 줄로 누워 있으면 17개 필드를 다 읽어 그중 둘만 쓴다.
+
+### 조인해서 라벨을 만든다
+
+**노출이 왼쪽이고 클릭이 오른쪽이다.** X 가 되는 것은 `ad.impression` 한 줄이다. 응찰을 계산한 `bidder` 가 넣은 그 줄이다. y 가 되는 것은 `ad.click` 한 줄이고, 이 글이 따라온 것이 그것이다. 5절이 본 `ad.impression.confirm` 은 그 광고가 실제로 떴다는 확인이라 또 다른 줄이다.
+
+셋 다 `r-8f21` 을 달고 있다. 7절이 셋을 같은 partition 에 놓은 이유가 이 자리다. 붙으면 `y:1` 이고 안 붙으면 `y:0` 이다. 창은 3시간이고 재는 시각은 `event_ts` 다. 우리 클릭은 노출 40분 뒤에 눌렸으니 창 안이다.
+
+```json
+{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","bid":182.4,"y":1}
+```
+
+**이 글이 따라온 한 건이 저 `y:1` 이다.** 16:48:21.234 에 A앱에서 눌린 그 탭이다. 아홉 홉을 지나 여기에 한 글자로 남았다.
+
+`bid` 182.4 는 이 글이 지나온 경로에 없던 값이다. 응찰을 계산한 `bidder` 안에서 나와 `ad.impression` 쪽으로 들어왔다. 이 줄부터가 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 7절이 시작하는 자리다.
+
+---
+
+## 9. 아홉 홉을 한 표로
+
+**한 건이 탭에서 학습 데이터까지 아홉 자리를 거친다. 자리마다 잃을 수 있는 것이 다르다.**
+
+| # | 어디 | 무슨 모양 | 크기 | 머문다 | 여기서 죽으면 사라지는 것 |
+|---|---|---|---|---|---|
+| ① | 앱 SDK 메모리 큐 | 구조체 | 102 B | 클릭 0초 · 노출 최대 5초 | 앱이 죽으면 큐에 있던 것 |
+| ② | 네트워크 | HTTP 요청 본문 | 79 B | 168 ms | 응답을 못 받으면 재전송 → 중복 |
+| ③ | 수집 서버 프로세스 | — | — | 2 ms | 로그 버퍼 32KB(약 194줄) |
+| ④ | 로컬 파일 | 액세스 로그 텍스트 | 169 B | 640 ms | 인스턴스가 사라지면 안 읽은 끝부분 |
+| ⑤ | 수집 에이전트 | 문자열만 든 map | 169 B | 46 ms | `pos.db` 와 같이 사라지면 위치 |
+| ⑥ | 변환기 | 타입이 붙은 JSON | 308 B | 220 ms | 조회 저장소가 느려지면 밀린다 |
+| ⑦ | Kafka 브로커 | 배치로 묶여 압축된 바이트 | 36.6 B | 7일 | 보존 창을 넘기면 지워진다 |
+| ⑧ | consumer 프로세스 | `ConsumerRecord` | 308 B | poll 주기 | commit 시점에 따라 유실 또는 중복 |
+| ⑨ | S3 Parquet · 조인 | 열로 누운 컬럼 | 더 줄어든다 | 수개월 | 조인 창 3시간을 넘긴 클릭은 `y=0` |
+
+**이 표가 세는 아홉은 한 건이 놓였다 떠난 자리다.** 4절 파이썬 표가 센 일곱에 브로커 뒤의 둘을 더한 것이다. ⑧과 ⑨가 그 둘이다.
+
+앞에서 다르게 센 것이 셋 더 있다. 도입의 다섯은 모양이 바뀐 곳만 셌다. 4절 파이썬 표의 일곱은 Kafka 에 닿기까지 시간이 쌓인 곳이다. 4절 대비 표의 셋은 액세스 로그 줄이 찍힌 뒤에 거치는 곳이다. 같은 경로인데 기준이 넷이라 수가 다 다르다.
+
+**⑦의 7일은 다른 시계다.** 나머지 여덟 칸의 시간은 다음 자리로 가기까지 기다린 값이다. ⑦의 7일은 놓인 뒤에 안 지워지고 남아 있는 기한이다. 재는 것이 다르니 더하면 안 된다.
+
+더할 수 있는 것은 ①부터 ⑦ 도달까지다.
+
+- 탭 → Kafka 도달: **1,112 ms**
+- 탭 → 학습 데이터: **10.2시간**
+
+두 값이 3만 3천 배쯤 차이 난다. 앞의 1,112 ms 는 홉 일곱을 더한 값이고, 뒤의 10.2시간은 거기에 학습이 오기를 기다린 시간을 얹은 값이다. 대시보드가 보는 시각은 그 사이인 2,012 ms 다. 같은 한 줄인데 읽는 쪽마다 나이가 다르다.
+
+**⑧ 칸의 유실·중복은 이 글이 다루지 않는다.** offset 을 처리 전에 적느냐 후에 적느냐가 그것을 가른다. [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 5절이 하루 몇 건인지까지 센다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 510 402" role="img" aria-label="홉 아홉 개를 위에서 아래로 쌓은 지도다. 홉마다 왼쪽에 이름과 머무는 시간이 있고 오른쪽에 크기 막대가 있다. 막대 길이는 바이트에 비례해서, 변환기와 consumer 의 308 바이트가 가장 길고 Kafka 브로커의 36.6 바이트가 가장 짧다. 일곱째 홉 아래의 점선은 탭에서 브로커 도달까지 1,112 밀리초라는 경계이고, 그 아래 두 홉은 브로커에 놓인 뒤의 이야기다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="lh9-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-secondary)"/></marker>
+</defs>
+<text x="6" y="14" style="font-size:12.5px; fill:var(--text-muted)">홉과 머무는 시간</text>
+<text x="506" y="14" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">크기 — 바이트에 비례</text>
+<g style="stroke:var(--border-color); stroke-width:1.5">
+<line x1="14" y1="35" x2="14" y2="270"/><line x1="14" y1="290" x2="14" y2="351"/>
+</g>
+<line x1="14" y1="362" x2="14" y2="382" style="stroke:var(--accent-secondary); stroke-width:1.5" marker-end="url(#lh9-arr)"/>
+<g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2">
+<circle cx="14" cy="35" r="9"/><circle cx="14" cy="71" r="9"/><circle cx="14" cy="107" r="9"/><circle cx="14" cy="143" r="9"/><circle cx="14" cy="179" r="9"/><circle cx="14" cy="215" r="9"/><circle cx="14" cy="251" r="9"/><circle cx="14" cy="315" r="9"/><circle cx="14" cy="351" r="9"/>
+</g>
+<g style="font-size:12.5px; fill:var(--text-secondary); text-anchor:middle">
+<text x="14" y="39.5">①</text><text x="14" y="75.5">②</text><text x="14" y="111.5">③</text><text x="14" y="147.5">④</text><text x="14" y="183.5">⑤</text><text x="14" y="219.5">⑥</text><text x="14" y="255.5">⑦</text><text x="14" y="319.5">⑧</text><text x="14" y="355.5">⑨</text>
+</g>
+<g style="font-size:12.5px; fill:var(--text-primary)">
+<text x="30" y="39">앱 SDK 메모리 큐</text><text x="30" y="75">네트워크</text><text x="30" y="111">수집 서버 프로세스</text><text x="30" y="147">로컬 파일</text><text x="30" y="183">수집 에이전트</text><text x="30" y="219">변환기</text><text x="30" y="255">Kafka 브로커</text><text x="30" y="319">consumer 프로세스</text><text x="30" y="355">S3 Parquet · 조인</text>
+</g>
+<g style="font-size:12.5px; fill:var(--text-muted)">
+<text x="30" y="54">클릭 0초 · 노출 최대 5초</text><text x="30" y="90">168 ms</text><text x="30" y="126">2 ms</text><text x="30" y="162">640 ms</text><text x="30" y="198">46 ms</text><text x="30" y="234">220 ms</text><text x="30" y="270">7일 — 놓인 뒤의 기한</text><text x="30" y="334">poll 주기</text><text x="30" y="370">수개월</text>
+</g>
+<g style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5">
+<rect x="270" y="29" width="50" height="12" rx="2"/><rect x="270" y="65" width="38" height="12" rx="2"/><rect x="270" y="137" width="82" height="12" rx="2"/><rect x="270" y="173" width="82" height="12" rx="2"/>
+</g>
+<g style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2.5">
+<rect x="270" y="209" width="150" height="12" rx="2"/><rect x="270" y="309" width="150" height="12" rx="2"/>
+</g>
+<rect x="270" y="245" width="18" height="12" rx="2" style="fill:var(--accent-secondary); stroke:none"/>
+<rect x="270" y="345" width="14" height="12" rx="2" style="fill:none; stroke:var(--accent-secondary); stroke-width:2; stroke-dasharray:4 3"/>
+<line x1="270" y1="107" x2="286" y2="107" style="stroke:var(--text-muted); stroke-width:2"/>
+<g style="font-size:12.5px; fill:var(--text-secondary); font-family:var(--font-mono); text-anchor:end">
+<text x="506" y="39">102 B</text><text x="506" y="75">79 B</text><text x="506" y="111">—</text><text x="506" y="147">169 B</text><text x="506" y="183">169 B</text><text x="506" y="219">308 B</text><text x="506" y="255">36.6 B</text><text x="506" y="319">308 B</text>
+</g>
+<text x="506" y="355" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">더 줄어든다</text>
+<line x1="6" y1="280" x2="506" y2="280" style="stroke:var(--accent-secondary); stroke-width:1.5; stroke-dasharray:6 4"/>
+<text x="30" y="296" style="font-size:12.5px; fill:var(--accent-secondary)">탭 → ⑦ 도달 1,112 ms</text>
+<text x="506" y="296" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">아래 둘은 놓인 뒤의 이야기</text>
+<text x="30" y="394" style="font-size:12.5px; fill:var(--text-muted)">학습이 이 줄을 읽는 것은 탭에서 10.2시간 뒤다</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">막대를 위에서 아래로 훑으면 크기가 한 번 부풀었다 꺼진다. 102 B 로 들어와 변환기에서 308 B 로 가장 커지고 브로커에서 36.6 B 로 꺼진다. 그리고 ⑧에서 308 B 가 그대로 되돌아온다. 압축은 브로커에 놓여 있는 동안만이고, 읽는 쪽 메모리에서는 부푼 모양으로 다시 선다.</figcaption>
+</figure>
+
+### 자주 밟는 지뢰 다섯
+
+다섯 다 홉의 경계에서 생긴다. 홉 하나만 보고 있으면 안 보이는 것들이다.
+
+**지뢰 1 — "수집기가 로그를 만든다"**
+
+만드는 것은 앱 안의 SDK 다. 수집기는 받아 적는다. 1절이 그 자리다. 순서를 뒤집어 외우면 안 보이는 구간이 생긴다.
+
+수집기 그래프는 평평한데 실제 클릭이 줄어드는 일이 그래서 생긴다. SDK 가 안 만들었거나 네트워크에서 못 갔으면 수집기에는 애초에 안 온다. 안 온 것은 수집기가 못 센다. 그 구간은 수집기 지표 어디에도 안 나온다.
+
+보려면 보내는 쪽 숫자가 있어야 한다. SDK 가 몇 건을 만들었고 몇 건을 보냈는지를 따로 실어 보내는 방법이 있다. 그 값이 없으면 ①과 ②는 계속 깜깜하다.
+
+**지뢰 2 — 수집기 단계에서 숫자로 보이는 것은 전부 문자열이다**
+
+3절의 액세스 로그 줄에서 `9931` 은 글자 넷이다. 5절 map 의 `"204"` 도 따옴표 안에 있다. 타입이 처음 생기는 자리는 6절이다.
+
+그 앞에서 집계하면 문자열 비교가 된다. 문자열로 정렬하면 `"1000"` 이 `"999"` 보다 앞에 온다. 크기가 아니라 글자 순서로 세우기 때문이다. 더하려고 하면 도구에 따라 값이 이어 붙거나 에러가 난다.
+
+앱이 `"ad":"9931"` 로 잘못 실어 보내도 3절에서는 아무 말이 안 나온다. 걸리는 곳은 타입을 붙이는 6절이다. 그 앞 홉의 숫자를 믿고 집계를 걸면 틀린 것을 읽는다.
+
+**지뢰 3 — 시각 셋을 섞지 마라**
+
+6절이 시각을 셋으로 늘렸다. `event_ts` 는 기기가, `collect_ts` 는 수집 서버가, `process_ts` 는 변환기가 찍는다. 어느 것을 어디에 쓰는지가 정해져 있다. 파티션은 `collect_ts` 로 자르고 조인 창 3시간은 `event_ts` 로 잰다.
+
+바꿔 쓰면 조용히 깨진다. 조인 창을 `collect_ts` 로 재는 경우가 그렇다. 1절의 디스크 큐에 걸려 사흘 늦게 온 클릭을 놓고 보자. 눌린 것은 노출 40분 뒤인데 `collect_ts` 로 재면 사흘로 보인다. 3시간 창 밖이라 밀려난다. 그 노출은 학습에서 `y=0` 이 된다. 눌린 광고가 안 눌린 것으로 학습된다.
+
+에러는 안 난다. 파이프라인은 끝까지 돈다. 보이는 것은 `y=0` 이 조금 늘고 모델이 조금 나빠지는 것뿐이다. [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 8절이 같은 증상을 partition 쪽에서 짚는다.
+
+**지뢰 4 — 재전송이 있으면 중복이 있다**
+
+2절의 SDK 는 2초 안에 204 를 못 받으면 다시 보낸다. 서버가 이미 받아 놓고 응답만 늦은 경우에도 다시 보낸다. 보내는 쪽에서 둘을 구별할 방법이 없다. 그래서 탭 한 번이 두 줄로 들어온다.
+
+거르려면 멱등키를 보내는 쪽이 만들어야 한다. `rid`+`seq` 가 그것이고 1절이 만든다. 재전송해도 값이 같으니 받는 쪽이 두 번째를 버릴 수 있다.
+
+받는 쪽이 도착할 때 키를 붙이면 그 성질이 사라진다. 재전송마다 새 키가 생겨 두 줄이 서로 다른 건이 된다. 5절의 배열 쪼개기도 같은 규칙에 걸린다. 펼치면서 `seq` 를 새로 매기면 재전송된 배치가 새 키를 얻는다.
+
+**지뢰 5 — 파일을 거치는 홉의 유실은 그래프에 안 잡힌다**
+
+4절이 고른 파일 경유가 ④와 ⑤를 만든다. 그 둘 사이가 유실의 자리다. 다만 두 경우를 갈라야 한다.
+
+에이전트만 죽는 것은 유실이 아니다. `pos.db` 가 남아 있으면 다시 떠서 그 자리부터 이어 읽는다. 늦게라도 온다. 인스턴스가 통째로 사라지면 다르다. 안 읽은 끝부분과 `pos.db` 가 같이 없어진다. 그 줄은 안 온다.
+
+이것이 평균값 그래프에 안 잡힌다. 초당 2,665건 중 몇십 건이 빠져도 선이 안 움직인다. 봐야 할 것은 인스턴스가 줄어든 시각이다. 오토스케일이 축소한 시각에 맞춰 그 인스턴스의 마지막 줄을 확인해야 보인다.
+
+---
+
+## 더 깊이 보기
+
+- [Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지](post.html?id=kafka-log-pipeline) — 이 글이 끝나는 자리에서 시작한다. acks·partition·offset·보존 기간
+- [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) — 수집 계층의 나머지. 스키마가 바뀌는 동안 읽는 넷을 안 깨는 방법
+- [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 글은 클릭 하나를 따라갔다. 입찰 한 건이 남기는 로그는 열 종이다
+- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 8절이 만든 X 쪽. 학습 피처와 서빙 피처가 어긋나는 자리
+- [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 조인 창의 확대판. 클릭은 3시간이지만 전환은 며칠이 걸린다
+- [로그가 모델이 되기까지 데모](demo-log-to-model.html) — 이 글 뒤의 아홉 단계를 넘겨 보는 화면

@@ -139,16 +139,24 @@ node scripts/build-search-index.js                      # 검색 색인 재생�
 
 | 절 | 지금 어디 | 무슨 모양 | 몇 바이트 | 얼마나 머무나 |
 |---|---|---|---|---|
-| 1 | 앱 SDK 메모리 큐 | 구조체 하나 | 96 B | 클릭 0초 · 노출 최대 5초 |
-| 2 | 네트워크 위 | HTTP 요청 본문 JSON | 78 B | 왕복 168 ms |
+| 1 | 앱 SDK 메모리 큐 | 구조체 하나 | 102 B | 클릭 0초 · 노출 최대 5초 |
+| 2 | 네트워크 위 | HTTP 요청 본문 JSON | 79 B | 왕복 168 ms |
 | 3 | 수집 서버 로컬 디스크 | 액세스 로그 텍스트 한 줄 | 169 B | 640 ms |
 | 4 | (선택을 다루는 절 — 표 대신 대비 표를 쓴다) | | | |
 | 5 | 수집 에이전트 메모리 | 값이 전부 문자열인 map | 169 B | 46 ms |
 | 6 | 변환기 메모리 | 타입이 붙은 JSON | 308 B | 220 ms |
 | 7 | Kafka 브로커 디스크 | 배치로 묶여 압축된 바이트 | 건당 36.6 B (Avro면 30.0 B) | 7일 |
-| 8 | consumer 프로세스 → S3 | ConsumerRecord → Parquet 열 | 308 B → 41 B | Parquet 은 수개월 |
+| 8 | consumer 프로세스 → S3 | ConsumerRecord → Parquet 열 | 308 B → 열로 누우면 더 준다 | Parquet 은 수개월 |
 
-1절 96 B와 2절 78 B는 태스크 2에서 실제로 세어 확정한다. 8절 41 B는 태스크 6에서 확정한다.
+**102 B와 79 B는 실제로 세어 확정한 값이다.** 태스크 2에서 다시 세어 같은 값이 나오는지 확인만 한다.
+
+```
+1절: json.dumps({"t":"clk","rid":"r-8f21","ad":9931,"s":"main_top",
+                 "ts":1786002501234,"seq":47,"tz":540,"sdk":"3.2.1"}) → 102 B
+2절: {"t":"clk","rid":"r-8f21","ad":9931,"s":"main_top","ts":1786002501234,"seq":47} → 79 B
+```
+
+**8절의 Parquet 크기는 숫자를 쓰지 않는다.** 표준 라이브러리로 Parquet 을 못 만들어 근거를 세울 수 없다. 근거 없는 숫자를 실측처럼 쓰지 않는다는 규칙을 따른다(태스크 6 Step 3).
 
 ---
 
@@ -380,13 +388,15 @@ log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
 | | 파일 경유 | 프로세스 안 producer 직행 |
 |---|---|---|
 | 홉 수 | 3 (파일 → 에이전트 → Kafka) | 1 |
-| Kafka 도달까지 | 906 ms | 5~50 ms |
+| 수집 서버가 받은 뒤 Kafka 까지 | **942 ms** | **256 ms** |
 | Kafka 가 멈추면 버티는 시간 | 디스크 100GB → **61.7시간** | 메모리 512MB → **10.4분** |
 | 수집 서버가 죽으면 | 파일은 남는다. 안 읽은 끝부분만 늦어진다 | 버퍼가 사라진다 |
 | 인스턴스가 사라지면 | 파일도 같이 사라진다 | 같다 |
 | 디스크가 차면 | 쓰기 실패가 요청 처리까지 흔든다 | 영향 없다 |
 | 배포 | 수집 서버와 전송 로직을 따로 배포 | 같이 배포 |
 | 언어 | 무관 | Kafka 클라이언트가 있는 언어여야 |
+
+942 ms 와 256 ms 의 차이 686 ms 는 파일(640 ms)과 에이전트(46 ms) 두 홉이 통째로 빠진 값이다. 나머지 구간(변환 220 ms + producer 36 ms)은 두 설계가 같다.
 
 **우리 답은 파일 경유다.** 근거는 버티는 시간 하나다.
 
@@ -1127,11 +1137,14 @@ sed -n '1,60p' js/kafka-partition-demo.js
 
 위아래 두 칸. 클래스 접두사는 `lh-` 로 통일한다(`embedKeep` 셀렉터가 이 접두사를 쓴다).
 
+**층은 6개다.** Step 5의 `HOPS` 상수와 개수·순서·`key` 가 정확히 같아야 한다.
+
 ```html
-<div class="lh-flow">        <!-- 위: 5층 흐름 -->
+<div class="lh-flow">        <!-- 위: 6층 흐름 -->
   <div class="lh-lane" data-hop="sdk">…</div>
   <div class="lh-lane" data-hop="collector">…</div>
   <div class="lh-lane" data-hop="agent">…</div>
+  <div class="lh-lane" data-hop="transform">…</div>
   <div class="lh-lane" data-hop="kafka">…</div>
   <div class="lh-lane" data-hop="consumer">…</div>
 </div>
@@ -1194,7 +1207,9 @@ const HOPS = [
 ];
 ```
 
-`collector` 의 642 ms 는 수집 서버 처리 2 ms + 로컬 파일 640 ms 다. 데모는 층을 5개로 묶으므로 이 둘을 합친다. **글의 표와 다른 이유를 화면에 한 줄로 적는다.**
+`collector` 의 642 ms 는 수집 서버 처리 2 ms + 로컬 파일 640 ms 를 한 층으로 합친 값이다. **글의 홉 표와 다른 이유를 화면에 한 줄로 적는다.** 나머지 다섯 층은 글의 홉과 일대일이다.
+
+`HOPS` 는 6개이고 Step 2 의 `data-hop` 여섯과 `key` 가 하나씩 대응해야 한다.
 
 - [ ] **Step 6: 축척을 화면에 표시한다**
 

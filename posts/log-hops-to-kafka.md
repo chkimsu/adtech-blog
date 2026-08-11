@@ -575,3 +575,281 @@ print(AFTER)
 캐시를 붙이면 대부분 해결된다. 광고 메타는 자주 안 바뀐다. 대신 캐시가 낡으면 틀린 `campaign_id` 가 박힌다. 박힌 뒤에는 그 줄을 고쳐 쓰지 못한다. 다시 만들어 새로 넣는 수밖에 없다.
 
 이제 308 B 짜리 JSON 이 producer 로 넘어간다. Kafka 안에서 어떤 모양으로 놓이는지가 7절이다.
+
+---
+
+## 7. Kafka 안 — 브로커가 들고 있는 것
+
+**브로커가 들고 있는 것은 바이트다. 값이 무엇인지는 브로커가 모른다.**
+
+| 지금 어디 | 무슨 모양 | 몇 바이트 | 얼마나 머무나 |
+|---|---|---|---|
+| Kafka 브로커 디스크 | 배치로 묶여 압축된 바이트 | 건당 36.6 B (Avro 면 30.0 B) | 7일 |
+
+6절이 만든 308 B 짜리 JSON 이 producer 로 넘어왔다. producer 에 넘기는 것은 넷이다.
+
+```text
+topic      ad.click
+key        b'r-8f21'                              6 B
+value      b'{"req_id":"r-8f21","ad_id":9931,…}'  308 B
+headers    [('schema', b'click.v3'), ('src', b'collector-07')]
+```
+
+`key` 와 `value` 는 둘 다 바이트 열이다. 앞에 붙은 `b` 가 그 뜻이다. 6절의 JSON 을 `encode()` 한 결과가 `value` 다. producer 는 그 안에 무엇이 들었는지 안 본다.
+
+`headers` 는 값을 열지 않고 읽는 이름표다. `schema` 는 6절이 마지막에 붙인 `click.v3` 이고, `src` 는 어느 수집기가 넣었는지다. 읽는 쪽이 308 B 를 다 파싱하기 전에 걸러 낼 때 쓴다.
+
+브로커에 닿으면 셋이 더 붙는다.
+
+```text
+partition 5      ← hash(b'r-8f21') % 12   (kafka-log-pipeline 3절)
+offset    8412
+timestamp 1786002502310   type=CREATE_TIME
+```
+
+`partition` 은 `key` 를 해시해 12로 나눈 나머지다. partition 12개와 key `req_id` 는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 3절이 정한 값이다. 같은 `req_id` 는 늘 같은 partition 으로 간다.
+
+`offset` 8412 는 partition 5 안에서 몇 번째 줄인지다. partition 마다 0부터 따로 센다. 5절의 `pos.db` 와 하는 일이 같다. 다른 것은 있는 자리다. 그 파일은 에이전트 디스크에 있고 이 번호는 브로커에 있다.
+
+`timestamp` 1786002502310 은 6절의 `process_ts` 와 같은 값이다. 16:48:22.310 이다. `type=CREATE_TIME` 이라 그렇다. producer 가 `send()` 를 부른 시각을 브로커가 그대로 적는다. 설정을 `LogAppendTime` 으로 바꾸면 브로커가 받은 시각이 박힌다. 그러면 36 ms 뒤인 16:48:22.346 이 여기 들어간다.
+
+**콘솔로 꺼내면 지금은 그대로 읽힌다.**
+
+```text
+$ kafka-console-consumer --topic ad.click --partition 5 --offset 8412 \
+    --max-messages 1 --property print.key=true --property print.offset=true
+Offset:8412	r-8f21	{"req_id":"r-8f21","ad_id":9931,"slot":"main_top",…}
+```
+
+값이 JSON 이라 사람이 읽는다. 같은 한 건을 Avro 로 넣으면 이렇게 나온다.
+
+```text
+Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\x0aclick\x96\x9b\x01\x10main_top…
+```
+
+`r-8f21` 과 `click`, `main_top` 만 겨우 보인다. 앞 다섯 바이트는 이렇게 갈린다.
+
+| 위치 | 바이트 | 무엇 |
+|---|---|---|
+| 0 | `\x00` | 매직 — 이 뒤가 스키마 번호라는 표시 |
+| 1~4 | `\x00\x00\x00\x11` | 스키마 번호 17 (big-endian) |
+| 5~ | `\x0c` `r-8f21` … | 길이 6 + 값. 필드 이름이 없다 |
+
+`\x0c` 는 12다. 길이 6을 두 배로 적는 방식이라 그렇다. 그 뒤 여섯 바이트가 `r-8f21` 이다. 이 값이 어느 필드의 것인지는 이 바이트 열 어디에도 없다.
+
+**앞 다섯 바이트는 Confluent 의 wire format 이다.** Avro 명세가 정한 것이 아니다. Avro 가 정하는 것은 값을 어떤 순서로 이어 붙이느냐까지다. 매직 한 바이트와 스키마 번호 네 바이트를 앞에 두는 것은 스키마 레지스트리를 쓰는 쪽의 약속이다. 다른 레지스트리를 쓰면 이 앞머리가 다르다.
+
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 512 212" role="img" aria-label="Avro 레코드 한 건을 가로 띠로 놓은 그림. 띠는 왼쪽부터 매직 1바이트, 스키마 번호 4바이트, payload 로 갈린다. payload 에는 값만 이어져 있고 필드 이름이 없다. 띠 위에는 브로커가 값과 따로 들고 있는 key, headers, offset, timestamp 네 상자가 있다. 띠 아래 점선 상자는 스키마 레지스트리 17번 스키마이고, payload 의 각 값에서 내려온 선이 req_id, event, ad_id 라는 이름에 닿는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<defs>
+<marker id="lh7-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-secondary)"/></marker>
+</defs>
+<text x="6" y="16" style="font-size:12.5px; fill:var(--text-muted)">브로커가 값과 따로 들고 있는 것</text>
+<g style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5">
+<rect x="6" y="24" width="100" height="40" rx="7"/><rect x="112" y="24" width="140" height="40" rx="7"/><rect x="258" y="24" width="100" height="40" rx="7"/><rect x="364" y="24" width="140" height="40" rx="7"/>
+</g>
+<g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle">
+<text x="56" y="41">key</text><text x="182" y="41">headers</text><text x="308" y="41">offset</text><text x="434" y="41">timestamp</text>
+</g>
+<g style="font-size:12.5px; fill:var(--text-primary); font-family:var(--font-mono); text-anchor:middle">
+<text x="56" y="58">r-8f21</text><text x="182" y="58">schema=click.v3</text><text x="308" y="58">8412</text><text x="434" y="58">16:48:22.310</text>
+</g>
+<text x="6" y="84" style="font-size:12.5px; fill:var(--text-muted)">value — 브로커에게는 그냥 바이트 열이다</text>
+<rect x="6" y="92" width="54" height="48" rx="7" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<rect x="60" y="92" width="138" height="48" rx="7" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:2; stroke-dasharray:5 3"/>
+<rect x="198" y="92" width="308" height="48" rx="7" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2.5"/>
+<g style="font-size:12.5px; fill:var(--text-primary); font-family:var(--font-mono); text-anchor:middle">
+<text x="33" y="115">\x00</text><text x="129" y="115">\x00\x00\x00\x11</text><text x="352" y="115">\x0c r-8f21 \x0aclick \x96\x9b\x01 …</text>
+</g>
+<g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle">
+<text x="33" y="133">매직</text><text x="129" y="133">스키마 번호 17</text><text x="352" y="133">값만 이어져 있다</text>
+</g>
+<g style="stroke:var(--text-muted); stroke-width:1.3">
+<line x1="277" y1="140" x2="277" y2="163"/><line x1="341" y1="140" x2="341" y2="163"/><line x1="427" y1="140" x2="427" y2="163"/>
+</g>
+<line x1="129" y1="140" x2="129" y2="150" style="stroke:var(--accent-secondary); stroke-width:2; stroke-dasharray:5 3" marker-end="url(#lh7-arr)"/>
+<rect x="6" y="152" width="500" height="48" rx="9" style="fill:none; stroke:var(--accent-secondary); stroke-width:1.8; stroke-dasharray:6 4"/>
+<line x1="190" y1="158" x2="190" y2="194" style="stroke:var(--border-color); stroke-width:1.2"/>
+<text x="16" y="172" style="font-size:12.5px; fill:var(--accent-secondary)">스키마 레지스트리</text>
+<text x="16" y="190" style="font-size:12.5px; fill:var(--text-muted)">17번 스키마</text>
+<g style="font-size:12.5px; fill:var(--text-primary); font-family:var(--font-mono); text-anchor:middle">
+<text x="277" y="172">req_id</text><text x="341" y="172">event</text><text x="427" y="172">ad_id</text><text x="480" y="172">…</text>
+</g>
+<text x="352" y="190" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">값에 없는 이름은 여기서 온다</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">브로커는 이 띠 안을 한 번도 열어 보지 않는다. 매직도 스키마 번호도 넣는 쪽과 읽는 쪽이 정한 약속이라, 틀린 번호가 박혀 있어도 브로커는 그대로 받아 적는다.</figcaption>
+</figure>
+
+그러면 이 모양이 크기에서 얼마나 이득인지가 남는다. 아래 예제는 같은 클릭 한 건을 다섯 모양으로 만들어 바이트를 센다. 액세스 로그 텍스트, JSON 한 건, JSON 배치 gzip, Avro 한 건, Avro 배치 gzip 이다.
+
+```python
+# "Kafka 에 담기는 바이트가 표현마다 얼마나 다른가" — 같은 한 건을 다섯으로 만들어 잰다.
+#
+# 상황: 클릭 한 건이 여러 모양을 지난다. 다섯을 나란히 놓고 바이트를 센다.
+#   ① 수집 서버 액세스 로그 텍스트   ② 변환 뒤 JSON 한 건
+#   ③ JSON 을 500건 묶어 gzip        ④ Avro 한 건   ⑤ Avro 를 500건 묶어 gzip
+# ③⑤ 가 Kafka 에 실제로 저장되는 모양이다. producer 는 배치 단위로 압축한다.
+# Avro 인코딩은 어느 구현의 것도 아니다. 바이트 수만 재려고 직접 짠 것이다
+#   (zigzag varint + 길이 접두 문자열, 앞에 매직 1B·스키마 번호 4B).
+# 하루 줄 수·복제·브로커는 Kafka 글에서 가져왔다 — ad.impression 2.28억,
+#   ad.click 228만, 복제 3벌, 브로커 6대, 대당 디스크 500GB, 보존 7일.
+import gzip, json, random
+from unicodedata import east_asian_width
+
+RAW = ('10.2.31.7 2026-08-06T16:48:21+09:00 POST /v1/e 204 0.002 '
+       '"MyApp/3.2.1 (iPhone; iOS 19.2)" '
+       '{"t":"clk","rid":"r-8f21","ad":9931,"s":"main_top","ts":1786002501234,"seq":47}')
+REC = {"req_id": "r-8f21", "event": "click", "ad_id": 9931, "slot": "main_top",
+       "seq": 47, "app_ver": "3.2.1", "device": "iPhone", "os": "iOS",
+       "os_ver": "19.2", "region": "KR-11", "campaign_id": 5502,
+       "advertiser_id": 311, "media": "A앱", "event_ts": 1786002501234,
+       "collect_ts": 1786002501402, "process_ts": 1786002502310,
+       "schema": "click.v3"}
+
+GB = 10 ** 9
+ROWS = 228_000_000 + 2_280_000          # 수집 서버가 하루에 받는 총량
+RF, BROKERS, DISK, KEEP, BATCH = 3, 6, 500, 7, 500
+
+def w(s):                                # 한글은 모노스페이스에서 두 칸을 먹는다
+    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
+
+def row(*cells):
+    print("".join(" " * (n - w(c)) + c for c, n in cells))
+
+# ── Avro 이진: 필드 이름을 안 싣는다. 값만 정해진 순서로 이어 붙인다 ──
+def varint(n):                           # 7비트씩 끊어 담고, 이어지면 최상위 비트를 1로
+    out = bytearray()
+    while True:
+        b, n = n & 0x7F, n >> 7
+        out.append(b | 0x80 if n else b)
+        if not n:
+            return bytes(out)
+
+def avro(rec, schema_id=17):
+    out = bytearray(b"\x00" + schema_id.to_bytes(4, "big"))     # 매직 + 스키마 번호
+    for v in rec.values():
+        if isinstance(v, str):
+            s = v.encode()
+            out += varint(len(s) << 1) + s                      # 길이(zigzag) + 값
+        else:
+            out += varint(v << 1)                               # 숫자(zigzag)
+    return bytes(out)
+
+# ── 배치를 만든다. 500건이 다 같으면 압축이 비현실적으로 잘 되니 실제처럼 흩어 놓는다 ──
+HOT = [9931, 1204, 5510, 3388, 7702]                            # 상위 5개가 40%
+COLD = list(range(10000, 10495))
+SLOTS = ["main_top", "main_mid", "feed_1", "feed_2", "end_card"]
+DEVS = [("iPhone", "iOS", "19.2"), ("Galaxy S25", "Android", "16"),
+        ("Pixel 10", "Android", "16"), ("iPad", "iOS", "19.1"),
+        ("Xiaomi 15", "Android", "15")]
+REGIONS = [f"KR-{i:02d}" for i in range(11, 28)]
+random.seed(11)
+
+def batch(encode):
+    blob = bytearray()
+    for _ in range(BATCH):
+        r = dict(REC)
+        r["req_id"] = f"r-{random.randrange(16 ** 8):08x}"
+        r["ad_id"] = random.choice(HOT) if random.random() < 0.4 else random.choice(COLD)
+        r["campaign_id"] = r["ad_id"] // 2 + 1000
+        r["advertiser_id"] = r["ad_id"] % 400
+        r["slot"] = random.choice(SLOTS)
+        r["device"], r["os"], r["os_ver"] = random.choice(DEVS)
+        r["region"] = random.choice(REGIONS)
+        r["app_ver"] = random.choice(["3.2.1", "3.1.9", "3.0.4"])
+        r["seq"] = random.randrange(1, 900)
+        r["event_ts"] = REC["event_ts"] + random.randrange(0, 60_000)
+        r["collect_ts"] = r["event_ts"] + random.randrange(60, 400)
+        r["process_ts"] = r["collect_ts"] + random.randrange(300, 1500)
+        blob += encode(r)
+    return bytes(blob)
+
+as_json = lambda r: json.dumps(r, ensure_ascii=False, separators=(",", ":")).encode() + b"\n"
+FORMS = [
+    ("① 액세스 로그 텍스트", len(RAW.encode()), "수집 서버"),
+    ("② JSON 한 건", len(as_json(REC)) - 1, "변환기"),
+    ("③ JSON 배치 gzip", len(gzip.compress(batch(as_json), 6)) / BATCH, "Kafka"),
+    ("④ Avro 한 건", len(avro(REC)), "변환기"),
+    ("⑤ Avro 배치 gzip", len(gzip.compress(batch(avro), 6)) / BATCH, "Kafka"),
+]
+
+print(f"같은 클릭 한 건 · 하루 {ROWS:,}줄 · 보존 {KEEP}일 · 복제 {RF}벌 · 브로커 {BROKERS}대")
+row(("모양", 22), ("한 건", 10), ("하루", 11), ("보존분", 12), ("브로커 한 대", 26), ("어디", 12))
+for name, size, where in FORMS:
+    day = size * ROWS / GB
+    disk = day * KEEP * RF
+    row((name, 22), (f"{size:,.1f} B", 10), (f"{day:,.1f} GB", 11), (f"{disk:,.0f} GB", 12),
+        (f"{disk / BROKERS:,.0f} GB (디스크의 {disk / BROKERS / DISK:.0%})", 26), (where, 12))
+print()
+
+j, a = FORMS[1][1], FORMS[3][1]
+jz, az = FORMS[2][1], FORMS[4][1]
+print(f"→ 압축 전만 보면 Avro 가 이긴다. {j} B → {a} B 로 {(1 - a / j):.0%} 가 준다.")
+print("   빠지는 것은 필드 이름과 따옴표·쉼표, 그리고 숫자를 글자로 쓰던 자리다.")
+print(f"→ 압축을 끼우면 좁혀진다. {jz:,.1f} B 대 {az:,.1f} B 로 차이가 {(1 - az / jz):.0%} 다.")
+print("   gzip 이 반복되는 필드 이름을 어차피 지우기 때문이다.")
+print("→ 그러니 Avro 를 고르는 이유는 크기가 전부가 아니다. 이름이 값에서 빠져나가")
+print("   스키마 레지스트리에 등록되면, 그 스키마가 보내는 쪽과 읽는 쪽의 계약이 된다.")
+print(f"→ 대신 콘솔로 꺼내면 안 읽힌다. 앞 5바이트 {avro(REC)[:5].hex(' ')} 중 뒤 4바이트가")
+print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이름은 그 번호로 밖에서 찾아온다.")
+
+# 출력:
+# 같은 클릭 한 건 · 하루 230,280,000줄 · 보존 7일 · 복제 3벌 · 브로커 6대
+#                   모양     한 건       하루      보존분              브로커 한 대        어디
+#   ① 액세스 로그 텍스트   169.0 B    38.9 GB      817 GB     136 GB (디스크의 27%)   수집 서버
+#           ② JSON 한 건   308.0 B    70.9 GB    1,489 GB     248 GB (디스크의 50%)      변환기
+#       ③ JSON 배치 gzip    36.6 B     8.4 GB      177 GB       30 GB (디스크의 6%)       Kafka
+#           ④ Avro 한 건    95.0 B    21.9 GB      459 GB      77 GB (디스크의 15%)      변환기
+#       ⑤ Avro 배치 gzip    30.0 B     6.9 GB      145 GB       24 GB (디스크의 5%)       Kafka
+#
+# → 압축 전만 보면 Avro 가 이긴다. 308 B → 95 B 로 69% 가 준다.
+#    빠지는 것은 필드 이름과 따옴표·쉼표, 그리고 숫자를 글자로 쓰던 자리다.
+# → 압축을 끼우면 좁혀진다. 36.6 B 대 30.0 B 로 차이가 18% 다.
+#    gzip 이 반복되는 필드 이름을 어차피 지우기 때문이다.
+# → 그러니 Avro 를 고르는 이유는 크기가 전부가 아니다. 이름이 값에서 빠져나가
+#    스키마 레지스트리에 등록되면, 그 스키마가 보내는 쪽과 읽는 쪽의 계약이 된다.
+# → 대신 콘솔로 꺼내면 안 읽힌다. 앞 5바이트 00 00 00 00 11 중 뒤 4바이트가
+#    스키마 번호 17 이고, 이름은 그 번호로 밖에서 찾아온다.
+```
+
+**압축 전만 보면 Avro 가 크게 이긴다.** 308 B 가 95 B 가 되니 69% 가 준다. 빠지는 것은 필드 이름과 따옴표·쉼표, 그리고 숫자를 글자로 쓰던 자리다.
+
+그런데 Kafka 에 실제로 저장되는 것은 그 둘이 아니다. producer 는 배치로 묶어 압축한 뒤에 보낸다. 위 표의 ③과 ⑤가 그 모양이다. 거기서 재면 36.6 B 대 30.0 B 로 차이가 18% 다.
+
+**그러니 "크기 때문에 Avro" 는 약한 근거다.** gzip 이 반복되는 필드 이름을 어차피 지우기 때문이다. 500건을 묶으면 `"req_id"` 여덟 글자가 500번 나온다. 압축은 그런 것부터 지운다. 크기만 보면 JSON 에 압축만 켜도 대부분을 얻는다.
+
+**진짜 이유는 이름이 어디로 가느냐다.** Avro 에서 필드 이름은 값에 안 실린다. 스키마 레지스트리에 등록되고 값에는 번호 17만 남는다. 그 등록된 스키마가 보내는 쪽과 읽는 쪽의 계약이 된다.
+
+계약이 있으면 걸리는 자리가 달라진다. 보내는 쪽이 `slot` 을 빼고 배포했다고 하자. 레지스트리에 호환성 검사를 켜 뒀으면 등록 단계에서 걸린다. Kafka 에 한 건도 안 들어간다. JSON 은 등록할 곳이 없으니 안 걸린다. `slot` 없는 줄이 그대로 들어가고 읽는 쪽이 `KeyError` 로 터진다. 그때는 이미 몇 시간치가 쌓여 있다.
+
+대가는 셋이다.
+
+- 부품이 하나 는다. 레지스트리를 띄우고 지켜봐야 한다.
+- 콘솔로 못 읽는다. 위의 두 화면 차이가 그 값이다.
+- 레지스트리가 죽으면 읽는 쪽이 멈춘다. 번호 17을 이름으로 풀 수 없다.
+
+셋째는 캐시가 줄여 준다. consumer 는 한 번 받아 온 스키마를 들고 있는다. 그래도 못 보던 번호가 오면 다시 물어봐야 한다. 그 순간 레지스트리가 죽어 있으면 그 줄은 못 읽는다.
+
+스키마를 바꾸면서 옛 줄을 계속 읽는 방법은 이 글 밖이다. [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) 8절이 그것을 다룬다.
+
+**5절이 topic 을 가른 근거는 형제 글 도입에 있다.** 그 글은 이렇게 적었다.
+
+> 노출됐다는 확인만 매체가 `log-collector` 로 따로 보내고, 두 줄은 `req_id` 로 이어 붙는다
+
+그 "두 줄"이 지금 브로커에 따로 놓여 있다. `ad.impression` 에는 `bidder` 가 만든 응찰 줄이 있다. `ad.impression.confirm` 에는 매체가 보낸 확인 줄이 있다. 5절이 이름을 가른 자리가 이 문장이다.
+
+이 글의 클릭까지 세면 topic 이 셋이다. 셋 다 key 가 `req_id` 이고 partition 이 12개다. 그래서 `r-8f21` 은 세 곳에서 다 partition 5 에 놓인다. 이어 붙이는 일이 partition 하나 안에서 끝난다.
+
+**그런데 언제 이어 붙이나.** 브로커는 놓인 줄을 아무에게도 밀어 주지 않는다. 읽는 쪽이 각자 와서 가져간다. 그래서 같은 줄을 보는 시각이 group 마다 다르다.
+
+| group | 읽는 방식 | 이 클릭을 보는 시각 | 탭한 때(16:48:21)부터 |
+|---|---|---|---|
+| 대시보드 | poll 루프가 계속 돈다 | 16:48:23.246 | 2,012 ms |
+| 정산 | 계속 | 16:48:25.246 | 4,012 ms |
+| 학습 | 하루 한 번, 다음 날 03:00 | 다음 날 03:00:00 | 10.2시간 |
+
+4절 예제가 낸 값이다. 대시보드와 정산은 루프가 계속 도니 몇 초 안에 본다. 학습은 다음 날 03:00 에 하루치를 몰아 읽는다. 같은 줄을 누구는 2초 뒤에 읽고 누구는 10.2시간 뒤에 읽는다.
+
+**그래서 보존 7일이 필요하다.** 학습이 읽으러 올 때 그 줄이 아직 있어야 한다. 10.2시간은 학습이 제때 돌았을 때의 값이다. 사흘 멈추면 사흘치를 한꺼번에 읽는다. 7일이 어디서 나온 값인지는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 6절이 잰다. 읽는 쪽이 가장 오래 멈춰도 되는 시간이 그 값이다.
+
+브로커에 놓이기까지가 여기까지다. 읽는 쪽이 무엇을 받는지가 8절이다.

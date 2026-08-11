@@ -337,7 +337,7 @@ Offset:8412	r-8f21	{"req_id":"r-8f21","ad_id":9931,"slot":"main_top",…}
 같은 줄을 Avro 로 바꾸면:
 
 ```
-Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\xa6\x9b\x01\x10main_top…
+Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\x0aclick\x96\x9b\x01\x10main_top…
 ```
 
 바이트 해부:

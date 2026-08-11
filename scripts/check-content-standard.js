@@ -55,20 +55,40 @@ function shortSections(md) {
 //     '(post.html?id=online-learning-delayed-feedback)' 같은 주소가 40~50자를 얹는다.
 //
 // 이 셋을 적용하면 전체 장문 경고가 112개 → 50개가 된다(62개가 오탐이었다).
+//
+// 반대 방향으로 새던 것 둘(2026-08-11 수정). 둘 다 실제로 글에 실렸다가 사람이
+// 손으로 세어 잡았다. 회귀 시험은 scripts/test-long-sentences.js 에 있다.
+//
+//  4) 줄 필터의 '\*' 가 '**굵게**' 로 시작하는 산문 줄을 불릿으로 오인해 통째로 뺐다.
+//     아래 강조 걷어내기(6)보다 필터가 먼저 도니 그 줄은 여기 닿지도 못했다.
+//  5) 인라인 코드 스팬을 '…' 한 글자로 접어서, 91자 문장이 46자로 세어졌다.
+//     코드도 독자가 화면에서 읽는 글자다. 길이에서 빼면 안 된다.
+//     다만 코드 안의 '.'·':'(`log.retention.ms`·`acks: all`)를 문장 경계로 삼으면
+//     한 문장이 조각나 오히려 숨는다. 그래서 길이만 남긴 자리표시자로 바꿔
+//     문장을 가른 뒤 되돌린다. 자리표시자는 본문에 안 나오는 사용자 정의 영역 문자다.
+const CODE_FILL = '';   // 코드 안쪽 글자 자리
+const CODE_END = '';    // 스팬 끝. 코드 스팬 둘이 붙어 있어도 안 뭉치게 한다
 function longSentences(md) {
   const out = [];
   for (const para of prose(md).split(/\n\s*\n/)) {
+    const spans = [];
     const text = para
       .split('\n')
-      .filter(l => !/^\s*(#|-|\d+\.|\*)/.test(l))
+      .filter(l => !/^\s*(#|-|\d+\.|\*(?!\*))/.test(l))
       .join(' ')
       // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
       // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
       .replace(/\*\*/g, '')
       .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')   // 링크 → 표시 텍스트만
-      .replace(/`[^`]*`/g, '…');
+      .replace(/`([^`]*)`/g, (_, s) => {
+        if (!s) return '';
+        spans.push(s);
+        return CODE_FILL.repeat(s.length - 1) + CODE_END;   // 글자 수는 그대로
+      });
+    let i = 0;
     out.push(...text
       .split(/(?<=[.!?:])\s+/)
+      .map(s => s.replace(new RegExp(`${CODE_FILL}*${CODE_END}`, 'g'), () => spans[i++]))
       .map(s => s.replace(/\s+/g, ' ').trim())
       .filter(s => s.length > MAX_SENTENCE));
   }
@@ -122,6 +142,11 @@ function check(post) {
     dead: deadLinks(md),
   };
 }
+
+// 시험에서 함수만 꺼내 쓸 수 있게 열어 둔다. CLI는 아래 require.main 가드 안에서만 돈다.
+module.exports = { prose, shortSections, longSentences, deadLinks, check, MAX_SENTENCE };
+
+if (require.main !== module) return;
 
 const args = process.argv.slice(2);
 const targets = args.length ? posts.filter(p => args.includes(p.id)) : posts;

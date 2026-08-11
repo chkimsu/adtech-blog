@@ -361,8 +361,9 @@
     if (lossEl) {
       lossEl.hidden = state.dropped === 0;
       if (state.dropped > 0) {
+        // 한 줄에 들어가게 짧게 쓴다. 되돌리는 방법은 바로 위 컨트롤에 보인다.
         lossEl.textContent = '⚠ 앞이 다 차서 못 받은 이벤트 ' + state.dropped.toLocaleString() +
-          '건. 파일이 가득 차면 쓰기가 실패하고 그때부터 로그가 끊긴다(글 4절). 멈춤을 풀거나 "처음부터"를 누르면 다시 흐른다.';
+          '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).';
       }
     }
   }
@@ -373,6 +374,8 @@
     var cap = HOPS[i].cap;
     var full = count >= cap;
     row.classList.toggle('is-full', full);
+    // 층에도 같이 붙인다. 임베드에서는 아래 막대를 접으므로 이쪽이 유일한 표시가 된다.
+    laneEl[i].classList.toggle('is-full', full);
     var bar = row.querySelector('.lh-queue-bar > i');
     if (bar) bar.style.width = Math.min(100, (count / cap) * 100).toFixed(1) + '%';
     var text = row.querySelector('.lh-queue-text');
@@ -406,10 +409,12 @@
             ' "method":"POST","uri":"/v1/e","status":"204","rt":"0.002",\n' +
             ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
             ' "body":"{\\"t\\":\\"clk\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}';
+        // 필드 17개다 — 글 6절 파이썬 출력의 그 17개와 하나씩 같다.
+        // 층 설명("8개에서 17개로 늘고")과 이 줄이 안 맞으면 세어 본 독자가 걸린다.
         case 'transform':
           return '{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top",\n' +
-            ' "seq":47,"app_ver":"3.2.1","device":"iPhone","os":"iOS","region":"KR-11",\n' +
-            ' "campaign_id":5502,"advertiser_id":311,"media":"A앱",\n' +
+            ' "seq":47,"app_ver":"3.2.1","device":"iPhone","os":"iOS","os_ver":"19.2",\n' +
+            ' "region":"KR-11","campaign_id":5502,"advertiser_id":311,"media":"A앱",\n' +
             ' "event_ts":1786002501234,"collect_ts":1786002501402,\n' +
             ' "process_ts":1786002502310,"schema":"click.v3"}';
         case 'kafka':
@@ -440,10 +445,12 @@
           ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
           ' "body":"{\\"t\\":\\"imp\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}' +
           (n > 1 ? '\n… 이렇게 ' + n + '개로 갈렸다 …' : '');
+      // 클릭 줄과 같은 17개를 같은 순서로 채운다. 값만 노출 것이다.
       case 'transform':
         return '{"req_id":"r-8f21","event":"impression_confirm","ad_id":9931,\n' +
           ' "slot":"main_top","seq":11,"app_ver":"3.2.1","device":"iPhone",\n' +
-          ' "region":"KR-11","campaign_id":5502,"advertiser_id":311,\n' +
+          ' "os":"iOS","os_ver":"19.2","region":"KR-11","campaign_id":5502,\n' +
+          ' "advertiser_id":311,"media":"A앱",\n' +
           ' "event_ts":1786000101118,"collect_ts":1786000106402,\n' +
           ' "process_ts":1786000107310,"schema":"impression.confirm.v1"}' +
           (n > 1 ? '\n… 같은 모양으로 ' + n + '건 …' : '');

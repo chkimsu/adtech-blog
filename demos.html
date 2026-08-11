@@ -445,7 +445,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 19개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 20개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -465,6 +465,7 @@
               <a href="demo-frequency-capping.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Frequency Capping</a>
               <a href="demo-request-path.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 요청 경로 시뮬레이터</a>
               <a href="demo-kafka-partition.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Kafka Partition 놀이터</a>
+              <a href="demo-log-hops.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그 여섯 층 흐름</a>
             </div>
           </div>
           <!-- 중급 -->
@@ -580,7 +581,7 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">20개 · 카테고리별</span>
+          <span class="count">21개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
@@ -613,6 +614,21 @@
               <span class="demo-card-meta-item">선수지식 거의 없음</span>
             </div>
             <a href="demo-kafka-partition.html" class="btn-try">체험하기</a>
+          </div>
+
+          <!-- 로그 여섯 층 흐름 (신규) -->
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Infra">Infra</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>로그 여섯 층 흐름</h3>
+            <p>클릭 한 건이 앱 SDK에서 Kafka까지 여섯 층을 순서대로 내려갑니다. 수집 에이전트나 Kafka를 멈추면 그 앞 어디에 쌓이는지 보이고, 점을 클릭하면 그 건의 모양과 바이트가 그대로 나옵니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-log-hops.html" class="btn-try">체험하기</a>
           </div>
 
           <!-- 로그 → ML 학습 루프 (신규) -->

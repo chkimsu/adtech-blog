@@ -1252,6 +1252,38 @@ window.DEMO_EDU = {
                     '이제 자유롭게 돌려 보세요!'
             }
         ]
+    },
+
+    // ==========================================
+    // 로그 여섯 층 흐름 (입문)
+    // ==========================================
+    'log-hops': {
+        analogy: '홉마다 모양이 바뀌고, 머무는 시간이 무엇을 잃을 수 있는지를 정한다',
+        anchor: '.lh-controls',
+        embedKeep: ['.lh-flow', '.lh-controls', '.lh-detail', '.lh-scale'],
+        explain: {
+            // 체크박스 input에 직접 걸면 해설이 안 나온다(demo-edu.js가 click에서
+            // input·select·textarea를 걸러내고, checkbox는 change 리스너 자체가 없다).
+            // kafka-partition의 '.kp-key-row label'과 같은 이유로 감싸는 label에 걸고,
+            // 라벨 텍스트를 눌렀을 때 두 번 오는 것은 dataset로 막는다.
+            '#lh-stop-agent-label': ({ el }) => {
+                const on = document.getElementById('lh-stop-agent').checked ? '1' : '0';
+                if (el.dataset.eduSaid === on) return '';
+                el.dataset.eduSaid = on;
+                return on === '1'
+                    ? '수집 에이전트를 멈췄습니다. 앞단(앱·수집 서버)은 아무 영향을 안 받고 <strong>로컬 파일만 찹니다</strong>. 100GB면 61.7시간을 버팁니다.'
+                    : '에이전트를 다시 켰습니다. 쌓인 것을 따라잡는 동안에도 새 줄은 초당 2,665건씩 들어옵니다.';
+            },
+            '#lh-stop-kafka-label': ({ el }) => {
+                const on = document.getElementById('lh-stop-kafka').checked ? '1' : '0';
+                if (el.dataset.eduSaid === on) return '';
+                el.dataset.eduSaid = on;
+                return on === '1'
+                    ? 'Kafka를 멈췄습니다. 에이전트가 보낼 곳이 없어 <strong>파일에 그대로 쌓입니다</strong>. 프로세스 안 producer로 직행했다면 메모리 512MB로 10.4분을 버팁니다.'
+                    : 'Kafka를 다시 켰습니다.';
+            },
+            '#lh-batch': ({ value, prev }) => `SDK가 한 번에 보내는 건수를 <strong>${prev} → ${value}건</strong>으로 바꿨습니다. 늘리면 요청 수가 줄지만 앱이 죽을 때 잃는 것이 그만큼 늘어납니다. 클릭만 이 값과 무관하게 즉시 갑니다.`,
+        },
     }
 
 };

@@ -850,6 +850,13 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 
 4절 예제가 낸 값이다. 대시보드와 정산은 루프가 계속 도니 몇 초 안에 본다. 학습은 다음 날 03:00 에 하루치를 몰아 읽는다. 같은 줄을 누구는 2초 뒤에 읽고 누구는 10.2시간 뒤에 읽는다.
 
+위 표는 group 마다 같은 줄을 읽는 시각을 하나씩만 짚는다. 그 사이 여섯 층 어딘가가 얼마나 차오르는지는 정지 화면 한 장으로는 안 보인다. 에이전트나 Kafka를 직접 멈춰 보면 그 앞 칸이 차오르는 순간이 그대로 보인다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-log-hops.html?embed=1" height="890" loading="lazy" title="로그 여섯 층 흐름 데모"></iframe>
+<a class="demo-embed-open" href="demo-log-hops.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
 **그래서 보존 7일이 필요하다.** 학습이 읽으러 올 때 그 줄이 아직 있어야 한다. 10.2시간은 학습이 제때 돌았을 때의 값이다. 사흘 멈추면 사흘치를 한꺼번에 읽는다. 7일이 어디서 나온 값인지는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 6절이 잰다.
 
 다만 디스크 숫자는 그 절과 이 절이 다르다. 형제 글 6절은 압축을 안 세고 한 줄 200 B 로 잡았다. 그래서 보존 7일에 브로커 한 대가 161.2 GB 다. 이 절 파이썬 표는 압축된 36.6 B 로 재서 같은 조건에 30 GB 다. 실제로 디스크에 앉는 것은 압축된 쪽이니, 그 절의 디스크 숫자는 넉넉히 잡은 값이다.

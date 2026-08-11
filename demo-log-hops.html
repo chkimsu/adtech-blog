@@ -90,6 +90,17 @@
       content: ' ⚠ 멈춤'; font-size: 0.72rem; font-weight: 700; color: var(--state-bad);
       white-space: nowrap; line-height: 1;
     }
+    /* 이벤트를 버리는 층 — 앱 SDK 다. 유실은 여기서만 난다(앞칸이 다 차면 못 받는다).
+       그런데 이 층엔 쌓임 막대가 없어서 위의 is-full 이 안 붙는다. 그래서 이 층에는
+       "지금 쌓이는 중" 과 "아예 사라지는 중" 을 가르는 표시가 하나도 없었다.
+       건수는 JS 가 .lh-lane-name 의 data-drop 에 넣고, 낱말·색·점선은 여기서 준다 —
+       다른 층의 "⚠ 가득" 과 같은 자리·같은 모양이라 읽는 법이 하나다.
+       is-full · is-stopped 뒤에 둔다. 겹칠 일은 없지만 겹치면 더 나쁜 소식이 이겨야 한다. */
+    .lh-lane.is-dropping { border: 1px dashed var(--state-bad); }
+    .lh-lane.is-dropping .lh-lane-name::after {
+      content: ' ⚠ 버림 ' attr(data-drop) '건'; font-size: 0.72rem; font-weight: 700;
+      color: var(--state-bad); white-space: nowrap; line-height: 1;
+    }
 
     .lh-lane-idx {
       grid-row: 1 / span 4; align-self: start; justify-self: center;
@@ -319,7 +330,11 @@
       gap: 0 0.35rem; margin: 0;
     }
     html.is-embed .lh-lane-head > * { min-width: 0; }
-    html.is-embed .lh-lane-name { grid-area: name; font-size: 0.79rem; line-height: 1.35; }
+    /* nowrap 이 높이 계약이다. 이름 뒤에 "⚠ 가득" · "⚠ 버림 1,373건" 같은 표시가 붙는
+       순간 이름이 두 줄이 되면 층이 늘고 iframe 높이가 재생 중에 튄다. 한 줄로 못 박으면
+       무슨 표시가 붙어도 이 칸은 17px 그대로다. 지금 넣는 글자는 다 이름 칸(150px~34%)에
+       들어가는 것을 재서 확인했다 — 넘칠 글자를 새로 붙이려면 폭을 같이 봐야 한다. */
+    html.is-embed .lh-lane-name { grid-area: name; font-size: 0.79rem; line-height: 1.35; white-space: nowrap; }
     html.is-embed .lh-lane-map { grid-area: map; font-size: 0.63rem; padding: 0 0.3rem; line-height: 1.5; }
     html.is-embed .lh-lane-meta { grid-area: meta; margin-left: 0; font-size: 0.67rem; line-height: 1.35; }
     html.is-embed .lh-track { grid-area: track; height: 16px; }
@@ -330,8 +345,11 @@
     html.is-embed .lh-lane-idx { width: 1.25rem; height: 1.25rem; font-size: 0.68rem; margin-top: 0; }
     html.is-embed .lh-rail { height: 0.15rem; }
     /* 좁은 임베드에서는 왼쪽 칸이 150px 뿐이다. 배지까지 넣으면 둘째 줄이 넘친다.
-       상태 표시도 낱말을 떼고 글리프만 남긴다 — 낱말까지 넣으면 이름이 두 줄이 되어
-       그 표시가 뜨는 순간 iframe 높이가 튄다. 점선 테두리가 같이 있어 색만으로 알리는 것은 아니다. */
+       가득·멈춤은 낱말을 떼고 글리프만 남긴다 — 이름이 긴 층("수집 서버 + 로컬 파일" 116px)에
+       낱말까지 붙으면 150px 을 넘어 오른쪽 길 위로 삐져나온다. 점선 테두리가 같이 있어
+       색만으로 알리는 것은 아니다.
+       버림은 낱말과 건수를 그대로 둔다. 이름이 "앱 SDK"(42px) 뿐이라 건수까지 넣어도
+       132px 로 들어가고, 여기서 낱말을 떼면 가득과 버림이 둘 다 "⚠" 가 되어 구별이 사라진다. */
     @media (max-width: 560px) {
       html.is-embed .lh-lane-map { display: none; }
       html.is-embed .lh-lane.is-full .lh-lane-name::after,
@@ -341,8 +359,11 @@
        쌓이는 것은 점이 밀리는 모습 · 길 왼쪽의 "+N" · 층 이름 뒤의 "⚠ 가득" 이 대신 알린다. */
     html.is-embed .lh-lane-note,
     html.is-embed .lh-queue { display: none; }
-    /* 유실 알림도 접는다. 떴다 사라지며 iframe 높이를 흔들고, 층 이름의 "⚠ 가득" 과
-       밀려 쌓인 점이 이미 같은 말을 한다. 전체 페이지에는 그대로 나온다. */
+    /* 유실 알림(문장)만 접는다 — 떴다 사라지며 iframe 높이를 흔든다. 전체 페이지에는 그대로다.
+       유실 자체는 접지 않는다. 앱 SDK 층 이름 뒤의 "⚠ 버림 N건" 이 같은 사실을 같은 자리에서
+       말한다(위 .lh-lane.is-dropping). 그 표시는 이름 칸 안에 들어가므로 높이가 안 변한다.
+       이 알림만 접고 배지가 없으면, 임베드에서 "쌓이는 중" 과 "사라지는 중" 이 구별되지 않는다 —
+       유실이 나는 층은 앱 SDK 인데 그 층에는 "⚠ 가득" 이 안 붙기 때문이다. */
     html.is-embed .lh-loss { display: none; }
 
     /* --- 컨트롤 --- */

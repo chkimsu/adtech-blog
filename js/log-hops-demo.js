@@ -272,6 +272,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var flowEl, laneEl = [], trackEl = [], moreEl = [], queueEl = [];
   var sdkqEl = null, lossEl = null;
+  var dropLaneEl = null, dropNameEl = null;   // 유실이 나는 층(앱 SDK)과 그 층의 이름 칸
   var dotNodes = Object.create(null);   // packet id -> <button>
 
   function cacheDom() {
@@ -286,6 +287,11 @@
       laneEl.push(lane);
       trackEl.push(track);
       queueEl.push(lane.querySelector('[data-queue]'));
+      // 유실은 첫 층에서만 난다 — spawn() 이 여기서 버린다. 배지도 그 층에 붙는다.
+      if (HOPS[i].key === 'sdk') {
+        dropLaneEl = lane;
+        dropNameEl = lane.querySelector('.lh-lane-name');
+      }
       var more = document.createElement('span');
       more.className = 'lh-more';
       more.hidden = true;
@@ -362,14 +368,37 @@
         : '지금은 1건이라 모으지 않는다';
     }
 
-    if (lossEl) {
-      lossEl.hidden = state.dropped === 0;
-      if (state.dropped > 0) {
-        lossEl.textContent = '⚠ 앞이 다 차서 못 받은 이벤트 ' + state.dropped.toLocaleString() +
-          '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).' +
-          // 임베드에서는 이 알림 자체를 CSS 가 접는다. 되돌리는 방법은 전체 페이지에만 적는다.
-          (IS_EMBED ? '' : ' 멈춤을 풀거나 "처음부터"를 누르면 다시 흐른다.');
+    drawLoss();
+  }
+
+  // 유실을 두 자리에 쓴다 — 나는 자리와, 그게 무슨 일인지.
+  //
+  // (1) 앱 SDK 층 이름 뒤의 "⚠ 버림 N건". 유실은 이 층에서만 난다(spawn 이 버린다).
+  //     그런데 이 층엔 쌓임 막대가 없어서 drawQueue 가 안 보고, 다른 층에 붙는 "⚠ 가득" 이
+  //     여기엔 안 붙는다. 임베드는 막대와 아래 알림을 둘 다 접으므로, 배지가 없으면
+  //     "쌓이는 중" 과 "아예 버려지는 중" 을 가르는 표시가 화면에 하나도 없다.
+  //     낱말·색·점선은 CSS 가 준다(다른 층의 "⚠ 가득" 과 같은 자리·같은 모양). 여기서는 수만 넘긴다.
+  // (2) #lh-loss — 무슨 일인지 문장으로. 임베드에서는 CSS 가 접는다(떴다 사라지며 높이를 흔든다).
+  function drawLoss() {
+    var lost = state.dropped;
+
+    if (dropLaneEl && dropNameEl) {
+      dropLaneEl.classList.toggle('is-dropping', lost > 0);
+      if (lost > 0) {
+        var n = lost.toLocaleString();
+        if (dropNameEl.getAttribute('data-drop') !== n) dropNameEl.setAttribute('data-drop', n);
+      } else if (dropNameEl.hasAttribute('data-drop')) {
+        dropNameEl.removeAttribute('data-drop');
       }
+    }
+
+    if (!lossEl) return;
+    lossEl.hidden = lost === 0;
+    if (lost > 0) {
+      lossEl.textContent = '⚠ 앞이 다 차서 못 받은 이벤트 ' + lost.toLocaleString() +
+        '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).' +
+        // 임베드에서는 이 알림 자체를 CSS 가 접는다. 되돌리는 방법은 전체 페이지에만 적는다.
+        (IS_EMBED ? '' : ' 멈춤을 풀거나 "처음부터"를 누르면 다시 흐른다.');
     }
   }
 

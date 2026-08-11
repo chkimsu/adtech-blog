@@ -9,13 +9,14 @@
 const posts = [
   {
     id: 'log-hops-to-kafka',
-    world: 'both',
+    world: 'na',
     title: '로그 수집기 안을 열어 본다 — 클릭 한 건이 Kafka를 지나기까지 9홉',
     excerpt: '광고를 탭한 그 순간부터 학습 데이터가 되기까지, 클릭 한 건은 다섯 군데에 머물고 그때마다 모양이 바뀐다. 수집 서버 안에서는 타입 없는 텍스트 한 줄(169 B)이고, 변환기를 지나면 필드가 8개에서 17개로 늘어난 JSON(308 B)이 되며, Kafka 안에서는 배치로 묶여 압축된 36.6 B다. 파일을 한 번 거치는 설계는 Kafka가 멈춰도 61.7시간을 버티고 직행은 10.4분을 버틴다 — 356배 차이가 640 ms 지연의 값이다. 같은 줄을 대시보드는 2초 뒤에, 학습은 10.2시간 뒤에 읽는다. 그래서 7일을 남긴다.',
     date: '2026-08-11',
     categories: ['ML Infrastructure', 'Software Engineering'],
     tags: ['ML Infra', 'Event-Driven', 'Kafka', 'System Design'],
-    contentUrl: 'posts/log-hops-to-kafka.md'
+    contentUrl: 'posts/log-hops-to-kafka.md',
+    series: 'engineering-foundations'
   },
   {
     id: 'kafka-log-pipeline',

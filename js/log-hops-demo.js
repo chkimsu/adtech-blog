@@ -72,6 +72,10 @@
 
   var DOT_CAP = 9;                  // 한 층에 그리는 점의 최대 수. 넘으면 "+N"
 
+  // 본문 안 iframe 인가. demo-edu.js 와 같은 방식으로 본다.
+  // 글자 수를 여기서만 가른다 — 나머지 접는 일은 전부 CSS(html.is-embed)가 한다.
+  var IS_EMBED = /[?&]embed=1/.test(location.search);
+
   // ==========================================
   // 1) 상태 — 시뮬레이션 값만. DOM 을 모른다
   // ==========================================
@@ -361,9 +365,10 @@
     if (lossEl) {
       lossEl.hidden = state.dropped === 0;
       if (state.dropped > 0) {
-        // 한 줄에 들어가게 짧게 쓴다. 되돌리는 방법은 바로 위 컨트롤에 보인다.
         lossEl.textContent = '⚠ 앞이 다 차서 못 받은 이벤트 ' + state.dropped.toLocaleString() +
-          '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).';
+          '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).' +
+          // 임베드에서는 이 알림 자체를 CSS 가 접는다. 되돌리는 방법은 전체 페이지에만 적는다.
+          (IS_EMBED ? '' : ' 멈춤을 풀거나 "처음부터"를 누르면 다시 흐른다.');
       }
     }
   }
@@ -439,20 +444,18 @@
       case 'collector':
         return IMP_HEAD + '\n{"t":"imp","e":[\n  ' + IMP_ELS[0] + (n > 1 ? ',' : '') + more + ']}';
       case 'agent':
-        return '쪼갠 뒤 첫 건 —\n' +
+        return (n > 1 ? n + '건으로 갈린 뒤 첫 건 —\n' : '쪼갤 것이 없어 한 건 그대로 —\n') +
           '{"remote":"10.2.31.7","ts":"2026-08-06T16:08:26+09:00",\n' +
           ' "method":"POST","uri":"/v1/e","status":"204","rt":"0.004",\n' +
           ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
-          ' "body":"{\\"t\\":\\"imp\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}' +
-          (n > 1 ? '\n… 이렇게 ' + n + '개로 갈렸다 …' : '');
+          ' "body":"{\\"t\\":\\"imp\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}';
       // 클릭 줄과 같은 17개를 같은 순서로 채운다. 값만 노출 것이다.
       case 'transform':
         return '{"req_id":"r-8f21","event":"impression_confirm","ad_id":9931,\n' +
           ' "slot":"main_top","seq":11,"app_ver":"3.2.1","device":"iPhone",\n' +
           ' "os":"iOS","os_ver":"19.2","region":"KR-11","campaign_id":5502,\n' +
-          ' "advertiser_id":311,"media":"A앱",\n' +
-          ' "event_ts":1786000101118,"collect_ts":1786000106402,\n' +
-          ' "process_ts":1786000107310,"schema":"impression.confirm.v1"}' +
+          ' "advertiser_id":311,"media":"A앱","event_ts":1786000101118,\n' +
+          ' "collect_ts":1786000106402,"process_ts":1786000107310,"schema":"impression.confirm.v1"}' +
           (n > 1 ? '\n… 같은 모양으로 ' + n + '건 …' : '');
       case 'kafka':
         return 'topic ' + topic + ' · partition 5 · offset 8412\n' +
@@ -528,11 +531,9 @@
 
     var hint = '';
     if (p.kind === 'imp' && HOPS[i].key === 'collector' && p.n > 1) {
-      hint = '묶으면 건당이 줄어든다. 서버가 앞에 붙이는 90 B 를 ' + p.n + '번이 아니라 한 번만 적기 때문이다 ' +
-        '— 클릭 한 건짜리 줄의 169 B 와 비교해 보라.';
+      hint = '앞부분 90 B 를 ' + p.n + '번이 아니라 한 번만 적어서 건당이 줄었다. 클릭 한 건짜리 줄은 169 B 다.';
     } else if (p.kind === 'imp' && HOPS[i].key === 'agent' && p.n > 1) {
-      hint = '건당이 다시 늘었다. 에이전트가 한 줄을 ' + p.n + '건으로 쪼개면서 그 90 B 가 건마다 다시 붙는다. ' +
-        '묶어서 아끼는 구간은 파일 한 층뿐이다.';
+      hint = '쪼개면서 그 90 B 가 건마다 다시 붙어 건당이 늘었다. 아끼는 구간은 파일 한 층뿐이다.';
     } else if (p.kind === 'imp' && (HOPS[i].key === 'transform' || HOPS[i].key === 'consumer')) {
       hint = '글은 클릭 줄만 끝까지 따라간다. 노출 줄의 필드 이름은 클릭 줄 구성을 그대로 옮긴 것이다.';
     } else if (HOPS[i].key === 'kafka') {

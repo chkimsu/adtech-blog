@@ -77,7 +77,8 @@
        임베드에서는 쌓임 막대를 접기 때문에, 그때도 이 표시가 남아 어디에 쌓이는지 알려 준다. */
     .lh-lane.is-full { border: 1px dashed var(--state-warn); }
     .lh-lane.is-full .lh-lane-name::after {
-      content: ' ⚠ 가득'; font-size: 0.72rem; font-weight: 700; color: var(--state-warn); white-space: nowrap;
+      content: ' ⚠ 가득'; font-size: 0.72rem; font-weight: 700; color: var(--state-warn);
+      white-space: nowrap; line-height: 1;
     }
     /* 멈춘 층 — 색 + 점선 테두리 + ⚠ 글자 셋이 같이 바뀐다.
        is-full 보다 뒤에 둔다. 둘이 겹칠 때 사람이 끈 쪽이 이겨야 한다. */
@@ -86,7 +87,8 @@
       background: var(--bg-secondary);
     }
     .lh-lane.is-stopped .lh-lane-name::after {
-      content: ' ⚠ 멈춤'; font-size: 0.72rem; font-weight: 700; color: var(--state-bad); white-space: nowrap;
+      content: ' ⚠ 멈춤'; font-size: 0.72rem; font-weight: 700; color: var(--state-bad);
+      white-space: nowrap; line-height: 1;
     }
 
     .lh-lane-idx {
@@ -297,11 +299,13 @@
        "글 표 3+4번 홉" 배지를 여기서도 남기는 이유가 있다. 축척 상자에서 접는
        "642 ms 는 3번 홉과 4번 홉을 합쳤다" 를 이 배지가 대신 말해 준다. */
     html.is-embed .lh-flow { padding-top: 0.6rem; padding-bottom: 0.6rem; }
-    html.is-embed .lh-flow-head { padding-bottom: 0.3rem; margin-bottom: 0.2rem; font-size: 0.74rem; }
+    html.is-embed .lh-flow-head { padding-bottom: 0.28rem; margin-bottom: 0.18rem; font-size: 0.72rem; }
     html.is-embed .lh-lane { padding: 0.15rem 0.4rem; gap: 0 0.45rem; }
     html.is-embed .lh-lane > div:last-child {
       display: grid;
-      grid-template-columns: minmax(150px, 30%) 1fr;
+      /* 34% — "⚠ 가득" 이 이름 뒤에 붙어도 한 줄에 들어가는 폭이다.
+         30% 로 두면 그 표시가 뜨는 순간 이름이 두 줄이 되고 iframe 높이가 튄다. */
+      grid-template-columns: minmax(150px, 34%) 1fr;
       grid-template-areas: "head track" "head bar";
       align-items: center; column-gap: 0.55rem;
     }
@@ -325,15 +329,21 @@
     html.is-embed .lh-dot.is-fat2 { width: 22px; margin-left: -11.5px; }
     html.is-embed .lh-lane-idx { width: 1.25rem; height: 1.25rem; font-size: 0.68rem; margin-top: 0; }
     html.is-embed .lh-rail { height: 0.15rem; }
-    /* 좁은 임베드에서는 왼쪽 칸이 150px 뿐이다. 배지까지 넣으면 둘째 줄이 넘친다. */
+    /* 좁은 임베드에서는 왼쪽 칸이 150px 뿐이다. 배지까지 넣으면 둘째 줄이 넘친다.
+       상태 표시도 낱말을 떼고 글리프만 남긴다 — 낱말까지 넣으면 이름이 두 줄이 되어
+       그 표시가 뜨는 순간 iframe 높이가 튄다. 점선 테두리가 같이 있어 색만으로 알리는 것은 아니다. */
     @media (max-width: 560px) {
       html.is-embed .lh-lane-map { display: none; }
+      html.is-embed .lh-lane.is-full .lh-lane-name::after,
+      html.is-embed .lh-lane.is-stopped .lh-lane-name::after { content: ' ⚠'; }
     }
     /* 층 설명 여섯 줄과 쌓임 막대 셋은 접는다.
        쌓이는 것은 점이 밀리는 모습 · 길 왼쪽의 "+N" · 층 이름 뒤의 "⚠ 가득" 이 대신 알린다. */
     html.is-embed .lh-lane-note,
     html.is-embed .lh-queue { display: none; }
-    html.is-embed .lh-loss { margin-top: 0.4rem; padding: 0.4rem 0.6rem; font-size: 0.72rem; }
+    /* 유실 알림도 접는다. 떴다 사라지며 iframe 높이를 흔들고, 층 이름의 "⚠ 가득" 과
+       밀려 쌓인 점이 이미 같은 말을 한다. 전체 페이지에는 그대로 나온다. */
+    html.is-embed .lh-loss { display: none; }
 
     /* --- 컨트롤 --- */
     html.is-embed .lh-controls { padding-top: 0.6rem; padding-bottom: 0.6rem; }
@@ -347,11 +357,38 @@
     html.is-embed .lh-switch { font-size: 0.77rem; }
     html.is-embed .lh-switch { padding: 0.28rem 0.65rem; }
 
-    /* --- 고른 한 건 --- */
-    html.is-embed .lh-detail { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+    /* --- 고른 한 건 ---
+       고정 높이다. 이 칸의 높이는 지금 고른 건이 어느 층에 있느냐에 따라 132~244px 로
+       달라지는데, 재생 중에는 그 선택이 여섯 층을 계속 옮겨 다닌다. 부모는 받은 높이를
+       iframe 에 그대로 넣으므로(상한도 디바운스도 없다) 글 중간의 칸이 재생 내내
+       위아래로 움직인다. 높이가 큰 것보다 이게 더 나쁘다.
+       그래서 칸을 고정하고 넘치는 것은 이 칸 안에서만 스크롤한다. */
+    html.is-embed .lh-detail {
+      padding-top: 0.7rem; padding-bottom: 0.7rem;
+      height: 218px; overflow-y: auto; overscroll-behavior: contain;
+    }
+    @media (max-width: 559px) {
+      html.is-embed .lh-detail { height: 360px; }
+    }
+    /* demo-edu.js 의 해설 패널도 글이 길어지면 높이가 바뀐다. 같은 이유로 고정한다. */
+    html.is-embed .demo-explain { height: 68px; overflow-y: auto; overscroll-behavior: contain; }
     html.is-embed .lh-detail-head { padding-bottom: 0.3rem; margin-bottom: 0.35rem; }
     html.is-embed .lh-detail-where { font-size: 0.94rem; }
-    html.is-embed .lh-shape { padding: 0.45rem 0.55rem; font-size: 0.66rem; line-height: 1.35; }
+    /* 모양 칸에만 높이 상한을 준다. 긴 것은 여기서 스크롤한다.
+       상세 칸 전체를 스크롤하게 두면 잘리는 것이 글이 되어 문장이 중간에 끊긴 것처럼 보인다.
+       코드 블록이 스크롤되는 것은 흔한 모양이라 그쪽이 낫다. */
+    html.is-embed .lh-shape {
+      padding: 0.45rem 0.55rem; font-size: 0.66rem; line-height: 1.35;
+      max-height: 84px; overflow: auto; overscroll-behavior: contain;
+    }
+    /* 좁아지면 안내문이 여러 줄로 늘어난다. 그만큼 모양 칸의 상한을 낮춰
+       글이 잘리는 대신 코드 블록이 스크롤되게 한다. */
+    @media (min-width: 560px) and (max-width: 699px) {
+      html.is-embed .lh-shape { max-height: 56px; }
+    }
+    @media (max-width: 559px) {
+      html.is-embed .lh-shape { max-height: 165px; }
+    }
     html.is-embed .lh-hint { font-size: 0.72rem; }
     /* 지나온 층 목록은 접는다 — 층별 ms 가 위 여섯 층의 머리에 그대로 적혀 있어서
        임베드에서는 같은 말을 두 번 하는 셈이다. 누적 값은 남는다. */
@@ -377,7 +414,7 @@
           — 넷째 줄이 없으면 Kafka 칸의 빈 점선 막대를 설명하는 말이 화면에 없어진다.
        접는 셋(클릭 비율 · 642 ms 합침 · 홉 사이 둘)은 전체 페이지에 그대로 있다.
        "642 ms 를 합쳤다" 는 층의 "글 표 3+4번 홉" 배지가 대신 말한다. */
-    html.is-embed .lh-scale { padding: 0.5rem 0.8rem; font-size: 0.75rem; line-height: 1.55; }
+    html.is-embed .lh-scale { padding: 0.45rem 0.8rem; font-size: 0.75rem; line-height: 1.45; }
     html.is-embed .lh-scale li:nth-child(2),
     html.is-embed .lh-scale li:nth-child(3),
     html.is-embed .lh-scale li:nth-child(5) { display: none; }

@@ -590,8 +590,8 @@ print(AFTER)
 
 ```text
 topic      ad.click
-key        b'r-8f21'                              6 B
-value      b'{"req_id":"r-8f21","ad_id":9931,…}'  308 B
+key        b'r-8f21'                                              6 B
+value      b'{"req_id":"r-8f21","event":"click","ad_id":9931,…}'  308 B
 headers    [('schema', b'click.v3'), ('src', b'collector-07')]
 ```
 
@@ -618,7 +618,7 @@ timestamp 1786002502310   type=CREATE_TIME
 ```text
 $ kafka-console-consumer --topic ad.click --partition 5 --offset 8412 \
     --max-messages 1 --property print.key=true --property print.offset=true
-Offset:8412	r-8f21	{"req_id":"r-8f21","ad_id":9931,"slot":"main_top",…}
+Offset:8412	r-8f21	{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top",…}
 ```
 
 값이 JSON 이라 사람이 읽는다. 같은 한 건을 Avro 로 넣으면 이렇게 나온다.
@@ -637,7 +637,7 @@ Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\x0aclick\x96\x9b\x01\x10main_t
 
 `\x0c` 는 12다. 길이 6을 두 배로 적는 방식이라 그렇다. 그 뒤 여섯 바이트가 `r-8f21` 이다. 이 값이 어느 필드의 것인지는 이 바이트 열 어디에도 없다.
 
-**앞 다섯 바이트는 Confluent 의 wire format 이다.** Avro 명세가 정한 것이 아니다. Avro 가 정하는 것은 값을 어떤 순서로 이어 붙이느냐까지다. 매직 한 바이트와 스키마 번호 네 바이트를 앞에 두는 것은 스키마 레지스트리를 쓰는 쪽의 약속이다. 다른 레지스트리를 쓰면 이 앞머리가 다르다.
+**앞 다섯 바이트는 Confluent 의 wire format 이다.** Avro 명세가 정한 것이 아니다. Avro 가 정하는 것은 값을 어떤 순서로, 어떤 이진 모양으로 이어 붙이느냐까지다. 매직 한 바이트와 스키마 번호 네 바이트를 앞에 두는 것은 스키마 레지스트리를 쓰는 쪽의 약속이다. 다른 레지스트리를 쓰면 이 앞머리가 다르다.
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 512 212" role="img" aria-label="Avro 레코드 한 건을 가로 띠로 놓은 그림. 띠는 왼쪽부터 매직 1바이트, 스키마 번호 4바이트, payload 로 갈린다. payload 에는 값만 이어져 있고 필드 이름이 없다. 띠 위에는 브로커가 값과 따로 들고 있는 key, headers, offset, timestamp 네 상자가 있다. 띠 아래 점선 상자는 스키마 레지스트리 17번 스키마이고, payload 의 각 값에서 내려온 선이 req_id, event, ad_id 라는 이름에 닿는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
@@ -691,8 +691,8 @@ Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\x0aclick\x96\x9b\x01\x10main_t
 # ③⑤ 가 Kafka 에 실제로 저장되는 모양이다. producer 는 배치 단위로 압축한다.
 # Avro 인코딩은 어느 구현의 것도 아니다. 바이트 수만 재려고 직접 짠 것이다
 #   (zigzag varint + 길이 접두 문자열, 앞에 매직 1B·스키마 번호 4B).
-# 하루 줄 수·복제·브로커는 Kafka 글에서 가져왔다 — ad.impression 2.28억,
-#   ad.click 228만, 복제 3벌, 브로커 6대, 대당 디스크 500GB, 보존 7일.
+# 하루 줄 수·복제·브로커는 Kafka 글에서 가져왔다 — 노출 확인 2.28억,
+#   클릭 228만, 복제 3벌, 브로커 6대, 대당 디스크 500GB, 보존 7일.
 import gzip, json, random
 from unicodedata import east_asian_width
 
@@ -838,7 +838,7 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 
 그 "두 줄"이 지금 브로커에 따로 놓여 있다. `ad.impression` 에는 `bidder` 가 만든 응찰 줄이 있다. `ad.impression.confirm` 에는 매체가 보낸 확인 줄이 있다. 5절이 이름을 가른 자리가 이 문장이다.
 
-이 글의 클릭까지 세면 topic 이 셋이다. 셋 다 key 가 `req_id` 이고 partition 이 12개다. 그래서 `r-8f21` 은 세 곳에서 다 partition 5 에 놓인다. 이어 붙이는 일이 partition 하나 안에서 끝난다.
+이 글의 클릭까지 세면 topic 이 셋이다. 셋 다 key 가 `req_id` 이고 partition 이 12개다. 5절이 셋째로 든 조건, 넣는 쪽이 같은 partitioner 를 쓰는 것까지 맞아야 한다. 셋이 다 맞을 때 `r-8f21` 이 세 곳에서 다 partition 5 에 놓인다. 그때 이어 붙이는 일이 partition 하나 안에서 끝난다.
 
 **그런데 언제 이어 붙이나.** 브로커는 놓인 줄을 아무에게도 밀어 주지 않는다. 읽는 쪽이 각자 와서 가져간다. 그래서 같은 줄을 보는 시각이 group 마다 다르다.
 
@@ -850,6 +850,14 @@ print(f"   스키마 번호 {int.from_bytes(avro(REC)[1:5], 'big')} 이고, 이�
 
 4절 예제가 낸 값이다. 대시보드와 정산은 루프가 계속 도니 몇 초 안에 본다. 학습은 다음 날 03:00 에 하루치를 몰아 읽는다. 같은 줄을 누구는 2초 뒤에 읽고 누구는 10.2시간 뒤에 읽는다.
 
-**그래서 보존 7일이 필요하다.** 학습이 읽으러 올 때 그 줄이 아직 있어야 한다. 10.2시간은 학습이 제때 돌았을 때의 값이다. 사흘 멈추면 사흘치를 한꺼번에 읽는다. 7일이 어디서 나온 값인지는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 6절이 잰다. 읽는 쪽이 가장 오래 멈춰도 되는 시간이 그 값이다.
+**그래서 보존 7일이 필요하다.** 학습이 읽으러 올 때 그 줄이 아직 있어야 한다. 10.2시간은 학습이 제때 돌았을 때의 값이다. 사흘 멈추면 사흘치를 한꺼번에 읽는다. 7일이 어디서 나온 값인지는 [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) 6절이 잰다.
+
+다만 디스크 숫자는 그 절과 이 절이 다르다. 형제 글 6절은 압축을 안 세고 한 줄 200 B 로 잡았다. 그래서 보존 7일에 브로커 한 대가 161.2 GB 다. 이 절 파이썬 표는 압축된 36.6 B 로 재서 같은 조건에 30 GB 다. 실제로 디스크에 앉는 것은 압축된 쪽이니, 그 절의 디스크 숫자는 넉넉히 잡은 값이다.
+
+**그래도 답은 안 바뀐다. 7일은 디스크가 아니라 읽는 쪽 기한에서 나온 값이다.** 형제 글이 그 자리에 이렇게 적어 뒀다.
+
+> Kafka 의 보존 기간은 장기 보관 기간이 아니라 읽는 쪽이 늦어도 되는 기한이다.
+
+읽는 쪽이 가장 오래 멈춰도 되는 시간이 그 값이다. 압축을 세면 디스크에 여유가 더 있다는 것이 달라지는 전부다.
 
 브로커에 놓이기까지가 여기까지다. 읽는 쪽이 무엇을 받는지가 8절이다.

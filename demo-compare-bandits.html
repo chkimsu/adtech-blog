@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -44,7 +44,7 @@
       padding: 1.2rem 1.5rem;
       background: rgba(255, 255, 255, 0.03);
       border: 1px dashed var(--border-color);
-      border-radius: 12px;
+      border-radius: 0;
       color: var(--text-secondary);
       font-size: 0.9rem;
       line-height: 1.7;
@@ -65,9 +65,9 @@
 
     .cmp-btn {
       padding: 0.55rem 1.15rem;
-      border-radius: 9px;
+      border-radius: 0;
       border: 1px solid var(--accent-primary);
-      background: rgba(90, 107, 122, 0.12);
+      background: color-mix(in srgb, var(--series-1) 12%, transparent);
       color: var(--accent-primary);
       font-weight: 600;
       font-size: 0.88rem;
@@ -88,21 +88,21 @@
     }
 
     .cmp-btn.danger {
-      border-color: #ff4b57;
-      color: #ff4b57;
-      background: rgba(255, 75, 87, 0.1);
+      border-color: var(--state-bad);
+      color: var(--state-bad);
+      background: color-mix(in srgb, var(--state-bad) 10%, transparent);
     }
 
     .cmp-btn.danger:hover:not(:disabled) {
-      background: #ff4b57;
-      color: white;
+      background: var(--state-bad);
+      color: var(--paper);
     }
 
     .cmp-round-display {
       display: inline-flex;
       align-items: center;
       padding: 0.5rem 1rem;
-      border-radius: 9px;
+      border-radius: 0;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
       font-size: 0.88rem;
@@ -121,13 +121,13 @@
       padding: 1rem 1.15rem;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 0;
       position: relative;
     }
 
     .cmp-ad-card.optimal {
       border-color: var(--state-good);
-      box-shadow: 0 0 0 2px rgba(95, 122, 99, 0.25);
+      box-shadow: none;
     }
 
     .cmp-ad-head {
@@ -168,7 +168,7 @@
       padding: 0.15rem 0.5rem;
       background: var(--state-good);
       color: var(--bg-primary);
-      border-radius: 20px;
+      border-radius: 0;
       letter-spacing: 0.05em;
     }
 
@@ -189,7 +189,7 @@
     .cmp-algo-panel {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 0;
       padding: 1.25rem;
     }
 
@@ -207,8 +207,8 @@
       font-size: 1.1rem;
     }
 
-    .cmp-algo-name.ucb { color: #5a6b7a; }
-    .cmp-algo-name.ts { color: #7d5e72; }
+    .cmp-algo-name.ucb { color: var(--series-1); }
+    .cmp-algo-name.ts { color: var(--series-4); }
 
     .cmp-algo-sub {
       font-size: 0.75rem;
@@ -225,7 +225,7 @@
     .cmp-metric {
       padding: 0.55rem 0.6rem;
       background: var(--bg-tertiary);
-      border-radius: 8px;
+      border-radius: 0;
       text-align: center;
     }
 
@@ -283,7 +283,7 @@
       display: inline-block;
       height: 6px;
       background: var(--accent-primary);
-      border-radius: 3px;
+      border-radius: 0;
       vertical-align: middle;
       margin-left: 0.3rem;
     }
@@ -292,7 +292,7 @@
     .cmp-chart-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 0;
       padding: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -312,10 +312,10 @@
       max-width: 900px;
       margin: 0 auto 2rem;
       padding: 1.1rem 1.5rem;
-      background: rgba(125, 94, 114, 0.08);
-      border: 1px solid rgba(125, 94, 114, 0.3);
+      background: color-mix(in srgb, var(--series-4) 8%, transparent);
+      border: 1px solid color-mix(in srgb, var(--series-4) 30%, transparent);
       border-left: 4px solid var(--accent-secondary);
-      border-radius: 10px;
+      border-radius: 0;
       font-size: 0.88rem;
       line-height: 1.7;
       color: var(--text-secondary);
@@ -371,7 +371,7 @@
       </div>
 
       <div class="demo-tldr-analogy">
-        <div class="demo-tldr-analogy-icon">⚔</div>
+        <div class="demo-tldr-analogy-icon">대결</div>
         <div class="demo-tldr-analogy-body">
           <div class="demo-tldr-analogy-label">한 줄 비유</div>
           <div class="demo-tldr-analogy-text">
@@ -405,7 +405,7 @@
       <div class="cmp-sim">
         <div class="cmp-controls">
           <span class="cmp-round-display" id="round-display">Round 0 / 0</span>
-          <button class="cmp-btn" id="btn-step">▶ 1 Round</button>
+          <button class="cmp-btn" id="btn-step">▸ 1 Round</button>
           <button class="cmp-btn" id="btn-100">⏭ 100 Rounds</button>
           <button class="cmp-btn" id="btn-500">⏭⏭ 500 Rounds</button>
           <button class="cmp-btn" id="btn-reveal">실제 CTR 공개</button>

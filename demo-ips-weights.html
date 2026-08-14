@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="옛 정책이 남긴 로그 10,000건으로 새 정책의 CTR을 Replay·IPS·SNIPS·DR 네 가지로 추정한다. 탐색 비율과 정책 거리, 가중치 절단, 보상 모델 정확도를 움직이면 가중치 꼬리와 유효표본크기 ESS가 같이 바뀐다.">
+  <title>성향점수 가중 실험실 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===================================================================
+       성향점수 가중 실험실 — demo-ips-weights.html
+       색 값은 이 파일에도 js/ips-weights-demo.js 에도 hex 가 하나도 없다.
+       전부 css/style.css 상단의 토큰이다. 모서리는 전부 0, 그림자는 없다.
+       =================================================================== */
+
+    /* 조작·그림이 들어가는 통은 넓게 쓴다. 읽는 글은 .ipw-page 로 좁힌다. */
+    .ipw-controls,
+    .ipw-metrics,
+    .ipw-charts {
+      max-width: 1600px;
+      margin: 0 auto 1.15rem;
+      padding-left: 46px;
+      padding-right: 46px;
+    }
+
+    .ipw-hero,
+    .ipw-page,
+    .ipw-verdict {
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .ipw-controls,
+      .ipw-metrics,
+      .ipw-charts { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+
+    @media (max-width: 480px) {
+      .ipw-controls,
+      .ipw-metrics,
+      .ipw-charts,
+      .ipw-hero,
+      .ipw-page,
+      .ipw-verdict { padding-left: 1rem; padding-right: 1rem; }
+    }
+
+    .ipw-hero { text-align: center; padding-top: 2rem; padding-bottom: 1rem; }
+    .ipw-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .ipw-hero p { color: var(--text-secondary); font-size: 0.98rem; }
+
+    .ipw-page > * + * { margin-top: 1.15rem; }
+    .ipw-page { margin-bottom: 1.4rem; }
+
+    .ipw-brief {
+      padding: 1.15rem 1.4rem;
+      background: var(--bg-secondary);
+      border: 1px dashed var(--border-color);
+      border-radius: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+    .ipw-brief strong { color: var(--accent-primary); }
+    .ipw-brief code {
+      background: var(--bg-tertiary); padding: 0.08rem 0.35rem;
+      border-radius: 0; font-size: 0.88em; font-family: var(--font-mono);
+    }
+
+    /* ---------- 컨트롤 ---------- */
+    .ipw-controls-inner {
+      padding: 1.3rem 1.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 0;
+    }
+    .ipw-control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem 2.4rem;
+    }
+    @media (max-width: 900px) { .ipw-control-grid { grid-template-columns: 1fr; } }
+
+    .ipw-row {
+      display: grid;
+      grid-template-columns: minmax(0, 250px) minmax(0, 1fr) 76px;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.35rem 0;
+    }
+    @media (max-width: 620px) { .ipw-row { grid-template-columns: 1fr; gap: 0.35rem; } }
+
+    .ipw-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .ipw-label small {
+      display: block; font-size: 0.72rem; color: var(--text-muted);
+      font-weight: 400; margin-top: 0.15rem; line-height: 1.5;
+    }
+    /* 홈이 판과 거의 같은 밝기라 어디를 잡는지 안 보인다. 1px 실선을 둘러 자리를 알린다. */
+    .ipw-slider {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 8px;
+      background: var(--bg-tertiary); border: 1px solid var(--border-color);
+      border-radius: 0; outline: none;
+    }
+    .ipw-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
+    }
+    .ipw-slider::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 0; cursor: pointer; border: none;
+    }
+    .ipw-slider:focus-visible { outline: 2px solid var(--accent-secondary); outline-offset: 3px; }
+    .ipw-val {
+      text-align: right; font-family: var(--font-mono); font-size: 0.86rem;
+      font-weight: 700; color: var(--accent-primary);
+    }
+
+    .ipw-presets {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-top: 0.9rem; padding-top: 0.9rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .ipw-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border-color); border-radius: 0;
+      transition: border-color var(--transition-fast), color var(--transition-fast);
+    }
+    .ipw-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ---------- 지표 ---------- */
+    .ipw-metrics-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem;
+    }
+    @media (max-width: 1000px) { .ipw-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .ipw-metrics-grid { grid-template-columns: 1fr; } }
+
+    .ipw-metric {
+      padding: 1rem 1.1rem; background: var(--glass-bg);
+      border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .ipw-metric-label {
+      font-size: 0.72rem; color: var(--text-muted);
+      letter-spacing: 0.06em; margin-bottom: 0.35rem;
+    }
+    .ipw-metric-value {
+      font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono);
+      color: var(--text-primary); line-height: 1.2;
+    }
+    .ipw-metric-value.is-good { color: var(--state-good); }
+    .ipw-metric-value.is-warn { color: var(--state-warn); }
+    .ipw-metric-value.is-bad { color: var(--state-bad); }
+    .ipw-metric-sub { font-size: 0.74rem; color: var(--text-muted); margin-top: 0.3rem; line-height: 1.5; }
+
+    .ipw-verdict {
+      padding: 0.9rem 1.2rem; margin-bottom: 1.4rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
+      color: var(--text-secondary); font-size: 0.92rem; line-height: 1.65;
+    }
+
+    /* ---------- 그림 ---------- */
+    .ipw-charts-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem;
+    }
+    @media (max-width: 1000px) { .ipw-charts-grid { grid-template-columns: 1fr; } }
+
+    .ipw-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: 0; padding: 1.2rem 1.3rem; min-width: 0;
+    }
+    .ipw-card-est { grid-column: 1 / -1; }
+    .ipw-card h3 { font-size: 1rem; margin-bottom: 0.3rem; color: var(--text-primary); }
+    .ipw-note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.85rem; line-height: 1.6; }
+    .ipw-chart { width: 100%; min-width: 0; }
+    /* 그림 아래 한 줄. SVG 안의 글자는 줄바꿈이 없어 좁은 화면에서 잘리므로 밖에 둔다. */
+    .ipw-foot {
+      margin: 0.7rem 0 0; font-size: 0.78rem; line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .ipw-table-wrap { overflow-x: auto; margin-top: 1rem; }
+    .ipw-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .ipw-table th,
+    .ipw-table td {
+      padding: 0.45rem 0.6rem; text-align: right;
+      border-bottom: 1px solid var(--rule2); white-space: nowrap;
+    }
+    .ipw-table thead th {
+      color: var(--text-muted); font-weight: 500; font-size: 0.78rem;
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+    }
+    .ipw-table th[scope="row"] { text-align: left; color: var(--text-primary); font-weight: 600; }
+    .ipw-table tbody td { font-family: var(--font-mono); color: var(--text-secondary); }
+    .ipw-table thead th:first-child { text-align: left; }
+
+    /* 임베드에서는 여백을 줄인다 */
+    html.is-embed .ipw-controls,
+    html.is-embed .ipw-metrics,
+    html.is-embed .ipw-charts { padding-left: 1rem; padding-right: 1rem; margin-bottom: 0.8rem; }
+    html.is-embed .ipw-verdict { padding-left: 1rem; padding-right: 1rem; margin-bottom: 0.8rem; }
+    html.is-embed .ipw-controls-inner { padding: 0.9rem 1rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="ipw-hero">
+      <h1>성향점수 가중 실험실</h1>
+      <p>옛 정책이 남긴 로그 10,000건이 전부입니다. 이 로그로 새 정책의 CTR을 네 가지 방법으로 추정합니다.
+        탐색 비율과 정책 거리를 움직이면 가중치의 꼬리가 자라고, 10,000건이 몇 건 몫으로 줄어드는지가 그 자리에서 보입니다.</p>
+    </section>
+
+    <div class="ipw-page">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-calibration.html">Calibration Explorer</a>
+        <a href="demo-ab-vs-bandit.html">A/B vs Bandit</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>같은 로그 하나를 놓고 <strong>Replay · IPS · SNIPS · DR</strong> 네 가지가 각각 얼마를 말하는지 나란히 봅니다. 진짜 값을 우리가 정해 둔 가상 세계라서, 어느 쪽이 얼마나 빗나갔는지 채점할 수 있습니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>겹친 건 2,595건은 넉넉해 보입니다. 그런데 실제로 값을 받치는 것은 <strong>339건</strong>입니다. 이 수를 세지 않으면 클릭 열 번 남짓으로 만든 숫자를 보고 모델 배포를 결정하게 됩니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text">그냥 두고 봅니다. 겹친 건은 <strong>2,595건</strong>인데 유효표본 ESS는 <strong>339건</strong>입니다. 세 번째 그림이 그 줄어듦입니다.</span></li>
+        <li><span class="step-text">탐색 비율 <strong>ε를 0.10에서 0.02로</strong> 내립니다. 가중치 상한이 80에서 400으로 뜁니다. 오른쪽 꼬리 막대가 자라고 ESS가 내려앉습니다.</span></li>
+        <li><span class="step-text"><strong>정책 거리를 0.30으로</strong> 내립니다. 겹침률이 오르고 구간이 좁아집니다. 대신 진짜 값도 옛 정책 쪽으로 내려옵니다 — 안 새로운 정책이라 잴 게 없습니다.</span></li>
+        <li><span class="step-text"><strong>절단을 M=20으로</strong> 겁니다. 표의 400주 평균을 보세요. IPS는 2.83%에서 2.13%로 내려앉는데 SNIPS는 2.91%로 버팁니다.</span></li>
+      </ol>
+
+      <div class="ipw-brief">
+        <strong>설정</strong> — 요청 <code>10,000</code>건, 지면 5개, 요청마다 후보 광고 8개입니다.
+        옛 정책은 softmax(온도 <code>0.0014</code>)로 고르되 <strong>10%는 균등 무작위</strong>로 섞었습니다.
+        그래서 어떤 후보든 최소 <code>0.0125</code>의 확률로 뽑히고, 가중치 <code>1/p</code>는 <strong>80배</strong>를 넘지 못합니다.
+        새 모델은 옛 모델이 못 보는 피처를 하나 더 봅니다. 그 피처의 값어치는 지면마다 다릅니다.
+        이 화면의 로그는 <a href="post.html?id=offpolicy-evaluation">지난주 로그로 새 모델을 채점하기</a>의 파이썬 코드를
+        같은 씨앗(<code>seed 7</code>)으로 다시 돌린 것이라, 기본값에서 나오는 숫자가 글의 출력과 자리 하나까지 같습니다.
+        <strong>모든 값은 설명을 위해 지어낸 가데이터</strong>입니다.
+      </div>
+    </div>
+
+    <!-- ================= 컨트롤 ================= -->
+    <div class="ipw-controls" id="ipw-controls">
+      <div class="ipw-controls-inner">
+        <div class="ipw-control-grid">
+          <div class="ipw-row ipw-row-eps">
+            <div class="ipw-label">옛 정책의 탐색 비율 ε
+              <small>균등 무작위로 고르는 비율. 가중치 상한 = 8 ÷ ε</small>
+            </div>
+            <input type="range" class="ipw-slider" id="ipw-eps" min="0" max="6" step="1" value="2"
+              aria-label="옛 정책의 탐색 비율">
+            <div class="ipw-val" id="ipw-eps-val">0.10</div>
+          </div>
+
+          <div class="ipw-row ipw-row-dist">
+            <div class="ipw-label">정책 거리
+              <small>0이면 새 정책이 옛 정책과 같은 답을 낸다. 1이면 글의 새 정책</small>
+            </div>
+            <input type="range" class="ipw-slider" id="ipw-dist" min="0" max="1" step="0.05" value="1"
+              aria-label="새 정책이 옛 정책과 얼마나 다른가">
+            <div class="ipw-val" id="ipw-dist-val">1.00</div>
+          </div>
+
+          <div class="ipw-row ipw-row-clip">
+            <div class="ipw-label">가중치 절단 M
+              <small>1/p 가 M을 넘으면 M으로 자른다. IPS·SNIPS·DR에 걸린다</small>
+            </div>
+            <input type="range" class="ipw-slider" id="ipw-clip" min="0" max="7" step="1" value="7"
+              aria-label="가중치 절단 임계값">
+            <div class="ipw-val" id="ipw-clip-val">없음</div>
+          </div>
+
+          <div class="ipw-row ipw-row-qacc">
+            <div class="ipw-label">보상 모델 정확도
+              <small>1이면 진짜 CTR을 맞힌다. 0이면 지면 평균만 내놓는다. DR에만 쓰인다</small>
+            </div>
+            <input type="range" class="ipw-slider" id="ipw-qacc" min="0" max="1" step="0.05" value="1"
+              aria-label="보상 모델 정확도">
+            <div class="ipw-val" id="ipw-qacc-val">1.00</div>
+          </div>
+        </div>
+
+        <div class="ipw-presets">
+          <button class="ipw-preset-btn" data-ipw-preset="0.1,1,7,1">글의 설정</button>
+          <button class="ipw-preset-btn" data-ipw-preset="0.02,1,7,1">탐색을 2%로</button>
+          <button class="ipw-preset-btn" data-ipw-preset="0.2,1,7,1">탐색을 20%로</button>
+          <button class="ipw-preset-btn" data-ipw-preset="0.1,1,2,1">실무 기본값 (M=20 + 자기정규화)</button>
+          <button class="ipw-preset-btn" data-ipw-preset="0.1,0.3,7,1">두 정책이 비슷하면</button>
+          <button class="ipw-preset-btn" data-ipw-preset="0.1,1,7,0">보상 모델이 지면 평균뿐</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 지표 ================= -->
+    <div class="ipw-metrics">
+      <div class="ipw-metrics-grid">
+        <div class="ipw-metric">
+          <div class="ipw-metric-label">겹친 건</div>
+          <div class="ipw-metric-value" id="ipw-m-match">—</div>
+          <div class="ipw-metric-sub" id="ipw-m-match-sub">두 정책이 같은 광고를 고른 건</div>
+        </div>
+        <div class="ipw-metric">
+          <div class="ipw-metric-label">가중치 합</div>
+          <div class="ipw-metric-value" id="ipw-m-wsum">—</div>
+          <div class="ipw-metric-sub" id="ipw-m-wsum-sub">요청 수와 비슷해야 한다</div>
+        </div>
+        <div class="ipw-metric">
+          <div class="ipw-metric-label">최대 가중치</div>
+          <div class="ipw-metric-value" id="ipw-m-wmax">—</div>
+          <div class="ipw-metric-sub" id="ipw-m-wmax-sub">한 건이 몇 건 몫으로 세어지나</div>
+        </div>
+        <div class="ipw-metric">
+          <div class="ipw-metric-label">유효표본 ESS</div>
+          <div class="ipw-metric-value" id="ipw-m-ess">—</div>
+          <div class="ipw-metric-sub" id="ipw-m-ess-sub">가중치 합의 제곱 ÷ 제곱 합</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ipw-verdict" id="ipw-verdict">컨트롤을 움직이면 여기에 지금 상태가 한 줄로 나옵니다.</div>
+
+    <!-- ================= 그림 ================= -->
+    <div class="ipw-charts" id="ipw-charts">
+      <div class="ipw-charts-grid">
+        <div class="ipw-card ipw-card-weights">
+          <h3>가중치가 어디에 몰려 있나</h3>
+          <p class="ipw-note">겹친 건마다 가중치 <code>1/p</code>가 붙습니다. 구간별로 그 합을 막대로 그렸습니다.
+            막대 길이는 건수가 아니라 <strong>가중치 합</strong>입니다. 클릭이 하나도 없는 구간은 회색입니다.</p>
+          <div class="ipw-chart" id="ipw-chart-weights"></div>
+          <p class="ipw-foot" id="ipw-foot-weights"></p>
+        </div>
+
+        <div class="ipw-card ipw-card-shrink">
+          <h3>표본이 세 번 줄어든다</h3>
+          <p class="ipw-note">같은 로그를 세 가지로 셉니다. 요청 수, 겹친 건 수, 그리고 가중치를 반영한 유효표본크기입니다.
+            셋째 막대가 실제로 추정치를 받치는 크기입니다.</p>
+          <div class="ipw-chart" id="ipw-chart-shrink"></div>
+          <p class="ipw-foot" id="ipw-foot-shrink"></p>
+        </div>
+
+        <div class="ipw-card ipw-card-est">
+          <h3>네 추정치와 진짜 값</h3>
+          <p class="ipw-note">주황 네모는 <strong>이번 주 로그 하나</strong>로 낸 값입니다.
+            파란 띠는 같은 조건의 지난주를 <strong>400번 다시 뽑아</strong> 얻은 평균과 표준편차 1배 구간입니다.
+            세로 점선이 진짜 값입니다. 띠가 진짜 값을 품고 있으면 편향이 없다는 뜻이고, 띠가 넓으면 한 주로는 못 가른다는 뜻입니다.</p>
+          <div class="ipw-chart" id="ipw-chart-est"></div>
+          <div class="ipw-table-wrap">
+            <table class="ipw-table">
+              <thead>
+                <tr>
+                  <th scope="col">추정기</th>
+                  <th scope="col">이번 주</th>
+                  <th scope="col">진짜와의 차</th>
+                  <th scope="col">400주 평균</th>
+                  <th scope="col">편향</th>
+                  <th scope="col">표준편차</th>
+                </tr>
+              </thead>
+              <tbody id="ipw-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ipw-page">
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>겹친 건 수와 유효표본크기는 다른 수다</strong> — 기본값에서 겹친 건은 2,595건이지만 ESS는 339건이다. 가중치 40에서 80 사이인 52건이 전체 가중치의 3분의 1을 쥐고 있고, 그 52건에는 클릭이 하나도 없다. 그 52건 중 하나에 클릭이 붙으면 추정치가 0.8%p 뛴다.</li>
+            <li><strong>탐색 비율이 가중치 상한을 정한다</strong> — ε를 0.02로 내리면 상한이 400이 되고 꼬리 막대가 자란다. ε를 0.20으로 올리면 40으로 내려가고 ESS가 두 배 가까이 커진다. 오늘의 성적을 얼마나 내주고 다음 판정을 사느냐의 문제다.</li>
+            <li><strong>절단은 구간을 좁히고 평균을 민다</strong> — M=20을 걸면 400주 표준편차가 0.91%p에서 0.42%p로 줄지만 평균이 2.83%에서 2.13%로 내려앉는다. 잘라 낸 몫이 아무 데도 안 더해지기 때문이다. 같은 M에서 SNIPS는 분모도 같이 줄어 그 몫이 대부분 돌아온다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          오프폴리시 추정치는 후보 정책을 <strong>거르는 데</strong> 씁니다. 절대값을 보고하는 자리가 아닙니다.
+          그래서 실무에서 먼저 보는 것은 추정치가 아니라 그 추정치를 몇 건이 받치고 있느냐입니다.
+        </p>
+        <ul>
+          <li><strong>ESS를 경보로 둡니다:</strong> 유효표본이 전체 요청의 1% 아래로 떨어지면 그 추정치는 보고서에 넣지 않습니다. 이 화면 기본값의 ESS는 3.4%입니다. 통과는 하지만 넉넉하지 않습니다.</li>
+          <li><strong>가중치 합으로 로깅을 점검합니다:</strong> 가중치 합의 기대값은 요청 수와 같습니다. 10% 넘게 어긋나면 성향점수가 잘못 기록됐거나 새 정책을 다시 돌린 방식이 서빙과 다르다고 봅니다.</li>
+          <li><strong>상한은 ESS를 보면서 고릅니다:</strong> 상한을 낮출수록 ESS는 커지고 편향도 커집니다. ESS가 목표선을 넘는 <strong>가장 큰 상한</strong>을 고르고, 자기정규화를 같이 겁니다.</li>
+          <li><strong>탐색 비율은 지면마다 다르게 잡습니다:</strong> 트래픽이 많고 매출 비중이 낮은 지면에서 탐색을 더 하고, 매출이 큰 지면에서는 덜 합니다. 최대 가중치가 후보 수 ÷ 탐색 비율로 정해지므로, 지면별 상한도 그 자리에서 계산됩니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=offpolicy-evaluation" class="demo-next-card">
+              <span class="demo-next-label">이 데모의 짝 글</span>
+              <span class="demo-next-title">지난주 로그로 새 모델을 채점하기</span>
+              <span class="demo-next-excerpt">이 화면의 숫자가 전부 거기서 왔습니다. Replay·IPS·SNIPS·절단·DR을 절마다 하나씩 엽니다</span>
+            </a>
+            <a href="post.html?id=model-ab-testing" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">모델 A/B 테스트</span>
+              <span class="demo-next-excerpt">오프폴리시로 거른 뒤에 하는 온라인 실험. 되먹임이 지난주 로그에 없는 이유</span>
+            </a>
+            <a href="demo-calibration.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">Calibration Explorer</span>
+              <span class="demo-next-excerpt">DR의 보상 모델이 맞는다는 말의 뜻. 확률이 어긋나면 무엇이 따라 어긋나나</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/ips-weights-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

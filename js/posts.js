@@ -8,6 +8,93 @@
 
 const posts = [
   {
+    id: 'api-kinds-and-contracts',
+    world: 'na',
+    title: 'API 두 종류와 그 사이의 규약 — 실무 첫 주에 밟는 것들',
+    excerpt: '메신저에 "API 붙여 주세요" 한 줄이 온다. 먼저 물어야 할 것은 언어가 아니라 부르는 쪽이다 — 앱이 초당 2,639건을 보내는 수집 API 와 12ms 안에 답해야 하는 입찰 API 는 비밀키·인증·버전·재시도가 통째로 다르다. 첫 주에 가장 비싼 것은 같은 요청을 두 번 세지 않겠다는 약속, 멱등성이다. 요청마다 고유 값을 붙이지 않고 재시도를 3회 걸면 전환 1,000건이 1,180건으로 부풀고, 전환 한 건당 광고비가 5,000원에서 4,237원으로 낮게 보인다. 재시도 시각을 무작위로 흩으면 500건 중 성공이 180건에서 472건으로 늘어난다 — 상태코드·목록 넘기기·필드 호환·인증 다섯 가지와 첫 주에 밟는 지뢰 여덟 개를 실제 요청과 응답으로 본다.',
+    date: '2026-08-14',
+    categories: ['Software Engineering'],
+    tags: ['System Design', 'Microservices', 'Networking'],
+    contentUrl: 'posts/api-kinds-and-contracts.md',
+    series: 'engineering-foundations'
+  },
+  {
+    id: 'data-pipeline-design',
+    world: 'na',
+    title: 'Kafka 앞뒤를 통째로 — 데이터 파이프라인을 설계하는 순서',
+    excerpt: '파이프라인 설계는 수집기 고르기에서 시작하지 않는다. 대시보드 2초·정산 33시간처럼 소비자마다 다른 마감을 먼저 적고, 거기서 Kafka 도달까지 쓰는 1,112 ms 를 빼면 남는 예산이 부품을 정한다. 여섯 층(수집·버퍼·처리·유통·저장·조회) 중 가장 낯선 유통 층을 두면 처리 잡 5개와 목적지 6개 사이 연결이 30개에서 11개로 줄고, 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없다. 원본 하루 21.9 GB 를 왜 남기는지, 필드 하나를 지운 배포가 사흘 뒤 학습을 조용히 나빠지게 하는 경로까지 따라간다.',
+    date: '2026-08-14',
+    categories: ['ML Infrastructure', 'Software Engineering'],
+    tags: ['ML Infra', 'Kafka', 'Event-Driven', 'System Design'],
+    contentUrl: 'posts/data-pipeline-design.md',
+    series: 'engineering-foundations'
+  },
+  {
+    id: 'offline-metrics-gauc',
+    world: 'both',
+    worldNote: '순위 점수(AUC)·요청 안 순위 점수(GAUC)·정규화 엔트로피(NE)·예측 대비 실제(COPC)의 정의와 계산은 두 무대가 똑같다. 다른 건 점수가 틀렸을 때 어디가 아픈지다. 열린 RTB 는 예측 대비 실제의 오차가 곧 입찰가 오차라 패찰로 바로 이어지고, 담장 안은 경매를 직접 돌리는 대신 CPC·CPM 물량을 eCPM 으로 한 줄에 세우는 자리에서 같은 오차가 드러난다.',
+    worldPractical: '담장 안에서는 요청·랭킹·노출·클릭 로그가 한 회사에 다 남아 요청 안 순위 점수(GAUC)를 요청 id 로 바로 묶어 계산할 수 있다. 무작위 노출 트래픽을 1% 떼어 편향 없는 평가 표본을 따로 쌓는 것도 우리가 정하면 되는 일이다. 대신 지면과 과금 상품이 섞여 있어 예측 대비 실제(COPC)를 지면별·광고별로 쪼개 보는 일이 실무의 절반을 차지한다. 열린 RTB 의 수요 쪽 플랫폼(DSP)은 이긴 노출만 로그에 남아 평가 표본이 애초에 승자 편향에 걸려 있다. 요청 id 도 거래소가 준 것이라 같은 요청 안 후보를 우리 쪽에서 다 보지 못해 그룹 정의부터 흔들린다. 그래서 예측 대비 실제와 정규화 엔트로피(NE)를 먼저 게이트에 걸고, 순위 지표는 무작위 입찰로 따로 모은 표본에서만 믿는 편이 안전하다.',
+    title: 'AUC는 올랐는데 매출은 그대로 — 오프라인 점수를 읽는 법',
+    excerpt: '오프라인 순위 점수(AUC)가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 신뢰구간 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 요청 6건·노출 30건을 한 통에 섞으면 0.7778 이지만, 짝을 같은 요청 안으로 제한한 요청 안 순위 점수(GAUC)는 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점(LogLoss)만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나눈 정규화 엔트로피(NE)는 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되고 예측 대비 실제(COPC)는 1.018 에서 0.342 로 떨어집니다.',
+    date: '2026-08-14',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Calibration', 'Ad Ranking'],
+    contentUrl: 'posts/offline-metrics-gauc.md',
+    series: 'judgment-track'
+  },
+  {
+    id: 'offpolicy-evaluation',
+    world: 'both',
+    worldNote: '역확률 가중(IPS)·자기정규화(SNIPS)·이중 강건(DR)의 식은 두 무대에서 똑같다. 다른 건 성향점수를 누가 쥐고 있느냐다. 담장 안은 경매를 직접 돌리니 탐색 비율과 로그 스키마를 우리가 정한다. 열린 RTB의 DSP는 우리 랭킹 확률만 알고, 낙찰 확률은 거래소 쪽이라 따로 추정해 곱해야 한다.',
+    worldPractical: '담장 안에서는 p_chosen 필드를 노출 로그 스키마에 넣는 것이 우리 결정이고, 탐색 비율도 지면별로 다르게 잡을 수 있다. 대신 광고주와 매체가 둘 다 고객이라, 탐색이 만드는 CTR 하락을 양쪽에 설명해야 한다. 열린 RTB에서는 성향점수가 두 항의 곱이 된다 — 우리 정책이 그 광고를 고를 확률과, 그 입찰이 경매를 통과할 확률이다. 뒤 항은 관측되지 않아 모델로 추정하므로 오차가 실린다. 그래서 성향점수 하나에만 기대는 역확률 가중(IPS)보다, 보상 모델이 받쳐 주는 이중 강건(DR)이 유리하다. 전환이 포스트백이나 측정 사업자(MMP)를 거쳐 늦게 들어오고 일부는 아예 안 오는 것도 열린 RTB 쪽에서 더 크게 작용한다.',
+    title: '안 띄운 광고의 성적을 어떻게 아나 — 지난주 로그로 새 모델 채점하기',
+    excerpt: '지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 향상이 진짜 +22.5%가 아니라 +56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 0.8%p 움직입니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림이 절반이 되는 대신 값이 24% 깎여, 자기정규화를 같이 걸어야 그 몫이 대부분 돌아옵니다.',
+    date: '2026-08-14',
+    categories: ['Measurement & Modeling', 'Bandits & Personalization'],
+    tags: ['Causal Inference', 'A/B Testing', 'Contextual Bandit', 'Ad Ranking'],
+    contentUrl: 'posts/offpolicy-evaluation.md',
+    series: 'judgment-track'
+  },
+  {
+    id: 'feedback-loop-bias',
+    world: 'both',
+    worldNote: '고리 자체는 두 무대가 같다 — 모델이 고른 것만 로그가 되고, 그 로그가 다음 모델을 만든다. 다른 것은 고리가 얼마나 완전히 닫히느냐다. 담장 안은 경매·랭킹·로그를 한 회사가 다 쥐고 있어 밖에서 섞이는 잡음이 없고, 열린 RTB는 패찰이라는 변동이 끼어들지만 그 변동도 남의 모델이 만든 것이라 무작위가 아니다.',
+    worldPractical: '담장 안에서는 배분 규칙이 우리 코드라 그 광고가 뜰 확률(성향점수)을 추정하지 않고 기록하면 된다. 대신 우리가 안 고른 광고는 그 지면에서 정말로 0번 뜨기 때문에, 탐색 예산을 명시적으로 잡지 않으면 굳음이 그대로 남는다. 이 글이 쓰는 5%·8%가 그 예산이고, 0으로 두면 40세대 내내 진짜 1위가 안 뜨는 결과가 그대로 나온다. 열린 RTB의 DSP는 성향점수가 두 겹이다 — 우리가 입찰했을 확률과 그 입찰이 이겼을 확률인데, 뒤쪽은 패찰하면 관측되지 않는다. 그래서 같은 역확률 가중(IPS)을 걸어도 담장 안보다 분산이 크고, 탐색 예산을 잡아도 패찰하면 그 예산을 쓰지도 못한다. 실무 순서는 양쪽 다 같다 — 탐색으로 성향점수를 0에서 떼어 놓는 것이 먼저고 역확률 가중은 그다음이다.',
+    title: '어제 띄운 광고만 학습 데이터가 된다 — 모델이 스스로 만드는 편향',
+    excerpt: '광고 8개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 순위를 정해 버립니다. 진짜 CTR 2.60%인 광고가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 노출을 받는 광고 넷은 사흘째에 고정되고 그 광고의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 광고가 102,500건을 가져가고, 누적 클릭은 17,350건으로 최선인 18,831건보다 7.9% 낮습니다. 되살리는 처방 넷을 같은 판에 걸어 대가를 재고, 한 번 굳은 뒤에는 왜 되돌리기가 어려운지를 숫자로 보입니다.',
+    date: '2026-08-14',
+    categories: ['Measurement & Modeling', 'Bandits & Personalization'],
+    tags: ['pCTR', 'Exploration', 'Online Learning'],
+    contentUrl: 'posts/feedback-loop-bias.md',
+    series: 'judgment-track'
+  },
+  {
+    id: 'uplift-incrementality',
+    world: 'both',
+    worldNote: '증분을 재는 논리는 두 무대가 같다. 뺄셈도 누적 증분 곡선(Qini)도 똑같다. 갈리는 것은 대조군에게 광고가 안 나가게 막을 수 있느냐 하나뿐이다.',
+    worldPractical: '담장 안에서는 로그인 ID 해시로 홀드아웃을 결정론적으로 잡아, 광고 요청을 받는 자리에서 노출 자체를 막을 수 있다. 그래서 캠페인마다 새로 잡는 대신 계정 단위 상시 홀드아웃을 5~10%로 길게 유지하는 쪽이 기본이다. 대신 홀드아웃에 든 사람에게도 다른 캠페인 광고는 나가므로, 캠페인 단위인지 브랜드 단위인지 계정 단위인지를 먼저 합의해야 숫자가 말이 된다. 열린 RTB에서는 노출 결정권이 경매에 있어 홀드아웃을 직접 만들 수 없다. 유령 입찰(ghost bidding)을 거래소가 지원하면 가장 깨끗하고, 없으면 공익광고 대조나 지역 단위 실험으로 내려간다. 낙찰에서 진 요청을 대조군으로 쓰는 것만은 피해야 한다. 그 요청은 경쟁이 치열했던 자리라 증분의 부호까지 뒤집힌다.',
+    title: '광고를 안 봤어도 살 사람 — 광고가 진짜 늘린 전환만 세는 법',
+    excerpt: '리포트에는 전환 9,000건, 전환당 비용 ₩1,400이 찍혔는데 매출은 안 늘었다. 광고를 일부러 안 보낸 대조군을 같이 돌려 보면, 그 9,000건 중 광고가 만든 것은 1,100건뿐이다. 같은 105,000명 예산을 광고가 잘 먹는 사람 순서로 다시 고르면 리포트 전환은 5,500건으로 39% 줄지만, 실제로 늘어난 전환은 1,350건으로 22.7% 는다. 사람은 설득 가능 6,400명·확실 구매 17,600명·청개구리 2,400명·무관심 773,600명 넷으로 갈리고, 광고비가 값을 하는 곳은 0.8%인 첫 칸뿐이다. 증분 모델을 만드는 세 가지 방법을 4만 명 가데이터로 돌려 참값과의 상관 +0.105 / +0.905 / +0.911을 비교하고, 정확도가 가장 높은 점수가 오히려 나쁜 선택인 이유까지 짚는다.',
+    date: '2026-08-14',
+    categories: ['Measurement & Modeling', 'Targeting & Audience'],
+    tags: ['Incrementality', 'Causal Inference', 'pCVR', 'Targeting'],
+    contentUrl: 'posts/uplift-incrementality.md',
+    series: 'judgment-track'
+  },
+  {
+    id: 'privacy-signal-loss',
+    world: 'both',
+    worldNote: '식별자가 사라지는 일은 두 무대에 같이 닥치지만 맞는 자리가 다르다. 열린 RTB는 남에게서 사 오던 타겟팅 신호가 통째로 끊겨 타겟팅 피처부터 무너진다. 담장 안은 로그인 ID를 사용자에게 직접 받은 값(1st-party)이라 피처는 거의 그대로지만, 담장 밖에서 끝나는 전환의 라벨은 똑같이 집계로 바뀐다. 그래서 이 글은 피해를 타겟팅 피처·전환 라벨·빈도 제어 세 곳으로 나눠 무대별로 따로 잰다.',
+    worldPractical: '열린 RTB에서는 먼저 피처 목록을 다시 짠다. 서드파티 세그먼트와 쿠키 동기화 리타겟 목록을 걷어내고 지면·시간·소재 같은 문맥 피처로 채우는 일이 몇 달짜리 과제가 된다. 담장 안에서는 그 작업이 거의 필요 없고, 대신 전환 확률 모델(pCVR)의 라벨 쪽에 인력이 붙는다. 자사 완결 전환과 외부 전환을 갈라 두 파이프라인으로 나누고, 외부 쪽만 집계 라벨용 학습 경로를 따로 만든다. 두 무대 공통으로 애플이 보내는 설치 성과 통보(SKAN 포스트백)는 창별로 나눠 세야 하고, 집계 리포트의 빈칸을 0이 아니라 결측으로 다뤄야 한다. 판정 수단도 갈린다. 열린 RTB는 어트리뷰션 리포트를 계속 못 믿게 되므로 증분 실험 비중을 먼저 늘린다. 담장 안은 자사 지면 안에서 무작위 실험을 돌릴 수 있어 전환이 상대적으로 매끄럽다.',
+    title: '쿠키와 광고 ID가 사라지면 무엇부터 망가지나',
+    excerpt: '같은 캠페인 하루치인데 웹 지면 전환 칸에는 3,120이 적히고 iOS 앱 지면 칸에는 940이 적힌다. 940건 중 415건은 금액 칸까지 비었고, 그마저 어제 것이 아니라 나흘 전 설치분이다. 타겟팅 피처가 빠지면 순위 점수가 열린 RTB에서 0.068 내려가고 담장 안은 0.012에 그친다. 사람마다 붙던 정답이 칸마다의 합계로 바뀌면 계수 흔들림이 3.3배가 되어 같은 정밀도까지 데이터가 11배 필요해진다. 노이즈는 절대량으로 붙어 전환 40건짜리는 상대 오차 70.7%로 묻히고, 빈도 상한은 아예 못 걸어 노출의 47.6%가 이미 다섯 번 넘게 본 사람에게 간다.',
+    date: '2026-08-14',
+    categories: ['Measurement & Modeling', 'Targeting & Audience'],
+    tags: ['Attribution', 'Targeting', 'Ad Ecosystem', 'DMP'],
+    contentUrl: 'posts/privacy-signal-loss.md',
+    series: 'judgment-track'
+  },
+  {
     id: 'log-hops-to-kafka',
     world: 'na',
     title: '로그 수집기 안을 열어 본다 — 클릭 한 건이 Kafka를 지나기까지 9홉',
@@ -693,6 +780,11 @@ const posts = [
 
 // 읽는 순서(시리즈). 순서는 여기 한 곳에서만 관리한다(데모 learning-path와 동일 사상).
 const series = {
+  'judgment-track': {
+    title: '판단·측정 트랙',
+    desc: '모델을 만든 다음의 문제 — 어떤 지표를 믿을지, 배포 전에 로그로 어떻게 채점할지, 내 데이터가 어떻게 오염되는지, 광고가 진짜 만든 몫은 얼마인지, 신호가 줄어드는 세계에서 무엇이 먼저 부서지는지',
+    posts: ['offline-metrics-gauc', 'offpolicy-evaluation', 'feedback-loop-bias', 'uplift-incrementality', 'privacy-signal-loss'],
+  },
   'kakao-adtech': {
     title: '카카오 광고 사례 트랙',
     desc: '비즈보드·모먼트·키워드광고 같은 실제 카카오 광고 상품을, 블로그가 다룬 광고 기술 개념과 하나씩 연결해 읽는 응용 트랙(상품 → 예측·타겟팅 → 입찰·측정)',
@@ -736,7 +828,8 @@ const series = {
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',
     desc: '협업 도구(Git)부터 시스템 설계·운영(아키텍처 패턴·쿠버네티스), 요청이 서비스까지 가는 길과 로그가 학습 데이터가 되는 길까지 — 백엔드/인프라 엔지니어의 기본기',
-    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router', 'kafka-log-pipeline', 'log-hops-to-kafka'],
+    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router',
+      'api-kinds-and-contracts', 'kafka-log-pipeline', 'log-hops-to-kafka', 'data-pipeline-design'],
   },
 };
 
@@ -770,7 +863,14 @@ const mlTrack = {
         'embedding-table-ops', 'model-monitoring',
         'model-ab-testing', 'conversion-definition',
         'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking'],
+    },    {
+      id: 'stage-4',
+      title: '4단계 · 판단 — 무엇을 믿고 무엇을 배포하나',
+      goal: '이 단계를 마치면: 오프라인 지표가 무엇을 재는지 알고, 배포 전에 로그로 정책을 채점하고, 내 학습 데이터가 스스로 오염되는 경로를 막고, 광고가 실제로 만든 몫을 가려낼 수 있습니다. 앞 세 단계가 “만들고 굴리는” 이야기였다면 여기는 “믿을지 말지 정하는” 이야기입니다.',
+      posts: ['offline-metrics-gauc', 'offpolicy-evaluation', 'feedback-loop-bias',
+        'uplift-incrementality', 'privacy-signal-loss'],
     },
+
   ],
 };
 

@@ -5,34 +5,27 @@
 // Theme Management
 // ========================================
 
+// 팔레트는 하나뿐이다(2026-08-14 개편). 예전엔 크림·슬레이트 두 벌 × 라이트·다크로
+// 네 칸이었는데, 색을 nlog2 정본 17색 한 벌로 줄이면서 라이트·다크 두 칸이 됐다.
+// chips 는 미리보기 타일의 [바탕, 판, 액센트, 글자] 네 색 — css 토큰과 같은 값이다.
 const THEMES = [
-  { palette: 'cream', mode: 'light', name: '크림 라이트',   chips: ['#faf8f3', '#fffdf8', '#b0442c', '#201d1a'] },
-  { palette: 'cream', mode: 'dark',  name: '크림 다크',     chips: ['#1a1715', '#232020', '#d77a5f', '#f1ece3'] },
-  { palette: 'slate', mode: 'light', name: '슬레이트 라이트', chips: ['#f2f4f7', '#ffffff', '#3f5b8b', '#1e2430'] },
-  { palette: 'slate', mode: 'dark',  name: '슬레이트 다크',   chips: ['#161a22', '#1f2530', '#7fa0d4', '#e8ecf3'] },
+  { mode: 'light', name: '라이트', chips: ['#FFFFFF', '#FAFAF9', '#9B3A21', '#17181A'] },
+  { mode: 'dark',  name: '다크',   chips: ['#17181A', '#1F2023', '#E59275', '#F4F4F5'] },
 ];
 
 function getSavedTheme() {
-  return {
-    mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
-    palette: localStorage.getItem('palette') === 'slate' ? 'slate' : 'cream',
-  };
+  return { mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light' };
 }
 
 function initializeTheme() {
-  const { mode, palette } = getSavedTheme();
-  const root = document.documentElement;
-  root.setAttribute('data-theme', mode);
-  root.setAttribute('data-palette', palette);
+  const { mode } = getSavedTheme();
+  document.documentElement.setAttribute('data-theme', mode);
   updateThemeButton();
 }
 
-function applyTheme(palette, mode) {
-  const root = document.documentElement;
-  root.setAttribute('data-theme', mode);
-  root.setAttribute('data-palette', palette);
+function applyTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
   localStorage.setItem('theme', mode);
-  localStorage.setItem('palette', palette);
   updateThemeButton();
   markCurrentThemeTile();
   if (typeof setGiscusTheme === 'function') setGiscusTheme(mode);
@@ -58,7 +51,7 @@ function buildThemePanel() {
   panel.hidden = true;
   panel.innerHTML = '<div class="theme-panel-title">테마</div><div class="theme-grid">' +
     THEMES.map(t =>
-      '<button type="button" class="theme-tile" role="menuitemradio" data-palette="' + t.palette + '" data-mode="' + t.mode + '" aria-label="' + t.name + '">' +
+      '<button type="button" class="theme-tile" role="menuitemradio" data-mode="' + t.mode + '" aria-label="' + t.name + '">' +
         '<span class="theme-tile-preview" style="background:' + t.chips[0] + '">' +
           '<span class="theme-tile-bar" style="background:' + t.chips[2] + '"></span>' +
           '<span class="theme-tile-line" style="background:' + t.chips[3] + '"></span>' +
@@ -71,7 +64,7 @@ function buildThemePanel() {
   panel.addEventListener('click', (e) => {
     const tile = e.target.closest('.theme-tile');
     if (!tile) return;
-    applyTheme(tile.dataset.palette, tile.dataset.mode);
+    applyTheme(tile.dataset.mode);
     closeThemePanel();
   });
   return panel;
@@ -82,7 +75,7 @@ function markCurrentThemeTile() {
   if (!panel) return;
   const cur = getSavedTheme();
   panel.querySelectorAll('.theme-tile').forEach(tile => {
-    const on = tile.dataset.palette === cur.palette && tile.dataset.mode === cur.mode;
+    const on = tile.dataset.mode === cur.mode;
     tile.classList.toggle('is-current', on);
     tile.setAttribute('aria-checked', on ? 'true' : 'false');
   });
@@ -1193,11 +1186,11 @@ async function renderPostDetail() {
       function mermaidPalette(isDark) {
         const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
         const fallback = isDark ? {
-          bgPrimary: '#1a1715', bgSecondary: '#232020', bgTertiary: '#2e2a26',
-          text: '#f1ece3', border: 'rgba(241,236,227,0.26)', accentSecondary: '#c9a36b'
+          bgPrimary: '#17181A', bgSecondary: '#1F2023', bgTertiary: '#232327',
+          text: '#F4F4F5', border: 'rgba(244,244,245,0.24)', accentSecondary: '#8AB0E0'
         } : {
-          bgPrimary: '#faf8f3', bgSecondary: '#fffdf8', bgTertiary: '#efe9dd',
-          text: '#201d1a', border: 'rgba(32,29,26,0.22)', accentSecondary: '#8a6a3a'
+          bgPrimary: '#FFFFFF', bgSecondary: '#FAFAF9', bgTertiary: '#F4F4F5',
+          text: '#17181A', border: 'rgba(23,24,26,0.22)', accentSecondary: '#20406B'
         };
 
         const background = cssVar('--bg-primary') || fallback.bgPrimary;
@@ -1964,7 +1957,7 @@ function renderChartJsCharts(container) {
 
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const textColor = isDark ? '#c6bdae' : '#4f4a42';
+  const textColor = isDark ? '#D4D4D8' : '#3F3F46';
 
   // Chart: Feature Freshness
   const freshnessCanvas = container.querySelector('#freshnessChart');

@@ -148,7 +148,7 @@
     return /없음$/.test(step.name) ? 'skip' : 'pass';
   }
 
-  var MARK = { pass: '✓', skip: '–', stop: '✕', ghost: '·' };
+  var MARK = { pass: '✓', skip: '–', stop: '×', ghost: '·' };
 
   function stepHTML(name, note, state, extra) {
     return '<div class="rp-step is-' + state + '">' +
@@ -188,7 +188,7 @@
     var text;
     if (stopped) {
       var last = steps[steps.length - 1];
-      text = '<strong>✕ 요청은 ' + last.name.replace(/ 없음$/, '') + ' 자리에서 멈춘다.</strong> ' + last.note + '.';
+      text = '<strong>× 요청은 ' + last.name.replace(/ 없음$/, '') + ' 자리에서 멈춘다.</strong> ' + last.note + '.';
     } else {
       var why = [];
       if (!cfg.ingress) why.push('서비스가 1개라 Ingress');
@@ -211,7 +211,7 @@
       var cls = r.lost ? ' is-lost' : (many ? ' is-many' : '');
       // 표시는 글자가 아니라 모양으로 — 색만으로는 알리지 않는다.
       // 글자로는 뜻이 안 통하므로 읽기에서는 빼고, 뜻은 오른쪽 설명문이 그대로 담는다.
-      var flag = r.lost ? '✕' : (many ? '▲' : '');
+      var flag = r.lost ? '×' : (many ? '▲' : '');
       return '<div class="rp-cost-row">' +
         '<span class="rp-cost-label">' + r.label + '</span>' +
         '<span class="rp-cost-value' + cls + '">' + r.value + '<em>' + r.unit + '</em>' +

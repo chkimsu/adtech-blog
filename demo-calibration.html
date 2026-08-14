@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -23,7 +23,7 @@
     .cal-intro {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .cal-intro strong { color: var(--accent-primary); }
     .cal-intro .katex { font-size: 1em; }
@@ -31,21 +31,21 @@
     /* Controls */
     .cal-controls {
       max-width: 900px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     .cal-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 230px 1fr 70px; align-items: center; gap: 0.8rem; }
     @media (max-width: 700px) { .cal-slider-row { grid-template-columns: 1fr; } }
     .cal-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
     .cal-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
-    .cal-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none; }
-    .cal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 50%; cursor: pointer; }
-    .cal-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 50%; cursor: pointer; border: none; }
+    .cal-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .cal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .cal-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
     .cal-slider-value { text-align: right; font-family: 'Fira Code', monospace; font-weight: 700; color: var(--accent-primary); }
 
     .cal-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
     .cal-preset-btn {
       font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
-      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
       transition: all var(--transition-fast);
     }
     .cal-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
@@ -53,24 +53,24 @@
     /* Metrics */
     .cal-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
     @media (max-width: 700px) { .cal-metrics { grid-template-columns: 1fr; } }
-    .cal-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; text-align: center; }
+    .cal-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
     .cal-metric-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
     .cal-metric-value { font-size: 1.35rem; font-weight: 700; font-family: 'Fira Code', monospace; color: var(--text-primary); }
     .cal-metric-value.good { color: var(--state-good); }
-    .cal-metric-value.warn { color: #a8783a; }
+    .cal-metric-value.warn { color: var(--series-5); }
     .cal-metric-value.bad  { color: var(--state-bad); }
     .cal-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
 
     .cal-verdict {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
       background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
-      border-radius: 10px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
     }
 
     /* Charts */
     .cal-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
     @media (max-width: 900px) { .cal-charts { grid-template-columns: 1fr; } }
-    .cal-chart-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 1.3rem 1.4rem; }
+    .cal-chart-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
     .cal-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
     .cal-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
     .cal-chart-wrap { position: relative; height: 300px; }

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="전환 포스트백 1,000건을 보내 놓고 호출 방향·유실률·재시도 횟수·멱등키·타임아웃·인증 방식을 바꿔 보는 인터랙티브 데모. 멱등키를 끄면 기록이 1,180줄로 부풀고, 클라이언트에 API key 를 두면 시크릿 계기가 위험으로 바뀐다.">
+  <title>API 계약 실험실 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ---------- 통 ---------- */
+    .ac-hero { text-align: center; padding: 2rem 46px 1rem; }
+    .ac-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .ac-hero p { color: var(--ink2); max-width: 900px; margin: 0 auto; font-size: 0.98rem; }
+
+    .ac-page { max-width: 1600px; margin: 0 auto; padding: 0 46px; }
+    @media (max-width: 700px) {
+      .ac-page { padding: 0 1rem; }
+      .ac-hero { padding: 1.5rem 1rem 0.75rem; }
+    }
+
+    /* ---------- 설정 설명 (읽기 폭) ---------- */
+    .ac-setup {
+      max-width: 900px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--plate); border: 1px dashed var(--rule); border-radius: 0;
+      color: var(--ink2); font-size: 0.9rem; line-height: 1.75;
+    }
+    .ac-setup p { margin: 0 0 0.5rem; }
+    .ac-setup p:last-child { margin-bottom: 0; }
+    .ac-setup strong { color: var(--accent-primary); }
+    .ac-setup code {
+      background: var(--grey-bg); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em;
+    }
+
+    /* ---------- 컨트롤 ---------- */
+    .ac-controls {
+      max-width: 1180px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--plate); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .ac-ctrl-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.05rem 1.7rem; align-items: start;
+    }
+    .ac-field { border: 0; padding: 0; margin: 0; min-width: 0; }
+    .ac-field-label {
+      display: block; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--ink3); margin-bottom: 0.45rem; padding: 0;
+    }
+    .ac-choices { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .ac-choices label, .ac-check {
+      display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
+      font-size: 0.88rem; color: var(--ink3);
+      padding: 0.4rem 0.85rem; border: 1px dashed var(--rule); border-radius: 0;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .ac-choices label.is-on, .ac-check.is-on {
+      color: var(--accent-primary); border-color: var(--accent-primary);
+      border-style: solid; font-weight: 600;
+    }
+    .ac-choices input, .ac-check input { accent-color: var(--accent-primary); margin: 0; }
+
+    .ac-select {
+      width: 100%; font-family: var(--font-sans); font-size: 0.88rem;
+      padding: 0.45rem 0.6rem; color: var(--ink); background: var(--paper);
+      border: 1px solid var(--rule); border-radius: 0;
+      -webkit-appearance: none; appearance: none;
+    }
+    .ac-select:focus { outline: 2px solid var(--accent-primary); outline-offset: -2px; }
+
+    .ac-slider-row {
+      display: grid; grid-template-columns: 96px 1fr 62px; align-items: center;
+      gap: 0.8rem; font-size: 0.88rem; color: var(--ink2); margin-bottom: 0.55rem;
+    }
+    .ac-slider-row:last-child { margin-bottom: 0; }
+    @media (max-width: 700px) { .ac-slider-row { grid-template-columns: 84px 1fr 54px; gap: 0.5rem; } }
+    .ac-slider-row label { cursor: pointer; }
+    .ac-slider-row input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; min-width: 0;
+      height: 6px; background: var(--grey-bg); border: 1px solid var(--rule);
+      border-radius: 0; outline: none;
+    }
+    .ac-slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
+    }
+    .ac-slider-row input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 0; cursor: pointer; border: none;
+    }
+    .ac-slider-row span:last-child {
+      text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary);
+    }
+    .ac-btn {
+      margin-top: 1rem; font-family: var(--font-sans); font-size: 0.84rem; font-weight: 600;
+      padding: 0.45rem 1.05rem; cursor: pointer; border-radius: 0;
+      background: var(--paper); color: var(--ink2); border: 1px solid var(--rule);
+    }
+    .ac-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ---------- 무대: 왼쪽 그림 · 오른쪽 계기 ---------- */
+    .ac-stage {
+      display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(270px, 1fr);
+      gap: 1.1rem; align-items: start; margin: 0 auto 1.1rem;
+    }
+    @media (max-width: 980px) { .ac-stage { grid-template-columns: 1fr; } }
+
+    .ac-flow {
+      padding: 1rem 1.15rem 1.15rem; background: var(--paper);
+      border: 1px solid var(--rule); border-radius: 0; min-width: 0;
+    }
+    .ac-flow-title { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink3); }
+    .ac-flow svg { display: block; width: 100%; height: auto; margin: 0.5rem 0 0; }
+    .ac-legend {
+      margin-top: 0.55rem; font-size: 0.78rem; line-height: 1.6; color: var(--ink3);
+      border-top: 1px solid var(--rule2); padding-top: 0.5rem;
+    }
+
+    .ac-table { width: 100%; border-collapse: collapse; margin-top: 1.1rem; font-size: 15px; }
+    .ac-table caption {
+      caption-side: top; text-align: left; font-size: 12.5px; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--ink3); padding-bottom: 0.4rem;
+    }
+    .ac-table th, .ac-table td {
+      border-bottom: 1px solid var(--rule2); padding: 0.4rem 0.5rem;
+      text-align: right; font-family: var(--font-mono); color: var(--ink);
+    }
+    .ac-table th {
+      font-family: var(--font-sans); font-size: 12.5px; font-weight: 700;
+      color: var(--ink3); border-bottom: 1px solid var(--rule);
+    }
+    .ac-table td.is-dim, .ac-table th.is-dim { color: var(--ink3); }
+    .ac-table td.is-hit { color: var(--state-bad); }
+    .ac-table tr.is-total td { border-top: 2px solid var(--rule); border-bottom: none; font-weight: 700; }
+    .ac-table th:first-child, .ac-table td:first-child { text-align: left; font-family: var(--font-sans); }
+
+    /* ---------- 계기 4개 ---------- */
+    .ac-gauges { display: grid; gap: 0.7rem; min-width: 0; }
+    .ac-gauge {
+      padding: 0.8rem 1rem; background: var(--plate);
+      border: 1px solid var(--rule); border-left: 3px solid var(--grey); border-radius: 0;
+    }
+    .ac-gauge[data-state="good"] { border-left-color: var(--state-good); }
+    .ac-gauge[data-state="warn"] { border-left-color: var(--state-warn); border-left-style: dashed; }
+    .ac-gauge[data-state="bad"] { border-left-color: var(--state-bad); border-left-style: dashed; }
+    .ac-gauge-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+    .ac-gauge-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink3); }
+    .ac-gauge-flag {
+      font-size: 11.5px; font-weight: 700; padding: 0.05rem 0.4rem;
+      border: 1px solid var(--rule); border-radius: 0; color: var(--ink3); white-space: nowrap;
+    }
+    .ac-gauge[data-state="good"] .ac-gauge-flag { color: var(--state-good); border-color: var(--state-good); }
+    .ac-gauge[data-state="warn"] .ac-gauge-flag { color: var(--state-warn); border-color: var(--state-warn); }
+    .ac-gauge[data-state="bad"] .ac-gauge-flag { color: var(--state-bad); border-color: var(--state-bad); }
+    .ac-gauge-value {
+      display: block; font-family: var(--font-mono); font-size: 1.65rem; font-weight: 700;
+      color: var(--ink); margin: 0.2rem 0 0.3rem; line-height: 1.2;
+    }
+    .ac-gauge[data-state="bad"] .ac-gauge-value { color: var(--state-bad); }
+    .ac-gauge-value em { font-style: normal; font-size: 0.52em; font-weight: 400; color: var(--ink3); margin-left: 0.12rem; }
+    .ac-gauge-note { display: block; font-size: 0.79rem; line-height: 1.62; color: var(--ink3); }
+    .ac-gauge-note strong { color: var(--ink2); }
+
+    /* ---------- 판정 ---------- */
+    .ac-verdict {
+      margin: 0 auto 2rem; padding: 0.9rem 1.2rem;
+      background: var(--plate); border: 1px solid var(--rule);
+      border-left: 4px solid var(--state-good); border-radius: 0;
+      color: var(--ink2); font-size: 0.95rem; line-height: 1.7;
+    }
+    .ac-verdict.is-bad { border-left-color: var(--state-bad); border-left-style: dashed; }
+    .ac-verdict strong { color: var(--ink); }
+    .ac-verdict.is-bad strong { color: var(--state-bad); }
+    .ac-verdict-order { display: block; margin-top: 0.35rem; font-size: 0.79rem; color: var(--ink3); }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="ac-hero">
+      <h1>API 계약 실험실</h1>
+      <p>문서에는 주소와 필드만 적혀 있습니다. 타임아웃·재시도·멱등키·인증은 붙이는 사람이 정합니다.
+        전환 포스트백 1,000건을 보내 놓고 그 넷을 바꿔 보면, 어느 것이 먼저 리포트를 틀어지게 하는지 보입니다.</p>
+    </section>
+
+    <div class="ac-page">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-request-path.html">요청 경로 시뮬레이터</a>
+        <a href="demo-log-hops.html">로그 여섯 층 내려가기</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고주 한 곳의 하루 전환 <strong>1,000건</strong>을 MMP가 우리 수집 API로 보냅니다.
+          응답이 돌아오는 길에서 일부가 사라지고, 보낸 쪽은 답을 못 받아 같은 요청을 다시 보냅니다.
+          스위치 여섯 개를 움직이면 <strong>전환 테이블에 몇 줄이 남는지</strong>와 어느 계기가 먼저 위험으로 바뀌는지가 같이 움직입니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>중복으로 쌓인 줄은 <strong>에러가 아닙니다</strong>. 전부 성공 응답을 받은 건이라 알람이 울릴 자리가 없습니다.
+          드러나는 곳은 다음 날 리포트의 CPA 한 줄뿐입니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text">기본값(<code>server → server</code> · 유실 15% · 재시도 3회 · 멱등키 켬)에서 회차 표를 봅니다. 요청은 <strong>1,180건</strong>인데 기록은 <strong>1,000줄</strong>입니다.</span></li>
+        <li><span class="step-text"><strong>멱등키를 끕니다.</strong> 기록이 1,180줄(+18.0%)이 되고 리포트 CPA가 5,000원에서 <strong>4,237원</strong>으로 내려갑니다.</span></li>
+        <li><span class="step-text"><strong>재시도를 0으로</strong> 내립니다. 중복은 사라지지만 성공률이 <strong>85.0%</strong>로 떨어집니다. 둘 중 하나만 고를 수는 없다는 뜻입니다.</span></li>
+        <li><span class="step-text">호출 방향을 <code>client → server</code>로 바꾸고 인증을 <strong>API key</strong>로 고릅니다. 시크릿 노출 계기가 위험으로 바뀝니다.</span></li>
+      </ol>
+
+      <div class="ac-setup">
+        <p><strong>상황</strong> — 광고비 500만 원을 쓴 광고주의 하루 전환은 1,000건입니다. 진짜 CPA는 <code>5,000원</code>입니다.</p>
+        <p><strong>가정</strong> — 서버는 받은 요청을 항상 기록합니다. 유실은 <strong>돌아오는 응답</strong>에서만 일어납니다.
+          유실률은 회차마다 조금씩 올라가고(15.0 → 16.7 → 20.0%), 4회차에는 남은 건이 전부 도착합니다.</p>
+        <p><strong>커넥션</strong> — 우리 API가 하위(전환 테이블)를 초당 <code>100</code>번 부르고, 커넥션 풀은 <code>200</code>개입니다.
+          우리가 상위에 약속한 응답 예산은 <code>400ms</code>입니다.</p>
+        <p>숫자는 전부 설명을 위해 지어낸 값입니다.</p>
+      </div>
+
+      <div class="ac-controls">
+        <div class="ac-ctrl-grid">
+          <fieldset class="ac-field ac-dir-row">
+            <legend class="ac-field-label">호출 방향</legend>
+            <div class="ac-choices">
+              <label><input type="radio" name="ac-dir" value="s2s" checked> server → server</label>
+              <label><input type="radio" name="ac-dir" value="c2s"> client → server</label>
+            </div>
+          </fieldset>
+
+          <div class="ac-field">
+            <span class="ac-field-label" id="ac-auth-label">인증 방식</span>
+            <select id="ac-auth" class="ac-select" aria-labelledby="ac-auth-label">
+              <option value="hmac" selected>HMAC 서명</option>
+              <option value="key">API key</option>
+              <option value="oauth">OAuth2 client credentials</option>
+              <option value="jwt">JWT (사용자 토큰)</option>
+              <option value="mtls">mTLS</option>
+            </select>
+          </div>
+
+          <div class="ac-field">
+            <span class="ac-field-label">멱등키</span>
+            <div class="ac-choices">
+              <label class="ac-check is-on" id="ac-idem-label"><input type="checkbox" id="ac-idem" checked> 멱등키 사용 (Idempotency-Key)</label>
+            </div>
+          </div>
+
+          <div class="ac-field">
+            <span class="ac-field-label">숫자 세 개</span>
+            <div class="ac-slider-row">
+              <label for="ac-loss">응답 유실률</label>
+              <input id="ac-loss" type="range" min="0" max="30" step="1" value="15">
+              <span id="ac-loss-v">15%</span>
+            </div>
+            <div class="ac-slider-row">
+              <label for="ac-retry">재시도 횟수</label>
+              <input id="ac-retry" type="range" min="0" max="5" step="1" value="3">
+              <span id="ac-retry-v">3회</span>
+            </div>
+            <div class="ac-slider-row">
+              <label for="ac-timeout">타임아웃 상한</label>
+              <input id="ac-timeout" type="range" min="0" max="3" step="1" value="0">
+              <span id="ac-timeout-v">400ms</span>
+            </div>
+          </div>
+        </div>
+        <button id="ac-reset" class="ac-btn" type="button">기본값으로</button>
+      </div>
+
+      <div class="ac-stage">
+        <div class="ac-flow">
+          <span class="ac-flow-title">요청 한 건이 지나는 길</span>
+          <div id="ac-svg"></div>
+          <p class="ac-legend"><span aria-hidden="true">×</span> 표시는 응답이 사라진 자리입니다.
+            점선 칸은 지금 설정에서 문제가 되는 자리, 실선 굵은 칸은 지금 막아 주고 있는 자리입니다.</p>
+          <table class="ac-table">
+            <caption>회차별로 무슨 일이 일어나나</caption>
+            <thead>
+              <tr>
+                <th scope="col">회차</th>
+                <th scope="col">보낸 건수</th>
+                <th scope="col">응답 유실</th>
+                <th scope="col" id="ac-th-naive">기록 누적 · 키 없음</th>
+                <th scope="col" id="ac-th-idem">기록 누적 · 키 있음</th>
+              </tr>
+            </thead>
+            <tbody id="ac-rows"></tbody>
+          </table>
+        </div>
+
+        <div class="ac-gauges" id="ac-gauges" aria-live="polite"></div>
+      </div>
+
+      <div id="ac-verdict" class="ac-verdict" aria-live="polite"></div>
+
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>재시도는 성공률을 사고 중복을 지불한다</strong> — 재시도를 0으로 두면 중복은 0이지만 보낸 쪽은 150건을 실패로 봅니다. 3으로 올리면 응답은 다 받지만 요청이 1,180건이 됩니다.</li>
+            <li><strong>멱등키는 그 지불만 지운다</strong> — 키를 켜도 요청 수는 1,180건 그대로입니다. 달라지는 것은 전환 테이블에 남는 줄뿐입니다. 1,180줄이 1,000줄이 됩니다.</li>
+            <li><strong>방향이 인증을 정한다</strong> — <code>client → server</code>에서는 API key·OAuth2·mTLS·HMAC 넷 다 앱 안에 비밀을 둬야 합니다. 남는 답은 사용자 토큰 하나입니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "API 붙여 주세요"를 받으면 문서에 없는 것부터 정합니다.
+          이 데모의 스위치 여섯 개가 그 목록입니다. 하나씩 값을 넣어 보고 어느 계기가 먼저 움직이는지를 봅니다.
+        </p>
+        <ul>
+          <li><strong>멱등키부터 정합니다:</strong> 부르는 쪽이 만들고, 재시도 내내 같은 값을 씁니다. 자연키(주문번호)가 있으면 그것을 쓰고, 없으면 UUID를 한 번만 만들어 재사용합니다. 재시도마다 새로 만들면 키가 없는 것과 같습니다.</li>
+          <li><strong>타임아웃은 예산을 나눠 잡습니다:</strong> 우리가 400ms에 답하기로 했으면 하위 호출의 상한 합이 400ms를 넘으면 안 됩니다. 넘으면 상위가 먼저 끊고, 아래 호출은 아무도 안 기다리는 채로 커넥션을 뭅니다.</li>
+          <li><strong>인증은 방향을 먼저 봅니다:</strong> 앱이 부르는 자리라면 비밀을 둘 곳이 없습니다. 로그인 토큰을 쓰거나, 비밀이 필요한 호출을 우리 서버가 대신하거나, 애초에 비밀이 필요 없게 설계하고 쿼터와 값 검증을 서버에 겁니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=api-kinds-and-contracts" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">API 두 종류와 그 위에 얹히는 규약</span>
+              <span class="demo-next-excerpt">client to server 와 server to server 가 왜 다른 물건인지, 그 위의 상태코드·페이지네이션·버전·멱등성·타임아웃·인증까지</span>
+            </a>
+            <a href="post.html?id=gateway-ingress-router" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">광고 요청 하나가 서비스까지 가는 길</span>
+              <span class="demo-next-excerpt">12ms 예산이 LB · Ingress · API Gateway · 라우터로 어떻게 쪼개지는지</span>
+            </a>
+            <a href="demo-request-path.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">요청 경로 시뮬레이터</span>
+              <span class="demo-next-excerpt">부품을 하나씩 꺼 보면서 요청이 어느 칸에서 멈추는지 확인합니다</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/api-contract-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

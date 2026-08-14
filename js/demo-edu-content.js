@@ -243,7 +243,7 @@ window.DEMO_EDU = {
             {
                 el: '#ab-auto',
                 title: '10일 돌려보기',
-                body: '<strong>10일 자동 ▶▶</strong>을 눌러 보세요. 하루 150명씩, 열흘짜리 캠페인이 자동으로 진행됩니다.',
+                body: '<strong>10일 자동 ▸▸</strong>을 눌러 보세요. 하루 150명씩, 열흘짜리 캠페인이 자동으로 진행됩니다.',
                 waitFor: 'click'
             },
             {
@@ -306,7 +306,7 @@ window.DEMO_EDU = {
             {
                 el: '#btn-step',
                 title: '한 라운드 진행',
-                body: '<strong>▶ 1 Round</strong>를 눌러 보세요. 두 알고리즘이 동시에 각자의 선택을 합니다.',
+                body: '<strong>▸ 1 Round</strong>를 눌러 보세요. 두 알고리즘이 동시에 각자의 선택을 합니다.',
                 waitFor: 'click'
             },
             {
@@ -848,7 +848,7 @@ window.DEMO_EDU = {
             {
                 el: '#aw-track',
                 title: '한 유저의 여정',
-                body: '이 유저는 전환(★)까지 Display → Search → Social → Email 순서로 광고를 만났어요. ' +
+                body: '이 유저는 전환(▲)까지 Display → Search → Social → Email 순서로 광고를 만났어요. ' +
                     '질문은 하나 — 이 전환의 공로는 누구 몫일까요?'
             },
             {
@@ -968,7 +968,7 @@ window.DEMO_EDU = {
                 `${value > prev ? '비싼 상품일수록 식어가는 작은 반응도 돈이 되니, 같은 사람에게 <strong>몇 번 더</strong> 보여줄 가치가 있습니다' : '전환 가치가 낮으면 몇 번만 보여주고 멈추는 게 이득입니다'}.`,
             '#fc-cost': ({ value, prev }) =>
                 `노출당 비용을 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}달러</strong>로 ${value > prev ? '올렸' : '내렸'}어요. ` +
-                `${value > prev ? '비싼 지면일수록 <strong>짧고 굵게</strong> — 한계 반응이 비용 아래로 빨리 떨어져 최적 cap이 작아집니다' : '노출이 싸지면 식은 반응도 비용을 넘기 쉬워 최적 cap이 커집니다'}. 오른쪽 차트의 점(●)이 어디로 갔는지 보세요.`,
+                `${value > prev ? '비싼 지면일수록 <strong>짧고 굵게</strong> — 한계 반응이 비용 아래로 빨리 떨어져 최적 cap이 작아집니다' : '노출이 싸지면 식은 반응도 비용을 넘기 쉬워 최적 cap이 커집니다'}. 오른쪽 차트의 표시점이 어디로 갔는지 보세요.`,
             '.fc-preset-btn': ({ el }) =>
                 `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했어요. ` +
                 '두 차트가 함께 바뀝니다 — 왼쪽 막대가 식는 속도, 오른쪽 봉우리(최적 cap)의 위치를 기본값과 비교해 보세요.'
@@ -984,12 +984,12 @@ window.DEMO_EDU = {
                 el: '.fc-chart-card:last-child',
                 title: '역U자 곡선과 최적점',
                 body: 'cap을 늘리면 순가치가 오르다가 <strong>정점을 지나 떨어집니다</strong>. ' +
-                    '추가 반응의 가치가 노출 비용보다 작아지는 순간부터 손해거든요. 점(●)이 그 최적 cap이에요.'
+                    '추가 반응의 가치가 노출 비용보다 작아지는 순간부터 손해거든요. 표시점이 그 최적 cap이에요.'
             },
             {
                 el: '#fc-cost',
                 title: '직접 움직여보기',
-                body: '<strong>노출당 비용</strong> 슬라이더를 올려보세요. 점(●)이 왼쪽으로 이동하는 걸 볼 수 있어요.',
+                body: '<strong>노출당 비용</strong> 슬라이더를 올려보세요. 표시점이 왼쪽으로 이동하는 걸 볼 수 있어요.',
                 waitFor: 'input'
             },
             {
@@ -1284,6 +1284,941 @@ window.DEMO_EDU = {
             },
             '#lh-batch': ({ value, prev }) => `SDK가 한 번에 보내는 건수를 <strong>${prev} → ${value}건</strong>으로 바꿨습니다. 늘리면 요청 수가 줄지만 앱이 죽을 때 잃는 것이 그만큼 늘어납니다. 클릭만 이 값과 무관하게 즉시 갑니다.`,
         },
-    }
+    },
 
+// js/demo-edu-content.js 의 window.DEMO_EDU 에 넣을 'metrics-lab' 엔트리.
+// 'log-hops' 엔트리 뒤에 쉼표로 이어 붙이면 된다. (이 파일 자체는 조각이다)
+
+    // ==========================================
+    // 지표 실험실 (중급)
+    // ==========================================
+    'metrics-lab': {
+        analogy: '전체 AUC 는 쉬운 요청과 어려운 요청을 가르는 능력까지 점수로 쳐 준다 — 경매는 그 능력을 안 쓴다',
+        anchor: '.mx-controls',
+        embedKeep: ['.mx-controls', '.mx-metrics', '.mx-panels'],
+        // ROC 설명문과 프리셋 이름표만 접는다. 요청 카드 설명문은 남긴다 —
+        // 보정 배수를 밀었을 때 "숫자는 바뀌었는데 순서는 그대로"라고 말해 주는 줄이다.
+        embedHide: ['.mx-note-roc', '.mx-presets-label'],
+        explain: {
+            '#mx-skill': ({ value, prev }) => {
+                const now = (+value * 100).toFixed(1), was = (+prev * 100).toFixed(1);
+                return `요청 안 분별력을 <strong>${was}% → ${now}%</strong>로 ` +
+                    (+value > +prev ? '올렸' : '내렸') + '습니다. ' +
+                    (+value >= 0.7
+                        ? '이 슬라이더는 <strong>AUC 와 GAUC 를 같이</strong> 움직입니다. 한 요청 안의 순서가 실제로 좋아졌기 때문이에요 — 경매 결과가 바뀌는 개선은 이쪽입니다.'
+                        : +value <= 0.2
+                            ? 'GAUC 가 0.5 쪽으로 내려앉습니다. 요청 안에서는 거의 못 가른다는 뜻이에요. 그런데 전체 AUC 는 아직 0.66 근처입니다 — 남은 점수는 전부 지면·요청을 구분하는 능력에서 옵니다.'
+                            : '두 지표가 같은 방향으로 움직이는지 보세요. 같이 움직이면 요청 안 순서가 바뀐 것입니다.')
+            },
+            '#mx-spread': ({ value, prev }) => {
+                const now = (+value).toFixed(2), was = (+prev).toFixed(2);
+                return `요청 간 난이도 편차를 <strong>${was} → ${now}</strong>로 ` +
+                    (+value > +prev ? '키웠' : '줄였') + '습니다. ' +
+                    '이건 모델이 아니라 <strong>데이터</strong>를 바꾸는 슬라이더예요. ' +
+                    (+value > +prev
+                        ? '요청끼리 쉬운·어려운 차이가 벌어지면 <strong>요청을 가로지른 짝</strong>이 맞히기 쉬워집니다. 전체 AUC 만 오르고 GAUC 는 제자리인 것을 보세요 — 두 곡선 사이 면적이 그 몫입니다.'
+                        : '요청끼리 비슷해지면 가로지른 짝도 요청 안 짝만큼 어려워집니다. 두 곡선이 붙는 것을 보세요.')
+            },
+            '#mx-slope': ({ value, prev }) => {
+                const now = (+value).toFixed(2), was = (+prev).toFixed(2);
+                return `보정 배수를 <strong>${was}× → ${now}×</strong>로 바꿨습니다. ` +
+                    (Math.abs(+value - 1) < 0.05
+                        ? '1.00 근처면 예측 총합이 실제 클릭 수와 맞습니다. COPC 가 1 근처로 돌아온 것을 보세요.'
+                        : '<strong>순위는 한 칸도 안 바뀝니다</strong> — 모든 예측에 같은 수를 곱했으니까요. AUC 와 GAUC 는 그대로인데 ' +
+                          (+value > 1
+                            ? 'COPC 는 1 아래로 내려갑니다. 예측이 실제보다 커졌다는 뜻이에요. NE 도 1 쪽으로 올라갑니다.'
+                            : 'COPC 는 1 위로 올라갑니다. 예측이 실제보다 작아졌다는 뜻이에요 — 과소예측입니다.'))
+            },
+            '#mx-slots': ({ value, prev }) =>
+                `요청당 광고 수를 <strong>${prev}개 → ${value}개</strong>로 바꿨습니다. ` +
+                `자리가 늘면 한 요청이 만드는 짝이 늘고, 클릭이 0건이라 버려지는 요청이 줄어듭니다. ` +
+                `자리당 CTR 2.5% 기준으로 버려지는 비율은 0.975 의 ${value}제곱, 즉 ` +
+                `<strong>${(Math.pow(0.975, +value) * 100).toFixed(1)}%</strong>입니다. 지표 칸 아래 줄에서 실제 비율을 확인해 보세요.`,
+            '[data-mx-preset="0.494,1.4,1,5"]': () =>
+                '<strong>요청 간 편차 ▲</strong> — 데이터만 바꿨습니다. 모델은 그대로예요. ' +
+                '전체 AUC 는 0.83 대로 뛰는데 GAUC 는 0.62 대에 머뭅니다. ' +
+                '오른 0.09 는 전부 "이 요청이 저 요청보다 쉽다"를 맞힌 몫입니다 — 경매는 그 판단을 안 씁니다.',
+            '[data-mx-preset="0.494,0,1,5"]': () =>
+                '<strong>요청 간 편차 0</strong> — 모든 요청이 똑같이 어렵습니다. ' +
+                '전체 AUC 0.6115 와 GAUC 0.6133 이 거의 같아집니다. ' +
+                '가로지른 짝이 요청 안 짝만큼 어려워졌으니 둘을 나눌 이유가 사라진 것이죠. 두 곡선이 포개집니다.',
+            '[data-mx-preset="0.75,0.915,1,5"]': () =>
+                '<strong>분별력 ▲</strong> — 이번에는 모델이 좋아졌습니다. ' +
+                'AUC 0.7776, GAUC 0.6818 로 <strong>둘 다</strong> 올랐어요. ' +
+                '배포 판단에서 보고 싶은 모습이 이것입니다. GAUC 가 안 따라오면 매출은 안 움직입니다.',
+            '[data-mx-preset="0.494,0.915,3,5"]': () =>
+                '<strong>예측 ×3</strong> — 순위 지표는 넷째 자리만 흔들립니다(0.99 에서 잘린 예측이 동점을 만들어서예요). ' +
+                '그 사이 NE 는 1.2535, COPC 는 0.342 가 됩니다. NE 가 1을 넘었다는 건 ' +
+                '<strong>기저 CTR 만 답하는 상수 모델보다 못하다</strong>는 뜻이라 즉시 중단 대상입니다.',
+            '[data-mx-preset="0.494,0.915,1,5"]': () =>
+                '<strong>기본값</strong>으로 돌아왔습니다. AUC 0.7413 · GAUC 0.6177 · NE 0.9303 · COPC 1.002. ' +
+                '글 1절 배포 표의 기존 모델 자리(AUC 0.7412 · GAUC 0.6180) 근처에 맞춰 둔 값입니다.',
+            '#mx-req-next': () =>
+                '다른 요청을 뽑았습니다. 클릭이 0건인 요청이 나오면 아래 칸이 "짝을 하나도 못 만든다"고 말합니다 — ' +
+                '그런 요청이 이 표본의 89% 입니다. GAUC 는 남은 11% 로만 계산됩니다.'
+        },
+        tour: [
+            {
+                el: '.mx-metrics-grid',
+                title: '다섯 숫자를 한 화면에서',
+                body: '같은 표본 하나에서 나온 값입니다. 오른쪽 위 배지는 글 8절 배포 게이트를 그대로 옮긴 것이고, ' +
+                    '전체 AUC 만 문턱 없이 "기록만"입니다.'
+            },
+            {
+                el: '#mx-spread',
+                title: '데이터를 바꿔 봅니다',
+                body: '<strong>요청 간 난이도 편차</strong> 슬라이더를 오른쪽으로 밀어 보세요. 모델은 하나도 안 건드립니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.mx-chart',
+                title: '두 곡선이 갈라진다',
+                body: '위 실선(전체 ROC)만 바깥으로 부풀고 아래 점선(요청 안 ROC 평균)은 거의 그대로입니다. ' +
+                    '그 사이 면적이 <strong>요청을 가로지른 짝</strong>이 만든 몫이에요. 경매는 그 짝을 쓰지 않습니다.'
+            },
+            {
+                el: '#mx-slope',
+                title: '이번에는 크기만 밀어 봅니다',
+                body: '<strong>보정 배수</strong>를 움직여 보세요. 모든 예측에 같은 수를 곱하는 것이라 순위는 안 바뀝니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.mx-req',
+                title: '요청 하나 안에서는',
+                body: '숫자는 바뀌었는데 순서는 그대로인 것을 여기서 확인할 수 있습니다. ' +
+                    '<strong>다음 요청 ▸</strong>을 눌러 클릭이 0건인 요청도 보세요 — GAUC 가 버리는 요청입니다.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더를 밀 때마다 "지금 무엇이 왜 움직였나"가 여기 나옵니다. 자유롭게 실험해 보세요.'
+            }
+        ]
+    },
+
+// ===================================================================
+// js/demo-edu-content.js 의 window.DEMO_EDU 에 넣을 조각.
+// 'calibration' 엔트리 옆(또는 뒤)에 아래 한 덩어리를 그대로 붙인다.
+// 이 파일 자체는 어디서도 로드하지 않는다 — 옮겨 붙이기용 조각이다.
+// ===================================================================
+
+    // ==========================================
+    // 성향점수 가중 실험실 (중급)
+    // ==========================================
+    'ips-weights': {
+        analogy: '겹친 건 2,595건 중 52건이 가중치의 3분의 1을 쥐고 있다 — 그래서 10,000건짜리 로그가 339건 몫이 된다',
+        anchor: '.ipw-controls',
+        embedKeep: ['.ipw-controls', '.ipw-metrics', '.ipw-verdict', '.ipw-charts'],
+        embedHide: ['.ipw-presets', '.ipw-row-clip', '.ipw-row-qacc', '.ipw-card-est'],
+        explain: {
+            '#ipw-eps': ({ value, prev }) => {
+                const S = [0.02, 0.05, 0.10, 0.20, 0.35, 0.50, 1.00];
+                const now = S[value], was = S[prev];
+                return `옛 정책의 탐색 비율을 <strong>${was.toFixed(2)} → ${now.toFixed(2)}</strong>로 바꿨어요. ` +
+                    `후보 8개니까 최소 선택 확률은 ${(now / 8).toFixed(4)}이고, ` +
+                    `<strong>가중치 상한은 8 ÷ ${now.toFixed(2)} = ${Math.round(8 / now)}배</strong>가 됩니다. ` +
+                    (now < was
+                        ? '탐색을 줄이면 겹치기 어려운 건이 더 무거워져요. 오른쪽 꼬리 막대가 자라고 유효표본 ESS가 내려앉습니다.'
+                        : '탐색을 늘리면 어떤 후보든 뽑힐 확률이 올라 가중치가 평평해집니다. ESS가 커지는 대신 오늘의 성적을 그만큼 내줘요.');
+            },
+            '#ipw-dist': ({ value, prev }) =>
+                `정책 거리를 <strong>${(+prev).toFixed(2)} → ${(+value).toFixed(2)}</strong>로 바꿨어요. ` +
+                (value > prev
+                    ? '새 정책이 옛 정책과 더 많이 갈립니다. 겹치는 건이 줄고, 남은 건 하나가 짊어지는 몫이 커져요. ' +
+                      '<strong>잴 값어치는 커지는데 잴 재료는 줄어드는 자리</strong>입니다.'
+                    : '새 정책이 옛 정책 쪽으로 다가갑니다. 겹침률도 ESS도 같이 오릅니다. ' +
+                      '대신 진짜 값이 옛 정책 값에 붙어요 — 안 새로운 정책은 잴 것도 없다는 뜻입니다.'),
+            '#ipw-clip': ({ value, prev }) => {
+                const S = [5, 10, 20, 40, 80, 160, 400, Infinity];
+                const name = (v) => (v === Infinity ? '절단 없음' : 'M=' + v);
+                const now = S[value], was = S[prev];
+                return `가중치 상한을 <strong>${name(was)} → ${name(now)}</strong>로 바꿨어요. ` +
+                    (now < was
+                        ? '상한을 넘는 건이 상한 값으로 눌립니다. 400주 표준편차가 눈에 띄게 줄어드는 대신, ' +
+                          '<strong>IPS 평균이 아래로 내려앉아요</strong> — 잘라 낸 몫이 아무 데도 안 더해지기 때문입니다. ' +
+                          'SNIPS는 분모(가중치 합)도 같이 줄어 그 몫이 대부분 돌아옵니다. 두 줄의 차이를 보세요.'
+                        : '누르는 힘이 약해집니다. 큰 가중치가 다시 살아나 편향은 줄고 구간은 넓어져요.');
+            },
+            '#ipw-qacc': ({ value, prev }) =>
+                `보상 모델 정확도를 <strong>${(+prev).toFixed(2)} → ${(+value).toFixed(2)}</strong>로 바꿨어요. ` +
+                (value < 0.5
+                    ? '모델이 후보를 구분하지 못하고 지면 평균만 내놓는 상태에 가깝습니다. ' +
+                      '보상 모델만 쓰는 추정(DM)은 크게 빗나가는데, <strong>DR의 400주 평균은 버팁니다</strong> — 성향점수가 맞기 때문이에요.'
+                    : '보상 모델이 진짜 CTR에 가까워집니다. DR의 앞항이 정확해지고 뒷항의 잔차가 작아져, ' +
+                      '큰 가중치가 곱해질 값 자체가 줄어듭니다.'),
+            '[data-ipw-preset="0.1,1,7,1"]': () =>
+                '<strong>글의 설정</strong>으로 돌아왔어요. 겹친 건 2,595건(25.9%) · 가중치 합 9,681 · 최대 가중치 80 · ESS 339입니다. ' +
+                '이번 주 Replay는 3.314%, IPS는 1.669%인데 진짜 값은 2.807%예요. 한 주짜리 추정치는 이만큼 흔들립니다.',
+            '[data-ipw-preset="0.02,1,7,1"]': () =>
+                '<strong>탐색을 2%로</strong> 줄였어요. 최소 선택 확률이 0.0025가 되어 가중치 상한이 400배로 뜁니다. ' +
+                '꼬리 막대가 새로 자라고 ESS가 세 자리 아래로 내려가요. 오늘의 성적은 지켰는데 다음 판정이 어려워진 상태입니다.',
+            '[data-ipw-preset="0.2,1,7,1"]': () =>
+                '<strong>탐색을 20%로</strong> 늘렸어요. 가중치 상한이 40으로 반토막 나고 ESS가 크게 오릅니다. ' +
+                '대신 요청의 20%를 무작위로 돌린 값이라, 오늘의 CTR을 그만큼 내준 결과예요.',
+            '[data-ipw-preset="0.1,1,2,1"]': () =>
+                '<strong>실무 기본값</strong>입니다. 상한 20에 자기정규화를 같이 걸었어요. ' +
+                '표의 <strong>400주 평균</strong> 열에서 IPS 줄과 SNIPS 줄을 비교해 보세요. 같은 절단인데 IPS는 2.13%로 밀려 있고 ' +
+                'SNIPS는 2.91%로 진짜 값 2.807% 근처를 지킵니다. 분모(가중치 합)가 같이 줄었기 때문입니다.',
+            '[data-ipw-preset="0.1,0.3,7,1"]': () =>
+                '<strong>두 정책이 비슷한</strong> 상태예요. 겹침률이 크게 오르고 구간이 좁아집니다. ' +
+                '그런데 진짜 값도 옛 정책 값 쪽으로 내려왔어요. 잘 재지는데 잴 만한 차이가 없는 자리입니다.',
+            '[data-ipw-preset="0.1,1,7,0"]': () =>
+                '<strong>보상 모델이 지면 평균만</strong> 내놓는 상태로 바꿨어요. DR의 앞항이 통째로 틀립니다. ' +
+                '그래도 400주 평균은 진짜 값 근처를 지켜요. 성향점수와 보상 모델 중 <strong>하나만 맞으면 된다</strong>는 것이 DR의 성질입니다.'
+        },
+        tour: [
+            {
+                el: '.ipw-metrics',
+                title: '먼저 볼 숫자 넷',
+                body: '왼쪽부터 두 정책이 같은 광고를 고른 건수, 가중치 합, 최대 가중치, 그리고 유효표본 ESS예요. ' +
+                    '겹친 건은 <strong>2,595건</strong>인데 ESS는 <strong>339건</strong>입니다. 이 둘이 다른 수라는 것이 이 데모의 전부입니다.'
+            },
+            {
+                el: '.ipw-card-weights',
+                title: '가중치가 몰린 자리',
+                body: '막대 길이는 건수가 아니라 그 구간이 쥔 <strong>가중치 합</strong>이에요. ' +
+                    '가장 아래 점선 막대를 보세요. 52건이 전체 가중치의 3분의 1을 쥐었는데 그 안에 클릭이 하나도 없습니다.'
+            },
+            {
+                el: '#ipw-eps',
+                title: '탐색을 줄여 보기',
+                body: '탐색 비율 슬라이더를 <strong>왼쪽으로</strong> 밀어 보세요. 가중치 상한이 8 ÷ ε로 커지고 꼬리가 자랍니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.ipw-card-est',
+                title: '네 추정치 읽는 법',
+                body: '주황 네모가 이번 주 값이고, 파란 띠는 같은 조건의 지난주를 400번 다시 뽑은 평균과 표준편차예요. ' +
+                    '<strong>띠가 진짜 값(세로 점선)을 품으면 편향이 없다</strong>는 뜻이고, 띠가 넓으면 한 주로는 못 가른다는 뜻입니다.'
+            },
+            {
+                el: '[data-ipw-preset="0.1,1,2,1"]',
+                title: '절단을 걸어 보기',
+                body: '<strong>실무 기본값</strong> 버튼을 눌러 보세요. 상한 20을 걸면 띠가 좁아지는 대신 IPS 줄의 400주 평균이 왼쪽으로 밀립니다. SNIPS 줄은 제자리를 지킵니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '조작할 때마다 "지금 일어난 일"이 여기 나옵니다. 정책 거리와 보상 모델 정확도도 움직여 보세요.'
+            }
+        ]
+    },
+
+// ===================================================================
+// window.DEMO_EDU 에 넣을 'feedback-loop' 엔트리 하나.
+// js/demo-edu-content.js 의 객체 안에 이 블록을 그대로 붙여 넣으면 된다
+// (다른 엔트리와 같은 들여쓰기 4칸, 뒤에 쉼표 유지).
+//
+// 짝: demo-feedback-loop.html · js/feedback-loop-demo.js · posts/feedback-loop-bias.md
+// ===================================================================
+
+    // ==========================================
+    // 피드백 루프 시뮬레이터 (중급)
+    // ==========================================
+    'feedback-loop': {
+        analogy: '어제 모델이 오늘의 학습 데이터를 골랐다 — 한 번 밀려난 광고는 추정값이 얼고, 그 언 값이 내일 순위를 다시 정한다',
+        anchor: '.fb-controls',
+        embedKeep: ['.fb-container'],
+        // '.fb-hero' 를 반드시 여기 적어야 한다 — embedKeep 의 '.fb-container' 가 히어로 안에도
+        // 있어서, 엔진의 '그 셀렉터를 품고 있으면 남긴다' 판정이 히어로까지 남긴다(실측 175px).
+        embedHide: ['.fb-hero', '.demo-prereq', '.demo-intro', '.demo-steps', '.fb-model', '.fb-measure', '.fb-tail-note', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '#fb-eps': ({ value, prev }) => {
+                const N = +document.getElementById('fb-n').value;
+                const nAds = +document.getElementById('fb-ads').value;
+                const slot = document.getElementById('fb-mode').value === 'slot';
+                const pool = Math.floor(N * value / 100);
+                if (+value === 0) {
+                    return '탐색 예산을 <strong>' + prev + '% → 0%</strong>로 내렸어요. 이제 배분을 정하는 값은 추정 CTR 순위 하나뿐입니다. ' +
+                        '추정 5위부터는 그날 노출이 0건이고, 0건이면 로그가 0줄이라 그 광고의 추정값이 그날 값에서 멈춥니다.';
+                }
+                return '탐색 예산을 <strong>' + prev + '% → ' + value + '%</strong>로 올렸어요. ' +
+                    '세대당 ' + N.toLocaleString('ko-KR') + '건 중 <strong>' + pool.toLocaleString('ko-KR') + '건</strong>을 순위와 무관하게 떼어 둡니다' +
+                    (slot
+                        ? ' — 이번 세대 0건인 광고들에게만 나눠 주므로 밀려난 광고 하나가 받는 몫이 큽니다.'
+                        : ' — 광고 ' + nAds + '개에 똑같이 나누니 광고당 ' + Math.floor(pool / nAds).toLocaleString('ko-KR') + '건입니다.') +
+                    ' 표본이 다시 들어오면 언 추정값이 움직이기 시작해요.';
+            },
+            '#fb-mode': ({ value }) => value === 'slot'
+                ? '탐색 예산을 <strong>0건 광고에만</strong> 몰아 줍니다(강제 슬롯). 밀려난 광고 하나가 받는 표본이 커서 언 값을 빨리 뒤집어요. ' +
+                  '글의 판에서는 8%(1,600건)를 밀려난 넷에 400건씩 줘서 <strong>3세대</strong>에 <code>9931</code>이 돌아옵니다.'
+                : '탐색 예산을 <strong>모든 광고에 똑같이</strong> 흩뿌립니다(ε 탐색). 이미 잘 도는 광고에도 몫이 가서 밀려난 광고가 받는 표본은 작아요. ' +
+                  '글의 판에서는 5%(1,000건)를 여덟에 125건씩 나눠 <code>9931</code> 복귀에 <strong>8세대</strong>가 걸립니다.',
+            '#fb-n': ({ value, prev }) => {
+                const k = Math.ceil(+value / 6000), kPrev = Math.ceil(+prev / 6000);
+                return '세대당 노출을 <strong>' + (+prev).toLocaleString('ko-KR') + '건 → ' + (+value).toLocaleString('ko-KR') + '건</strong>으로 바꿨어요. ' +
+                    '광고당 상한이 6,000건이라 노출 자리가 <strong>' + kPrev + '개에서 ' + k + '개</strong>로 바뀝니다. ' +
+                    '자리 밖으로 밀리는 순간 로그가 끊기니, 자리가 몇 개인지가 굳음의 경계를 정합니다.';
+            },
+            '#fb-prior': ({ value, prev }) => +value === 0
+                ? '낙관 초기값을 <strong>껐습니다</strong>. 추정 CTR 이 다시 <code>(누적 클릭+1) ÷ (누적 노출+2)</code>가 되어, 노출이 없는 광고는 낮은 값에 그대로 머뭅니다.'
+                : '아직 안 본 광고를 <strong>CTR ' + (+value).toFixed(1) + '%</strong>라고 우기고 시작합니다(의사노출 2,000건). ' +
+                  '진짜 CTR 사다리의 꼭대기(2.60%)보다 높은 값이라 안 본 광고가 위로 올라오고, 노출을 받으면 값이 진짜 쪽으로 내려옵니다. ' +
+                  (prev === 0 ? '' : '사전평균을 ' + (+prev).toFixed(1) + '% 에서 옮겼어요. ') +
+                  '글의 판에서는 3.5% 로 두면 3세대에 <code>9931</code>이 돌아오고 40세대 클릭이 18,546건입니다.',
+            '.fb-check': ({ el }) => {
+                const on = el.querySelector('input').checked;
+                const win = document.getElementById('fb-win').value === '7' ? '최근 7세대' : '전체 이력';
+                return on
+                    ? 'IPS 재가중을 <strong>켰습니다</strong>(창: ' + win + '). 광고마다 1÷성향점수를 가중해 "모두 똑같이 띄웠다면 나왔을 평균 CTR"을 되찾으려는 계산이에요. ' +
+                      '<strong>배분은 하나도 바뀌지 않습니다</strong> — 측정만 바뀝니다. 아래 "성향점수 0인 광고" 칸을 같이 보세요. ' +
+                      '그 값이 0보다 크면 1÷0 이 생겨 그 광고들은 계산에서 통째로 빠집니다.'
+                    : 'IPS 재가중을 <strong>껐습니다</strong>. 이제 "로그 그대로" 값만 남습니다. 고리가 CTR 높은 광고만 남겼기 때문에 이 값은 진짜 값보다 위로 떠 있어요.';
+            },
+            '#fb-win': ({ value }) => value === '0'
+                ? '측정 창을 <strong>전체 이력</strong>으로 바꿨어요. 1세대의 균등 배분 500건이 창에 들어오므로 성향점수 0인 광고가 사라집니다. ' +
+                  '대신 노출 500건짜리 광고의 가중치가 234,500건짜리의 469배가 되어, IPS 값이 오히려 진짜 값 아래로 끌려갑니다(글의 판에서 1.880%). ' +
+                  '성향점수를 <strong>사후 관측된 노출 비율</strong>로 채우면 생기는 일이에요.'
+                : '측정 창을 <strong>최근 7세대</strong>로 바꿨어요. 실무 학습이 쓰는 창입니다. 굳은 뒤라면 이 창에는 밀려난 광고의 줄이 아예 없습니다 — ' +
+                  '그래서 성향점수가 0이 되고, IPS 가 고칠 수 있는 폭이 거의 사라집니다.',
+            '#fb-ads': ({ value }) => '광고 수를 <strong>' + value + '개</strong>로 바꿔 판을 처음부터 다시 시작했습니다. ' +
+                (value === '12'
+                    ? '노출 자리는 그대로인데 후보만 늘었으니, 자리 밖으로 밀리는 광고가 더 많아집니다.'
+                    : '<code>9931</code>~<code>9938</code> — 글이 쓰는 판과 같은 구성입니다.'),
+            '#fb-seed': ({ value }) => '시드를 <strong>' + value + '</strong>로 바꿔 판을 처음부터 다시 시작했습니다. ' +
+                '시드 하나는 운 한 판이에요. 글에서 시드 100판을 돌려 보니 진짜 1위가 2세대에 밀려난 판이 12판, ' +
+                '그중 40세대까지 못 돌아온 판이 6판이었습니다. <strong>37</strong>이 글이 쓰는 판입니다.',
+            '#fb-step': () => '한 세대를 돌렸습니다. 이 세대의 배분은 <strong>어제까지</strong> 쌓인 로그로만 정했고, 방금 나온 클릭은 <strong>내일</strong> 배분에 쓰입니다. ' +
+                '오른쪽 막대에서 "언 값"이라고 붙은 줄을 보세요 — 이번 세대에 노출이 0건이라 추정값이 한 칸도 안 움직인 광고입니다.',
+            '#fb-auto': ({ el }) => el.textContent.indexOf('멈춤') > -1
+                ? '30세대를 이어서 돌립니다. 왼쪽 띠 그래프에서 <strong>모양이 더 이상 바뀌지 않는 지점</strong>을 찾아보세요. 기본값에서는 3세대입니다.'
+                : '자동 진행을 멈췄습니다. 지금 상태에서 컨트롤을 바꾸면 <strong>다음 세대부터</strong> 적용돼요 — 굳은 판에 탐색을 뒤늦게 켜서 풀리는지 보는 실험이 가능합니다.',
+            '#fb-reset': () => '같은 시드로 판을 처음부터 다시 시작했습니다. 난수열이 같으니 설정만 바꿔 돌리면 <strong>처방의 차이만</strong> 남습니다.',
+            '[data-preset="base"]': () => '<strong>기본</strong> — 탐색 0%. 순위가 배분의 전부입니다. 끝까지 돌리면 노출 집합이 3세대에 굳고, ' +
+                '진짜 1위 <code>9931</code>의 40세대 누적 노출이 500건에서 멈춥니다. 누적 클릭 17,350건으로 오라클(18,831건)보다 7.9% 적어요.',
+            '[data-preset="eps"]': () => '<strong>ε 탐색 5%</strong> — 20,000건 중 1,000건을 여덟에 125건씩 나눠 줍니다. 노출 집합이 아예 굳지 않지만, ' +
+                '한 세대에 주는 표본이 작아 <code>9931</code> 복귀에 8세대가 걸립니다. 40세대 클릭 18,541건.',
+            '[data-preset="prior"]': () => '<strong>낙관 초기값 3.5%</strong> — 노출은 여전히 넷만 받지만 그 넷의 구성이 계속 바뀝니다. ' +
+                '노출을 받은 광고의 추정값이 진짜 값으로 내려오면서 아직 덜 본 광고가 위로 올라오기 때문이에요. 40세대 클릭 18,546건.',
+            '[data-preset="slot"]': () => '<strong>강제 슬롯 8%</strong> — 1,600건을 0건 광고에게만 줍니다(넷이면 400건씩). 복귀는 3세대로 가장 빠르지만 ' +
+                '40세대 클릭은 18,515건으로 셋 중 가장 낮아요. 이 처방이 사는 것은 매출이 아니라 측정의 정확도입니다 — IPS 를 켜서 확인해 보세요.'
+        },
+        tour: [
+            {
+                el: '#fb-step',
+                title: '한 세대 = 하루',
+                body: '이 버튼을 한 번 누르면 하루가 갑니다. 배분을 정하고, 노출을 뿌리고, 클릭 로그를 쌓고, 그 로그로 내일 배분을 정합니다. ' +
+                    '먼저 <strong>한 세대 진행</strong>을 눌러 첫날을 보세요.',
+                waitFor: 'click'
+            },
+            {
+                el: '.fb-charts .fb-card:nth-child(2)',
+                title: '첫날은 모두 500건씩',
+                body: '왼쪽 파란 막대가 <strong>진짜 CTR</strong>, 가운데가 시스템이 믿는 <strong>추정 CTR</strong>입니다. ' +
+                    '500건이라는 작은 표본에서 나온 값이라 두 순서가 어긋나 있죠? 이 어긋난 순서가 내일 노출을 정합니다.'
+            },
+            {
+                el: '#fb-auto',
+                title: '고리를 끝까지 돌린다',
+                body: '<strong>30세대 자동</strong>을 눌러 보세요. 왼쪽 띠 그래프에서 모양이 더 이상 바뀌지 않는 지점이 굳은 순간입니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.fb-metrics',
+                title: '굳음을 숫자로',
+                body: '"굳음"은 노출을 받는 광고 집합이 마지막으로 바뀐 세대예요. "누적 지니계수"는 쏠린 정도인데, ' +
+                    '값이 높은 것보다 <strong>변화가 멈춘 것</strong>이 신호입니다. 맨 오른쪽은 진짜 CTR 을 알고 배분했을 때와의 클릭 차이입니다.'
+            },
+            {
+                el: '#fb-eps',
+                title: '굳은 판을 풀어 보기',
+                body: '탐색 예산 ε 를 <strong>5%</strong> 쯤으로 올려 보세요. 다음 세대부터 적용됩니다. 계속 돌리면 갇혀 있던 광고가 돌아옵니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '조작할 때마다 "지금 일어난 일"이 여기 표시됩니다. IPS 재가중을 켜고 측정 창을 바꿔 보는 실험도 해보세요.'
+            }
+        ]
+    },
+
+// js/demo-edu-content.js 의 window.DEMO_EDU 안에 그대로 끼워 넣는 조각.
+// 'log-hops' 엔트리 앞이나 뒤 어디든 좋다(마지막에 넣으면 앞 엔트리 뒤에 쉼표를 붙일 것).
+//
+//   analogy   : 카드/허브용 한 줄 — 비유가 아니라 이 데모가 남기는 통찰 한 줄
+//   anchor    : 해설 패널이 들어갈 자리(.uq-explain-host 는 비어 있으면 CSS 가 접는다)
+//   embedKeep : ?embed=1 에서 남길 main 직계 자식
+//   embedHide : 임베드에서 더 접을 것 — 프리셋 줄과 컨트롤 머리말은 본문 안에서 자리만 먹는다
+//   explain   : 컨트롤 셀렉터별 해설. 표의 현재 값을 그대로 읽어 말한다
+//   tour      : 5스텝
+
+    // ==========================================
+    // 증분 4분면 (중급)
+    // ==========================================
+    'uplift-quadrant': {
+        analogy: '리포트 전환이 가장 큰 계획과 매출을 가장 많이 늘린 계획은 같지 않다',
+        anchor: '.uq-explain-host',
+        embedKeep: ['.uq-controls', '.uq-explain-host', '.uq-metrics', '.uq-charts'],
+        embedHide: ['.uq-presets', '.uq-controls-head span'],
+        explain: {
+            '#uq-per': ({ value, prev }) => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `설득 가능을 <strong>${prev}% → ${value}%</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                    `광고비가 값을 하는 부류는 이 하나뿐입니다. 전체 증분이 <strong>${g('uq-cvr-lift')}</strong>, ` +
+                    `전원에게 광고했을 때 증분 전환이 <strong>${g('uq-inc-total')}</strong>이 됐습니다. ` +
+                    `이들은 pCVR이 낮은 편이라 왼쪽 그림에서 <strong>가로선 위·세로선 왼쪽</strong>에 많이 앉습니다 — ` +
+                    `pCVR 순으로 고르면 그 자리가 통째로 빠집니다.`;
+            },
+            '#uq-sure': ({ value, prev }) => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `확실 구매를 <strong>${prev}% → ${value}%</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                    `광고를 안 봐도 사는 사람이라 pCVR은 가장 높고 증분은 0입니다. ` +
+                    `지금 pCVR 순으로 고르면 증분 전환이 <strong>${g('uq-p-inc')}</strong>, 증분 CPA가 <strong>${g('uq-p-icpa')}</strong>입니다. ` +
+                    `올릴수록 pCVR 순의 자리를 이들이 채웁니다 — 리포트 전환은 커지고 매출은 그대로입니다.`;
+            },
+            '#uq-dog': ({ value, prev }) => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `청개구리를 <strong>${prev}% → ${value}%</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                    `보여 주면 오히려 안 사는 사람이라 증분이 음수입니다. ` +
+                    `전원에게 광고했을 때 증분 전환이 <strong>${g('uq-inc-total')}</strong>으로 바뀌었습니다. ` +
+                    `오른쪽 Qini 곡선의 최고점이 ${value > prev ? '왼쪽으로 옵니다' : '오른쪽으로 갑니다'} — ` +
+                    `그 점 뒤는 광고를 더 할수록 매출이 주는 구간입니다.`;
+            },
+            '#uq-budget': ({ value, prev }) => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `예산을 상위 <strong>${prev}% → ${value}%</strong>로 바꿨습니다. 지금 광고가 닿는 사람은 ${g('uq-spend')}입니다. ` +
+                    `같은 돈으로 pCVR 순은 증분 <strong>${g('uq-p-inc')}</strong>, uplift 순은 <strong>${g('uq-u-inc')}</strong>을 만듭니다. ` +
+                    (Number(value) >= 100
+                        ? `100%까지 밀었더니 두 곡선이 한 점에서 만납니다. 전원에게 광고하면 순서를 아무리 잘 매겨도 결과가 같습니다.`
+                        : `100%까지 밀면 두 곡선이 한 점에서 만납니다 — 증분 모델의 값은 "어디서 멈출까"와 짝일 때만 생깁니다.`);
+            },
+            '#uq-mode-pcvr': () => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `고르는 기준을 <strong>pCVR 순</strong>으로 바꿨습니다. 왼쪽 그림에서 <strong>세로선 오른쪽</strong>이 통째로 진해집니다. ` +
+                    `오른쪽 아래 칸(확실 구매)까지 같이 딸려 옵니다. ` +
+                    `리포트 전환 <strong>${g('uq-p-report')}</strong>에 겉보기 CPA <strong>${g('uq-p-cpa')}</strong> — 여기까지는 좋아 보입니다. ` +
+                    `그런데 증분은 <strong>${g('uq-p-inc')}</strong>, 증분 CPA는 <strong>${g('uq-p-icpa')}</strong>입니다.`;
+            },
+            '#uq-mode-uplift': () => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `고르는 기준을 <strong>uplift 순</strong>으로 바꿨습니다. 이번에는 <strong>가로선 위쪽</strong>이 진해지고 오른쪽 아래 칸이 통째로 빠집니다. ` +
+                    `리포트 전환은 <strong>${g('uq-u-report')}</strong>으로 줄었는데 증분은 <strong>${g('uq-u-inc')}</strong>, ` +
+                    `증분 CPA는 <strong>${g('uq-u-icpa')}</strong>입니다. 리포트가 나빠진 계획이 매출은 더 늘렸습니다.`;
+            },
+            '.uq-preset-btn': ({ el }) => {
+                const g = (id) => (document.getElementById(id) || {}).textContent || '—';
+                return `<strong>${el.textContent.trim()}</strong>로 바꿨습니다. ` +
+                    `노출군 CVR ${g('uq-cvr-t')} · 대조군 CVR ${g('uq-cvr-c')} · 증분 ${g('uq-cvr-lift')}입니다. ` +
+                    `지금 예산에서 pCVR 순 증분 <strong>${g('uq-p-inc')}</strong> 대 uplift 순 증분 <strong>${g('uq-u-inc')}</strong>. ` +
+                    `${g('uq-mix')}`;
+            }
+        },
+        tour: [
+            {
+                el: '#uq-card-scatter',
+                title: '네 부류가 어디에 앉아 있나',
+                body: '가로가 pCVR(광고를 봤을 때 살 확률), 세로가 uplift(광고가 늘린 확률)입니다. ' +
+                    '<strong>오른쪽 아래</strong>가 확실 구매입니다 — pCVR은 가장 높은데 광고가 늘린 것은 0입니다. ' +
+                    '<strong>왼쪽 위</strong>에는 pCVR이 낮은데 증분은 있는 사람이 앉아 있습니다.'
+            },
+            {
+                el: '#uq-mode-pcvr',
+                title: '기준을 바꿔 보세요',
+                body: '<strong>pCVR 순</strong>을 눌러 보세요. 진해지는 점 무리가 통째로 옮겨 갑니다. ' +
+                    '세로선 오른쪽을 전부 사게 되고, 오른쪽 아래 칸이 같이 딸려 옵니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.uq-compare',
+                title: '두 줄을 나란히 읽기',
+                body: '같은 사람 수, 같은 광고비입니다. <strong>리포트 전환</strong>은 pCVR 순이 큽니다. ' +
+                    '<strong>증분 전환</strong>은 uplift 순이 큽니다. 어느 칸을 보느냐로 예산이 갈립니다.'
+            },
+            {
+                el: '#uq-budget',
+                title: '예산을 끝까지 밀어 보기',
+                body: '타겟팅 예산을 100%까지 밀어 보세요. 오른쪽 두 곡선이 한 점에서 만납니다 — ' +
+                    '전원에게 광고하면 순서를 아무리 잘 매겨도 결과가 같습니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#uq-card-qini',
+                title: 'Qini 곡선과 멈출 자리',
+                body: '위에서부터 잘라 가며 더한 증분입니다. 파란 곡선의 <strong>최고점</strong>이 광고를 멈출 자리예요. ' +
+                    '그 오른쪽은 광고를 더 할수록 증분이 줄어듭니다. 이제 자유롭게 돌려 보세요.'
+            }
+        ]
+    },
+
+// ==========================================
+    // 신호 소실 계단 (중급)
+    // js/demo-edu-content.js 의 window.DEMO_EDU 에 이 엔트리 하나를 그대로 넣는다.
+    // 마지막 엔트리 뒤에 붙일 때는 앞 엔트리의 닫는 중괄호 뒤 쉼표를 확인할 것.
+    // ==========================================
+    'signal-loss': {
+        analogy: '식별자가 빠지면 피처보다 라벨이 먼저 부서진다 — 타겟팅 계기는 그대로인데 나머지 셋이 같이 내려간다',
+        anchor: '.sl-stage',
+        embedKeep: ['.sl-stage', '.sl-panels'],
+        // 임베드에서는 스위치·계기·판정과 전환 분해 판 하나만 남긴다.
+        // 스위치 설명줄과 각주는 글 본문이 이미 말하고 있으므로 접는다(높이 200px쯤 절약).
+        embedHide: [
+            '.sl-hero', '.demo-prereq', '.demo-intro', '.demo-steps', '.sl-brief',
+            '.sl-switches-head p', '.sl-switch-note', '.sl-gauge-foot',
+            '.sl-card-spread', '.sl-card-freq', '#sl-conv-note',
+            '.demo-tldr', '.demo-practice', '.demo-next'
+        ],
+        explain: {
+            // 스위치는 <button role="switch"> 다. 데모 JS 의 핸들러가 버튼에 붙어 있어서
+            // document 로 올라오기 전에 aria-checked 가 이미 새 값으로 바뀌어 있다.
+            '#sl-sw-cookie': ({ el }) => el.getAttribute('aria-checked') === 'false'
+                ? '<strong>3rd-party 쿠키</strong>를 내렸습니다. 웹 780만 노출에 크로스 사이트 신호가 안 붙고, ' +
+                  '광고주 픽셀로 잇던 전환 780건이 아예 안 들어옵니다. 열린 RTB AUC 가 0.040 내려갔는데 ' +
+                  '담장 안은 0.007 뿐입니다 — 담장 안이 쓰던 신호는 남에게서 산 것이 아니라 우리 것이기 때문이에요. ' +
+                  '계기 3·4 는 그대로인 것도 보세요. <strong>피처가 준 것이지 학습이 멈춘 것이 아닙니다.</strong>'
+                : '쿠키를 다시 올렸습니다. 웹 780만 노출과 픽셀 경유 전환 780건이 돌아왔어요.',
+
+            '#sl-sw-idfa': ({ el }) => el.getAttribute('aria-checked') === 'false'
+                ? '<strong>IDFA</strong>를 내렸습니다. iOS 앱 940건과 MMP 앱 270건이 포스트백으로 바뀌어 ' +
+                  '사람이 붙지 않습니다. 그중 44.1% 는 값 없이 건수만 옵니다 — 글 4절의 940건 중 415건이 그것이에요. ' +
+                  '계기 2 보다 계기 3 이 더 크게 떨어지는 것을 보세요. 집계 한 줄은 개인 한 줄의 11분의 1 값이라서 그렇습니다.'
+                : 'IDFA 를 다시 올렸습니다. iOS 940건이 다시 줄 단위로 사람에 붙습니다.',
+
+            '#sl-sw-label': ({ el }) => el.getAttribute('aria-checked') === 'false'
+                ? '<strong>이 데모의 핵심 장면입니다.</strong> 유저 단위 전환 라벨을 내리자 계기 2·3·4 가 한꺼번에 내려갔는데 ' +
+                  '계기 1(타겟팅)은 100.0% 그대로입니다. 라벨이 없어진 것이 아니라 <strong>모양이 바뀐 것</strong>이에요 — ' +
+                  '학습 데이터의 한 줄이 사람에서 칸으로 바뀝니다. 집계 라벨도 계수의 평균은 참값과 맞습니다. ' +
+                  '틀어지는 것은 흔들림이고, 그 값이 3.3배입니다. 되돌리려면 데이터가 3.3의 제곱, 곧 11배 필요해요.'
+                : '전환 라벨을 다시 올렸습니다. 유효 표본이 원래대로 돌아옵니다. ' +
+                  '스위치 하나로 계기 셋이 같이 움직인 자리가 여기입니다.',
+
+            '#sl-sw-freq': ({ el }) => el.getAttribute('aria-checked') === 'false'
+                ? '<strong>크로스 앱 빈도 제어</strong>를 내렸습니다. 계기 2·3 은 꿈쩍도 안 하는데 아래 3층 판이 바뀌었죠. ' +
+                  '같은 사람인지 모르면 몇 번 봤는지도 셀 수 없어서 상한 5회를 못 겁니다. ' +
+                  'iOS 노출 420만 중 47.6% 가 이미 다섯 번 넘게 본 사람에게 갑니다. ' +
+                  '이 층은 대체 신호로 못 메웁니다 — 판정이 되거나 안 되거나 둘 중 하나예요.'
+                : '빈도 제어를 다시 올렸습니다. 상한 5회를 걸어 초과분 1,998,000건을 새 사람에게 돌립니다.',
+
+            '#sl-sw-noise': ({ el }) => el.getAttribute('aria-checked') === 'false'
+                ? '<strong>노이즈</strong>가 붙었습니다. 라플라스 스케일 b=20 이라 칸마다 평균 20건씩 어긋나고, ' +
+                  '표준편차는 28.3건입니다. 노이즈는 <strong>칸의 크기와 무관하게 같은 크기로</strong> 붙어요 — ' +
+                  '전환 40건 칸에도 28.3, 4,000건 칸에도 28.3 입니다. 그래서 상대 오차가 100배 갈립니다. ' +
+                  '거기에 50건 미만인 칸은 지워집니다. 지워진 칸은 0 이 아니라 결측이에요.'
+                : '노이즈를 껐습니다. 리포트가 원본 그대로 옵니다. 억제로 지워진 칸도 돌아왔어요.',
+
+            '#sl-conv-level': ({ value, prev }) => {
+                const L = [10, 40, 120, 400, 1200, 4000];
+                const SD = [282.8, 70.7, 23.6, 7.1, 2.4, 0.7];
+                const SUP = [93.6, 69.5, 1.6, 0.0, 0.0, 0.0];
+                const WK = [106.9, 26.6, 8.9, 2.7, 0.9, 0.3];
+                const i = +value, p = +prev;
+                const fmt = n => n.toLocaleString('en-US');
+                return '광고 규모를 <strong>' + fmt(L[p]) + '건 → ' + fmt(L[i]) + '건</strong>으로 바꿨어요. ' +
+                    '노이즈가 만드는 상대 오차는 ' + SD[i].toFixed(1) + '% 이고, 이 칸이 지워지는 날은 ' +
+                    SUP[i].toFixed(1) + '% 입니다. 7일을 합산하면 ' + WK[i].toFixed(1) + '% 로 내려가요 — ' +
+                    '신호는 7배가 되는데 노이즈는 제곱근 7배만 커지기 때문입니다. ' +
+                    (L[i] <= 40
+                        ? '이 규모에서는 5% 차이가 ' + (L[i] * 0.05).toFixed(0) + '건이라 노이즈에 완전히 묻힙니다. ' +
+                          '<strong>최적화가 느려지는 것이 아니라 멈춥니다.</strong>'
+                        : '이 규모에서는 5% 차이가 ' + fmt(Math.round(L[i] * 0.05)) + '건이라 노이즈 위로 올라옵니다.');
+            },
+
+            '[data-preset="11111"]': () =>
+                '<strong>전부 켬</strong>. 전환 4,060건이 모두 줄 단위로 사람에 붙는 상태예요. ' +
+                '여기가 기준선입니다. 스위치를 위에서부터 하나씩 내리며 어느 계기가 먼저 움직이는지 보세요.',
+
+            '[data-preset="01111"]': () =>
+                '<strong>웹 서드파티 차단</strong>. 계기 1 이 35.0% 로 떨어지고 계기 2 는 80.8% 입니다. ' +
+                '그런데 계기 4(흔들림 폭)는 15.8% 그대로예요. 라벨이 살아 있으면 지표는 안 흔들립니다.',
+
+            '[data-preset="10101"]': () =>
+                '<strong>iOS SKAN 경로</strong>. IDFA 와 빈도 제어만 내린 상태입니다. ' +
+                'iOS 940건과 MMP 270건이 집계로 바뀌어 계기 3 이 72.9% 로 내려갔어요. ' +
+                '웹 2,850건은 아직 사람에 붙습니다. 실무에서 SKAN 라벨로 모델 전체를 학습하지 않는 이유가 이 그림이에요 — ' +
+                '개인 라벨로 본체를 학습하고 집계는 캠페인 단위 보정에만 씁니다.',
+
+            '[data-preset="00111"]': () =>
+                '<strong>담장 안 로그인 지면</strong>. 크로스 신호는 0인데 계기 4 는 15.8% 그대로입니다. ' +
+                '라벨이 살아 있기 때문이에요. 담장 안 AUC 는 0.761 로 0.010 만 내려갔고 열린 RTB 는 0.706 입니다. ' +
+                '다만 "담장 안은 안전하다"는 층별로 갈립니다 — 전환의 37.5% 는 담장 밖에서 끝나거든요.',
+
+            '[data-preset="00000"]': () =>
+                '<strong>집계 API 경로</strong>. 다섯을 다 내렸습니다. 값이 오는 전환은 14.0%, ' +
+                '유효 표본은 93줄로 기준의 2.3% 입니다. 이 상태에서는 지표로 성과를 판정할 수 없어요. ' +
+                '남는 길은 무작위 실험입니다 — 지역이나 시간으로 나눠 광고를 껐다 켜면 식별자가 없어도 성립하니까요.'
+        },
+        tour: [
+            {
+                el: '.sl-switches',
+                title: '스위치 다섯',
+                body: '위에서부터 3rd-party 쿠키 · IDFA · 유저 단위 전환 라벨 · 크로스 앱 빈도 제어 · 노이즈 없는 집계입니다. ' +
+                    '내린 스위치는 점선 테두리가 되고 상태 글자가 같이 바뀝니다.'
+            },
+            {
+                el: '#sl-sw-label',
+                title: '세 번째를 내려 보세요',
+                body: '<strong>유저 단위 전환 라벨</strong>을 눌러 보세요. 무엇이 먼저 부서지는지가 여기서 갈립니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.sl-gauges',
+                title: '계기 셋이 같이 내려갔다',
+                body: '계기 2·3·4 가 한꺼번에 내려갔는데 계기 1(타겟 가능 유저 비율)은 100.0% 그대로예요. ' +
+                    '<strong>타겟팅보다 라벨이 먼저 부서집니다.</strong> 피처가 빠지면 성능이 조금 내려가지만, ' +
+                    '라벨이 바뀌면 학습 코드가 읽는 단위 자체가 달라집니다.'
+            },
+            {
+                el: '#sl-conv-card',
+                title: '전환 4,060건의 모양',
+                body: '같은 4,060건인데 개인 라벨 · 집계로 값이 오는 것 · 건수만 오는 것 · 칸째 지워진 것 · 아예 못 보는 것으로 갈립니다. ' +
+                    '건수와 비율은 막대 아래 표에 그대로 있어요.'
+            },
+            {
+                el: '#sl-conv-level',
+                title: '광고 규모를 밀어 보세요',
+                body: '슬라이더를 <strong>4,000건</strong> 쪽으로 밀어 보세요. 같은 노이즈인데 흔들림 폭이 70.7%에서 0.7%로 내려갑니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '스위치를 누르거나 슬라이더를 움직일 때마다 "지금 일어난 일"이 여기에 표시됩니다. 자유롭게 돌려 보세요!'
+            }
+        ]
+    },
+
+// js/demo-edu-content.js 의 window.DEMO_EDU 에 넣을 'api-contract' 엔트리.
+// 'log-hops' 엔트리 뒤에 쉼표로 이어 붙이면 된다. (이 파일 자체는 조각이다)
+//
+// 숫자는 js/api-contract-demo.js 가 그린 결과를 그대로 읽어 쓴다. 판정 박스
+// (#ac-verdict)의 data-* 에 실려 있다 — acSent · acRows · acDup · acBlocked ·
+// acInflate · acSuccess · acUnresolved · acCpa · acConc · acTimeout ·
+// acRounds · acSecret · acSecretFlag. 해설에서 계산을 다시 하지 않는 이유는
+// 그림·계기·해설이 서로 다른 숫자를 말하는 사고를 막으려는 것이다.
+//
+// acSent · acRows · acBlocked · acUnresolved · acCpa 는 자릿점이 붙어 온다
+// (그대로 화면에 박는 값). 크기를 비교하는 acDup · acRounds · acConc 는
+// 숫자만 오므로 + 를 붙여 읽는다.
+//
+// 조사(을/를 · 이/가 · 로/으로)를 변수 뒤에 붙이지 않는다. 인증 이름이
+// "HMAC 서명"·"JWT (사용자 토큰)"처럼 끝 글자가 달라 한쪽이 반드시 틀린다.
+// 그래서 변수는 문장 끝에 두고 "입니다"로 받는다.
+
+    // ==========================================
+    // API 계약 실험실 (입문)
+    // ==========================================
+    'api-contract': {
+        analogy: '문서에 적힌 것은 주소와 필드뿐이다 — 리포트를 틀어지게 하는 넷은 전부 문서에 없는 칸에서 정해진다',
+        anchor: '.ac-controls',
+        // main 의 자식은 .ac-hero 와 .ac-page 둘뿐이고 나머지는 전부 .ac-page
+        // 안에 있다. 그래서 embedKeep 만으로는 아무것도 안 접힌다 —
+        // .ac-page 를 남긴 다음 embedHide 가 안쪽을 접는다.
+        embedKeep: ['.ac-controls', '.ac-stage', '.ac-verdict'],
+        embedHide: [
+            '.demo-prereq', '.demo-intro', '.demo-steps', '.ac-setup',
+            '.demo-tldr', '.demo-practice', '.demo-next'
+        ],
+        explain: {
+            // 체크박스 input 에 직접 걸면 해설이 안 나온다(demo-edu.js 가 click 에서
+            // input 을 걸러내고, input 이벤트 쪽은 checkbox 의 value 가 늘 "on" 이라
+            // 값이 안 바뀐 것으로 본다). log-hops 와 같은 이유로 감싸는 label 에
+            // 걸고, 라벨을 눌렀을 때 두 번 오는 것은 dataset 로 막는다.
+            '#ac-idem-label': ({ el }) => {
+                const on = document.getElementById('ac-idem').checked ? '1' : '0';
+                if (el.dataset.eduSaid === on) return '';
+                el.dataset.eduSaid = on;
+                const d = document.getElementById('ac-verdict').dataset;
+                return on === '0'
+                    ? `멱등키를 껐습니다. <strong>요청 수는 ${d.acSent}건 그대로</strong>인데 ` +
+                      `전환 테이블이 <strong>${d.acRows}줄(+${d.acInflate})</strong>이 됐습니다. ` +
+                      `진짜 CPA 5,000원이 리포트에는 <strong>${d.acCpa}원</strong>으로 뜹니다. ` +
+                      `달라진 것은 기록뿐이에요 — 중복 ${d.acDup}건은 전부 성공 응답을 받았으니 에러 로그에 한 줄도 안 남습니다.`
+                    : `멱등키를 켰습니다. 같은 키로 온 ${d.acBlocked}건은 새로 처리하지 않고 ` +
+                      `<strong>저장해 둔 201 을 그대로</strong> 받습니다. 전환 테이블이 ${d.acRows}줄로 돌아왔어요. ` +
+                      `요청 수 ${d.acSent}건은 그대로입니다 — 멱등키는 재시도를 줄이는 장치가 아니라 그 값을 지우는 장치입니다.`;
+            },
+            // 라디오도 같은 이유로 감싸는 fieldset 에 건다.
+            '.ac-dir-row': ({ el }) => {
+                const picked = document.querySelector('input[name="ac-dir"]:checked');
+                if (!picked || el.dataset.eduSaid === picked.value) return '';
+                el.dataset.eduSaid = picked.value;
+                const d = document.getElementById('ac-verdict').dataset;
+                const sel = document.getElementById('ac-auth');
+                const name = sel.options[sel.selectedIndex].text;
+                return picked.value === 'c2s'
+                    ? `부르는 쪽을 <strong>사용자 기기</strong>로 바꿨습니다. 지금 고른 인증은 ${name} 입니다. ` +
+                      (d.acSecret === '1'
+                          ? `부르는 쪽에 비밀이 있어야 하니 시크릿 계기는 <strong>${d.acSecretFlag}</strong> 입니다. ` +
+                            `앱에 넣은 문자열은 앱을 받은 사람 모두가 갖고, 이미 배포된 값은 회수할 방법이 없습니다.`
+                          : `앱에 둘 비밀이 없으니 시크릿 계기는 <strong>${d.acSecretFlag}</strong> 입니다. 이 방향에서 남는 답이 이것입니다.`) +
+                      ` 값도 같이 못 믿게 됩니다 — 전환 금액은 앱이 보낸 것을 쓰지 않고 우리 주문 테이블에서 다시 읽습니다.`
+                    : `부르는 쪽을 <strong>우리·상대 서버</strong>로 되돌렸습니다. 비밀을 둘 자리가 생겼습니다. ` +
+                      `지금 고른 인증은 ${name} 이고, 시크릿 계기는 <strong>${d.acSecretFlag}</strong> 입니다. ` +
+                      `자격증명이 새도 한쪽에서 갈아 끼우면 끝나는 것이 이 방향의 차이입니다.`;
+            },
+            '#ac-auth': ({ value, prev }) => {
+                const NAME = {
+                    hmac: 'HMAC 서명', key: 'API key', oauth: 'OAuth2 client credentials',
+                    jwt: 'JWT (사용자 토큰)', mtls: 'mTLS'
+                };
+                const PROVES = {
+                    hmac: '본문과 시각을 비밀키로 해시해 헤더에 붙입니다. 본문을 한 글자 고쳐도 걸리지만, 같은 요청을 그대로 다시 보내는 것은 못 막습니다.',
+                    key: '이 키를 가진 쪽이라는 것만 증명합니다. 본문 위변조도 재전송도 못 막습니다 — 다섯 중 가장 단순하고 가장 약합니다.',
+                    oauth: '서비스 신원을 증명하고 토큰을 받아 씁니다. 토큰이 새도 만료까지만 유효합니다. 대신 발급 호출 한 번이 예산에 더 붙습니다.',
+                    jwt: '발급자가 서명했다는 것을 증명합니다. 만료 전 회수와 탈취는 못 막습니다.',
+                    mtls: '양쪽이 서로의 인증서를 확인합니다. 인증서가 새면 교체로 끝나지만, 본문 내용이 옳은지는 못 봅니다.'
+                };
+                const d = document.getElementById('ac-verdict').dataset;
+                const dir = document.querySelector('input[name="ac-dir"]:checked').value;
+                let tail = `지금은 ${dir === 'c2s' ? 'client → server' : 'server → server'} 방향이라 ` +
+                    `시크릿 계기가 <strong>${d.acSecretFlag}</strong>입니다.`;
+                if (value === 'hmac') tail += ' 시계도 같이 봅니다 — 우리 서버 시각이 6분 어긋나면 코드가 멀쩡해도 전량 401 입니다.';
+                if (value === 'key' && dir === 's2s') tail += ' 두 키를 동시에 인정하는 기간을 두고 갈아 끼웁니다.';
+                return `인증 방식을 바꿨습니다 — <strong>${NAME[prev] || prev} → ${NAME[value] || value}</strong>. ` +
+                    `${PROVES[value]} ${tail}`;
+            },
+            '#ac-loss': ({ value, prev }) => {
+                const d = document.getElementById('ac-verdict').dataset;
+                const step2 = (+value * 10 / 9).toFixed(1), step3 = (+value * 4 / 3).toFixed(1);
+                return `응답 유실률을 <strong>${prev}% → ${value}%</strong>로 ` +
+                    (+value > +prev ? '올렸' : '내렸') + '습니다. ' +
+                    `회차 계단이 <strong>${(+value).toFixed(1)}% → ${step2}% → ${step3}%</strong>로 다시 잡히고 ` +
+                    `요청 합계가 ${d.acSent}건이 됐습니다. ` +
+                    (+d.acDup > 0
+                        ? `전환 테이블은 ${d.acRows}줄(+${d.acInflate})입니다. 유실은 <strong>돌아오는 응답</strong>에서만 났는데 부푸는 것은 기록이에요.`
+                        : `전환 테이블은 ${d.acRows}줄 그대로입니다. 늘어난 것은 요청 수뿐이고, 멱등키가 그 차이를 먹었습니다.`);
+            },
+            '#ac-retry': ({ value, prev }) => {
+                const d = document.getElementById('ac-verdict').dataset;
+                let body;
+                if (+value === 0) {
+                    body = `중복은 0이 되지만 성공률이 <strong>${d.acSuccess}%</strong>로 떨어집니다. ` +
+                        `미확인 ${d.acUnresolved}건은 서버가 기록했는지 아닌지 보낸 쪽이 모르는 건이에요. ` +
+                        `안 보내면 유실, 보내면 중복 — 끄는 쪽도 답이 아닙니다.`;
+                } else if (+d.acRounds < +value + 1) {
+                    body = `표에는 ${d.acRounds}회차까지만 나옵니다. 4회차에 남은 건이 전부 도착한다고 뒀으니(설정 설명) ` +
+                        `그 위로 올려도 달라지는 것이 없습니다. 재시도 횟수는 유실이 남아 있을 때만 값을 냅니다.`;
+                } else {
+                    body = `성공률 <strong>${d.acSuccess}%</strong> · 요청 ${d.acSent}건입니다. ` +
+                        `재시도는 성공률을 사고 중복을 지불합니다.`;
+                }
+                if (+value >= 3) {
+                    body += ` 실제로는 여기에 <strong>지터</strong>를 같이 넣습니다. 같은 순간에 끊긴 500건이 ` +
+                        `지수 백오프만으로 다시 몰리면 성공 180건 · 100ms 창 최대 부하 500건입니다. ` +
+                        `full jitter 를 넣으면 성공 <strong>472건</strong> · 최대 부하 <strong>92건</strong>이 됩니다.`;
+                }
+                return `재시도를 <strong>${prev}회 → ${value}회</strong>로 바꿨습니다. ${body}`;
+            },
+            '#ac-timeout': ({ value, prev }) => {
+                const MS = [400, 800, 1500, 3000];
+                const d = document.getElementById('ac-verdict').dataset;
+                const now = MS[+value], was = MS[+prev], conc = +d.acConc;
+                return `하위 호출 타임아웃 상한을 <strong>${was.toLocaleString('en-US')}ms → ` +
+                    `${now.toLocaleString('en-US')}ms</strong>로 바꿨습니다. ` +
+                    `초당 100번을 부르니 동시에 물리는 커넥션이 <strong>${conc}개</strong>입니다. ` +
+                    (conc > 200
+                        ? `풀 200개를 넘겼습니다. 상대는 죽지 않았고 느려졌을 뿐인데 우리 서비스가 멈춥니다 — ` +
+                          `타임아웃은 상대를 위한 배려가 아니라 우리를 지키는 장치예요.`
+                        : now > 400
+                            ? `풀은 아직 견디는데 상위에 약속한 400ms 를 넘었습니다. 상위가 먼저 끊고, ` +
+                              `아래 호출만 아무도 안 기다리는 채로 커넥션을 뭅니다.`
+                            : `400ms 예산 안입니다. 안쪽은 서명 20 + 멱등 조회 50 + 전환 테이블 200 + Kafka 100 + 여유 30 으로 쪼갭니다.`);
+            },
+            '#ac-reset': () =>
+                '<strong>기본값</strong>으로 돌아왔습니다 — server → server · HMAC 서명 · 멱등키 켬 · ' +
+                '유실 15% · 재시도 3회 · 타임아웃 400ms. 요청은 1,180건인데 전환 테이블은 1,000줄입니다. ' +
+                '글 7절 표의 그 값이에요.'
+        },
+        tour: [
+            {
+                el: '.ac-flow',
+                title: '요청 한 건이 지나는 길',
+                body: '왼쪽부터 <strong>보내는 쪽 · 인증 · 우리 수집 API · 멱등키 조회 · 전환 테이블</strong> 다섯 칸입니다. ' +
+                    '아래로 돌아오는 선이 응답이고, <span aria-hidden="true">×</span> 는 응답이 사라진 자리예요. ' +
+                    '점선 칸은 지금 문제가 되는 자리, 실선 굵은 칸은 지금 막아 주고 있는 자리입니다.'
+            },
+            {
+                el: '#ac-idem-label',
+                title: '멱등키를 꺼 봅니다',
+                body: '<strong>멱등키 사용</strong> 칸을 눌러 꺼 보세요. 요청 수는 하나도 안 늘어나는데 전환 테이블만 부풉니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.ac-table',
+                title: '두 열을 나란히 봅니다',
+                body: '맨 오른쪽 두 열이 <strong>키 없음</strong>과 <strong>키 있음</strong>입니다. ' +
+                    '보낸 건수와 유실 건수는 같은데 누적만 갈라집니다. 지금 고른 설정의 열이 진하게 나옵니다.'
+            },
+            {
+                el: '#ac-gauges',
+                title: '계기 넷 중 무엇이 먼저 움직였나',
+                body: '성공률은 <strong>100.0%</strong> 그대로입니다. 재시도로 응답을 다 받아 냈으니까요. ' +
+                    '움직인 것은 중복 계기 하나뿐이고, 리포트 CPA 가 5,000원에서 4,237원으로 내려갑니다. ' +
+                    '실패로 세어지는 곳이 한 군데도 없는 사고가 이 모양입니다.'
+            },
+            {
+                el: '.ac-dir-row',
+                title: '이번에는 방향을 바꿉니다',
+                body: '<strong>client → server</strong>를 눌러 보세요. 부르는 쪽이 남의 기기가 됩니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#ac-auth',
+                title: '인증 다섯을 돌려 봅니다',
+                body: '<strong>API key</strong>를 골라 보세요. 시크릿 계기가 위험으로 바뀝니다. ' +
+                    '넷을 다 돌려 보면 이 방향에서 계기가 안전으로 남는 것은 <strong>사용자 토큰</strong> 하나뿐입니다. ' +
+                    '무엇을 눌렀을 때 무엇이 왜 움직였는지는 위 해설 패널이 말해 줍니다.'
+            }
+        ]
+    },
+
+// js/demo-edu-content.js 의 window.DEMO_EDU 에 그대로 끼워 넣을 조각.
+// 'log-hops' 엔트리 뒤, 객체 닫는 괄호 앞에 붙인다.
+//
+// 컨트롤이 라디오 두 벌 + 체크박스 다섯이라 "무엇이 켜졌나"를 라벨 하나만 보고
+// 말할 수 없다. 라디오는 켜지는 쪽만 click 이 오고 꺼지는 쪽은 조용히 풀리기
+// 때문이다. 그래서 클릭마다 컨트롤 전체 상태를 한 줄로 찍어 .pb-controls 의
+// dataset 에 남기고, 지난 줄과 다른 자리만 말한다. 같으면 아무 말도 안 한다
+// (라벨 글자를 누르면 click 이 라벨·입력 두 번 오는 것도 이 비교가 걸러 낸다).
+
+    // ==========================================
+    // 파이프라인 조립기 (심화)
+    // ==========================================
+    'pipeline-builder': {
+        analogy: '층을 고르는 것은 취향이 아니다 — 소비자의 마감 하나가 어느 층을 반드시 세우게 만든다',
+        anchor: '.pb-controls',
+        embedKeep: ['.pb-controls', '.pb-strip-wrap', '.pb-gauges', '.pb-fan-wrap', '.pb-verdict-wrap'],
+        embedHide: ['.pb-hero', '.demo-prereq', '.demo-intro', '.demo-steps', '.pb-setup',
+            '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '.pb-choices label': () => {
+                const g = (id) => document.getElementById(id);
+                const snap = (now) => {
+                    const on = (id) => (now ? g(id).checked : g(id).defaultChecked);
+                    const stores = ['pb-store-lake', 'pb-store-rt', 'pb-store-search'].filter(on);
+                    return [
+                        on('pb-col-sdk') ? 'sdk' : 'agent',
+                        on('pb-buf') ? 'buf' : 'nobuf',
+                        on('pb-proc-stream') ? 'stream' : (on('pb-proc-batch') ? 'batch' : 'both'),
+                        (on('pb-buf') && on('pb-dist')) ? 'dist' : 'nodist',
+                        stores.join('+') || 'none'
+                    ].join('|');
+                };
+                const box = document.querySelector('.pb-controls');
+                const cur = snap(true);
+                const prev = box.dataset.eduState || snap(false);
+                if (cur === prev) return '';
+                box.dataset.eduState = cur;
+                const p = prev.split('|'), c = cur.split('|');
+
+                // 잡 수와 목적지 수 — 연결 수를 그 자리에서 세어 말한다
+                const jobs = c[2] === 'stream' ? 4 : (c[2] === 'batch' ? 3 : 5);
+                const storeCount = c[4] === 'none' ? 0 : c[4].split('+').length;
+                const dests = Math.max(+document.getElementById('pb-dests').value, storeCount);
+
+                if (c[0] !== p[0]) {
+                    return c[0] === 'sdk'
+                        ? '수집을 <strong>SDK 직행</strong>으로 바꿨습니다. 도달이 1,112 ms 에서 <strong>426 ms</strong> 로 줄어 ' +
+                          '대시보드 마감 2,000 ms 에서 남는 예산이 888 ms 에서 1,574 ms 가 됩니다. ' +
+                          '대신 버퍼를 끄면 버틸 것이 메모리 큐뿐이라 10.4분입니다.'
+                        : '수집을 <strong>에이전트 tail</strong> 로 바꿨습니다. 도달이 426 ms 에서 <strong>1,112 ms</strong> 로 늘어 ' +
+                          '남는 예산이 888 ms 로 줍니다. 대신 버퍼가 없어도 로컬 파일이 61.7시간 버팁니다.';
+                }
+                if (c[1] !== p[1]) {
+                    return c[1] === 'buf'
+                        ? 'Kafka 를 세웠습니다. 한 번 쓰고 여럿이 읽는 자리가 생겨 <strong>유통 층을 고를 수 있게</strong> 됩니다. ' +
+                          '처리 잡이 멈춰도 <strong>168시간</strong>까지 offset 을 들고 있어 되감아 읽습니다.'
+                        : '버퍼를 껐습니다. 읽어 갈 topic 이 없어 <strong>유통 층이 같이 잠깁니다</strong>. ' +
+                          '버티는 시간이 168시간에서 <strong>' + (c[0] === 'sdk' ? '10.4분' : '61.7시간') + '</strong>으로 떨어집니다' +
+                          (c[0] === 'sdk' ? ' — 사람이 붙는 30분보다 짧아 알아채기 전에 샙니다.' : '.');
+                }
+                if (c[2] !== p[2]) {
+                    if (c[2] === 'stream') {
+                        return '스트림만 두었습니다. 잡이 <strong>4개</strong>입니다. 대시보드는 800 ms 로 마감 안에 들지만, ' +
+                            '다시 세어 덮어쓸 배치가 없어 <strong>5분 창의 2,202,480건(96.6%)이 확정</strong>이 됩니다. ' +
+                            '늦게 온 클릭 77,520건이 라벨에 안 붙습니다.';
+                    }
+                    if (c[2] === 'batch') {
+                        return '배치만 두었습니다. 잡이 <strong>3개</strong>입니다. 가장 빠른 후보가 1시간 배치라 ' +
+                            '대시보드가 <strong>남는 예산 888 ms 를 2,100배 넘깁니다</strong>. 어떤 설정으로도 못 맞춥니다.';
+                    }
+                    return '스트림과 배치를 같이 두었습니다. 정제·조인을 한 번만 세어 잡이 <strong>5개</strong>입니다. ' +
+                        '대시보드는 스트림이 받고, 라벨은 D+1 배치가 2,273,160건(99.7%)으로 다시 세어 덮어씁니다.';
+                }
+                if (c[3] !== p[3]) {
+                    return c[3] === 'dist'
+                        ? '유통 층을 세웠습니다. 연결이 <strong>' + jobs + ' × ' + dests + ' = ' + (jobs * dests) + '개</strong> 에서 ' +
+                          '<strong>' + jobs + ' + ' + dests + ' = ' + (jobs + dests) + '개</strong> 로 줍니다. ' +
+                          '값은 topic 왕복 200 ms 입니다 — 대시보드 예산 888 ms 의 22%입니다.'
+                        : '유통 층을 껐습니다. 연결이 <strong>' + (jobs + dests) + '개에서 ' + (jobs * dests) + '개</strong>, ' +
+                          '설정 자리가 ' + ((jobs + dests) * 4) + '개에서 ' + (jobs * dests * 4) + '개가 됩니다. ' +
+                          '목적지를 하나 더 붙일 때 손대는 처리 잡이 0개에서 ' + jobs + '개입니다.';
+                }
+                if (c[4] !== p[4]) {
+                    const gone = p[4].split('+').filter((s) => c[4].indexOf(s) < 0)[0];
+                    const added = c[4].split('+').filter((s) => p[4].indexOf(s) < 0)[0];
+                    const NAME = {
+                        'pb-store-lake': ['오브젝트 + Iceberg', '학습·정산 원천과 30일 백필이 걸린 자리입니다. 없으면 raw 하루 21.9 GB · 정제 하루 9.12 GB 를 담을 곳이 없습니다.'],
+                        'pb-store-rt': ['실시간 DB', '5분 집계를 최근 5분 · 지면별로 꺼내는 자리입니다. 없으면 지연을 아무리 줄여도 볼 화면이 없습니다.'],
+                        'pb-store-search': ['검색엔진', 'DLQ 하루 1,800건 중 "알 수 없음" 130건의 원문을 사람이 보는 자리입니다.']
+                    };
+                    const hit = added || gone;
+                    if (!hit || !NAME[hit]) return '';
+                    // 목적지 수는 데모 쪽 change 처리가 아직 안 돌아서 슬라이더에 안 반영돼 있다.
+                    // 저장소 하나가 목적지 하나이므로 여기서 같은 규칙으로 미리 센다.
+                    const bumped = Math.min(8, Math.max(1, (+document.getElementById('pb-dests').value) + (added ? 1 : -1)));
+                    const shown = Math.max(bumped, storeCount);
+                    return (added ? '저장소를 세웠습니다: ' : '저장소를 껐습니다: ') + '<strong>' + NAME[hit][0] + '</strong>. ' +
+                        NAME[hit][1] + ' 저장소는 목적지 하나이기도 해서 목적지 수가 같이 ' +
+                        (added ? '늘어 ' : '줄어 ') + '<strong>' + shown + '개</strong>가 됩니다.';
+                }
+                return '';
+            },
+            '#pb-dests': ({ value, prev }) => {
+                const g = (id) => document.getElementById(id);
+                const jobs = g('pb-proc-stream').checked ? 4 : (g('pb-proc-batch').checked ? 3 : 5);
+                const dist = g('pb-buf').checked && g('pb-dist').checked;
+                const links = dist ? jobs + value : jobs * value;
+                const was = dist ? jobs + prev : jobs * prev;
+                return '목적지를 <strong>' + prev + '개 → ' + value + '개</strong>로 바꿨습니다. ' +
+                    (dist
+                        ? '유통 층이 있어 연결은 덧셈입니다 — ' + was + '개에서 <strong>' + links + '개</strong>. ' +
+                          '목적지 하나가 커넥터 설정 블록 하나입니다.'
+                        : '유통 층이 없어 연결은 곱셈입니다 — ' + was + '개에서 <strong>' + links + '개</strong>. ' +
+                          '목적지 하나를 늘릴 때 처리 잡 ' + jobs + '개를 전부 고칩니다.');
+            }
+        },
+        tour: [
+            {
+                el: '.pb-strip-wrap',
+                title: '지금 세운 여섯 층',
+                body: '수집에서 조회까지 왼쪽에서 오른쪽으로 놓여 있습니다. ' +
+                    '<strong>점선 칸</strong>은 비어 둔 층, 굵게 두른 칸은 지금 켜 둔 유통 층입니다. ' +
+                    '칸 아래 왼쪽이 대시보드 지연 계산식입니다.'
+            },
+            {
+                el: '.pb-gauges',
+                title: '계기 넷이 판정한다',
+                body: '기본값에서 대시보드가 <strong>2,112 ms</strong> 입니다. 마감 2,000 ms 를 112 ms 넘겼습니다. ' +
+                    '나머지 셋은 마감 안이고, 관리할 연결은 11개입니다.'
+            },
+            {
+                el: '#pb-f-dist',
+                title: '유통 층을 꺼 보세요',
+                body: '커넥터를 끄면 처리 잡이 목적지마다 직접 씁니다. ' +
+                    '연결이 <strong>11개에서 30개</strong>, 설정 자리가 44개에서 120개가 됩니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.pb-fan-wrap',
+                title: '덧셈이 곱셈이 됐다',
+                body: '선이 잡마다 목적지 전부로 뻗습니다. 이 그림이 <strong>5 × 6</strong> 입니다. ' +
+                    '목적지를 하나 더 붙일 때 손대는 처리 잡도 0개에서 5개가 됩니다.'
+            },
+            {
+                el: '#pb-f-buf',
+                title: '버퍼를 꺼 보세요',
+                body: 'Kafka 를 끄면 유통 층이 <strong>같이 잠깁니다</strong> — 읽어 갈 topic 이 없습니다. ' +
+                    '버티는 시간도 168시간에서 61.7시간으로 떨어집니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '컨트롤을 움직일 때마다 "지금 일어난 일"이 여기에 뜹니다. ' +
+                    '아래 판정 칸은 그 조합에서 <strong>먼저 터지는 것</strong>부터 순서대로 적습니다. 이제 자유롭게 조립해 보세요.'
+            }
+        ]
+    }
 };

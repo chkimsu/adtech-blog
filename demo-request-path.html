@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -23,21 +23,21 @@
     .rp-intro {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .rp-intro strong { color: var(--accent-primary); }
-    .rp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+    .rp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
 
     /* ---------- 컨트롤 ---------- */
     .rp-controls {
       max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     .rp-toggles { display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; margin-bottom: 1.1rem; }
     .rp-toggles label {
       display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
       font-size: 0.88rem; color: var(--text-muted);
-      padding: 0.4rem 0.85rem; border: 1px solid var(--border-color); border-radius: 999px;
+      padding: 0.4rem 0.85rem; border: 1px solid var(--border-color); border-radius: 0;
       border-style: dashed; transition: color var(--transition-fast), border-color var(--transition-fast);
     }
     .rp-toggles label.is-on {
@@ -52,15 +52,15 @@
     @media (max-width: 700px) { .rp-slider-row { grid-template-columns: 92px 1fr 44px; gap: 0.5rem; } }
     .rp-slider-row input[type="range"] {
       -webkit-appearance: none; appearance: none; width: 100%; min-width: 0;
-      height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none;
+      height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none;
     }
     .rp-slider-row input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
-      background: var(--accent-primary); border-radius: 50%; cursor: pointer;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
     }
     .rp-slider-row input[type="range"]::-moz-range-thumb {
       width: 18px; height: 18px; background: var(--accent-primary);
-      border-radius: 50%; cursor: pointer; border: none;
+      border-radius: 0; cursor: pointer; border: none;
     }
     .rp-slider-row label { cursor: pointer; }
     .rp-slider-row span:last-child {
@@ -69,7 +69,7 @@
 
     .rp-fire-btn {
       margin-top: 0.5rem; font-family: var(--font-sans); font-size: 0.86rem; font-weight: 600;
-      padding: 0.5rem 1.15rem; cursor: pointer; border-radius: 999px;
+      padding: 0.5rem 1.15rem; cursor: pointer; border-radius: 0;
       background: var(--accent-primary); color: var(--bg-secondary); border: 1px solid var(--accent-primary);
       transition: opacity var(--transition-fast);
     }
@@ -85,7 +85,7 @@
     .rp-link > .rp-step { flex: 1 1 auto; }
     .rp-step {
       flex: 1 1 148px; min-width: 0; padding: 0.75rem 0.85rem;
-      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
       transition: background var(--transition-fast);
     }
     .rp-step-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.35rem; }
@@ -102,7 +102,7 @@
     .rp-step.is-pass .rp-step-mark { color: var(--state-good); }
     /* 아직 없어도 되는 칸 — 점선 테두리 + – */
     .rp-step.is-skip { border-style: dashed; }
-    /* 멈춤 — 굵은 점선 + ✕ + 칩 (색만으로 알리지 않는다) */
+    /* 멈춤 — 굵은 점선 + × + 칩 (색만으로 알리지 않는다) */
     .rp-step.is-stop {
       border: 2px dashed var(--state-bad); background: var(--bg-tertiary);
     }
@@ -110,7 +110,7 @@
     .rp-step.is-stop .rp-step-note { color: var(--text-secondary); }
     .rp-step-stop {
       font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
-      padding: 0.1rem 0.4rem; border: 1px solid var(--state-bad); border-radius: 4px; color: var(--state-bad);
+      padding: 0.1rem 0.4rem; border: 1px solid var(--state-bad); border-radius: 0; color: var(--state-bad);
     }
     /* 도달하지 못한 칸 — 옅은 점선 */
     .rp-step.is-ghost { border-style: dotted; background: transparent; opacity: 0.6; }
@@ -135,7 +135,7 @@
     /* ---------- 판정 한 줄 ---------- */
     .rp-verdict {
       max-width: 980px; margin: 0 auto 1.25rem; padding: 0.85rem 1.2rem;
-      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
       color: var(--text-secondary); font-size: 0.93rem; line-height: 1.65;
     }
     .rp-verdict.is-pass { border-left: 4px solid var(--state-good); }
@@ -146,7 +146,7 @@
     /* ---------- 사람이 관리해야 하는 것 ---------- */
     .rp-cost {
       max-width: 980px; margin: 0 auto 2rem; padding: 1.15rem 1.4rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     .rp-cost h3 { font-size: 1rem; margin: 0 0 0.15rem; }
     .rp-cost-sub { font-size: 0.76rem; color: var(--text-muted); margin: 0 0 0.6rem; line-height: 1.5; }
@@ -160,7 +160,7 @@
       color: var(--text-muted); text-align: right; white-space: nowrap;
     }
     .rp-cost-value em { font-style: normal; font-size: 0.7rem; font-weight: 400; margin-left: 0.15rem; }
-    /* 늘어난 값(▲)과 아예 못 하게 된 것(✕) — 색이 아니라 모양이 뜻을 나른다 */
+    /* 늘어난 값(▲)과 아예 못 하게 된 것(×) — 색이 아니라 모양이 뜻을 나른다 */
     .rp-cost-flag { font-size: 0.62em; margin-left: 0.2rem; }
     .rp-cost-value.is-many { color: var(--state-warn); }
     .rp-cost-value.is-lost { color: var(--state-bad); }
@@ -240,7 +240,7 @@
       <div id="rp-cost" class="rp-cost">
         <h3>사람이 관리해야 하는 것</h3>
         <p class="rp-cost-sub">부품을 빼면 그 일이 사라지는 게 아니라 사람 쪽으로 옮겨온다.
-          기본값보다 늘어난 값에 ▲, 부품이 없어져 아예 못 하게 된 것에 ✕ 가 붙는다.</p>
+          기본값보다 늘어난 값에 ▲, 부품이 없어져 아예 못 하게 된 것에 × 가 붙는다.</p>
         <div id="rp-cost-rows" aria-live="polite"></div>
       </div>
 

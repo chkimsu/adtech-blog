@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -17,7 +17,7 @@
        로그 여섯 층 데모 — demo-log-hops.html
        색 값은 이 파일에도 JS 에도 hex 로 하나도 없다. 전부 var(--...) 다
        (팔레트 2종 × 테마 2종 = 4가지 조합에서 다 살아 있어야 하므로).
-       상태는 색만으로 알리지 않는다 — 점선 테두리와 ⚠ 글리프가 함께 바뀐다.
+       상태는 색만으로 알리지 않는다 — 점선 테두리와 [주의] 글리프가 함께 바뀐다.
        =================================================================== */
 
     .lh-hero { text-align: center; padding: 2rem 1rem 1rem; }
@@ -42,15 +42,15 @@
     .lh-brief {
       padding: 1.15rem 1.5rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .lh-brief strong { color: var(--accent-primary); }
-    .lh-brief code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+    .lh-brief code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
 
     /* ---------- 위 칸: 6층 흐름 ---------- */
     .lh-flow {
       padding-top: 1.1rem; padding-bottom: 1.1rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     @media (max-width: 700px) { .lh-flow { padding-left: 0.7rem; padding-right: 0.7rem; } }
 
@@ -65,40 +65,40 @@
 
     /* 범례의 표식은 아래 점과 같은 모양이다 — 색이 아니라 모양이 종류를 가른다 */
     .lh-key-mark { width: 13px; height: 13px; flex: none; }
-    .lh-key-mark.is-click { border-radius: 50%; background: var(--accent-primary); }
-    .lh-key-mark.is-imp { border-radius: 3px; background: var(--bg-secondary); border: 1.5px solid var(--text-secondary); }
+    .lh-key-mark.is-click { border-radius: 0; background: var(--accent-primary); }
+    .lh-key-mark.is-imp { border-radius: 0; background: var(--bg-secondary); border: 1.5px solid var(--text-secondary); }
 
     .lh-lane {
       display: grid; grid-template-columns: 1.55rem 1fr; gap: 0 0.55rem;
       padding: 0.45rem 0.5rem 0.5rem;
-      border: 1px solid transparent; border-radius: 10px;
+      border: 1px solid transparent; border-radius: 0;
     }
     /* 가득 찬 층 — 색 + 점선 테두리 + 이름 뒤의 글자 셋이 같이 바뀐다.
        임베드에서는 쌓임 막대를 접기 때문에, 그때도 이 표시가 남아 어디에 쌓이는지 알려 준다. */
     .lh-lane.is-full { border: 1px dashed var(--state-warn); }
     .lh-lane.is-full .lh-lane-name::after {
-      content: ' ⚠ 가득'; font-size: 0.72rem; font-weight: 700; color: var(--state-warn);
+      content: ' [가득]'; font-size: 0.72rem; font-weight: 700; color: var(--state-warn);
       white-space: nowrap; line-height: 1;
     }
-    /* 멈춘 층 — 색 + 점선 테두리 + ⚠ 글자 셋이 같이 바뀐다.
+    /* 멈춘 층 — 색 + 점선 테두리 + [주의] 글자 셋이 같이 바뀐다.
        is-full 보다 뒤에 둔다. 둘이 겹칠 때 사람이 끈 쪽이 이겨야 한다. */
     .lh-lane.is-stopped {
       border: 1px dashed var(--state-bad);
       background: var(--bg-secondary);
     }
     .lh-lane.is-stopped .lh-lane-name::after {
-      content: ' ⚠ 멈춤'; font-size: 0.72rem; font-weight: 700; color: var(--state-bad);
+      content: ' [멈춤]'; font-size: 0.72rem; font-weight: 700; color: var(--state-bad);
       white-space: nowrap; line-height: 1;
     }
     /* 이벤트를 버리는 층 — 앱 SDK 다. 유실은 여기서만 난다(앞칸이 다 차면 못 받는다).
        그런데 이 층엔 쌓임 막대가 없어서 위의 is-full 이 안 붙는다. 그래서 이 층에는
        "지금 쌓이는 중" 과 "아예 사라지는 중" 을 가르는 표시가 하나도 없었다.
        건수는 JS 가 .lh-lane-name 의 data-drop 에 넣고, 낱말·색·점선은 여기서 준다 —
-       다른 층의 "⚠ 가득" 과 같은 자리·같은 모양이라 읽는 법이 하나다.
+       다른 층의 "[가득]" 과 같은 자리·같은 모양이라 읽는 법이 하나다.
        is-full · is-stopped 뒤에 둔다. 겹칠 일은 없지만 겹치면 더 나쁜 소식이 이겨야 한다. */
     .lh-lane.is-dropping { border: 1px dashed var(--state-bad); }
     .lh-lane.is-dropping .lh-lane-name::after {
-      content: ' ⚠ 버림 ' attr(data-drop) '건'; font-size: 0.72rem; font-weight: 700;
+      content: ' [버림] ' attr(data-drop) '건'; font-size: 0.72rem; font-weight: 700;
       color: var(--state-bad); white-space: nowrap; line-height: 1;
     }
 
@@ -107,7 +107,7 @@
       width: 1.45rem; height: 1.45rem; margin-top: 0.1rem;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.74rem; color: var(--text-secondary);
-      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 50%;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
     }
     /* 층과 층을 잇는 세로 선 — 글 9절 그림과 같은 모양 */
     .lh-rail { grid-column: 1; justify-self: center; width: 1px; height: 0.5rem; background: var(--border-color); }
@@ -119,7 +119,7 @@
     .lh-lane-name { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
     .lh-lane-map {
       font-size: 0.68rem; color: var(--text-muted); white-space: nowrap;
-      border: 1px solid var(--border-color); border-radius: 999px; padding: 0.02rem 0.4rem;
+      border: 1px solid var(--border-color); border-radius: 0; padding: 0.02rem 0.4rem;
     }
     .lh-lane-meta {
       margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem;
@@ -129,13 +129,13 @@
     .lh-lane-note { font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.5; }
 
     /* 머무는 시간 막대 — 다섯 층은 같은 축(최대 900 ms), Kafka 는 축 밖이라 점선 빈 칸 */
-    .lh-timebar { height: 5px; border-radius: 3px; background: var(--bg-tertiary); margin-bottom: 0.35rem; }
-    .lh-timebar > i { display: block; height: 100%; border-radius: 3px; background: var(--text-secondary); }
+    .lh-timebar { height: 5px; border-radius: 0; background: var(--bg-tertiary); margin-bottom: 0.35rem; }
+    .lh-timebar > i { display: block; height: 100%; border-radius: 0; background: var(--text-secondary); }
     .lh-timebar.is-offaxis { background: transparent; border: 1px dashed var(--accent-secondary); height: 5px; }
 
     /* 점이 지나가는 길 */
     .lh-track {
-      position: relative; height: 27px; border-radius: 7px;
+      position: relative; height: 27px; border-radius: 0;
       background: var(--bg-tertiary); border: 1px solid var(--border-color);
       overflow: hidden;
     }
@@ -144,14 +144,14 @@
     .lh-dot {
       position: absolute; top: 50%; padding: 0; cursor: pointer;
       width: 13px; height: 13px; margin: -7px 0 0 -7px;
-      background: var(--bg-secondary); border: 1.5px solid var(--text-secondary); border-radius: 3px;
+      background: var(--bg-secondary); border: 1.5px solid var(--text-secondary); border-radius: 0;
     }
-    .lh-dot.is-click { border-radius: 50%; background: var(--accent-primary); border-color: var(--accent-primary); }
+    .lh-dot.is-click { border-radius: 0; background: var(--accent-primary); border-color: var(--accent-primary); }
     /* 배치가 커지면 점이 굵어진다 — 한 점이 이벤트 여러 건을 들고 간다는 표시 */
     .lh-dot.is-fat { width: 19px; margin-left: -10px; }
     .lh-dot.is-fat2 { width: 26px; margin-left: -13.5px; }
     .lh-dot.is-selected {
-      box-shadow: 0 0 0 2px var(--bg-tertiary), 0 0 0 3.5px var(--accent-secondary);
+      box-shadow: none;
       z-index: 2;
     }
     .lh-dot:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; z-index: 3; }
@@ -162,12 +162,12 @@
       position: absolute; left: 0.3rem; top: 50%; transform: translateY(-50%);
       font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-secondary);
       background: var(--bg-secondary); border: 1px solid var(--border-color);
-      border-radius: 4px; padding: 0 0.25rem; pointer-events: none;
+      border-radius: 0; padding: 0 0.25rem; pointer-events: none;
     }
 
     /* 쌓임 막대 (파일·메모리) */
     .lh-queue { display: flex; align-items: center; gap: 0.45rem; margin-top: 0.3rem; font-size: 0.7rem; color: var(--text-muted); }
-    .lh-queue-bar { flex: 1 1 auto; min-width: 0; height: 7px; border-radius: 4px; background: var(--bg-tertiary); border: 1px solid var(--border-color); overflow: hidden; }
+    .lh-queue-bar { flex: 1 1 auto; min-width: 0; height: 7px; border-radius: 0; background: var(--bg-tertiary); border: 1px solid var(--border-color); overflow: hidden; }
     .lh-queue-bar > i { display: block; height: 100%; width: 0; background: var(--text-secondary); }
     .lh-queue.is-full .lh-queue-bar { border: 1px dashed var(--state-bad); }
     .lh-queue.is-full .lh-queue-bar > i { background: var(--state-bad); }
@@ -177,7 +177,7 @@
     .lh-loss {
       margin-top: 0.6rem; padding: 0.5rem 0.8rem; font-size: 0.78rem; line-height: 1.6;
       color: var(--state-bad); background: var(--bg-secondary);
-      border: 1px dashed var(--state-bad); border-radius: 8px;
+      border: 1px dashed var(--state-bad); border-radius: 0;
     }
     .lh-loss[hidden] { display: none; }
 
@@ -187,14 +187,14 @@
        .lh-controls 자체가 flex 면 그 패널이 버튼들과 한 줄에 끼어 찌그러진다. */
     .lh-controls {
       padding: 1.1rem 1.3rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     .lh-controls-row {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem;
     }
     .lh-btn {
       flex: 0 0 auto; font-family: var(--font-sans); font-size: 0.84rem; font-weight: 600;
-      padding: 0.45rem 1rem; cursor: pointer; border-radius: 999px;
+      padding: 0.45rem 1rem; cursor: pointer; border-radius: 0;
       background: var(--bg-secondary); color: var(--accent-primary);
       border: 1px solid var(--accent-primary);
       transition: color var(--transition-fast), border-color var(--transition-fast);
@@ -207,27 +207,27 @@
     .lh-field select {
       font-family: var(--font-sans); font-size: 0.82rem; padding: 0.3rem 0.5rem;
       color: var(--text-primary); background: var(--bg-secondary);
-      border: 1px solid var(--border-color); border-radius: 7px;
+      border: 1px solid var(--border-color); border-radius: 0;
     }
     .lh-field input[type="range"] {
       -webkit-appearance: none; appearance: none; width: 110px; min-width: 70px;
-      height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none;
+      height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none;
     }
     .lh-field input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none; width: 17px; height: 17px;
-      background: var(--accent-primary); border-radius: 50%; cursor: pointer;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
     }
     .lh-field input[type="range"]::-moz-range-thumb {
       width: 17px; height: 17px; background: var(--accent-primary);
-      border-radius: 50%; cursor: pointer; border: none;
+      border-radius: 0; cursor: pointer; border: none;
     }
     .lh-field-v { font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); min-width: 2.6rem; }
 
-    /* 멈춤 스위치 — 켜지면 글자·테두리·⚠ 셋이 같이 바뀐다 */
+    /* 멈춤 스위치 — 켜지면 글자·테두리·[주의] 셋이 같이 바뀐다 */
     .lh-switch {
       display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
       font-size: 0.82rem; color: var(--text-muted);
-      padding: 0.36rem 0.8rem; border: 1px dashed var(--border-color); border-radius: 999px;
+      padding: 0.36rem 0.8rem; border: 1px dashed var(--border-color); border-radius: 0;
       transition: color var(--transition-fast), border-color var(--transition-fast);
     }
     .lh-switch input { accent-color: var(--accent-primary); margin: 0; }
@@ -239,7 +239,7 @@
     .lh-detail {
       padding: 1.1rem 1.3rem;
       background: var(--bg-secondary); border: 1px solid var(--border-color);
-      border-left: 3px solid var(--accent-primary); border-radius: 12px;
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
     }
     .lh-detail-head {
       display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.6rem;
@@ -258,7 +258,7 @@
     /* 실제 모양 — 375px 에서도 가로 스크롤이 안 생기게 접어서 보여준다 */
     .lh-shape {
       margin: 0; padding: 0.6rem 0.7rem;
-      background: var(--bg-tertiary); border-radius: 8px;
+      background: var(--bg-tertiary); border-radius: 0;
       font-family: var(--font-mono); font-size: 0.71rem; line-height: 1.65;
       color: var(--text-primary);
       white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
@@ -276,7 +276,7 @@
     /* ---------- 축척과 기준 ---------- */
     .lh-scale {
       padding: 0.9rem 1.2rem;
-      background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 12px;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 0;
       font-size: 0.79rem; line-height: 1.7; color: var(--text-secondary);
     }
     .lh-scale-title { display: block; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.02em; margin-bottom: 0.35rem; }
@@ -314,7 +314,7 @@
     html.is-embed .lh-lane { padding: 0.15rem 0.4rem; gap: 0 0.45rem; }
     html.is-embed .lh-lane > div:last-child {
       display: grid;
-      /* 34% — "⚠ 가득" 이 이름 뒤에 붙어도 한 줄에 들어가는 폭이다.
+      /* 34% — "[가득]" 이 이름 뒤에 붙어도 한 줄에 들어가는 폭이다.
          30% 로 두면 그 표시가 뜨는 순간 이름이 두 줄이 되고 iframe 높이가 튄다. */
       grid-template-columns: minmax(150px, 34%) 1fr;
       grid-template-areas: "head track" "head bar";
@@ -330,7 +330,7 @@
       gap: 0 0.35rem; margin: 0;
     }
     html.is-embed .lh-lane-head > * { min-width: 0; }
-    /* nowrap 이 높이 계약이다. 이름 뒤에 "⚠ 가득" · "⚠ 버림 1,373건" 같은 표시가 붙는
+    /* nowrap 이 높이 계약이다. 이름 뒤에 "[가득]" · "[버림] 1,373건" 같은 표시가 붙는
        순간 이름이 두 줄이 되면 층이 늘고 iframe 높이가 재생 중에 튄다. 한 줄로 못 박으면
        무슨 표시가 붙어도 이 칸은 17px 그대로다. 지금 넣는 글자는 다 이름 칸(150px~34%)에
        들어가는 것을 재서 확인했다 — 넘칠 글자를 새로 붙이려면 폭을 같이 봐야 한다. */
@@ -349,21 +349,21 @@
        낱말까지 붙으면 150px 을 넘어 오른쪽 길 위로 삐져나온다. 점선 테두리가 같이 있어
        색만으로 알리는 것은 아니다.
        버림은 낱말과 건수를 그대로 둔다. 이름이 "앱 SDK"(42px) 뿐이라 건수까지 넣어도
-       132px 로 들어가고, 여기서 낱말을 떼면 가득과 버림이 둘 다 "⚠" 가 되어 구별이 사라진다. */
+       132px 로 들어가고, 여기서 낱말을 떼면 가득과 버림이 둘 다 "[가득]" 가 되어 구별이 사라진다. */
     @media (max-width: 560px) {
       html.is-embed .lh-lane-map { display: none; }
       html.is-embed .lh-lane.is-full .lh-lane-name::after,
-      html.is-embed .lh-lane.is-stopped .lh-lane-name::after { content: ' ⚠'; }
+      html.is-embed .lh-lane.is-stopped .lh-lane-name::after { content: ' [주의]'; }
     }
     /* 층 설명 여섯 줄과 쌓임 막대 셋은 접는다.
-       쌓이는 것은 점이 밀리는 모습 · 길 왼쪽의 "+N" · 층 이름 뒤의 "⚠ 가득" 이 대신 알린다. */
+       쌓이는 것은 점이 밀리는 모습 · 길 왼쪽의 "+N" · 층 이름 뒤의 "[가득]" 이 대신 알린다. */
     html.is-embed .lh-lane-note,
     html.is-embed .lh-queue { display: none; }
     /* 유실 알림(문장)만 접는다 — 떴다 사라지며 iframe 높이를 흔든다. 전체 페이지에는 그대로다.
-       유실 자체는 접지 않는다. 앱 SDK 층 이름 뒤의 "⚠ 버림 N건" 이 같은 사실을 같은 자리에서
+       유실 자체는 접지 않는다. 앱 SDK 층 이름 뒤의 "[버림] N건" 이 같은 사실을 같은 자리에서
        말한다(위 .lh-lane.is-dropping). 그 표시는 이름 칸 안에 들어가므로 높이가 안 변한다.
        이 알림만 접고 배지가 없으면, 임베드에서 "쌓이는 중" 과 "사라지는 중" 이 구별되지 않는다 —
-       유실이 나는 층은 앱 SDK 인데 그 층에는 "⚠ 가득" 이 안 붙기 때문이다. */
+       유실이 나는 층은 앱 SDK 인데 그 층에는 "[가득]" 이 안 붙기 때문이다. */
     html.is-embed .lh-loss { display: none; }
 
     /* --- 컨트롤 --- */
@@ -623,13 +623,13 @@
       <label class="lh-switch" id="lh-stop-agent-label">
         <input type="checkbox" id="lh-stop-agent">
         <span>수집 에이전트 멈춤</span>
-        <span class="lh-warn" aria-hidden="true">⚠</span>
+        <span class="lh-warn" aria-hidden="true">[주의]</span>
       </label>
 
       <label class="lh-switch" id="lh-stop-kafka-label">
         <input type="checkbox" id="lh-stop-kafka">
         <span>Kafka 멈춤</span>
-        <span class="lh-warn" aria-hidden="true">⚠</span>
+        <span class="lh-warn" aria-hidden="true">[주의]</span>
       </label>
 
       <span class="lh-field">

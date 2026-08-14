@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="어제 모델이 오늘의 학습 데이터를 고른다 — 광고 8개를 40세대 돌려 노출이 굳는 순간, 진짜 1위가 갇히는 과정, ε 탐색·낙관 초기값·강제 슬롯·IPS 의 효과를 직접 보는 인터랙티브 데모.">
+  <title>피드백 루프 시뮬레이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ------------------------------------------------------------------
+       demo-feedback-loop 전용 규칙.
+       모서리 0 · 그림자 none · hex 직접 금지(토큰만) · serif 금지 —
+       css/style.css 상단 토큰이 정본이고 여기서는 그 이름만 참조한다.
+       ------------------------------------------------------------------ */
+    .fb-container { max-width: 1600px; margin: 0 auto; padding: 1.5rem 46px 0; }
+    @media (max-width: 700px) { .fb-container { padding: 1.2rem 16px 0; } }
+
+    .fb-hero { padding: 2rem 0 0.5rem; text-align: center; }
+    .fb-hero h1 { font-size: 2.5rem; line-height: 1.25; margin-bottom: 0.6rem; color: var(--accent-primary); }
+    .fb-hero p { color: var(--text-secondary); max-width: 900px; margin: 0 auto; font-size: 16px; }
+    @media (max-width: 700px) { .fb-hero h1 { font-size: 1.625rem; } }
+
+    /* 본문 설명 문단은 읽기 폭으로 묶는다 */
+    .fb-model {
+      max-width: 900px; margin: 1.5rem auto 0; padding: 1rem 1.4rem;
+      background: var(--plate); border: 1px dashed var(--rule);
+      border-radius: 0; color: var(--text-secondary); font-size: 15px; line-height: 1.7;
+    }
+    .fb-model strong { color: var(--text-primary); }
+    .fb-model code { font-family: var(--font-mono); font-size: 13.5px; color: var(--accent-primary); }
+    .fb-model p { margin: 0 0 0.5rem; }
+    .fb-model p:last-child { margin-bottom: 0; }
+
+    /* ---------- 컨트롤 ---------- */
+    .fb-controls {
+      max-width: 1600px; margin: 1.5rem auto 1.25rem; padding: 1.25rem 1.4rem;
+      background: var(--plate); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.9rem 1.6rem; }
+    .fb-ctl-label { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-secondary); }
+    .fb-ctl-label small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text-muted); margin-top: 0.15rem; letter-spacing: 0; }
+    .fb-ctl-row { display: grid; grid-template-columns: 1fr 82px; align-items: center; gap: 0.7rem; margin-top: 0.45rem; }
+    .fb-ctl-row.is-wide { grid-template-columns: 1fr; }
+
+    .fb-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--grey-bg); border: 1px solid var(--rule); border-radius: 0; outline: none; }
+    .fb-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 20px; background: var(--accent-primary); border: none; border-radius: 0; cursor: pointer; }
+    .fb-range::-moz-range-thumb { width: 16px; height: 20px; background: var(--accent-primary); border: none; border-radius: 0; cursor: pointer; }
+    .fb-out { text-align: right; font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent-primary); }
+
+    .fb-select, .fb-num {
+      width: 100%; font-family: var(--font-sans); font-size: 15px; padding: 0.35rem 0.5rem;
+      background: var(--paper); color: var(--text-primary);
+      border: 1px solid var(--rule); border-radius: 0;
+    }
+    .fb-num { font-family: var(--font-mono); }
+
+    .fb-check { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 15px; color: var(--text-secondary); }
+    .fb-check input { width: 16px; height: 16px; accent-color: var(--accent-primary); }
+
+    .fb-run { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+    .fb-btn {
+      font-family: var(--font-sans); font-size: 15px; font-weight: 600; padding: 0.45rem 1rem; cursor: pointer;
+      background: var(--paper); color: var(--text-primary); border: 1px solid var(--rule); border-radius: 0;
+      transition: border-color var(--transition-fast), color var(--transition-fast);
+    }
+    .fb-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .fb-btn.is-primary { background: var(--accent-primary); color: var(--paper); border-color: var(--accent-primary); }
+    .fb-btn.is-primary:hover { color: var(--paper); }
+    .fb-btn[disabled] { opacity: 0.45; cursor: default; }
+    .fb-btn[disabled]:hover { border-color: var(--rule); color: var(--text-primary); }
+    .fb-gen-note { font-size: 12.5px; color: var(--text-muted); margin-left: 0.3rem; }
+
+    .fb-presets { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; }
+    .fb-preset-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--text-muted); align-self: center; margin-right: 0.2rem; }
+    .fb-preset {
+      font-family: var(--font-sans); font-size: 13.5px; padding: 0.3rem 0.7rem; cursor: pointer;
+      background: var(--grey-bg); color: var(--text-secondary); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .fb-preset:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ---------- 지표 ---------- */
+    .fb-metrics { max-width: 1600px; margin: 0 auto 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.7rem; }
+    .fb-metric { padding: 0.85rem 1rem; background: var(--plate); border: 1px solid var(--rule); border-radius: 0; }
+    .fb-metric-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); }
+    .fb-metric-value { font-size: 1.625rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); line-height: 1.25; margin-top: 0.15rem; }
+    .fb-metric-value.is-good { color: var(--state-good); }
+    .fb-metric-value.is-bad { color: var(--state-bad); }
+    .fb-metric-value.is-warn { color: var(--state-warn); }
+    .fb-metric-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.45; }
+
+    .fb-verdict {
+      max-width: 1600px; margin: 0 auto 1.25rem; padding: 0.8rem 1.2rem;
+      background: var(--plate); border: 1px solid var(--rule); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 15px; line-height: 1.6;
+    }
+    .fb-verdict strong { color: var(--text-primary); }
+
+    /* ---------- 차트 ---------- */
+    .fb-charts { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 1180px) { .fb-charts { grid-template-columns: 1.08fr 1fr; } }
+    /* min-width:0 이 없으면 그리드 칸이 SVG 의 min-width 만큼 벌어져 본문이 가로로 흐른다 */
+    .fb-card { min-width: 0; background: var(--plate); border: 1px solid var(--rule); border-radius: 0; padding: 1.1rem 1.2rem; }
+    .fb-card h3 { font-size: 1.3125rem; margin: 0 0 0.25rem; color: var(--text-primary); }
+    .fb-card .fb-note { font-size: 12.5px; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .fb-svg-wrap { min-width: 0; overflow-x: auto; }
+    .fb-svg-wrap svg { display: block; width: 100%; min-width: 620px; height: auto; font-family: var(--font-sans); }
+
+    /* ---------- 측정 패널 ---------- */
+    .fb-measure { margin-top: 1rem; background: var(--plate); border: 1px solid var(--rule); border-radius: 0; padding: 1.1rem 1.2rem; }
+    .fb-measure h3 { font-size: 1.3125rem; margin: 0 0 0.25rem; color: var(--text-primary); }
+    .fb-measure .fb-note { font-size: 12.5px; color: var(--text-muted); margin: 0 0 0.8rem; line-height: 1.5; }
+    .fb-measure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.7rem; }
+    .fb-mcell { padding: 0.7rem 0.9rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 0; }
+    .fb-mcell-label { font-size: 12.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; }
+    .fb-mcell-value { font-size: 1.3125rem; font-family: var(--font-mono); font-weight: 700; color: var(--text-primary); margin-top: 0.15rem; }
+    .fb-mcell-value.is-off { color: var(--text-muted); font-size: 15px; font-weight: 400; }
+    .fb-mcell-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 0.15rem; }
+
+    .fb-tail-note { max-width: 900px; margin: 1.25rem auto 0; font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="fb-hero">
+      <div class="fb-container">
+        <h1>피드백 루프 시뮬레이터</h1>
+        <p>어제 배포된 모델이 오늘 뜰 광고를 골랐고, 뜬 광고에만 로그가 남고, 그 로그가 내일 모델을 만듭니다.
+          이 고리를 40세대 돌리면서 노출이 언제 굳는지, 진짜 1위가 어떻게 갇히는지를 직접 보세요.</p>
+      </div>
+    </section>
+
+    <div class="fb-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-ab-vs-bandit.html">A/B vs Bandit</a>
+        <a href="demo-compare-bandits.html">UCB vs TS 비교</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 8개에 매일 노출 20,000건을 나눠 줍니다. 배분 기준은 어제까지 쌓인 로그로 계산한 추정 CTR 하나뿐입니다. 세대를 넘길수록 노출 자리의 주인이 어떻게 고정되는지, 그리고 밀려난 광고의 추정값이 어떻게 얼어붙는지 보입니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>밀려난 광고는 로그에 줄이 0개입니다. 줄이 0개면 추정값이 어제 값에서 멈추고, 멈춘 값이 내일 순위를 다시 정합니다. <strong>진짜 CTR 이 가장 높은 광고가 첫날 운이 나빴다는 이유만으로 39세대 동안 갇힐 수 있습니다.</strong></div>
+        <div><span class="demo-intro-label">숫자에 대해</span>진짜 CTR 은 시뮬레이터만 알고 배분 규칙은 모릅니다. 기본값(광고 8개 · 시드 37 · 탐색 0%)은 <a href="post.html?id=feedback-loop-bias">피드백 루프 편향</a> 글의 파이썬 출력과 같은 난수열을 씁니다. 세대별 클릭·누적 노출·지니계수가 글의 표와 자릿수까지 일치합니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요</span>
+        <li><span class="step-text">아무것도 건드리지 말고 <strong>30세대 자동</strong>을 누르세요. 2세대에서 띠가 넷으로 줄고, 3세대 뒤로는 모양이 바뀌지 않습니다.</span></li>
+        <li><span class="step-text">아래 막대에서 <code>9931</code> 줄을 보세요. 진짜 CTR 은 가장 긴데 추정 CTR 막대가 1세대 값에서 멈춰 있습니다.</span></li>
+        <li><span class="step-text">굳은 상태에서 <strong>탐색 예산 ε</strong> 를 5% 로 올리고 계속 돌려 보세요. 몇 세대 뒤 <code>9931</code> 이 돌아옵니다.</span></li>
+        <li><span class="step-text"><strong>IPS 재가중</strong>을 켜고 창을 <strong>최근 7세대</strong>로 두세요. ε 가 0일 때는 성향점수 0인 광고가 4개라 IPS 가 거의 못 고칩니다.</span></li>
+      </ol>
+
+      <div class="fb-model">
+        <p><strong>배분 규칙</strong> — 추정 CTR 이 높은 광고부터 하루 상한 <code>6,000건</code>까지 채웁니다.
+          세대당 노출이 20,000건이면 <code>6,000 + 6,000 + 6,000 + 2,000</code> 으로 넷이 나눠 갖고, <strong>추정 5위부터는 그날 노출이 0건</strong>입니다.</p>
+        <p><strong>추정 CTR</strong> — <code>(누적 클릭 + 1) ÷ (누적 노출 + 2)</code>. 분모가 0이 되지 않게 1과 2를 더합니다.
+          낙관 초기값을 켜면 <code>(사전평균 × 2,000 + 누적 클릭) ÷ (2,000 + 누적 노출)</code> 로 바뀌어, 아직 안 본 광고를 사전평균만큼 좋다고 우기고 시작합니다.</p>
+        <p><strong>첫 세대</strong>는 순위를 매길 로그가 없으므로 광고당 500건씩 똑같이 줍니다. 이 500건에서 나온 클릭 수가 2세대 순위를 정합니다.</p>
+      </div>
+
+      <div class="fb-controls">
+        <div class="fb-grid">
+          <div>
+            <label class="fb-ctl-label" for="fb-eps">탐색 예산 ε
+              <small>순위와 무관하게 떼어 두는 몫. 0% 면 순위가 전부를 정한다</small></label>
+            <div class="fb-ctl-row">
+              <input type="range" class="fb-range" id="fb-eps" min="0" max="20" step="1" value="0">
+              <output class="fb-out" id="fb-eps-val">0%</output>
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-mode">탐색 예산을 누구에게
+              <small>균등 = 모든 광고에 · 강제 슬롯 = 이번 세대 0건인 광고에만</small></label>
+            <div class="fb-ctl-row is-wide">
+              <select class="fb-select" id="fb-mode">
+                <option value="even" selected>모든 광고에 균등 (ε 탐색)</option>
+                <option value="slot">0건 광고에만 (강제 슬롯)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-n">세대당 노출 수
+              <small>상한 6,000건으로 나눈 몫이 곧 노출 자리 개수다</small></label>
+            <div class="fb-ctl-row is-wide">
+              <select class="fb-select" id="fb-n">
+                <option value="10000">10,000건 — 자리 2개</option>
+                <option value="20000" selected>20,000건 — 자리 4개 (글과 같음)</option>
+                <option value="40000">40,000건 — 자리 7개</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-prior">초기값 낙관도
+              <small>안 본 광고를 이만큼 좋다고 가정. 0 이면 끔</small></label>
+            <div class="fb-ctl-row">
+              <input type="range" class="fb-range" id="fb-prior" min="0" max="4" step="0.5" value="0">
+              <output class="fb-out" id="fb-prior-val">끔</output>
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-ads">광고 수
+              <small>바꾸면 판이 처음부터 다시 시작한다</small></label>
+            <div class="fb-ctl-row is-wide">
+              <select class="fb-select" id="fb-ads">
+                <option value="8" selected>8개 — 9931~9938 (글과 같음)</option>
+                <option value="12">12개 — 9931~9942</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-seed">난수 시드
+              <small>바꾸면 판이 처음부터 다시 시작한다. 37 이 글의 판</small></label>
+            <div class="fb-ctl-row is-wide">
+              <input type="number" class="fb-num" id="fb-seed" min="1" max="9999" step="1" value="37">
+            </div>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-ips">IPS 재가중
+              <small>배분은 그대로 두고 측정만 1÷성향점수 로 가중한다</small></label>
+            <label class="fb-check"><input type="checkbox" id="fb-ips"> 켜기</label>
+          </div>
+
+          <div>
+            <label class="fb-ctl-label" for="fb-win">측정 창
+              <small>실무 학습은 대개 최근 며칠 창을 쓴다</small></label>
+            <div class="fb-ctl-row is-wide">
+              <select class="fb-select" id="fb-win">
+                <option value="7" selected>최근 7세대</option>
+                <option value="0">전체 이력</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fb-run">
+          <button class="fb-btn is-primary" id="fb-step">한 세대 진행</button>
+          <button class="fb-btn" id="fb-auto">30세대 자동</button>
+          <button class="fb-btn" id="fb-reset">처음으로</button>
+          <span class="fb-gen-note" id="fb-gen-note">아직 한 세대도 안 돌았습니다.</span>
+        </div>
+
+        <div class="fb-presets">
+          <span class="fb-preset-label">처방</span>
+          <button class="fb-preset" data-preset="base">기본 — 탐색 0%</button>
+          <button class="fb-preset" data-preset="eps">ε 탐색 5%</button>
+          <button class="fb-preset" data-preset="prior">낙관 초기값 3.5%</button>
+          <button class="fb-preset" data-preset="slot">강제 슬롯 8%</button>
+        </div>
+      </div>
+
+      <div class="fb-metrics" id="fb-metrics"></div>
+
+      <div class="fb-verdict" id="fb-verdict">아직 한 세대도 안 돌았습니다. <strong>한 세대 진행</strong>을 눌러 첫날 배분부터 보세요.</div>
+
+      <div class="fb-charts">
+        <div class="fb-card">
+          <h3>세대별 노출 점유율</h3>
+          <p class="fb-note">가로는 세대, 세로는 그 세대 노출 20,000건을 광고들이 나눈 비율입니다. 왼쪽 이름은 1세대의 균등 배분 자리, 오른쪽 이름은 마지막 세대에 노출을 받은 광고입니다.</p>
+          <div class="fb-svg-wrap" id="fb-bands"></div>
+        </div>
+        <div class="fb-card">
+          <h3>진짜 CTR 과 지금 노출</h3>
+          <p class="fb-note">줄 순서는 진짜 CTR 내림차순으로 고정입니다. 가운데 막대가 시스템이 믿는 값이고, 오른쪽 막대가 그 믿음이 만든 이번 세대 노출입니다.</p>
+          <div class="fb-svg-wrap" id="fb-bars"></div>
+        </div>
+      </div>
+
+      <div class="fb-measure">
+        <h3>로그로 평균 CTR 을 재 본다</h3>
+        <p class="fb-note">모든 광고를 똑같이 띄웠다면 나왔을 평균 CTR 을, 지금 로그만 가지고 되찾을 수 있는지 봅니다. 성향점수는 창 안에서 그 광고가 차지한 노출 비율로 씁니다.</p>
+        <div class="fb-measure-grid" id="fb-measure"></div>
+      </div>
+
+      <p class="fb-tail-note">설정을 바꾸면 <strong>다음 세대부터</strong> 적용됩니다. 굳은 판에 ε 를 뒤늦게 켜서 풀리는지 보는 실험이 가능합니다.
+        광고 수와 시드만은 난수열이 바뀌므로 판을 처음부터 다시 시작합니다.</p>
+
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>쏠림은 한 번에 정해진다</strong> — 지니계수는 2세대에 0.479 까지 뛰고, 남은 38세대 동안 0.084 밖에 더 안 오른다. 굳음은 서서히 오는 것이 아니라 첫 순위 매김 한 번으로 온다.</li>
+            <li><strong>밀려난 광고의 추정값은 얼어 있다</strong> — 노출 0건이면 로그가 0줄이고, 로그가 0줄이면 추정값이 그날 값 그대로다. 굳음이 풀리려면 <em>안에 남은</em> 광고의 추정값이 스스로 그 언 값 아래로 내려가야 하는데, 표본이 쌓일수록 진짜 값으로 수렴할 뿐이라 내려갈 이유가 없다.</li>
+            <li><strong>IPS 는 탐색이 있어야 작동한다</strong> — 굳은 뒤 최근 7세대 창에는 성향점수가 0인 광고가 4개다. 1÷0 을 못 하니 계산에서 통째로 빠진다. ε 나 강제 슬롯으로 성향점수를 0에서 떼어 놓는 것이 IPS 보다 먼저다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>담장 안 DSP 는 후보 선정·랭킹·노출·로그를 한 회사가 다 쥡니다. 고리 밖에서 들어오는 잡음이 없으므로,
+          탐색을 예산에 명시적으로 넣지 않으면 이 데모의 기본값과 똑같은 일이 실제로 벌어집니다.</p>
+        <ul>
+          <li><strong>굳음을 지표로 감시한다:</strong> 노출을 받은 광고 집합이 며칠째 그대로인지, 누적 지니계수의 변화량이 0에 붙었는지를 대시보드에 둡니다. 값이 높은 것보다 <em>변화가 멈춘 것</em>이 신호입니다.</li>
+          <li><strong>탐색 예산은 정보의 값이다:</strong> 이미 옳게 굳은 판에서는 탐색이 손해입니다. 옳은지 그른지 모르기 때문에 내는 값이라, 매출 지표만으로 예산을 깎으면 잘못 굳은 판에서 크게 잃습니다.</li>
+          <li><strong>성향점수는 추정하지 말고 설계로 박는다:</strong> ε 나 강제 슬롯으로 배정한 몫은 확률을 우리가 정한 값이라 그대로 기록하면 됩니다. 사후 관측된 노출 비율로 성향점수를 채우면 밀려난 광고에 큰 가중치가 실려 추정값이 오히려 아래로 끌려갑니다.</li>
+          <li><strong>신규 광고 상한은 두 번 정한다:</strong> 첫날 500건은 비용을 아끼지만 진짜 1위를 1위로 맞힐 확률이 35% 대입니다. 콜드 스타트 상한과 이후 탐색 예산을 따로 두는 편이 안전합니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=feedback-loop-bias" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">피드백 루프 편향 — 어제 모델이 오늘 데이터를 고른다</span>
+              <span class="demo-next-excerpt">40세대 시뮬레이션 · 굳음의 조건 · 처방 넷의 대가 · IPS 가 안 듣는 지점</span>
+            </a>
+            <a href="post.html?id=exploration-exploitation" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">탐색과 활용</span>
+              <span class="demo-next-excerpt">ε 탐색·UCB·톰슨 샘플링 중 무엇을 고를지의 기준</span>
+            </a>
+            <a href="demo-compare-bandits.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">UCB vs TS 비교</span>
+              <span class="demo-next-excerpt">같은 판에서 탐색 방식만 바꿔 후회(regret)를 나란히 본다</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/feedback-loop-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

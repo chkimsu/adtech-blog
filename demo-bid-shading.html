@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bid Shading Visualizer - AdTech Blog</title>
@@ -31,7 +31,7 @@
         .panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
         }
 
@@ -79,7 +79,7 @@
             gap: 0.75rem;
             padding: 1rem;
             background: var(--bg-tertiary);
-            border-radius: 12px;
+            border-radius: 0;
             margin-bottom: 1.25rem;
             flex-wrap: wrap;
         }
@@ -87,7 +87,7 @@
         .bid-box {
             text-align: center;
             padding: 0.5rem 1rem;
-            border-radius: 8px;
+            border-radius: 0;
             font-family: 'Fira Code', monospace;
             font-weight: 600;
         }
@@ -99,9 +99,9 @@
         }
 
         .bid-box.shaded {
-            background: rgba(90, 107, 122, 0.15);
-            border: 1px solid #5a6b7a;
-            color: #5a6b7a;
+            background: color-mix(in srgb, var(--series-1) 15%, transparent);
+            border: 1px solid var(--series-1);
+            color: var(--series-1);
         }
 
         .bid-box .box-label {
@@ -153,24 +153,24 @@
         }
 
         .stats-table .row-noshade {
-            color: rgba(156, 90, 68, 0.9);
+            color: color-mix(in srgb, var(--series-2) 90%, transparent);
         }
 
         .stats-table .row-shaded {
-            color: rgba(90, 107, 122, 0.9);
+            color: color-mix(in srgb, var(--series-1) 90%, transparent);
         }
 
         .stats-table .row-2ndprice {
-            color: rgba(154, 125, 56, 0.9);
+            color: color-mix(in srgb, var(--series-3) 90%, transparent);
         }
 
         /* === Optimal Box === */
         .optimal-box {
             margin-top: 1rem;
             padding: 1rem;
-            background: rgba(95, 122, 99, 0.1);
-            border: 1px solid rgba(95, 122, 99, 0.3);
-            border-radius: 10px;
+            background: color-mix(in srgb, var(--series-6) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--series-6) 30%, transparent);
+            border-radius: 0;
         }
 
         .optimal-box h4 {
@@ -207,9 +207,9 @@
 
         .btn-censored {
             padding: 0.6rem 1.2rem;
-            background: rgba(156, 90, 68, 0.1);
+            background: color-mix(in srgb, var(--series-2) 10%, transparent);
             border: 1px solid var(--state-bad);
-            border-radius: 8px;
+            border-radius: 0;
             color: var(--state-bad);
             font-weight: 600;
             font-size: 0.85rem;
@@ -218,11 +218,11 @@
         }
 
         .btn-censored:hover {
-            background: rgba(156, 90, 68, 0.2);
+            background: color-mix(in srgb, var(--series-2) 20%, transparent);
         }
 
         .btn-censored.active {
-            background: rgba(95, 122, 99, 0.1);
+            background: color-mix(in srgb, var(--series-6) 10%, transparent);
             border-color: var(--state-good);
             color: var(--state-good);
         }
@@ -236,28 +236,28 @@
         .censored-bar {
             display: flex;
             height: 28px;
-            border-radius: 6px;
+            border-radius: 0;
             overflow: hidden;
             font-size: 0.75rem;
             font-weight: 600;
         }
 
         .censored-observed {
-            background: rgba(95, 122, 99, 0.5);
+            background: color-mix(in srgb, var(--series-6) 50%, transparent);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--paper);
             min-width: 60px;
         }
 
         .censored-hidden {
             background: repeating-linear-gradient(
                 45deg,
-                rgba(156, 90, 68, 0.2),
-                rgba(156, 90, 68, 0.2) 4px,
-                rgba(156, 90, 68, 0.1) 4px,
-                rgba(156, 90, 68, 0.1) 8px
+                color-mix(in srgb, var(--series-2) 20%, transparent),
+                color-mix(in srgb, var(--series-2) 20%, transparent) 4px,
+                color-mix(in srgb, var(--series-2) 10%, transparent) 4px,
+                color-mix(in srgb, var(--series-2) 10%, transparent) 8px
             );
             display: flex;
             align-items: center;
@@ -269,25 +269,25 @@
         /* === Key Insight Box === */
         .insight-box {
             padding: 1.25rem;
-            border-radius: 12px;
+            border-radius: 0;
             margin-top: 1.5rem;
             font-size: 0.9rem;
             line-height: 1.6;
         }
 
         .insight-box.warning {
-            background: rgba(156, 90, 68, 0.08);
+            background: color-mix(in srgb, var(--series-2) 8%, transparent);
             border-left: 4px solid var(--state-bad);
         }
 
         .insight-box.success {
-            background: rgba(95, 122, 99, 0.08);
+            background: color-mix(in srgb, var(--series-6) 8%, transparent);
             border-left: 4px solid var(--state-good);
         }
 
         .insight-box.info {
-            background: rgba(90, 107, 122, 0.08);
-            border-left: 4px solid #5a6b7a;
+            background: color-mix(in srgb, var(--series-1) 8%, transparent);
+            border-left: 4px solid var(--series-1);
         }
 
         .insight-box strong {
@@ -321,7 +321,7 @@
         .formula-block {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 0;
             padding: 1rem 1.25rem;
             margin: 1rem 0;
             font-family: 'Fira Code', monospace;
@@ -371,7 +371,7 @@
         </div>
 
         <div class="demo-tldr-analogy">
-          <div class="demo-tldr-analogy-icon">✂</div>
+          <div class="demo-tldr-analogy-icon">셰이딩</div>
           <div class="demo-tldr-analogy-body">
             <div class="demo-tldr-analogy-label">한 줄 비유</div>
             <div class="demo-tldr-analogy-text">
@@ -518,9 +518,9 @@
                 <canvas id="distChart" height="100"></canvas>
                 <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
                     <span style="color: var(--state-warn);">━━</span> 노란 점선 = True Value &nbsp;
-                    <span style="color: #5a6b7a;">━━</span> 파란 실선 = Shaded Bid &nbsp;
-                    <span style="color: rgba(95, 122, 99, 0.8);">■</span> 초록 = 관측 가능 (낙찰) &nbsp;
-                    <span style="color: rgba(156, 90, 68, 0.8);">■</span> 빨간 = 패배 영역 &nbsp;
+                    <span style="color: var(--series-1);">━━</span> 파란 실선 = Shaded Bid &nbsp;
+                    <span style="display:inline-block;width:10px;height:10px;vertical-align:-1px;background:var(--series-6);"></span> 관측 가능 (낙찰) &nbsp;
+                    <span style="display:inline-block;width:10px;height:10px;vertical-align:-1px;background:var(--series-2);"></span> 패배 영역 &nbsp;
                     <span style="color: rgba(120, 120, 120, 0.6);">▨</span> 사선 = ??? 관측 불가 &nbsp;
                     <span style="color: var(--state-bad);">━━</span> 벽돌색 점선 = Naive 추정 (편향됨)
                 </div>
@@ -535,7 +535,7 @@
             <div class="panel full-width">
                 <canvas id="sweepChart" height="90"></canvas>
                 <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
-                    <span style="color: #5a6b7a;">━━</span> 파란 점선 = 현재 Shading Factor 위치 &nbsp;
+                    <span style="color: var(--series-1);">━━</span> 파란 점선 = 현재 Shading Factor 위치 &nbsp;
                     이익이 최대인 지점이 최적 Shading Factor입니다.
                 </div>
             </div>
@@ -619,11 +619,11 @@
                 동일한 시장 조건에서 3가지 전략의 결과를 비교합니다.
             </p>
             <ul>
-                <li><strong style="color: rgba(156, 90, 68, 0.9);">No Shade (1st Price)</strong>:
+                <li><strong style="color: color-mix(in srgb, var(--series-2) 90%, transparent);">No Shade (1st Price)</strong>:
                     Win Rate은 가장 높지만, Avg Profit/Win = $0.00 → 이겨도 남는 게 없음</li>
-                <li><strong style="color: rgba(90, 107, 122, 0.9);">Shaded (1st Price)</strong>:
+                <li><strong style="color: color-mix(in srgb, var(--series-1) 90%, transparent);">Shaded (1st Price)</strong>:
                     Win Rate은 낮아지지만, 이길 때마다 이익 발생 → E[Profit] 양수</li>
-                <li><strong style="color: rgba(154, 125, 56, 0.9);">2nd Price (Truthful)</strong>:
+                <li><strong style="color: color-mix(in srgb, var(--series-3) 90%, transparent);">2nd Price (Truthful)</strong>:
                     자동 shading 효과 → 비교 기준선(benchmark)</li>
             </ul>
 
@@ -688,7 +688,7 @@
 
             <h3>시나리오 3: True Value가 시장 평균보다 낮을 때</h3>
             <p>
-                True Value를 $1.0, Market μ를 0.8 (시장 중앙값 ≈ $2.23)으로 설정하면,
+                True Value를 1.0달러, Market μ를 0.8 (시장 중앙값 ≈ 2.23달러)으로 설정하면,
                 내 가치가 시장 평균보다 낮아 어떤 shading을 해도 E[Profit]이 매우 낮습니다.
                 이런 경매는 <strong>입찰 자체를 하지 않는 것이 합리적</strong>입니다.
                 실제 DSP에서는 이 로직으로 bid request를 skip합니다.

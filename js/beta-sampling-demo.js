@@ -57,10 +57,10 @@ const NBINS = 40;
 const BW = 1 / NBINS;
 const AUTO_CAP = 5000;
 const COLORS = {
-    brick: 'rgba(156, 90, 68, 1)',
-    brickFill: 'rgba(156, 90, 68, 0.18)',
-    bronze: 'rgba(154, 125, 56, 1)',
-    slate: 'rgba(90, 107, 122, 1)'
+    brick: 'rgba(155,58,33, 1)',
+    brickFill: 'rgba(155,58,33, 0.18)',
+    bronze: 'rgba(103,105,108, 1)',
+    slate: 'rgba(32,64,107, 1)'
 };
 
 let alpha = 8, beta = 14;
@@ -198,7 +198,7 @@ function stopAuto() {
     if (autoTimer) {
         clearInterval(autoTimer);
         autoTimer = null;
-        document.getElementById('btn-auto').textContent = '자동 ▶';
+        document.getElementById('btn-auto').textContent = '자동 ▸';
         document.getElementById('btn-auto').classList.remove('primary');
     }
 }

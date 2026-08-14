@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -23,21 +23,21 @@
     .aw-intro {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .aw-intro strong { color: var(--accent-primary); }
 
     /* Controls */
     .aw-controls {
       max-width: 900px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
       display: flex; flex-direction: column; gap: 1rem;
     }
     .aw-control-title { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 0.5rem; }
     .aw-btn-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .aw-btn {
       font-family: var(--font-sans); font-size: 0.85rem; padding: 0.45rem 1rem; cursor: pointer;
-      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
       transition: all var(--transition-fast);
     }
     .aw-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
@@ -46,26 +46,26 @@
     .aw-verdict {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
       background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
-      border-radius: 10px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
     }
     .aw-verdict strong { color: var(--accent-primary); }
 
     /* Card */
-    .aw-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
+    .aw-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
     .aw-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
     .aw-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 1rem; line-height: 1.5; }
 
     /* Timeline */
     .aw-track { position: relative; height: 120px; margin: 1.5rem 0 0.5rem; }
     .aw-track::before { content: ''; position: absolute; left: 0; right: 0; top: 38px; height: 2px; background: var(--border-color); }
-    .aw-shade { position: absolute; left: 0; top: 14px; bottom: 38px; background: var(--bg-tertiary); border-right: 2px dashed var(--text-muted); opacity: 0.6; border-radius: 6px 0 0 6px; transition: width var(--transition-normal); }
+    .aw-shade { position: absolute; left: 0; top: 14px; bottom: 38px; background: var(--bg-tertiary); border-right: 2px dashed var(--text-muted); opacity: 0.6; border-radius: 0; transition: width var(--transition-normal); }
     .aw-boundary { position: absolute; top: 6px; bottom: 30px; width: 0; border-left: 2px dashed var(--accent-secondary); transition: left var(--transition-normal); }
     .aw-tp { position: absolute; top: 22px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.25rem; transition: opacity var(--transition-normal); }
-    .aw-tp-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-primary); border: 2px solid var(--bg-secondary); box-shadow: 0 0 0 1px var(--accent-primary); }
+    .aw-tp-dot { width: 16px; height: 16px; border-radius: 0; background: var(--accent-primary); border: 2px solid var(--bg-secondary); box-shadow: none; }
     .aw-tp-ch { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-top: 0.35rem; }
     .aw-tp-day { font-size: 0.7rem; color: var(--text-muted); font-family: 'Fira Code', monospace; }
     .aw-tp.out { opacity: 0.32; }
-    .aw-tp.out .aw-tp-dot { background: var(--text-muted); box-shadow: 0 0 0 1px var(--text-muted); }
+    .aw-tp.out .aw-tp-dot { background: var(--text-muted); box-shadow: none; }
     .aw-conv { position: absolute; top: 16px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
     .aw-conv-dot { font-size: 1.3rem; color: var(--accent-secondary); line-height: 1; }
     .aw-conv-label { font-size: 0.72rem; color: var(--accent-secondary); font-weight: 600; margin-top: 0.55rem; }
@@ -113,7 +113,7 @@
       </div>
 
       <div class="demo-tldr-analogy">
-        <div class="demo-tldr-analogy-icon">⛳</div>
+        <div class="demo-tldr-analogy-icon">경로</div>
         <div class="demo-tldr-analogy-body">
           <div class="demo-tldr-analogy-label">한 줄 비유</div>
           <div class="demo-tldr-analogy-text">
@@ -168,7 +168,7 @@
       <!-- Timeline -->
       <div class="aw-card">
         <h3>유저 여정 타임라인</h3>
-        <p class="note">왼쪽이 과거, 오른쪽(★)이 전환. 빗금 영역은 윈도우 밖이라 공로에서 제외되는 구간입니다.</p>
+        <p class="note">왼쪽이 과거, 오른쪽(▲)이 전환. 빗금 영역은 윈도우 밖이라 공로에서 제외되는 구간입니다.</p>
         <div class="aw-track" id="aw-track">
           <div class="aw-shade" id="aw-shade"></div>
           <div class="aw-boundary" id="aw-boundary"></div>

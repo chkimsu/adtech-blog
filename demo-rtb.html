@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RTB Auction Simulator - AdTech Blog</title>
@@ -26,7 +26,7 @@
         .chart-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
             min-height: 400px;
         }
@@ -40,7 +40,7 @@
         .control-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 0;
             padding: 1rem;
             transition: transform 0.2s;
         }
@@ -52,7 +52,7 @@
         .auction-type-group {
             display: flex;
             gap: 0;
-            border-radius: 8px;
+            border-radius: 0;
             overflow: hidden;
             border: 1px solid var(--glass-border);
         }
@@ -100,7 +100,7 @@
             width: 100%;
             padding: 0.6rem 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 0;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9rem;
@@ -122,13 +122,13 @@
         }
 
         .btn-auto {
-            background: rgba(125, 94, 114, 0.2);
-            color: #7d5e72;
-            border: 1px solid rgba(125, 94, 114, 0.4);
+            background: color-mix(in srgb, var(--series-4) 20%, transparent);
+            color: var(--series-4);
+            border: 1px solid color-mix(in srgb, var(--series-4) 40%, transparent);
         }
 
         .btn-auto:hover {
-            background: rgba(125, 94, 114, 0.35);
+            background: color-mix(in srgb, var(--series-4) 35%, transparent);
         }
 
         .btn-auto:disabled {
@@ -138,7 +138,7 @@
 
         .btn-reset {
             background: rgba(255, 71, 87, 0.2);
-            color: #ff4757;
+            color: var(--state-bad);
             border: 1px solid rgba(255, 71, 87, 0.4);
         }
 
@@ -184,7 +184,7 @@
 
         .log-panel {
             background: var(--code-bg);
-            border-radius: 8px;
+            border-radius: 0;
             padding: 1rem;
             height: 200px;
             overflow-y: auto;
@@ -221,9 +221,9 @@
         .strategy-badge {
             margin-top: 0.75rem;
             padding: 0.5rem 0.75rem;
-            background: rgba(154, 125, 56, 0.08);
-            border: 1px solid rgba(154, 125, 56, 0.25);
-            border-radius: 8px;
+            background: color-mix(in srgb, var(--series-3) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--series-3) 25%, transparent);
+            border-radius: 0;
             font-size: 0.8rem;
             display: flex;
             align-items: center;
@@ -252,7 +252,7 @@
         .comparison-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 0;
             padding: 1.25rem;
             margin-top: 1.5rem;
         }
@@ -273,10 +273,10 @@
         .btn-clear {
             font-size: 0.75rem;
             padding: 0.25rem 0.6rem;
-            border-radius: 6px;
+            border-radius: 0;
             border: 1px solid rgba(255, 71, 87, 0.4);
             background: rgba(255, 71, 87, 0.15);
-            color: #ff4757;
+            color: var(--state-bad);
             cursor: pointer;
             font-weight: 500;
         }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bid Landscape Explorer - AdTech Blog</title>
@@ -13,7 +13,7 @@
         .chart-full {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
             margin-top: 2rem;
             min-height: 400px;
@@ -41,7 +41,7 @@
         .control-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
         }
 
@@ -76,7 +76,7 @@
         .stats-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
         }
 
@@ -93,7 +93,7 @@
         .stat-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 0;
             padding: 0.75rem 1rem;
             transition: transform 0.2s;
         }
@@ -290,7 +290,7 @@
                 중앙값보다 훨씬 높게 입찰하면 거의 100%에 수렴합니다.
             </p>
             <ul>
-                <li>Market Median = $2.00일 때, $2.00 입찰 시 약 50%의 낙찰 확률을 가집니다.</li>
+                <li>Market Median = 2.00달러일 때, 2.00달러 입찰 시 약 50%의 낙찰 확률을 가집니다.</li>
                 <li>Competition Level이 높을수록 곡선이 가파르게 변합니다. 경쟁이 치열한 시장에서는 조금만 낮게 입찰해도 낙찰률이 급락합니다.</li>
             </ul>
 

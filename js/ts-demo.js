@@ -150,9 +150,9 @@ class ThompsonSampling {
 // Configuration
 const N_ARMS = 3;
 const ADS = [
-    { id: 0, name: "Ad A (Classic)", color: 'rgba(156, 90, 68, 1)', bgColor: 'rgba(156, 90, 68, 0.2)' },
-    { id: 1, name: "Ad B (Modern)", color: 'rgba(90, 107, 122, 1)', bgColor: 'rgba(90, 107, 122, 0.2)' },
-    { id: 2, name: "Ad C (Bold)", color: 'rgba(154, 125, 56, 1)', bgColor: 'rgba(154, 125, 56, 0.2)' }
+    { id: 0, name: "Ad A (Classic)", color: 'rgba(155,58,33, 1)', bgColor: 'rgba(155,58,33, 0.2)' },
+    { id: 1, name: "Ad B (Modern)", color: 'rgba(32,64,107, 1)', bgColor: 'rgba(32,64,107, 0.2)' },
+    { id: 2, name: "Ad C (Bold)", color: 'rgba(103,105,108, 1)', bgColor: 'rgba(103,105,108, 0.2)' }
 ];
 
 let model = new ThompsonSampling(N_ARMS);

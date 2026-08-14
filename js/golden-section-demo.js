@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 /**
  * Golden Section Search Interactive Demo
  * 황금 비율 탐색으로 1st Price Auction에서 최적 입찰가 b*를 찾는 과정을 시각화.
@@ -135,10 +135,10 @@ function generateSurplusCurve(V, mu, sigma, nPoints = 300) {
 function getChartColors() {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     return {
-        curve: '#5a6b7a',
-        curveFill: 'rgba(90, 107, 122, 0.08)',
-        bracketFill: 'rgba(90, 107, 122, 0.15)',
-        bracketBorder: 'rgba(90, 107, 122, 0.6)',
+        curve: cssVar('--series-1'),
+        curveFill: 'rgba(32,64,107, 0.08)',
+        bracketFill: 'rgba(32,64,107, 0.15)',
+        bracketBorder: 'rgba(32,64,107, 0.6)',
         x1: cssVar('--state-bad'),
         x2: cssVar('--state-warn'),
         optimal: cssVar('--state-good'),
@@ -189,7 +189,7 @@ function initSurplusChart() {
                     pointRadius: 8,
                     pointHoverRadius: 10,
                     backgroundColor: colors.x1,
-                    borderColor: '#fff',
+                    borderColor: cssVar('--paper'),
                     borderWidth: 2,
                     order: 1
                 },
@@ -199,7 +199,7 @@ function initSurplusChart() {
                     pointRadius: 8,
                     pointHoverRadius: 10,
                     backgroundColor: colors.x2,
-                    borderColor: '#fff',
+                    borderColor: cssVar('--paper'),
                     borderWidth: 2,
                     order: 1
                 },
@@ -209,7 +209,7 @@ function initSurplusChart() {
                     pointRadius: 10,
                     pointHoverRadius: 12,
                     backgroundColor: colors.optimal,
-                    borderColor: '#fff',
+                    borderColor: cssVar('--paper'),
                     borderWidth: 2,
                     pointStyle: 'star',
                     order: 0
@@ -267,12 +267,12 @@ function initConvergenceChart() {
                 label: 'Bracket Size (b - a)',
                 data: [],
                 borderColor: colors.curve,
-                backgroundColor: 'rgba(90, 107, 122, 0.1)',
+                backgroundColor: 'rgba(32,64,107, 0.1)',
                 fill: true,
                 borderWidth: 2,
                 pointRadius: 4,
                 pointBackgroundColor: colors.curve,
-                pointBorderColor: '#fff',
+                pointBorderColor: cssVar('--paper'),
                 pointBorderWidth: 1,
                 tension: 0.3
             }]
@@ -394,7 +394,7 @@ function updateIterationLog() {
             <td>${h.bracket.toFixed(4)}</td>
         `;
         if (engine.converged && h.iter === engine.iteration) {
-            tr.style.background = 'rgba(95, 122, 99, 0.15)';
+            tr.style.background = 'rgba(32,64,107, 0.15)';
         }
         tbody.appendChild(tr);
     }

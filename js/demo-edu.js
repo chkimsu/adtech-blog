@@ -295,10 +295,10 @@
         bubble.style.left = left + 'px';
     }
 
-    // "▶ 가이드 투어" 재시작 칩
+    // "▸ 가이드 투어" 재시작 칩
     function injectTourChip() {
         if (!steps.length || isEmbed) return;
-        const chip = el('button', 'edu-tour-chip', '▶ 가이드 투어');
+        const chip = el('button', 'edu-tour-chip', '▸ 가이드 투어');
         chip.type = 'button';
         chip.addEventListener('click', startTour);
         const stepsTitle = document.querySelector('.demo-steps-title');

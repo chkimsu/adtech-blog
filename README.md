@@ -9,7 +9,7 @@ A calm, editorial blog about Ad Tech, built with vanilla HTML, CSS, and JavaScri
 
 ##  Features
 
--  **Calm Editorial Design** - Cream/ink/brick palette, serif headings, restrained typography
+-  **Squared Modern Design** - Flat paper/ink surfaces, 1px rules, no rounded corners, no shadows; navy/oxide/grey accents, Pretendard throughout (no serif)
 -  **Real-time Search** - Instantly filter posts by title, content, or keywords
 -  **Category & Tag Filtering** - Organize and discover content easily
 -  **Theme Toggle** - Switch between dark and light modes (persisted in localStorage)
@@ -140,11 +140,13 @@ Edit CSS variables in `css/style.css`:
 
 ```css
 :root {
-  --bg-primary: #faf8f3;          /* cream */
-  --accent-primary: #b0442c;      /* brick */
-  --accent-secondary: #8a6a3a;    /* bronze/ochre */
-  --text-primary: #201d1a;        /* ink */
-  /* ... more variables (see css/style.css :root) */
+  --paper: #FFFFFF;               /* page background */
+  --plate: #FAFAF9;               /* cards, table heads */
+  --ink: #17181A;                 /* body text */
+  --navy: #20406B;                /* pass, link, current */
+  --oxide: #9B3A21;               /* problem, emphasis (accent-primary) */
+  --grey: #67696C;                /* conditional, reference */
+  /* ... 17 tokens x light/dark (see css/style.css :root) */
 }
 ```
 
@@ -154,7 +156,7 @@ Update Google Fonts import in `css/style.css`:
 
 ```css
 /* Actual fonts are imported in css/style.css (lines 6-7):
-   Pretendard (body) · Newsreader + Noto Serif KR (serif headings) · Fira Code (code).
+   Pretendard (body AND headings — no serif) · Fira Code (code).
    Swap them there, then reference via the CSS variables: */
 
 body {

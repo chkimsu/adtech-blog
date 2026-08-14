@@ -209,7 +209,7 @@
     function stop() {
       playing = false;
       if (timer) { clearTimeout(timer); timer = null; }
-      btnPlay.textContent = '▶ 재생';
+      btnPlay.textContent = '▸ 재생';
       btnPlay.classList.remove('is-primary');
     }
     function tick() {

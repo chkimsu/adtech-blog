@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 /**
  * Bid Landscape Explorer Demo Implementation
  * Visualizes Win Rate, Expected Cost, and Expected Profit curves
@@ -114,8 +114,8 @@ function createChart() {
                 {
                     label: 'Win Rate (%)',
                     data: [],
-                    borderColor: '#36A2EB',
-                    backgroundColor: 'rgba(90, 107, 122, 0.1)',
+                    borderColor: cssVar('--series-1'),
+                    backgroundColor: 'rgba(32,64,107, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,
@@ -126,7 +126,7 @@ function createChart() {
                     label: 'Expected Cost ($)',
                     data: [],
                     borderColor: cssVar('--state-bad'),
-                    backgroundColor: 'rgba(156, 90, 68, 0.1)',
+                    backgroundColor: 'rgba(155,58,33, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,
@@ -137,7 +137,7 @@ function createChart() {
                     label: 'Expected Profit ($)',
                     data: [],
                     borderColor: cssVar('--state-good'),
-                    backgroundColor: 'rgba(95, 122, 99, 0.1)',
+                    backgroundColor: 'rgba(32,64,107, 0.1)',
                     borderWidth: 2,
                     pointRadius: 0,
                     tension: 0.4,

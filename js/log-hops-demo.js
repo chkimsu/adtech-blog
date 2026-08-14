@@ -373,11 +373,11 @@
 
   // 유실을 두 자리에 쓴다 — 나는 자리와, 그게 무슨 일인지.
   //
-  // (1) 앱 SDK 층 이름 뒤의 "⚠ 버림 N건". 유실은 이 층에서만 난다(spawn 이 버린다).
-  //     그런데 이 층엔 쌓임 막대가 없어서 drawQueue 가 안 보고, 다른 층에 붙는 "⚠ 가득" 이
+  // (1) 앱 SDK 층 이름 뒤의 "[버림] N건". 유실은 이 층에서만 난다(spawn 이 버린다).
+  //     그런데 이 층엔 쌓임 막대가 없어서 drawQueue 가 안 보고, 다른 층에 붙는 "[가득]" 이
   //     여기엔 안 붙는다. 임베드는 막대와 아래 알림을 둘 다 접으므로, 배지가 없으면
   //     "쌓이는 중" 과 "아예 버려지는 중" 을 가르는 표시가 화면에 하나도 없다.
-  //     낱말·색·점선은 CSS 가 준다(다른 층의 "⚠ 가득" 과 같은 자리·같은 모양). 여기서는 수만 넘긴다.
+  //     낱말·색·점선은 CSS 가 준다(다른 층의 "[가득]" 과 같은 자리·같은 모양). 여기서는 수만 넘긴다.
   // (2) #lh-loss — 무슨 일인지 문장으로. 임베드에서는 CSS 가 접는다(떴다 사라지며 높이를 흔든다).
   function drawLoss() {
     var lost = state.dropped;
@@ -395,7 +395,7 @@
     if (!lossEl) return;
     lossEl.hidden = lost === 0;
     if (lost > 0) {
-      lossEl.textContent = '⚠ 앞이 다 차서 못 받은 이벤트 ' + lost.toLocaleString() +
+      lossEl.textContent = '[주의] 앞이 다 차서 못 받은 이벤트 ' + lost.toLocaleString() +
         '건. 파일이 가득 차면 쓰기가 실패해 로그가 끊긴다(글 4절).' +
         // 임베드에서는 이 알림 자체를 CSS 가 접는다. 되돌리는 방법은 전체 페이지에만 적는다.
         (IS_EMBED ? '' : ' 멈춤을 풀거나 "처음부터"를 누르면 다시 흐른다.');
@@ -413,7 +413,7 @@
     var bar = row.querySelector('.lh-queue-bar > i');
     if (bar) bar.style.width = Math.min(100, (count / cap) * 100).toFixed(1) + '%';
     var text = row.querySelector('.lh-queue-text');
-    if (text) text.textContent = (full ? '⚠ 가득 ' : '') + count + ' / ' + cap;
+    if (text) text.textContent = (full ? '[가득] ' : '') + count + ' / ' + cap;
   }
 
   // ---- 아래 칸: 골라둔 한 건 ----
@@ -610,7 +610,7 @@
   function drawControls() {
     var play = $('lh-play');
     if (play) {
-      play.textContent = state.playing ? '⏸ 정지' : '▶ 재생';
+      play.textContent = state.playing ? '⏸ 정지' : '▸ 재생';
       play.setAttribute('aria-pressed', state.playing ? 'true' : 'false');
     }
     var a = $('lh-stop-agent-label'), k = $('lh-stop-kafka-label');

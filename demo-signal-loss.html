@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="3rd-party 쿠키·IDFA·유저 단위 전환 라벨·크로스 앱 빈도 제어·집계 노이즈를 하나씩 내리면서 타겟 가능 유저 비율·관측 가능한 전환 비율·pCVR 유효 표본·지표 흔들림 폭이 어떻게 떨어지는지 보는 데모. 타겟팅보다 라벨이 먼저 부서진다.">
+  <title>신호 소실 계단 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===================================================================
+       신호 소실 계단 — demo-signal-loss.html
+       색 값은 이 파일에도 js/signal-loss-demo.js 에도 hex 가 하나도 없다.
+       전부 css/style.css 상단의 토큰(var(--...))을 그대로 쓴다.
+       모서리 0 · 그림자 none · serif 없음 · 통은 1600px · 읽는 글은 900px.
+       상태는 색만으로 알리지 않는다 — 스위치는 점선 테두리와 상태 글자가 같이 바뀐다.
+       =================================================================== */
+
+    /* .sl-stage 와 .sl-panels 는 <main> 의 직계 자식이다.
+       임베드에서 이 둘만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 훑는다).
+       그래서 폭·여백을 바깥 통에 기대지 않고 각자 갖는다. */
+    .sl-page,
+    .sl-stage,
+    .sl-panels {
+      max-width: 1600px;
+      margin: 0 auto 1.25rem;
+      padding-left: 46px;
+      padding-right: 46px;
+    }
+
+    @media (max-width: 900px) {
+      .sl-page,
+      .sl-stage,
+      .sl-panels { padding-left: 1rem; padding-right: 1rem; }
+    }
+
+    .sl-hero { text-align: center; padding: 2rem 1rem 0.75rem; }
+    .sl-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .sl-hero p {
+      color: var(--text-secondary); max-width: 900px; margin: 0 auto;
+      font-size: 0.98rem; line-height: 1.65;
+    }
+
+    .sl-brief {
+      max-width: 900px; margin: 1rem auto 0; padding: 1.1rem 1.4rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .sl-brief strong { color: var(--accent-primary); }
+    .sl-brief code {
+      font-family: var(--font-mono); background: var(--bg-tertiary);
+      padding: 0.05rem 0.35rem; border-radius: 0; font-size: 0.88em;
+    }
+
+    /* ---------- 왼쪽: 스위치 다섯 ---------- */
+    .sl-stage-grid {
+      display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 1000px) { .sl-stage-grid { grid-template-columns: 1fr; } }
+
+    .sl-switches {
+      padding: 1.1rem 1.2rem 1.2rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .sl-switches h2 { font-size: 1.05rem; margin: 0 0 0.25rem; color: var(--text-primary); }
+    .sl-switches-head p {
+      margin: 0 0 0.7rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;
+    }
+    .sl-stair { margin-bottom: 0.2rem; }
+    .sl-stair-count {
+      font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-secondary);
+      padding-bottom: 0.7rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--border-color);
+    }
+
+    /* 스위치는 <button role="switch"> 다. 체크박스로 하면 라벨을 눌렀을 때
+       클릭이 두 번 올라가 해설이 두 줄 나온다. 버튼은 한 번만 온다. */
+    .sl-switch {
+      display: grid; grid-template-columns: 15px 1fr; gap: 0 0.6rem;
+      width: 100%; text-align: left; cursor: pointer;
+      margin-bottom: 0.5rem; padding: 0.6rem 0.7rem;
+      font-family: var(--font-sans);
+      background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: border-color var(--transition-fast);
+    }
+    .sl-switch:hover { border-color: var(--accent-primary); }
+    .sl-switch:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
+    .sl-switch-box {
+      grid-row: 1 / span 3; align-self: start; margin-top: 0.2rem;
+      width: 15px; height: 15px; border-radius: 0;
+      background: var(--navy); border: 1.5px solid var(--navy);
+    }
+    .sl-switch.is-off { border-style: dashed; border-color: var(--oxide); }
+    .sl-switch.is-off .sl-switch-box {
+      background: var(--oxide-bg); border: 1.5px dashed var(--oxide);
+    }
+    .sl-switch-name { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); }
+    .sl-switch-note {
+      display: block; margin-top: 0.15rem;
+      font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;
+    }
+    .sl-switch-state {
+      display: block; margin-top: 0.25rem;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-secondary);
+    }
+    .sl-switch.is-off .sl-switch-state { color: var(--accent-primary); }
+
+    .sl-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+    .sl-preset {
+      font-family: var(--font-sans); font-size: 0.78rem; padding: 0.35rem 0.7rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .sl-preset:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .sl-preset.is-current {
+      border-color: var(--accent-secondary); color: var(--accent-secondary); font-weight: 700;
+    }
+
+    .sl-level {
+      margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--border-color);
+      display: grid; grid-template-columns: 1fr 62px; gap: 0.35rem 0.6rem; align-items: center;
+    }
+    .sl-level-label { grid-column: 1 / -1; font-size: 0.82rem; color: var(--text-secondary); }
+    .sl-level-label small { display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .sl-slider {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+      background: var(--bg-tertiary); border: 1px solid var(--border-color);
+      border-radius: 0; outline: none;
+    }
+    .sl-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 17px; height: 17px;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
+    }
+    .sl-slider::-moz-range-thumb {
+      width: 17px; height: 17px; background: var(--accent-primary);
+      border-radius: 0; border: none; cursor: pointer;
+    }
+    .sl-level-val {
+      text-align: right; font-family: var(--font-mono); font-weight: 700;
+      font-size: 0.86rem; color: var(--accent-primary);
+    }
+
+    /* ---------- 오른쪽: 계기 넷 + 판정 ---------- */
+    .sl-gauges {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin-bottom: 0.9rem;
+    }
+    @media (max-width: 620px) { .sl-gauges { grid-template-columns: 1fr; } }
+    .sl-gauge {
+      padding: 0.95rem 1.05rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+      border-top: 3px solid var(--border-color);
+    }
+    .sl-gauge-label {
+      font-size: 0.74rem; color: var(--text-muted); letter-spacing: 0.04em;
+      margin-bottom: 0.3rem; line-height: 1.4;
+    }
+    .sl-gauge-value {
+      font-family: var(--font-mono); font-size: 1.6rem; font-weight: 700;
+      color: var(--text-primary); line-height: 1.15;
+    }
+    .sl-gauge-value.is-good { color: var(--state-good); }
+    .sl-gauge-value.is-warn { color: var(--state-warn); }
+    .sl-gauge-value.is-bad { color: var(--state-bad); }
+    .sl-gauge-sub {
+      margin-top: 0.35rem; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.55;
+    }
+    .sl-gauge-foot {
+      margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--border-color);
+      font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5;
+    }
+
+    .sl-verdict {
+      max-width: 900px; padding: 0.95rem 1.2rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
+    }
+    .sl-verdict-label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent-primary); margin-bottom: 0.35rem;
+    }
+    .sl-verdict p { margin: 0; font-size: 0.92rem; line-height: 1.65; color: var(--text-secondary); }
+    .sl-verdict strong { color: var(--text-primary); }
+
+    /* ---------- 아래: 판 셋 ---------- */
+    .sl-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.25rem; }
+    .sl-card {
+      padding: 1.1rem 1.2rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .sl-card h3 { font-size: 0.98rem; margin: 0 0 0.25rem; color: var(--text-primary); }
+    .sl-card-note { margin: 0 0 0.7rem; font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
+    .sl-card-foot {
+      margin: 0.7rem 0 0; padding-top: 0.6rem; border-top: 1px solid var(--border-color);
+      font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;
+    }
+
+    .sl-legend { margin-top: 0.7rem; }
+    .sl-lg-row {
+      display: grid; grid-template-columns: 13px 6.6rem 4.6rem 3.4rem 1fr;
+      gap: 0 0.5rem; align-items: baseline;
+      padding: 0.28rem 0; border-top: 1px solid var(--border-color);
+      font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45;
+    }
+    @media (max-width: 520px) {
+      .sl-lg-row { grid-template-columns: 13px 1fr 4.6rem 3.4rem; }
+      .sl-lg-note { grid-column: 2 / -1; }
+    }
+    .sl-lg-chip {
+      width: 13px; height: 13px; align-self: start; margin-top: 0.15rem;
+      border: 1px solid var(--rule); border-radius: 0;
+    }
+    .sl-lg-name { color: var(--text-primary); font-weight: 600; }
+    .sl-lg-num, .sl-lg-pct { font-family: var(--font-mono); text-align: right; color: var(--text-primary); }
+    .sl-lg-note { color: var(--text-muted); }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sl-hero">
+      <h1>신호 소실 계단</h1>
+      <p>식별자 신호를 하나씩 내리면 오른쪽 계기 넷이 같이 움직입니다.
+        어느 스위치가 어느 계기를 부수는지가 다릅니다. 세 번째 스위치에서 계기 셋이 한꺼번에 내려갑니다.</p>
+    </section>
+
+    <div class="sl-page">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-attribution-window.html">어트리뷰션 윈도우</a>
+        <a href="demo-frequency-capping.html">Frequency Capping</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>신호 스위치 다섯 개를 하나씩 내리면서
+          <strong>타겟 가능 유저 비율 · 관측 가능한 전환 비율 · pCVR 유효 표본 · 지표 흔들림 폭</strong>이
+          어떻게 떨어지는지 봅니다. 판정 박스가 "이 조합에서 무엇이 먼저 부서지나"를 한 줄로 말해 줍니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>"신호가 사라졌다"는 문장만으로는 무엇을 고쳐야 하는지 알 수 없습니다.
+          잃는 것이 <strong>피처 · 라벨 · 제어</strong> 세 종류이고 각각 대응이 다릅니다.
+          먼저 아픈 것은 피처가 아니라 라벨입니다 — 피처가 빠지면 성능이 조금 내려가지만,
+          라벨이 바뀌면 손실 함수의 정답 칸 모양이 달라집니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text"><strong>3rd-party 쿠키</strong>를 내립니다. 계기 1만 크게 떨어지고 계기 3·4는 그대로입니다.
+          피처가 줄어든 것이지 학습이 멈춘 것이 아닙니다.</span></li>
+        <li><span class="step-text">쿠키를 다시 올리고 <strong>유저 단위 전환 라벨</strong>을 내립니다.
+          계기 2·3·4가 <em>동시에</em> 내려가는데 계기 1은 100.0% 그대로입니다. 이 데모의 핵심 장면입니다.</span></li>
+        <li><span class="step-text"><strong>집계 노이즈</strong>까지 내립니다. 아래 막대에 <code>억제로 지워짐</code> 칸이 생깁니다.
+          빈칸은 0이 아니라 결측입니다.</span></li>
+        <li><span class="step-text">아래 슬라이더로 광고 규모를 <strong>40건 → 4,000건</strong>으로 밉니다.
+          같은 노이즈인데 흔들림 폭이 70.7%에서 0.7%로 내려갑니다. 노이즈는 작은 광고부터 지웁니다.</span></li>
+      </ol>
+
+      <div class="sl-brief">
+        <strong>설정</strong> — 캠페인 <code>c-4417</code>의 2026년 8월 12일 하루입니다.
+        회사 전체 하루 노출 2.28억 줄 중 이 캠페인이 <code>1,200만</code>을 가져갔습니다.
+        웹 지면 780만 · iOS 앱 지면 420만이고, 클릭은 15.6만 · 8.4만으로 둘 다 CTR 2.0%입니다.
+        전환 칸에서 갈립니다 — 웹 3,120건은 대부분 누가 언제 얼마를 샀는지가 붙어 있고,
+        iOS 창 1 포스트백 940건에는 사람이 없습니다. 그중 415건은 금액 칸까지 비어 있습니다.
+        <strong>이 화면의 숫자는 전부 짝 글에서 가져온 가데이터</strong>입니다 —
+        <a href="post.html?id=privacy-signal-loss">신호가 사라진 자리에서 모델은 무엇을 잃나</a>.
+      </div>
+    </div>
+
+    <!-- ================= 스위치 + 계기 + 판정 ================= -->
+    <div class="sl-stage">
+      <div class="sl-stage-grid">
+        <section class="sl-switches" aria-label="신호 스위치 다섯">
+          <div class="sl-switches-head">
+            <h2>신호 스위치 다섯</h2>
+            <p>위에서부터 하나씩 내려 보세요. 내린 스위치는 점선 테두리가 되고 상태 글자가 바뀝니다.</p>
+            <div class="sl-stair" id="sl-stair"></div>
+            <div class="sl-stair-count" id="sl-stair-count">다섯 중 0개 내려감</div>
+          </div>
+
+          <button type="button" class="sl-switch" id="sl-sw-cookie" role="switch" aria-checked="true">
+            <span class="sl-switch-box" aria-hidden="true"></span>
+            <span class="sl-switch-name">3rd-party 쿠키</span>
+            <span class="sl-switch-note">웹 780만 노출에 크로스 사이트 신호를 붙인다. 광고주 픽셀 780건도 이 열쇠로 잇는다</span>
+            <span class="sl-switch-state">살아 있음</span>
+          </button>
+
+          <button type="button" class="sl-switch" id="sl-sw-idfa" role="switch" aria-checked="true">
+            <span class="sl-switch-box" aria-hidden="true"></span>
+            <span class="sl-switch-name">IDFA</span>
+            <span class="sl-switch-note">iOS 420만 노출의 크로스 앱 신호. 내리면 iOS 940건과 MMP 270건이 포스트백으로 바뀐다</span>
+            <span class="sl-switch-state">살아 있음</span>
+          </button>
+
+          <button type="button" class="sl-switch" id="sl-sw-label" role="switch" aria-checked="true">
+            <span class="sl-switch-box" aria-hidden="true"></span>
+            <span class="sl-switch-name">유저 단위 전환 라벨</span>
+            <span class="sl-switch-note">전환을 사람에 붙이는 열쇠. 내리면 남은 전환이 전부 칸 합계로 온다</span>
+            <span class="sl-switch-state">줄마다 사람이 붙음</span>
+          </button>
+
+          <button type="button" class="sl-switch" id="sl-sw-freq" role="switch" aria-checked="true">
+            <span class="sl-switch-box" aria-hidden="true"></span>
+            <span class="sl-switch-name">크로스 앱 빈도 제어</span>
+            <span class="sl-switch-note">같은 사람인지 판정하는 능력. 빈도 상한·중복 제거·제외 목록이 여기에 걸린다</span>
+            <span class="sl-switch-state">상한 5회를 건다</span>
+          </button>
+
+          <button type="button" class="sl-switch" id="sl-sw-noise" role="switch" aria-checked="true">
+            <span class="sl-switch-box" aria-hidden="true"></span>
+            <span class="sl-switch-name">노이즈 없는 집계</span>
+            <span class="sl-switch-note">내리면 칸마다 라플라스 노이즈가 더해지고 50건 미만인 칸은 지워진다</span>
+            <span class="sl-switch-state">원본 그대로</span>
+          </button>
+
+          <div class="sl-presets">
+            <button type="button" class="sl-preset" data-preset="11111">전부 켬</button>
+            <button type="button" class="sl-preset" data-preset="01111">웹 서드파티 차단</button>
+            <button type="button" class="sl-preset" data-preset="10101">iOS SKAN 경로</button>
+            <button type="button" class="sl-preset" data-preset="00111">담장 안 로그인 지면</button>
+            <button type="button" class="sl-preset" data-preset="00000">집계 API 경로</button>
+          </div>
+
+          <div class="sl-level">
+            <label class="sl-level-label" for="sl-conv-level">지표를 볼 광고 하나 — 하루 전환
+              <small>계기 4와 가운데 판만 이 값을 씁니다. 10 · 40 · 120 · 400 · 1,200 · 4,000건</small></label>
+            <input type="range" class="sl-slider" id="sl-conv-level" min="0" max="5" step="1" value="1">
+            <span class="sl-level-val" id="sl-conv-level-val">40건</span>
+          </div>
+        </section>
+
+        <section class="sl-right" aria-label="계기 넷과 판정">
+          <div class="sl-gauges">
+            <div class="sl-gauge">
+              <div class="sl-gauge-label">타겟 가능 유저 비율</div>
+              <div class="sl-gauge-value" id="sl-g1">—</div>
+              <div class="sl-gauge-sub" id="sl-g1-sub">—</div>
+              <div class="sl-gauge-foot">크로스 사이트·크로스 앱 신호가 붙는 노출입니다.
+                자사 로그인 지면의 1st-party 신호는 이 계기 밖입니다.</div>
+            </div>
+            <div class="sl-gauge">
+              <div class="sl-gauge-label">관측 가능한 전환 비율</div>
+              <div class="sl-gauge-value" id="sl-g2">—</div>
+              <div class="sl-gauge-sub" id="sl-g2-sub">—</div>
+              <div class="sl-gauge-foot">값이 실려 오는 전환만 셉니다.
+                건수만 오는 것과 칸째 지워진 것은 빠집니다.</div>
+            </div>
+            <div class="sl-gauge">
+              <div class="sl-gauge-label">pCVR 모델의 유효 표본</div>
+              <div class="sl-gauge-value" id="sl-g3">—</div>
+              <div class="sl-gauge-sub" id="sl-g3-sub">—</div>
+              <div class="sl-gauge-foot">집계 한 줄은 개인 한 줄의 11분의 1 값입니다.
+                계수 표준편차가 3.3배이고 3.3의 제곱이 11이기 때문입니다.</div>
+            </div>
+            <div class="sl-gauge">
+              <div class="sl-gauge-label" id="sl-g4-title">하루 전환 40건 광고 — 지표 흔들림 폭</div>
+              <div class="sl-gauge-value" id="sl-g4">—</div>
+              <div class="sl-gauge-sub" id="sl-g4-sub">—</div>
+              <div class="sl-gauge-foot">표본 오차와 리포트 노이즈를 분산으로 더한 상대 표준편차입니다.
+                작을수록 좋습니다.</div>
+            </div>
+          </div>
+
+          <div class="sl-verdict">
+            <span class="sl-verdict-label">이 조합에서 무엇이 먼저 부서지나</span>
+            <p id="sl-verdict">—</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ================= 판 셋 ================= -->
+    <div class="sl-panels">
+      <section class="sl-card sl-card-conv" id="sl-conv-card">
+        <h3>전환 4,060건이 어떤 모양으로 오나</h3>
+        <p class="sl-card-note">웹 3,120건(자사 완결 1,950 · 광고주 픽셀 780 · MMP 앱 270 · 오프라인 120)과
+          iOS 창 1 포스트백 940건입니다.</p>
+        <div id="sl-conv-svg"></div>
+        <div class="sl-legend" id="sl-conv-legend"></div>
+        <p class="sl-card-foot" id="sl-conv-note">—</p>
+      </section>
+
+      <section class="sl-card sl-card-spread" id="sl-spread-card">
+        <h3>광고 하나의 지표 흔들림 폭</h3>
+        <p class="sl-card-note">노이즈는 칸의 크기와 무관하게 같은 크기로 붙습니다.
+          그래서 작은 광고일수록 상대 오차가 커집니다.</p>
+        <div id="sl-spread-svg"></div>
+        <p class="sl-card-foot" id="sl-spread-note">—</p>
+      </section>
+
+      <section class="sl-card sl-card-freq" id="sl-freq-card">
+        <h3>3층 — 빈도 상한은 판정이 되어야 돈다</h3>
+        <p class="sl-card-note">모델 밖의 규칙입니다. 같은 사람인지 모르면 몇 번 봤는지도 셀 수 없습니다.</p>
+        <div id="sl-freq-svg"></div>
+        <p class="sl-card-foot" id="sl-freq-note">—</p>
+      </section>
+    </div>
+
+    <div class="sl-page">
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>라벨이 피처보다 먼저 부서진다</strong> — 3rd-party 쿠키를 내리면 계기 1만 움직인다.
+              유저 단위 전환 라벨을 내리면 계기 2·3·4가 한꺼번에 내려가는데 계기 1은 100.0% 그대로다.
+              피처가 빠지면 성능이 조금 내려가고, 라벨이 바뀌면 학습 코드가 읽는 단위가 달라진다.</li>
+            <li><strong>집계는 계수를 비틀지 않는다. 흔들림만 키운다</strong> — 집계 라벨로 배운 계수도 평균은 참값과 맞는다.
+              표준편차가 3.3배로 커질 뿐이다. 그래서 "보정하면 되지 않나"가 안 통한다.
+              흔들림은 데이터를 더 모아야만 줄어들고, 그 양이 11배다.</li>
+            <li><strong>노이즈는 작은 광고부터 지운다</strong> — 슬라이더를 40건에 두면 흔들림 폭이 70.7%이고,
+              4,000건에 두면 0.7%다. 같은 노이즈가 붙었는데 100배 갈린다.
+              작은 캠페인은 최적화가 느려지는 것이 아니라 최적화 자체가 멈춘다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "신호가 줄었으니 성능이 나빠졌다"는 문장으로는 아무것도 못 고칩니다.
+          먼저 정하는 것은 <strong>어느 층이 얼마나 상했나</strong>입니다. 층마다 대응과 비용이 다릅니다.
+        </p>
+        <ul>
+          <li><strong>1층(피처)은 계측부터:</strong> 피처군을 하나씩 빼며 오프라인 AUC를 다시 잽니다.
+            열린 RTB와 담장 안에서 폭이 다릅니다. 이 데모의 가데이터로는 -0.068과 -0.012로 5.7배 차이입니다.
+            AUC 하락폭이 매출 하락폭은 아닙니다 — 경쟁자도 같이 눈이 어두워지기 때문에 매출 영향은 실험으로만 잽니다.</li>
+          <li><strong>2층(라벨)은 학습 방법을 바꿉니다:</strong> 줄마다 정답을 맞추는 손실 대신
+            가방(칸) 합계를 맞추는 손실로 갑니다. 다만 SKAN 라벨로 모델 전체를 학습하지는 않습니다.
+            웹·자사 앱의 개인 라벨로 본체를 학습하고 집계는 캠페인 단위 보정에만 씁니다.</li>
+          <li><strong>빈칸을 0으로 채우지 않습니다:</strong> 전환 40건짜리 칸은 69.5%의 날에 지워집니다.
+            그 날들을 0으로 채우면 그 소재의 전환율이 3분의 1로 보입니다. 결측으로 다뤄야 합니다.</li>
+          <li><strong>3층(제어)은 예산을 옮깁니다:</strong> 빈도 상한과 중복 제거는 대체 신호로 못 메웁니다.
+            판정이 되거나 안 되거나 둘 중 하나입니다. 그래서 로그인 지면·자사 앱·광고주 1st-party 결합처럼
+            판정이 되는 구간으로 예산을 옮깁니다.</li>
+          <li><strong>포스트백 수를 설치 수로 세지 않습니다:</strong> 측정 창이 셋이라 같은 설치가 최대 세 번 옵니다.
+            창 1은 3~4일, 창 3은 최대 41일 뒤에 도착합니다. 창별로 나눠 세야 합니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=privacy-signal-loss" class="demo-next-card">
+              <span class="demo-next-label">이 데모의 짝 글</span>
+              <span class="demo-next-title">신호가 사라진 자리에서 모델은 무엇을 잃나</span>
+              <span class="demo-next-excerpt">피처·라벨·제어 세 층으로 나눠 손실을 재는 글. 이 화면의 값이 전부 거기서 왔습니다</span>
+            </a>
+            <a href="post.html?id=walled-garden" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">담장 안 생태계 vs 열린 RTB</span>
+              <span class="demo-next-excerpt">1st-party 식별자가 왜 안 사라지는지, 그리고 담장 안도 무엇을 잃는지</span>
+            </a>
+            <a href="demo-frequency-capping.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">Frequency Capping</span>
+              <span class="demo-next-excerpt">상한을 걸 수 있을 때 노출이 어떻게 재분배되는지 직접 돌려 봅니다</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/signal-loss-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

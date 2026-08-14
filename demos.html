@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -41,9 +41,9 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--accent-primary);
-      background: rgba(90, 107, 122, 0.1);
-      border: 1px solid rgba(90, 107, 122, 0.3);
-      border-radius: 20px;
+      background: color-mix(in srgb, var(--series-1) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--series-1) 30%, transparent);
+      border-radius: 0;
       margin-bottom: 1rem;
     }
 
@@ -79,7 +79,7 @@
       padding: 0.85rem 1rem;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 0;
       text-decoration: none;
       transition: all var(--transition-fast);
       height: 100%;
@@ -88,7 +88,7 @@
     .learning-path-step:hover {
       border-color: var(--accent-primary);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(90, 107, 122, 0.12);
+      box-shadow: none;
     }
 
     .step-num {
@@ -97,9 +97,9 @@
       justify-content: center;
       width: 32px;
       height: 32px;
-      border-radius: 50%;
+      border-radius: 0;
       background: var(--accent-gradient);
-      color: white;
+      color: var(--paper);
       font-weight: 700;
       font-size: 0.9rem;
       flex-shrink: 0;
@@ -156,7 +156,7 @@
     .demo-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      border-radius: 0;
       padding: 1.75rem;
       transition: all var(--transition-normal);
       display: flex;
@@ -191,47 +191,47 @@
       display: inline-block;
       padding: 0.25rem 0.75rem;
       background: var(--accent-gradient);
-      border-radius: 20px;
+      border-radius: 0;
       font-size: 0.72rem;
       font-weight: 600;
-      color: white;
+      color: var(--paper);
       letter-spacing: 0.03em;
     }
 
-    .demo-card-badge[data-badge="Auction"]      { background: #5a6b7a; }
+    .demo-card-badge[data-badge="Auction"]      { background: var(--series-1); }
     .demo-card-badge[data-badge="Bidding"]      { background: var(--state-good); }
-    .demo-card-badge[data-badge="Bandits"]      { background: #7d5e72; }
-    .demo-card-badge[data-badge="ML · Stats"]   { background: #a8783a; }
+    .demo-card-badge[data-badge="Bandits"]      { background: var(--series-4); }
+    .demo-card-badge[data-badge="ML · Stats"]   { background: var(--series-5); }
     .demo-card-badge[data-badge="Optimization"] { background: var(--state-bad); }
-    .demo-card-badge[data-badge="Measurement"]  { background: #4f6d6a; }
-    /* 인프라 배관 데모(요청 경로·Kafka). 흙톤 중 유일한 무채 계열이라 나머지 다섯과 안 겹친다. */
-    .demo-card-badge[data-badge="Infra"]        { background: #6e6257; }
+    .demo-card-badge[data-badge="Measurement"]  { background: var(--series-6); }
+    /* 인프라 배관 데모(요청 경로·Kafka). 3색조 중 회색 — 나머지 배지와 안 겹친다. */
+    .demo-card-badge[data-badge="Infra"]        { background: var(--grey); }
 
     .demo-card-level {
       display: inline-block;
       padding: 0.25rem 0.75rem;
-      border-radius: 20px;
+      border-radius: 0;
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.03em;
     }
 
     .level-beginner {
-      background: rgba(95, 122, 99, 0.15);
+      background: color-mix(in srgb, var(--series-6) 15%, transparent);
       color: var(--state-good);
-      border: 1px solid rgba(95, 122, 99, 0.4);
+      border: 1px solid color-mix(in srgb, var(--series-6) 40%, transparent);
     }
 
     .level-intermediate {
-      background: rgba(168, 120, 58, 0.15);
+      background: color-mix(in srgb, var(--series-5) 15%, transparent);
       color: var(--state-warn);
-      border: 1px solid rgba(168, 120, 58, 0.4);
+      border: 1px solid color-mix(in srgb, var(--series-5) 40%, transparent);
     }
 
     .level-advanced {
-      background: rgba(156, 90, 68, 0.15);
+      background: color-mix(in srgb, var(--series-2) 15%, transparent);
       color: var(--state-bad);
-      border: 1px solid rgba(156, 90, 68, 0.4);
+      border: 1px solid color-mix(in srgb, var(--series-2) 40%, transparent);
     }
 
     .demo-card h3 {
@@ -274,9 +274,9 @@
     .demo-card .btn-try {
       display: inline-block;
       padding: 0.6rem 1.4rem;
-      background: rgba(90, 107, 122, 0.1);
+      background: color-mix(in srgb, var(--series-1) 10%, transparent);
       border: 1px solid var(--accent-primary);
-      border-radius: 8px;
+      border-radius: 0;
       color: var(--accent-primary);
       font-weight: 600;
       font-size: 0.9rem;
@@ -292,12 +292,9 @@
       box-shadow: var(--shadow-glow);
     }
 
-    /* Highlight the Demos link in nav */
-    .btn-demo-active {
-      background: var(--accent-primary) !important;
-      color: var(--bg-primary) !important;
-      box-shadow: var(--shadow-glow);
-    }
+    /* 현재 위치 표시는 style.css 의 .nav-actions .btn-demo-active 하나가 맡는다
+       (액센트 글자색 + 2px 밑줄). 여기 있던 채움 블록 !important 를 걷어냈다 —
+       형제 링크는 텍스트인데 '데모'만 판이라 한 줄에 두 형식이 섞여 있었다. */
 
     /* --- Glossary Section --- */
     .glossary-section {
@@ -331,13 +328,13 @@
     .glossary-item {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 10px;
+      border-radius: 0;
       overflow: hidden;
       transition: border-color var(--transition-fast);
     }
 
     .glossary-item:hover {
-      border-color: rgba(90, 107, 122, 0.35);
+      border-color: color-mix(in srgb, var(--series-1) 35%, transparent);
     }
 
     .glossary-item summary {
@@ -445,12 +442,12 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 20개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 28개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
           <!-- 입문 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-good); border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-good); border-radius: 0; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
               <strong style="font-size:0.95rem; color:var(--state-good);">1단계 · 입문</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">선수지식 거의 없음</span>
@@ -466,10 +463,13 @@
               <a href="demo-request-path.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 요청 경로 시뮬레이터</a>
               <a href="demo-kafka-partition.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Kafka Partition 놀이터</a>
               <a href="demo-log-hops.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그 여섯 층 흐름</a>
+                          <a href="demo-log-to-model.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 모델까지</a>
+              <a href="demo-signal-loss.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 신호 소실 계단</a>
+              <a href="demo-api-contract.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ API 계약 실험실</a>
             </div>
           </div>
           <!-- 중급 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-warn); border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-warn); border-radius: 0; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
               <strong style="font-size:0.95rem; color:var(--state-warn);">2단계 · 중급</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">입문 4개 후</span>
@@ -481,10 +481,14 @@
               <a href="demo-compare-bandits.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ UCB vs TS 비교</a>
               <a href="demo-calibration.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Calibration Explorer</a>
               <a href="demo-attribution-window.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Attribution Window</a>
+                          <a href="demo-metrics-lab.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 오프라인 지표 실험실</a>
+              <a href="demo-uplift-quadrant.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 증분 4분면</a>
+              <a href="demo-feedback-loop.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 피드백 루프</a>
+              <a href="demo-pipeline-builder.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 파이프라인 조립기</a>
             </div>
           </div>
           <!-- 고급 -->
-          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-bad); border-radius:12px; padding:1.1rem 1.25rem;">
+          <div class="roadmap-tier" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-left:4px solid var(--state-bad); border-radius: 0; padding:1.1rem 1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
               <strong style="font-size:0.95rem; color:var(--state-bad);">3단계 · 고급</strong>
               <span style="font-size:0.7rem; color:var(--text-muted);">중급 후</span>
@@ -494,6 +498,7 @@
               <a href="demo-header-bidding.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Header Bidding</a>
               <a href="demo-pctr-impact.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ pCTR Impact</a>
               <a href="demo-portfolio.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Portfolio</a>
+                          <a href="demo-ips-weights.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 성향점수 가중</a>
             </div>
           </div>
         </div>
@@ -581,10 +586,108 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>전체 데모</h2>
-          <span class="count">21개 · 카테고리별</span>
+          <span class="count">28개 · 카테고리별</span>
         </div>
 
         <div class="demos-grid">
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>신호 소실 계단</h3>
+            <p>3자 쿠키·IDFA·유저 단위 전환 라벨·크로스 앱 빈도 제어를 하나씩 끄면서, 타겟 가능 유저·관측 가능한 전환·유효 표본·지표 신뢰구간 네 계기가 어떻게 떨어지는지 봅니다. 타겟팅보다 라벨이 먼저 부서집니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-signal-loss.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>오프라인 지표 실험실</h3>
+            <p>분별력·보정 기울기·요청당 광고 수·요청 간 난이도 편차를 움직이면 AUC·GAUC·LogLoss·NE·COPC 다섯 숫자가 동시에 바뀝니다. 요청 간 편차를 키우면 AUC만 오르고 GAUC는 그대로인 자리를 직접 만듭니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 12분</span>
+              <span class="demo-card-meta-item">확률·AUC 기초</span>
+            </div>
+            <a href="demo-metrics-lab.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>증분 4분면과 Qini 곡선</h3>
+            <p>유저 2,000명을 설득 가능·확실 구매·무관심·청개구리 넷으로 섞어 놓고, pCVR 순으로 고른 경우와 uplift 순으로 고른 경우의 Qini 곡선을 겹쳐 봅니다. 리포트 전환수가 큰 쪽이 증분은 작습니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 12분</span>
+              <span class="demo-card-meta-item">pCVR·실험 기초</span>
+            </div>
+            <a href="demo-uplift-quadrant.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>피드백 루프 시뮬레이터</h3>
+            <p>어제의 모델이 고른 광고만 노출되고, 노출된 것만 라벨이 붙습니다. 세대를 돌리면 진짜 1등이 초기 운 때문에 하위권에 갇히는 과정이 보입니다. 탐색 예산을 조금만 줘도 굳음이 풀립니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">밴딧 기초</span>
+            </div>
+            <a href="demo-feedback-loop.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
+              <span class="demo-card-level level-advanced">고급</span>
+            </div>
+            <h3>성향점수 가중 실험실</h3>
+            <p>옛 정책이 남긴 로그로 새 정책을 채점합니다. Replay·IPS·SNIPS·DR 네 추정치를 진짜 값과 나란히 놓고, 정책 거리를 키우면 신뢰구간이 폭발하고 절단을 걸면 점 추정이 밀리는 거래를 봅니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 15분</span>
+              <span class="demo-card-meta-item">확률·기댓값</span>
+            </div>
+            <a href="demo-ips-weights.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Infra">Infra</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>API 계약 실험실</h3>
+            <p>재시도·멱등키·타임아웃·인증 방식을 켜고 끄면서 요청 1,000건이 어떻게 되는지 봅니다. 멱등키를 끄고 재시도를 3으로 올리면 전환이 1,180건으로 18% 부풀고, 부르는 쪽을 사용자 기기로 두면 시크릿 노출 계기가 빨간불이 됩니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-api-contract.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Infra">Infra</span>
+              <span class="demo-card-level level-intermediate">중급</span>
+            </div>
+            <h3>파이프라인 조립기</h3>
+            <p>수집·버퍼·처리·유통·저장 다섯 층에 부품을 놓아 보면 대시보드 지연·학습 준비 시각·버티는 시간·관리할 연결 수가 같이 바뀝니다. 유통 층을 끄면 연결이 11개에서 30개로, 버퍼를 빼면 버티는 시간이 168시간에서 10.4분으로 떨어집니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 10분</span>
+              <span class="demo-card-meta-item">Kafka 기초</span>
+            </div>
+            <a href="demo-pipeline-builder.html" class="btn-try">체험하기</a>
+          </div>
 
           <!-- 요청 경로 시뮬레이터 (신규) -->
           <div class="demo-card">

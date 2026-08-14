@@ -1,13 +1,30 @@
 name: Validate posts
 
 # 글 메타데이터가 표준 분류(data/taxonomy.json)를 어기면 빌드 실패.
+# 디자인 규칙(각진 모서리·무그림자·팔레트·serif 없음)이 깨져도 실패.
 # 읽기전용 — 커밋하지 않는다(쓰는 잡은 sitemap.yml).
 on:
   push:
     branches: [main]
-    paths: ['js/posts.js', 'posts/**', 'data/taxonomy.json', 'scripts/validate-posts.js']
+    paths:
+      - 'js/posts.js'
+      - 'posts/**'
+      - 'data/taxonomy.json'
+      - 'scripts/validate-posts.js'
+      - 'scripts/check-design.js'
+      - 'scripts/test-long-sentences.js'
+      - 'css/style.css'
+      - '*.html'
   pull_request:
-    paths: ['js/posts.js', 'posts/**', 'data/taxonomy.json', 'scripts/validate-posts.js']
+    paths:
+      - 'js/posts.js'
+      - 'posts/**'
+      - 'data/taxonomy.json'
+      - 'scripts/validate-posts.js'
+      - 'scripts/check-design.js'
+      - 'scripts/test-long-sentences.js'
+      - 'css/style.css'
+      - '*.html'
   workflow_dispatch:
 
 permissions:
@@ -21,4 +38,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node scripts/validate-posts.js
+      - name: 글 메타 정합성
+        run: node scripts/validate-posts.js
+      - name: 장문 검사기 회귀 시험
+        run: node scripts/test-long-sentences.js
+      - name: 디자인 정합 (각진·무그림자·팔레트·serif 없음·장식글자 없음)
+        run: node scripts/check-design.js

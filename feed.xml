@@ -5,8 +5,78 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-07T00:00:00Z</updated>
+  <updated>2026-08-14T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>API 두 종류와 그 사이의 규약 — 실무 첫 주에 밟는 것들</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>메신저에 &quot;API 붙여 주세요&quot; 한 줄이 온다. 먼저 물어야 할 것은 언어가 아니라 부르는 쪽이다 — 앱이 초당 2,639건을 보내는 수집 API 와 12ms 안에 답해야 하는 입찰 API 는 비밀키·인증·버전·재시도가 통째로 다르다. 첫 주에 가장 비싼 것은 같은 요청을 두 번 세지 않겠다는 약속, 멱등성이다. 요청마다 고유 값을 붙이지 않고 재시도를 3회 걸면 전환 1,000건이 1,180건으로 부풀고, 전환 한 건당 광고비가 5,000원에서 4,237원으로 낮게 보인다. 재시도 시각을 무작위로 흩으면 500건 중 성공이 180건에서 472건으로 늘어난다 — 상태코드·목록 넘기기·필드 호환·인증 다섯 가지와 첫 주에 밟는 지뢰 여덟 개를 실제 요청과 응답으로 본다.</summary>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>Kafka 앞뒤를 통째로 — 데이터 파이프라인을 설계하는 순서</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>파이프라인 설계는 수집기 고르기에서 시작하지 않는다. 대시보드 2초·정산 33시간처럼 소비자마다 다른 마감을 먼저 적고, 거기서 Kafka 도달까지 쓰는 1,112 ms 를 빼면 남는 예산이 부품을 정한다. 여섯 층(수집·버퍼·처리·유통·저장·조회) 중 가장 낯선 유통 층을 두면 처리 잡 5개와 목적지 6개 사이 연결이 30개에서 11개로 줄고, 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없다. 원본 하루 21.9 GB 를 왜 남기는지, 필드 하나를 지운 배포가 사흘 뒤 학습을 조용히 나빠지게 하는 경로까지 따라간다.</summary>
+    <category term="ML Infrastructure"/>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>AUC는 올랐는데 매출은 그대로 — 오프라인 점수를 읽는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>오프라인 순위 점수(AUC)가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 신뢰구간 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 요청 6건·노출 30건을 한 통에 섞으면 0.7778 이지만, 짝을 같은 요청 안으로 제한한 요청 안 순위 점수(GAUC)는 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점(LogLoss)만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나눈 정규화 엔트로피(NE)는 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되고 예측 대비 실제(COPC)는 1.018 에서 0.342 로 떨어집니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>안 띄운 광고의 성적을 어떻게 아나 — 지난주 로그로 새 모델 채점하기</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 향상이 진짜 +22.5%가 아니라 +56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 0.8%p 움직입니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림이 절반이 되는 대신 값이 24% 깎여, 자기정규화를 같이 걸어야 그 몫이 대부분 돌아옵니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>어제 띄운 광고만 학습 데이터가 된다 — 모델이 스스로 만드는 편향</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>광고 8개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 순위를 정해 버립니다. 진짜 CTR 2.60%인 광고가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 노출을 받는 광고 넷은 사흘째에 고정되고 그 광고의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 광고가 102,500건을 가져가고, 누적 클릭은 17,350건으로 최선인 18,831건보다 7.9% 낮습니다. 되살리는 처방 넷을 같은 판에 걸어 대가를 재고, 한 번 굳은 뒤에는 왜 되돌리기가 어려운지를 숫자로 보입니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>광고를 안 봤어도 살 사람 — 광고가 진짜 늘린 전환만 세는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=uplift-incrementality"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=uplift-incrementality</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>리포트에는 전환 9,000건, 전환당 비용 ₩1,400이 찍혔는데 매출은 안 늘었다. 광고를 일부러 안 보낸 대조군을 같이 돌려 보면, 그 9,000건 중 광고가 만든 것은 1,100건뿐이다. 같은 105,000명 예산을 광고가 잘 먹는 사람 순서로 다시 고르면 리포트 전환은 5,500건으로 39% 줄지만, 실제로 늘어난 전환은 1,350건으로 22.7% 는다. 사람은 설득 가능 6,400명·확실 구매 17,600명·청개구리 2,400명·무관심 773,600명 넷으로 갈리고, 광고비가 값을 하는 곳은 0.8%인 첫 칸뿐이다. 증분 모델을 만드는 세 가지 방법을 4만 명 가데이터로 돌려 참값과의 상관 +0.105 / +0.905 / +0.911을 비교하고, 정확도가 가장 높은 점수가 오히려 나쁜 선택인 이유까지 짚는다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>쿠키와 광고 ID가 사라지면 무엇부터 망가지나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=privacy-signal-loss"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=privacy-signal-loss</id>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>같은 캠페인 하루치인데 웹 지면 전환 칸에는 3,120이 적히고 iOS 앱 지면 칸에는 940이 적힌다. 940건 중 415건은 금액 칸까지 비었고, 그마저 어제 것이 아니라 나흘 전 설치분이다. 타겟팅 피처가 빠지면 순위 점수가 열린 RTB에서 0.068 내려가고 담장 안은 0.012에 그친다. 사람마다 붙던 정답이 칸마다의 합계로 바뀌면 계수 흔들림이 3.3배가 되어 같은 정밀도까지 데이터가 11배 필요해진다. 노이즈는 절대량으로 붙어 전환 40건짜리는 상대 오차 70.7%로 묻히고, 빈도 상한은 아예 못 걸어 노출의 47.6%가 이미 다섯 번 넘게 본 사람에게 간다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>로그 수집기 안을 열어 본다 — 클릭 한 건이 Kafka를 지나기까지 9홉</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=log-hops-to-kafka"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=log-hops-to-kafka</id>
+    <updated>2026-08-11T00:00:00Z</updated>
+    <summary>광고를 탭한 그 순간부터 학습 데이터가 되기까지, 클릭 한 건은 다섯 군데에 머물고 그때마다 모양이 바뀐다. 수집 서버 안에서는 타입 없는 텍스트 한 줄(169 B)이고, 변환기를 지나면 필드가 8개에서 17개로 늘어난 JSON(308 B)이 되며, Kafka 안에서는 배치로 묶여 압축된 36.6 B다. 파일을 한 번 거치는 설계는 Kafka가 멈춰도 61.7시간을 버티고 직행은 10.4분을 버틴다 — 356배 차이가 640 ms 지연의 값이다. 같은 줄을 대시보드는 2초 뒤에, 학습은 10.2시간 뒤에 읽는다. 그래서 7일을 남긴다.</summary>
+    <category term="ML Infrastructure"/>
+    <category term="Software Engineering"/>
+  </entry>
   <entry>
     <title>Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kafka-log-pipeline"/>
@@ -105,71 +175,5 @@
     <updated>2026-06-21T00:00:00Z</updated>
     <summary>경매에서 이겼는데 왜 2등이 부른 값만 낼까. DSP 5곳의 가상 입찰표를 놓고 계산해 보면, 2등 가격 경매에서는 정직하게 부르는 쪽이 과대입찰(₩1,500을 불러 −₩400 손해)이나 과소입찰(놓친 이익 ₩250)보다 기대 이익이 항상 앞선다. 그런데 같은 데이터를 1등 가격으로 돌리면 정직 입찰의 이익이 정확히 0이 되고, 20% 낮춰 부르는 Bid Shading이 오히려 이긴다. 헤더비딩으로 ‘2등’이라는 개념 자체가 무의미해지며 2017년 무렵부터 주요 거래소가, 2019년 무렵엔 Google Ad Manager까지 1등 가격으로 갈아탄 배경까지 정리한다.</summary>
     <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>DSP·SSP·Ad Exchange: 각각 뭐 하는 곳인가 — 실제 예시로</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=dsp-ssp-exchange</id>
-    <updated>2026-06-21T00:00:00Z</updated>
-    <summary>광고주와 사용자 사이엔 세 명의 중개인이 있다 — 파는 쪽 대리인 SSP, 사는 쪽 대리인 DSP, 둘이 만나는 경매장 Ad Exchange. 노출 1건이 뜨기까지 데이터가 오가는 0.1초를 8단계 타임라인으로 재구성하고, 광고주가 낸 ₩1,000 중 매체에 도착하는 몫(예시 계산 ₩544, take rate 45.6%)을 파이썬으로 직접 계산해 본다. DV360·The Trade Desk·Magnite·네이버 GFA·카카오모먼트 같은 실제 회사 이름과, 열린 RTB·닫힌 생태계에서 이 구조가 어떻게 달라지는지도 함께 짚는다.</summary>
-    <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>카카오 광고 상품 지도: 비즈보드·모먼트·키워드광고는 우리가 배운 무엇인가</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-products</id>
-    <updated>2026-06-13T00:00:00Z</updated>
-    <summary>카카오톡 채팅 목록 위 비즈보드 배너 한 칸은, 우리가 배운 eCPM 랭킹이 실제로 돌아가는 현장이다. 가상의 입찰 후보 5개로 낙찰자를 뽑아 보고, pCTR 예측이 단 10%만 틀려도 낙찰자가 통째로 바뀌는 걸 파이썬으로 확인한다. 비즈보드·카카오모먼트·키워드광고·톡채널 메시지를 상품 지도로 엮고, 같은 자리가 열린 RTB였다면 무엇이 달랐을지, 예약(CPT) 물량과 경매 물량은 어떻게 공존하는지까지 짚는 카카오 광고 3부작의 1편.</summary>
-    <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>카카오는 무엇으로 광고를 고르나: pCTR·톡 데이터·맞춤/유사타겟</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-prediction-targeting</id>
-    <updated>2026-06-13T00:00:00Z</updated>
-    <summary>카카오는 로그인 데이터로 pCTR을 어떻게 다르게 맞히나? 익명 트래픽과 로그인 기반 피처가 붙었을 때 pCTR이 어떻게 갈리는지, 데모·관심사·맞춤·유사타겟의 도달-전환율 트레이드오프를 가상 데이터로 뜯어본다. CPA만 보면 맞춤타겟이 1등이지만 도달이 8만 명뿐이라 예산 2,000만 원 중 96만 원밖에 못 쓴다 — ‘가장 정확한 타겟이 최선은 아닌’ 이유와 고정 예산의 최적 배분을 파이썬으로 계산한다. 유사타겟이 씨앗에서 확장되는 원리, 예측이 좋아도 보정이 없으면 낙찰자가 바뀌는 이유까지 잇는 카카오 광고 3부작의 2편.</summary>
-    <category term="Targeting &amp; Audience"/>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>카카오에서 캠페인이 굴러가는 법: 자동입찰·예산 페이싱·성과 측정</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kakao-ads-bidding-measurement</id>
-    <updated>2026-06-13T00:00:00Z</updated>
-    <summary>광고를 골랐으면 얼마를 부를지, 하루 예산을 언제 쓸지, 그리고 그 성과가 진짜인지 정해야 한다. 가상의 시간대별 전환율 데이터로 예산 페이싱 세 전략(아침 몰빵·균등·성과 가중)을 비교하면 같은 100만 원으로 22건에서 37.8건까지 벌어진다. 목표 CPA를 3,000원까지 조이면 승률 3.7%, 예산의 1.5%만 쓰고 마는 것도 파이썬 시뮬레이션으로 확인한다. 자동입찰이 결국 목표(CPA·ROAS)를 받아 매 요청의 입찰가를 정하는 일이라는 것, 그리고 픽셀·SDK가 잡은 전환 수는 어트리뷰션이지 증분이 아니라는 것까지 — 카카오 광고 3부작을 완결하는 마지막 편.</summary>
-    <category term="Bidding &amp; Auction"/>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>소프트웨어 아키텍처 패턴 6가지 쉽게 이해하기: 이벤트 기반·계층형·모놀리식·마이크로서비스·MVC·마스터-슬레이브</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=software-architecture-patterns</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>집을 짓는 방식이 여러 가지이듯, 소프트웨어도 &apos;어떻게 짜맞출지&apos;의 정형화된 설계도가 있다. 컴포넌트가 &apos;사건&apos;으로 대화하는 이벤트 기반, 책임을 층층이 쌓는 계층형, 한 덩어리로 만드는 모놀리식, 잘게 쪼개는 마이크로서비스, 화면·로직·데이터를 나누는 MVC, 읽기/쓰기를 분산하는 마스터-슬레이브까지 — 6가지 대표 패턴을 일상 비유와 도식으로 풀고, 언제 무엇을 고를지까지 정리한다.</summary>
-    <category term="Software Engineering"/>
-  </entry>
-  <entry>
-    <title>쿠버네티스 네트워킹 쉽게 이해하기: Pods → Services → Ingress, 트래픽은 어떻게 흐르는가</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=kubernetes-networking"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=kubernetes-networking</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>사용자의 요청 한 건이 쿠버네티스 클러스터 안에서 어떻게 앱까지 도착할까? 앱이 도는 &apos;집&apos; Pod, 그 집들을 안정적으로 이어주는 &apos;길&apos; Service, 도시 밖에서 들어오는 입구 &apos;성문&apos; Ingress — 이 세 가지가 어떻게 협력하는지 비유와 트래픽 흐름 도식으로 풀어낸다. Pod는 왜 자꾸 바뀌고(ephemeral), 그래서 왜 안정적 주소(Service)와 입구(Ingress)가 필요한지까지.</summary>
-    <category term="Software Engineering"/>
-  </entry>
-  <entry>
-    <title>인과추론 입문: 상관과 인과는 왜 다른가 — 반사실, 교란변수, 그리고 &apos;안 일어난 세계&apos;의 문제</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=causal-inference-101</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>광고를 본 사람의 구매율(17.0%)이 안 본 사람(4.4%)보다 훨씬 높다 — 그런데 이 naive 비교, 참값보다 6~7배나 부풀려진 착시다. 유저를 ‘원래 구매 의향’ 층으로 나눠 보면 naive 효과는 +12.7%p지만, 층별 보정과 무작위 배정(RCT) 시뮬레이션은 둘 다 +2%p 근처로 수렴한다. 같은 사람의 ‘광고 안 본 세계’를 절대 볼 수 없다는 반사실의 근본 문제, 아이스크림-익사부터 계절성·프로모션·브랜드 검색량까지 교란변수의 실제 얼굴, 그리고 이 빈칸을 채우는 두 갈래 길(랜덤 실험 vs 준실험)까지 파이썬 시뮬레이션과 표로 풀어내는 인과추론 트랙의 출발점.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>랜덤 실험(RCT): 동전 던지기 하나가 어떻게 &apos;진짜 효과&apos;를 증명하는가</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=rct-randomized-experiment</id>
-    <updated>2026-06-07T00:00:00Z</updated>
-    <summary>약을 먹은 사람이 빨리 나았다 — 약 덕분인가, 원래 건강해서인가? 무작위 배정은 동전 던지기 하나로 이 질문에 답한다. 배정을 특성과 무관하게 만들면, 아는 특성도 모르는 특성도 두 집단에서 평균적으로 같아진다. 기저 전환율 2.0%에서 리프트 +5%·+10%·+20%를 잡으려면 각각 315,207명·80,680명·21,106명이 필요하고, 표본을 반으로 줄이면 검출력이 80.5%에서 50.8%로 급락한다는 걸 5,000회 반복 실험으로 실측한다. 아무 차이 없는 A/A 테스트에서도 5.1%는 ‘유의하다’고 나온다.</summary>
-    <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

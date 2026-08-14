@@ -1320,7 +1320,7 @@
     svg.classList.add('is-flowing');
     flowBar.hidden = false;
     buildStepList(flow);
-    flowPanelTitle.textContent = `▶ ${flow.label} — 단계별 설명`;
+    flowPanelTitle.textContent = `▸ ${flow.label} — 단계별 설명`;
     summaryEl.hidden = true;
     nodePanel.hidden = true;
     returnStrip.hidden = true;
@@ -1550,7 +1550,7 @@
   }
 
   function updatePlayBtn() {
-    playBtn.textContent = fs.ended ? '▶ 다시 보기' : (fs.playing ? '⏸ 일시정지' : '▶ 재생');
+    playBtn.textContent = fs.ended ? '▸ 다시 보기' : (fs.playing ? '⏸ 일시정지' : '▸ 재생');
   }
 
   function exitFlow() {

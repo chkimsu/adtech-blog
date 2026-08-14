@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 /**
  * Bid Shading Interactive Demo
  * pCTR 모델러 관점에서 bid shading 개념을 직관적으로 이해하기 위한 시뮬레이션.
@@ -201,8 +201,8 @@ function createDistChart() {
                 {   // 0: Win Zone
                     label: 'Win Zone (관측 가능: 낙찰한 경매)',
                     data: [],
-                    backgroundColor: 'rgba(95, 122, 99, 0.6)',
-                    borderColor: 'rgba(95, 122, 99, 1)',
+                    backgroundColor: 'rgba(32,64,107, 0.6)',
+                    borderColor: 'rgba(32,64,107, 1)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -211,8 +211,8 @@ function createDistChart() {
                 {   // 1: Lose Zone
                     label: 'Lose Zone (내 입찰가 초과)',
                     data: [],
-                    backgroundColor: 'rgba(156, 90, 68, 0.4)',
-                    borderColor: 'rgba(156, 90, 68, 0.8)',
+                    backgroundColor: 'rgba(155,58,33, 0.4)',
+                    borderColor: 'rgba(155,58,33, 0.8)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -244,7 +244,7 @@ function createDistChart() {
                     label: 'Shaded Bid (실제 입찰가)',
                     data: [],
                     type: 'line',
-                    borderColor: '#5a6b7a',
+                    borderColor: cssVar('--series-1'),
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: false,
@@ -428,24 +428,24 @@ function createCompareChart() {
                 {
                     label: '1st Price (No Shade)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(156, 90, 68, 0.7)',
-                    borderColor: 'rgba(156, 90, 68, 1)',
+                    backgroundColor: 'rgba(155,58,33, 0.7)',
+                    borderColor: 'rgba(155,58,33, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
                 {
                     label: '1st Price (Shaded)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(90, 107, 122, 0.7)',
-                    borderColor: 'rgba(90, 107, 122, 1)',
+                    backgroundColor: 'rgba(32,64,107, 0.7)',
+                    borderColor: 'rgba(32,64,107, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
                 {
                     label: '2nd Price (Truthful)',
                     data: [0, 0, 0, 0],
-                    backgroundColor: 'rgba(154, 125, 56, 0.7)',
-                    borderColor: 'rgba(154, 125, 56, 1)',
+                    backgroundColor: 'rgba(103,105,108, 0.7)',
+                    borderColor: 'rgba(103,105,108, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 }
@@ -522,7 +522,7 @@ function createSweepChart() {
                     label: 'E[Profit] / Auction ($)',
                     data: [],
                     borderColor: cssVar('--state-good'),
-                    backgroundColor: 'rgba(95, 122, 99, 0.15)',
+                    backgroundColor: 'rgba(32,64,107, 0.15)',
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: true,
@@ -532,7 +532,7 @@ function createSweepChart() {
                 {
                     label: 'Win Rate (%)',
                     data: [],
-                    borderColor: 'rgba(154, 125, 56, 0.8)',
+                    borderColor: 'rgba(103,105,108, 0.8)',
                     borderWidth: 2,
                     borderDash: [6, 3],
                     pointRadius: 0,
@@ -591,13 +591,13 @@ function createSweepChart() {
                 ctx.save();
                 ctx.beginPath();
                 ctx.setLineDash([6, 4]);
-                ctx.strokeStyle = 'rgba(90, 107, 122, 0.7)';
+                ctx.strokeStyle = 'rgba(32,64,107, 0.7)';
                 ctx.lineWidth = 1.5;
                 ctx.moveTo(xPx, yScale.top);
                 ctx.lineTo(xPx, yScale.bottom);
                 ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.fillStyle = 'rgba(90, 107, 122, 0.9)';
+                ctx.fillStyle = 'rgba(32,64,107, 0.9)';
                 ctx.font = '11px Fira Code, monospace';
                 ctx.textAlign = 'center';
                 ctx.fillText(val + '%', xPx, yScale.top - 6);

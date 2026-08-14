@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -51,7 +51,7 @@
           위는 모델이 사는 <strong>두뇌 층</strong>(피처→학습→서빙→예측→보정→감시),
           아래는 돈과 소재가 흐르는 <strong>거래 층</strong>(사용자→매체→거래소→DSP→광고주).
           두 층은 <strong>DSP와 pCTR/pCVR을 잇는 세로선</strong> 하나로 연결됩니다.</p>
-        <p class="eco-hero-guide">아래에서 <strong>① 흐름을 고르고</strong> ▶ 재생하면, 지도 위 라벨 패킷이 움직이며
+        <p class="eco-hero-guide">아래에서 <strong>① 흐름을 고르고</strong> ▸ 재생하면, 지도 위 라벨 패킷이 움직이며
           각 단계의 <strong>설명과 예시</strong>가 옆 패널에 차곡차곡 쌓입니다. 노드를 클릭하면 정의·데모·포스트도 열려요.</p>
 
         <!-- 보기 방식 토글 -->
@@ -78,27 +78,27 @@
     <div class="eco-controls">
       <div class="eco-flow-chips" role="group" aria-label="흐름 선택 — 카드를 누르면 단계별 패킷 애니메이션이 재생됩니다. 재생 중 같은 카드를 다시 누르면 정지">
         <button type="button" class="eco-flow-chip is-featured" data-flow="modeler">
-          <span class="eco-flow-chip-label">▶ 모델러의 눈으로 보는 0.1초</span>
+          <span class="eco-flow-chip-label">▸ 모델러의 눈으로 보는 0.1초</span>
           <span class="eco-flow-chip-desc">입찰 요청 1건이 두뇌를 거쳐 입찰가가 되고, 로그로 돌아와 다음 모델이 되기까지</span>
         </button>
         <button type="button" class="eco-flow-chip" data-flow="rtb">
-          <span class="eco-flow-chip-label">▶ 100ms RTB</span>
+          <span class="eco-flow-chip-label">▸ 100ms RTB</span>
           <span class="eco-flow-chip-desc">광고가 0.1초 안에 거래되는 전체 과정</span>
         </button>
         <button type="button" class="eco-flow-chip" data-flow="modeling">
-          <span class="eco-flow-chip-label">▶ 모델 학습·서빙</span>
+          <span class="eco-flow-chip-label">▸ 모델 학습·서빙</span>
           <span class="eco-flow-chip-desc">어제 클릭 로그가 오늘 새 모델이 되기까지</span>
         </button>
         <button type="button" class="eco-flow-chip" data-flow="attribution">
-          <span class="eco-flow-chip-label">▶ 어트리뷰션</span>
+          <span class="eco-flow-chip-label">▸ 어트리뷰션</span>
           <span class="eco-flow-chip-desc">전환이 일어났을 때 누구의 공으로 인정되나</span>
         </button>
         <button type="button" class="eco-flow-chip" data-flow="hb">
-          <span class="eco-flow-chip-label">▶ Header Bidding</span>
+          <span class="eco-flow-chip-label">▸ Header Bidding</span>
           <span class="eco-flow-chip-desc">병렬 호출로 매체 수익 +10~30% 끌어올리기</span>
         </button>
         <button type="button" class="eco-flow-chip" data-flow="targeting">
-          <span class="eco-flow-chip-label">▶ 데이터·타겟팅</span>
+          <span class="eco-flow-chip-label">▸ 데이터·타겟팅</span>
           <span class="eco-flow-chip-desc">동의받은 사용자 데이터가 개인화 광고로 가는 길</span>
         </button>
       </div>
@@ -128,11 +128,11 @@
     <!-- How to read this map -->
     <div class="eco-howto-wrap">
       <details class="eco-howto" open>
-        <summary>📖 이 지도 읽는 법 (3줄)</summary>
+        <summary> 이 지도 읽는 법 (3줄)</summary>
         <ul>
           <li><strong>색 = 역할.</strong> 보라(사는 쪽)·금색(파는 쪽)·회청(거래소)·적갈(ML 모델)·녹색(측정)·황토(사용자) — 아래 범례와 같습니다.</li>
           <li><strong>화살표 = 이동 방향.</strong> 요청·돈·광고 소재·데이터가 화살표 방향으로 흘러갑니다.</li>
-          <li><strong>▶ 버튼 = 시나리오 재생.</strong> 알약 모양 <strong>패킷</strong>이 "지금 무엇이 이동 중인지"를 라벨로 보여주고,
+          <li><strong>▸ 버튼 = 시나리오 재생.</strong> 알약 모양 <strong>패킷</strong>이 "지금 무엇이 이동 중인지"를 라벨로 보여주고,
             옆 패널에 단계별 설명이 쌓입니다. 일시정지·이전·다음 버튼으로 천천히 봐도 됩니다.</li>
         </ul>
       </details>
@@ -161,7 +161,7 @@
 
       <aside class="eco-side-panel" id="eco-side-panel">
         <div id="eco-flow-return" class="eco-flow-return" hidden>
-          <button type="button" id="eco-flow-return-btn">◀ 흐름 패널로 돌아가기</button>
+          <button type="button" id="eco-flow-return-btn">← 흐름 패널로 돌아가기</button>
         </div>
         <div id="eco-node-panel">
           <div class="eco-side-empty">
@@ -172,7 +172,7 @@
         <div id="eco-flow-panel" hidden>
           <div class="eco-flow-panel-head">
             <span class="eco-flow-panel-title" id="eco-flow-panel-title"></span>
-            <button type="button" class="eco-flow-exit" id="eco-flow-exit" aria-label="흐름 닫기" title="흐름 닫기">✕</button>
+            <button type="button" class="eco-flow-exit" id="eco-flow-exit" aria-label="흐름 닫기" title="흐름 닫기">×</button>
           </div>
           <ol class="eco-steps" id="eco-steps"></ol>
           <div class="eco-flow-summary" id="eco-flow-summary" hidden></div>

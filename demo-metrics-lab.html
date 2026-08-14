@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="AUC · GAUC · LogLoss · NE · COPC 다섯 지표를 같은 표본 하나에서 동시에 재 보는 데모. 요청 간 난이도 편차를 키우면 전체 AUC 는 오르는데 GAUC 는 제자리다. 예측에 배수를 곱하면 순위 지표는 그대로인데 NE 와 COPC 만 무너진다.">
+  <title>지표 실험실 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===================================================================
+       지표 실험실 — demo-metrics-lab.html
+
+       색 값은 이 파일에도 js/metrics-lab-demo.js 에도 hex 가 하나도 없다.
+       전부 var(--...) 다. 그림은 canvas 가 아니라 인라인 SVG 라서
+       var() 가 그대로 먹고 테마가 바뀌면 색이 알아서 따라온다.
+
+       모서리 0 · 그림자 none · serif 없음 · 장식 글자 없음.
+       .mx-controls · .mx-metrics · .mx-panels 는 <main> 의 직계 자식이다 —
+       임베드(?embed=1)에서 이 셋만 남기려면 그래야 한다.
+       =================================================================== */
+
+    .mx-wide,
+    .mx-controls,
+    .mx-metrics,
+    .mx-panels {
+      max-width: 1600px;
+      margin: 0 auto 1.25rem;
+      padding-left: 46px;
+      padding-right: 46px;
+    }
+
+    @media (max-width: 760px) {
+      .mx-wide,
+      .mx-controls,
+      .mx-metrics,
+      .mx-panels { padding-left: 1rem; padding-right: 1rem; }
+    }
+
+    /* 읽는 문단은 좁게 — 1600px 짜리 줄은 눈이 못 따라간다 */
+    .mx-read { max-width: 900px; }
+
+    .mx-hero { text-align: center; padding: 2.2rem 1rem 1.1rem; }
+    .mx-hero h1 { font-size: 40px; line-height: 1.2; margin-bottom: 0.6rem; color: var(--accent-primary); }
+    .mx-hero p {
+      color: var(--ink2); max-width: 900px; margin: 0 auto;
+      font-size: 16px; line-height: 1.7;
+    }
+    @media (max-width: 700px) { .mx-hero h1 { font-size: 28px; } }
+
+    .mx-wide > * + * { margin-top: 1.25rem; }
+
+    .mx-brief {
+      padding: 1.15rem 1.4rem;
+      background: var(--plate); border: 1px dashed var(--rule);
+      border-radius: 0; color: var(--ink2); font-size: 15px; line-height: 1.75;
+    }
+    .mx-brief-title {
+      display: block; font-size: 12.5px; color: var(--ink3);
+      letter-spacing: 0.02em; margin-bottom: 0.45rem;
+    }
+    .mx-brief ul { list-style: none; margin: 0; padding: 0; }
+    .mx-brief li + li { margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px solid var(--rule2); }
+    .mx-brief b { color: var(--ink); }
+    .mx-brief code {
+      font-family: var(--font-mono); font-size: 0.92em;
+      background: var(--grey-bg); padding: 0.05rem 0.3rem; border-radius: 0;
+    }
+
+    /* ---------- 컨트롤 ----------
+       .mx-controls 자체는 블록이다. demo-edu.js 가 이 요소의 첫 자식 자리에
+       해설 패널을 끼우기 때문에, 여기가 grid 면 패널이 슬라이더 사이에 낀다. */
+    .mx-controls {
+      padding-top: 1.2rem; padding-bottom: 1.2rem;
+      background: var(--plate); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .mx-controls-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem 2rem;
+    }
+    @media (max-width: 860px) { .mx-controls-grid { grid-template-columns: 1fr; } }
+
+    .mx-row { display: grid; grid-template-columns: minmax(0, 15rem) 1fr 4.6rem; align-items: center; gap: 0.75rem; }
+    @media (max-width: 520px) { .mx-row { grid-template-columns: 1fr; gap: 0.25rem; } }
+    .mx-row-label { font-size: 15px; color: var(--ink); font-weight: 600; }
+    .mx-row-label small {
+      display: block; font-size: 12.5px; color: var(--ink3);
+      font-weight: 400; margin-top: 0.12rem; line-height: 1.45;
+    }
+    .mx-slider {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+      background: var(--grey-bg); border: 1px solid var(--rule); border-radius: 0; outline: none;
+    }
+    .mx-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
+    }
+    .mx-slider::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 0; cursor: pointer; border: none;
+    }
+    .mx-slider:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+    .mx-row-v {
+      text-align: right; font-family: var(--font-mono); font-size: 15px;
+      font-weight: 700; color: var(--accent-primary);
+    }
+
+    .mx-presets {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--rule);
+    }
+    .mx-presets-label { font-size: 12.5px; color: var(--ink3); align-self: center; margin-right: 0.2rem; }
+    .mx-btn {
+      font-family: var(--font-sans); font-size: 13.5px; font-weight: 600;
+      padding: 0.4rem 0.9rem; cursor: pointer; border-radius: 0;
+      background: var(--paper); color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .mx-btn.is-quiet { color: var(--ink2); border-color: var(--rule); font-weight: 500; }
+    .mx-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .mx-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+    /* ---------- 지표 다섯 칸 ---------- */
+    /* 글 본문 안 iframe 은 1,020px 쯤이다. 거기서도 다섯 칸이 한 줄에 남아야
+       임베드 높이가 안 늘어난다 — 그래서 첫 접힘을 940px 로 잡는다. */
+    .mx-metrics-grid {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.7rem;
+    }
+    @media (max-width: 940px) { .mx-metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 600px) { .mx-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 380px) { .mx-metrics-grid { grid-template-columns: 1fr; } }
+
+    .mx-metric {
+      padding: 0.9rem 1rem; background: var(--paper);
+      border: 1px solid var(--rule); border-radius: 0;
+    }
+    .mx-metric-head { display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.3rem; }
+    .mx-metric-label { font-size: 12.5px; color: var(--ink3); letter-spacing: 0.02em; }
+    .mx-gate {
+      margin-left: auto; font-size: 11.5px; font-weight: 700; white-space: nowrap;
+      padding: 0.05rem 0.4rem; border-radius: 0; border: 1px solid var(--rule);
+      color: var(--ink2); background: var(--grey-bg);
+    }
+    .mx-gate.is-good { color: var(--state-good); border-color: var(--navy-bd); background: var(--navy-bg); }
+    .mx-gate.is-bad { color: var(--state-bad); border-color: var(--oxide-bd); background: var(--oxide-bg); }
+    .mx-gate.is-note { color: var(--ink2); border-color: var(--grey-bd); background: var(--grey-bg); }
+    .mx-metric-value {
+      font-family: var(--font-mono); font-size: 25px; font-weight: 700;
+      color: var(--ink); line-height: 1.25;
+    }
+    .mx-metric-value.is-bad { color: var(--state-bad); }
+    .mx-metric-sub { font-size: 12.5px; color: var(--ink3); margin-top: 0.25rem; line-height: 1.5; }
+    .mx-metric-sub b { color: var(--ink2); font-family: var(--font-mono); }
+
+    .mx-shape {
+      margin-top: 0.7rem; padding: 0.55rem 0.9rem; font-size: 13.5px; line-height: 1.6;
+      color: var(--ink2); background: var(--grey-bg); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .mx-shape b { color: var(--ink); font-family: var(--font-mono); }
+
+    .mx-verdict {
+      margin-top: 0.55rem; padding: 0.7rem 1rem; font-size: 15px; line-height: 1.65;
+      color: var(--ink2); background: var(--plate);
+      border: 1px solid var(--rule); border-left: 3px solid var(--accent-primary); border-radius: 0;
+    }
+    .mx-verdict b { color: var(--ink); font-family: var(--font-mono); }
+
+    /* ---------- 두 판: ROC 와 요청 카드 ---------- */
+    /* 두 판은 높이를 안 맞춘다. 자리 수를 바꾸면 오른쪽 칸의 줄 수가 달라지는데,
+       늘려 맞추면 짧은 쪽에 빈 자리가 300px 씩 생긴다. */
+    .mx-panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+    @media (max-width: 1000px) { .mx-panels-grid { grid-template-columns: 1fr; } }
+
+    .mx-card {
+      padding: 1.1rem 1.2rem; background: var(--paper);
+      border: 1px solid var(--rule); border-radius: 0;
+    }
+    .mx-card h2 { font-size: 21px; margin: 0 0 0.25rem; color: var(--ink); }
+    .mx-card .mx-note { font-size: 13.5px; color: var(--ink3); margin: 0 0 0.8rem; line-height: 1.6; }
+
+    .mx-chart { display: block; width: 100%; max-width: 620px; margin: 0 auto; height: auto; }
+    .mx-axis { stroke: var(--rule); stroke-width: 1.2; fill: none; }
+    .mx-grid { stroke: var(--rule2); stroke-width: 1; fill: none; }
+    .mx-tick { font-size: 11px; fill: var(--ink3); font-family: var(--font-mono); }
+    .mx-axis-title { font-size: 12.5px; fill: var(--ink3); }
+    .mx-diag { stroke: var(--ink3); stroke-width: 1.2; stroke-dasharray: 5 4; fill: none; }
+    .mx-curve-all { stroke: var(--accent-primary); stroke-width: 2.4; fill: none; }
+    .mx-curve-in { stroke: var(--accent-secondary); stroke-width: 2.2; stroke-dasharray: 7 4; fill: none; }
+    .mx-curve-tag { font-size: 12px; font-family: var(--font-mono); font-weight: 700; }
+
+    .mx-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; margin-top: 0.6rem; font-size: 13px; color: var(--ink2); }
+    .mx-key { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+    .mx-key-mark { width: 20px; height: 0; flex: none; border-top-style: solid; border-top-width: 2.4px; }
+    .mx-key-mark.is-all { border-top-color: var(--accent-primary); }
+    .mx-key-mark.is-in { border-top-color: var(--accent-secondary); border-top-style: dashed; }
+    .mx-key-mark.is-gap {
+      height: 12px; border: 1px solid var(--oxide-bd); background: var(--oxide-bg); border-top-width: 1px;
+    }
+
+    /* 요청 카드 */
+    .mx-req-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem; margin-bottom: 0.35rem; }
+    .mx-req-head h2 { margin: 0; }
+    .mx-req-id { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent-primary); }
+    .mx-req-place {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink2);
+      border: 1px solid var(--rule); border-radius: 0; padding: 0.02rem 0.4rem;
+    }
+    .mx-req-head .mx-btn { margin-left: auto; }
+
+    .mx-req-list { list-style: none; margin: 0.6rem 0 0; padding: 0; }
+    .mx-ad {
+      display: grid; grid-template-columns: 1.7rem 3.6rem 1fr 3.9rem 2.6rem;
+      align-items: center; gap: 0.5rem;
+      padding: 0.42rem 0.5rem; border: 1px solid var(--rule2); border-left: 3px solid var(--rule);
+      border-radius: 0; font-size: 14px;
+    }
+    .mx-ad + .mx-ad { margin-top: 0.28rem; }
+    .mx-ad.is-click { border-left-color: var(--accent-secondary); background: var(--navy-bg); }
+    .mx-ad-rank {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink2); text-align: center;
+      border: 1px solid var(--rule); border-radius: 0; line-height: 1.45;
+    }
+    .mx-ad-id { font-family: var(--font-mono); font-size: 13.5px; color: var(--ink); }
+    .mx-ad-bar { height: 9px; background: var(--grey-bg); border: 1px solid var(--rule); border-radius: 0; overflow: hidden; }
+    .mx-ad-bar > i { display: block; height: 100%; background: var(--grey); }
+    .mx-ad.is-click .mx-ad-bar > i { background: var(--accent-secondary); }
+    .mx-ad-p { font-family: var(--font-mono); font-size: 13.5px; color: var(--ink); text-align: right; }
+    .mx-ad-y { font-size: 12.5px; color: var(--ink3); text-align: right; }
+    .mx-ad.is-click .mx-ad-y { color: var(--accent-secondary); font-weight: 700; }
+
+    .mx-req-foot {
+      margin-top: 0.7rem; padding: 0.6rem 0.8rem; font-size: 13.5px; line-height: 1.6;
+      color: var(--ink2); background: var(--plate); border: 1px solid var(--rule); border-radius: 0;
+    }
+    .mx-req-foot b { color: var(--ink); font-family: var(--font-mono); }
+
+    /* ---------- 글의 숫자로 검산 ---------- */
+    .mx-refs h2 { font-size: 26px; margin-bottom: 0.35rem; }
+    .mx-refs h3 { font-size: 21px; margin: 0 0 0.3rem; }
+    .mx-refs p { font-size: 16px; color: var(--ink2); line-height: 1.75; margin: 0 0 0.8rem; }
+
+    .mx-table-wrap { overflow-x: auto; }
+    .mx-table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
+    .mx-table th, .mx-table td {
+      border: 1px solid var(--rule); padding: 0.42rem 0.6rem; text-align: left;
+    }
+    .mx-table thead th { background: var(--plate); color: var(--ink); font-weight: 600; font-size: 13.5px; }
+    .mx-table .mx-num { text-align: right; font-family: var(--font-mono); }
+    .mx-table .mx-mono { font-family: var(--font-mono); font-size: 13.5px; }
+    .mx-table .mx-num.is-click { color: var(--accent-secondary); font-weight: 700; }
+    .mx-table .mx-num.is-click::after { content: ' 클릭'; font-size: 11px; font-weight: 600; }
+
+    .mx-out { list-style: none; margin: 0.8rem 0 0; padding: 0.7rem 1rem; font-size: 15px; line-height: 1.7;
+      color: var(--ink2); background: var(--plate); border: 1px solid var(--rule); border-radius: 0; }
+    .mx-out li + li { margin-top: 0.25rem; }
+    .mx-out b { color: var(--ink); font-family: var(--font-mono); }
+
+    .mx-two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    @media (max-width: 900px) { .mx-two { grid-template-columns: 1fr; } }
+
+    /* ===================================================================
+       임베드(?embed=1)에서만 접는 것
+       글 5절 안의 iframe 은 620px 자리다. 남기는 것은 셋 —
+       ① 슬라이더  ② 지표 다섯 칸  ③ 두 판(ROC · 요청 카드)
+       높이가 재생 중에 튀지 않도록 요청 카드 칸은 높이를 못 박는다.
+       =================================================================== */
+    html.is-embed .mx-controls,
+    html.is-embed .mx-metrics,
+    html.is-embed .mx-panels {
+      padding-left: 0.85rem; padding-right: 0.85rem; margin-bottom: 0.45rem;
+    }
+    html.is-embed .mx-controls { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+    html.is-embed .mx-controls-grid { gap: 0.35rem 1.2rem; }
+    html.is-embed .mx-row { grid-template-columns: minmax(0, 12rem) 1fr 4rem; gap: 0.5rem; }
+    html.is-embed .mx-row-label { font-size: 13px; }
+    html.is-embed .mx-row-label small { display: none; }
+    html.is-embed .mx-row-v { font-size: 13px; }
+    html.is-embed .mx-presets { margin-top: 0.5rem; padding-top: 0.5rem; gap: 0.35rem; }
+    html.is-embed .mx-btn { font-size: 12px; padding: 0.28rem 0.6rem; }
+    html.is-embed .demo-explain { padding: 0.5rem 0.75rem; margin-bottom: 0.3rem; height: 66px; overflow-y: auto; overscroll-behavior: contain; }
+    html.is-embed .demo-explain-msg { font-size: 13px; line-height: 1.45; }
+
+    html.is-embed .mx-metric { padding: 0.5rem 0.6rem; }
+    html.is-embed .mx-metric-value { font-size: 18px; }
+    html.is-embed .mx-metric-sub { display: none; }
+    html.is-embed .mx-shape { display: none; }
+    html.is-embed .mx-verdict { margin-top: 0.4rem; padding: 0.5rem 0.7rem; font-size: 13px; }
+    html.is-embed .mx-metrics-grid { gap: 0.4rem; }
+
+    html.is-embed .mx-card { padding: 0.6rem 0.75rem; }
+    html.is-embed .mx-card h2 { font-size: 15px; }
+    /* ROC 설명문은 embedHide 로 접는다. 요청 카드 설명문은 남긴다 —
+       보정 배수를 밀었을 때 "순서는 그대로"라고 말해 주는 줄이라 여기가 핵심이다. */
+    html.is-embed #mx-req-note { font-size: 12.5px; margin-bottom: 0.35rem; }
+    html.is-embed .mx-chart { max-width: 380px; }
+    html.is-embed .mx-legend { font-size: 12px; gap: 0.25rem 0.8rem; margin-top: 0.35rem; }
+    /* 172px = 자리 5개가 잘리지 않고 다 들어가는 높이. 자리를 8개로 올리면 여기서 스크롤한다.
+       높이를 못 박는 이유는 자리 수를 바꿀 때 iframe 이 위아래로 튀지 않게 하려는 것이다. */
+    html.is-embed .mx-req-list { margin-top: 0.4rem; height: 172px; overflow-y: auto; overscroll-behavior: contain; }
+    html.is-embed .mx-ad { padding: 0.24rem 0.4rem; font-size: 13px; }
+    html.is-embed .mx-req-foot { margin-top: 0.45rem; padding: 0.45rem 0.6rem; font-size: 12.5px; height: 62px; overflow-y: auto; overscroll-behavior: contain; }
+    html.is-embed .mx-panels-grid { gap: 0.5rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="mx-hero">
+      <h1>지표 실험실</h1>
+      <p>같은 표본 하나에서 AUC · GAUC · LogLoss · NE · COPC 를 동시에 잽니다.
+        슬라이더 넷을 밀면 다섯 숫자가 각자 다른 방향으로 움직입니다.
+        요청 간 난이도 편차를 키우면 전체 AUC 는 오르는데 GAUC 는 제자리인 것을 그 자리에서 봅니다.</p>
+    </section>
+
+    <div class="mx-wide">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-pctr-impact.html">pCTR Impact</a>
+        <a href="demo-calibration.html">Calibration Explorer</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>지표 다섯 개를 <strong>같은 표본 위에서 동시에</strong> 냅니다. 슬라이더를 밀 때 어느 지표가 반응하고 어느 지표가 꿈쩍도 안 하는지가 바로 보입니다. 왼쪽 ROC 곡선 두 개는 전체 AUC 와 GAUC 가 벌어지는 폭을 그림으로 보여 줍니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>전체 AUC 는 <strong>서로 다른 요청에서 온 노출끼리도 짝을 짓습니다</strong>. 경매는 그 짝을 안 씁니다. 한 요청 안에서만 줄을 세우기 때문입니다. 그래서 AUC 가 올라도 매출이 안 움직이는 배포가 나옵니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <li><span class="step-text">기본값 그대로 봅니다. 전체 AUC <strong>0.7413</strong>, GAUC <strong>0.6177</strong>. 간격이 <strong>0.1236</strong>입니다. 오른쪽 카드에서 요청 하나 안의 순위도 같이 봅니다.</span></li>
+        <li><span class="step-text"><strong>요청 간 난이도 편차</strong>를 <strong>1.40</strong>까지 밉니다. AUC 는 <strong>0.8311</strong>로 0.09 올라가는데 GAUC 는 <strong>0.6287</strong>로 0.011 움직이고 맙니다. 두 곡선 사이가 벌어지는 것을 보세요.</span></li>
+        <li><span class="step-text"><strong>기본으로</strong>를 누른 뒤 이번에는 <strong>요청 안 분별력</strong>을 <strong>75%</strong>로 올립니다. AUC <strong>0.7776</strong>, GAUC <strong>0.6818</strong> — 이번에는 둘이 같이 오릅니다. 경매가 실제로 쓰는 개선은 이쪽입니다.</span></li>
+        <li><span class="step-text"><strong>보정 배수</strong>를 <strong>3.00</strong>으로 밉니다. 순위 지표는 그대로인데 NE 가 <strong>1.2535</strong>, COPC 가 <strong>0.342</strong>가 됩니다. NE 가 1을 넘으면 기저 CTR 만 답하는 상수 모델보다 못하다는 뜻입니다.</span></li>
+      </ol>
+
+      <div class="mx-brief mx-read">
+        <span class="mx-brief-title">이 화면의 축척과 기준</span>
+        <ul>
+          <li><b>요청 12,000건 × 자리 5개 = 노출 60,000건</b>이 기본값입니다. 기저 CTR 은 <b>2.5%</b>로, 글 3절이 쓰는 자리당 CTR 과 같은 값입니다.</li>
+          <li><b>모델은 요청 수준 차이를 그대로 봅니다.</b> 지면·시간대 같은 요청 단위 신호는 맞힌다고 두고, 요청 안에서 광고를 가르는 능력만 <b>분별력</b> 슬라이더가 정합니다. 그래서 요청 간 편차를 키우면 전체 AUC 만 오릅니다.</li>
+          <li><b>보정 배수 1.00 이면 예측 총합이 실제 클릭 수와 정확히 맞습니다.</b> 평균은 맞게 학습됐다고 두고, 슬라이더가 거기서 얼마나 밀어내는지를 봅니다.</li>
+          <li><b>예측은 0.99 에서 자릅니다.</b> 배수를 3까지 올리면 잘린 예측이 동점을 만들어 AUC·GAUC 의 넷째 자리가 조금 움직입니다. 순위가 바뀐 것이 아니라 동점이 생긴 것입니다.</li>
+          <li><b>아래 두 슬라이더는 성격이 다릅니다.</b> 분별력·보정 배수는 <b>모델</b>을 바꾸고, 요청 간 편차·요청당 광고 수는 <b>평가 표본</b>을 바꿉니다. 표본이 바뀌면 "기존 모델 대비" 문턱은 견줄 자리가 없어져 배지가 <code>표본이 다름</code>으로 바뀝니다. NE 절댓값과 COPC 범위는 표본이 달라도 그대로 유효합니다 — 그러라고 있는 지표입니다.</li>
+          <li><b>이 화면의 숫자는 이 표본이 낸 값입니다.</b> 글 1절 배포 표의 AUC 0.7412 · GAUC 0.6180 · NE 0.9031 · COPC 1.012 와는 다른 표본입니다. 기본값을 그 근처에 놓아 뒀을 뿐입니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= 컨트롤 ================= -->
+    <div class="mx-controls" id="mx-controls">
+      <div class="mx-controls-grid">
+        <div class="mx-row">
+          <div class="mx-row-label">요청 안 분별력
+            <small>한 요청 안에서 광고를 얼마나 잘 가르나 · GAUC 를 정하는 값</small>
+          </div>
+          <input type="range" class="mx-slider" id="mx-skill" min="0" max="0.95" step="0.001" value="0.494"
+            aria-label="요청 안 분별력">
+          <div class="mx-row-v"><span id="mx-skill-v">49.4</span>%</div>
+        </div>
+
+        <div class="mx-row">
+          <div class="mx-row-label">보정 배수
+            <small>예측 확률에 곱하는 수 · 1.00 이면 총합이 실제와 맞는다</small>
+          </div>
+          <input type="range" class="mx-slider" id="mx-slope" min="0.3" max="3" step="0.01" value="1"
+            aria-label="보정 배수">
+          <div class="mx-row-v" id="mx-slope-v">1.00×</div>
+        </div>
+
+        <div class="mx-row">
+          <div class="mx-row-label">요청당 광고 수
+            <small>한 요청이 만드는 노출 수 · 요청 안 짝 수를 정한다</small>
+          </div>
+          <input type="range" class="mx-slider" id="mx-slots" min="2" max="8" step="1" value="5"
+            aria-label="요청당 광고 수">
+          <div class="mx-row-v" id="mx-slots-v">5개</div>
+        </div>
+
+        <div class="mx-row">
+          <div class="mx-row-label">요청 간 난이도 편차
+            <small>요청마다 기저 CTR 이 얼마나 다른가 · 모델이 아니라 데이터 쪽</small>
+          </div>
+          <input type="range" class="mx-slider" id="mx-spread" min="0" max="1.4" step="0.005" value="0.915"
+            aria-label="요청 간 난이도 편차">
+          <div class="mx-row-v" id="mx-spread-v">0.92</div>
+        </div>
+      </div>
+
+      <div class="mx-presets">
+        <span class="mx-presets-label">한 번에 맞추기</span>
+        <button class="mx-btn" type="button" data-mx-preset="0.494,0.915,1,5">기본으로</button>
+        <button class="mx-btn" type="button" data-mx-preset="0.494,1.4,1,5">요청 간 편차 ▲</button>
+        <button class="mx-btn" type="button" data-mx-preset="0.494,0,1,5">요청 간 편차 0</button>
+        <button class="mx-btn" type="button" data-mx-preset="0.75,0.915,1,5">분별력 ▲</button>
+        <button class="mx-btn" type="button" data-mx-preset="0.494,0.915,3,5">예측 ×3</button>
+      </div>
+    </div>
+
+    <!-- ================= 지표 다섯 칸 ================= -->
+    <div class="mx-metrics" id="mx-metrics">
+      <div class="mx-metrics-grid">
+        <div class="mx-metric">
+          <div class="mx-metric-head">
+            <span class="mx-metric-label">AUC (전체)</span>
+            <span class="mx-gate is-note" id="mx-auc-g">기록만</span>
+          </div>
+          <div class="mx-metric-value" id="mx-auc-v">—</div>
+          <div class="mx-metric-sub" id="mx-auc-s">—</div>
+        </div>
+        <div class="mx-metric">
+          <div class="mx-metric-head">
+            <span class="mx-metric-label">GAUC (요청·짝 가중)</span>
+            <span class="mx-gate is-good" id="mx-gauc-g">통과</span>
+          </div>
+          <div class="mx-metric-value" id="mx-gauc-v">—</div>
+          <div class="mx-metric-sub" id="mx-gauc-s">—</div>
+        </div>
+        <div class="mx-metric">
+          <div class="mx-metric-head">
+            <span class="mx-metric-label">LogLoss</span>
+            <span class="mx-gate is-note" id="mx-ll-g">문턱 없음</span>
+          </div>
+          <div class="mx-metric-value" id="mx-ll-v">—</div>
+          <div class="mx-metric-sub" id="mx-ll-s">—</div>
+        </div>
+        <div class="mx-metric">
+          <div class="mx-metric-head">
+            <span class="mx-metric-label">NE</span>
+            <span class="mx-gate is-good" id="mx-ne-g">통과</span>
+          </div>
+          <div class="mx-metric-value" id="mx-ne-v">—</div>
+          <div class="mx-metric-sub" id="mx-ne-s">—</div>
+        </div>
+        <div class="mx-metric">
+          <div class="mx-metric-head">
+            <span class="mx-metric-label">COPC (전체)</span>
+            <span class="mx-gate is-good" id="mx-copc-g">통과</span>
+          </div>
+          <div class="mx-metric-value" id="mx-copc-v">—</div>
+          <div class="mx-metric-sub" id="mx-copc-s">—</div>
+        </div>
+      </div>
+
+      <p class="mx-shape" id="mx-shape">—</p>
+      <p class="mx-verdict" id="mx-verdict">—</p>
+    </div>
+
+    <!-- ================= 두 판 ================= -->
+    <div class="mx-panels" id="mx-panels">
+      <div class="mx-panels-grid">
+
+        <div class="mx-card">
+          <h2>ROC 곡선 두 개</h2>
+          <p class="mx-note mx-note-roc">위 곡선은 노출 전체를 한 통에 부어 그린 것이고, 아래 점선은 요청마다 따로 그린 곡선을
+            짝 수로 가중해 평균한 것입니다. 두 곡선 사이 면적이 <strong>요청을 가로지른 짝이 만든 몫</strong>입니다.</p>
+
+          <svg class="mx-chart" viewBox="0 0 400 292" role="img"
+            aria-label="ROC 곡선 두 개. 위쪽 실선은 노출 전체를 섞어 그린 전체 ROC 이고 아래쪽 점선은 요청 안에서만 그린 곡선의 평균이다. 두 곡선 사이가 요청을 가로지른 짝이 만든 몫이다.">
+            <!-- 눈금. 아래 x 값 다섯은 js/metrics-lab-demo.js 의 PL 과 같은 좌표다 -->
+            <g class="mx-grid">
+              <line x1="58" y1="244" x2="58" y2="16" />
+              <line x1="139.5" y1="244" x2="139.5" y2="16" />
+              <line x1="221" y1="244" x2="221" y2="16" />
+              <line x1="302.5" y1="244" x2="302.5" y2="16" />
+              <line x1="384" y1="244" x2="384" y2="16" />
+              <line x1="58" y1="244" x2="384" y2="244" />
+              <line x1="58" y1="187" x2="384" y2="187" />
+              <line x1="58" y1="130" x2="384" y2="130" />
+              <line x1="58" y1="73" x2="384" y2="73" />
+              <line x1="58" y1="16" x2="384" y2="16" />
+            </g>
+            <!-- 두 곡선 사이 -->
+            <path id="mx-roc-gap" d="" fill="var(--accent-primary)" fill-opacity="0.12" stroke="none" />
+            <!-- 무작위 기준선 -->
+            <line class="mx-diag" x1="58" y1="244" x2="384" y2="16" />
+            <path class="mx-curve-in" id="mx-roc-in" d="" />
+            <path class="mx-curve-all" id="mx-roc-all" d="" />
+            <text class="mx-curve-tag" id="mx-roc-tag-all" x="376" y="208" text-anchor="end"
+              fill="var(--accent-primary)">—</text>
+            <text class="mx-curve-tag" id="mx-roc-tag-in" x="376" y="230" text-anchor="end"
+              fill="var(--accent-secondary)">—</text>
+            <!-- 축 -->
+            <g class="mx-axis">
+              <line x1="58" y1="244" x2="384" y2="244" />
+              <line x1="58" y1="244" x2="58" y2="16" />
+            </g>
+            <g class="mx-tick" text-anchor="middle">
+              <text x="58" y="260">0</text>
+              <text x="139.5" y="260">0.25</text>
+              <text x="221" y="260">0.50</text>
+              <text x="302.5" y="260">0.75</text>
+              <text x="384" y="260">1</text>
+            </g>
+            <g class="mx-tick" text-anchor="end">
+              <text x="52" y="248">0</text>
+              <text x="52" y="191">0.25</text>
+              <text x="52" y="134">0.50</text>
+              <text x="52" y="77">0.75</text>
+              <text x="52" y="20">1</text>
+            </g>
+            <text class="mx-axis-title" x="221" y="282" text-anchor="middle">가짜 양성 비율 — 안 누른 노출 중 위로 올린 비율</text>
+            <text class="mx-axis-title" x="12" y="130" text-anchor="middle" transform="rotate(-90 12 130)">진짜 양성 비율</text>
+          </svg>
+
+          <div class="mx-legend">
+            <span class="mx-key"><span class="mx-key-mark is-all" aria-hidden="true"></span>전체 ROC — 노출을 다 섞어서</span>
+            <span class="mx-key"><span class="mx-key-mark is-in" aria-hidden="true"></span>요청 안 ROC 평균 — GAUC</span>
+            <span class="mx-key"><span class="mx-key-mark is-gap" aria-hidden="true"></span>요청을 가로지른 짝이 만든 몫</span>
+          </div>
+        </div>
+
+        <div class="mx-card mx-req">
+          <div class="mx-req-head">
+            <h2>요청 하나 안의 순위</h2>
+            <span class="mx-req-id" id="mx-req-id">—</span>
+            <span class="mx-req-place" id="mx-req-place">—</span>
+            <button class="mx-btn is-quiet" type="button" id="mx-req-next">다음 요청 ▸</button>
+          </div>
+          <p class="mx-note" id="mx-req-note">예측 내림차순입니다. 자리 배정은 이 순서가 정합니다.</p>
+          <ol class="mx-req-list" id="mx-req-list"></ol>
+          <p class="mx-req-foot" id="mx-req-foot">—</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= 글의 숫자로 검산 ================= -->
+    <div class="mx-wide mx-refs">
+      <h2>글의 숫자로 검산</h2>
+      <p class="mx-read">위 실험실은 매번 새 표본을 만듭니다. 그래서 계산이 맞는지는 값이 고정된 데이터로 확인해야 합니다.
+        아래 표는 글 3절의 요청 6건 × 자리 5개를 그대로 옮긴 것이고, 오른쪽 두 칸과 그 아래 결과는
+        실험실이 쓰는 것과 <strong>똑같은 함수</strong>가 이 자리에서 계산한 값입니다.</p>
+
+      <div class="mx-table-wrap">
+        <table class="mx-table">
+          <thead>
+            <tr>
+              <th>요청</th><th>지면</th>
+              <th>자리 1</th><th>자리 2</th><th>자리 3</th><th>자리 4</th><th>자리 5</th>
+              <th>이긴 짝</th><th>요청 안 AUC</th>
+            </tr>
+          </thead>
+          <tbody id="mx-check-body"></tbody>
+        </table>
+      </div>
+      <ul class="mx-out" id="mx-check-out"></ul>
+
+      <div class="mx-two">
+        <div>
+          <h3>LogLoss 벌점 여섯 줄</h3>
+          <p>글 4절 표입니다. 노출 한 건의 벌점이 얼마인지가 LogLoss 의 전부입니다.
+            낮게 답했는데 눌린 경우가 가장 비쌉니다.</p>
+          <div class="mx-table-wrap">
+            <table class="mx-table" style="min-width:0">
+              <thead><tr><th>실제</th><th>예측</th><th>벌점</th><th>읽는 법</th></tr></thead>
+              <tbody>
+                <tr><td>클릭</td><td class="mx-num">0.90</td><td class="mx-num">0.105</td><td>맞혔고 자신도 있었다</td></tr>
+                <tr><td>클릭</td><td class="mx-num">0.50</td><td class="mx-num">0.693</td><td>맞혔지만 반신반의였다</td></tr>
+                <tr><td>클릭</td><td class="mx-num">0.02</td><td class="mx-num">3.912</td><td>거의 아니라고 했는데 눌렸다</td></tr>
+                <tr><td>미클릭</td><td class="mx-num">0.02</td><td class="mx-num">0.020</td><td>거의 아니라고 했고 맞았다</td></tr>
+                <tr><td>미클릭</td><td class="mx-num">0.50</td><td class="mx-num">0.693</td><td>반신반의했는데 안 눌렸다</td></tr>
+                <tr><td>미클릭</td><td class="mx-num">0.90</td><td class="mx-num">2.303</td><td>누른다고 했는데 안 눌렸다</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3>COPC 가 순위를 뒤집는 자리</h3>
+          <p>글 6절 표입니다. 지면 단위 COPC 는 한 요청 안의 순서를 안 바꿉니다. 자리 다섯이 전부 같은 지면이기 때문입니다.
+            광고 단위로 갈릴 때만 순서가 뒤집힙니다.</p>
+          <div class="mx-table-wrap">
+            <table class="mx-table" style="min-width:0">
+              <thead><tr><th>광고</th><th>예측 pCTR</th><th>광고 단위 COPC</th><th>보정 후</th><th>순위</th></tr></thead>
+              <tbody>
+                <tr><td class="mx-mono">9931</td><td class="mx-num">3.52%</td><td class="mx-num">0.85</td><td class="mx-num">2.99%</td><td class="mx-num">1 → 2</td></tr>
+                <tr><td class="mx-mono">8420</td><td class="mx-num">3.04%</td><td class="mx-num">1.30</td><td class="mx-num">3.95%</td><td class="mx-num">2 → 1</td></tr>
+                <tr><td class="mx-mono">7715</td><td class="mx-num">2.60%</td><td class="mx-num">1.00</td><td class="mx-num">2.60%</td><td class="mx-num">3 → 3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-wide">
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>전체 AUC 는 요청을 가로지른 짝까지 점수로 쳐 준다</strong> — 요청 간 편차만 0에서 1.40 으로 올리면 AUC 는 0.6115 에서 0.8311 로 0.22 오르는데, 모델의 요청 안 능력은 한 줄도 안 바뀌었다. GAUC 는 0.6133 에서 0.6287 로 0.015 움직이고 만다.</li>
+            <li><strong>보정 배수는 순위 지표에 안 보인다</strong> — 예측에 3을 곱해도 AUC 와 GAUC 는 넷째 자리만 흔들린다. 그 사이 NE 는 0.9303 에서 1.2535 로, COPC 는 1.002 에서 0.342 로 간다. 크기를 재는 지표가 따로 있어야 하는 이유다.</li>
+            <li><strong>GAUC 는 요청 대부분을 버린다</strong> — 자리 5개에 자리당 CTR 2.5% 면 요청의 88.1% 가 클릭 0건이라 짝을 못 만든다. 오른쪽 카드에서 <code>r-8a90</code> 이나 <code>r-7c08</code> 을 보면 그 요청이 어떻게 생겼는지 나온다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          배포 게이트는 지표 목록이 아니라 <strong>문턱과 행동의 짝</strong>입니다.
+          넘으면 무엇을 할지 미리 안 정해 두면 게이트가 아닙니다.
+          위 지표 칸의 배지가 글 8절 게이트를 그대로 옮긴 것입니다.
+        </p>
+        <ul>
+          <li><strong>GAUC 로 순위를 봅니다:</strong> 기존 대비 -0.001 아래로 떨어지면 배포를 멈춥니다. 문턱 값 자체는 근거가 없습니다. 같은 모델을 시드만 바꿔 다섯 번 학습해 GAUC 가 얼마나 흔들리는지 먼저 재고, 그 흔들림보다 큰 값을 문턱으로 잡습니다.</li>
+          <li><strong>NE 로 크기를 봅니다:</strong> 기존 대비 +0.5% 이상이면 중단이고, 절댓값이 1.0 을 넘으면 즉시 중단입니다. NE 1.0 은 "보통"이 아니라 기저 CTR 만 답하는 상수 모델과 같다는 뜻입니다.</li>
+          <li><strong>COPC 로 총합을 봅니다:</strong> 전체가 0.97~1.03 밖이면 중단, 지면별 최악이 0.90~1.10 밖이면 경고 후 검토입니다. 예측 평균이 학습 기간 실제 CTR 대비 ±3% 를 벗어나면 다운샘플링 보정을 빠뜨린 것이라 즉시 중단합니다.</li>
+          <li><strong>전체 AUC 는 기록만 합니다:</strong> 문턱을 안 겁니다. 다만 0.74 에서 0.62 로 뚝 떨어지면 피처 파이프라인이 깨진 신호라 계속 찍어 둡니다. 작은 개선을 판정하는 자리에는 못 씁니다.</li>
+          <li><strong>서빙 p99 는 12ms 예산입니다:</strong> 초과하면 배포 중단입니다. 늦은 응답은 없던 응답이라 지표가 아무리 좋아도 소용이 없습니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=offline-metrics-gauc" class="demo-next-card">
+              <span class="demo-next-label">이 데모의 짝 글</span>
+              <span class="demo-next-title">오프라인 지표는 무엇을 재고 무엇을 못 재나</span>
+              <span class="demo-next-excerpt">AUC · GAUC · LogLoss · NE · COPC 를 하나씩 손으로 세어 보는 글. 이 화면의 규칙이 전부 거기서 왔습니다</span>
+            </a>
+            <a href="post.html?id=calibration" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Calibration — AUC가 높아도 돈을 잃는 이유</span>
+              <span class="demo-next-excerpt">보정 배수 슬라이더가 만든 어긋남을 실제로 고치는 방법. Platt·Isotonic·Temperature</span>
+            </a>
+            <a href="post.html?id=ecpm-ranking" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">eCPM 랭킹</span>
+              <span class="demo-next-excerpt">요청 안 순위가 실제로 어떻게 매겨지는지. GAUC 가 왜 요청 단위인지의 근거</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/metrics-lab-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

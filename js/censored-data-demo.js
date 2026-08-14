@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 /**
  * Censored Data in RTB — Interactive Demo
  * ML 엔지니어 관점에서 Right-Censoring 문제를 단계별로 이해하기 위한 시뮬레이션.
@@ -441,8 +441,8 @@ function createDistributionChart() {
                 { // 0: Win Zone
                     label: 'Win (관측 가능)',
                     data: [],
-                    backgroundColor: 'rgba(95, 122, 99, 0.6)',
-                    borderColor: 'rgba(95, 122, 99, 1)',
+                    backgroundColor: 'rgba(32,64,107, 0.6)',
+                    borderColor: 'rgba(32,64,107, 1)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -451,8 +451,8 @@ function createDistributionChart() {
                 { // 1: Lose Zone
                     label: 'Lose (내 입찰가 초과)',
                     data: [],
-                    backgroundColor: 'rgba(156, 90, 68, 0.4)',
-                    borderColor: 'rgba(156, 90, 68, 0.8)',
+                    backgroundColor: 'rgba(155,58,33, 0.4)',
+                    borderColor: 'rgba(155,58,33, 0.8)',
                     borderWidth: 1,
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
@@ -473,7 +473,7 @@ function createDistributionChart() {
                     label: 'My Bid (= Censoring Threshold)',
                     data: [],
                     type: 'line',
-                    borderColor: '#5a6b7a',
+                    borderColor: cssVar('--series-1'),
                     borderWidth: 2.5,
                     pointRadius: 0,
                     fill: false,
@@ -851,8 +851,8 @@ function createComparisonChart() {
                 {
                     label: '실제 (God View)',
                     data: [0, 0],
-                    backgroundColor: 'rgba(95, 122, 99, 0.7)',
-                    borderColor: 'rgba(95, 122, 99, 1)',
+                    backgroundColor: 'rgba(32,64,107, 0.7)',
+                    borderColor: 'rgba(32,64,107, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },
@@ -936,8 +936,8 @@ function createImpactChart() {
                 {
                     label: 'Oracle (God View)',
                     data: [0, 0, 0],
-                    backgroundColor: 'rgba(95, 122, 99, 0.7)',
-                    borderColor: 'rgba(95, 122, 99, 1)',
+                    backgroundColor: 'rgba(32,64,107, 0.7)',
+                    borderColor: 'rgba(32,64,107, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 },

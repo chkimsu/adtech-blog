@@ -41,9 +41,9 @@
   const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   function palette() {
     return {
-      text: cssVar('--text-secondary') || '#4f4a42',
-      muted: cssVar('--text-muted') || '#8a8176',
-      accent: cssVar('--accent-primary') || '#b0442c',
+      text: cssVar('--text-secondary') || '#3F3F46',
+      muted: cssVar('--text-muted') || '#71717A',
+      accent: cssVar('--accent-primary') || '#9B3A21',
       grid: 'rgba(128,128,128,0.18)',
     };
   }
@@ -57,7 +57,7 @@
     const conv = document.createElement('div');
     conv.className = 'aw-conv';
     conv.style.left = leftPct(0) + '%';
-    conv.innerHTML = '<span class="aw-conv-dot">★</span><span class="aw-conv-label">전환</span>';
+    conv.innerHTML = '<span class="aw-conv-dot">▲</span><span class="aw-conv-label">전환</span>';
     track.appendChild(conv);
     // 터치포인트
     journey.forEach(t => {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thompson Sampling Demo - AdTech Blog</title>
@@ -27,7 +27,7 @@
         .chart-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 1.5rem;
             min-height: 400px;
         }
@@ -41,7 +41,7 @@
         .control-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 0;
             padding: 1rem;
             transition: transform 0.2s;
         }
@@ -61,33 +61,33 @@
             flex: 1;
             padding: 0.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 0;
             cursor: pointer;
             font-weight: 600;
             transition: opacity 0.2s;
         }
 
         .btn-success {
-            background: rgba(95, 122, 99, 0.2);
+            background: color-mix(in srgb, var(--series-6) 20%, transparent);
             color: var(--state-good);
         }
 
         .btn-success:hover {
-            background: rgba(95, 122, 99, 0.4);
+            background: color-mix(in srgb, var(--series-6) 40%, transparent);
         }
 
         .btn-fail {
-            background: rgba(156, 90, 68, 0.2);
+            background: color-mix(in srgb, var(--series-2) 20%, transparent);
             color: var(--state-bad);
         }
 
         .btn-fail:hover {
-            background: rgba(156, 90, 68, 0.4);
+            background: color-mix(in srgb, var(--series-2) 40%, transparent);
         }
 
         .log-panel {
             background: var(--code-bg);
-            border-radius: 8px;
+            border-radius: 0;
             padding: 1rem;
             height: 200px;
             overflow-y: auto;
@@ -211,7 +211,7 @@
                 </div>
 
                 <div
-                    style="background: var(--glass-bg); padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    style="background: var(--glass-bg); padding: 1rem; border-radius: 0; border: 1px solid var(--glass-border);">
                     <h3 style="margin-bottom: 0.5rem;">Model State</h3>
                     <div id="stats-container">
                         <!-- Stats injected by JS -->
@@ -229,7 +229,7 @@
 
         <!-- Reset & Related -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;">
-            <button onclick="resetTS()" style="background: #ff4757; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600;">Reset Model</button>
+            <button onclick="resetTS()" style="background: var(--state-bad); color: var(--paper); border: none; padding: 0.5rem 1.5rem; border-radius: 0; cursor: pointer; font-weight: 600;">Reset Model</button>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                 <a href="post.html?id=ucb-vs-ts" class="btn-demo">UCB vs TS</a>
                 <a href="post.html?id=TS-linTS" class="btn-demo">Standard TS vs Linear TS</a>

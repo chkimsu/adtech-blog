@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -39,7 +39,7 @@
       padding: 1.15rem 1.5rem;
       background: rgba(255, 255, 255, 0.03);
       border: 1px dashed var(--border-color);
-      border-radius: 12px;
+      border-radius: 0;
       color: var(--text-secondary);
       font-size: 0.9rem;
       line-height: 1.7;
@@ -48,7 +48,7 @@
     .pq-intro code {
       background: var(--bg-tertiary);
       padding: 0.08rem 0.35rem;
-      border-radius: 4px;
+      border-radius: 0;
       font-size: 0.88em;
     }
 
@@ -59,7 +59,7 @@
       padding: 1.3rem 1.5rem;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 0;
     }
 
     .pq-slider-row {
@@ -94,7 +94,7 @@
       width: 100%;
       height: 6px;
       background: var(--bg-tertiary);
-      border-radius: 3px;
+      border-radius: 0;
       outline: none;
     }
     .pq-slider::-webkit-slider-thumb {
@@ -103,15 +103,15 @@
       width: 18px;
       height: 18px;
       background: var(--accent-primary);
-      border-radius: 50%;
+      border-radius: 0;
       cursor: pointer;
-      box-shadow: 0 0 6px var(--accent-primary);
+      box-shadow: none;
     }
     .pq-slider::-moz-range-thumb {
       width: 18px;
       height: 18px;
       background: var(--accent-primary);
-      border-radius: 50%;
+      border-radius: 0;
       cursor: pointer;
     }
 
@@ -137,7 +137,7 @@
     .pq-panel {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 0;
       padding: 1.35rem 1.4rem;
     }
 
@@ -196,7 +196,7 @@
       padding: 1rem 1.1rem;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 0;
       text-align: center;
     }
 
@@ -215,7 +215,7 @@
       color: var(--text-primary);
     }
 
-    .pq-summary-value.warn { color: #a8783a; }
+    .pq-summary-value.warn { color: var(--series-5); }
     .pq-summary-value.bad  { color: var(--state-bad); }
     .pq-summary-value.good { color: var(--state-good); }
 
@@ -229,7 +229,7 @@
     .pq-chart-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 0;
       padding: 1.3rem 1.5rem;
       margin-bottom: 2rem;
     }

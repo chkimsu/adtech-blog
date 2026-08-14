@@ -1,15 +1,15 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 // A/B vs Bandit traffic simulator
 // A/B = fixed 1/3 split each day. Bandit = Thompson Sampling (Beta posterior).
 (function () {
   const ADS = [
-    { name: '광고 A', color: '#b0442c' },
-    { name: '광고 B', color: '#5a6b7a' },
+    { name: '광고 A', color: cssVar('--accent-primary') },
+    { name: '광고 B', color: cssVar('--series-1') },
     { name: '광고 C', color: cssVar('--state-good') }
   ];
   const INIT_CTR = [2, 6, 3];      // % (slider default) — B clearly best so the gap is visible
@@ -54,8 +54,8 @@ const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(
   function colors() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
-      text: dark ? '#c6bdae' : '#4f4a42',
-      grid: dark ? 'rgba(241,236,227,0.10)' : 'rgba(32,29,26,0.08)'
+      text: dark ? '#D4D4D8' : '#3F3F46',
+      grid: dark ? 'rgba(241,236,227,0.10)' : 'rgba(23,24,26,0.08)'
     };
   }
 
@@ -169,8 +169,8 @@ const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(
       data: {
         labels: [0],
         datasets: [
-          { label: 'A/B (고정)', data: [0], borderColor: '#b0442c', backgroundColor: 'rgba(176,68,44,0.08)', tension: 0.25, borderWidth: 2, pointRadius: 0, fill: true },
-          { label: '밴딧 (적응)', data: [0], borderColor: '#5a6b7a', backgroundColor: 'rgba(90,107,122,0.10)', tension: 0.25, borderWidth: 2.5, pointRadius: 0, fill: true }
+          { label: 'A/B (고정)', data: [0], borderColor: cssVar('--accent-primary'), backgroundColor: 'color-mix(in srgb, ' + cssVar('--accent-primary') + ' 8%, transparent)', tension: 0.25, borderWidth: 2, pointRadius: 0, fill: true },
+          { label: '밴딧 (적응)', data: [0], borderColor: cssVar('--series-1'), backgroundColor: 'color-mix(in srgb, ' + cssVar('--series-1') + ' 10%, transparent)', tension: 0.25, borderWidth: 2.5, pointRadius: 0, fill: true }
         ]
       },
       options: {

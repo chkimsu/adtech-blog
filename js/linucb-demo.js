@@ -213,10 +213,10 @@ let model = new LinUCB(N_ARMS, N_FEATURES, ALPHA);
 // Let's assume a static context for simplicity of the demo, 
 // or we can toggle contexts.
 const ads = [
-    { id: 0, name: "Ad A (Tech)", features: [1.0, 1.0, 0.2], color: 'rgba(156, 90, 68, 0.7)' },
-    { id: 1, name: "Ad B (Fashion)", features: [0.2, 0.0, 1.0], color: 'rgba(90, 107, 122, 0.7)' },
-    { id: 2, name: "Ad C (Food)", features: [0.5, 0.5, 0.5], color: 'rgba(154, 125, 56, 0.7)' },
-    { id: 3, name: "Ad D (Travel)", features: [0.1, 0.8, 0.9], color: 'rgba(95, 122, 99, 0.7)' }
+    { id: 0, name: "Ad A (Tech)", features: [1.0, 1.0, 0.2], color: 'rgba(155,58,33, 0.7)' },
+    { id: 1, name: "Ad B (Fashion)", features: [0.2, 0.0, 1.0], color: 'rgba(32,64,107, 0.7)' },
+    { id: 2, name: "Ad C (Food)", features: [0.5, 0.5, 0.5], color: 'rgba(103,105,108, 0.7)' },
+    { id: 3, name: "Ad D (Travel)", features: [0.1, 0.8, 0.9], color: 'rgba(32,64,107, 0.7)' }
 ];
 
 // Chart Instance
@@ -363,7 +363,7 @@ function renderAdCards() {
       <div class="features">Features: [${ad.features.join(', ')}]</div>
       <div style="display: flex; gap: 0.5rem; justify-content: center;">
         <button onclick="handleAdClick(${idx})" style="flex:1;">Click</button>
-        <button onclick="handleAdIgnore(${idx})" style="flex:1; background: rgba(255,75,87,0.15); border-color: #ff4b57; color: #ff4b57;">Ignore</button>
+        <button onclick="handleAdIgnore(${idx})" style="flex:1; background: color-mix(in srgb, var(--state-bad) 15%, transparent); border-color: var(--state-bad); color: var(--state-bad);">Ignore</button>
       </div>
     `;
         container.appendChild(card);

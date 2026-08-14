@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A/B 테스트(고정 트래픽)와 멀티암드 밴딧(적응형 트래픽)이 같은 광고를 두고 어떻게 다르게 트래픽을 나누는지 슬라이더로 직접 비교하는 인터랙티브 데모.">
@@ -17,7 +17,7 @@
     .ab-intro {
       max-width: 920px; margin: 0 auto 1.75rem; padding: 1.1rem 1.4rem;
       background: var(--bg-tertiary); border: 1px solid var(--border-color);
-      border-left: 3px solid var(--accent-primary); border-radius: 10px;
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
       color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .ab-intro strong { color: var(--accent-primary); }
@@ -29,17 +29,17 @@
     @media (max-width: 760px) { .ab-controls { grid-template-columns: 1fr; } }
     .ab-slider-card {
       background: var(--bg-secondary); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 1rem 1.1rem;
+      border-radius: 0; padding: 1rem 1.1rem;
     }
     .ab-slider-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
     .ab-slider-name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.45rem; }
-    .ab-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+    .ab-dot { width: 12px; height: 12px; border-radius: 0; display: inline-block; }
     .ab-slider-val { font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); font-size: 0.95rem; }
     .ab-slider-card input[type=range] { width: 100%; accent-color: var(--accent-primary); }
 
     .ab-buttons { display: flex; gap: 0.7rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.75rem; }
     .ab-btn {
-      padding: 0.55rem 1.2rem; border-radius: 9px; border: 1px solid var(--accent-primary);
+      padding: 0.55rem 1.2rem; border-radius: 0; border: 1px solid var(--accent-primary);
       background: transparent; color: var(--accent-primary); font-weight: 600; font-size: 0.9rem;
       cursor: pointer; font-family: inherit; transition: all var(--transition-fast);
     }
@@ -53,7 +53,7 @@
     }
     @media (max-width: 760px) { .ab-summary { grid-template-columns: 1fr; } }
     .ab-stat {
-      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
       padding: 1.1rem 1.2rem; text-align: center;
     }
     .ab-stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.35rem; }
@@ -63,7 +63,7 @@
 
     .ab-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
     @media (max-width: 900px) { .ab-charts { grid-template-columns: 1fr; } }
-    .ab-chart-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.2rem 1.3rem; }
+    .ab-chart-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0; padding: 1.2rem 1.3rem; }
     .ab-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
     .ab-chart-card .ab-chart-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.9rem; line-height: 1.5; }
     .ab-chart-wrap { position: relative; height: 300px; }
@@ -71,7 +71,7 @@
     .ab-cta { text-align: center; padding: 1.5rem 0 2.5rem; }
     .ab-cta a {
       display: inline-block; padding: 0.85rem 1.75rem; background: var(--accent-primary);
-      color: var(--bg-primary); border-radius: 10px; font-weight: 700; text-decoration: none;
+      color: var(--bg-primary); border-radius: 0; font-weight: 700; text-decoration: none;
     }
     .ab-cta a:hover { filter: brightness(0.94); }
   </style>
@@ -104,7 +104,7 @@
     </div>
 
     <div class="demo-tldr-analogy">
-      <div class="demo-tldr-analogy-icon">⚖</div>
+      <div class="demo-tldr-analogy-icon">A/B</div>
       <div class="demo-tldr-analogy-body">
         <div class="demo-tldr-analogy-label">한 줄 비유</div>
         <div class="demo-tldr-analogy-text">
@@ -122,7 +122,7 @@
 
     <ol class="demo-steps">
       <span class="demo-steps-title">이렇게 해보세요</span>
-      <li><span class="step-text"><strong>10일 자동 ▶▶</strong>을 눌러 한 번 끝까지 돌려 보세요 — 누적 클릭 그래프에서 밴딧 선이 A/B 선 위로 벌어집니다.</span></li>
+      <li><span class="step-text"><strong>10일 자동 ▸▸</strong>을 눌러 한 번 끝까지 돌려 보세요 — 누적 클릭 그래프에서 밴딧 선이 A/B 선 위로 벌어집니다.</span></li>
       <li><span class="step-text">오른쪽 <strong>트래픽 배분 차트</strong>를 보세요. 밴딧은 며칠 만에 클릭률 높은 광고에 노출을 몰아주기 시작합니다.</span></li>
       <li><span class="step-text">슬라이더로 <strong>광고들의 CTR 차이를 좁혀</strong> 보세요(예: 3% vs 3.5%). 차이가 작을수록 밴딧의 이득도 줄어드는 걸 확인하세요.</span></li>
     </ol>
@@ -131,8 +131,8 @@
       <div class="ab-controls" id="ab-controls"><!-- 슬라이더 JS 주입 --></div>
 
       <div class="ab-buttons">
-        <button class="ab-btn" id="ab-step" type="button">하루 진행 ▶</button>
-        <button class="ab-btn primary" id="ab-auto" type="button">10일 자동 ▶▶</button>
+        <button class="ab-btn" id="ab-step" type="button">하루 진행 ▸</button>
+        <button class="ab-btn primary" id="ab-auto" type="button">10일 자동 ▸▸</button>
         <button class="ab-btn ghost" id="ab-reset" type="button">리셋</button>
       </div>
     </div>

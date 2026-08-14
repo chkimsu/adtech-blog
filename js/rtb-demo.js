@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9c3b26', '--state-good': '#3f6248', '--state-warn': '#7d5529' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#5a6b7a';
+                    || CSS_VAR_FALLBACK[n] || '#20406B';
 /**
  * RTB Auction Simulator Demo Implementation
  * Visualizes First Price vs Second Price auctions with DSP bidding strategies
@@ -17,8 +17,8 @@ const DSPS = [
     {
         id: 0,
         name: 'DSP A (Aggressive)',
-        color: 'rgba(156, 90, 68, 0.8)',
-        borderColor: 'rgba(156, 90, 68, 1)',
+        color: 'rgba(155,58,33, 0.8)',
+        borderColor: 'rgba(155,58,33, 1)',
         strategy: 'aggressive',
         basePCTR: 0.08,
         conversionValue: 25
@@ -26,8 +26,8 @@ const DSPS = [
     {
         id: 1,
         name: 'DSP B (Conservative)',
-        color: 'rgba(90, 107, 122, 0.8)',
-        borderColor: 'rgba(90, 107, 122, 1)',
+        color: 'rgba(32,64,107, 0.8)',
+        borderColor: 'rgba(32,64,107, 1)',
         strategy: 'conservative',
         basePCTR: 0.04,
         conversionValue: 15
@@ -35,8 +35,8 @@ const DSPS = [
     {
         id: 2,
         name: 'DSP C (Smart)',
-        color: 'rgba(154, 125, 56, 0.8)',
-        borderColor: 'rgba(154, 125, 56, 1)',
+        color: 'rgba(103,105,108, 0.8)',
+        borderColor: 'rgba(103,105,108, 1)',
         strategy: 'smart',
         basePCTR: 0.06,
         conversionValue: 20
@@ -44,8 +44,8 @@ const DSPS = [
     {
         id: 3,
         name: 'DSP D (Random)',
-        color: 'rgba(95, 122, 99, 0.8)',
-        borderColor: 'rgba(95, 122, 99, 1)',
+        color: 'rgba(32,64,107, 0.8)',
+        borderColor: 'rgba(32,64,107, 1)',
         strategy: 'random',
         basePCTR: 0.03,
         conversionValue: 10
@@ -230,11 +230,11 @@ const clearingPricePlugin = {
                 const barW = bar.width;
 
                 // Semi-transparent savings overlay
-                ctx.fillStyle = 'rgba(90, 107, 122, 0.18)';
+                ctx.fillStyle = 'rgba(32,64,107, 0.18)';
                 ctx.fillRect(barX, bidY, barW, yPixel - bidY);
 
                 // Diagonal stripes pattern
-                ctx.strokeStyle = 'rgba(90, 107, 122, 0.35)';
+                ctx.strokeStyle = 'rgba(32,64,107, 0.35)';
                 ctx.lineWidth = 1;
                 const step = 6;
                 ctx.beginPath();
@@ -246,7 +246,7 @@ const clearingPricePlugin = {
 
                 // Savings label
                 const savings = (lastAuctionResult.winnerBid - cp).toFixed(2);
-                ctx.fillStyle = '#5a6b7a';
+                ctx.fillStyle = cssVar('--series-1');
                 ctx.font = 'bold 10px "Fira Code", monospace';
                 ctx.textAlign = 'center';
                 const midY = (bidY + yPixel) / 2;
@@ -369,7 +369,7 @@ function updateChart(bids, winner) {
         // Highlight winner with thicker border
         if (winner && winner.dsp.id === dsp.id) {
             chart.data.datasets[i].borderWidth = 3;
-            chart.data.datasets[i].borderColor = '#ffffff';
+            chart.data.datasets[i].borderColor = cssVar('--paper');
         } else {
             chart.data.datasets[i].borderWidth = 1;
             chart.data.datasets[i].borderColor = dsp.borderColor;

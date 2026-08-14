@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="가상 유저 2,000명을 설득 가능·확실 구매·청개구리·무관심 네 부류로 섞어 pCVR 축과 uplift 축에 뿌린다. pCVR 상위 20%를 고르면 리포트 전환은 크지만 증분 전환은 uplift 상위 20%의 절반도 안 된다는 것을 Qini 곡선 두 개로 직접 확인하는 데모.">
+  <title>증분 4분면 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===================================================================
+       증분 4분면 — demo-uplift-quadrant.html
+       색 값은 이 파일에도 js/uplift-quadrant-demo.js 에도 hex 가 하나도 없다.
+       전부 var(--...) 다. 그림은 인라인 SVG 라 테마 토큰이 그대로 먹는다.
+       모서리는 전부 0, 그림자는 없다.
+       =================================================================== */
+
+    .uq-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .uq-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .uq-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    /* .uq-controls · .uq-explain-host · .uq-metrics · .uq-charts 는 <main> 의 직계 자식이다.
+       임베드에서 이 넷만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 훑는다).
+       그래서 폭·여백을 바깥 통에 기대지 않고 각자 갖는다. */
+    .uq-page,
+    .uq-controls,
+    .uq-explain-host,
+    .uq-metrics {
+      max-width: 1080px;
+      margin: 0 auto 1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    /* 차트 두 장은 나란히 놓으므로 통이 더 넓다(규칙상 상한 1600px 안).
+       1320px 로 두면 SVG 한 장이 약 600px 로 그려져 viewBox 620 과 거의 같다 —
+       글자를 늘리지 않아 가장 또렷하다. */
+    .uq-charts {
+      max-width: 1320px;
+      margin: 0 auto 1.25rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    .uq-explain-host:empty { display: none; margin: 0; }
+
+    .uq-page > * + * { margin-top: 1.25rem; }
+    /* 읽는 글은 900px 를 안 넘긴다 */
+    .uq-page .demo-intro,
+    .uq-page .demo-steps,
+    .uq-brief { max-width: 900px; margin-left: auto; margin-right: auto; }
+
+    .uq-brief {
+      padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .uq-brief strong { color: var(--accent-primary); }
+    .uq-brief code {
+      background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em;
+    }
+    .uq-brief p { margin: 0 0 0.6rem; }
+    .uq-brief p:last-child { margin-bottom: 0; }
+
+    /* ---------- 컨트롤 ---------- */
+    .uq-controls {
+      padding: 1.25rem 1.5rem 1.35rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .uq-controls-head {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.9rem;
+      padding-bottom: 0.7rem; margin-bottom: 0.9rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .uq-controls-head h2 { font-size: 1rem; margin: 0; color: var(--text-primary); }
+    .uq-controls-head span { font-size: 0.78rem; color: var(--text-secondary); }
+
+    .uq-row {
+      display: grid; grid-template-columns: 250px 1fr 74px; align-items: center;
+      gap: 0.8rem; margin-bottom: 0.85rem;
+    }
+    @media (max-width: 720px) { .uq-row { grid-template-columns: 1fr; gap: 0.35rem; } }
+    .uq-row-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .uq-row-label small {
+      display: block; font-size: 0.72rem; color: var(--text-secondary);
+      font-weight: 400; margin-top: 0.15rem; line-height: 1.45;
+    }
+    .uq-row-label i { font-style: normal; font-weight: 700; }
+    .uq-row-label i.k-per { color: var(--series-1); }
+    .uq-row-label i.k-sure { color: var(--series-6); }
+    .uq-row-label i.k-dog { color: var(--series-2); }
+
+    .uq-slider {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+      background: var(--bg-tertiary); border-radius: 0; outline: none;
+    }
+    .uq-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
+    }
+    .uq-slider::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent-primary);
+      border-radius: 0; cursor: pointer; border: none;
+    }
+    .uq-slider-val {
+      text-align: right; font-family: var(--font-mono); font-weight: 700;
+      font-size: 0.92rem; color: var(--accent-primary);
+    }
+
+    .uq-rest {
+      display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline;
+      margin: -0.2rem 0 1rem; padding: 0.5rem 0.7rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      font-size: 0.78rem; color: var(--text-secondary);
+    }
+    .uq-rest b { color: var(--text-primary); font-family: var(--font-mono); }
+
+    .uq-modes { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.9rem; }
+    .uq-modes-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; margin-right: 0.2rem; }
+    .uq-mode-btn {
+      font-family: var(--font-sans); font-size: 0.85rem; padding: 0.4rem 0.95rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .uq-mode-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    /* 켜진 쪽은 색만으로 알리지 않는다 — 굵기와 앞의 ▸ 가 같이 바뀐다 */
+    .uq-mode-btn.is-on {
+      background: var(--bg-secondary); color: var(--text-primary); font-weight: 700;
+      border-color: var(--text-primary); border-left-width: 4px;
+    }
+    .uq-mode-btn.is-on::before { content: '▸ '; }
+
+    .uq-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .uq-presets-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; margin-right: 0.2rem; }
+    .uq-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .uq-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ---------- 지표 ---------- */
+    .uq-pop {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px;
+      background: var(--border-color); border: 1px solid var(--border-color); border-radius: 0;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 900px) { .uq-pop { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 520px) { .uq-pop { grid-template-columns: repeat(2, 1fr); } }
+    .uq-pop-cell { background: var(--bg-primary); padding: 0.75rem 0.8rem; text-align: center; }
+    .uq-pop-label { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.25rem; letter-spacing: 0.02em; }
+    .uq-pop-val { font-size: 1.12rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+
+    .uq-spend-line {
+      font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 0.5rem;
+      padding-left: 0.1rem;
+    }
+    .uq-spend-line b { color: var(--text-primary); font-family: var(--font-mono); }
+
+    .uq-compare-wrap { overflow-x: auto; }
+    .uq-compare {
+      width: 100%; border-collapse: collapse; font-size: 15px;
+      border: 1px solid var(--border-color);
+    }
+    .uq-compare th, .uq-compare td {
+      padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--border-color); text-align: right;
+      white-space: nowrap;
+    }
+    .uq-compare th {
+      background: var(--bg-secondary); color: var(--text-secondary);
+      font-size: 0.78rem; font-weight: 600; text-align: right;
+    }
+    .uq-compare th:first-child, .uq-compare td:first-child { text-align: left; }
+    .uq-compare td { font-family: var(--font-mono); color: var(--text-primary); }
+    .uq-compare td:first-child { font-family: var(--font-sans); color: var(--text-secondary); }
+    .uq-compare tbody tr:last-child td { border-bottom: none; }
+    .uq-compare tr.uq-pcvr td:first-child { border-left: 4px solid var(--accent-primary); }
+    .uq-compare tr.uq-uplift td:first-child { border-left: 4px solid var(--accent-secondary); }
+    /* 지금 고른 기준 — 배경 + 굵기 + 앞의 ▸ 셋이 같이 바뀐다 */
+    .uq-compare tr.is-on td { background: var(--bg-secondary); font-weight: 700; }
+    .uq-compare tr.is-on td:first-child::before { content: '▸ '; color: var(--text-primary); }
+    .uq-compare td.is-bad { color: var(--state-bad); }
+    .uq-compare .uq-key { font-size: 0.78rem; color: var(--text-secondary); display: block; font-weight: 400; }
+
+    /* 판정은 읽는 문단이라 읽기 폭을 넘기지 않는다 */
+    .uq-verdict {
+      max-width: 900px;
+      margin-top: 1rem; padding: 0.9rem 1.2rem;
+      background: var(--bg-secondary); border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
+      color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65;
+    }
+
+    /* ---------- 차트 ---------- */
+    .uq-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+    @media (max-width: 1000px) { .uq-charts-grid { grid-template-columns: 1fr; } }
+    .uq-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+      padding: 1.15rem 1.25rem 1.25rem;
+    }
+    .uq-card h3 { font-size: 1rem; margin: 0 0 0.25rem; color: var(--text-primary); }
+    .uq-card p.note { font-size: 0.79rem; color: var(--text-secondary); margin: 0 0 0.7rem; line-height: 1.55; }
+    .uq-card svg { width: 100%; height: auto; display: block; font-family: var(--font-sans); }
+
+    .uq-legend {
+      display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; margin-top: 0.6rem;
+      padding-top: 0.6rem; border-top: 1px solid var(--border-color);
+      font-size: 0.76rem; color: var(--text-secondary);
+    }
+    .uq-legend span { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+    .uq-legend svg { width: 14px; height: 14px; flex: none; }
+    .uq-auuc {
+      margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* SVG 안의 글자 크기·색 — 인라인으로 안 박고 여기서 한 번에 준다.
+       12.5px 는 글 본문 SVG 의 라벨 크기와 같다. */
+    .uq-tick { font-size: 12.5px; fill: var(--ink3); }
+    .uq-axis { font-size: 12.5px; fill: var(--ink2); }
+    .uq-quad { font-size: 12.5px; fill: var(--ink3); }
+    .uq-quad.is-bad { fill: var(--oxide); }
+    /* 컷 선 글자와 곡선 위 글자는 점·선에 겹쳐도 읽혀야 한다.
+       바탕색으로 테두리를 먼저 칠하고 글자를 그 위에 얹는다(halo). */
+    .uq-cut {
+      font-size: 12.5px; font-weight: 700; fill: var(--accent-primary);
+      paint-order: stroke; stroke: var(--paper); stroke-width: 3.5px; stroke-linejoin: round;
+    }
+    .uq-cut.is-navy { fill: var(--accent-secondary); }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="uq-hero">
+      <h1>증분 4분면</h1>
+      <p>사람 2,000명을 네 부류로 섞어 pCVR 축과 uplift 축에 뿌렸습니다. 같은 예산으로
+        pCVR 높은 순으로 고를 때와 uplift 높은 순으로 고를 때, 리포트에 찍히는 전환과
+        실제로 늘어난 매출이 어떻게 갈리는지 봅니다.</p>
+    </section>
+
+    <div class="uq-page">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <a href="demo-attribution-window.html">어트리뷰션 윈도우</a>
+        <a href="demo-pctr-impact.html">pCTR Impact</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>같은 사람들, 같은 예산인데 <strong>고르는 기준만</strong> 바꿉니다. pCVR 높은 순으로 고르면 리포트 전환이 크게 찍히고, uplift 높은 순으로 고르면 리포트는 줄어드는데 증분 전환이 늡니다. 두 Qini 곡선이 그 차이를 그대로 보여줍니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>리포트의 전환 수는 "광고를 본 뒤 산 사람"이고, 매출을 늘리는 것은 "광고가 없었으면 안 샀을 사람"입니다. 둘은 겹치지만 같지 않습니다. 기본값에서 pCVR 상위 20%의 증분은 uplift 상위 20%의 <strong>36.8%</strong>뿐입니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <li><span class="step-text">먼저 <strong>고르는 기준</strong>을 <code>pCVR 순</code>과 <code>uplift 순</code>으로 번갈아 눌러 보세요. 왼쪽 그림에서 진해지는 점 무리가 통째로 옮겨 갑니다. 오른쪽 아래 칸(pCVR 높고 증분 0 이하)이 켜지느냐 꺼지느냐가 전부입니다.</span></li>
+        <li><span class="step-text">아래 표 두 줄을 비교합니다. 기본값에서 <strong>리포트 전환은 pCVR 순이 51.7% 많은데 증분 전환은 uplift 순이 2.7배</strong>입니다.</span></li>
+        <li><span class="step-text"><strong>확실 구매 비율</strong>을 22% → 34%로 올려 보세요. pCVR 순의 증분이 거의 0으로 무너집니다. 브랜드 검색 유입처럼 이미 살 사람이 몰린 인벤토리가 이 모양입니다.</span></li>
+        <li><span class="step-text"><strong>타겟팅 예산</strong>을 오른쪽 끝(100%)까지 밉니다. 두 곡선이 같은 점에서 만납니다. 전원에게 광고하면 순서를 아무리 잘 매겨도 결과가 같습니다.</span></li>
+        <li><span class="step-text"><strong>청개구리 비율</strong>을 올리면 uplift 곡선의 최고점이 왼쪽으로 옵니다. 그 점 오른쪽은 광고를 더 할수록 매출이 주는 구간입니다.</span></li>
+      </ol>
+
+      <div class="uq-brief">
+        <p><strong>설정</strong> — 점 하나가 실제 <code>200명</code>입니다. 2,000개면 <code>40만 명</code>으로,
+          글의 노출군 규모와 같습니다. 도달 1명당 광고비는 <code>₩120</code>입니다.
+          기본 비율(설득 가능 12% · 확실 구매 22% · 청개구리 4%)에서 노출군 CVR <code>3.00%</code>,
+          대조군 CVR <code>2.50%</code>, 증분 <code>+0.50%p</code>가 나옵니다 —
+          <a href="post.html?id=uplift-incrementality">증분(uplift) 모델링</a>의 값과 소수점까지 같습니다.</p>
+        <p><strong>글과 다른 점 하나</strong> — 글 2절의 네 부류는 개인 증분이 정확히 +1 · 0 · -1인 극단형입니다.
+          여기서는 그 네 부류를 확률로 펼쳤습니다. 설득 가능은 증분이 큰 양수, 청개구리는 음수,
+          확실 구매와 무관심은 0 언저리입니다. 그리고 글 4절은 세그먼트를 통째로 골랐지만
+          이 화면은 사람을 한 명씩 고릅니다. 그래서 두 기준의 차이가 글보다 더 크게 벌어집니다.</p>
+        <p><strong>가로축이 제곱근 눈금</strong>인 이유 — 무관심이 전체의 62%인데 이들의 pCVR이 0.3% 언저리라
+          보통 눈금으로 그리면 왼쪽 벽에 붙어 한 줄이 됩니다. 낮은 쪽을 펴서 보려고 제곱근을 썼습니다.</p>
+      </div>
+    </div>
+
+    <!-- ================= 컨트롤 ================= -->
+    <div class="uq-controls" id="uq-controls">
+      <div class="uq-controls-head">
+        <h2>사람을 섞고, 예산을 정하고, 고르는 기준을 바꾼다</h2>
+        <span>비율 셋의 합은 95%를 넘지 않습니다. 나머지가 무관심입니다.</span>
+      </div>
+
+      <div class="uq-row">
+        <div class="uq-row-label"><i class="k-per">설득 가능</i> 비율
+          <small>광고를 봐야만 산다. 광고비가 값을 하는 유일한 부류</small>
+        </div>
+        <input type="range" class="uq-slider" id="uq-per" min="0" max="30" step="0.5" value="12">
+        <div class="uq-slider-val" id="uq-per-val">12.0%</div>
+      </div>
+
+      <div class="uq-row">
+        <div class="uq-row-label"><i class="k-sure">확실 구매</i> 비율
+          <small>광고와 무관하게 산다. pCVR은 가장 높고 증분은 0</small>
+        </div>
+        <input type="range" class="uq-slider" id="uq-sure" min="0" max="45" step="0.5" value="22">
+        <div class="uq-slider-val" id="uq-sure-val">22.0%</div>
+      </div>
+
+      <div class="uq-row">
+        <div class="uq-row-label"><i class="k-dog">청개구리</i> 비율
+          <small>광고를 보면 오히려 안 산다. 증분이 음수</small>
+        </div>
+        <input type="range" class="uq-slider" id="uq-dog" min="0" max="20" step="0.5" value="4">
+        <div class="uq-slider-val" id="uq-dog-val">4.0%</div>
+      </div>
+
+      <div class="uq-row">
+        <div class="uq-row-label">타겟팅 예산 — 상위 몇 %
+          <small>고른 기준의 점수가 높은 쪽부터 이만큼만 산다</small>
+        </div>
+        <input type="range" class="uq-slider" id="uq-budget" min="2" max="100" step="1" value="20">
+        <div class="uq-slider-val" id="uq-budget-val">20%</div>
+      </div>
+
+      <div class="uq-rest">
+        <span>남은 <b id="uq-lost-val">62.0%</b>가 무관심입니다 — 뭘 해도 안 삽니다.</span>
+        <span id="uq-mix">—</span>
+      </div>
+
+      <div class="uq-modes">
+        <span class="uq-modes-label">고르는 기준</span>
+        <button class="uq-mode-btn" id="uq-mode-pcvr" data-mode="pcvr" aria-pressed="false">pCVR 순</button>
+        <button class="uq-mode-btn is-on" id="uq-mode-uplift" data-mode="uplift" aria-pressed="true">uplift 순</button>
+      </div>
+
+      <div class="uq-presets">
+        <span class="uq-presets-label">바로 보기</span>
+        <button class="uq-preset-btn" data-preset="12,22,4,20,1">기본 — 글의 40만 명</button>
+        <button class="uq-preset-btn" data-preset="6,34,4,20,0">확실 구매가 몰린 인벤토리</button>
+        <button class="uq-preset-btn" data-preset="12,18,12,20,1">청개구리가 많다</button>
+        <button class="uq-preset-btn" data-preset="24,14,4,20,1">설득 가능이 많다</button>
+        <button class="uq-preset-btn" data-preset="12,22,4,100,1">전원에게 광고</button>
+      </div>
+    </div>
+
+    <!-- 해설 패널이 들어올 자리 (demo-edu.js) -->
+    <div class="uq-explain-host"></div>
+
+    <!-- ================= 지표 ================= -->
+    <div class="uq-metrics" id="uq-metrics">
+      <div class="uq-pop">
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">노출군 CVR</div>
+          <div class="uq-pop-val" id="uq-cvr-t">—</div>
+        </div>
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">대조군 CVR</div>
+          <div class="uq-pop-val" id="uq-cvr-c">—</div>
+        </div>
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">증분 (uplift)</div>
+          <div class="uq-pop-val" id="uq-cvr-lift">—</div>
+        </div>
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">전원 기준 리포트 전환</div>
+          <div class="uq-pop-val" id="uq-report-total">—</div>
+        </div>
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">전원 기준 증분 전환</div>
+          <div class="uq-pop-val" id="uq-inc-total">—</div>
+        </div>
+        <div class="uq-pop-cell">
+          <div class="uq-pop-label">전원 기준 증분 CPA</div>
+          <div class="uq-pop-val" id="uq-icpa-total">—</div>
+        </div>
+      </div>
+
+      <p class="uq-spend-line">지금 예산으로 광고가 닿는 사람 <b id="uq-spend">—</b></p>
+
+      <div class="uq-compare-wrap">
+        <table class="uq-compare">
+          <thead>
+            <tr>
+              <th scope="col">고르는 기준</th>
+              <th scope="col">도달</th>
+              <th scope="col">리포트 전환</th>
+              <th scope="col">증분 전환</th>
+              <th scope="col">겉보기 CPA</th>
+              <th scope="col">증분 CPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="uq-pcvr" id="uq-row-pcvr">
+              <td>pCVR 높은 순<span class="uq-key">광고를 봤을 때 살 확률</span></td>
+              <td id="uq-p-reach">—</td>
+              <td id="uq-p-report">—</td>
+              <td id="uq-p-inc">—</td>
+              <td id="uq-p-cpa">—</td>
+              <td id="uq-p-icpa">—</td>
+            </tr>
+            <tr class="uq-uplift is-on" id="uq-row-uplift">
+              <td>uplift 높은 순<span class="uq-key">광고가 늘린 확률</span></td>
+              <td id="uq-u-reach">—</td>
+              <td id="uq-u-report">—</td>
+              <td id="uq-u-inc">—</td>
+              <td id="uq-u-cpa">—</td>
+              <td id="uq-u-icpa">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uq-verdict" id="uq-verdict">—</div>
+    </div>
+
+    <!-- ================= 차트 ================= -->
+    <div class="uq-charts" id="uq-charts">
+      <div class="uq-charts-grid">
+        <div class="uq-card" id="uq-card-scatter">
+          <h3>4분면 — 누가 어디에 있나</h3>
+          <p class="note">가로는 pCVR, 세로는 uplift입니다. 세로선은 전체 평균 pCVR, 가로선은 증분 0입니다.
+            지금 고른 기준으로 뽑힌 사람만 진하게 칠합니다. 옅게 칠한 점은 예산 밖입니다.</p>
+          <svg id="uq-scatter" viewBox="0 0 620 432" role="img" aria-label="pCVR과 uplift의 산점도"></svg>
+          <div class="uq-legend">
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" style="fill:var(--series-1)"/></svg>설득 가능</span>
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.6" y="2.6" width="8.8" height="8.8" style="fill:var(--series-6)"/></svg>확실 구매</span>
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 12.2 L12 3.4 H2 Z" style="fill:var(--series-2)"/></svg>청개구리</span>
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="4.6" y="4.6" width="4.8" height="4.8" style="fill:var(--series-3)"/></svg>무관심</span>
+            <span>옅은 점 = 예산 밖</span>
+          </div>
+        </div>
+
+        <div class="uq-card" id="uq-card-qini">
+          <h3>Qini 곡선 — 위에서부터 잘라 가며 더한 증분</h3>
+          <p class="note">가로는 누적 도달 인원, 세로는 그때까지 쌓인 증분 전환입니다.
+            같은 가로 위치에서 두 곡선의 높이 차이가 곧 매출 차이입니다.
+            직선은 아무 순서 없이 무작위로 골랐을 때입니다.</p>
+          <svg id="uq-qini" viewBox="0 0 620 432" role="img" aria-label="Qini 곡선 두 개"></svg>
+          <div class="uq-legend">
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><line x1="0" y1="7" x2="14" y2="7" style="stroke:var(--accent-secondary); stroke-width:2.6"/></svg>uplift 순</span>
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><line x1="0" y1="7" x2="14" y2="7" style="stroke:var(--accent-primary); stroke-width:2.2; stroke-dasharray:5 3"/></svg>pCVR 순</span>
+            <span><svg viewBox="0 0 14 14" aria-hidden="true"><line x1="0" y1="7" x2="14" y2="7" style="stroke:var(--series-3); stroke-width:1.8; stroke-dasharray:4 3"/></svg>무작위</span>
+          </div>
+          <div class="uq-auuc" id="uq-auuc">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uq-page">
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>리포트가 좋은 계획과 매출이 좋은 계획이 다르다</strong> — 기본값에서 pCVR 순은 리포트 전환 8,150건에 겉보기 CPA ₩1,178을 찍는다. uplift 순은 5,371건에 ₩1,787이다. 리포트만 보면 pCVR 순이 51.7% 낫다. 그런데 증분은 942건 대 2,558건으로 뒤집힌다. 증분 CPA는 ₩10,192 대 ₩3,753이다. 광고팀이 예산을 더 달라고 들고 오는 리포트가 대개 앞쪽 계획이다.</li>
+            <li><strong>돈이 새는 곳은 오른쪽 아래 칸이다</strong> — pCVR이 높은데 증분이 0 이하인 칸. 확실 구매와 청개구리가 거기 산다. pCVR 순으로 고른다는 것은 세로선 오른쪽을 통째로 사는 일이라 이 칸이 같이 딸려 온다. uplift 순은 가로선 위쪽을 사므로 이 칸을 통째로 뺀다.</li>
+            <li><strong>증분 모델은 "어디서 멈출까"와 짝일 때만 값이 있다</strong> — 예산을 100%로 밀면 두 곡선이 같은 점에서 만난다. 전원에게 광고하면 순서를 아무리 잘 매겨도 결과가 같다. uplift 곡선의 최고점이 멈출 자리를 짚어 주고, 그 오른쪽은 광고를 더 할수록 증분이 주는 구간이다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          증분 모델을 붙이는 일은 모델 학습보다 <strong>홀드아웃을 만드는 일</strong>이 먼저입니다.
+          대조군이 없으면 이 화면의 세로축 자체가 존재하지 않습니다.
+        </p>
+        <ul>
+          <li><strong>상시 홀드아웃부터 만듭니다:</strong> 로그인 ID 해시의 나머지로 계정 단위 홀드아웃을 길게 유지합니다. 캠페인마다 새로 잡으면 세그먼트별 대조군이 늘 모자랍니다. 비율은 대개 5~10% 사이에서 정합니다. 1%는 검정력이 29.6%라 "차이 없음"이 나와도 근거가 못 됩니다.</li>
+          <li><strong>배포 전 검사는 AUC가 아니라 Qini입니다:</strong> 전환 예측력이 높은 점수가 증분 예측력은 낮을 수 있습니다. 이 화면의 두 곡선을 그대로 오프라인 평가에 씁니다. 순위 지표만 보고 증분 모델을 고르면 가장 쓸모없는 모델이 뽑힙니다.</li>
+          <li><strong>증분이 음수인 곳은 예산을 줄일 곳이 아니라 뺄 곳입니다:</strong> 최근 구매자나 해지 직전 사용자처럼 청개구리가 몰린 구간은 제외 목록으로 관리합니다. 빼면 증분이 늘고 광고비도 같이 줍니다.</li>
+          <li><strong>대조군에 다른 채널 광고가 닿는지 먼저 정합니다:</strong> 이 캠페인만 막을지, 브랜드 전체를 막을지, 계정 전체를 막을지 합의가 없으면 관측 증분이 항상 실제보다 작게 나옵니다. 그 방향의 오차는 잘 되고 있는 캠페인을 끄는 쪽으로 사람을 밉니다.</li>
+        </ul>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=uplift-incrementality" class="demo-next-card">
+              <span class="demo-next-label">이 데모의 짝 글</span>
+              <span class="demo-next-title">증분(uplift) 모델링</span>
+              <span class="demo-next-excerpt">네 부류 · S/T/X-learner · Qini와 AUUC · 홀드아웃 비율. 이 화면의 값이 전부 거기서 왔습니다</span>
+            </a>
+            <a href="post.html?id=causal-inference-101" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">인과추론 입문</span>
+              <span class="demo-next-excerpt">반사실이 무엇이고, 상관과 인과가 왜 다른가</span>
+            </a>
+            <a href="post.html?id=rct-randomized-experiment" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">랜덤 실험(RCT)</span>
+              <span class="demo-next-excerpt">무작위 배정이 왜 대조군을 빌려 쓸 수 있게 하는가. 표본 크기와 검정력</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/uplift-quadrant-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

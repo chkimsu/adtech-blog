@@ -26,12 +26,12 @@
   const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   function palette() {
     return {
-      text: cssVar('--text-secondary') || '#4f4a42',
-      muted: cssVar('--text-muted') || '#8a8176',
-      accent: cssVar('--accent-primary') || '#b0442c',
-      accent2: cssVar('--accent-secondary') || '#8a6a3a',
+      text: cssVar('--text-secondary') || '#3F3F46',
+      muted: cssVar('--text-muted') || '#71717A',
+      accent: cssVar('--accent-primary') || '#9B3A21',
+      accent2: cssVar('--accent-secondary') || '#20406B',
       grid: 'rgba(128,128,128,0.18)',
-      faint: 'rgba(176,68,44,0.18)',
+      faint: 'rgba(155,58,33,0.18)',
     };
   }
 

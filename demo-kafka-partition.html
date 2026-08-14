@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 
-<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light',p=localStorage.getItem('palette')||'cream';d.setAttribute('data-theme',t);d.setAttribute('data-palette',p);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -23,10 +23,10 @@
     .kp-intro {
       max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-radius: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
     }
     .kp-intro strong { color: var(--accent-primary); }
-    .kp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+    .kp-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
 
     /* ---------- 흙톤 6색 — consumer 구분에만 쓴다 ----------
        쓰는 자리는 카드 왼쪽 테두리와 작은 사각형 표식뿐 — 글자에는 절대 안 쓴다.
@@ -38,14 +38,14 @@
        알파가 해 주던 보호가 없어져서, 하나의 값으로는 다크 배경에서 3:1 을 못 넘긴다.
        그래서 --state-bad / --state-good / --state-warn 과 같은 방식으로 테마별로 따로 정한다.
        (측정: 라이트 3.82~5.65, 다크 5.00~5.30 — 네 조합 모두 3:1 위) */
-    .kp-tone-0 { --kp-tone: rgba(156, 90, 68, 1); }
-    .kp-tone-1 { --kp-tone: rgba(90, 107, 122, 1); }
-    .kp-tone-2 { --kp-tone: rgba(95, 122, 99, 1); }
-    .kp-tone-3 { --kp-tone: rgba(168, 120, 58, 1); }
-    .kp-tone-4 { --kp-tone: rgba(125, 94, 114, 1); }
-    .kp-tone-5 { --kp-tone: rgba(154, 125, 56, 1); }
+    .kp-tone-0 { --kp-tone: color-mix(in srgb, var(--series-2) 100%, transparent); }
+    .kp-tone-1 { --kp-tone: color-mix(in srgb, var(--series-1) 100%, transparent); }
+    .kp-tone-2 { --kp-tone: color-mix(in srgb, var(--series-6) 100%, transparent); }
+    .kp-tone-3 { --kp-tone: color-mix(in srgb, var(--series-5) 100%, transparent); }
+    .kp-tone-4 { --kp-tone: color-mix(in srgb, var(--series-4) 100%, transparent); }
+    .kp-tone-5 { --kp-tone: color-mix(in srgb, var(--series-3) 100%, transparent); }
     /* 다크 — 같은 여섯 색조를 어두운 카드 위에서 보이도록 올린 값.
-       크림 다크(#232020)와 slate 다크(#1f2530) 둘 다 이 한 벌로 덮는다. */
+       팔레트가 한 벌(17색)로 줄어 라이트·다크 둘만 덮으면 된다. */
     [data-theme="dark"] .kp-tone-0 { --kp-tone: rgba(193, 133, 112, 1); }
     [data-theme="dark"] .kp-tone-1 { --kp-tone: rgba(132, 150, 165, 1); }
     [data-theme="dark"] .kp-tone-2 { --kp-tone: rgba(126, 154, 130, 1); }
@@ -56,7 +56,7 @@
     /* ---------- 컨트롤 ---------- */
     .kp-controls {
       max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
-      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
     }
     .kp-slider-row {
       margin-bottom: 0.75rem; display: grid; grid-template-columns: 148px 1fr 54px;
@@ -65,15 +65,15 @@
     @media (max-width: 700px) { .kp-slider-row { grid-template-columns: 112px 1fr 40px; gap: 0.5rem; } }
     .kp-slider-row input[type="range"] {
       -webkit-appearance: none; appearance: none; width: 100%; min-width: 0;
-      height: 6px; background: var(--bg-tertiary); border-radius: 3px; outline: none;
+      height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none;
     }
     .kp-slider-row input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
-      background: var(--accent-primary); border-radius: 50%; cursor: pointer;
+      background: var(--accent-primary); border-radius: 0; cursor: pointer;
     }
     .kp-slider-row input[type="range"]::-moz-range-thumb {
       width: 18px; height: 18px; background: var(--accent-primary);
-      border-radius: 50%; cursor: pointer; border: none;
+      border-radius: 0; cursor: pointer; border: none;
     }
     /* 값 표시는 <output> 이 아니라 <span> 이다 — <output> 은 암묵적으로 role=status,
        즉 aria-live 영역이라 슬라이더가 이미 읽어 준 숫자를 한 번 더 읽는다. */
@@ -91,7 +91,7 @@
     .kp-key-row label {
       display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
       font-size: 0.86rem; color: var(--text-muted);
-      padding: 0.4rem 0.85rem; border: 1px dashed var(--border-color); border-radius: 999px;
+      padding: 0.4rem 0.85rem; border: 1px dashed var(--border-color); border-radius: 0;
       transition: color var(--transition-fast), border-color var(--transition-fast);
     }
     .kp-key-row label.is-on {
@@ -104,7 +104,7 @@
     .kp-verdict {
       max-width: 980px; margin: 0 auto 0.8rem; padding: 0.85rem 1.2rem;
       background: var(--bg-secondary); border: 1px solid var(--border-color);
-      border-left: 3px solid var(--border-color); border-radius: 10px;
+      border-left: 3px solid var(--border-color); border-radius: 0;
       color: var(--text-primary); font-size: 0.93rem; line-height: 1.65;
     }
     /* 색만으로 알리지 않는다 — 왼쪽 선의 굵기·실선/점선, 그리고 글자 배지가 함께 바뀐다 */
@@ -114,7 +114,7 @@
     .kp-verdict-badge {
       display: inline-block; margin-right: 0.5rem; padding: 0.08rem 0.42rem;
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap;
-      border: 1px solid currentColor; border-radius: 4px;
+      border: 1px solid currentColor; border-radius: 0;
     }
     .kp-verdict.is-good .kp-verdict-badge { color: var(--state-good); }
     .kp-verdict.is-warn .kp-verdict-badge { color: var(--state-warn); }
@@ -132,7 +132,7 @@
     .kp-shuffle {
       max-width: 980px; margin: 0 auto 1rem; padding: 0.8rem 1.15rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
-      border-left: 3px solid var(--accent-primary); border-radius: 10px;
+      border-left: 3px solid var(--accent-primary); border-radius: 0;
       color: var(--text-secondary); font-size: 0.87rem; line-height: 1.65;
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem;
     }
@@ -141,7 +141,7 @@
     .kp-shuffle-text { flex: 1 1 320px; min-width: 0; }
     .kp-shuffle-btn {
       flex: 0 0 auto; font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600;
-      padding: 0.36rem 0.8rem; cursor: pointer; border-radius: 999px;
+      padding: 0.36rem 0.8rem; cursor: pointer; border-radius: 0;
       background: transparent; color: var(--text-secondary);
       border: 1px solid var(--border-color); transition: color var(--transition-fast), border-color var(--transition-fast);
     }
@@ -152,11 +152,11 @@
     .kp-legend-item {
       display: inline-flex; align-items: center; gap: 0.4rem;
       padding: 0.3rem 0.7rem; font-size: 0.78rem; color: var(--text-secondary);
-      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 999px;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
     }
     /* 아무 칸도 못 맡은 consumer — 점선 + 옅은 글자 + "맡은 칸 없음" 이라는 말까지 함께 */
     .kp-legend-item.is-idle { border-style: dashed; color: var(--text-muted); }
-    .kp-swatch { width: 0.62rem; height: 0.62rem; border-radius: 2px; background: var(--kp-tone); flex: none; }
+    .kp-swatch { width: 0.62rem; height: 0.62rem; border-radius: 0; background: var(--kp-tone); flex: none; }
     .kp-legend-item.is-idle .kp-swatch { background: transparent; border: 1px dashed var(--text-muted); }
 
     /* ---------- 칸 ---------- */
@@ -171,7 +171,7 @@
     .kp-card {
       min-width: 0; padding: 0.6rem 0.7rem 0.65rem;
       background: var(--bg-secondary); border: 1px solid var(--border-color);
-      border-left: 3px solid var(--kp-tone); border-radius: 10px;
+      border-left: 3px solid var(--kp-tone); border-radius: 0;
     }
     /* 빈 칸 — 점선 (색을 안 쓴다) */
     .kp-card.is-empty { border-style: dashed; }
@@ -188,7 +188,7 @@
     .kp-card-hot, .kp-verdict-hot {
       display: inline-block; white-space: nowrap;
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em; color: var(--state-warn);
-      border: 1px solid var(--state-warn); border-radius: 4px; padding: 0.02rem 0.3rem;
+      border: 1px solid var(--state-warn); border-radius: 0; padding: 0.02rem 0.3rem;
     }
     .kp-rec {
       display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.4rem;

@@ -5,14 +5,41 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-14T00:00:00Z</updated>
+  <updated>2026-08-15T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
-    <title>API 두 종류와 그 사이의 규약 — 실무 첫 주에 밟는 것들</title>
+    <title>목적지가 여럿일 때 — 연결을 30에서 11로</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>설정 파일에 블록 하나를 더하고 반나절 만에 배포 승인을 받는 팀이 있고, 같은 요청에 처리 잡 다섯 개를 열어 두 주를 쓰는 팀이 있다. 차이는 처리와 목적지 사이에 결과를 갈라 보내는 층이 있느냐다. 처리 잡 다섯과 목적지 여섯이면 층이 없을 때 연결이 30개, 설정 자리가 120개다. 층을 두면 연결 11개, 설정 자리 44개가 되고 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 대신 홉이 하나 늘어 남는 예산 888 ms 에 topic 왕복 200 ms 가 붙으니, 목적지 셋과 처리 잡 둘 아래에서는 이 층이 순손해다.</summary>
+    <category term="ML Infrastructure"/>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>추정 방법 둘을 겹치면 왜 더 튼튼한가 — 이중 강건</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=doubly-robust"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=doubly-robust</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>지난주 로그로 새 모델을 채점할 때 쓰는 재료는 옛 정책이 그 광고를 고를 확률 하나입니다. 그 확률이 틀리면 추정치가 통째로 기웁니다. 클릭 확률을 예측하는 pCTR 모델로 답을 먼저 깔고 확률의 역수 가중을 예측이 빗나간 몫에만 걸면, 둘 중 하나만 맞아도 값이 진짜에 붙습니다. 성향점수가 틀린 경우 확률의 역수로 세기는 2.442%로 낮게 나오지만 이 방법은 2.797%로 진짜 값 2.807% 옆에 붙습니다. 대신 흔들림은 0.809%에서 0.806%로 거의 그대로이고, 예측 모델을 평가에 쓸 로그로 학습하면 값이 조용히 예측 쪽으로 기웁니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>굳은 것을 푸는 네 방법과 그 대가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-remedies"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-remedies</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>밀려난 소재를 다시 띄우려면 하루 노출에서 얼마를 떼어 줘야 하고, 그 몫은 그날 포기하는 매출입니다. ε 탐색·낙관적 초기값·강제 슬롯·역확률 가중 넷을 같은 판에 걸어 보면 앞의 셋은 진짜 1등 소재를 사흘에서 여드레 만에 되살리지만, 역확률 가중은 노출을 한 푼도 안 쓰는 대신 굳음을 풀지도 못합니다. 기본 고리는 40일 동안 클릭 17,350건에 그쳐 최선인 18,831건보다 1,481건, ₩740,500을 흘립니다. 시드 100판으로 보면 진짜 상위 셋을 맞힌 60판에서 ε 탐색은 16건 손해이고 틀린 40판에서는 403건 이득이라, 탐색은 잘못 굳었을 때만 값을 합니다. 강제 슬롯은 클릭으로는 68판에서 지지만 측정의 흔들림을 6할 수준으로 줄여 예산 결정을 받쳐 줍니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+    <category term="Bandits &amp; Personalization"/>
+  </entry>
+  <entry>
+    <title>API 두 종류와 그 사이의 약속 — 실무 첫 주에 밟는 것들</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>메신저에 &quot;API 붙여 주세요&quot; 한 줄이 온다. 먼저 물어야 할 것은 언어가 아니라 부르는 쪽이다 — 앱이 초당 2,639건을 보내는 수집 API 와 12ms 안에 답해야 하는 입찰 API 는 비밀키·인증·버전·재시도가 통째로 다르다. 첫 주에 가장 비싼 것은 같은 요청을 두 번 세지 않겠다는 약속, 멱등성이다. 요청마다 고유 값을 붙이지 않고 재시도를 3회 걸면 전환 1,000건이 1,180건으로 부풀고, 전환 한 건당 광고비가 5,000원에서 4,237원으로 낮게 보인다. 재시도 시각을 무작위로 흩으면 500건 중 성공이 180건에서 472건으로 늘어난다 — 상태코드·목록 넘기기·필드 호환·인증 다섯 가지와 첫 주에 밟는 지뢰 여덟 개를 실제 요청과 응답으로 본다.</summary>
+    <summary>입사 나흘째에 첫 연동을 맡으면, 먼저 물어야 할 것은 무슨 언어로 짜나가 아니라 누가 부르나다 — 앱이 초당 2,639건을 보내는 수집 API 와 12ms 안에 답해야 하는 입찰 API 는 비밀키·인증·버전·재시도가 통째로 갈린다. 첫 주에 가장 비싼 약속은 같은 요청을 두 번 세지 않겠다는 멱등성이다. 요청마다 고유 값을 안 붙이고 재시도를 걸면 전환 1,000건이 1,180건으로 부풀고, 전환 한 건당 광고비가 ₩5,000에서 ₩4,237로 싸 보여 예산이 잘못 움직인다. 재시도 시각을 무작위로 흩으면 500건 중 성공이 180건에서 472건으로 늘어난다. 상태코드·목록 넘기기·필드 호환·인증 다섯과 첫 주에 밟는 지뢰 여덟을 실제 요청과 응답으로 본다.</summary>
     <category term="Software Engineering"/>
   </entry>
   <entry>
@@ -20,7 +47,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>파이프라인 설계는 수집기 고르기에서 시작하지 않는다. 대시보드 2초·정산 33시간처럼 소비자마다 다른 마감을 먼저 적고, 거기서 Kafka 도달까지 쓰는 1,112 ms 를 빼면 남는 예산이 부품을 정한다. 여섯 층(수집·버퍼·처리·유통·저장·조회) 중 가장 낯선 유통 층을 두면 처리 잡 5개와 목적지 6개 사이 연결이 30개에서 11개로 줄고, 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없다. 원본 하루 21.9 GB 를 왜 남기는지, 필드 하나를 지운 배포가 사흘 뒤 학습을 조용히 나빠지게 하는 경로까지 따라간다.</summary>
+    <summary>티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 쓴다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 소비자 넷의 마감이다. 대시보드 마감 2초에서 브로커까지 쓴 1,112 ms 를 빼면 888 ms 가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐이다. 정산은 33시간이라 후보가 넷 다 들어 비용지수 4짜리 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻는다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없고, 원본 하루 21.9 GB 를 왜 남기는지와 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라간다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>
@@ -29,7 +56,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>오프라인 순위 점수(AUC)가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 신뢰구간 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 요청 6건·노출 30건을 한 통에 섞으면 0.7778 이지만, 짝을 같은 요청 안으로 제한한 요청 안 순위 점수(GAUC)는 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점(LogLoss)만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나눈 정규화 엔트로피(NE)는 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되고 예측 대비 실제(COPC)는 1.018 에서 0.342 로 떨어집니다.</summary>
+    <summary>배포 전 점수가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 범위는 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 노출 서른 건을 한 통에 섞어 재면 0.7778 이지만, 짝을 같은 요청 안으로 제한하면 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나누면 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되니, 승인을 취소하고 중단해야 하는 배포입니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -37,7 +64,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 향상이 진짜 +22.5%가 아니라 +56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 0.8%p 움직입니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림이 절반이 되는 대신 값이 24% 깎여, 자기정규화를 같이 걸어야 그 몫이 대부분 돌아옵니다.</summary>
+    <summary>지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 나아진 폭이 진짜 22.5%가 아니라 56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 1.669%에서 2.469%로 밀어 올립니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림은 절반이 되지만 400주 평균이 2.124%로 내려앉아, 가중치 합으로 나누기를 같이 걸어야 그 몫이 대부분 돌아옵니다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Bandits &amp; Personalization"/>
   </entry>
@@ -46,7 +73,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>광고 8개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 순위를 정해 버립니다. 진짜 CTR 2.60%인 광고가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 노출을 받는 광고 넷은 사흘째에 고정되고 그 광고의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 광고가 102,500건을 가져가고, 누적 클릭은 17,350건으로 최선인 18,831건보다 7.9% 낮습니다. 되살리는 처방 넷을 같은 판에 걸어 대가를 재고, 한 번 굳은 뒤에는 왜 되돌리기가 어려운지를 숫자로 보입니다.</summary>
+    <summary>광고 여덟 개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 예산을 정해 버립니다. 진짜 클릭률 2.60%인 소재가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 예산을 받는 소재 넷은 사흘째에 고정되고 그 소재의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 소재가 102,500건을 가져가 매출 ₩980,500을 만들고, 리포트만 보면 진짜로 좋았던 쪽이 먼저 중단됩니다. 한 번 굳은 뒤 역확률 가중으로 되돌리려 하면 그 소재가 뜰 확률이 0이라 계산에서 아예 빠지고, 진짜 값 2.0875%가 1.880%로 도로 내려앉는 이유까지 숫자로 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Bandits &amp; Personalization"/>
   </entry>
@@ -151,29 +178,5 @@
     <updated>2026-06-21T00:00:00Z</updated>
     <summary>민지가 ₩89,000 운동화를 샀다. 2주간 인스타 노출 3번, 검색광고 클릭, 브랜드검색 클릭 — 이 매출은 누구 공일까? 실제 여정 로그에 라스트클릭·퍼스트클릭·선형·시간감쇠·U자형 다섯 규칙을 그대로 적용해 보면, 같은 여정에서 네이버 검색광고의 성과가 ₩0과 ₩89,000 사이를 오간다. 윈도우를 7일에서 2일로 줄이면 또 달라지고, 홀드아웃으로 재 보면 어트리뷰션이 말하는 2,500건 중 실제 광고가 만든 건 500건뿐이다(5배 과대). 파이썬 코드로 직접 나눠 보고, 겉보기 CPA ₩4,000과 증분 CPA ₩20,000이 왜 정반대 결론을 주는지까지.</summary>
     <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>헤더비딩: 한 줄로 세우지 말고 동시에 — 매체 수익을 +10~30% 올리는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=header-bidding"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=header-bidding</id>
-    <updated>2026-06-21T00:00:00Z</updated>
-    <summary>매체가 광고 자리 하나를 파는데, 6개 SSP의 입찰가 중 가장 비싼 ₩1,420짜리는 순서에 밀려 아예 질문도 받지 못한다 — Waterfall이 흘리는 돈은 정확히 ₩420, 42%다. 페이지 머리(header)의 Prebid.js가 SSP들을 동시에 불러 그 손실을 되찾는 원리, 타임아웃을 100ms에서 300ms로 늘릴 때 낙찰가가 ₩980에서 ₩1,420까지 움직이는 트레이드오프, 클라이언트 vs 서버 사이드(Google Open Bidding·Amazon TAM), 그리고 1st-price 전환과 Bid Shading까지 파이썬 시뮬레이터로 직접 확인한다.</summary>
-    <category term="Bidding &amp; Auction"/>
-  </entry>
-  <entry>
-    <title>pCTR: ‘이 사람이 누를까?’를 맞히는 확률, 그리고 그게 왜 돈이 되나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=pctr-prediction</id>
-    <updated>2026-06-21T00:00:00Z</updated>
-    <summary>DSP가 “₩1,200 내겠다”고 부를 때 그 값은 단 하나의 숫자에서 나온다 — ‘이 사람이 이 광고를 누를 확률(pCTR)’. 가장 비싸게 부른 광고(₩2,000)가 꼴찌, 가장 싸게 부른 광고(₩600)가 1등이 되는 eCPM 랭킹 표로 pCTR이 왜 돈인지 보이고, 순위는 완벽한데 전 구간에서 13% 낮게 보는 보정(Calibration) 사례(COPC 1.13)를 짚는다. 그리고 모든 예측에 0.5를 곱해도 AUC는 소수점까지 그대로인데 LogLoss만 나빠진다는 걸 파이썬으로 직접 증명해, 순위 지표만으로는 이 사고를 못 잡는 이유를 보인다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>2등 가격 경매(Second-Price): 이겨도 왜 2등 값만 낼까 — 그리고 광고판은 왜 1등 가격으로 옮겨갔나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=second-price-auction</id>
-    <updated>2026-06-21T00:00:00Z</updated>
-    <summary>경매에서 이겼는데 왜 2등이 부른 값만 낼까. DSP 5곳의 가상 입찰표를 놓고 계산해 보면, 2등 가격 경매에서는 정직하게 부르는 쪽이 과대입찰(₩1,500을 불러 −₩400 손해)이나 과소입찰(놓친 이익 ₩250)보다 기대 이익이 항상 앞선다. 그런데 같은 데이터를 1등 가격으로 돌리면 정직 입찰의 이익이 정확히 0이 되고, 20% 낮춰 부르는 Bid Shading이 오히려 이긴다. 헤더비딩으로 ‘2등’이라는 개념 자체가 무의미해지며 2017년 무렵부터 주요 거래소가, 2019년 무렵엔 Google Ad Manager까지 1등 가격으로 갈아탄 배경까지 정리한다.</summary>
-    <category term="Bidding &amp; Auction"/>
   </entry>
 </feed>

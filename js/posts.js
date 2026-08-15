@@ -111,6 +111,17 @@ const posts = [
     series: 'algorithm-track'
   },
   {
+    id: 'api-basics',
+    world: 'na',
+    title: 'API 기초 — POST로 보냈는데 왜 데이터가 돌아오나',
+    excerpt: 'POST 는 "수정"이 아니라 "이걸 처리해 줘"다. 그리고 HTTP 는 요청 하나에 응답 하나가 반드시 짝이라, 메서드가 무엇이든 답은 온다 — 작은 서버를 띄워 GET·POST·"조회인데 POST" 셋을 실제로 불러 보면 세 요청 모두 응답 본문이 있다. 메서드 다섯의 뜻, 주소에 동사를 넣으면 안 되는 이유, 내부·파트너·공개 세 등급, 비밀번호를 가리면서 남기는 로그 한 줄, 그리고 클릭 로그 100만 줄(86MB)을 10,000줄씩 나눠 879KB로, 압축해 131KB로 보내는 법까지.',
+    date: '2026-08-15',
+    categories: ['Software Engineering'],
+    tags: ['System Design', 'Networking', '입문'],
+    contentUrl: 'posts/api-basics.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'api-kinds-and-contracts',
     world: 'na',
     title: 'API 두 종류와 그 사이의 약속 — 실무 첫 주에 밟는 것들',
@@ -980,7 +991,8 @@ const series = {
     title: '엔지니어링 기초 트랙',
     desc: '협업 도구(Git)부터 시스템 설계·운영(아키텍처 패턴·쿠버네티스), 요청이 서비스까지 가는 길과 로그가 학습 데이터가 되는 길까지 — 백엔드/인프라 엔지니어의 기본기',
     posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router',
-      'api-kinds-and-contracts', 'kafka-log-pipeline', 'log-hops-to-kafka', 'data-pipeline-design', 'data-distribution-layer'],
+      'api-basics', 'api-kinds-and-contracts', 'kafka-log-pipeline', 'log-hops-to-kafka', 'data-pipeline-design',
+      'data-distribution-layer'],
   },
 };
 

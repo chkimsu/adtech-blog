@@ -80,6 +80,14 @@
     <category term="Interview &amp; Algorithms"/>
   </entry>
   <entry>
+    <title>API 기초 — POST로 보냈는데 왜 데이터가 돌아오나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=api-basics"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-basics</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>POST 는 &quot;수정&quot;이 아니라 &quot;이걸 처리해 줘&quot;다. 그리고 HTTP 는 요청 하나에 응답 하나가 반드시 짝이라, 메서드가 무엇이든 답은 온다 — 작은 서버를 띄워 GET·POST·&quot;조회인데 POST&quot; 셋을 실제로 불러 보면 세 요청 모두 응답 본문이 있다. 메서드 다섯의 뜻, 주소에 동사를 넣으면 안 되는 이유, 내부·파트너·공개 세 등급, 비밀번호를 가리면서 남기는 로그 한 줄, 그리고 클릭 로그 100만 줄(86MB)을 10,000줄씩 나눠 879KB로, 압축해 131KB로 보내는 법까지.</summary>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
     <title>목적지가 여럿일 때 — 연결을 30에서 11로</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer</id>
@@ -166,14 +174,5 @@
     <summary>같은 캠페인 하루치인데 웹 지면 전환 칸에는 3,120이 적히고 iOS 앱 지면 칸에는 940이 적힌다. 940건 중 415건은 금액 칸까지 비었고, 그마저 어제 것이 아니라 나흘 전 설치분이다. 타겟팅 피처가 빠지면 순위 점수가 열린 RTB에서 0.068 내려가고 담장 안은 0.012에 그친다. 사람마다 붙던 정답이 칸마다의 합계로 바뀌면 계수 흔들림이 3.3배가 되어 같은 정밀도까지 데이터가 11배 필요해진다. 노이즈는 절대량으로 붙어 전환 40건짜리는 상대 오차 70.7%로 묻히고, 빈도 상한은 아예 못 걸어 노출의 47.6%가 이미 다섯 번 넘게 본 사람에게 간다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>로그 수집기 안을 열어 본다 — 클릭 한 건이 Kafka를 지나기까지 9홉</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=log-hops-to-kafka"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=log-hops-to-kafka</id>
-    <updated>2026-08-11T00:00:00Z</updated>
-    <summary>광고를 탭한 그 순간부터 학습 데이터가 되기까지, 클릭 한 건은 다섯 군데에 머물고 그때마다 모양이 바뀐다. 수집 서버 안에서는 타입 없는 텍스트 한 줄(169 B)이고, 변환기를 지나면 필드가 8개에서 17개로 늘어난 JSON(308 B)이 되며, Kafka 안에서는 배치로 묶여 압축된 36.6 B다. 파일을 한 번 거치는 설계는 Kafka가 멈춰도 61.7시간을 버티고 직행은 10.4분을 버틴다 — 356배 차이가 640 ms 지연의 값이다. 같은 줄을 대시보드는 2초 뒤에, 학습은 10.2시간 뒤에 읽는다. 그래서 7일을 남긴다.</summary>
-    <category term="ML Infrastructure"/>
-    <category term="Software Engineering"/>
   </entry>
 </feed>

@@ -3062,9 +3062,12 @@ footer {
   letter-spacing: 0.01em;
 }
 
+/* minmax 의 최솟값을 그냥 280px 로 두면 컨테이너가 그보다 좁을 때 트랙이 안 줄어들어
+   페이지에 가로 스크롤이 생긴다(실측: 데모 카드 안쪽 264px 자리에서 16px 넘침).
+   min(280px, 100%) 는 넓은 화면에서는 280px 그대로, 좁으면 컨테이너 폭을 따른다. */
 .demo-next-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 1rem;
 }
 

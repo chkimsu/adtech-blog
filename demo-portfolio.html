@@ -230,16 +230,20 @@
     }
 
     /* Charts */
+    /* 1fr 은 자동 최솟값이 min-content 라, 안에 든 캔버스가 안 줄어들면 트랙째 늘어난다.
+       Chart.js 는 부모 폭에 맞춰 캔버스를 그리는데 그 부모 폭이 다시 캔버스에 끌려가 서로를 붙잡는다.
+       minmax(0, …) 와 카드의 min-width:0 이 그 고리를 끊는다. */
     .po-charts {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1.25rem;
       margin-bottom: 1.5rem;
     }
 
-    @media (max-width: 900px) { .po-charts { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .po-charts { grid-template-columns: minmax(0, 1fr); } }
 
     .po-chart-card {
+      min-width: 0;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       border-radius: 0;

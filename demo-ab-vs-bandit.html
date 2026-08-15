@@ -61,9 +61,11 @@
     .ab-stat.win .ab-stat-value { color: var(--accent-primary); }
     .ab-stat-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; }
 
-    .ab-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
-    @media (max-width: 900px) { .ab-charts { grid-template-columns: 1fr; } }
-    .ab-chart-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0; padding: 1.2rem 1.3rem; }
+    /* 1fr 은 자동 최솟값이 min-content 라, 안에 든 캔버스가 안 줄어들면 트랙째 늘어난다.
+       minmax(0, …) 와 카드의 min-width:0 이 있어야 좁은 화면에서 컨테이너 안에 들어온다. */
+    .ab-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .ab-charts { grid-template-columns: minmax(0, 1fr); } }
+    .ab-chart-card { min-width: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0; padding: 1.2rem 1.3rem; }
     .ab-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
     .ab-chart-card .ab-chart-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.9rem; line-height: 1.5; }
     .ab-chart-wrap { position: relative; height: 300px; }

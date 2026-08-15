@@ -8,6 +8,43 @@
 
 const posts = [
   {
+    id: 'interview-ml-modeling',
+    world: 'both',
+    worldNote: '보정·다운샘플링·랭킹 질문은 두 무대 다 나온다. 다만 담장 안은 경매를 직접 돌려 모든 입찰을 보니 COPC 를 지면·시간대별로 쪼개 볼 수 있고, 열린 RTB 는 패찰한 경매가 안 보여 같은 지표라도 관측 범위가 좁다.',
+    worldPractical: '면접에서 "COPC 가 1.15 인데 원인이 뭘까요"를 받았을 때, 담장 안 지원자는 지면별·시간대별로 쪼개 보겠다고 답할 수 있다. 노출과 클릭과 전환이 모두 자사 서버에 남아 어느 축에서 어긋나는지 바로 갈라 보이기 때문이다. 열린 RTB 쪽은 패찰한 경매가 아예 관측되지 않아 그 축이 통째로 비어 있고, 그래서 답이 "관측 가능한 구간에서만 재고 그 편향을 따로 보정하겠다"로 바뀐다. 지원하는 회사가 어느 쪽인지 모르면 이 되묻기부터 하는 편이 안전하다. 8절의 랭킹 질문도 갈리는데, 담장 안은 품질 점수와 다양성 규칙을 자기가 정하니 "어떻게 정하겠나"까지 답해야 하고, 열린 RTB 는 그 규칙이 남의 손에 있으니 "주어진 규칙 아래서 입찰가를 어떻게 만들겠나"가 질문이 된다.',
+    title: 'ML 모델링 면접 — AUC가 올랐는데 매출이 그대로인 이유',
+    excerpt: '면접에서 반복되는 광고 ML 모델링 질문 스물여덟 개를 모범답안과 함께 정리했다. CTR 0.2%에서 아무것도 안 하는 모델이 정확도 99.8%를 받고, AUC가 소수점까지 같은 두 모델의 COPC가 0.95와 0.32로 갈린다. 다운샘플링 되돌리기 공식, 시간으로 안 나눈 검증이 AUC를 0.058 부풀리는 실측, 피처 다섯 묶음, 랭킹에 eCPM 뒤로 무엇을 붙이나, 그리고 모르는 걸 물었을 때 답하는 법까지.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['pCTR', 'Calibration', 'Ad Ranking', '입문'],
+    contentUrl: 'posts/interview-ml-modeling.md',
+    series: 'interview-track'
+  },
+  {
+    id: 'interview-experiment-metrics',
+    world: 'both',
+    worldNote: '표본 수 계산과 엿보기 문제는 무대와 무관하다. 간섭은 갈린다 — 담장 안은 예산과 인벤토리를 한 회사가 쥐고 있어 실험군이 대조군을 직접 침범하고, 열린 RTB 는 경매를 통해 간접적으로 영향을 준다.',
+    worldPractical: '5절의 간섭 질문이 무대에 따라 답이 다르다. 담장 안에서는 실험군이 입찰가를 올리면 그 캠페인 예산이 빨리 소진되어 대조군에서도 같은 광고가 사라지므로, 캠페인이나 광고주 단위로 나누는 것이 사실상 강제된다. 열린 RTB 에서는 내 실험군이 남의 경매에서 낙찰가를 밀어 올려 내 대조군의 성과를 떨어뜨리는데, 이쪽은 자기 트래픽 비중이 작으면 무시할 만하다는 판단이 가능하다. 그래서 답에 "우리 물량이 그 거래처에서 몇 퍼센트인가요"라는 되묻기가 붙으면 좋다. 9절의 증분 실험도 갈린다 — 담장 안은 자기 지면이라 공익광고로 대체하는 방식을 직접 집행할 수 있고, 열린 RTB 는 입찰을 안 넣는 방식뿐이라 그 자리를 경쟁사가 채워 순수한 대조군이 안 만들어진다.',
+    title: '실험·측정 면접 — 언제 멈추고 이 숫자를 믿어도 되나',
+    excerpt: '광고 ML 면접의 실험·측정 질문 스물네 개. A/B 테스트를 며칠 돌리냐는 질문에는 표본 수로 답해야 하고, CTR 0.2%에서 1% 개선을 잡으려면 79일이 걸린다. 매일 보다가 유의할 때 멈추면 진짜 차이가 0인데도 21.6%가 "차이 있다"로 나오고, 지표를 스무 개 보면 열에 여섯 번은 뭔가 유의하다. CUPED로 표준오차를 2.4배 줄이는 법, 간섭·가드레일·어트리뷰션·증분까지 실행 출력으로 확인한다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['A/B Testing', 'Attribution', 'Incrementality', 'Causal Inference'],
+    contentUrl: 'posts/interview-experiment-metrics.md',
+    series: 'interview-track'
+  },
+  {
+    id: 'interview-system-design',
+    world: 'na',
+    title: 'ML 시스템 설계 면접 — 상자를 그리기 전에 숫자를 정한다',
+    excerpt: '"광고 추천 시스템을 설계해 보세요"에 바로 그리면 진다. 초당 요청·응답 예산·후보 개수·실시간 여부를 되묻는 것이 답의 절반이다. 100ms 예산을 단계별로 쪼개 보면 피처 조회가 30%로 가장 크고 모델을 두 배로 키우면 예산이 −1ms가 된다. 서버 하나의 p99 확률이 1%여도 30대를 거치면 26%가 되고, 학습·서빙 피처가 어긋나면 코드를 안 바꿔도 AUC가 0.78에서 0.74로 떨어진다. 배포·감시·장애·확장까지 스물두 문답.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['System Design', 'Model Serving', 'ML Infra', 'Microservices'],
+    contentUrl: 'posts/interview-system-design.md',
+    series: 'interview-track'
+  },
+  {
     id: 'algorithm-complexity-array',
     world: 'na',
     title: '복잡도와 배열 훑기 — 돌아가는 코드와 통과하는 코드의 차이',
@@ -927,6 +964,11 @@ const series = {
     title: '입찰·생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰·페이싱 → 입찰 셰이딩',
     posts: ['walled-garden', 'adtech-dev-layers', 'auto-bidding-pacing', 'bid-shading-censored'],
+  },
+  'interview-track': {
+    title: 'ML 엔지니어 면접 트랙',
+    desc: '광고 ML 면접에서 반복되는 질문 일흔네 개와 모범답안 — 모델링·실험/측정·시스템 설계 셋으로 나눠, 답의 근거를 실행되는 코드로 확인한다',
+    posts: ['interview-ml-modeling', 'interview-experiment-metrics', 'interview-system-design'],
   },
   'algorithm-track': {
     title: '알고리즘 코딩테스트 트랙',

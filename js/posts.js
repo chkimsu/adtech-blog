@@ -41,6 +41,39 @@ const posts = [
     series: 'algorithm-track'
   },
   {
+    id: 'algorithm-tree-heap',
+    world: 'na',
+    title: '트리와 힙 — 한 줄로 늘어놓을 수 없는 자료',
+    excerpt: '같은 값 아홉 개를 같은 코드로 이진 탐색 트리에 넣었는데, 넣은 순서만 달랐더니 찾는 데 4회와 8회로 갈렸다. 정렬된 순서로 넣으면 트리가 한 줄이 되기 때문이다. 트리를 코드로 담는 법과 훑는 순서 네 가지, 파이썬 재귀가 1000에서 멈추는 문제, 그리고 트리처럼 생겼지만 실제로는 배열인 힙까지 — 값 20만 개 중 상위 10개를 뽑는 세 방법을 재 보면 직접 짠 힙이 정렬보다 느리다는 뜻밖의 결과도 나온다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-tree-heap.md',
+    series: 'algorithm-track'
+  },
+  {
+    id: 'algorithm-graph-search',
+    world: 'na',
+    title: '그래프 탐색 — 스택을 큐로 바꾸면 최단 거리가 나온다',
+    excerpt: '그래프를 훑는 방법은 둘뿐이다. 스택으로 한 갈래를 끝까지 파고들거나(DFS), 큐로 가까운 것부터 훑거나(BFS). 두 코드는 자료형 하나만 다른데 그 하나가 최단 거리를 주느냐를 가른다. 인접 리스트와 행렬의 자리 차이(16칸 vs 49칸), BFS에서 방문 표시를 꺼낼 때 하면 큐가 두 배로 부푸는 이유, 격자 미로, 다익스트라의 낡은 값 걸러내기, 위상 정렬까지 실행 기록으로 따라간다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-graph-search.md',
+    series: 'algorithm-track'
+  },
+  {
+    id: 'algorithm-dp-greedy',
+    world: 'na',
+    title: 'DP·백트래킹·그리디 — 다 볼 수 없을 때 쓰는 세 가지',
+    excerpt: '피보나치 30을 그냥 재귀로 구하면 269만 번을 부른다. 답을 적어 두는 줄 하나를 더하면 59번이 된다. 겹치는 계산을 없애는 동적 계획법(점화식 세우는 네 단계와 배낭 문제 표), 아니면 되돌아오는 백트래킹(4×4 퀸을 256가지 대신 17번에), 지금 최선만 고르는 그리디(회의실 배정은 맞고 거스름돈 4·3·1은 틀린다)를 실제 출력으로 가른다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-dp-greedy.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'api-kinds-and-contracts',
     world: 'na',
     title: 'API 두 종류와 그 사이의 약속 — 실무 첫 주에 밟는 것들',
@@ -897,8 +930,9 @@ const series = {
   },
   'algorithm-track': {
     title: '알고리즘 코딩테스트 트랙',
-    desc: '복잡도를 실측으로 재는 것부터 배열·해시·정렬·이분탐색·스택큐까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
-    posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack'],
+    desc: '복잡도를 실측으로 재는 것부터 배열·해시·정렬·이분탐색·스택큐·트리·힙·그래프·DP까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
+    posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
+            'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

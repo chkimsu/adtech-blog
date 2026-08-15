@@ -55,6 +55,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-tree-heap</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-graph-search</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-dp-greedy</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
@@ -470,6 +488,12 @@
   </url>
   <url>
     <loc>https://chkimsu.github.io/adtech-blog/demo-beta-sampling.html</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-bfs-dfs.html</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

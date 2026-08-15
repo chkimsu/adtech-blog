@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS vs BFS - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .bd-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 700px) {
+            .bd-controls { grid-template-columns: 1fr; }
+        }
+
+        .bd-controls label.bd-title {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .bd-radios {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .bd-radios label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .bd-hint {
+            margin-top: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .bd-controls select {
+            width: 100%;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .bd-stage {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .bd-stage svg {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            margin: 0 auto;
+            font-family: var(--font-sans);
+        }
+
+        .bd-edge {
+            stroke: var(--border-color);
+            stroke-width: 1.6;
+        }
+
+        .bd-edge.is-path {
+            stroke: var(--accent-primary);
+            stroke-width: 3;
+        }
+
+        .bd-node circle {
+            fill: var(--bg-secondary);
+            stroke: var(--border-color);
+            stroke-width: 1.6;
+        }
+
+        .bd-node text {
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            fill: var(--text-primary);
+            text-anchor: middle;
+        }
+
+        .bd-node.is-frontier circle {
+            fill: var(--bg-tertiary);
+            stroke: var(--accent-secondary);
+            stroke-width: 2;
+            stroke-dasharray: 4 2;
+        }
+
+        .bd-node.is-visited circle {
+            fill: var(--bg-tertiary);
+            stroke: var(--accent-secondary);
+            stroke-width: 2;
+        }
+
+        .bd-node.is-current circle {
+            fill: var(--bg-tertiary);
+            stroke: var(--accent-primary);
+            stroke-width: 3;
+        }
+
+        .bd-node.is-current text {
+            fill: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .bd-dist {
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            fill: var(--accent-primary);
+            text-anchor: middle;
+        }
+
+        .bd-track {
+            margin-bottom: 1rem;
+        }
+
+        .bd-track-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .bd-chips {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            min-height: 30px;
+            align-items: center;
+        }
+
+        .bd-chip {
+            display: inline-block;
+            min-width: 28px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .bd-chip.is-next {
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .bd-chip.is-done {
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .bd-empty {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .bd-verdict {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-secondary);
+            background: var(--bg-secondary);
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .bd-verdict.is-done { border-left-color: var(--accent-primary); }
+
+        .bd-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .bd-actions button {
+            padding: 0.5rem 1.1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bd-actions button:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .bd-counts {
+            margin-left: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .bd-counts b {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .bd-legend {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.9rem;
+        }
+
+        .bd-legend span::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 0.4rem;
+            border: 2px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .bd-legend .lg-current::before { border-color: var(--accent-primary); background: var(--bg-tertiary); }
+        .bd-legend .lg-visited::before { border-color: var(--accent-secondary); background: var(--bg-tertiary); }
+        .bd-legend .lg-frontier::before { border-color: var(--accent-secondary); border-style: dashed; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>DFS vs BFS</h1>
+        <p class="demo-subtitle">
+            같은 그래프를 <strong>스택으로</strong> 훑을 때와 <strong>큐로</strong> 훑을 때가 어떻게 달라지는지 한 회차씩 봅니다.
+            두 코드의 차이는 꺼내는 자리 하나뿐인데, 그 하나가 <strong>최단 거리를 주느냐</strong>를 가릅니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              스택은 <strong>마지막에 넣은 것</strong>부터 꺼내 한 갈래를 끝까지 파고들고,
+              큐는 <strong>먼저 넣은 것</strong>부터 꺼내 가까운 것부터 훑는다. 그래서 최단 거리는 큐 쪽에서만 나온다.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>회차마다 스택·큐에서 무엇을 꺼내고 무엇을 넣는지, 그리고 방문 순서가 어떻게 쌓이는지를 봅니다. BFS 에서는 각 마디 위에 출발점에서의 거리가 뜨고, 끝나면 최단 경로가 굵은 선으로 표시됩니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>코딩 테스트에서 "최단"이 지문에 있으면 BFS 입니다. DFS 로 풀면 답이 우연히 맞을 때가 있어서 더 위험합니다. 방문 표시를 언제 하느냐로 큐 크기가 몇 배 달라지는 것도 여기서 직접 비교할 수 있습니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+          <li><span class="step-text"><code>Step</code> 을 눌러 스택·큐에서 <strong>굵게 표시된 것</strong>이 다음에 꺼낼 것임을 확인하세요. 스택은 오른쪽 끝, 큐는 왼쪽 끝입니다.</span></li>
+          <li><span class="step-text">DFS 로 끝까지 돌린 뒤 BFS 로 바꿔 같은 그래프를 다시 보세요. 방문 순서가 달라집니다.</span></li>
+          <li><span class="step-text">BFS 에서 <strong>방문 표시 시점</strong>을 "꺼낼 때"로 바꿔 보세요. 답은 같은데 큐에 넣은 횟수가 늘어납니다.</span></li>
+          <li><span class="step-text">DFS 를 돌리다 보면 "이미 본 마디라 버렸다"는 회차가 나옵니다. 스택에 같은 마디가 두 번 들어가서 그렇습니다.</span></li>
+        </ol>
+
+        <div class="bd-controls">
+            <div>
+                <label class="bd-title">훑는 방법</label>
+                <div class="bd-radios">
+                    <label><input type="radio" name="bd-mode" value="dfs" checked> 깊이 우선 (스택)</label>
+                    <label><input type="radio" name="bd-mode" value="bfs"> 너비 우선 (큐)</label>
+                </div>
+                <div class="bd-hint">코드에서 다른 것은 <code>스택.pop()</code> 이 <code>큐.popleft()</code> 로 바뀌는 것뿐입니다.</div>
+            </div>
+            <div id="bd-mark-row" style="display:none">
+                <label class="bd-title" for="bd-mark">방문 표시 시점 (BFS)</label>
+                <select id="bd-mark">
+                    <option value="push">큐에 넣을 때 (권장)</option>
+                    <option value="pop">큐에서 꺼낼 때</option>
+                </select>
+                <div class="bd-hint">꺼낼 때 표시하면 답은 맞지만 같은 마디가 큐에 여러 번 들어갑니다. 아래 "넣은 횟수"를 비교해 보세요.</div>
+            </div>
+        </div>
+
+        <div class="bd-stage">
+            <svg id="bd-graph" viewBox="0 0 500 200" role="img" aria-label="A 부터 G 까지 일곱 마디로 된 그래프. 탐색이 진행되면서 방문한 마디와 다음에 볼 마디가 색으로 구분된다."></svg>
+        </div>
+
+        <div class="bd-track">
+            <div class="bd-track-label" id="bd-frontier-label">스택</div>
+            <div class="bd-chips" id="bd-frontier"></div>
+        </div>
+
+        <div class="bd-track">
+            <div class="bd-track-label">방문 순서</div>
+            <div class="bd-chips" id="bd-order"></div>
+        </div>
+
+        <div class="bd-verdict" id="bd-verdict"></div>
+
+        <div class="bd-actions">
+            <button id="bd-step">Step</button>
+            <button id="bd-play">Play</button>
+            <button id="bd-reset">Reset</button>
+            <span class="bd-counts">넣은 횟수 <b id="bd-push">0</b> · 꺼낸 횟수 <b id="bd-pop">0</b></span>
+        </div>
+
+        <div class="bd-legend">
+            <span class="lg-current">지금 보는 마디</span>
+            <span class="lg-visited">이미 본 마디</span>
+            <span class="lg-frontier">스택·큐에 들어 있는 마디</span>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">홈</a>
+                <a href="posts-browse.html">Posts</a>
+                <a href="ml-track.html">ML 트랙</a>
+                <a href="ecosystem.html">Ecosystem</a>
+                <a href="demos.html">데모</a>
+                <a href="post.html?id=algorithm-graph-search">그래프 탐색 글</a>
+            </div>
+            <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/bfs-dfs-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

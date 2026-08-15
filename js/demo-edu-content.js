@@ -2310,5 +2310,65 @@ window.DEMO_EDU = {
                     '<strong>가장 운 나쁜 경우에도 이 회차를 넘지 않는다</strong>는 보장입니다.'
             }
         ]
+    },
+
+    // ==========================================
+    // DFS · BFS (알고리즘)
+    // ==========================================
+    'bfs-dfs': {
+        analogy: '스택이냐 큐냐 하나만 바뀌는데, 그 하나가 최단 거리를 주느냐를 가른다',
+        anchor: '.bd-controls',
+        embedKeep: ['.bd-controls', '.bd-stage', '.bd-track', '.bd-verdict', '.bd-actions', '.bd-legend'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            'input[name="bd-mode"]': ({ el }) => {
+                if (el.value === 'dfs') {
+                    return '<strong>깊이 우선</strong>으로 바꿨습니다. 스택은 마지막에 넣은 것부터 꺼내니 ' +
+                        '한 갈래를 끝까지 파고들었다가 되돌아옵니다. ' +
+                        '<strong>이 순서로 어떤 마디에 처음 닿아도 그것이 최단이라는 보장은 없습니다.</strong>';
+                }
+                return '<strong>너비 우선</strong>으로 바꿨습니다. 큐는 먼저 넣은 것부터 꺼내니 ' +
+                    '한 칸 거리를 다 본 뒤에야 두 칸 거리로 넘어갑니다. ' +
+                    '그래서 <strong>어떤 마디에 처음 닿은 순간이 곧 최단 거리</strong>이고, 마디 위에 그 거리가 뜹니다.';
+            },
+            '#bd-mark': ({ el }) => {
+                const 넣은 = document.querySelector('#bd-push');
+                if (el.value === 'push') {
+                    return '표시를 <strong>큐에 넣을 때</strong> 하도록 되돌렸습니다. ' +
+                        '한 마디가 큐에 최대 한 번만 들어가니 넣은 횟수가 마디 수를 안 넘습니다.';
+                }
+                return '표시를 <strong>꺼낼 때</strong>로 바꿨습니다. 여러 이웃이 같은 마디를 동시에 발견하면 ' +
+                    '그 마디가 큐에 여러 번 들어갑니다. 끝까지 돌려 아래 <strong>넣은 횟수</strong>를 비교해 보세요' +
+                    (넣은 ? '' : '') + ' — 답은 같은데 큐만 부풉니다. 마디 만 개짜리 문제에서는 이것만으로 시간 초과가 납니다.';
+            },
+        },
+        tour: [
+            {
+                el: '.bd-stage',
+                title: '같은 그래프를 두 방법으로',
+                body: 'A 에서 출발합니다. D 에 닿는 길이 A→B→D 와 A→C→D 둘이라 ' +
+                    '<strong>같은 마디를 두 번 방문하지 않게 막는 장치</strong>가 필요합니다.'
+            },
+            {
+                el: '#bd-step',
+                title: 'Step 을 눌러 보세요',
+                body: '스택·큐에서 <strong>굵게 표시된 것</strong>이 다음에 꺼낼 것입니다. ' +
+                    '스택은 오른쪽 끝, 큐는 왼쪽 끝 — 여기가 두 탐색의 유일한 차이입니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.bd-radios',
+                title: '큐로 바꿔 보세요',
+                body: '같은 그래프인데 방문 순서가 달라집니다. 마디 위에 뜨는 숫자가 ' +
+                    '<strong>A 에서의 최단 거리</strong>이고, 끝까지 돌리면 G 까지의 길이 굵은 선으로 표시됩니다.',
+                waitFor: 'change'
+            },
+            {
+                el: '.bd-counts',
+                title: '넣은 횟수를 보세요',
+                body: 'BFS 에서 방문 표시를 "꺼낼 때"로 바꾸면 이 숫자가 늡니다. ' +
+                    '<strong>답은 그대로인데 큐만 부푸는</strong> 것이라 코딩 테스트에서 원인을 찾기 어렵습니다.'
+            }
+        ]
     }
 };

@@ -32,6 +32,30 @@
     <category term="Interview &amp; Algorithms"/>
   </entry>
   <entry>
+    <title>트리와 힙 — 한 줄로 늘어놓을 수 없는 자료</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-tree-heap"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-tree-heap</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>같은 값 아홉 개를 같은 코드로 이진 탐색 트리에 넣었는데, 넣은 순서만 달랐더니 찾는 데 4회와 8회로 갈렸다. 정렬된 순서로 넣으면 트리가 한 줄이 되기 때문이다. 트리를 코드로 담는 법과 훑는 순서 네 가지, 파이썬 재귀가 1000에서 멈추는 문제, 그리고 트리처럼 생겼지만 실제로는 배열인 힙까지 — 값 20만 개 중 상위 10개를 뽑는 세 방법을 재 보면 직접 짠 힙이 정렬보다 느리다는 뜻밖의 결과도 나온다.</summary>
+    <category term="Interview &amp; Algorithms"/>
+  </entry>
+  <entry>
+    <title>그래프 탐색 — 스택을 큐로 바꾸면 최단 거리가 나온다</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-graph-search"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-graph-search</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>그래프를 훑는 방법은 둘뿐이다. 스택으로 한 갈래를 끝까지 파고들거나(DFS), 큐로 가까운 것부터 훑거나(BFS). 두 코드는 자료형 하나만 다른데 그 하나가 최단 거리를 주느냐를 가른다. 인접 리스트와 행렬의 자리 차이(16칸 vs 49칸), BFS에서 방문 표시를 꺼낼 때 하면 큐가 두 배로 부푸는 이유, 격자 미로, 다익스트라의 낡은 값 걸러내기, 위상 정렬까지 실행 기록으로 따라간다.</summary>
+    <category term="Interview &amp; Algorithms"/>
+  </entry>
+  <entry>
+    <title>DP·백트래킹·그리디 — 다 볼 수 없을 때 쓰는 세 가지</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-dp-greedy"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-dp-greedy</id>
+    <updated>2026-08-15T00:00:00Z</updated>
+    <summary>피보나치 30을 그냥 재귀로 구하면 269만 번을 부른다. 답을 적어 두는 줄 하나를 더하면 59번이 된다. 겹치는 계산을 없애는 동적 계획법(점화식 세우는 네 단계와 배낭 문제 표), 아니면 되돌아오는 백트래킹(4×4 퀸을 256가지 대신 17번에), 지금 최선만 고르는 그리디(회의실 배정은 맞고 거스름돈 4·3·1은 틀린다)를 실제 출력으로 가른다.</summary>
+    <category term="Interview &amp; Algorithms"/>
+  </entry>
+  <entry>
     <title>목적지가 여럿일 때 — 연결을 30에서 11로</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer</id>
@@ -153,30 +177,5 @@
     <summary>서버가 죽으면 알람이 울리지만 모델이 나빠지면 아무 알람도 없습니다. 200 OK로 답하고 그럴듯한 숫자를 내놓는데 그 숫자가 틀린 것입니다. 60일 시뮬레이션에서 40일차에 사고를 넣어 보면, 예측 분포를 보는 쪽은 사고 1일 뒤에 알람이 울리고 라벨 확정을 기다리는 쪽은 8일 뒤에 울립니다. 세그먼트를 쪼개는 것도 필수입니다 — 전체 COPC가 1.000으로 완벽한데 지면별로는 0.42에서 1.50까지 흩어져, 예측 클릭의 7.1%가 엉뚱한 지면에 얹혀 있는 상황이 만들어집니다. PSI 임계값 0.1도 표본에 따라 뜻이 달라져서, 표본 300건이면 아무 문제 없어도 평균 0.029가 나옵니다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>CTR 피처 엔지니어링 실전: 무엇을 모델에 넣나 — 해싱·시퀀스·집계 피처를 만드는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=ctr-feature-engineering"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=ctr-feature-engineering</id>
-    <updated>2026-07-26T00:00:00Z</updated>
-    <summary>광고 ID 100만 개를 one-hot으로 넣으면 배치 하나가 3.8GB, 해싱 2^18과 16차원 임베딩으로 접으면 테이블 전체가 16MB입니다. 100만 개를 26만 칸에 밀어 넣으면 ID의 97.8%가 남과 칸을 나눠 쓰는데, 노출로 가중한 예측 오차는 상위 1만 광고에서 1.59%뿐입니다. 진짜 사고는 머리끼리 부딪친 200쌍에서 나고(오차 19.0%), 전용 칸 0.6MB를 주면 0.00%로 사라집니다. “같은 날 CTR”을 피처로 쓰면 오프라인 AUC가 0.8938까지 부풀지만 실서빙에서는 0.7786으로 무너집니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>대규모 임베딩 테이블 운영 — 수억 개 ID를 학습하고 서빙하기</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=embedding-table-ops"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=embedding-table-ops</id>
-    <updated>2026-07-19T00:00:00Z</updated>
-    <summary>유저 2억 줄 × 32차원이면 서빙 테이블은 23.8GB인데, Adam으로 학습하면 옵티마이저 상태 때문에 83.2GB가 됩니다. 배치 1,024건이 건드리는 줄은 전체의 0.0005%뿐이라 희소 갱신이 전제인데, 밀집으로 짜면 하루치 스텝에 6.6일이 걸려 아예 못 돌립니다. 퇴출 정책은 빈도 컷·LRU·TTL의 커버율 차이가 0.7%p 이내라, 진짜 갈림은 남긴 줄이 아직 살아 있는지(81% vs 96.8%)와 크기를 통제할 수 있는지입니다. 사전과 행렬의 버전이 어긋나면 점수 평균·표준편차는 정상인데 Top-10 겹침이 0개가 되는, 에러 하나 없는 사고가 납니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>전환 정의와 라벨 지연 — 어디까지가 전환이고, 언제 확정하나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=conversion-definition"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=conversion-definition</id>
-    <updated>2026-07-12T00:00:00Z</updated>
-    <summary>pCVR 모델을 만들라는 일을 받으면 첫 줄을 쓰기 전에 막힙니다. “전환”이 무엇인지 광고주가 고르는데 모델은 하나입니다. 상담 신청은 클릭한 사람의 15%가 하고 재구매는 0.3%만 해서 50배 차이가 나니, 유형을 구분하지 않은 모델은 어떤 광고주에게 2.5배 과소예측하고 어떤 광고주에게 20배 과대예측합니다. 그런데 전체 COPC는 1.00으로 완벽해 보입니다. 유형별 보정으로 평균은 잡히지만 개별 오차는 3.70%에서 0.70%까지만 줄고, 유형을 피처로 넣어야 0이 됩니다. 라벨을 1일에 확정하면 -58% 편향이 생기고, 늦은 전환을 과거에 반영하면 하루 1,740건의 라벨이 바뀌어 같은 코드가 다른 모델을 냅니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

@@ -195,14 +195,14 @@ The design is mobile-first with breakpoints:
 
 ##  Content
 
-The blog contains 66+ posts across 7 categories (`data/taxonomy.json` is the single source):
+The blog contains 72+ posts across 7 categories (`data/taxonomy.json` is the single source):
 - **Measurement & Modeling** — pCTR/pCVR, calibration, attribution, offline metrics, debiasing
 - **Bidding & Auction** — RTB, eCPM, bid shading, auto-bidding, walled gardens
 - **ML Infrastructure** — log pipelines, feature stores, model serving, online learning
 - **Bandits & Personalization** — MAB, UCB, Thompson Sampling, contextual bandits
 - **Software Engineering** — Git, architecture, Kubernetes, API contracts, Kafka, data pipelines
 - **Targeting & Audience** — segmentation, lookalike modeling
-- **Interview & Algorithms** — coding-test algorithms and data structures, ML engineer interview prep
+- **Interview & Algorithms** — coding-test algorithms and data structures (complexity, hashing/sorting, binary search, trees/heaps, graphs, DP), ML engineer interview prep
 
 Curated reading paths (`series`) and a "start here" rail are defined in `js/posts.js`. Add a post with `node scripts/new-post.js` (see 새 글 추가 below).
 

@@ -8,6 +8,39 @@
 
 const posts = [
   {
+    id: 'algorithm-complexity-array',
+    world: 'na',
+    title: '복잡도와 배열 훑기 — 돌아가는 코드와 통과하는 코드의 차이',
+    excerpt: '예제 입력에서는 눈 깜짝할 사이에 끝나던 코드가 채점 서버에서 시간 초과로 떨어진다. 같은 문제를 두 방법으로 풀고 n 을 1,000에서 8,000까지 두 배씩 키우며 재 보면, 한쪽은 매번 4배씩 늘고 다른 쪽은 2배씩 는다 — 8,000에서 870.3밀리초와 0.397밀리초다. 빅오가 무엇을 재는 자인지, 파이썬에서 리스트를 집합으로 바꾸면 왜 11,303배가 빨라지는지, 그리고 배열을 훑는 세 가지 요령(누적합·양 끝 좁히기·창 미끄러뜨리기)을 회차별 상태 변화 그림과 실행 출력으로 따라간다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test', '입문'],
+    contentUrl: 'posts/algorithm-complexity-array.md',
+    series: 'algorithm-track'
+  },
+  {
+    id: 'algorithm-hash-sort',
+    world: 'na',
+    title: '해시와 정렬 — 값에서 자리를 계산한다는 것',
+    excerpt: '값 20만 개 중에서 2천 번 찾을 때 리스트는 7초 가까이 걸리고 딕셔너리는 0.4밀리초로 끝난다. 딕셔너리가 훑지 않고 값에서 자리를 계산하기 때문인데, 해시값이 한 칸으로 몰리면 같은 딕셔너리가 1.6밀리초에서 701.9밀리초로 느려진다. 충돌과 재배치, 3 과 3.0 이 같은 열쇠인 이유, 두 수의 합을 한 번 훑기로 푸는 법, Counter·defaultdict·집합 연산, 그리고 해시가 안 통할 때 꺼내는 정렬(안정 정렬·튜플 key·구간 병합·세 수의 합)을 실행 출력과 그림으로 본다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-hash-sort.md',
+    series: 'algorithm-track'
+  },
+  {
+    id: 'algorithm-binary-search-stack',
+    world: 'na',
+    title: '이분 탐색과 스택 — 부등호 하나로 답이 갈리는 자리',
+    excerpt: '이분 탐색은 코드가 다섯 줄뿐이라 배우기는 쉽고 맞히기는 어렵다. 배열 [1,3,3,3,7] 에서 3 을 찾으면 네 변형이 각각 2·1·4·3 을 내는데, 전부 맞는 답이고 서로 다른 질문에 답하고 있을 뿐이다. hi 초기값과 부등호와 mid 올림·내림이 어떻게 맞물리는지, lo = mid 를 쓸 때 무한 루프가 어떻게 생기는지를 실행 출력으로 보고, bisect·파라메트릭 서치·회전 배열로 넓힌다. 이어서 스택(괄호·단조 스택)과 덱(큐·단조 덱)으로 창 최댓값을 O(n)에 구하는 데까지 간다.',
+    date: '2026-08-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-binary-search-stack.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'api-kinds-and-contracts',
     world: 'na',
     title: 'API 두 종류와 그 사이의 약속 — 실무 첫 주에 밟는 것들',
@@ -482,7 +515,7 @@ const posts = [
     title: '실무에서 바로 쓰는 Git 완전 가이드: 시각적으로 이해하는 fetch, merge, rebase, stash',
     excerpt: 'Working Directory → Staging → Local Repo → Remote Repo 멘탈 모델부터 fetch vs pull, merge vs rebase 비교, stash 활용, 충돌 해결, 실무 브랜치 전략까지 — 다이어그램으로 완전 해부합니다.',
     date: '2026-04-12',
-    categories: ['DevOps & Tooling'],
+    categories: ['Software Engineering'],
     tags: ['Git', 'DevOps', 'Workflow', 'Collaboration'],
     contentUrl: 'posts/git-practical-guide.md',
     series: 'engineering-foundations'
@@ -861,6 +894,11 @@ const series = {
     title: '입찰·생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰·페이싱 → 입찰 셰이딩',
     posts: ['walled-garden', 'adtech-dev-layers', 'auto-bidding-pacing', 'bid-shading-censored'],
+  },
+  'algorithm-track': {
+    title: '알고리즘 코딩테스트 트랙',
+    desc: '복잡도를 실측으로 재는 것부터 배열·해시·정렬·이분탐색·스택큐까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
+    posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

@@ -271,9 +271,15 @@
         if (!target) return;
         const r = target.getBoundingClientRect();
         const pad = 6;
+        // 타깃이 container 전폭을 차지하면 pad 만큼 화면 밖으로 나가 가로 스크롤이 생긴다.
+        // 투어는 첫 방문에 자동으로 뜨므로, 그 6px 이 모바일에서 그대로 보인다.
+        // 그래서 좌우를 뷰포트 안으로 자른다 — 위아래는 세로 스크롤이라 그대로 둔다.
+        const vw = document.documentElement.clientWidth;
+        const spotLeft = Math.max(0, r.left - pad);
+        const spotRight = Math.min(vw, r.right + pad);
         spot.style.top = (r.top + window.scrollY - pad) + 'px';
-        spot.style.left = (r.left + window.scrollX - pad) + 'px';
-        spot.style.width = (r.width + pad * 2) + 'px';
+        spot.style.left = (spotLeft + window.scrollX) + 'px';
+        spot.style.width = Math.max(0, spotRight - spotLeft) + 'px';
         spot.style.height = (r.height + pad * 2) + 'px';
 
         // ≤900px에서는 CSS가 말풍선을 바텀시트로 고정

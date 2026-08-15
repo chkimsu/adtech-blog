@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .bs-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 700px) {
+            .bs-controls { grid-template-columns: 1fr; }
+        }
+
+        .bs-control label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .bs-control label span {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .bs-control input[type="range"],
+        .bs-control select {
+            width: 100%;
+        }
+
+        .bs-control select {
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .bs-mode-desc {
+            margin-top: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .bs-mode-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.6rem;
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .bs-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .bs-cell {
+            flex: 0 0 auto;
+            min-width: 42px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            padding: 0.3rem 0.35rem;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            transition: opacity .15s ease;
+        }
+
+        .bs-cell-idx {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .bs-cell-val {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .bs-cell.is-out {
+            opacity: 0.28;
+        }
+
+        .bs-cell.is-mid {
+            border: 2px solid var(--accent-secondary);
+            background: var(--bg-tertiary);
+        }
+
+        .bs-cell.is-hit {
+            border: 2px solid var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .bs-cell.is-hit .bs-cell-val {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .bs-markers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+        }
+
+        .bs-markers b {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-right: 0.35rem;
+        }
+
+        .bs-verdict {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-secondary);
+            background: var(--bg-secondary);
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .bs-verdict.is-done {
+            border-left-color: var(--accent-primary);
+        }
+
+        .bs-actions {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bs-actions button {
+            padding: 0.5rem 1.1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bs-actions button:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .bs-panels {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .bs-panels { grid-template-columns: 1fr; }
+        }
+
+        .bs-panel {
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+        }
+
+        .bs-panel h3 {
+            font-size: 0.95rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.9rem;
+        }
+
+        .bs-log-wrap {
+            overflow-x: auto;
+        }
+
+        .bs-log {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .bs-log th,
+        .bs-log td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.35rem 0.5rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .bs-log th {
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--bg-tertiary);
+        }
+
+        .bs-log-verdict {
+            text-align: left !important;
+            color: var(--text-secondary);
+        }
+
+        .bs-log-empty {
+            text-align: center !important;
+            color: var(--text-muted);
+            padding: 1.2rem !important;
+        }
+
+        .bs-cmp-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.88rem;
+        }
+
+        .bs-cmp-row:last-child { border-bottom: 0; }
+
+        .bs-cmp-row b {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .bs-cmp-note {
+            margin-top: 0.9rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>Binary Search</h1>
+        <p class="demo-subtitle">
+            정렬된 배열에서 <strong>후보를 절반씩 지워 가는</strong> 과정을 한 회차씩 봅니다.
+            같은 배열 위에서 <strong>정확히 찾기 · 왼쪽 경계 · 오른쪽 경계</strong> 세 변형을 바꿔 가며
+            <code>while</code> 조건과 <code>hi</code> 초기값이 답을 어떻게 가르는지 확인하세요.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              한 회차마다 후보가 <strong>절반으로 준다</strong>. 100만 칸도 20회면 끝난다.
+              변형 셋의 차이는 알고리즘이 아니라 <strong>경계를 어디까지 남기느냐</strong>뿐이다.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>회차마다 <code>lo</code>·<code>hi</code>·<code>mid</code> 가 어떻게 움직이고 남은 후보가 몇 칸인지, 그리고 앞에서부터 훑었다면 몇 번 비교했을지를 나란히 봅니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>코딩 테스트에서 이분 탐색을 틀리는 자리는 알고리즘이 아니라 <strong>경계 조건</strong>입니다. 중복이 있는 배열에서 세 변형이 서로 다른 칸을 가리키는 것을 직접 보면 그 차이가 기억에 남습니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해보세요 — 3분</span>
+          <li><span class="step-text"><code>Step</code> 을 눌러 회차마다 흐려지는 칸이 늘어나는 것을 보세요. 남은 후보가 절반씩 줍니다.</span></li>
+          <li><span class="step-text">중복이 있는 값(같은 숫자가 여러 칸)을 찾는 값으로 두고 <strong>왼쪽 경계</strong>와 <strong>오른쪽 경계</strong>를 번갈아 보세요. 두 답의 차가 그 값의 개수입니다.</span></li>
+          <li><span class="step-text">배열에 <strong>없는 값</strong>을 골라 보세요. 정확히 찾기는 -1 을 내지만 경계 변형은 넣을 자리를 알려 줍니다.</span></li>
+          <li><span class="step-text">칸 수를 늘리며 회차가 몇으로 느는지 보세요. 칸이 두 배가 돼도 회차는 하나만 늡니다.</span></li>
+        </ol>
+
+        <div class="bs-controls">
+            <div class="bs-control">
+                <label>배열 칸 수 <span id="bs-size-val">16칸</span></label>
+                <input type="range" id="bs-size" min="8" max="48" step="1" value="16">
+            </div>
+            <div class="bs-control">
+                <label>찾는 값 <span id="bs-target-val">20</span></label>
+                <input type="range" id="bs-target" min="0" max="60" step="1" value="20">
+            </div>
+            <div class="bs-control">
+                <label>변형</label>
+                <select id="bs-mode">
+                    <option value="exact">정확히 찾기</option>
+                    <option value="left">왼쪽 경계 (bisect_left)</option>
+                    <option value="right">오른쪽 경계 (bisect_right)</option>
+                </select>
+                <div class="bs-mode-desc" id="bs-mode-desc"></div>
+            </div>
+        </div>
+
+        <div class="bs-mode-code" id="bs-mode-code"></div>
+
+        <div class="bs-array" id="bs-array"></div>
+
+        <div class="bs-markers">
+            <span><b>lo</b><span id="bs-lo">0</span></span>
+            <span><b>hi</b><span id="bs-hi">0</span></span>
+            <span><b>mid</b><span id="bs-mid">—</span></span>
+            <span><b>남은 후보</b><span id="bs-remaining">0칸</span></span>
+        </div>
+
+        <div class="bs-verdict" id="bs-verdict"></div>
+
+        <div class="bs-actions">
+            <button id="bs-step">Step</button>
+            <button id="bs-play">Play</button>
+            <button id="bs-reset">Reset</button>
+        </div>
+
+        <div class="bs-panels">
+            <div class="bs-panel">
+                <h3>회차 기록</h3>
+                <div class="bs-log-wrap">
+                    <table class="bs-log">
+                        <thead>
+                            <tr>
+                                <th>회차</th><th>lo</th><th>hi</th><th>mid</th><th>값</th>
+                                <th style="text-align:left">판정</th><th>남은 후보</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bs-log-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bs-panel">
+                <h3>훑기와 비교</h3>
+                <div class="bs-cmp-row"><span>앞에서부터 훑으면</span><b id="bs-cmp-linear">—</b></div>
+                <div class="bs-cmp-row"><span>지금까지 돈 회차</span><b id="bs-cmp-binary">—</b></div>
+                <div class="bs-cmp-row"><span>이분의 최대 회차</span><b id="bs-cmp-bound">—</b></div>
+                <div class="bs-cmp-note">
+                    최대 회차는 칸 수를 2로 몇 번 나눠야 1이 되는가입니다.
+                    칸이 두 배가 되면 회차는 하나만 늡니다.
+                    찾는 값이 배열 맨 앞에 있으면 훑기가 더 빠른데,
+                    이분 탐색은 <strong>운 나쁜 경우에도</strong> 이 회차를 넘지 않는다는 것이 값어치입니다.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">홈</a>
+                <a href="posts-browse.html">Posts</a>
+                <a href="ml-track.html">ML 트랙</a>
+                <a href="ecosystem.html">Ecosystem</a>
+                <a href="demos.html">데모</a>
+                <a href="post.html?id=algorithm-binary-search-stack">이분 탐색 글</a>
+            </div>
+            <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/binary-search-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

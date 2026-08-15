@@ -2220,5 +2220,95 @@ window.DEMO_EDU = {
                     '아래 판정 칸은 그 조합에서 <strong>먼저 터지는 것</strong>부터 순서대로 적습니다. 이제 자유롭게 조립해 보세요.'
             }
         ]
+    },
+
+    // ==========================================
+    // 이분 탐색 (알고리즘)
+    // ==========================================
+    'binary-search': {
+        analogy: '회차마다 후보가 절반으로 준다. 변형 셋의 차이는 경계를 어디까지 남기느냐뿐',
+        anchor: '.bs-controls',
+        embedKeep: ['.bs-controls', '.bs-mode-code', '.bs-array', '.bs-markers', '.bs-verdict', '.bs-actions', '.bs-panels'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            '#bs-size': ({ value, prev }) => {
+                const 최대 = Math.ceil(Math.log2(value + 1));
+                const 이전최대 = Math.ceil(Math.log2(prev + 1));
+                const head = `칸 수를 <strong>${prev}칸 → ${value}칸</strong>으로 바꿨습니다. `;
+                if (최대 === 이전최대) {
+                    return head + `그런데 최대 회차는 <strong>${최대}회 그대로</strong>입니다. ` +
+                        '회차는 칸 수가 아니라 칸 수를 2로 몇 번 나눌 수 있느냐로 정해지기 때문입니다.';
+                }
+                return head + `최대 회차가 ${이전최대}회에서 <strong>${최대}회</strong>가 됐습니다. ` +
+                    `칸은 ${Math.abs(value - prev)}칸 움직였는데 회차는 ${Math.abs(최대 - 이전최대)}회만 움직입니다.`;
+            },
+            '#bs-target': ({ value }) => {
+                const cells = [...document.querySelectorAll('#bs-array .bs-cell-val')].map(e => +e.textContent);
+                const 개수 = cells.filter(v => v === value).length;
+                if (개수 === 0) {
+                    return `<strong>${value}</strong> 는 배열에 없는 값입니다. ` +
+                        '정확히 찾기는 -1 을 내지만, 왼쪽·오른쪽 경계는 <strong>넣을 자리</strong>를 알려 줍니다. ' +
+                        '정렬을 유지하며 값을 끼워 넣을 때 이 자리를 씁니다.';
+                }
+                if (개수 === 1) {
+                    return `<strong>${value}</strong> 는 한 칸에만 있습니다. ` +
+                        '이때는 왼쪽 경계와 오른쪽 경계의 차가 1 이라 세 변형이 사실상 같은 자리를 가리킵니다. ' +
+                        '차이를 보려면 같은 값이 여러 칸인 곳을 골라 보세요.';
+                }
+                return `<strong>${value}</strong> 가 <strong>${개수}칸</strong>에 있습니다. ` +
+                    '왼쪽 경계는 그중 첫 칸, 오른쪽 경계는 마지막 칸의 <em>다음</em> 칸을 가리킵니다. ' +
+                    `그래서 두 답을 빼면 개수 ${개수} 가 그대로 나옵니다 — 개수를 세려고 훑을 필요가 없습니다.`;
+            },
+            '#bs-mode': ({ el }) => {
+                const v = el.value;
+                if (v === 'exact') {
+                    return '<strong>정확히 찾기</strong>는 <code>hi</code> 를 마지막 칸 번호로 두고 ' +
+                        '<code>while lo &lt;= hi</code> 로 돕니다. 같은 값을 만나면 그 자리에서 멈추니, ' +
+                        '중복이 있으면 <strong>몇 번째 칸이 나올지는 정해져 있지 않습니다.</strong>';
+                }
+                if (v === 'left') {
+                    return '<strong>왼쪽 경계</strong>는 <code>hi</code> 를 칸 수(마지막 칸 번호가 아니라)로 두고 ' +
+                        '<code>while lo &lt; hi</code> 로 돕니다. 찾는 값과 같아도 왼쪽을 계속 좁히니 ' +
+                        '<strong>같은 값 중 첫 칸</strong>에 멈춥니다.';
+                }
+                return '<strong>오른쪽 경계</strong>는 왼쪽 경계와 부등호 하나만 다릅니다. ' +
+                    '<code>&lt;</code> 가 <code>&lt;=</code> 로 바뀌면 같은 값을 만나도 오른쪽으로 밀어서, ' +
+                    '<strong>같은 값의 마지막 칸 다음</strong>에 멈춥니다.';
+            },
+        },
+        tour: [
+            {
+                el: '.bs-array',
+                title: '배열은 정렬돼 있다',
+                body: '이분 탐색의 유일한 전제입니다. 정렬이 안 된 배열에 쓰면 답이 틀리는데, ' +
+                    '<strong>우연히 맞는 경우가 있어서</strong> 더 위험합니다.'
+            },
+            {
+                el: '#bs-step',
+                title: 'Step 을 눌러 보세요',
+                body: '한 회차가 지나면 칸의 절반이 흐려집니다. 흐려진 칸은 <strong>다시는 안 봅니다</strong>. ' +
+                    '가운데 값 하나만 보고 나머지 절반을 통째로 지운 것입니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.bs-markers',
+                title: 'lo 와 hi 가 후보 구간이다',
+                body: '남은 후보 칸 수가 회차마다 절반으로 줍니다. ' +
+                    '<code>mid</code> 는 매번 그 구간의 가운데라 <strong>계산으로만 정해집니다</strong> — 찾아다니지 않습니다.'
+            },
+            {
+                el: '#bs-mode',
+                title: '변형을 바꿔 보세요',
+                body: '같은 배열, 같은 찾는 값인데 답이 달라집니다. 세 변형의 코드 차이는 ' +
+                    '<code>hi</code> 초기값과 부등호 하나뿐입니다. <strong>코딩 테스트에서 틀리는 자리가 여기입니다.</strong>',
+                waitFor: 'input'
+            },
+            {
+                el: '#bs-cmp-linear',
+                title: '훑기와 견줘 보세요',
+                body: '찾는 값이 맨 앞이면 훑기가 더 빠릅니다. 이분 탐색의 값어치는 평균이 아니라 ' +
+                    '<strong>가장 운 나쁜 경우에도 이 회차를 넘지 않는다</strong>는 보장입니다.'
+            }
+        ]
     }
 };

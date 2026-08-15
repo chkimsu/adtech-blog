@@ -6,7 +6,7 @@
     { "id": "Measurement & Modeling",    "label": "Measurement & Modeling",    "description": "pCTR/pCVR, calibration, attribution, bias 보정" },
     { "id": "ML Infrastructure",         "label": "ML Infrastructure",         "description": "로그 파이프라인, feature store, 모델 서빙" },
     { "id": "Targeting & Audience",      "label": "Targeting & Audience",      "description": "세그멘테이션, lookalike, 타겟팅" },
-    { "id": "DevOps & Tooling",          "label": "DevOps & Tooling",          "description": "Git, 워크플로, 협업 도구" },
+    { "id": "Interview & Algorithms",    "label": "Interview & Algorithms",    "description": "코딩 테스트 알고리즘·자료구조, ML 엔지니어 면접 준비. 이름에 콤마를 넣지 말 것 — browse.js 가 ?category=A,B 를 콤마로 쪼갠다" },
     { "id": "Software Engineering",      "label": "Software Engineering",      "description": "소프트웨어 아키텍처, 시스템 설계, 컨테이너/네트워킹 등 일반 개발 기초" }
   ],
   "tags": [
@@ -16,7 +16,8 @@
     "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
     "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
     "Git", "DevOps", "Workflow", "Collaboration",
-    "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking", "Kafka"
+    "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking", "Kafka",
+    "Algorithm", "Data Structure", "Coding Test"
   ],
   "_worlds_comment": "글의 '무대' — 내가 경매를 돌리는 안쪽(담장 안)이냐, 밖에서 입찰만 넣느냐(열린 RTB)냐. na는 광고 경매 무관(배지 없음).",
   "worlds": [

@@ -49,14 +49,14 @@
   var LOSS_MULT = [1, 10 / 9, 4 / 3, 0, 0, 0];
 
   var TIMEOUTS = [400, 800, 1500, 3000];   // 하위 호출 타임아웃 상한 후보
-  var BUDGET_MS = 400;          // 우리가 상위에 약속한 응답 예산 (글 8절)
+  var BUDGET_MS = 400;          // 우리가 상위에 약속한 응답 예산 (글 5절)
   var DOWNSTREAM_RPS = 100;     // 우리 API 가 하위를 부르는 초당 횟수
   var POOL = 200;               // 커넥션 풀 크기
 
-  // 글 8절 예산 표 — 400ms 를 넷과 여유로 나눈 값
+  // 글 5절 예산 표 — 400ms 를 넷과 여유로 나눈 값
   var BUDGET_PARTS = '서명 20 + 멱등 조회 50 + 전환 테이블 200 + Kafka 100 + 여유 30';
 
-  // 인증 다섯. secret = "부르는 쪽에 우리만 아는 값을 둬야 하나" (글 9절 표)
+  // 인증 다섯. secret = "부르는 쪽에 우리만 아는 값을 둬야 하나" (글 6절 표)
   var AUTH = {
     hmac: {
       label: 'HMAC 서명', short: 'HMAC 서명', secret: true,
@@ -264,7 +264,7 @@
         '" style="stroke:var(--navy); stroke-width:2" marker-end="url(#ac-arr-f)"/>';
     }
 
-    // 재시도 고리 — 보내는 쪽 위로 되돌아온다
+    // 재시도 고리 — 부르는 쪽 위로 되돌아온다
     var loopColor = (m.dup > 0) ? 'var(--oxide)' : 'var(--navy)';
     var loopMarker = (m.dup > 0) ? 'ac-arr-b' : 'ac-arr-f';
     if (retries > 0) {
@@ -309,7 +309,7 @@
   }
 
   function flowLabel(m) {
-    return '왼쪽부터 보내는 쪽 · 인증 · 우리 수집 API · 멱등키 조회 · 전환 테이블 다섯 칸이 화살표로 이어진 그림이다. ' +
+    return '왼쪽부터 부르는 쪽 · 인증 · 우리 수집 API · 멱등키 조회 · 전환 테이블 다섯 칸이 화살표로 이어진 그림이다. ' +
       '지금 설정에서 요청은 ' + fmt(m.sim.totalSent) + '건, 응답 유실은 ' + fmt(m.sim.totalLost) +
       '건, 전환 테이블에 남는 줄은 ' + fmt(m.records) + '줄이다.';
   }
@@ -377,7 +377,7 @@
   function drawGauges(m) {
     var s = m.state;
 
-    // (1) 성공률 — 보낸 쪽이 응답을 받아 낸 비율
+    // (1) 성공률 — 부르는 쪽이 응답을 받아 낸 비율
     var miss = m.sim.unresolved;
     var g1 = {
       label: '성공률', unit: '%',
@@ -422,7 +422,7 @@
         (m.overPool
           ? '넘친 ' + fmt(m.conc - POOL) + '개는 대기합니다. 이 API 와 무관한 요청까지 같이 멈춥니다.'
           : m.overBudget
-            ? '상위에 약속한 ' + BUDGET_MS + 'ms 를 넘었습니다. 상위가 먼저 끊고, 아래 호출은 아무도 안 기다리는 채로 커넥션을 뭅니다.'
+            ? '우리를 부르는 쪽에 약속한 ' + BUDGET_MS + 'ms 를 넘었습니다. 그 쪽이 먼저 끊고, 우리가 부르는 쪽은 아무도 안 기다리는 채로 커넥션을 뭅니다.'
             : '안쪽 합(' + BUDGET_PARTS + ')이 ' + BUDGET_MS + 'ms 에 맞습니다.')
     };
 
@@ -472,14 +472,14 @@
       list.push({
         bad: m.successPct < 95, short: '미확인 ' + fmt(m.sim.unresolved) + '건',
         line: '먼저 걸리는 것은 <strong>유실</strong>입니다 — ' + fmt(m.sim.unresolved) +
-          '건이 답을 못 받고 남습니다. 서버가 기록했는지 아닌지를 보낸 쪽이 구분할 수 없습니다.'
+          '건이 답을 못 받고 남습니다. 서버가 기록했는지 아닌지를 부르는 쪽이 구분할 수 없습니다.'
       });
     }
     if (m.overBudget && !m.overPool) {
       list.push({
         bad: false, short: '예산 초과 ' + fmt(m.timeout) + 'ms',
         line: '먼저 걸리는 것은 <strong>예산</strong>입니다 — 하위 타임아웃 ' + fmt(m.timeout) +
-          'ms 가 상위에 약속한 ' + BUDGET_MS + 'ms 를 넘습니다. 상위가 먼저 끊습니다.'
+          'ms 가 우리를 부르는 쪽에 약속한 ' + BUDGET_MS + 'ms 를 넘습니다. 그 쪽이 먼저 끊습니다.'
       });
     }
     if (m.secret.state === 'warn') {

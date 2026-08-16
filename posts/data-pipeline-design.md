@@ -488,7 +488,7 @@ Content-Type: application/vnd.schemaregistry.v1+json
 
 ## 더 깊이 보기
 
-- [누가 보내고 누가 가지러 가나](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. 이 글이 아는 것으로 놓고 시작한 여섯 자리를 장바구니 한 줄로 연다
+- [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. 이 글이 아는 것으로 놓고 시작한 여섯 자리를 클릭 한 줄로 연다
 - [목적지가 여럿일 때 — 연결을 30에서 11로](post.html?id=data-distribution-layer) — 2절이 요약만 하고 넘어간 넷째 층. 설정 파일 한 장이 배포 승인을 어떻게 없애는지
 - [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) — 둘째 층 안쪽. 보존 기간과 acks 를 값으로 정한다
 - [로그 수집기 안을 열어 본다](post.html?id=log-hops-to-kafka) — 첫째 층 안쪽. 브로커에 닿기까지 쓴 시간의 출처

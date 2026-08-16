@@ -1076,7 +1076,7 @@ ConsumerRecord(
 
 ## 더 깊이 보기
 
-- [누가 보내고 누가 가지러 가나](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. 같은 길을 광고가 아니라 쇼핑몰 장바구니로, 홉 아홉이 아니라 자리 여섯으로 본다
+- [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. 같은 클릭 한 건을 홉 아홉이 아니라 자리 여섯으로, 모양이 아니라 방향으로 본다
 - [Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지](post.html?id=kafka-log-pipeline) — 이 글이 끝나는 자리에서 시작한다. acks·partition·offset·보존 기간
 - [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) — 수집 계층의 나머지. 스키마가 바뀌는 동안 읽는 넷을 안 깨는 방법
 - [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 글은 클릭 하나를 따라갔다. 입찰 한 건이 남기는 로그는 열 종이다

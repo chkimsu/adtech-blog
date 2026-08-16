@@ -868,6 +868,7 @@ lag 은 partition 마다 마지막 offset 에서 commit 된 offset 을 뺀 값�
 
 ## 더 깊이 보기
 
+- [누가 보내고 누가 가지러 가나](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. producer·consumer 가 처음 보는 말이면 여기가 입구다
 - [광고 요청 하나가 서비스까지 가는 길](post.html?id=gateway-ingress-router) — 이 로그를 만든 요청이 `bidder` 까지 온 길. 12ms 중 1.4ms 를 앞단이 쓴다
 - [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 글은 topic 셋만 봤다. 입찰 한 건이 실제로 남기는 로그는 열 종이다
 - [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) — 필드를 하나 더 넣어야 할 때. 스키마가 바뀌는 동안 읽는 넷을 안 깨는 방법

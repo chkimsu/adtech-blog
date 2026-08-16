@@ -284,6 +284,7 @@ output {
 
 ## 더 깊이 보기
 
+- [누가 보내고 누가 가지러 가나](post.html?id=pipeline-push-and-pull) — 먼저 읽어도 되는 글. 이 층 앞뒤의 여섯 자리와, Kafka 가 왜 며칠 들고 있는지
 - [Kafka 앞뒤를 통째로 — 데이터 파이프라인을 설계하는 순서](post.html?id=data-pipeline-design) — 이 층을 품은 여섯 층 전체. 888 ms 예산이 어디서 나온 값인지
 - [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) — 이 층이 읽는 topic 안쪽. 보존 기간을 비용으로 정한다
 - [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 목적지 중 피처 스토어 쪽. 학습 피처와 서빙 피처가 어긋나는 자리

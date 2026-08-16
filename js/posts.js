@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'pipeline-push-and-pull',
+    world: 'na',
+    title: '누가 보내고 누가 가지러 가나 — 장바구니 담기 한 번이 지나는 여섯 자리',
+    excerpt: '손님이 운동화를 장바구니에 담으면 그 사실이 네 곳에 가 닿는다 — 대시보드는 2초, 재고는 5초, 창고는 다음 날 새벽, 추천 학습은 하루 뒤다. 그 사이에 자리가 여섯인데, 넘김 다섯 중 셋은 앞에서 밀고 둘은 뒤에서 가지러 간다. 브라우저가 만든 57바이트에는 가격도 시각도 없고(둘 다 브라우저가 보낸 값을 믿으면 안 되기 때문이다), 웹서버가 107바이트를 앞에 붙이고, 수집 에이전트는 내용을 한 글자도 안 건드린 채 봉투에만 셋을 적는다. 변환기를 지나면 325바이트가 320바이트로 줄어드는데 쓸 수 있는 필드는 4개에서 15개가 된다. Kafka가 며칠 들고 있는 건 여유를 주려는 게 아니라 마지막 넘김이 "가지러 가는" 방식이기 때문이고, 3시간 멈춘 소비자는 4분에 따라잡지만 10일 멈추면 앞 72시간치는 이미 없다.',
+    date: '2026-08-16',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['Event-Driven', 'Kafka', 'System Design', '입문'],
+    contentUrl: 'posts/pipeline-push-and-pull.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'interview-ml-modeling',
     world: 'both',
     worldNote: '보정·다운샘플링·랭킹 질문은 두 무대 다 나온다. 다만 담장 안은 경매를 직접 돌려 모든 입찰을 보니 COPC 를 지면·시간대별로 쪼개 볼 수 있고, 열린 RTB 는 패찰한 경매가 안 보여 같은 지표라도 관측 범위가 좁다.',
@@ -991,8 +1002,8 @@ const series = {
     title: '엔지니어링 기초 트랙',
     desc: '협업 도구(Git)부터 시스템 설계·운영(아키텍처 패턴·쿠버네티스), 요청이 서비스까지 가는 길과 로그가 학습 데이터가 되는 길까지 — 백엔드/인프라 엔지니어의 기본기',
     posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router',
-      'api-basics', 'api-kinds-and-contracts', 'kafka-log-pipeline', 'log-hops-to-kafka', 'data-pipeline-design',
-      'data-distribution-layer'],
+      'api-basics', 'api-kinds-and-contracts', 'pipeline-push-and-pull', 'kafka-log-pipeline', 'log-hops-to-kafka',
+      'data-pipeline-design', 'data-distribution-layer'],
   },
 };
 

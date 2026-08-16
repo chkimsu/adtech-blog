@@ -1286,6 +1286,83 @@ window.DEMO_EDU = {
         },
     },
 
+    // ==========================================
+    // 장바구니 여섯 자리 (입문)
+    // ==========================================
+    'cart-pipeline': {
+        analogy: '자리마다 데이터가 밀려 오는지 가지러 가는지가 갈리고, 그게 막혔을 때 어디에 쌓이는지를 정한다',
+        anchor: '.cp-rail',
+        embedKeep: ['.cp-rail', '.cp-panes', '.cp-what', '.cp-consumers', '.cp-retention'],
+        explain: {
+            // 자리 버튼과 소비자 칩은 <button> 이라 click 룰이 그대로 걸린다
+            // (demo-edu.js 의 click 핸들러는 input·select·textarea 만 거른다).
+            // 다만 같은 자리를 다시 눌렀을 때 또 말하지 않게 dataset 으로 막는다.
+            '.cp-step': ({ el }) => {
+                const i = el.dataset.stage;
+                const host = document.getElementById('cp-rail-list');
+                if (host.dataset.eduSaid === i) return '';
+                host.dataset.eduSaid = i;
+                return [
+                    '<strong>1번 브라우저</strong>입니다. 만드는 것은 57 B 뿐이고 <strong>누가·어디서·언제·얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
+                    '<strong>2번 웹서버</strong>입니다. 107 B 가 앞에 붙어 164 B 가 됐습니다. 붙은 것은 전부 <strong>받는 쪽만 아는 값</strong>이에요 — 브라우저는 자기 요청이 200 을 받았는지 보내는 시점에 모릅니다.',
+                    '<strong>3번 수집 에이전트</strong>입니다. 여기가 처음 <strong>가지러 가는</strong> 자리예요. 원문은 message 칸에 한 글자도 안 바뀌고 들어가고, 붙는 것은 봉투 셋뿐입니다.',
+                    '<strong>4번 변환기</strong>입니다. 크기는 5 B <strong>줄었는데</strong> 필드가 4개에서 15개가 됐습니다. 바이트로는 아무 일도 없어 보이는 자리에서 가장 큰 일이 일어납니다.',
+                    '<strong>5번 Kafka</strong>입니다. 값은 한 글자도 안 바뀌고 <strong>주소만 붙습니다</strong> — topic·partition·offset. 여기서부터 한 번 쓰이고 여럿이 읽습니다.',
+                    '<strong>6번 소비자 넷</strong>입니다. 아래 칩을 갈아 눌러 보세요. <strong>왼쪽은 그대로인데 오른쪽만 바뀝니다</strong> — 같은 한 줄이 네 결과가 됩니다.'
+                ][+i] || '';
+            },
+            '.cp-chip': ({ el }) => {
+                const i = el.dataset.consumer;
+                const host = document.getElementById('cp-consumer-list');
+                if (host.dataset.eduSaid === i) return '';
+                host.dataset.eduSaid = i;
+                return [
+                    '대시보드는 <strong>건수와 금액만</strong> 남기고 나머지 12개를 버립니다. 2초 안에 답해야 하니 완벽함보다 속도예요.',
+                    '재고는 <code>cart_id</code> 를 들고 갑니다. 같은 담기를 두 번 처리하면 재고가 <strong>4 줄어들기</strong> 때문에, 이미 본 줄인지 확인할 열쇠가 필요합니다.',
+                    '창고는 <strong>하나도 안 버립니다</strong>. 나중에 무엇을 물어볼지 모르니까요. Kafka 는 기한이 지나면 지우므로 오래 보관은 이쪽 몫입니다.',
+                    '추천 학습은 <strong>순서</strong>를 만듭니다. 접속 주소나 응답 코드는 학습에 안 쓰니 뺍니다.'
+                ][+i] || '';
+            },
+            '#cp-keep': ({ value, prev }) =>
+                `보존 기간을 <strong>${prev}일 → ${value}일</strong>로 바꿨습니다. ` +
+                (+value > +prev
+                    ? '늘리면 더 오래 되감을 수 있지만 디스크를 그만큼 더 씁니다. 늘릴 것이 아니라 <strong>가장 늦게 읽는 소비자와 고치는 데 걸리는 시간</strong>을 재서 정합니다.'
+                    : '줄이면 되감을 수 있는 창이 좁아집니다. 멈춘 시간을 이 값 너머로 밀어 보면 앞부분이 통째로 사라지는 것이 보입니다.'),
+            '#cp-stall': ({ value, prev }) =>
+                `재고 서비스가 멈춘 시간을 <strong>${prev}시간 → ${value}시간</strong>으로 바꿨습니다. ` +
+                (document.querySelector('#cp-verdict.is-lost')
+                    ? '보존 창을 넘었습니다. <strong>넘긴 만큼은 이미 지워져</strong> 되감을 수가 없어요. 따라잡는 시간이 더 안 늘어나는 것도 그 때문입니다 — 따라잡을 것 자체가 없습니다.'
+                    : '아직 보존 창 안이라 <strong>전부 되감을 수 있습니다</strong>. 처리량이 유입의 45배라 밀린 것을 금방 빨아들입니다.')
+        },
+        tour: [
+            {
+                el: '.cp-rail',
+                title: '여섯 자리',
+                body: '담기 한 건이 왼쪽에서 오른쪽으로 지납니다. 배지는 그 자리가 데이터를 ' +
+                    '<strong>받는</strong> 방법이에요 — 밀려 오는 자리가 셋, 가지러 가는 자리가 둘입니다.'
+            },
+            {
+                el: '.cp-rail-list',
+                title: '자리를 눌러 보기',
+                body: '<strong>4번 변환기</strong>를 눌러 보세요. 크기는 줄었는데 필드가 4개에서 15개가 됩니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.cp-panes',
+                title: '들어온 것과 나간 것',
+                body: '왼쪽이 그 자리에 들어온 것, 오른쪽이 나간 것입니다. 줄 앞의 ' +
+                    '<strong>+</strong>는 붙은 것, <strong>~</strong>는 바뀐 것, <strong>-</strong>는 사라진 것이에요.'
+            },
+            {
+                el: '.cp-retention',
+                title: '며칠 들고 있으면 되나',
+                body: '멈춘 시간을 <strong>240시간</strong>까지 밀어 보세요. 보존 7일을 넘는 순간 ' +
+                    '앞부분이 지워졌다고 바뀝니다. 보존 기간이 무엇을 사고 무엇을 못 사는지가 거기서 갈립니다.',
+                waitFor: 'input'
+            }
+        ]
+    },
+
 // js/demo-edu-content.js 의 window.DEMO_EDU 에 넣을 'metrics-lab' 엔트리.
 // 'log-hops' 엔트리 뒤에 쉼표로 이어 붙이면 된다. (이 파일 자체는 조각이다)
 

@@ -146,8 +146,8 @@ const posts = [
   {
     id: 'data-pipeline-design',
     world: 'na',
-    title: 'Kafka 앞뒤를 통째로 — 데이터 파이프라인을 설계하는 순서',
-    excerpt: '티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 쓴다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 소비자 넷의 마감이다. 대시보드 마감 2초에서 브로커까지 쓴 1,112 ms 를 빼면 888 ms 가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐이다. 정산은 33시간이라 후보가 넷 다 들어 비용지수 4짜리 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻는다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없고, 원본 하루 21.9 GB 를 왜 남기는지와 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라간다.',
+    title: '데이터 파이프라인 설계 — 배치와 스트림을 무엇으로 고르나',
+    excerpt: '지훈 씨가 올린 티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 씁니다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 읽는 쪽 넷의 마감입니다. 대시보드 마감 2초에서 브로커까지 쓴 1,112밀리초를 빼면 888밀리초가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐입니다. 학습은 30시간이라 후보가 넷 다 들어 가장 싼 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻습니다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없습니다. 원본 하루 21.9GB 를 왜 남기는지와, 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라갑니다.',
     date: '2026-08-14',
     categories: ['ML Infrastructure', 'Software Engineering'],
     tags: ['ML Infra', 'Kafka', 'Event-Driven', 'System Design'],
@@ -157,8 +157,8 @@ const posts = [
   {
     id: 'data-distribution-layer',
     world: 'na',
-    title: '목적지가 여럿일 때 — 연결을 30에서 11로',
-    excerpt: '설정 파일에 블록 하나를 더하고 반나절 만에 배포 승인을 받는 팀이 있고, 같은 요청에 처리 잡 다섯 개를 열어 두 주를 쓰는 팀이 있다. 차이는 처리와 목적지 사이에 결과를 갈라 보내는 층이 있느냐다. 처리 잡 다섯과 목적지 여섯이면 층이 없을 때 연결이 30개, 설정 자리가 120개다. 층을 두면 연결 11개, 설정 자리 44개가 되고 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 대신 홉이 하나 늘어 남는 예산 888 ms 에 topic 왕복 200 ms 가 붙으니, 목적지 셋과 처리 잡 둘 아래에서는 이 층이 순손해다.',
+    title: '데이터 유통 층 — Logstash · Kafka Connect 로 목적지를 늘린다',
+    excerpt: '지훈 씨가 올린 티켓을 받은 팀은 설정 파일에 블록 열두 줄을 더하고 반나절 만에 승인을 받았습니다. 다른 팀은 같은 요청에 처리 잡 다섯 개를 열어 두 주를 씁니다. 차이는 처리와 목적지 사이에 결과를 갈라 보내는 층이 있느냐입니다. 처리 잡 다섯과 목적지 여섯이면 층이 없을 때 연결이 30개, 설정 자리가 120개입니다. 층을 두면 연결 11개, 설정 자리 44개가 되고 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 됩니다. 대신 홉이 하나 늘어 남는 예산 888밀리초에 topic 왕복 200밀리초가 붙으니, 목적지 셋과 처리 잡 둘 아래에서는 이 층이 순손해입니다.',
     date: '2026-08-15',
     categories: ['ML Infrastructure', 'Software Engineering'],
     tags: ['ML Infra', 'Kafka', 'Event-Driven', 'System Design'],
@@ -1000,9 +1000,10 @@ const series = {
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',
-    desc: '협업 도구(Git)부터 시스템 설계·운영(아키텍처 패턴·쿠버네티스), 요청이 서비스까지 가는 길과 로그가 학습 데이터가 되는 길까지 — 백엔드/인프라 엔지니어의 기본기',
-    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking', 'gateway-ingress-router',
-      'api-basics', 'api-kinds-and-contracts', 'pipeline-push-and-pull', 'kafka-log-pipeline', 'log-hops-to-kafka',
+    desc: '신입 지훈 씨가 첫 API 를 만들고, 그 API 가 받은 클릭 한 건이 Kafka 를 지나 학습 데이터가 되기까지 — API 두 편, 요청이 오는 길, 파이프라인 다섯 편을 같은 클릭 하나로 이어 읽습니다',
+    posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking',
+      'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
+      'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
       'data-pipeline-design', 'data-distribution-layer'],
   },
 };

@@ -37,6 +37,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=pipeline-push-and-pull</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/post.html?id=interview-ml-modeling</loc>
     <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
@@ -542,6 +548,12 @@
   </url>
   <url>
     <loc>https://chkimsu.github.io/adtech-blog/demo-calibration.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-cart-pipeline.html</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

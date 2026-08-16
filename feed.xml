@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-15T00:00:00Z</updated>
+  <updated>2026-08-16T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>데이터 파이프라인 입문 — 로그 한 건이 지나는 여섯 자리</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pipeline-push-and-pull"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=pipeline-push-and-pull</id>
+    <updated>2026-08-16T00:00:00Z</updated>
+    <summary>지훈 씨가 만든 API 가 받은 클릭 한 건이 네 곳에 가 닿습니다 — 대시보드는 2초, 예산 소진 확인은 5초, 광고주 리포트는 5분, 모델 학습은 다음 날 새벽입니다. 그 사이에 자리가 여섯인데, 넘김 다섯 중 셋은 앞에서 밀고 둘은 뒤에서 가지러 갑니다. 앱이 만든 85바이트에는 과금액이 없고(앱이 보낸 값은 고칠 수 있기 때문입니다), 웹서버가 98바이트를 앞에 붙이며, 수집 에이전트는 내용을 한 글자도 안 건드린 채 봉투에만 셋을 적습니다. Kafka 가 며칠 들고 있는 건 마지막 넘김이 &quot;가지러 가는&quot; 방식이기 때문이고, 3시간 멈춘 소비자는 2.4분에 따라잡지만 10일 멈추면 앞 72시간치는 이미 없습니다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>ML 모델링 면접 — AUC가 올랐는데 매출이 그대로인 이유</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=interview-ml-modeling"/>
@@ -80,19 +89,19 @@
     <category term="Interview &amp; Algorithms"/>
   </entry>
   <entry>
-    <title>API 기초 — POST로 보냈는데 왜 데이터가 돌아오나</title>
+    <title>API 기초 — 요청과 응답, 메서드 다섯, 로그가 남는 두 자리</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=api-basics"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-basics</id>
     <updated>2026-08-15T00:00:00Z</updated>
-    <summary>POST 는 &quot;수정&quot;이 아니라 &quot;이걸 처리해 줘&quot;다. 그리고 HTTP 는 요청 하나에 응답 하나가 반드시 짝이라, 메서드가 무엇이든 답은 온다 — 작은 서버를 띄워 GET·POST·&quot;조회인데 POST&quot; 셋을 실제로 불러 보면 세 요청 모두 응답 본문이 있다. 메서드 다섯의 뜻, 주소에 동사를 넣으면 안 되는 이유, 내부·파트너·공개 세 등급, 비밀번호를 가리면서 남기는 로그 한 줄. 그 줄은 누가 남기나 — 로그는 두 종류다. 요청이 오면 코드 없이 남는 접속 로그와, 부르는 쪽이 서버를 한 번 더 불러야 남는 이벤트 로그. 광고가 화면에 떴는지 사용자가 눌렀는지는 서버가 알 길이 없어서, 앱이 그 사실을 요청으로 보내는 것 말고는 방법이 없다. 그래서 두 줄이 자주 다른 말을 한다 — 도착도 못 한 요청은 서버 로그에 아예 없고, 답이 늦어 포기한 요청은 서버 로그에 성공으로 남는다. 그리고 클릭 로그 100만 줄(86MB)을 10,000줄씩 나눠 879KB로, 압축해 131KB로 보내는 법까지.</summary>
+    <summary>신입 지훈 씨가 첫 주에 막힌 자리부터 시작합니다. POST 는 &quot;수정&quot;이 아니라 &quot;이걸 처리해 주세요&quot;이고, HTTP 는 요청 하나에 응답 하나가 반드시 짝이라 메서드가 무엇이든 답은 옵니다. 실제 요청·응답 원문 셋, 주소 짓는 규칙, 내부·파트너·공개 세 등급, 비밀번호를 가리면서 남기는 로그 한 줄. 그리고 클릭 한 번에 서버에 남는 두 줄 — nginx 가 저절로 남기는 접속 로그와 앱이 보내야만 남는 이벤트 로그를 실물로 나란히 놓고 봅니다.</summary>
     <category term="Software Engineering"/>
   </entry>
   <entry>
-    <title>목적지가 여럿일 때 — 연결을 30에서 11로</title>
+    <title>데이터 유통 층 — Logstash · Kafka Connect 로 목적지를 늘린다</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-distribution-layer</id>
     <updated>2026-08-15T00:00:00Z</updated>
-    <summary>설정 파일에 블록 하나를 더하고 반나절 만에 배포 승인을 받는 팀이 있고, 같은 요청에 처리 잡 다섯 개를 열어 두 주를 쓰는 팀이 있다. 차이는 처리와 목적지 사이에 결과를 갈라 보내는 층이 있느냐다. 처리 잡 다섯과 목적지 여섯이면 층이 없을 때 연결이 30개, 설정 자리가 120개다. 층을 두면 연결 11개, 설정 자리 44개가 되고 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 된다. 대신 홉이 하나 늘어 남는 예산 888 ms 에 topic 왕복 200 ms 가 붙으니, 목적지 셋과 처리 잡 둘 아래에서는 이 층이 순손해다.</summary>
+    <summary>지훈 씨가 올린 티켓을 받은 팀은 설정 파일에 블록 열두 줄을 더하고 반나절 만에 승인을 받았습니다. 다른 팀은 같은 요청에 처리 잡 다섯 개를 열어 두 주를 씁니다. 차이는 처리와 목적지 사이에 결과를 갈라 보내는 층이 있느냐입니다. 처리 잡 다섯과 목적지 여섯이면 층이 없을 때 연결이 30개, 설정 자리가 120개입니다. 층을 두면 연결 11개, 설정 자리 44개가 되고 목적지를 하나 더 붙일 때 손대는 잡이 5개에서 0개가 됩니다. 대신 홉이 하나 늘어 남는 예산 888밀리초에 topic 왕복 200밀리초가 붙으니, 목적지 셋과 처리 잡 둘 아래에서는 이 층이 순손해입니다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>
@@ -115,19 +124,19 @@
     <category term="Bandits &amp; Personalization"/>
   </entry>
   <entry>
-    <title>API 두 종류와 그 사이의 약속 — 실무 첫 주에 밟는 것들</title>
+    <title>API 연동 실무 — 상태코드 · 목록 나눠 받기 · 버전 호환 · 인증</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>입사 나흘째에 첫 연동을 맡으면, 먼저 물어야 할 것은 무슨 언어로 짜나가 아니라 누가 부르나다 — 앱이 초당 2,639건을 보내는 수집 API 와 12ms 안에 답해야 하는 입찰 API 는 비밀키·인증·버전·재시도가 통째로 갈린다. 첫 주에 가장 비싼 약속은 같은 요청을 두 번 세지 않겠다는 멱등성이다. 요청마다 고유 값을 안 붙이고 재시도를 걸면 전환 1,000건이 1,180건으로 부풀고, 전환 한 건당 광고비가 ₩5,000에서 ₩4,237로 싸 보여 예산이 잘못 움직인다. 재시도 시각을 무작위로 흩으면 500건 중 성공이 180건에서 472건으로 늘어난다. 상태코드·목록 넘기기·필드 호환·인증 다섯과 첫 주에 밟는 지뢰 여덟을 실제 요청과 응답으로 본다.</summary>
+    <summary>지훈 씨가 둘째 주에 남의 회사 서버와 처음 붙습니다. 코드는 30분이면 쓰는데 막히는 것은 그다음입니다 — 답이 안 와서 다시 보내면 그 전환이 한 건인지 두 건인지를 문서가 말해 주지 않습니다. 요청마다 번호를 안 붙이면 전환 1,000건이 1,180건으로 부풀어 전환당 광고비가 ₩5,000에서 ₩4,237로 싸 보이고, 그 숫자로 예산이 움직입니다. 상태코드, 5만 행을 커서로 나눠 받기, 필드를 지우기 전에 세어 보는 법, 다시 보내는 시각을 흩는 이유, 인증 셋을 실제 요청과 응답으로 봅니다.</summary>
     <category term="Software Engineering"/>
   </entry>
   <entry>
-    <title>Kafka 앞뒤를 통째로 — 데이터 파이프라인을 설계하는 순서</title>
+    <title>데이터 파이프라인 설계 — 배치와 스트림을 무엇으로 고르나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design</id>
     <updated>2026-08-14T00:00:00Z</updated>
-    <summary>티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 쓴다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 소비자 넷의 마감이다. 대시보드 마감 2초에서 브로커까지 쓴 1,112 ms 를 빼면 888 ms 가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐이다. 정산은 33시간이라 후보가 넷 다 들어 비용지수 4짜리 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻는다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없고, 원본 하루 21.9 GB 를 왜 남기는지와 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라간다.</summary>
+    <summary>지훈 씨가 올린 티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 씁니다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 읽는 쪽 넷의 마감입니다. 대시보드 마감 2초에서 브로커까지 쓴 1,112밀리초를 빼면 888밀리초가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐입니다. 학습은 30시간이라 후보가 넷 다 들어 가장 싼 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻습니다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없습니다. 원본 하루 21.9GB 를 왜 남기는지와, 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라갑니다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>
@@ -163,15 +172,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=uplift-incrementality</id>
     <updated>2026-08-14T00:00:00Z</updated>
     <summary>리포트에는 전환 9,000건, 전환당 비용 ₩1,400이 찍혔는데 매출은 안 늘었다. 광고를 일부러 안 보낸 대조군을 같이 돌려 보면, 그 9,000건 중 광고가 만든 것은 1,100건뿐이다. 같은 105,000명 예산을 광고가 잘 먹는 사람 순서로 다시 고르면 리포트 전환은 5,500건으로 39% 줄지만, 실제로 늘어난 전환은 1,350건으로 22.7% 는다. 사람은 설득 가능 6,400명·확실 구매 17,600명·청개구리 2,400명·무관심 773,600명 넷으로 갈리고, 광고비가 값을 하는 곳은 0.8%인 첫 칸뿐이다. 증분 모델을 만드는 세 가지 방법을 4만 명 가데이터로 돌려 참값과의 상관 +0.105 / +0.905 / +0.911을 비교하고, 정확도가 가장 높은 점수가 오히려 나쁜 선택인 이유까지 짚는다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>쿠키와 광고 ID가 사라지면 무엇부터 망가지나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=privacy-signal-loss"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=privacy-signal-loss</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>같은 캠페인 하루치인데 웹 지면 전환 칸에는 3,120이 적히고 iOS 앱 지면 칸에는 940이 적힌다. 940건 중 415건은 금액 칸까지 비었고, 그마저 어제 것이 아니라 나흘 전 설치분이다. 타겟팅 피처가 빠지면 순위 점수가 열린 RTB에서 0.068 내려가고 담장 안은 0.012에 그친다. 사람마다 붙던 정답이 칸마다의 합계로 바뀌면 계수 흔들림이 3.3배가 되어 같은 정밀도까지 데이터가 11배 필요해진다. 노이즈는 절대량으로 붙어 전환 40건짜리는 상대 오차 70.7%로 묻히고, 빈도 상한은 아예 못 걸어 노출의 47.6%가 이미 다섯 번 넘게 본 사람에게 간다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Targeting &amp; Audience"/>
   </entry>

@@ -33,9 +33,9 @@
 | 순서 | 글 | 지훈이 있는 자리 | 그 글이 답하는 질문 |
 |---|---|---|---|
 | 4 | `api-basics` | 입사 첫 주. 팀 코드에서 `POST /v1/search` 를 보고 막힘 | 요청과 응답이 뭔가. 로그는 어디에 남나 |
-| 5 | `api-kinds-and-contracts` | 나흘째. 광고주 전환 포스트백 연동을 맡음 | 남의 서버와 붙일 때 뭘 정하나 |
-| 6 | `gateway-ingress-router` | 둘째 주. 내가 만든 주소 앞에 뭐가 서 있나 | 요청이 내 코드까지 오는 길 |
-| 7 | `pipeline-push-and-pull` | 셋째 주. "내가 남긴 클릭 로그는 어디로 가요?" | 자리가 여섯. 누가 밀고 누가 가지러 가나 |
+| 5 | `api-kinds-and-contracts` | 둘째 주. 광고주 전환 포스트백 연동을 맡음 | 남의 서버와 붙일 때 뭘 정하나 |
+| 6 | `gateway-ingress-router` | 셋째 주. 내가 만든 주소 앞에 뭐가 서 있나 | 요청이 내 코드까지 오는 길 |
+| 7 | `pipeline-push-and-pull` | 넷째 주. "내 파일 한 줄이 어떻게 네 곳에 가 닿나" | 자리가 여섯. 누가 밀고 누가 가지러 가나 |
 | 8 | `log-hops-to-kafka` | 같은 클릭 한 건을 자리마다 열어 봄 | 자리마다 데이터 모양이 어떻게 바뀌나 |
 | 9 | `kafka-log-pipeline` | 그 클릭이 Kafka에 들어간 뒤 | topic·partition·group·offset이 뭔가 |
 | 10 | `data-pipeline-design` | 티켓 하나 — "이 로그를 운영자 검색 창에도" | 배치와 스트림을 무엇으로 고르나 |
@@ -324,3 +324,41 @@ node scripts/build-search-index.js
 | 스키마 진화 호환 설정 · 백필 | `design` 5절 | 사례 하나 + 한 문단 |
 
 **그대로 남기는 것** — topic · partition · consumer group · offset · 보존 기간 · 상태코드 · 목록 나눠 받기 · 필드 호환 · 인증 · 배치와 스트림 · 원본/정제/마트 · 로드밸런서/Ingress/Gateway. 이만큼이면 실무 대화가 됩니다.
+
+
+---
+
+## 12. 실제로 끝난 뒤 (2026-08-16)
+
+8편 전부 다시 썼습니다. 설계와 달라진 것과 실측값을 남깁니다.
+
+### 분량 — KB 가 아니라 산문으로 재야 했습니다
+
+`check-content-standard.js` 의 KB 는 SVG 마크업을 같이 셉니다. 그림이 있는 글은 부풀어 보여서, 프로즈만 따로 재어 기준자와 견줬습니다.
+
+| 글 | 전 | 후 | 산문만 | 파이썬 | 표 |
+|---|---|---|---|---|---|
+| `api-basics` | 46 KB | 38.7 | **25.9 KB** | 4 → 0 | 15 → 10 |
+| `api-kinds-and-contracts` | 39 KB | 30.4 | **21.6 KB** | 2 → 0 | 14 → 11 |
+| `gateway-ingress-router` | 72 KB | 43.9 | **24.0 KB** | 2 → 0 | 9 → 7 |
+| `pipeline-push-and-pull` | 33 KB | 31.3 | — | 1 → 0 | 5 → 6 |
+| `log-hops-to-kafka` | 87 KB | 32.2 | **23.1 KB** | 3 → 0 | 18 → 6 |
+| `kafka-log-pipeline` | 76 KB | 43.4 | **21.0 KB** | 4 → 0 | 12 → 9 |
+| `data-pipeline-design` | 34 KB | 24.4 | — | 2 → 0 | 14 → 14 |
+| `data-distribution-layer` | 19 KB | 16.6 | — | 1 → 0 | 4 → 6 |
+
+기준자 3편의 산문이 21.8~25.7KB 이니 같은 폭에 들어왔습니다. 파이썬 19블록(약 950줄)이 전부 빠졌고, `check-content-standard.js` 에 `NO_PYTHON_BY_DESIGN` 목록을 넣어 `코드없음` 오경보를 껐습니다.
+
+### 설계 때 못 본 것 셋
+
+1. **바이트 사슬이 안 맞았습니다.** `log-hops` 가 79/169/308 B 를, `pipeline-push-and-pull` 이 85/183/309 B 를 **같은 클릭 한 건에** 쓰고 있었습니다. 필드 이름도 `t`·`rid`·`ad`·`s` 축약형과 `event`·`req_id`·`ad_id`·`slot` 로 갈려 있었습니다. 재작성하며 실제로 세어 하나로 맞췄습니다.
+2. **`log-hops` 의 61.7시간이 상한값이었습니다.** 이벤트마다 로그 한 줄이라고 가정한 값인데, 노출 4건이 한 요청에 묶여 오니 실제로는 하루 5,928만 줄입니다. 다시 재어 **237시간**으로 고쳤습니다.
+3. **`data-distribution-layer` 의 주인공이 "수민"이었습니다.** 8편 중 이 한 편만 다른 이름이었고 지훈으로 통일했습니다.
+
+### 읽는 순서
+
+두 군데가 움직였습니다 — `gateway` 가 API 두 편 뒤로, `log-hops` 가 `kafka` 앞으로. 그래서 `log-hops` 가 `kafka-log-pipeline` 을 10번 참조하던 앞뒤 뒤엉킴이 풀렸습니다. `log-hops` 8절(읽는 쪽 `poll()`)은 `kafka` 6절로 옮겼습니다.
+
+### 트랙 규칙을 가이드에 옮겼습니다
+
+`MARKDOWN_GUIDE.md` 의 「엔지니어링 기초 트랙 — API·Kafka 8편만의 규칙」에 일곱 항목으로 적었습니다. 이 트랙에 새 글이 붙으면 거기 표준 데이터 한 벌을 가져다 씁니다.

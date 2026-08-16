@@ -14,6 +14,15 @@ const MIN_BYTES = 15000;      // 표준 8: 얇은 글은 15KB 이상
 const MIN_SECTION_CHARS = 300; // 표준 2: 한두 줄로 끝나는 섹션 금지
 const MAX_SENTENCE = 80;       // 표준 7: 한 문장 = 한 생각
 
+// 파이썬을 일부러 안 쓰는 글 — API·Kafka 8편(2026-08-16 사용자 확정).
+// 표를 뽑으려고 60~80줄을 싣는 대신 표와 실물(로그 줄·요청 원문·설정 파일)로
+// 대신했다. 여기 있는 글에는 '코드없음' 플래그를 안 붙인다.
+const NO_PYTHON_BY_DESIGN = new Set([
+  'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
+  'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
+  'data-pipeline-design', 'data-distribution-layer',
+]);
+
 // 코드블록·표·임베드 HTML을 걷어낸 '산문'만 남긴다 — 길이 계산의 분모.
 function prose(md) {
   return md
@@ -168,7 +177,7 @@ if (args.length) {
     r.bytes < MIN_BYTES ? '분량' : '',
     r.short.length ? `짧은섹션${r.short.length}` : '',
     r.long.length > 6 ? `장문${r.long.length}` : '',
-    r.python === 0 ? '코드없음' : '',
+    r.python === 0 && !NO_PYTHON_BY_DESIGN.has(r.id) ? '코드없음' : '',
     r.tables === 0 ? '표없음' : '',
     r.world !== 'na' && !r.hasPractical ? 'practical없음' : '',
     r.badBadge.length ? '✗마커' : '',

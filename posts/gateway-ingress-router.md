@@ -1,29 +1,29 @@
-서버 한 대가 요청을 받고 있다. 프로세스 이름은 `bidder`, 주소는 `10.0.3.14:8080`. 매체 한 곳이 이 주소로 초당 3,000건씩 입찰 요청을 보낸다. 요청은 `POST /v1/bid` 한 종류뿐이고, 12ms 안에 답해야 한다. 늦으면 그 건은 없던 일이 된다.
+지훈 씨가 만든 클릭 수집 API 가 배포됐습니다. 매체 쪽에 주소를 알려 주려고 서버 IP `10.0.3.14:8080` 을 적어 메일을 쓰는데, 선배가 그걸 붙잡았습니다. **"그 주소를 주면 다음 배포 때 매체 요청이 통째로 날아갑니다."**
 
-이 그림에는 LB도 Ingress도 API Gateway도 라우터도 없다. 매체의 설정 파일에 우리 서버 IP가 그대로 적혀 있고, 요청은 거기로 곧장 간다. 그리고 이 구성은 잘 돌아간다. 서버가 안 죽고, 배포를 안 하고, 서비스가 하나뿐인 동안은 그렇다.
+그러면서 대신 알려 준 주소는 `ads.example.com` 이었습니다. 서버 IP 도 아니고 포트도 없습니다. 그 이름과 지훈 씨 서버 사이에 부품이 셋 서 있는데, 이름이 로드밸런서·Ingress·API Gateway 입니다.
 
-이 글은 그 다음을 따라간다. 서비스가 하나에서 열둘로 늘어나는 동안 부품은 한꺼번에 등장하지 않는다. 매번 구체적인 사고가 하나 나고, 그걸 막으려고 부품이 하나 생긴다. 순서대로 보면 넷의 경계가 저절로 갈린다.
+**넷 다 "요청을 어디로 보낼지 정하는" 일을 합니다. 그런데 왜 넷일까요?**
 
-이 글의 숫자는 전부 설명을 위해 지어낸 값이다. 실제 입찰 제한시간은 매체·거래소마다 다르다.
+한꺼번에 설계된 것이 아니기 때문입니다. 서비스가 늘 때마다 구체적인 사고가 하나씩 나고, 그걸 막으려고 부품이 하나씩 생겼습니다. 이 글은 서버 한 대에서 시작해 그 순서를 따라갑니다. 순서대로 보면 넷의 경계가 저절로 갈립니다.
 
-> **한 줄 요약:** LB·Ingress·API Gateway·라우터는 한꺼번에 설계된 것이 아니다. 서비스가 늘 때마다 생긴 문제에 하나씩 답한 결과다.
+> **한 줄 요약:** 로드밸런서·Ingress·API Gateway 는 한꺼번에 설계된 것이 아닙니다. 서비스가 늘 때마다 생긴 문제에 하나씩 답한 결과라, 생긴 순서가 그대로 경계입니다.
 
-> **골라 읽는 법** — 절이 8개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
+> **골라 읽는 법** — 절이 다섯 개입니다.
 >
-> - 부품이 왜 생겼는지 순서대로 → 1~5절
-> - "라우터"라는 말이 헷갈리면 → 3절 '"라우터"가 가리키는 세 가지'
-> - Ingress와 API Gateway의 경계만 → 4절
-> - 메시를 넣을지 정해야 하면 → 5절 '언제 넣나'
-> - 다섯을 한 표로 비교만 → 6절
-> - 흔한 오해만 → 7절
+> - 부품이 왜 생겼는지 순서대로 → 1~4절
+> - "라우터"라는 말이 헷갈리면 → 3절 뒷부분
+> - Ingress 와 API Gateway 의 경계만 → 4절
+> - 넷을 한 표로 비교만 → 5절
+
+이 글의 숫자는 전부 설명을 위해 지어낸 값입니다. 다만 설정 파일의 **모양**은 실제 nginx · 쿠버네티스 · Gateway 제품이 쓰는 그대로입니다. 그리고 이 글이 따라가는 요청은 지훈 씨의 클릭 수집이 아니라, 같은 길을 지나는 것 중 가장 빡빡한 **입찰 요청**입니다. 12ms 안에 답해야 하는 요청에서 부품 하나의 비용이 가장 선명하게 드러납니다.
 
 ---
 
-## 1. 서버 한 대 — 매체가 주소를 직접 부른다
+## 1. 서버 한 대 — 매체가 주소를 직접 부릅니다
 
-**부품이 하나도 없는 상태에서는 매체가 우리 서버 주소를 직접 안다. 그래서 서버가 잠깐만 멈춰도 그 시간만큼 요청이 통째로 사라진다.**
+**부품이 하나도 없으면 매체가 우리 서버 주소를 직접 압니다. 그래서 서버가 잠깐만 멈춰도 그 시간만큼 요청이 통째로 사라집니다.**
 
-매체 쪽 연동 설정 파일에는 이렇게 적혀 있다.
+선배가 막은 그 메일이 실제로 나갔다면, 매체 쪽 연동 설정 파일에 이렇게 적힙니다.
 
 ```yaml
 # 매체 서버의 DSP 연동 설정
@@ -33,11 +33,11 @@ bidders:
     timeout_ms: 12
 ```
 
-`10.0.3.14` 는 우리 `bidder` 서버의 IP다. 매체는 이 주소로만 요청을 보낸다.
+`10.0.3.14` 는 우리 `bidder` 서버의 IP 입니다. 매체는 이 주소로만 요청을 보냅니다. 초당 3,000건씩 들어오고, 12ms 안에 답해야 하며, 늦으면 그 건은 없던 일이 됩니다.
 
-매체와 우리는 같은 데이터센터 안에서 전용 회선으로 붙어 있다. 중간에 거치는 것도 없다. 그래서 사설 IP를 그대로 부를 수 있고, TLS 없이도 되고, 12ms라는 빡빡한 예산이 성립한다. 바깥 인터넷을 건너는 열린 RTB 연동이라면 이 숫자가 훨씬 커진다.
+매체와 우리는 같은 데이터센터 안에서 전용 회선으로 붙어 있습니다. 중간에 거치는 것도 없어서 사설 IP 를 그대로 부를 수 있고, 12ms 라는 빡빡한 예산이 성립합니다.
 
-문제는 배포할 때 드러난다. 새 버전을 올리려면 `bidder` 프로세스를 내리고 새 프로세스를 띄워야 한다. 그 사이 `10.0.3.14:8080` 은 아무도 듣지 않는 포트가 된다. 이때 매체가 보낸 요청은 느린 응답을 받는 게 아니다. 연결 자체가 거부된다(`connection refused`). 12ms 예산 안에서는 재시도할 여유도 없다.
+**문제는 배포할 때 드러납니다.** 새 버전을 올리려면 `bidder` 프로세스를 내리고 새 프로세스를 띄워야 합니다. 그 사이 `10.0.3.14:8080` 은 아무도 듣지 않는 포트가 됩니다. 이때 매체가 보낸 요청은 느린 응답을 받는 게 아니라 **연결 자체가 거부**됩니다. 12ms 예산 안에서는 다시 시도할 여유도 없습니다.
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 180" role="img" aria-label="매체 한 곳이 bidder 서버 한 대의 IP를 직접 호출하는 구조. 그 서버 한 칸이 배포 중에 사라지면 대신 부를 곳이 없다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
@@ -46,7 +46,7 @@ bidders:
 </defs>
 <rect x="6" y="44" width="140" height="60" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="70" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
-<text x="76" y="90" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 IP가 박혀 있다</text>
+<text x="76" y="90" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 IP가 박혀 있습니다</text>
 <line x1="152" y1="74" x2="330" y2="74" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw1-arr)"/>
 <text x="241" y="64" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14:8080</text>
 <rect x="336" y="38" width="142" height="72" rx="13" style="fill:none; stroke:var(--state-bad); stroke-width:1.6; stroke-dasharray:5 4"/>
@@ -54,151 +54,124 @@ bidders:
 <text x="407" y="70" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">bidder</text>
 <text x="407" y="90" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">서버 1대</text>
 <line x1="407" y1="110" x2="407" y2="134" style="stroke:var(--state-bad); stroke-width:1.6; stroke-dasharray:5 4"/>
-<text x="407" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">배포하면 이 칸이 잠깐 사라진다</text>
+<text x="407" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">배포하면 이 칸이 잠깐 사라집니다</text>
 <text x="407" y="171" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">그동안 요청은 전부 실패</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">실선이 하나뿐인 게 이 그림의 전부다. 그 하나가 끊기면 매체 쪽에 대안이 없다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">실선이 하나뿐인 게 이 그림의 전부입니다. 그 하나가 끊기면 매체 쪽에 대안이 없습니다.</figcaption>
 </figure>
 
-얼마나 사라지는지 세어 보자. 아래 숫자는 설명을 위해 지어낸 가상 수치다.
+얼마나 사라지는지 세어 보겠습니다. 하루에 배포를 4번 하고, 한 번 배포할 때 프로세스가 없는 시간이 20초이고, 이 매체가 초당 3,000건을 보냅니다. 곱하면 **하루 24만 건**입니다.
 
-| 항목 | 값 |
-|---|---|
-| 하루 배포 횟수 | 4회 |
-| 배포 1회당 프로세스가 없는 시간 | 20초 |
-| 이 매체의 초당 입찰 요청 | 3,000건 |
-| **하루에 버려지는 요청** | **4 × 20 × 3,000 = 240,000건** |
+이 요청들은 우리가 응찰조차 못 한 건이라 매출로도 안 잡히고, **우리 쪽 에러 로그에도 안 남습니다.** 로그를 남길 프로세스가 그 순간 떠 있지 않기 때문입니다. 매체 리포트에만 "응답률이 낮은 DSP"로 조용히 기록됩니다. 앞 글 9절에서 본 "서버 로그에 아예 없는 요청"이 여기서도 그대로입니다.
 
-하루 24만 건이다. 이 요청들은 우리가 응찰조차 못 한 건이라 매출로도 안 잡히고, 우리 쪽 에러 로그에도 안 남는다. 로그를 남길 프로세스가 그 순간 떠 있지 않기 때문이다. 매체 리포트에만 "응답률이 낮은 DSP"로 조용히 기록된다.
+배포를 조심히 하면 되지 않느냐고 물을 수 있습니다. 그런데 배포를 멈춰도 서버는 죽습니다. 디스크가 차거나, 커널이 패닉을 내거나, 앞단 스위치가 재시작합니다. **이때 매체가 대신 부를 주소가 없다는 것이 문제입니다.** 설정 파일에 적힌 주소가 하나뿐이기 때문입니다. 그래서 서버를 여러 대로 늘리는 것 말고는 답이 없습니다.
 
-배포를 조심히 하면 되지 않느냐고 물을 수 있다. 그런데 배포를 멈춰도 서버는 죽는다. 디스크가 차거나, 커널이 패닉을 내거나, 앞단 스위치가 재시작한다. 이때 매체가 대신 부를 주소가 없다. 설정 파일에 적힌 주소가 하나뿐이기 때문이다. 그래서 서버를 여러 대로 늘리는 것 말고는 답이 없다.
+## 2. 세 대로 늘렸습니다 — 로드밸런서가 생깁니다
 
----
+**서버를 3대로 늘리면 한 대가 죽어도 서비스는 삽니다. 대신 "매체가 어느 주소를 불러야 하나"라는 문제가 새로 생깁니다.**
 
-## 2. 세 대로 늘렸다 — LB가 생긴다
+`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 세 대에 띄웠다고 하겠습니다. 이제 배포는 한 대씩 돌아가며 하면 되고, 한 대를 내리는 동안 나머지 두 대가 요청을 받습니다. 1절에서 하루 24만 건을 날리던 20초가 없어집니다.
 
-**서버를 3대로 늘리면 한 대가 죽어도 서비스는 산다. 대신 "매체가 어느 주소를 불러야 하나"라는 문제가 새로 생긴다.**
+대신 배포 중에는 남은 2대가 3대 몫을 받습니다. 평소 서버당 1,000건이던 것이 그동안 1,500건이 됩니다. **그래서 3대라는 숫자는 평소가 아니라 이 순간을 기준으로 잡습니다.** 평소에 딱 맞게 잡으면 배포할 때마다 지연이 튑니다.
 
-`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 세 대에 띄웠다고 하자. 이제 배포는 한 대씩 돌아가며 하면 된다. 한 대를 내리는 동안 나머지 두 대가 요청을 받는다. 1절에서 하루 24만 건을 날리던 20초가 없어진다.
+그런데 매체 입장에서 보면 곤란해집니다. 설정 파일에 IP 3개를 다 적어야 할까요. `10.0.3.15` 가 죽으면 매체 담당자에게 연락해서 그 줄을 빼 달라고 해야 할까요. 서버를 5대로 늘릴 때마다 매체 수십 곳에 같은 부탁을 반복해야 할까요. **우리 쪽 사정을 매체가 대신 관리하는 꼴입니다.**
 
-대신 배포 중에는 남은 2대가 3대 몫을 받는다. 평상시 서버당 1,000 QPS이던 것이 그동안 1,500 QPS가 된다. 3대라는 숫자는 평상시가 아니라 이 순간을 기준으로 잡아야 한다. 평상시에 딱 맞게 잡으면 배포할 때마다 지연이 튄다.
+**로드밸런서(LB)** 가 이 자리를 메웁니다. 대표 주소 하나를 앞에 세우고, 그 뒤에 서버 3대를 대상으로 등록합니다. 매체 설정에는 이제 `10.0.9.7` 하나만 적힙니다. 뒤에 서버가 3대인지 12대인지는 매체가 알 필요가 없습니다.
 
-그런데 매체 입장에서 보면 곤란해진다. 설정 파일에 IP 3개를 다 적어야 하나. `10.0.3.15` 가 죽으면 매체 담당자에게 연락해서 그 줄을 빼 달라고 해야 하나. 서버를 5대로 늘릴 때마다 매체 수십 곳에 같은 부탁을 반복해야 하나. 우리 쪽 사정을 매체가 대신 관리하는 꼴이다.
+로드밸런서가 실제로 하는 일은 두 가지입니다. 하나는 들어온 연결을 대상 중 하나에 넘기는 것이고, 다른 하나는 **살아 있는 대상만 고르는 것**입니다. 두 번째를 하려면 대상의 상태를 계속 확인해야 하니, 주기적으로 정해진 주소를 찔러 봅니다. 이것을 헬스체크라고 합니다.
 
-**로드 밸런서(LB, Load Balancer)** 가 이 자리를 메운다. 대표 주소 하나를 앞에 세우고, 그 뒤에 서버 3대를 대상으로 등록한다. 매체 설정에는 이제 `10.0.9.7` 하나만 적힌다. 뒤에 서버가 3대인지 12대인지는 매체가 알 필요가 없다.
-
-LB가 실제로 하는 일은 두 가지다. 하나는 들어온 연결을 대상 중 하나에 넘기는 것이다. 다른 하나는 **살아 있는 대상만 고르는 것**이다. 두 번째를 하려면 LB가 대상의 상태를 계속 확인해야 한다. 그래서 주기적으로 정해진 주소를 찔러 본다. 이걸 헬스체크(health check)라고 한다.
-
-설정값은 이런 모양이다. 아래 값도 설명을 위해 잡은 가상 수치다.
+설정값은 이런 모양입니다.
 
 | 설정 | 값 | 뜻 |
 |---|---|---|
-| 검사 경로 | `GET /healthz` | 200이 오면 살아 있는 것으로 본다 |
-| 검사 주기 | 5초 | 5초마다 한 번씩 물어본다 |
+| 검사 경로 | `GET /healthz` | 200 이 오면 살아 있는 것으로 봅니다 |
+| 검사 주기 | 5초 | 5초마다 한 번씩 물어봅니다 |
 | 타임아웃 | 2초 | 2초 안에 답이 없으면 그 회차는 실패 |
-| 제외 조건 | 연속 2회 실패 | 죽은 뒤 최대 12초에 대상에서 빠진다 |
-| 복귀 조건 | 연속 2회 성공 | 고쳐진 뒤 최대 10초에 다시 받는다 |
+| 제외 조건 | 연속 2회 실패 | 죽은 뒤 최대 12초에 대상에서 빠집니다 |
+| 복귀 조건 | 연속 2회 성공 | 고쳐진 뒤 최대 10초에 다시 받습니다 |
 
-여기서 "연속 2회"가 핵심이다. 1회 실패로 빼면 네트워크가 한 번 튄 것만으로 멀쩡한 서버가 빠진다. 반대로 5회를 기다리면 이미 죽은 서버에 약 27초 동안 요청이 계속 들어간다. 그 27초치 요청은 전부 실패다. 27초는 5초 주기로 다섯 번을 세고 마지막 타임아웃 2초를 더한 값이다. 2회는 그 사이에서 고른 값이고, 최악의 경우 5+5+2 = 12초 만에 빠진다.
+**다섯 줄 중 실제로 고민하는 것은 제외 조건 하나입니다.** 1회 실패로 빼면 네트워크가 한 번 튄 것만으로 멀쩡한 서버가 빠집니다. 반대로 5회를 기다리면 이미 죽은 서버에 약 27초 동안 요청이 계속 들어가고, 그 27초치 요청은 전부 실패합니다. 2회는 그 사이에서 고른 값이고, 최악의 경우 5+5+2 = 12초 만에 빠집니다.
 
-LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다. 이름 하나에 IP 셋을 걸어 두면(DNS 라운드로빈) 대표 주소는 하나가 된다. 그런데 죽은 IP가 매체 쪽 캐시에서 빠지는 데 TTL만큼 걸리고, 그 TTL을 지킨다는 보장도 없다. 12초 안에 빼는 일을 DNS로는 못 한다.
-
-검사 주기만큼 중요한 것이 `/healthz` 가 무엇을 보고 200을 답하느냐다. 프로세스가 살아 있기만 하면 200을 주는 구현이 가장 흔하다. 그런데 이러면 `bidder` 가 떠 있지만 모델 저장소를 못 읽는 상태를 못 잡는다. 그 서버는 계속 대상에 남아 요청을 받으면서, 계속 빈 응답을 낸다.
-
-반대로 `/healthz` 안에서 의존하는 것을 전부 확인하면 다른 사고가 난다. 모델 저장소가 3초 흔들리면 3대가 동시에 실패를 답한다. 그러면 세 대가 한꺼번에 빠지고, 대상 그룹에 한 대도 안 남는다.
-
-선은 이 자리에 긋는다. **나 하나만 빠지면 해결되는 것**은 `/healthz` 에서 본다 — 모델 파일 적재 여부, 스레드풀 고갈, 로컬 디스크. **모두가 같이 쓰는 것**은 보지 않는다 — 공용 저장소, 공용 DB. 뒤엣것이 죽으면 남은 서버도 똑같이 못 하니, 빼 봐야 보낼 곳이 없다.
-
-배포도 이 장치를 그대로 쓴다. 새 버전을 올릴 서버는 먼저 대상 그룹에서 스스로 빠진다(deregister). 빠진 뒤에 프로세스를 교체하고, 준비가 끝나면 다시 등록해 `/healthz` 로 복귀를 알린다. 그러면 10초 안에 대상으로 돌아온다. 1절에서 24만 건을 버리게 만들었던 20초가 여기서는 대부분 사라진다.
-
-대부분이지 전부가 아니다. LB는 연결 단위로 대상을 고른다. 대상에서 뺀다는 건 "새 연결을 더 보내지 않는다"는 뜻이지, 이미 맺어진 연결을 옮긴다는 뜻이 아니다. 매체는 12ms 예산 때문에 연결을 계속 붙여 두고 쓴다. 그래서 앱이 종료할 때 남은 연결을 스스로 닫아 줘야(graceful shutdown) 비로소 손실이 0이 된다. 이걸 빼먹으면 빼는 순서를 아무리 잘 잡아도 배포 때마다 몇백 건이 샌다.
-
-빼는 방법에 따라 결과가 반대인 제품도 있다. AWS NLB가 그렇다.
-
-| 대상에서 빼는 방법 | 이미 맺어진 연결 |
-|---|---|
-| 명시적으로 뺀다 (deregister) | 유지 — 처리 중인 요청이 끝날 때까지 기다린다 |
-| `/healthz` 를 일부러 실패시킨다 | 끊는다 — 처리 중이던 입찰 요청이 RST로 잘린다 |
-
-둘 다 AWS NLB의 기본값이다. 그래서 배포에는 앞의 길을 쓴다. 헬스체크 실패는 서버가 진짜 죽었을 때 빨리 걷어 내라고 있는 것이지, 멀쩡한 서버를 뺄 때 쓰는 방법이 아니다. 이것도 제품마다 다르다 — HAProxy는 `on-marked-down shutdown-sessions` 를 켜야 연결을 끊고, nginx는 안 끊는다.
+로드밸런서 대신 DNS 를 쓰면 되지 않느냐는 물음에도 이 12초가 답합니다. 이름 하나에 IP 셋을 걸어 두면 대표 주소는 하나가 됩니다. 그런데 죽은 IP 가 매체 쪽 캐시에서 빠지는 데 시간이 걸리고, 그 시간을 지킨다는 보장도 없습니다. **12초 안에 빼는 일을 DNS 로는 못 합니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 258" role="img" aria-label="매체가 LB 대표 주소 하나만 호출하고, LB가 헬스체크로 살아 있는 bidder 서버 두 대에만 요청을 넘기는 구조. 헬스체크에 실패한 서버 한 대는 대상에서 빠져 있지만 헬스체크는 계속 받는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 250" role="img" aria-label="매체가 로드밸런서 대표 주소 하나만 호출하고, 로드밸런서가 헬스체크로 살아 있는 bidder 서버 두 대에만 요청을 넘기는 구조. 헬스체크에 실패한 서버 한 대는 대상에서 빠져 있지만 헬스체크는 계속 받는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw2-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 <marker id="gw2-hc" markerWidth="8" markerHeight="8" refX="6.5" refY="2.5" orient="auto"><path d="M0,0 L6.5,2.5 L0,5 Z" style="fill:var(--text-muted)"/></marker>
 </defs>
-<rect x="6" y="24" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="76" y="46" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
-<text x="76" y="65" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 주소 1개</text>
-<line x1="76" y1="76" x2="76" y2="96" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<text x="86" y="92" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<text x="76" y="120" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="6" y="126" width="140" height="76" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="76" y="150" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">LB</text>
-<text x="76" y="170" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대표 IP 1개</text>
-<text x="76" y="190" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP·포트만 본다 (L4)</text>
-<text x="76" y="224" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz · 5s</text>
-<text x="76" y="244" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">점선 화살표 = 헬스체크</text>
-<rect x="330" y="20" width="164" height="228" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="412" y="40" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대상 그룹 — bidder 3대</text>
-<rect x="342" y="54" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="412" y="76" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
-<text x="412" y="96" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14</text>
-<rect x="342" y="118" width="140" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="412" y="140" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
-<text x="412" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.15</text>
-<rect x="342" y="182" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--text-muted); stroke-width:1.5; stroke-dasharray:5 4"/>
-<text x="412" y="204" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">헬스체크 실패 — 빠짐</text>
-<text x="412" y="224" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.16</text>
-<line x1="150" y1="140" x2="338" y2="74" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<line x1="150" y1="152" x2="338" y2="92" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
-<line x1="150" y1="166" x2="338" y2="136" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
-<line x1="150" y1="178" x2="338" y2="156" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
-<line x1="150" y1="192" x2="338" y2="208" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<rect x="6" y="20" width="140" height="50" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="76" y="41" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 1곳</text>
+<text x="76" y="60" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">설정에 주소 1개</text>
+<line x1="76" y1="70" x2="76" y2="88" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<text x="86" y="86" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
+<text x="76" y="108" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
+<rect x="6" y="116" width="140" height="72" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="76" y="140" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">로드밸런서</text>
+<text x="76" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대표 IP 1개</text>
+<text x="76" y="180" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP·포트만 봅니다</text>
+<text x="76" y="212" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz · 5초</text>
+<text x="76" y="232" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">점선 = 헬스체크</text>
+<rect x="330" y="14" width="164" height="222" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
+<text x="412" y="34" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대상 그룹 — bidder 3대</text>
+<rect x="342" y="46" width="140" height="50" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="412" y="67" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
+<text x="412" y="86" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.14</text>
+<rect x="342" y="108" width="140" height="50" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
+<text x="412" y="129" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">bidder</text>
+<text x="412" y="148" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.15</text>
+<rect x="342" y="170" width="140" height="50" rx="9" style="fill:var(--bg-secondary); stroke:var(--text-muted); stroke-width:1.5; stroke-dasharray:5 4"/>
+<text x="412" y="191" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">헬스체크 실패 — 빠짐</text>
+<text x="412" y="210" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.3.16</text>
+<line x1="150" y1="132" x2="338" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<line x1="150" y1="144" x2="338" y2="84" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<line x1="150" y1="156" x2="338" y2="126" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw2-arr)"/>
+<line x1="150" y1="168" x2="338" y2="146" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
+<line x1="150" y1="180" x2="338" y2="196" style="stroke:var(--text-muted); stroke-width:1.1; stroke-dasharray:4 3" marker-end="url(#gw2-hc)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">LB가 끼어들면서 "누가 살아 있나"를 아는 주체가 매체에서 우리 쪽으로 넘어왔다. 빠진 서버에도 헬스체크는 계속 간다 — 그래야 돌아올 수 있다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">로드밸런서가 끼면서 "누가 살아 있나"를 아는 주체가 매체에서 우리 쪽으로 넘어왔습니다. 빠진 서버에도 헬스체크는 계속 갑니다 — 그래야 돌아올 수 있습니다.</figcaption>
 </figure>
 
-### L4 LB가 못 하는 것
+### `/healthz` 가 무엇을 보고 200을 답하나
 
-지금 이 LB는 IP와 포트만 본다. 이런 방식을 L4 LB라고 부른다. 4는 TCP·UDP를 담당하는 계층의 번호다. 연결이 들어오면 대상 하나를 골라 그대로 넘길 뿐, 그 연결에 어떤 HTTP 요청이 실려 오는지는 열어 보지 않는다.
+검사 주기만큼 중요한 것이 이것입니다. 프로세스가 살아 있기만 하면 200을 주는 구현이 가장 흔합니다. 그런데 이러면 `bidder` 가 떠 있지만 모델 저장소를 못 읽는 상태를 못 잡습니다. 그 서버는 계속 대상에 남아 요청을 받으면서, 계속 빈 응답을 냅니다.
 
-우리가 매체에 열어 준 주소는 두 개다. `POST /v1/bid` 는 12ms 안에 답해야 하는 입찰 요청이다. `POST /v1/track` 은 노출·클릭을 기록하는 요청이라 100ms가 걸려도 된다. 그런데 L4 LB에게는 둘 다 그냥 "8080 포트로 들어온 TCP 연결"이다. 어느 쪽인지 구분할 방법이 없다.
+반대로 `/healthz` 안에서 의존하는 것을 전부 확인하면 다른 사고가 납니다. 모델 저장소가 3초 흔들리면 3대가 동시에 실패를 답하고, 그러면 세 대가 한꺼번에 빠져 대상 그룹에 한 대도 안 남습니다.
 
-구분하지 못하면 사고가 난다. `/v1/track` 이 100ms를 쓰는 동안 그 서버의 처리 슬롯 하나가 묶인다. 트래킹이 몰리는 시간대에는 `/v1/bid` 가 슬롯을 못 잡아 12ms를 넘긴다. 느린 쪽이 빠른 쪽을 끌어내리는 것이다.
+**선은 이 자리에 긋습니다.** 나 하나만 빠지면 해결되는 것은 `/healthz` 에서 봅니다 — 모델 파일 적재 여부, 스레드풀 고갈, 로컬 디스크입니다. 모두가 같이 쓰는 것은 보지 않습니다 — 공용 저장소, 공용 DB 입니다. 뒤엣것이 죽으면 남은 서버도 똑같이 못 하니, 빼 봐야 보낼 곳이 없기 때문입니다.
 
-포트를 나누면 되지 않느냐 — 8080은 입찰, 8081은 트래킹으로. 그러면 매체 설정을 다시 고쳐 달라고 부탁해야 한다. 지금은 두 개지만 서비스가 열둘이 되면 포트도 열두 개다. 2절에서 막 벗어난 자리로 되돌아가는 것이다.
+배포도 이 장치를 그대로 씁니다. 새 버전을 올릴 서버는 먼저 대상 그룹에서 스스로 빠지고, 프로세스를 교체한 뒤 다시 등록해 복귀를 알립니다. 1절에서 24만 건을 버리게 만들었던 20초가 여기서 대부분 사라집니다.
 
-경로를 보고 갈라 보내려면 요청 안을 열어 보는 부품이 필요하다. 그게 3절이다.
+대부분이지 전부는 아닙니다. 로드밸런서는 **연결 단위**로 대상을 고릅니다. 대상에서 뺀다는 건 "새 연결을 더 보내지 않는다"는 뜻이지, 이미 맺어진 연결을 옮긴다는 뜻이 아닙니다. 매체는 12ms 예산 때문에 연결을 계속 붙여 두고 씁니다. 그래서 앱이 종료할 때 남은 연결을 스스로 닫아 줘야 비로소 손실이 0이 됩니다. 이걸 빼먹으면 빼는 순서를 아무리 잘 잡아도 **배포 때마다 몇백 건이 샙니다.**
 
----
+한 가지 더 조심할 것이 있습니다. 서버를 뺄 때 `/healthz` 를 일부러 실패시키는 방법을 쓰는 경우가 있는데, 제품에 따라 이러면 **이미 처리 중이던 요청까지 끊깁니다.** 헬스체크 실패는 서버가 진짜 죽었을 때 빨리 걷어 내라고 있는 것이지, 멀쩡한 서버를 뺄 때 쓰는 방법이 아닙니다. 뺄 때는 명시적으로 빼는 쪽을 씁니다.
 
-## 3. 서비스를 넷으로 쪼갰다 — Ingress가 생긴다
+### 이 로드밸런서가 못 하는 것
 
-**서비스를 넷으로 나누면 앞에 세울 대표 주소도 넷이 된다. Ingress는 주소를 다시 하나로 되돌리고, 대신 경로를 보고 갈라 보낸다.**
+지금 이 로드밸런서는 IP 와 포트만 봅니다. 연결이 들어오면 대상 하나를 골라 그대로 넘길 뿐, 그 연결에 어떤 요청이 실려 오는지는 열어 보지 않습니다.
 
-이 절에 나오는 숫자도 전부 설명을 위해 지어낸 값이다.
+우리가 매체에 열어 준 주소는 두 개입니다. `POST /v1/bid` 는 12ms 안에 답해야 하는 입찰 요청입니다. `POST /v1/track` 은 노출·클릭을 기록하는 요청이라 100ms 가 걸려도 됩니다. **그런데 이 로드밸런서에게는 둘 다 그냥 "8080 포트로 들어온 연결"입니다.**
 
-`bidder` 한 프로세스에 네 가지가 같이 들어 있었다. 입찰 응답 만들기, pCTR 예측, 피처 조회, 노출·클릭 기록이다. 이걸 `bidder`·`pctr`·`feature-store`·`log-collector` 넷으로 갈랐다. pCTR 모델만 하루 세 번 올리고 싶은데, 그때마다 입찰 프로세스까지 같이 내려야 했기 때문이다.
+구분하지 못하면 사고가 납니다. `/v1/track` 이 100ms 를 쓰는 동안 그 서버의 처리 슬롯 하나가 묶입니다. 트래킹이 몰리는 시간대에는 `/v1/bid` 가 슬롯을 못 잡아 12ms 를 넘깁니다. **느린 쪽이 빠른 쪽을 끌어내리는 것입니다.**
 
-서비스마다 LB를 하나씩 세우면 2절을 네 번 반복하는 꼴이 된다. 안에서만 부르는 `pctr` 과 `feature-store` 도 여러 대로 띄우니 대표 주소는 넷 다 필요하다.
+포트를 나누면 되지 않느냐고 할 수 있습니다. 8080은 입찰, 8081은 트래킹으로 말입니다. 그러면 매체 설정을 다시 고쳐 달라고 부탁해야 하고, 서비스가 열둘이 되면 포트도 열두 개입니다. 방금 벗어난 자리로 되돌아가는 셈입니다.
 
-| 항목 | LB를 넷 세우면 | Ingress 하나면 |
-|---|---|---|
-| 대표 주소 | 4개 | 1개 |
-| 대상 그룹·헬스체크 설정 | 4벌 | 1벌 |
-| 매체가 알아야 할 주소 | 2개 (입찰·트래킹) | 1개 |
-| 월 LB 비용 | 4배 | 1배 |
+그래서 판단 기준은 하나로 정리됩니다. **같은 포트로 들어오는 요청 중 응답 시간 예산이 다른 것이 섞여 있으면, 경로를 열어 보는 부품이 필요합니다.** 그것이 3절입니다.
 
-보통 여기에 TLS 인증서 4장이 한 줄 더 붙는다. 이 글의 입찰 경로는 전용 회선 위 평문이라 그 줄이 없다.
+## 3. 서비스를 넷으로 쪼갰습니다 — Ingress가 생깁니다
 
-**Ingress** 는 이 자리에 규칙표 하나를 놓는다. 주소는 다시 하나로 돌아가고, 그 뒤에서 요청을 열어 보고 갈라 보낸다. 2절의 LB가 없어지는 것은 아니다. LB는 그대로 대표 주소를 들고 있고, 그 대상이 `bidder` 서버 3대에서 Ingress로 바뀐다. `/v1/track` 이 이제 `log-collector` 로 빠지니 입찰 슬롯을 더 이상 먹지 않는다. 2절에서 12ms를 넘기게 만들던 원인이 여기서 사라진다.
+**서비스를 넷으로 나누면 앞에 세울 대표 주소도 넷이 됩니다. Ingress 는 주소를 다시 하나로 되돌리고, 대신 경로를 보고 갈라 보냅니다.**
 
-대신 매체 설정을 한 번 더 고쳐야 한다. Ingress는 요청 헤더에 실린 호스트 이름을 보고 규칙을 고르기 때문이다. 그래서 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고, 사내 DNS에 그 이름을 같은 IP로 등록한다. 이 부탁은 이번이 마지막이다. 포트는 서비스마다 하나씩 늘지만 이름은 하나로 끝난다.
+`bidder` 한 프로세스에 네 가지가 같이 들어 있었습니다. 입찰 응답 만들기, pCTR 예측, 피처 조회, 노출·클릭 기록입니다. 이걸 `bidder`·`pctr`·`feature-store`·`log-collector` 넷으로 갈랐습니다. pCTR 모델만 하루 세 번 올리고 싶은데, 그때마다 입찰 프로세스까지 같이 내려야 했기 때문입니다.
+
+서비스마다 로드밸런서를 하나씩 세우면 2절을 네 번 반복하는 꼴이 됩니다. 대표 주소가 4개, 대상 그룹과 헬스체크 설정이 4벌, 월 비용이 4배이고, 매체가 알아야 할 주소도 2개가 됩니다.
+
+**Ingress** 는 이 자리에 규칙표 하나를 놓습니다. 주소는 다시 하나로 돌아가고, 그 뒤에서 요청을 열어 보고 갈라 보냅니다. 2절의 로드밸런서가 없어지는 것은 아닙니다. 로드밸런서는 그대로 대표 주소를 들고 있고, 그 대상이 `bidder` 서버 3대에서 Ingress 로 바뀝니다. **`/v1/track` 이 이제 `log-collector` 로 빠지니 입찰 슬롯을 더 이상 먹지 않습니다.** 2절에서 12ms 를 넘기게 만들던 원인이 여기서 사라집니다.
+
+대신 매체 설정을 한 번 더 고쳐야 합니다. Ingress 는 요청 헤더에 실린 호스트 이름을 보고 규칙을 고르기 때문입니다. 그래서 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고, 사내 DNS 에 그 이름을 같은 IP 로 등록합니다. **이 부탁은 이번이 마지막입니다.** 서비스는 앞으로도 늘겠지만 이름은 하나로 끝납니다. 선배가 지훈 씨에게 알려 준 그 주소가 이것입니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 LB를 부르고, LB 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 갈라 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 로드밸런서를 부르고, 그 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 갈라 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -209,13 +182,13 @@ LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다.
 <line x1="180" y1="66" x2="206" y2="66" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 <text x="266" y="32" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">2절 그대로</text>
 <rect x="210" y="40" width="112" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="266" y="62" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="266" y="62" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">로드밸런서</text>
 <text x="266" y="82" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
 <path d="M266,92 L266,124 L350,124 L350,150" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw3-arr)"/>
 <text x="250" y="142" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
 <rect x="110" y="154" width="280" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
 <text x="250" y="176" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
-<text x="250" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">규칙표 — host · path 를 본다</text>
+<text x="250" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">규칙표 — 호스트와 경로를 봅니다</text>
 <rect x="12" y="250" width="476" height="76" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
 <rect x="24" y="260" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="77.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
@@ -230,13 +203,13 @@ LB 대신 DNS를 쓰면 되지 않느냐는 물음에도 이 12초가 답한다.
 <line x1="250" y1="208" x2="307.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 <line x1="320" y1="208" x2="422.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나다. LB는 2절에서 하던 일을 그대로 하고, 화살표는 pctr 에 닿지 않는다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나입니다. 로드밸런서는 2절에서 하던 일을 그대로 하고, 화살표는 pctr 에 닿지 않습니다.</figcaption>
 </figure>
 
-규칙표는 실제로 이런 모양이다.
+규칙표는 실제로 이런 모양입니다.
 
 ```yaml
-# Ingress 규칙 — 이 표의 경로 네 줄 다 pathType: Prefix 다.
+# Ingress 규칙 — 이 네 줄 다 pathType 은 Prefix 입니다.
 rules:
   - host: ads.example.com
     http:
@@ -248,82 +221,65 @@ rules:
     http:
       paths:
         - path: /            →  admin-service:3000
-# 맞는 줄이 하나도 없으면 404.
+# 맞는 줄이 하나도 없으면 404 입니다.
 ```
 
-서비스는 넷인데 `ads.example.com` 아래 줄은 셋이다. `pctr` 은 매체가 아니라 `bidder` 가 부르므로 규칙표에 없다. 규칙표는 클러스터 바깥에서 들어오는 요청만 다룬다. `/v1/feature` 도 매체용이 아니라 사내 운영 도구가 피처 값을 볼 때 쓴다.
+서비스는 넷인데 `ads.example.com` 아래 줄은 셋입니다. `pctr` 은 매체가 아니라 `bidder` 가 부르니 규칙표에 없습니다. **규칙표는 클러스터 바깥에서 들어오는 요청만 다룹니다.**
 
-요청 하나가 이 표를 지나는 길은 이렇다.
+**규칙표에서 이기는 것은 위치가 아니라 길이입니다.** 가장 길게 맞는 줄이 이깁니다. 그래서 짧은 경로를 새로 추가할 때는 그 아래로 무엇이 딸려 들어오는지부터 세어 봐야 합니다.
 
-```mermaid
-flowchart TD
-  R["요청 도착<br/>ads.example.com/v1/bid"] --> H{"host로 규칙을 먼저 추린다"}
-  H -- "ads.example.com" --> M["맞는 경로를 <b>전부</b> 모은다<br/>/v1/bid ✓ · /v1/track ✗ · /v1/feature ✗"]
-  H -- "admin.example.com" --> A["/ ✓"]
-  H -- "맞는 host 없음" --> E["404"]
-  M --> L{"모인 게 몇 개인가"}
-  L -- "0개" --> E
-  L -- "1개 이상" --> P["<b>가장 긴 것</b>을 고른다<br/>순서는 안 본다"]
-  P --> S1["bidder-service:8080"]
-  A --> S3["admin-service:3000"]
-  classDef hit stroke:#b0442c,stroke-width:2px
-  class P,S1 hit
-```
+언젠가 `/v1` 아래를 통째로 한곳에 보내는 규칙을 하나 넣게 됩니다. `/v1/bid` 는 안 뺏깁니다 — 더 길게 맞는 줄이 어디에 적혀 있든 이기기 때문입니다. 대신 `/v1` 아래에서 404 로 떨어지던 것이 전부 그 새 규칙으로 빨려 들어갑니다. `/v1/report` 도, `/v1/status` 도, 오타로 들어온 `/v1/bidd` 도 그렇습니다. **문법 오류도 없고, 배포도 성공하고, 헬스체크도 전부 초록입니다.**
 
-순서가 상관없다는 말이 곧 안전하다는 뜻은 아니다. 언젠가 `/v1` 아래를 통째로 한곳에 보내는 규칙을 하나 넣게 된다. `/v1/bid` 는 안 뺏긴다. 더 길게 맞는 줄이 어디에 적혀 있든 이기기 때문이다. 대신 `/v1` 아래에서 404로 떨어지던 것이 전부 그 새 규칙으로 빨려 들어간다. `/v1/report` 도, `/v1/status` 도, 오타로 들어온 `/v1/bidd` 도. 문법 오류도 없고, 배포도 성공하고, 헬스체크도 전부 초록이다.
+`pathType` 은 `Prefix` 면 `/v1/bid` 아래 경로까지 같이 걸리고, `Exact` 면 딱 그 경로만 걸립니다. 다만 글자 단위가 아니라 `/` 로 끊은 조각 단위라, `/v1/bid` 는 `/v1/bid/test` 를 잡지만 `/v1/bidder` 는 안 잡습니다.
 
-규칙표에서 이기는 것은 위치가 아니라 길이다. **가장 길게 맞는 줄이 이긴다.** 그래서 짧은 경로를 새로 추가할 때는 그 아래로 무엇이 딸려 들어오는지부터 세어 봐야 한다. `pathType` 은 `Prefix` 면 `/v1/bid` 아래 경로까지 같이 걸리고, `Exact` 면 딱 그 경로만 걸린다. 단, 글자 단위가 아니라 `/` 로 끊은 조각 단위다 — `/v1/bid` 는 `/v1/bid/test` 를 잡지만 `/v1/bidder` 는 안 잡는다.
+그래서 규칙을 하나 추가할 때 실제로 물을 것은 "이 줄이 무엇을 뺏나"가 아닙니다. **"이 줄 아래로 무엇이 딸려 들어오나"입니다.** 짧은 경로일수록 이 답이 길어지고, 답이 길면 그 규칙은 안 넣는 쪽이 낫습니다.
 
-### "라우터"가 가리키는 세 가지
+### "라우터"라는 말이 가리키는 것
 
-지금까지 Ingress라고 부른 것은 규칙표, 곧 적어 놓은 설정이다. 그 표를 읽고 실제로 요청을 넘기는 것은 따로 도는 프로세스다. 그 프로세스를 "라우터"라고들 부르는데, 이 말이 문맥마다 다른 것을 가리킨다.
+지금까지 Ingress 라고 부른 것은 규칙표, 곧 적어 놓은 설정입니다. 그 표를 읽고 실제로 요청을 넘기는 것은 따로 도는 프로세스입니다. 그 프로세스를 "라우터"라고들 부르는데, **이 말이 문맥마다 다른 것을 가리켜서 대화가 자주 어긋납니다.**
 
 | 어디서 쓰는 말인가 | 무엇을 가리키나 | 실제 이름 |
 |---|---|---|
 | 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx·traefik) |
-| OpenShift | 규칙표에 해당하는 자체 리소스 (라우터 프로세스가 읽는 대상) | `Route` 오브젝트 |
+| OpenShift | 규칙표에 해당하는 자체 리소스 | `Route` 오브젝트 |
 | 앱 코드 안 | 들어온 경로를 함수에 연결하는 것 | `@app.route("/v1/bid")` |
 
-셋이 하는 일은 같다. 경로를 보고 어디로 보낼지 정한다. 다른 것은 **어느 층에서 도느냐**다. 그런데 **셋은 두 층이다.** 1·2행은 같은 층이고 플랫폼이 다를 뿐이다. 쿠버네티스를 쓰면 1행, OpenShift를 쓰면 2행이지 둘을 같이 지나가지 않는다. 3행만 다른 층이다. 그래서 `POST /v1/bid` 한 건은 두 층을 지난다. 바깥에서 Ingress Controller가 `bidder-service` 를 고르고, 그 안에서 `@app.route("/v1/bid")` 함수가 실행된다.
+셋이 하는 일은 같습니다. 경로를 보고 어디로 보낼지 정합니다. 다른 것은 **어느 층에서 도느냐**입니다. 그런데 셋이 세 층은 아닙니다. 1·2행은 같은 층이고 플랫폼만 다릅니다 — 쿠버네티스를 쓰면 1행, OpenShift 를 쓰면 2행이지 둘을 같이 지나가지 않습니다. 3행만 다른 층입니다.
 
-이제 매체가 열 곳으로 늘었다. 그중 한 곳이 설정을 잘못 올려 초당 3,000건이 아니라 30,000건을 보내기 시작한다. 규칙표에는 이걸 막을 칸이 없다. `host` 와 `path` 밖에 안 보기 때문이다. 어느 매체가 보낸 요청인지조차 모른다. 그게 4절이다.
+그래서 `POST /v1/bid` 한 건은 두 층을 지납니다. 바깥에서는 Ingress Controller 가 `bidder-service` 를 고릅니다. 그 안에서는 `@app.route("/v1/bid")` 함수가 실행됩니다. **회의에서 "라우터에서 막힌 것 같다"는 말을 들으면 어느 층인지부터 되물어야 합니다.** 둘은 고치는 사람도 배포 주기도 다릅니다.
 
----
+이제 매체가 열 곳으로 늘었습니다. 그중 한 곳이 설정을 잘못 올려 초당 3,000건이 아니라 30,000건을 보내기 시작합니다. 규칙표에는 이걸 막을 칸이 없습니다. 호스트와 경로밖에 안 보니 어느 매체가 보낸 요청인지조차 모릅니다. 그것이 4절입니다.
 
-## 4. 매체가 열 곳으로 늘었다 — API Gateway가 생긴다
+## 4. 매체가 열 곳으로 늘었습니다 — API Gateway가 생깁니다
 
-**Ingress 규칙표에는 "누가 보냈나"를 적을 칸이 없다. 매체를 가려야 하는 일이 쌓이면 그 칸을 가진 부품이 뒤에 하나 더 생긴다.**
+**규칙표에는 "누가 보냈나"를 적을 칸이 없습니다. 매체를 가려야 하는 일이 쌓이면 그 칸을 가진 부품이 뒤에 하나 더 생깁니다.**
 
-매체가 열 곳이 됐다. 조건이 다 다르다. 아래 값은 전부 설명을 위해 지어낸 가상 수치다.
+매체가 열 곳이 됐고 조건이 다 다릅니다.
 
 | 매체 | 인증 방식 | 초당 허용 | 쓰는 버전 |
 |---|---|---|---|
 | A앱 | API 키 | 3,000 | v2 |
-| B웹 | HMAC 서명 | 8,000 | v2 |
+| B웹 | 서명 | 8,000 | v2 |
 | C제휴 | API 키 | 500 | v1 |
-| D앱 | OAuth 토큰 | 1,200 | v1 |
+| D앱 | 토큰 | 1,200 | v1 |
 | E웹 | API 키 | 4,500 | v2 |
 | 나머지 5곳 (합계) | — | 12,800 | — |
 
-열 곳을 다 더하면 초당 3만 건이다. 3절 끝에서 A앱 한 곳이 3,000이 아니라 30,000 — 열 곳 전체와 맞먹는 양 — 을 보내기 시작했다. A앱만 느려지는 게 아니라 나머지 아홉 곳이 같이 느려진다. 3만 건을 감당하는 것과 한 곳이 3만 건을 쏟는 것을 막는 것은 다른 문제다.
+열 곳을 다 더하면 초당 3만 건입니다. 3절 끝에서 A앱 한 곳이 3,000이 아니라 **30,000 — 열 곳 전체와 맞먹는 양** — 을 보내기 시작했습니다. A앱만 느려지는 게 아니라 나머지 아홉 곳이 같이 느려집니다. **3만 건을 감당하는 것과, 한 곳이 3만 건을 쏟는 것을 막는 것은 다른 문제입니다.**
 
-이 표를 규칙표로 옮길 방법이 없다. 규칙표에는 `host` 와 `path` 칸뿐이다. 다음 넷이 전부 안 된다.
+이 표를 규칙표로 옮길 방법이 없습니다. 규칙표에는 호스트와 경로 칸뿐이라 다음 넷이 전부 안 됩니다.
 
-- **매체별 인증키 확인** — 요청을 누가 보냈는지 규칙표가 모른다.
-- **초당 호출 제한** — 매체를 구분 못 하니 500과 8,000을 따로 걸 수 없다.
-- **`v1`/`v2` 분기** — 버전은 `x-api-version` 헤더로 온다. 규칙표는 헤더를 안 본다.
-- **응답 형식 변환** — v1 매체는 옛 필드 이름을 기대하는데 `bidder` 는 v2 형식만 만든다.
+- **매체별 인증키 확인** — 요청을 누가 보냈는지 규칙표가 모릅니다.
+- **초당 호출 제한** — 매체를 구분 못 하니 500과 8,000을 따로 걸 수 없습니다.
+- **v1·v2 분기** — 버전은 `x-api-version` 헤더로 오는데 규칙표는 헤더를 안 봅니다.
+- **응답 형식 변환** — v1 매체는 옛 필드 이름을 기대하는데 `bidder` 는 v2 형식만 만듭니다.
 
-구현체에 따라 애너테이션으로 헤더 조건을 밀어 넣을 수는 있지만, nginx에서 traefik으로 갈아탈 때 통째로 다시 써야 한다.
-
-**API Gateway** 는 Ingress 뒤에 서서 이 넷을 맡는다. 규칙표와 다른 점은 `header` 조건과 정책 칸(`common`·`policies`)이다.
+**API Gateway** 가 Ingress 뒤에 서서 이 넷을 맡습니다. 규칙표와 다른 점은 헤더 조건과 정책 칸입니다.
 
 ```yaml
-# API Gateway 설정 — 규칙표에 없던 것: header 조건과 정책
-# 두 라우트가 겹칠 때 무엇이 이기는지는 제품마다 다르다 — 순서인 곳도, 더 구체적인 쪽인 곳도 있다.
-# 여기서는 어느 쪽이든 bid-v1이 이긴다. 조건이 하나 더 많고, 위에 있다.
-common:                                    # 모든 라우트가 먼저 지나간다
-  - auth:      { type: api-key, header: x-media-key }   # A앱 기준. HMAC·OAuth 매체는 방식만 다르고 자리는 같다
+# API Gateway 설정 — 규칙표에 없던 것: 헤더 조건과 정책
+common:                                    # 모든 라우트가 먼저 지나갑니다
+  - auth:      { type: api-key, header: x-media-key }
   - ratelimit: { key: media_id, per_second: media_quota }   # 값은 위 표의 초당 허용 열
   - timeout:   { ms: 10 }
 routes:
@@ -331,393 +287,71 @@ routes:
     match: { host: ads.example.com, path: /v1/bid, header: { x-api-version: "1" } }
     target: bidder-service:8080
     policies:
-      - response: { transform: v2_to_v1 }  # 옛 필드 이름으로 되돌려 준다
-  - id: bid-v2                             # 헤더가 없으면 여기. v3를 내도 이 기본값은 v2에 둔다
+      - response: { transform: v2_to_v1 }  # 옛 필드 이름으로 되돌려 줍니다
+  - id: bid-v2                             # 헤더가 없으면 여기가 기본값입니다
     match: { host: ads.example.com, path: /v1/bid }
     target: bidder-service:8080
 ```
 
-버전을 경로로 나눌 수도 있다 — `/v2/bid` 를 새로 파면 된다. 그러면 v2를 쓰는 매체 전부에 주소를 고쳐 달라고 해야 한다. 3절에서 그 부탁은 이번이 마지막이라고 했다. 그래서 경로는 `/v1/bid` 로 두고, 옛 버전을 쓰는 매체만 헤더로 알린다. 대신 기본값은 시간이 갈수록 가장 오래된 버전이 되고, 그걸 언제 걷을지는 따로 정해야 한다.
+버전을 경로로 나눌 수도 있습니다. `/v2/bid` 를 새로 파면 되는데, 그러면 v2 를 쓰는 매체 전부에 주소를 고쳐 달라고 해야 합니다. 3절에서 그 부탁은 이번이 마지막이라고 했습니다. **그래서 경로는 `/v1/bid` 로 두고, 옛 버전을 쓰는 매체만 헤더로 알립니다.**
 
-주소는 그대로다. 대신 A앱은 `x-media-key` 헤더 한 줄을 새로 넣는다. 버전 헤더는 안 보내도 된다. 한 줄 늘긴 했지만 성격이 다르다. 주소는 우리 안쪽이 바뀔 때마다 따라 바뀌었다 — 서버가 늘어서 한 번, 서비스를 쪼개서 또 한 번. 인증키는 A앱이 A앱인 한 그대로다. 새로 붙는 아홉 곳은 처음 연동할 때 주소와 키를 같이 받는다.
+주소는 그대로이고 A앱은 `x-media-key` 헤더 한 줄을 새로 넣습니다. 한 줄 늘긴 했지만 성격이 다릅니다. 주소는 우리 안쪽이 바뀔 때마다 따라 바뀌었지만, **인증키는 A앱이 A앱인 한 그대로**입니다.
 
-`timeout` 을 12로 적고 싶겠지만 그러면 늦는다. 12ms는 매체가 요청을 보내고 답을 받기까지 전부다. Ingress를 지나는 데 0.3ms, Gateway가 인증키와 쿼터를 보는 데 1.1ms가 든다(가상 수치). LB는 연결을 넘기기만 하니 셈에서 뺀다. 그래서 `bidder` 를 기다리는 시간은 10ms로 잡는다. 남는 0.6ms가 여유분이다. v1 매체는 여기에 응답 변환이 더 붙는데, 그 몫은 이 0.6ms 안에서 쓴다. v1을 쓰는 곳은 C제휴 500과 D앱 1,200, 초당 3만 건 중 1,700건이다. `bidder` 가 평소 쓰는 건 8ms 안팎이고, 10ms는 그 위에 얹은 상한이다.
+`timeout` 을 12로 적고 싶겠지만 그러면 늦습니다. 12ms 는 매체가 요청을 보내고 답을 받기까지 전부입니다. Ingress 를 지나는 데 0.3ms, Gateway 가 인증키와 쿼터를 보는 데 1.1ms 가 듭니다. 그래서 `bidder` 를 기다리는 시간은 10ms 로 잡고, 남는 0.6ms 가 여유분입니다.
 
-<figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 416" role="img" aria-label="조건이 서로 다른 매체 10곳의 요청이 LB와 Ingress를 지나 API Gateway 한 칸에 모여 인증·쿼터를 거친 뒤, 서비스 넷 중 셋으로 나뉘는 구조." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
-<defs>
-<marker id="gw4-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
-</defs>
-<rect x="6" y="16" width="150" height="196" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="81" y="36" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">매체 10곳</text>
-<rect x="16" y="48" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="81" y="68" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">A앱</text>
-<text x="81" y="88" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">API 키 · 3,000</text>
-<rect x="16" y="104" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="81" y="124" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">B웹</text>
-<text x="81" y="144" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">HMAC · 8,000</text>
-<rect x="16" y="160" width="130" height="48" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="81" y="180" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">…외 8곳</text>
-<text x="81" y="200" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">합계 19,000</text>
-<line x1="150" y1="72" x2="212" y2="94" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="150" y1="128" x2="212" y2="110" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="150" y1="184" x2="212" y2="126" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="278" y="78" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">3절까지 그대로</text>
-<rect x="216" y="86" width="124" height="48" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="278" y="106" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
-<text x="278" y="126" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">10.0.9.7</text>
-<line x1="278" y1="134" x2="278" y2="148" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<rect x="216" y="152" width="124" height="48" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
-<text x="278" y="172" text-anchor="middle" style="font-size:13px; fill:var(--accent-secondary)">Ingress</text>
-<text x="278" y="192" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">host · path</text>
-<line x1="310" y1="200" x2="310" y2="226" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<text x="220" y="218" text-anchor="middle" style="font-size:12.5px; fill:var(--accent-primary)">이번 절에서 새로 생긴 칸</text>
-<rect x="140" y="230" width="200" height="72" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
-<text x="240" y="254" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">API Gateway</text>
-<text x="240" y="276" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">매체 인증 · 쿼터</text>
-<text x="240" y="294" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">버전 라우팅</text>
-<rect x="12" y="334" width="476" height="76" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<rect x="24" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="77.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="139" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="192.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="254" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="307.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<rect x="369" y="344" width="107" height="40" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="422.5" y="369" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<text x="250" y="402" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
-<line x1="180" y1="304" x2="77.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="240" y1="304" x2="307.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-<line x1="300" y1="304" x2="422.5" y2="340" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw4-arr)"/>
-</svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">화살표가 pctr 에 닿지 않는 것은 3절과 같다. 왼쪽이 스무 줄이 돼도 오른쪽 절반은 그대로다.</figcaption>
-</figure>
+### 정책을 서비스마다 따로 두면
 
-정책을 서비스마다 따로 두면 어떻게 되는지 개수로 세어 보자.
+Gateway 없이 서비스 넷이 인증·쿼터·타임아웃 세 정책을 각자 구현하면 어떻게 되는지 개수로 세어 보겠습니다.
 
-```python
-# "규칙을 서비스마다 따로 두면 뭐가 문제인가" — 개수로 답한다.
-#
-# 상황: 서비스 4개, 매체 10곳. 인증·쿼터·타임아웃 세 가지 정책을 지켜야 한다.
-#   방식 A(각자): 서비스 4곳이 세 정책을 각각 구현한다.
-#   방식 B(한 곳): Gateway 한 곳에 구현하고 서비스는 모른 채 둔다.
-# 모든 숫자는 설명을 위한 가상 데이터다.
-from unicodedata import east_asian_width
+| | 서비스마다 각자 | Gateway 한 곳 |
+|---|---|---|
+| 구현 벌수 | 12벌 (서비스 4 × 정책 3) | 3벌 |
+| 정책 하나 고칠 때 배포 | 4번 | 1번 |
+| 넷이 애초에 같게 구현돼 있을 확률 | **72.9%** | 100% |
 
-SERVICES = 4
-POLICIES = 3
-LINES_PER_POLICY = 60      # 정책 하나를 구현하는 코드 줄수(가정)
-CHANGES_PER_QUARTER = 2    # 정책이 바뀌는 횟수
+마지막 줄은 한 곳이 정확히 같게 구현될 확률을 0.9 로 두고 셋을 곱한 값입니다. **나머지 27.1% 는 사고가 날 때까지 아무 표시도 내지 않습니다.** 배포 네 번 중 하나만 늦어도 그동안은 서비스마다 다른 쿼터가 걸립니다.
 
-# ── 방식 A: 정책이 서비스 수만큼 복제된다 ──
-a_copies = SERVICES * POLICIES
-a_lines = a_copies * LINES_PER_POLICY
-a_deploys = SERVICES                       # 정책 1회 변경 → 서비스 전부 배포
-# 손으로 4번 구현하면 한 곳이 어긋날 기회가 그만큼 생긴다.
-# 한 곳이 정확히 같게 구현될 확률을 0.9로 두면, 넷이 모두 같을 확률은 0.9^3.
-a_match = 0.9 ** (SERVICES - 1)
+무엇을 Gateway 에 두고 무엇을 서비스에 남길까요. **우리 광고 데이터를 안 봐도 정해지면 Gateway, 봐야 정해지면 서비스입니다.** 인증키가 맞나, 이 매체가 이번 초에 몇 건을 넘겼나, 버전이 몇인가 — 셋 다 광고 데이터를 안 봅니다. 반대로 이 캠페인에 예산이 남았나, 이 사용자에게 이 광고를 이미 보였나는 `bidder` 만 압니다.
 
-# ── 방식 B: 한 곳에만 있다 ──
-b_copies = POLICIES
-b_lines = b_copies * LINES_PER_POLICY
-b_deploys = 1
-b_match = 1.0                              # 한 벌뿐이라 어긋날 데가 없다
+Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉이 하나 더 붙고, 그 홉은 매체 열 곳의 **모든** 요청에 붙습니다. 위에서 잡은 0.6ms 여유가 거기서 없어집니다.
 
-# ── 한글은 화면에서 두 칸을 먹는다. 칸수를 직접 세어 맞춘다 ──
-def w(s):
-    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
-
-def row(label, a, b):
-    a, b = str(a), str(b)
-    print(label + " " * (26 - w(label))
-          + " " * (16 - w(a)) + a
-          + " " * (20 - w(b)) + b)
-
-print(f"서비스 {SERVICES}개 · 정책 {POLICIES}종 · 분기당 변경 {CHANGES_PER_QUARTER}회")
-print()
-row("", "A) 서비스마다", "B) Gateway 한 곳")
-row("구현 벌수", a_copies, b_copies)
-row("총 코드 줄수", f"{a_lines:,}", f"{b_lines:,}")
-row("정책 1회 변경 시 배포", a_deploys, b_deploys)
-row("분기당 배포", a_deploys * CHANGES_PER_QUARTER, b_deploys * CHANGES_PER_QUARTER)
-row("구현이 모두 일치할 확률", f"{a_match:.1%}", f"{b_match:.1%}")
-print()
-print("→ 코드량이 문제가 아니다. 정책 하나를 고치는 데 배포가 몇 번 필요한가가 문제다.")
-print("→ 벌수가 늘수록 '어딘가 한 곳만 다르게 구현돼 있는' 상태가 기본값이 된다.")
-
-# 출력:
-# 서비스 4개 · 정책 3종 · 분기당 변경 2회
-#
-#                              A) 서비스마다    B) Gateway 한 곳
-# 구현 벌수                               12                   3
-# 총 코드 줄수                           720                 180
-# 정책 1회 변경 시 배포                    4                   1
-# 분기당 배포                              8                   2
-# 구현이 모두 일치할 확률              72.9%              100.0%
-#
-# → 코드량이 문제가 아니다. 정책 하나를 고치는 데 배포가 몇 번 필요한가가 문제다.
-# → 벌수가 늘수록 '어딘가 한 곳만 다르게 구현돼 있는' 상태가 기본값이 된다.
-```
-
-눈여겨볼 줄은 세 번째다. 쿼터 하나를 고치는 데 방식 A는 배포가 네 번 필요하다. 네 번 중 하나만 늦어도 그동안은 서비스마다 다른 값이 걸린다. 넷이 애초에 같게 구현돼 있을 확률은 72.9%다. 나머지 27.1%는 사고가 날 때까지 아무 표시도 내지 않는다.
-
-무엇을 Gateway에 두고 무엇을 서비스에 남기나. **우리 광고 데이터를 안 봐도 정해지면 Gateway. 봐야 정해지면 서비스.** 인증키가 맞나, 이 매체가 이번 초에 몇 건을 넘겼나, 버전이 몇인가 — 셋 다 광고 데이터를 안 본다. 쿼터 계수는 인스턴스마다 따로 세고 주기적으로 맞춘다. 반대로 이 캠페인에 예산이 남았나, 이 사용자에게 이 광고를 이미 보였나는 `bidder` 만 안다.
-
-Gateway가 그것까지 물어보게 만들 수는 있다. 그러면 홉이 하나 더 붙고, 그 홉은 매체 열 곳의 모든 요청에 붙는다. 위에서 잡은 0.6ms 여유가 거기서 없어진다.
-
-경계를 표로 못 박으면 이렇다.
+경계를 표로 못 박으면 이렇습니다.
 
 | | Ingress | API Gateway |
 |---|---|---|
 | 무엇을 보고 나누나 | 호스트 · 경로 | 호스트 · 경로 + 헤더 · 인증키 · 매체 |
-| 정책을 갖나 | 아니오 (규칙표뿐 — 애너테이션은 구현체 전용) | 예 — 인증 · 쿼터 · 변환 · 타임아웃 |
+| 정책을 갖나 | 아니요 (규칙표뿐) | 예 — 인증 · 쿼터 · 변환 · 타임아웃 |
 | 설정이 바뀌는 이유 | 서비스가 늘거나 줄 때 | 매체가 늘거나 정책이 바뀔 때 |
-| 없으면 무엇이 늘어나나 | 서비스마다 대표 주소와 헬스체크 설정이 한 벌씩 붙는다 | 인증·쿼터·타임아웃이 서비스 수만큼 복제된다 |
 
-방금 센 것을 안쪽 호출에 그대로 대 보자. Gateway가 걷어 간 것은 매체가 보낸 요청뿐이다. `bidder` 가 `pctr` 을 부르고 `pctr` 이 `feature-store` 를 부르는 호출은 그 앞을 지나지 않는다. 그 사이의 재시도와 타임아웃은 지금도 서비스마다 각자 코드에 적혀 있다. 넷일 때는 손으로 넣을 만했다. 열둘이 되면 그 "사이"가 몇 개인지부터 세어 봐야 한다. 그게 5절이다.
+## 5. 완성된 지도
 
----
-
-## 5. 서비스가 열둘이 됐다 — 메시를 써야 하나
-
-**안쪽 호출에는 아직 아무 부품도 없다. 메시가 그 자리를 채우는데, 12ms 예산에서는 그 값을 낼 수 있는지부터 계산해야 한다.**
-
-서비스가 여덟 개 더 생겨 열둘이 됐다. `pcvr` · `budget` · `frequency` · `creative` · `audience` · `pacing` · `model-registry` · `report` 다. 매체는 이 이름을 하나도 모른다 — 전부 안에서만 부른다.
-
-1절부터 4절까지 쌓은 부품은 밖에서 안으로 들어오는 길 위에 있다. 사고는 그 길이 끝난 다음에 난다.
-
-그래서 이 절부터 부르는 쪽·받는 쪽은 매체와 우리가 아니다. 안쪽 서비스끼리다 — `bidder` 가 `pctr` 을 부르면 `bidder` 가 부르는 쪽이다.
-
-`pctr` 여섯 대 중 한 대가 모델을 다시 읽느라 4초 동안 응답이 40ms대로 늘어졌다. 그 한 대가 받던 요청이 초당 5,000건이니, 4초면 20,000건이 그 대를 지났다. 이 숫자도 설명을 위해 지어낸 값이다.
-
-이 2만 건이 어떻게 되는지는 `bidder` 코드 안의 한 줄이 정한다.
-
-| `bidder` 가 `pctr` 을 부를 때 적어 둔 타임아웃 | 2만 건의 결말 |
-|---|---|
-| 3ms | pCTR 없이 응찰한다. 매출은 떨어져도 12ms는 지킨다 |
-| 안 적음 (라이브러리 기본값) | 40ms를 끝까지 기다린다. 2만 건이 전부 12ms를 넘겨 버려진다 |
-
-어느 쪽인지는 `bidder` 를 열어 봐야 안다. `pctr` 이 `feature-store` 를 부르는 줄도, `budget` 이 `pacing` 을 부르는 줄도 각자 다른 사람이 각자 적었다. 사고가 끝난 뒤에도 그 2만 건이 어디서 늦었는지는 열두 군데 로그를 맞춰 보기 전에는 모른다.
-
-**서비스 메시** 는 그 한 줄을 코드 밖으로 꺼낸다. 가장 흔한 사이드카 방식은 서비스마다 프록시를 하나씩 붙이고, 나가고 들어오는 호출을 전부 그 프록시가 받게 한다. 이 프록시가 사이드카(sidecar)다. 재시도 횟수, 타임아웃, 서비스 간 mTLS — 셋은 사이드카 설정에 적는다. `bidder` 코드는 한 줄도 안 바뀐다.
-
-넷째인 추적은 다르다. 사이드카는 구간 기록(span)을 알아서 만든다. 그런데 그 기록들을 요청 하나로 묶으려면 들어온 요청의 `x-request-id` · `traceparent` · `tracestate` 를 다음 호출에 그대로 붙여야 한다(Zipkin이면 `x-b3-*`). 그 일은 `bidder` 코드가 한다. 한 줄짜리지만 0은 아니다. 방금 "어디서 늦었나"에 답하는 것이 이 추적이라, 하필 가장 아쉬웠던 몫이 공짜가 아니다.
-
-4절 Gateway와 같은 해법이다. 다른 것은 모으는 자리다 — Gateway는 클러스터에 하나, 사이드카는 서비스마다 하나다.
+**네 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 됩니다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 엽니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 282" role="img" aria-label="밖에서 안으로 들어온 요청이 서비스 사이를 여러 번 오가고, 그때마다 사이드카를 지나는 구조." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 로드밸런서·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw5-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
-<marker id="gw5-dim" markerWidth="8" markerHeight="8" refX="6.5" refY="2.5" orient="auto"><path d="M0,0 L6.5,2.5 L0,5 Z" style="fill:var(--text-muted)"/></marker>
-</defs>
-<text x="6" y="18" style="font-size:12.5px; fill:var(--text-muted)">여기까지가 밖에서 안으로</text>
-<rect x="6" y="26" width="112" height="226" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<rect x="14" y="40" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="62" y="63" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">매체 10곳</text>
-<line x1="62" y1="76" x2="62" y2="90" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="14" y="94" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="62" y="117" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">LB</text>
-<line x1="62" y1="130" x2="62" y2="144" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="14" y="148" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="62" y="171" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">Ingress</text>
-<line x1="62" y1="184" x2="62" y2="198" style="stroke:var(--text-muted); stroke-width:1.1" marker-end="url(#gw5-dim)"/>
-<rect x="14" y="202" width="96" height="36" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="62" y="225" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">API Gateway</text>
-<text x="488" y="18" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">서비스 12개 중 6개만 그렸다</text>
-<rect x="140" y="26" width="354" height="226" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<line x1="248" y1="75" x2="269" y2="75" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="365" y1="75" x2="386" y2="75" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="200" y1="98" x2="200" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="317" y1="98" x2="317" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="434" y1="98" x2="434" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="248" y1="98" x2="269" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="269" y1="98" x2="248" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="365" y1="98" x2="386" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<line x1="386" y1="98" x2="365" y2="168" style="stroke:var(--border-color); stroke-width:1"/>
-<rect x="152" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="156" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="207" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">budget</text>
-<rect x="269" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="273" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="324" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">frequency</text>
-<rect x="386" y="52" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="390" y="59" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="441" y="80" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<rect x="152" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="156" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="207" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
-<rect x="269" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="273" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="324" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
-<rect x="386" y="168" width="96" height="46" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<rect x="390" y="175" width="10" height="32" rx="3" style="fill:var(--accent-secondary)"/>
-<text x="441" y="196" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
-<line x1="114" y1="220" x2="148" y2="191" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
-<path d="M200,214 L200,232 L317,232 L317,216" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
-<path d="M300,168 L300,140 L450,140 L450,164" style="fill:none; stroke:var(--accent-primary); stroke-width:2; stroke-linejoin:round" marker-end="url(#gw5-arr)"/>
-<rect x="6" y="259" width="10" height="15" rx="2" style="fill:var(--accent-secondary)"/>
-<text x="22" y="272" style="font-size:12.5px; fill:var(--text-muted)">사이드카</text>
-<line x1="82" y1="267" x2="108" y2="267" style="stroke:var(--border-color); stroke-width:1"/>
-<text x="114" y="272" style="font-size:12.5px; fill:var(--text-muted)">서로 부를 수 있는 사이</text>
-<line x1="240" y1="267" x2="266" y2="267" style="stroke:var(--accent-primary); stroke-width:2"/>
-<text x="272" y="272" style="font-size:12.5px; fill:var(--text-muted)">요청 하나가 지나는 길</text>
-</svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">앞 네 절 전부가 왼쪽 한 덩어리로 줄었다. 오른쪽은 여섯 개만 그렸는데도 선이 상자보다 많다.</figcaption>
-</figure>
-
-여기서 나오는 반문이 있다. 공통 라이브러리를 하나 만들어 열두 서비스가 다 쓰면 되지 않나. 그러면 홉이 하나도 안 붙는다. 대신 4절에서 센 것이 그대로 돌아온다. 넷일 때 72.9%였던 "전부 같게 구현돼 있을 확률"이 열둘이면 31.4%다 — 0.9를 열한 번 곱한 값이다. 값 하나를 고치는 데 필요한 배포도 4번이 아니라 12번이 된다. 언어가 둘이면 벌수가 또 두 배다.
-
-무는 값이 있다. 호출 하나가 프록시를 두 번 지난다. 나갈 때는 부르는 쪽 사이드카, 들어갈 때는 받는 쪽 사이드카다. 한 번 지나는 데 0.3ms로 잡는다. 4절의 Ingress 통과와 값만 같고 잰 대상이 다르다. 12ms에서 이게 얼마인지 세어 보자. 아래 값은 4절에서 쓴 것 그대로이고, 전부 설명을 위한 가상 수치다.
-
-```python
-# "서비스가 열둘이 되면 사이드카를 넣을 수 있나" — 12ms 예산으로 답한다.
-#
-# 상황: 4절까지 서비스는 4개였다. 이제 12개다. 안쪽 호출의 재시도·타임아웃을
-#   서비스 코드에서 빼내 사이드카에 맡길 수 있는지 두 가지로 잰다.
-#     (가) 손볼 '사이'가 몇 곳으로 늘어나나
-#     (나) 사이드카가 12ms 예산을 얼마나 먹나
-#   앞단 0.3·1.1ms 와 bidder 8/10ms 는 4절에서 쓴 값 그대로다. 전부 가상 데이터다.
-from unicodedata import east_asian_width
-
-def w(s):                       # 한글은 모노스페이스에서 두 칸을 먹는다
-    return sum(2 if east_asian_width(c) in "WF" else 1 for c in s)
-
-def row(*cells):                # (글자, 칸수) 쌍을 오른쪽 맞춤으로 찍는다
-    print("".join(" " * (n - w(c)) + c for c, n in cells))
-
-# ── (가) 서비스가 늘면 '사이'가 몇 곳이 되나 ──
-# 한 서비스가 평균 2곳을 부른다고 두자. 실제 호출은 가능한 조합보다 훨씬 적다.
-row(("서비스", 8), ("가능한 호출 방향", 20), ("실제 호출(평균 2곳)", 22))
-for n in (1, 4, 8, 12, 20):
-    row((f"{n}개", 8), (f"{n*(n-1)}곳", 20), (f"{0 if n == 1 else 2*n}곳", 22))
-print()
-
-# ── (나) 12ms 예산에서 사이드카가 먹는 몫 ──
-BUDGET = 12.0
-FRONT  = 0.3 + 1.1      # Ingress + Gateway (4절)
-BIDDER = {"평소": 8.0, "상한": 10.0}   # 평소 8.0 = 자체 3.0 + pctr 3.0 + feature-store 2.0
-HOPS   = 4              # 안쪽 호출 2개 × 양 끝. (가)에서 센 24곳 중 입찰 경로 위는 2곳뿐이다
-                        # bidder 앞단은 빼고 센 값이다
-HOP    = 0.3            # 사이드카 1회 통과. 잘 튜닝된 Envoy의 p50 수준으로 잡은 가정이다
-                        # 벤더 공표값은 프록시 한 쌍 기준 P90뿐이라 여기서는 그 절반으로 뒀다
-
-def verdict(t):
-    return f"여유 {BUDGET-t:.2f}ms" if t <= BUDGET else f"초과 {t-BUDGET:.2f}ms"
-
-row(("", 8), ("메시 전", 12), ("메시 후", 12), ("예산 12ms", 18))
-for name, ms in BIDDER.items():
-    row((name, 8), (f"{FRONT+ms:.1f}ms", 12), (f"{FRONT+ms+HOPS*HOP:.1f}ms", 12),
-        (verdict(FRONT + ms + HOPS * HOP), 18))
-print()
-
-row(("1회 통과", 12), ("평소", 22), ("상한", 22))   # 통과 지연을 바꿔 가며
-for hop in (0.15, 0.3, 0.5, 1.0):
-    cells = [(f"{hop:.2f}ms", 12)]
-    for ms in BIDDER.values():
-        t = FRONT + ms + HOPS * hop
-        cells.append((f"{t:.1f}ms  {verdict(t)}", 22))
-    row(*cells)
-print()
-
-for name, ms in BIDDER.items():   # 한 번 통과에 쓸 수 있는 시간
-    print(f"{name} 기준  ({BUDGET:.0f} - {FRONT+ms:.1f}) / {HOPS}회 = 한 번에 {(BUDGET-FRONT-ms)/HOPS:.2f}ms")
-print(f"bidder 앞단까지 5회로 세면   평소 {FRONT+8.0+5*HOP:.1f}ms · 상한 {FRONT+10.0+5*HOP:.1f}ms")
-print()
-print("→ 평소값으로 재면 들어간다. 상한으로 재면 0.15ms를 넘는 순간 넘친다.")
-print("→ 12ms에서 재야 하는 쪽은 상한이다. 늦은 응답은 버려지니 평소값은 답이 못 된다.")
-print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ 통과 횟수'다.")
-
-# 출력:
-#   서비스    가능한 호출 방향   실제 호출(평균 2곳)
-#      1개                 0곳                   0곳
-#      4개                12곳                   8곳
-#      8개                56곳                  16곳
-#     12개               132곳                  24곳
-#     20개               380곳                  40곳
-#
-#              메시 전     메시 후         예산 12ms
-#     평소       9.4ms      10.6ms       여유 1.40ms
-#     상한      11.4ms      12.6ms       초과 0.60ms
-#
-#     1회 통과                  평소                  상한
-#       0.15ms   10.0ms  여유 2.00ms   12.0ms  여유 0.00ms
-#       0.30ms   10.6ms  여유 1.40ms   12.6ms  초과 0.60ms
-#       0.50ms   11.4ms  여유 0.60ms   13.4ms  초과 1.40ms
-#       1.00ms   13.4ms  초과 1.40ms   15.4ms  초과 3.40ms
-#
-# 평소 기준  (12 - 9.4) / 4회 = 한 번에 0.65ms
-# 상한 기준  (12 - 11.4) / 4회 = 한 번에 0.15ms
-# bidder 앞단까지 5회로 세면   평소 10.9ms · 상한 12.9ms
-#
-# → 평소값으로 재면 들어간다. 상한으로 재면 0.15ms를 넘는 순간 넘친다.
-# → 12ms에서 재야 하는 쪽은 상한이다. 늦은 응답은 버려지니 평소값은 답이 못 된다.
-# → 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ 통과 횟수'다.
-```
-
-평소로 재면 들어가고 상한으로 재면 넘친다. 어느 쪽으로 재야 하나. 1절에서 늦은 응답은 없던 일이 된다고 했다. 매체는 12ms를 넘긴 응답을 봐주지 않는다. 상한이 기준이고, 0.6ms가 모자란다.
-
-빠져나갈 길은 셋이다.
-
-첫째, 더 빠른 사이드카. 통과 0.15ms면 합이 딱 12.0ms인데 여유가 0이다. 위에서 가정한 0.3ms의 절반을 요구하는 셈이다.
-
-둘째, 통과 횟수 줄이기. 받는 쪽 프록시만 지나게 하면 호출당 1회, 모두 2회다. 예산이 0.15ms에서 0.30ms로 두 배가 되는데, 위에서 가정한 통과 비용도 0.30ms다. 합은 또 정확히 12.0ms이고 여유는 여전히 0이다. 부르는 쪽에서 걸던 재시도와 타임아웃은 코드로 돌아간다. 이건 새로 지어야 하는 구조가 아니다. Istio ambient 모드(1.24부터 정식)의 waypoint 프록시가 이미 그렇게 돈다. 목적지 쪽에만 서서 L7을 한 번만 지나게 한다.
-
-셋째, 세는 방법 바꾸기. `bidder` 앞단까지 세면 5회이고 상한은 12.9ms다. 어느 쪽으로 세도 넘는 것은 같다.
-
-### 전용선 평문인데 mTLS가 값어치를 하나
-
-메시가 주는 넷 중 mTLS는 이 글의 전제와 부딪힌다. 매체와 우리 사이는 같은 데이터센터의 전용 회선이고 평문이다(1절). 클러스터 안도 같은 사설망이라 도청을 막으려고 켤 자리가 아니다.
-
-값어치는 다른 데 있다. 지금 `feature-store` 는 자기를 부르는 것이 `pctr` 인지 IP로만 안다. 그 IP는 파드가 다시 뜰 때마다 바뀐다. mTLS는 IP 대신 파드가 들고 있는 인증서에 신원을 건다. 신원의 단위는 서비스 이름이 아니라 쿠버네티스 ServiceAccount다. 인증서에 `cluster.local/ns/ads/sa/pctr` 처럼 박혀 있고, 접근 규칙도 이 이름으로 적는다.
-
-규칙은 받는 쪽에 적는다 — "`feature-store` 를 부를 수 있는 것은 `pctr` 뿐이다". 이 문장 자체는 mTLS 없이도 적힌다. 쿠버네티스 NetworkPolicy가 라벨을 보고 같은 것을 막는다. 갈리는 건 근거다. NetworkPolicy는 출발지 IP로 "이건 `pctr` 일 것이다"라고 미루어 짐작하고, mTLS는 인증서로 증명받는다. 열둘이면 이걸 적을 곳이 스물넷이다.
-
-값은 위 사이드카 0.3ms 안에 이미 들어 있다. 연결을 붙여 두므로(2절) 핸드셰이크는 요청마다 붙지 않고, 매번 붙는 것은 암·복호화뿐이다.
-
-### 언제 넣나
-
-기준은 서비스가 몇 개냐가 아니다. 나눗셈 한 번이다.
-
-**한 번 통과에 쓸 수 있는 시간 = 남은 여유 ÷ 통과 횟수.**
-
-우리 입찰 경로는 (12 − 11.4) ÷ 4 = 0.15ms다. 실측 사이드카가 그보다 느리면 못 넣는다. 여유가 5ms인 리포트 경로라면 5 ÷ 4 = 1.25ms까지 쓰니 넣는다. 서비스가 열둘이어도 입찰 경로에는 못 넣고, 넷이어도 리포트 경로에는 넣는다.
-
-전부 아니면 전무는 아니다. 사이드카를 붙일 대상은 고를 수 있다. 입찰 경로는 빼고 `report` · `model-registry` · `log-collector` 쪽만 넣으면 된다. 대신 재시도와 타임아웃이 가장 급한 곳이 12ms를 다투는 입찰 경로다. 값을 못 치르는 자리와 얻을 것이 가장 큰 자리가 겹친다.
-
-부품은 여기까지다. 다섯 절에서 하나씩 생긴 것을 한 장에 겹쳐 놓으면 경계가 보인다. 그게 6절이다.
-
----
-
-## 6. 완성된 지도
-
-**다섯 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 된다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 연다.**
-
-<figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 LB·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
-<defs>
-<marker id="gw6-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
 <rect x="6" y="20" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="42" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">매체 10곳</text>
 <text x="76" y="62" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ads.example.com</text>
-<line x1="76" y1="72" x2="76" y2="90" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="76" y1="72" x2="76" y2="90" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="92" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="76" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">LB</text>
+<text x="76" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">로드밸런서</text>
 <text x="76" y="134" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP · 포트</text>
-<line x1="76" y1="144" x2="76" y2="162" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="76" y1="144" x2="76" y2="162" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="164" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="186" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">Ingress</text>
 <text x="76" y="206" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">호스트 · 경로</text>
-<line x1="76" y1="216" x2="76" y2="234" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<line x1="76" y1="216" x2="76" y2="234" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="236" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="258" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">API Gateway</text>
 <text x="76" y="278" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">+ 헤더 · 인증키 · 매체</text>
 <rect x="334" y="20" width="160" height="250" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
-<text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">서비스 메시 (선택)</text>
-<line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<line x1="150" y1="262" x2="330" y2="185" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
-<line x1="150" y1="276" x2="330" y2="227" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw6-arr)"/>
+<text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스</text>
+<line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
+<line x1="150" y1="262" x2="330" y2="185" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
+<line x1="150" y1="276" x2="330" y2="227" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="346" y="54" width="136" height="62" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="74" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
 <rect x="354" y="82" width="120" height="26" rx="6" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
@@ -728,69 +362,76 @@ print("→ 그래서 기준은 서비스 개수가 아니라 '남은 여유 ÷ �
 <text x="414" y="189" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">feature-store</text>
 <rect x="346" y="210" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="231" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
-<text x="414" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">…외 8개</text>
-<text x="414" y="290" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">메시 — 서비스 사이 호출</text>
+<text x="414" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">지훈 씨 API 가 여기입니다</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">점선은 메시 하나뿐이다. 나머지 넷은 앞 절에서 이미 켜졌고, 메시만 5절의 나눗셈을 통과해야 켜진다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽 넷이 이 글에서 하나씩 켜진 부품입니다. 지훈 씨가 만든 클릭 수집 API 는 오른쪽 맨 아래 칸에 있습니다.</figcaption>
 </figure>
 
 | 부품 | 어디서 도나 | 무엇을 보고 나누나 | 없으면 사람이 관리할 것 |
 |---|---|---|---|
-| LB | 클러스터 밖 | IP · 포트 (L4) | 매체 설정에 IP가 서버 수만큼 — 3대면 3줄 (2절) |
-| Ingress | 클러스터 입구 | 호스트 · 경로 (L7) | 대표 주소 4개 · 헬스체크 4벌 (3절 표) |
-| API Gateway | 앱 계층 | 경로 + 헤더 · 인증키 · 매체 | 정책 구현 12벌 — 서비스 4 × 정책 3 (4절 코드) |
-| 라우터 | 앱 안 | 코드 경로 | 어느 절에서 새로 생긴 것이 아니다 |
-| 서비스 메시 | 서비스 사이 | 서비스 간 호출 | 재시도 · 타임아웃을 24곳에 손으로 (5절 코드) |
+| 로드밸런서 | 클러스터 밖 | IP · 포트 | 매체 설정에 IP 가 서버 수만큼 — 3대면 3줄 |
+| Ingress | 클러스터 입구 | 호스트 · 경로 | 대표 주소 4개 · 헬스체크 4벌 |
+| API Gateway | 앱 계층 | 경로 + 헤더 · 인증키 · 매체 | 정책 구현 12벌 · 값 하나 고칠 때 배포 4번 |
+| 라우터 | 앱 안 | 코드 경로 | 어느 절에서 새로 생긴 것이 아닙니다 |
 
-표의 마지막 칸이 이 글의 줄거리다. 부품은 기능을 더하려고 들어온 것이 아니다. 없을 때 사람이 관리할 것이 몇 벌로 불어나느냐가 먼저였고, 부품은 그 뒤에 왔다.
+**마지막 칸이 이 글의 줄거리입니다.** 부품은 기능을 더하려고 들어온 것이 아닙니다. 없을 때 사람이 관리할 것이 몇 벌로 불어나느냐가 먼저였고, 부품은 그 뒤에 왔습니다.
 
-셋째 칸은 아래로 갈수록 조건이 하나씩 붙는다. 다섯이 다 "나눈다"는 같은 말을 쓴다. 보는 것은 전부 다르다. 이름만 듣고 헷갈리는 이유가 여기 있다.
+셋째 칸은 아래로 갈수록 조건이 하나씩 붙습니다. 넷이 다 "나눈다"는 같은 말을 쓰는데 보는 것은 전부 다릅니다. **이름만 듣고 헷갈리는 이유가 여기 있습니다.**
 
-넷째 줄만 생긴 순서가 다르다. 라우터는 어느 절에서 새로 생긴 것이 아니다. 1절의 서버 한 대에도 `POST /v1/bid` 를 함수에 잇는 코드는 있었다.
+넷째 줄만 생긴 순서가 다릅니다. 라우터는 어느 절에서 새로 생긴 것이 아닙니다. 1절의 서버 한 대에도 `POST /v1/bid` 를 함수에 잇는 코드는 있었습니다.
 
-이 글은 부품을 하나씩 켜면서 왔고, 아래 데모는 그것을 거꾸로 돌린다. Ingress를 끈 채 서비스 수를 1로 내리면 요청이 다시 통과한다 — 3절이 시작되기 전 자리다. 끌 때마다 아래 "사람이 관리해야 하는 것" 칸에 숫자가 붙는데, 그게 위 표의 마지막 열이다.
+서비스가 열둘쯤으로 더 늘면 다음 부품 이야기가 나옵니다. 서비스끼리 부르는 호출의 재시도와 타임아웃을 코드 밖으로 꺼내는 **서비스 메시**입니다. 다만 그건 이 글 밖입니다. 12ms 를 다투는 입찰 경로에서는 프록시를 한 번 더 지나는 값 자체가 예산을 넘기기 때문에, 넣을지 말지가 먼저 계산 문제가 됩니다.
+
+아래 데모는 이 글을 거꾸로 돌립니다. Ingress 를 끈 채 서비스 수를 1로 내리면 요청이 다시 통과합니다 — 3절이 시작되기 전 자리입니다. 끌 때마다 "사람이 관리해야 하는 것" 칸에 숫자가 붙는데, 그게 위 표의 마지막 열입니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-request-path.html?embed=1" height="560" loading="lazy" title="요청 경로 시뮬레이터"></iframe>
 <a class="demo-embed-open" href="demo-request-path.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
 </div>
 
----
+## 한눈 정리
 
-## 7. 헷갈리기 쉬운 점
+| 질문 | 한 줄 답 |
+|---|---|
+| 매체에 서버 IP 를 주면 안 되나 | 배포할 때마다 그 시간만큼 요청이 통째로 사라집니다 |
+| 로드밸런서는 무엇을 보나 | IP 와 포트만. 어떤 요청인지는 안 엽니다 |
+| 헬스체크에 무엇을 넣나 | 나만 빠지면 되는 것은 넣고, 다 같이 쓰는 것은 뺍니다 |
+| Ingress 는 무엇을 하나 | 대표 주소를 하나로 되돌리고 호스트·경로로 갈라 보냅니다 |
+| 규칙표에서 무엇이 이기나 | 위치가 아니라 길이. 가장 길게 맞는 줄입니다 |
+| 라우터가 뭔가 | 문맥마다 다릅니다. 어느 층인지부터 되묻습니다 |
+| API Gateway 는 왜 또 필요한가 | 규칙표에 "누가 보냈나"를 적을 칸이 없기 때문입니다 |
+| 무엇을 Gateway 에 두나 | 광고 데이터를 안 봐도 정해지는 것만 |
 
-**"Ingress랑 API Gateway랑 같은 것 아닌가."**
+## 헷갈리기 쉬운 점
 
-아니다. 둘 다 L7에서 경로를 보는 것까지는 같다. 3절 규칙표도 `/v1/bid` 를 보고 갈랐고, 4절 Gateway도 같은 경로를 본다. 겹치는 것은 여기까지다.
+**"Ingress 랑 API Gateway 랑 같은 것 아닌가."**
 
-갈리는 곳은 정책이다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없다. Gateway에는 인증·쿼터·타임아웃·응답 변환이 설정 항목으로 있다. 그래서 바뀌는 이유가 다르다 — 규칙표는 서비스가 늘 때, Gateway는 매체가 늘 때 바뀐다.
+아닙니다. 둘 다 경로를 보는 것까지는 같습니다. 3절 규칙표도 `/v1/bid` 를 보고 갈랐고, 4절 Gateway 도 같은 경로를 봅니다. 겹치는 것은 여기까지입니다.
 
-경계가 고정된 것은 아니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API는 헤더 조건과 트래픽 분할을 규격 안에 갖고 있다. 4절에서 구현체마다 다르게 밀어 넣던 것이 표준이 된 셈이다. 응답 **헤더** 를 손보는 필터도 규격에 이미 있다(`ResponseHeaderModifier`). 남은 것은 쿼터와 응답 **본문** 변환이고, 인증은 규격에 들어오긴 했지만 아직 실험 단계다(`ExternalAuth` 필터). 그래서 지금은 둘이다.
+갈리는 곳은 정책입니다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없고, Gateway 에는 인증·쿼터·타임아웃·응답 변환이 설정 항목으로 있습니다. **그래서 바뀌는 이유가 다릅니다** — 규칙표는 서비스가 늘 때, Gateway 는 매체가 늘 때 바뀝니다.
 
-**"LB가 있으면 Ingress는 필요 없나."**
+다만 경계가 고정된 것은 아닙니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API 는 헤더 조건을 규격 안에 갖고 있습니다. 4절에서 구현체마다 다르게 밀어 넣던 것이 표준이 된 셈입니다.
 
-대부분의 구성에서는 Ingress 앞에도 LB가 하나 있다. 규칙표를 실행하는 프로세스도 여러 개 뜨니, 그 앞에도 대표 주소가 하나 필요하기 때문이다. 3절에서 LB는 없어지지 않았고, 그 대상만 `bidder` 서버 3대에서 Ingress로 바뀌었다.
+**"로드밸런서가 있으면 Ingress 는 필요 없나."**
 
-클라우드에서는 이게 잘 안 보인다. Ingress를 만들면 LB가 자동으로 딸려 오는 구성이 흔해서 없는 것처럼 느껴질 뿐이다. 요금 항목에는 남는다.
+대부분의 구성에서는 Ingress 앞에도 로드밸런서가 하나 있습니다. 규칙표를 실행하는 프로세스도 여러 개 뜨니, 그 앞에도 대표 주소가 하나 필요하기 때문입니다. 3절에서 로드밸런서는 없어지지 않았고, 그 대상만 `bidder` 서버 3대에서 Ingress 로 바뀌었습니다.
 
-대체가 아니라 덧붙임이다. 2절 LB는 IP와 포트만 보고 연결을 넘기고, 3절 Ingress는 그 연결에 실린 요청을 열어 호스트와 경로를 본다. 하는 일이 다르니 한쪽이 다른 쪽을 지우지 못한다.
+클라우드에서는 이게 잘 안 보입니다. Ingress 를 만들면 로드밸런서가 자동으로 딸려 오는 구성이 흔해서 없는 것처럼 느껴질 뿐인데, **요금 항목에는 남습니다.**
 
-하는 일이 둘이라는 것이지 상자가 꼭 둘이라는 뜻은 아니다. 베어메탈에서는 규칙표 실행 프로세스를 노드마다 하나씩(DaemonSet) 띄우고 호스트 네트워크를 그대로 쓸 수 있다. ingress-nginx 문서가 다루는 구성인데, 여기엔 앞에 세울 Service조차 없다. 거꾸로 GKE나 AWS ALB에서는 딸려 오는 그 LB가 곧 L7 규칙을 실행하는 물건이다. "뒤에 프로세스가 여러 개라서 LB가 필요하다"는 이유는 이 두 경우에 안 맞는다.
+대체가 아니라 덧붙임입니다. 로드밸런서는 IP 와 포트만 보고 연결을 넘기고, Ingress 는 그 연결에 실린 요청을 열어 호스트와 경로를 봅니다. 하는 일이 다르니 한쪽이 다른 쪽을 지우지 못합니다.
 
-**"Gateway를 넣으면 느려지지 않나."**
+**"Gateway 를 넣으면 느려지지 않나."**
 
-느려진다. 4절에서 인증키와 쿼터를 보는 데 1.1ms를 잡았다(가상 수치). 12ms의 9%다. 공짜가 아니다.
+느려집니다. 4절에서 인증키와 쿼터를 보는 데 1.1ms 를 잡았고, 12ms 의 9% 입니다. 공짜가 아닙니다.
 
-견줄 대상은 3절 끝의 사고다. A앱 한 곳이 초당 3만 건을 쏟는 동안 쿼터를 볼 자리가 없으면, 나머지 아홉 곳이 같이 12ms를 넘긴다. 모든 요청에 1.1ms를 얹는 쪽과, 그동안 열 곳이 다 같이 넘기는 쪽 중 하나를 고른다.
+견줄 대상은 3절 끝의 사고입니다. A앱 한 곳이 초당 3만 건을 쏟는 동안 쿼터를 볼 자리가 없으면 나머지 아홉 곳이 같이 12ms 를 넘깁니다. **모든 요청에 1.1ms 를 얹는 쪽과, 그동안 열 곳이 다 같이 넘기는 쪽 중 하나를 고르는 것입니다.**
 
-인증과 쿼터를 계속하려면 그 1.1ms는 없애는 것이 아니라 옮기는 것이다. `bidder` 안에서 같은 검사를 하면 10ms 상한 안에서 그 시간을 쓴다. 4절에서 센 대로 구현은 12벌이 되고, 값 하나 고치는 데 배포가 네 번이다.
+그리고 인증과 쿼터를 계속하려면 그 1.1ms 는 없애는 것이 아니라 옮기는 것입니다. `bidder` 안에서 같은 검사를 하면 10ms 상한 안에서 그 시간을 씁니다. 대신 4절에서 센 대로 구현이 12벌이 되고, 값 하나 고치는 데 배포가 네 번입니다.
 
----
+## 더 깊이 보기
 
-## 8. 더 깊이 보기
-
-- [쿠버네티스 네트워킹 쉽게 이해하기](post.html?id=kubernetes-networking) — 이 글이 Ingress에서 멈춘 아래쪽, Pod와 Service의 주소
-- [소프트웨어 아키텍처 패턴 6가지](post.html?id=software-architecture-patterns) — 3절에서 서비스를 넷으로 쪼갠 판단
-- [모델 서빙 아키텍처](post.html?id=model-serving-architecture) — `bidder` 가 3.0ms를 떼어 준 `pctr` 안에서 실제로 벌어지는 일
-- [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) — 이 경로로 들어온 입찰 한 건이 로그를 몇 줄 남기는지
-- [Kafka는 왜 있나](post.html?id=kafka-log-pipeline) — `log-collector` 가 받은 그 로그가 다음에 어디로 가는지
+- 이 다음은 [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) 편입니다. 지훈 씨 API 가 `log-collector` 에 남긴 그 로그가 어디로 흘러가는지를 따라갑니다.
+- 이 글이 Ingress 에서 멈춘 아래쪽, Pod 와 Service 의 주소는 [쿠버네티스 네트워킹](post.html?id=kubernetes-networking) 편에 있습니다.
+- 3절에서 서비스를 넷으로 쪼갠 판단은 [소프트웨어 아키텍처 패턴](post.html?id=software-architecture-patterns) 편에서 다룹니다.
+- `bidder` 가 시간을 떼어 준 `pctr` 안에서 실제로 벌어지는 일은 [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 편에 있습니다.
+- 이 경로로 들어온 입찰 한 건이 로그를 몇 줄 남기는지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리해 뒀습니다.

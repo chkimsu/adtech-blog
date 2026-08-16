@@ -259,8 +259,8 @@ const posts = [
   {
     id: 'log-hops-to-kafka',
     world: 'na',
-    title: '로그 수집기 안을 열어 본다 — 클릭 한 건이 Kafka를 지나기까지 9홉',
-    excerpt: '광고를 탭한 그 순간부터 학습 데이터가 되기까지, 클릭 한 건은 다섯 군데에 머물고 그때마다 모양이 바뀐다. 수집 서버 안에서는 타입 없는 텍스트 한 줄(169 B)이고, 변환기를 지나면 필드가 8개에서 17개로 늘어난 JSON(308 B)이 되며, Kafka 안에서는 배치로 묶여 압축된 36.6 B다. 파일을 한 번 거치는 설계는 Kafka가 멈춰도 61.7시간을 버티고 직행은 10.4분을 버틴다 — 356배 차이가 640 ms 지연의 값이다. 같은 줄을 대시보드는 2초 뒤에, 학습은 10.2시간 뒤에 읽는다. 그래서 7일을 남긴다.',
+    title: '로그 수집 — nginx · Filebeat · Logstash 를 지나며 로그가 바뀌는 모양',
+    excerpt: '지훈 씨가 숫자 둘을 세어 봤더니 안 맞습니다. 서버 파일에 쌓인 줄은 하루 5,928만 줄인데 대시보드가 세는 이벤트는 2억 3,028만 건입니다. 한 줄이 어느 자리에서 네 건이 될까요. 앞 글이 방향으로 본 여섯 자리를 이 글은 모양으로 엽니다 — 앱 안에서는 객체 110바이트, 서버 파일에서는 타입 없는 텍스트 183바이트, 변환기를 지나면 필드 15개짜리 JSON 309바이트입니다. 파일을 한 번 거치는 설계는 Kafka 가 멈춰도 237시간을 버티고 직행은 10.9분입니다. 그 차이가 640밀리초 지연의 값입니다.',
     date: '2026-08-11',
     categories: ['ML Infrastructure', 'Software Engineering'],
     tags: ['ML Infra', 'Event-Driven', 'Kafka', 'System Design'],
@@ -270,8 +270,8 @@ const posts = [
   {
     id: 'kafka-log-pipeline',
     world: 'na',
-    title: 'Kafka는 왜 있나 — 노출 로그 한 줄이 학습 데이터가 되기까지',
-    excerpt: '광고가 한 번 노출되면 그 사실을 알아야 하는 곳이 네 군데다 — 학습팀·정산팀·대시보드·광고주 리포트. bidder가 네 곳에 직접 알리면 한 팀이 배포할 때마다 광고가 느려진다. Kafka는 이 문제를 "한 번 쓰고 각자 읽는" 구조로 푼다. producer가 무엇인지, partition이 왜 있는지, offset이 무엇을 기억하는지를 노출 로그 한 줄이 pCTR 학습 데이터가 되는 과정으로 따라간다.',
+    title: 'Kafka 기초 — topic · partition · consumer group · offset',
+    excerpt: '앞 글에서 따라온 클릭이 방금 브로커에 놓였습니다. 그런데 그 줄 하나로는 쓸 데가 없습니다 — 그 광고가 왜 그 사람에게 나갔는지는 40분 전 응찰 때 만들어진 다른 줄에 있기 때문입니다. 따로 놓인 두 줄을 어떻게 다시 붙일까요. 그리고 왜 같은 줄을 네 팀이 각자 읽을까요. 네 이름은 둘 다 이 질문에 답하려고 있는 것들입니다. Kafka 없이 직접 부르면 12밀리초 예산이 19.4로 넘치고, 파일로 옮기면 오토스케일 축소에 132,000줄이 사라집니다.',
     date: '2026-08-07',
     categories: ['Software Engineering', 'ML Infrastructure'],
     tags: ['Event-Driven', 'System Design', 'ML Infra', 'Kafka'],

@@ -112,9 +112,13 @@
   }
 
   // 1절 — Kafka 가 멈추면 어디에 쌓이나. 값은 글이 계산해 둔 것을 그대로 쓴다.
+  // capacity 는 hours·mins 가 전제하는 용량이다 — "237시간"만 보여주면 그 시간이
+  // 어디서 나왔는지 안 보이므로, 근거 용량(V.fileGB·V.directMB)을 같이 들려 보낸다.
   const HOLD = {
-    file: { where: '로컬 파일', hours: V.fileHours, mins: null, note: '앞단(앱, 웹서버)은 아무 영향을 안 받습니다' },
-    direct: { where: '서버 메모리', hours: null, mins: V.directMins, note: '광고 서버가 같이 위험해집니다' },
+    file: { where: '로컬 파일', hours: V.fileHours, mins: null, capacity: V.fileGB + 'GB',
+      note: '앞단(앱, 웹서버)은 아무 영향을 안 받습니다' },
+    direct: { where: '서버 메모리', hours: null, mins: V.directMins, capacity: V.directMB + 'MB',
+      note: '광고 서버가 같이 위험해집니다' },
   };
   function holdTime(route) { return HOLD[route]; }
 

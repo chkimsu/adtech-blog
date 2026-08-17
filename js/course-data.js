@@ -51,7 +51,12 @@
     perSecImp:   v(2639, C, '초당 2,639건'),
     msToKafka:   v(1112, L, '탭에서 Kafka 도달까지 1,112 밀리초'),
     msInFile:    v(640,  L, '1,112 밀리초 중 640이 거기입니다'),
+    // fileGB·directMB 는 fileHours·directMins 와 근거 문장이 같다 — 근거를 두 벌
+    // 만드는 것이 아니라, 한 문장 안에 이미 같이 적혀 있는 용량과 시간을 각각
+    // 뽑아서 값 두 개로 등록하는 것이다("100GB 면 237시간", "512MB 가 10.9분").
+    fileGB:      v(100,  L, '디스크 100GB 면 237시간입니다'),
     fileHours:   v(237,  L, '디스크 100GB 면 237시간입니다'),
+    directMB:    v(512,  L, '512MB 가 10.9분에 찹니다'),
     directMins:  v(10.9, L, '512MB 가 10.9분에 찹니다'),
     nginxBufLoss: v(179, L, '없어질 수 있는 최대치는 **179줄**'),
     dailyClicks: v('하루 클릭 228만 건', P),

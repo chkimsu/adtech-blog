@@ -132,8 +132,9 @@
 
     $('plc-route-direct').dataset.tone = stopKafkaOn ? 'bad' : 'idle';
     $('plc-route-file').dataset.tone = stopKafkaOn ? 'good' : 'idle';
-    $('plc-route-direct-stat').textContent = stopKafkaOn ? direct.mins + '분' : '—';
-    $('plc-route-file-stat').textContent = stopKafkaOn ? file.hours + '시간' : '—';
+    // 시간만 보이면 그 시간이 어디서 나왔는지 안 보이므로 용량(capacity)을 앞에 같이 둔다.
+    $('plc-route-direct-stat').textContent = stopKafkaOn ? direct.capacity + ' → ' + direct.mins + '분' : '—';
+    $('plc-route-file-stat').textContent = stopKafkaOn ? file.capacity + ' → ' + file.hours + '시간' : '—';
     $('plc-route-direct-note').textContent = stopKafkaOn ? direct.note : 'Kafka 를 멈춰 보면 나옵니다';
     $('plc-route-file-note').textContent = stopKafkaOn ? file.note : 'Kafka 를 멈춰 보면 나옵니다';
     // 대가(640 ms)는 Kafka 상태와 무관하게 항상 참인 사실이라 스위치와 상관없이 보인다.

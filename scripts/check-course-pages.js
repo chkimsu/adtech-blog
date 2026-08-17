@@ -18,6 +18,8 @@ const PAGES = [
     must: [
       'apc-sec1', 'apc-sec2', 'apc-sec3', 'apc-sec4', 'apc-sec5', 'apc-sec6',
       '골라 읽는 법',
+      'apc-controls', 'apc-req', 'apc-serverstate', 'apc-send',
+      'apc-res', 'apc-verdict', 'apc-codes', 'apc-fake200',
     ],
   },
   {

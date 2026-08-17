@@ -41,6 +41,89 @@
 
     /* 넓은 것은 제 스크롤 상자 안에서만 넘친다 — 페이지가 가로로 안 밀리게 */
     .apc-scroll { overflow-x: auto; }
+
+    /* ---- 1절 — 요청 조립기 ---- */
+    .apc-build { display: grid; grid-template-columns: 1fr; gap: 1.1rem; align-items: start; }
+    @media (min-width: 760px) {
+      .apc-build { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+    }
+
+    .apc-ctrl-row { padding: 0.7rem 0; border-bottom: 1px solid var(--border-color); }
+    .apc-ctrl-row:last-child { border-bottom: none; }
+    .apc-ctrl-name {
+      font-size: 0.76rem; font-weight: 700; letter-spacing: 0.03em;
+      color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+
+    /* 메서드, 인증, 서버 상태 — 라디오가 아니라 평범한 버튼. 감싸는 label 이 없으니
+       체크박스/라디오의 두 번 click 함정 자체가 없다. */
+    .apc-pick, .apc-serverstate { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .apc-serverstate { margin-bottom: 1rem; }
+    .apc-btn-pick {
+      padding: 0.4rem 0.85rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit; font-size: 0.85rem;
+      cursor: pointer; border-radius: 0;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+    .apc-btn-pick:hover { background: var(--bg-tertiary); }
+    /* 선택 상태는 색만이 아니라 굵기, 글리프로도 드러난다 */
+    .apc-btn-pick[aria-pressed="true"] {
+      border-color: var(--accent-secondary);
+      background: var(--navy-bg);
+      color: var(--accent-secondary);
+      font-weight: 700;
+    }
+    .apc-btn-pick[aria-pressed="true"]::before { content: "▸ "; }
+
+    .apc-body-fields { display: flex; flex-wrap: wrap; gap: 0.6rem 1.1rem; }
+    .apc-check { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer; }
+    .apc-check input { margin: 0; cursor: pointer; }
+    .apc-check span { font-family: var(--font-mono); }
+
+    .apc-raw { border: 1px solid var(--border-color); background: var(--bg-secondary); min-width: 0; }
+    .apc-raw-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary); font-size: 0.8rem; font-weight: 700; color: var(--text-primary);
+    }
+    .apc-raw-head span { font-weight: 400; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .apc-raw pre { margin: 0; border: none; background: none; padding: 0.75rem 0.9rem; font-size: 0.82rem; line-height: 1.65; }
+
+    /* ---- 2절 — 판정 ---- */
+    .apc-verdict {
+      margin: 0.9rem 0; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color); font-size: 0.92rem; line-height: 1.6;
+    }
+    .apc-verdict[data-tone="ok"] { border-color: var(--navy-bd); background: var(--navy-bg); color: var(--accent-secondary); }
+    .apc-verdict[data-tone="bad"] { border-color: var(--oxide-bd); background: var(--oxide-bg); color: var(--state-bad); }
+
+    table.apc-codes { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .apc-codes th, .apc-codes td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .apc-codes th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .apc-codes td.apc-codes-code { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
+    .apc-codes-now {
+      display: none; margin-left: 0.4rem; font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.02em; color: var(--accent-secondary);
+    }
+    .apc-codes tr.is-now td { background: var(--navy-bg); }
+    .apc-codes tr.is-now .apc-codes-now { display: inline; }
+
+    .apc-fake200-note {
+      margin-top: 0.7rem; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--oxide-bd); background: var(--oxide-bg);
+      color: var(--text-primary); font-size: 0.88rem; line-height: 1.7;
+    }
+    .apc-fake200-note:empty { display: none; padding: 0; border: none; }
+    #apc-fake200[aria-pressed="true"] {
+      border-color: var(--state-bad); background: var(--oxide-bg); color: var(--state-bad); font-weight: 700;
+    }
+    #apc-fake200[aria-pressed="true"]::before { content: "▸ "; }
   </style>
 </head>
 
@@ -79,9 +162,37 @@
     <div class="apc-page">
       <section class="apc-sec" id="apc-sec1">
         <h2>1. 요청 한 건은 이렇게 생겼습니다</h2>
+        <p class="apc-lead">
+          조각은 넷뿐입니다. 무엇을 하려는지(메서드), 무엇에 대해서인지(주소),
+          곁들이는 정보(헤더), 실어 보내는 내용(본문)입니다.
+          아래에서 값을 바꾸면 오른쪽 원문이 그 자리에서 바뀝니다.
+        </p>
+        <div class="apc-build">
+          <div class="apc-controls" id="apc-controls"></div>
+          <div class="apc-raw apc-scroll">
+            <div class="apc-raw-head">보낼 요청 원문 <span id="apc-req-bytes"></span></div>
+            <pre id="apc-req"></pre>
+          </div>
+        </div>
       </section>
       <section class="apc-sec" id="apc-sec2">
         <h2>2. 받는 쪽은 무엇을 보고 무엇을 돌려줍니까</h2>
+        <p class="apc-lead">
+          받는 쪽은 위에서부터 하나씩 봅니다. 먼저 걸리는 것이 이기고, 거기서 멈춥니다.
+          서버 상태를 바꿔 보면 같은 요청이 다른 답을 받습니다.
+        </p>
+        <div class="apc-serverstate" id="apc-serverstate"></div>
+        <button type="button" id="apc-send" class="btn-try">보내기</button>
+        <div class="apc-raw apc-scroll">
+          <div class="apc-raw-head">돌아온 응답</div>
+          <pre id="apc-res"></pre>
+        </div>
+        <div class="apc-verdict" id="apc-verdict"></div>
+        <div class="apc-scroll"><table class="apc-codes" id="apc-codes"></table></div>
+
+        <h3>실무에서 자주 보는 함정 하나</h3>
+        <button type="button" id="apc-fake200" class="btn-try" aria-pressed="false">200 안에 에러 담기</button>
+        <p class="apc-fake200-note" id="apc-fake200-note"></p>
       </section>
       <section class="apc-sec" id="apc-sec3">
         <h2>3. 이 줄은 누가 남깁니까</h2>

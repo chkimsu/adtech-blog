@@ -254,16 +254,52 @@
 
   // 되감는 속도의 상한은 partition 수다(화면에는 이 이름을 안 쓴다). 글이
   // 재어 둔 두 점만 쓴다 — 공식을 새로 만들면 글의 14.1 과 1.1 이 안 나온다.
+  // 이 두 숫자는 이 프로젝트가 특히 지키려던 값이라(리뷰 요청) CourseData.FACTS
+  // 에 catchup4Days·catchup12Days 로 등록해 뒀다 — 여기서는 그 값을 그대로 쓴다.
   const CATCHUP = [
-    { consumers: 4, backlogDays: 3, days: 14.1 },
-    { consumers: 12, backlogDays: 3, days: 1.1 },
+    { consumers: 4, backlogDays: 3, days: V.catchup4Days },
+    { consumers: 12, backlogDays: 3, days: V.catchup12Days },
   ];
+
+  // ------------------------------------------------------------------
+  // 7절 — 노출과 클릭을 req_id 로 붙여야 라벨이 생긴다. 표본 여섯 줄(노출)과
+  // 한 줄(클릭)은 붙이는 방법만 보이려는 것이다. 실제 비율은 하루치로 재야
+  // 나오고 그 값이 CourseData.val.ctr(1.00%) 다 — 화면 쪽이 이 표본 결과와
+  // 그 실제 비율을 같은 문장에 두지 않는다(7절 화면 코드의 규칙).
+  //
+  // IMP_SAMPLE·CLICK_SAMPLE 은 posts 에서 잰 값이 아니라 시연용 구조 상수다
+  // — req_id 다섯 개('r-9d55' 등)는 진짜처럼 보이려 지은 표본 id 일 뿐이다.
+  // 유일하게 실재하는 값은 그 클릭의 req_id(V.reqId, r-8f21) 하나뿐이라
+  // 손으로 다시 안 적고 CourseData 에서 그대로 가져온다.
+  //
+  // CLICK_SAMPLE[0].afterHours = 0.67 은 kafka-log-pipeline.md 의 "이 클릭은
+  // 노출 40분 뒤에 눌렸습니다"(40분 ÷ 60 ≈ 0.67시간)를 옮긴 값이다. 화면에
+  // 이 소수를 그대로 찍지 않고 조인 여부(y)를 가르는 데만 쓰므로 FACTS 에
+  // 따로 등록하지 않는다 — 40분이라는 원 사실은 이미 다른 곳(글)에 있다.
+  // ------------------------------------------------------------------
+  const IMP_SAMPLE = [V.reqId, 'r-9d55', 'r-4a17', 'r-2e93', 'r-6b02', 'r-1c48'];
+  const CLICK_SAMPLE = [{ req_id: V.reqId, afterHours: 0.67 }];
+
+  function joinRows(windowHours) {
+    const hit = {};
+    CLICK_SAMPLE.forEach(function (c) {
+      if (c.afterHours <= windowHours) hit[c.req_id] = 1;
+    });
+    const rows = IMP_SAMPLE.map(function (id) {
+      return { req_id: id, y: hit[id] ? 1 : 0 };
+    });
+    return {
+      rows: rows,
+      joined: rows.filter(function (r) { return r.y === 1; }).length,
+      unjoined: rows.filter(function (r) { return r.y === 0; }).length,
+    };
+  }
 
   return {
     HOPS: HOPS, textAt: textAt, totalMs: totalMs, holdTime: holdTime,
     hasBatchim: hasBatchim, iGa: iGa, eunNeun: eunNeun, waGwa: waGwa,
     initialCursors: initialCursors, tick: tick, resetTicks: resetTicks, READ_MODES: READ_MODES,
     lateFor: lateFor, DISK: DISK, DISK_CAPACITY_GB: DISK_CAPACITY_GB,
-    retentionVerdict: retentionVerdict, CATCHUP: CATCHUP,
+    retentionVerdict: retentionVerdict, CATCHUP: CATCHUP, joinRows: joinRows,
   };
 });

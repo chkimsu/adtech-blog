@@ -211,6 +211,7 @@ eq('7일이면 32%',              M.DISK.find(d => d.days === 7).percent, 32);
 eq('30일은 안 들어간다',        M.DISK.find(d => d.days === 30).percent > 100, true);
 eq('보존 7일에 3일 멈추면 산다', M.retentionVerdict(7, 3), { safe: true, lostDays: 0 });
 eq('보존 2일에 3일 멈추면 하루를 잃는다', M.retentionVerdict(2, 3), { safe: false, lostDays: 1 });
+eq('보존 3일에 정확히 3일 멈추면(경계) 그래도 안 잃는다', M.retentionVerdict(3, 3), { safe: true, lostDays: 0 });
 eq('되감기 두 점',              M.CATCHUP.map(c => c.consumers), [4, 12]);
 eq('4명이면 14.1일',            M.CATCHUP[0].days, 14.1);
 eq('12명이면 1.1일',            M.CATCHUP[1].days, 1.1);
@@ -223,6 +224,12 @@ eq('읽는 쪽 how 넷', D.CONSUMERS.map(c => c.how),
 eq('목적지는 여섯', D.DESTINATIONS.length, 6);
 eq('목적지 이름 순서', D.DESTINATIONS.map(d => d.name),
    ['스토리지 + Iceberg', 'ClickHouse', 'OpenSearch', '리포트용 DB', '다른 팀 Kafka', '피처 스토어']);
+
+console.log('\n7절 — req_id 로 붙여 라벨이 생기나');
+const j3 = M.joinRows(D.val.joinHours);
+eq('노출 여섯에 클릭 하나',  [j3.rows.length, j3.rows.filter(r => r.y === 1).length], [6, 1]);
+eq('붙은 클릭은 r-8f21',     j3.rows.filter(r => r.y === 1)[0].req_id, D.val.reqId);
+eq('창을 0 으로 두면 안 붙는다', M.joinRows(0).rows.filter(r => r.y === 1).length, 0);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

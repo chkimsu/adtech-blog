@@ -63,6 +63,8 @@ const PAGES = [
       'plc-tools-table', 'plc-destinations',
       '잡이 몇 시간 떠 있나',
       '실시간 쪽 숫자와 배치 쪽 숫자가 안 맞는 것이 정상입니다',
+      // 7절 — 내 학습 데이터는 여기서 나옵니다 (req_id 조인)
+      'plc-join', 'plc-window', 'demo-api-course.html',
     ],
   },
 ];

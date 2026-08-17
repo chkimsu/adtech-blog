@@ -1,6 +1,10 @@
 // ===================================================================
-// 파이프라인 코스 2페이지 — 5~6절 위젯
+// 파이프라인 코스 2페이지 — 5~7절 위젯
 //   js/pipeline-course-sections2.js
+//
+// 이 파일이 담는 절 — 5절(기다렸다 가져가도 되나, 보존·되감기), 6절(그
+// 주기를 지키려면 무엇이 필요한가, 수단·비용), 7절(내 학습 데이터는 여기서
+// 나온다, req_id 조인). 3~4절은 js/pipeline-course-sections.js 에 있다.
 //
 // js/pipeline-course-sections.js 가 3~4절을 갖고 있었는데 Task 11 이
 // 5~6절을 더하면서 그 파일이 650줄을 넘겼다. 그 파일의 예고대로 3절/4절
@@ -11,8 +15,9 @@
 // 있는 것과 같은 모양이지만 그 파일의 지역 함수라 여기서 못 불러 다시 둔다
 // (이 파일은 window.* 만 본다) — 그 파일이 이미 쓰는 것과 같은 관행이다.
 //
-// 7절은 아직 빈 채로 남아 있다. 다음 작업이 그 절을 이 파일에 이을지 세
-// 번째 파일을 새로 만들지는 그때 줄 수를 보고 판단한다.
+// Task 12 가 7절을 이 파일에 이어 붙였다 — 세 번째 파일(sections3.js)을
+// 새로 만들지 않는다. 이 파일이 600줄 언저리에서 끝나 굳이 또 가를 이유가
+// 없었다.
 // ===================================================================
 (function () {
   'use strict';
@@ -72,7 +77,7 @@
   // 글의 표기와 맞춘다.
   function buildDiskTable() {
     const table = $('plc-disk');
-    theadRow(table, ['보존', '합계', '브로커 한 대', '디스크 ' + M.DISK_CAPACITY_GB + 'GB 대비', '']);
+    theadRow(table, ['보존', '합계', '브로커 한 대', '디스크 ' + M.DISK_CAPACITY_GB + 'GB 대비', '들어가나']);
     const tbody = el('tbody');
     const fmt = { minimumFractionDigits: 1, maximumFractionDigits: 1 };
     M.DISK.forEach(function (d) {
@@ -213,4 +218,122 @@
   buildDestinations();
   buildRetryNote();
   buildMlTrap();
+
+  // ==========================================
+  // 7절 — 내 학습 데이터는 여기서 나옵니다 (req_id 조인)
+  // ==========================================
+
+  // 창 2택 상태 — 기본은 실제 답(3시간, CD.val.joinHours). 표본 조인 표와
+  // 아래 트레이드오프 노트가 둘 다 이 상태를 본다.
+  let joinWindowHours = CD.val.joinHours;
+
+  function buildJoinLead() {
+    $('plc-join-lead').textContent =
+      '노출은 여섯 줄이 있고 그중 req_id 가 클릭과 같은 한 줄에만 y=1 이 붙습니다. ' +
+      '나머지 다섯은 y=0 인 채로 남습니다. 표본은 붙이는 방법만 보여 줍니다.';
+  }
+
+  // M.joinRows() 의 결과(rows)를 그대로 표로 그린다. 붙은 행(y=1)은 다른
+  // 절의 "지금 고른 행"과 같은 관행으로 갈린다 — .plc-join tr.is-joined.
+  function drawJoinTable() {
+    const table = $('plc-join');
+    table.innerHTML = '';
+    theadRow(table, ['req_id', 'y (라벨)']);
+    const tbody = el('tbody');
+    M.joinRows(joinWindowHours).rows.forEach(function (r) {
+      const tr = el('tr');
+      if (r.y === 1) tr.className = 'is-joined';
+      tr.appendChild(el('td', null, r.req_id));
+      tr.appendChild(el('td', null, String(r.y)));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+
+  // 창 2택 버튼 — 3시간(실제 답, CD.val.joinHours)과 24시간(비교,
+  // CD.val.joinWindowAlt). 라벨의 숫자도 손으로 안 적고 CourseData 에서 가져온다.
+  function buildWindowBtns() {
+    const host = $('plc-window');
+    [CD.val.joinHours, CD.val.joinWindowAlt].forEach(function (hours) {
+      const b = el('button', 'btn-try plc-window-btn', hours + '시간');
+      b.type = 'button';
+      b.dataset.hours = String(hours);
+      b.setAttribute('aria-pressed', 'false');
+      host.appendChild(b);
+    });
+  }
+
+  // 24시간을 고르면 표본이 아니라 실제 하루 규모의 트레이드오프(11,400건 ·
+  // 228만의 0.5% · 학습 데이터 확정 지연 21시간)를 보여 준다. 표본 조인
+  // 표는 두 창 다 그대로 1건일 수 있다(표본이 작아서) — 그래서 이 노트가
+  // 표본과 별도로, 실제 값만 갖고 설명한다.
+  function drawWindowNote() {
+    Array.prototype.forEach.call($('plc-window').querySelectorAll('.plc-window-btn'), function (b) {
+      b.setAttribute('aria-pressed', String(Number(b.dataset.hours) === joinWindowHours));
+    });
+    const note = $('plc-window-note');
+    if (joinWindowHours === CD.val.joinWindowAlt) {
+      note.textContent =
+        '창을 ' + CD.val.joinWindowAlt + '시간으로 늘리면 ' + CD.val.joinAltCatch.toLocaleString('en-US') +
+        '건을 더 건지는데 ' + CD.val.ctrClicks + '의 ' + CD.val.joinAltPct + ' 이고, 그 ' + CD.val.joinAltPct +
+        '를 사려고 학습 데이터 확정이 ' + CD.val.joinAltDelayHours + '시간 늦어집니다.';
+    } else {
+      note.textContent = '지금 창은 ' + CD.val.joinHours + '시간입니다. 우리 답이 이 창입니다.';
+    }
+  }
+
+  function bindWindowBtns() {
+    $('plc-window').addEventListener('click', function (e) {
+      const b = e.target.closest('.plc-window-btn');
+      if (!b) return;
+      joinWindowHours = Number(b.dataset.hours);
+      drawJoinTable();
+      drawWindowNote();
+    });
+  }
+
+  // 실물 두 줄 — 노출과 라벨. 손으로 짜맞추지 않고 CD.val 을 그대로 찍는다.
+  function buildRealLines() {
+    $('plc-imp-line').textContent = CD.val.impLine;
+    $('plc-label-line').textContent = CD.val.labelLine;
+  }
+
+  // 실제 비율 — 표본과 절대 같은 문장에 두지 않는다. 표본 일곱 줄로는
+  // 1.00% 를 만들 수 없으니 이 문장은 표본 얘기를 하지 않고 실제 값만 말한다.
+  function buildCtrReal() {
+    $('plc-ctr-real').textContent =
+      '표본 여섯 줄로는 비율을 못 만듭니다. 실제 비율은 하루치로 재야 나오고 그 값이 ' +
+      CD.val.ctr + '입니다 (' + CD.val.ctrClicks + ' 나누기 ' + CD.val.ctrImpressions + ').';
+  }
+
+  // 닫는 문장 셋. 둘째 항목만 DOM 으로 직접 지어 1페이지로 가는 링크를
+  // 문장 안에 끼운다(js/pipeline-course-sections.js 의 buildTwoPaths 링크
+  // 문단과 같은 모양) — req_id 를 1페이지에서 빼먹으면 여기서 라벨이 안
+  // 붙는다는 것이 이 두 장을 잇는 핵심 연결고리다.
+  function buildClosing() {
+    const host = $('plc-closing');
+    host.appendChild(el('li', null, '라벨이 늦게 옵니다. 전환은 며칠 뒤입니다.'));
+
+    const li2 = el('li');
+    li2.appendChild(document.createTextNode('붙이는 열쇠가 '));
+    li2.appendChild(el('code', null, 'req_id'));
+    li2.appendChild(document.createTextNode('입니다. 1페이지에서 그 필드를 빼먹으면 여기서 라벨이 안 붙습니다 — '));
+    const link = document.createElement('a');
+    link.href = 'demo-api-course.html#apc-sec1';
+    link.textContent = '1페이지 1절';
+    li2.appendChild(link);
+    li2.appendChild(document.createTextNode('에서 다시 봅니다.'));
+    host.appendChild(li2);
+
+    host.appendChild(el('li', null, '대시보드 숫자와 내 학습 데이터 숫자가 다릅니다.'));
+  }
+
+  buildJoinLead();
+  buildWindowBtns();
+  drawJoinTable();
+  drawWindowNote();
+  bindWindowBtns();
+  buildRealLines();
+  buildCtrReal();
+  buildClosing();
 })();

@@ -348,6 +348,20 @@
     .plc-disk-row[aria-current="true"] { background: var(--navy-bg); }
     .plc-disk-row[aria-current="true"] td:first-child { color: var(--accent-secondary); font-weight: 700; }
     .plc-disk-row[aria-current="true"] td:first-child::before { content: "▸ "; }
+
+    /* ---- 7절 — 내 학습 데이터는 여기서 나옵니다. 붙은 행과 창 선택 버튼은
+       다른 절과 같은 관행으로 갈린다 — 배경·글자색만이 아니라 ▸ 글리프·굵기도
+       같이 쓴다(색만으로 가르지 않는다). ---- */
+    .plc-join tr.is-joined { background: var(--navy-bg); }
+    .plc-join tr.is-joined td:first-child { color: var(--accent-secondary); font-weight: 700; }
+    .plc-join tr.is-joined td:first-child::before { content: "▸ "; }
+
+    .plc-window-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+    .plc-window-btn[aria-pressed="true"] {
+      border-color: var(--accent-secondary); background: var(--navy-bg);
+      color: var(--accent-secondary); font-weight: 700;
+    }
+    .plc-window-btn[aria-pressed="true"]::before { content: "▸ "; }
   </style>
 </head>
 
@@ -560,16 +574,51 @@
 
         <p class="plc-trap" id="plc-ml-trap"></p>
       </section>
-      <section class="plc-sec" id="plc-sec7"><h2>7. 내 학습 데이터는 여기서 나옵니다</h2></section>
+      <section class="plc-sec" id="plc-sec7">
+        <h2>7. 내 학습 데이터는 여기서 나옵니다</h2>
+        <p class="plc-lead">
+          클릭 한 건이 학습 행 한 줄이 되기까지입니다. 노출과 클릭을 <code>req_id</code>로
+          붙여야 라벨이 생깁니다.
+        </p>
+
+        <h3>노출과 클릭을 req_id 로 이어 붙이면</h3>
+        <p class="plc-lead" id="plc-join-lead"></p>
+        <div class="plc-scroll"><table class="plc-tools plc-join" id="plc-join"></table></div>
+
+        <h3>창을 3시간에서 24시간으로 늘리면</h3>
+        <p class="plc-lead">
+          표본 여섯 줄은 붙이는 방법만 보여 줍니다. 창을 바꿔도 표본에서는 결과가
+          그대로일 수 있습니다 — 표본이 작아서입니다. 실제 크기는 아래에서 봅니다.
+        </p>
+        <div class="plc-window-btns" id="plc-window"></div>
+        <p class="plc-callout" id="plc-window-note"></p>
+
+        <h3>실물 두 줄 — 노출과 라벨</h3>
+        <div class="plc-pair">
+          <div class="plc-raw plc-scroll">
+            <div class="plc-raw-head"><span>노출 (topic <code>ad.impression</code>)</span></div>
+            <pre id="plc-imp-line"></pre>
+          </div>
+          <div class="plc-raw plc-scroll">
+            <div class="plc-raw-head"><span>라벨이 붙은 뒤 (topic <code>ad.click</code> 조인 결과)</span></div>
+            <pre id="plc-label-line"></pre>
+          </div>
+        </div>
+
+        <p class="plc-lead" id="plc-ctr-real"></p>
+
+        <h3>ML 엔지니어가 실제로 만나는 것 셋</h3>
+        <ol class="plc-reasons" id="plc-closing"></ol>
+      </section>
     </div>
   </main>
 
   <script src="js/main.js"></script>
   <script src="js/course-data.js"></script>
   <script src="js/pipeline-course-model.js"></script>
-  <script src="js/pipeline-course-demo.js"></script>
-  <script src="js/pipeline-course-sections.js"></script>
-  <script src="js/pipeline-course-sections2.js"></script>
+  <script src="js/pipeline-course-demo.js"></script> <!-- rail·자리 상세, 1~2절 -->
+  <script src="js/pipeline-course-sections.js"></script> <!-- 3~4절 -->
+  <script src="js/pipeline-course-sections2.js"></script> <!-- 5~7절 -->
 </body>
 
 </html>

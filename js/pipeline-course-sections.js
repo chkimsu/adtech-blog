@@ -8,10 +8,12 @@
 // 같은 클로저에 있을 필요가 없기 때문이다. 이 파일은 window.CourseData 와
 // window.PipelineCourseModel 만 읽고, 자기 절의 DOM 만 건드린다.
 //
-// Task 10~12(4~7절)는 이 파일 끝에 같은 모양으로 절을 이어 붙인다 —
-// 절마다 (상태 → 그리기/짓기 → 바인딩) 한 묶음이면 된다. 공용 rail 을
-// 다시 그릴 필요가 있는 절이 생기면 그때는 window.PipelineCourseModel
-// 수준으로 인터페이스를 하나 더 뽑아야 한다.
+// Task 10 이 4절을 같은 모양(상태 → 그리기/짓기 → 바인딩)으로 이어 붙였다.
+// Task 11~12(5~7절)도 같은 자리에 같은 모양으로 잇는다 — 공용 rail 을 다시
+// 그릴 필요가 있는 절이 생기면 그때는 window.PipelineCourseModel 수준으로
+// 인터페이스를 하나 더 뽑아야 한다. 이 파일이 600줄에 가까워지면(지금
+// 4절까지 포함해 488줄) 3절/4절 경계에서 두 번째 파일로 나눈다 — 두 절
+// 다 rail 과 상태를 안 주고받는 완결된 위젯이라 가르기 쉽다.
 // ===================================================================
 (function () {
   'use strict';
@@ -20,24 +22,22 @@
   const CD = window.CourseData;
   const $ = (id) => document.getElementById(id);
 
-  // ------------------------------------------------------------------
-  // 한글 조사 — 완성형 한글의 마지막 글자에 받침이 있는지로 이/가, 은/는,
-  // 와/과 를 고른다. 읽는 쪽 이름을 그때그때 문장에 끼워 넣어야 해서
-  // (예: "예산 소진 확인이" vs "실시간 대시보드가") 고정 조사 하나로는
-  // 넷 다 자연스럽게 못 쓴다. 라틴 문자(Kafka)는 이 저장소 관행대로
-  // 조사 앞에 띄어쓰기를 둬 별도로 쓴다(범위 밖이면 이 함수는 안 쓴다).
-  // ------------------------------------------------------------------
-  function hasBatchim(w) {
-    const c = w.charCodeAt(w.length - 1);
-    if (c < 0xAC00 || c > 0xD7A3) return false;
-    return (c - 0xAC00) % 28 !== 0;
-  }
-  function iGa(w) { return hasBatchim(w) ? '이' : '가'; }
-  function eunNeun(w) { return hasBatchim(w) ? '은' : '는'; }
-  function waGwa(w) { return hasBatchim(w) ? '과' : '와'; }
+  // 한글 조사(이/가·은/는·와/과)는 Task 10 에서 js/pipeline-course-model.js 로
+  // 옮겼다 — 완성형 받침 판정이 진짜 로직이라 시험이 필요했는데, 이 파일은
+  // 브라우저 전용 IIFE라 require() 가 안 됐다. M 이 이미 그 함수들을 갖고 있다.
+  const iGa = M.iGa, eunNeun = M.eunNeun, waGwa = M.waGwa;
 
   function reader(key) {
     return CD.CONSUMERS.filter(function (c) { return c.key === key; })[0];
+  }
+
+  // 작은 DOM 빌더 — js/pipeline-course-demo.js 의 el() 과 같은 모양이지만
+  // 그 파일의 지역 함수라 여기서 못 부른다(이 파일은 window.* 만 본다).
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
   }
 
   // ==========================================
@@ -241,4 +241,248 @@
   bindNoKafka();
   bindFanoutKill();
   drawFanout();
+
+  // ==========================================
+  // 4절 — topic 에 놓인 뒤 누가 언제 읽어 가나
+  // ==========================================
+
+  // 읽는 빈도 순서 — stream 이 가장 잦고 batch 가 가장 뜸하다. 4-2 에서
+  // 방식을 눌러 보는 미리보기가 "그 방식이 지금 방식보다 잦은지 뜸한지"만
+  // 알면 되므로, 그 판단에 필요한 순서만 여기서 정한다.
+  const MODE_RANK = { stream: 0, micro: 1, batch: 2 };
+
+  // ---- 상태 ----
+  // head — 지금 topic 의 끝. [시간 흐르기] 마다 하나씩 는다.
+  // STRIP_LEFT_PAD·STRIP_RIGHT_PAD — 왼쪽은 고정, r-8f21(V.offsetOf)이 20칸
+  // 중 8번째에 오도록 7칸 앞에서 시작한다. 오른쪽은 처음에 12칸을 더
+  // 보여줘서(8,405~8,424, 스펙 5.2 4절의 그 20칸) 첫 몇 번의 [시간 흐르기]가
+  // 미리 그려 둔 빈 칸을 채우는 것으로 보이게 하고, head 가 그 여유를
+  // 넘어서면 그때부터 줄이 실제로 길어진다 — r-8f21 칸은 왼쪽에 고정이라
+  // 오른쪽이 아무리 늘어도 지워지지 않는다.
+  const STRIP_LEFT_PAD = 7;
+  const STRIP_RIGHT_PAD = 12;
+  const STRIP_START = CD.val.offsetOf - STRIP_LEFT_PAD;
+
+  let head = CD.val.offsetOf;
+  let stripEnd = head + STRIP_RIGHT_PAD;
+  let topicCursors = M.initialCursors();
+  let activeReaderKey = CD.CONSUMERS[0].key;  // #plc-why 에서 굵게 볼 대상
+  let activeModeKey = null;                   // #plc-modes 에서 미리 보는 방식. null = 실제 방식
+
+  // 그 소비자의 실제 mode 와 지금 고른 방식이 다를 때만 가상의 「늦으면」을
+  // 만든다 — 고른 쪽이 실제보다 뜸하면(랭크가 크면) late(실제로 늦었을 때
+  // 잃는 것)를, 고른 쪽이 더 잦으면(랭크가 작으면) faster(더 빨리 해도
+  // 소용없는 이유)를 그대로 재사용한다. 새 문장을 짓지 않고 CONSUMERS 에
+  // 이미 있는 두 필드만 고쳐 보여 준다 — 조합마다 새 판단을 지어내지 않는다.
+  function lateFor(c) {
+    if (c.key !== activeReaderKey || activeModeKey === null || activeModeKey === c.mode) {
+      return c.late;
+    }
+    return MODE_RANK[activeModeKey] > MODE_RANK[c.mode] ? c.late : c.faster;
+  }
+
+  function drawTopicStrip() {
+    const host = $('plc-topic-strip');
+    host.innerHTML = '';
+    for (let o = STRIP_START; o <= stripEnd; o++) {
+      const written = o <= head;
+      const isTarget = o === CD.val.offsetOf;
+      const cell = el('div', 'plc-topic-cell' + (written ? '' : ' is-pending') + (isTarget ? ' is-target' : ''));
+      if (written) {
+        cell.appendChild(document.createTextNode(o.toLocaleString('en-US')));
+        if (isTarget) cell.appendChild(el('span', 'plc-topic-tag', CD.val.reqId));
+      }
+      host.appendChild(cell);
+    }
+  }
+
+  function theadRow(host, labels) {
+    const thead = el('thead');
+    const tr = el('tr');
+    labels.forEach(function (t) { tr.appendChild(el('th', null, t)); });
+    thead.appendChild(tr);
+    host.appendChild(thead);
+  }
+
+  // 커서 넷 — "몇 번까지 읽었나"(offset)와 "밀린 정도"(head 와의 차)만
+  // 기억한다는 4절의 개념을 그대로 표로 옮긴 것. 행을 누르면 그 소비자가
+  // #plc-why 에서 굵어진다.
+  function drawCursorTable() {
+    const table = $('plc-cursor-table');
+    table.innerHTML = '';
+    theadRow(table, ['읽는 쪽', '지금 읽은 곳', '밀린 정도']);
+    const tbody = el('tbody');
+    topicCursors.forEach(function (c) {
+      const r = reader(c.key);
+      const behind = head - c.offset;
+      const tr = el('tr', 'plc-cursor-row');
+      tr.dataset.reader = c.key;
+      tr.tabIndex = 0;
+      tr.setAttribute('role', 'button');
+      tr.setAttribute('aria-current', String(c.key === activeReaderKey));
+      tr.setAttribute('aria-label', r.name + ', 지금 읽은 곳 ' + c.offset.toLocaleString('en-US') +
+        ', 밀린 정도 ' + behind.toLocaleString('en-US') + '건. 눌러서 이유를 봅니다.');
+      tr.appendChild(el('td', null, r.name));
+      tr.appendChild(el('td', null, c.offset.toLocaleString('en-US')));
+      tr.appendChild(el('td', null, behind.toLocaleString('en-US') + '건'));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+
+  // 4-1 — 왜 그 주기라야 하나. CONSUMERS 의 why·late·faster 세 칸을 그대로
+  // 옮기고, 지금 굵게 볼 행(activeReaderKey)의 late 칸만 lateFor() 가 고른다.
+  function drawWhyTable() {
+    const table = $('plc-why');
+    table.innerHTML = '';
+    theadRow(table, ['읽는 쪽', '주기', '왜 그 주기라야 하나', '늦으면', '더 빨리 하면']);
+    const tbody = el('tbody');
+    CD.CONSUMERS.forEach(function (c) {
+      const tr = el('tr');
+      if (c.key === activeReaderKey) tr.className = 'is-active';
+      [c.name, c.deadline, c.why, lateFor(c), c.faster].forEach(function (t) {
+        tr.appendChild(el('td', null, t));
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+
+  // 4-2 — 읽는 방식은 셋. 행을 누르면 activeModeKey 가 바뀌고 drawWhyTable()
+  // 이 그 미리보기를 반영한다.
+  function drawModesTable() {
+    const table = $('plc-modes');
+    table.innerHTML = '';
+    theadRow(table, ['방식', '어떻게', '누가', '잡이 도는 시간']);
+    const tbody = el('tbody');
+    M.READ_MODES.forEach(function (m) {
+      const tr = el('tr', 'plc-mode-row');
+      tr.dataset.mode = m.key;
+      tr.tabIndex = 0;
+      tr.setAttribute('role', 'button');
+      tr.setAttribute('aria-current', String(m.key === activeModeKey));
+      tr.setAttribute('aria-label', m.name + ' 방식. 눌러서 「늦으면」 칸에 미리 봅니다.');
+      tr.appendChild(el('td', null, m.name));
+      tr.appendChild(el('td', null, m.how));
+      tr.appendChild(el('td', null, m.who));
+      tr.appendChild(el('td', null, m.jobHours != null ? m.jobHours + '시간' : '—'));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+
+  // 4-3 — 같은 클릭이 두 경로로 갑니다. 방식 이름은 손으로 다시 적지 않고
+  // M.READ_MODES 에서 그대로 가져온다 — 이름이 바뀌면 여기도 같이 바뀐다.
+  function buildTwoPaths() {
+    const host = $('plc-twopaths');
+    const batchMode = M.READ_MODES.filter(function (m) { return m.key === 'batch'; })[0];
+    const streamMode = M.READ_MODES.filter(function (m) { return m.key === 'stream'; })[0];
+
+    const grid = el('div', 'plc-twopaths-grid');
+
+    const trainCard = el('div', 'plc-twopath-card');
+    trainCard.appendChild(el('div', 'plc-twopath-head', '→ 학습 데이터'));
+    trainCard.appendChild(el('div', 'plc-twopath-body',
+      '내 학습 데이터는 「' + batchMode.name + '」에서 나옵니다.'));
+
+    const servingCard = el('div', 'plc-twopath-card');
+    servingCard.appendChild(el('div', 'plc-twopath-head', '→ 서빙 피처'));
+    servingCard.appendChild(el('div', 'plc-twopath-body',
+      '그런데 내 모델이 서빙될 때 쓰는 피처는 「' + streamMode.name + '」에서 나올 수 있습니다 (피처 스토어).'));
+
+    grid.appendChild(trainCard);
+    grid.appendChild(servingCard);
+    host.appendChild(grid);
+
+    host.appendChild(el('p', 'plc-lead',
+      '같은 클릭 한 건이 두 갈래로 갈라져 서로 다른 주기로 흐릅니다. ' +
+      '둘이 어긋나면 학습 때 본 값과 서빙 때 보는 값이 달라집니다.'));
+
+    const linkP = el('p', 'plc-lead');
+    linkP.appendChild(document.createTextNode('더 읽을거리 — '));
+    const link = document.createElement('a');
+    link.href = 'post.html?id=feature-store-serving';
+    link.textContent = '피처 스토어와 서빙';
+    linkP.appendChild(link);
+    host.appendChild(linkP);
+  }
+
+  function draw4() {
+    drawTopicStrip();
+    drawCursorTable();
+    drawWhyTable();
+    drawModesTable();
+  }
+
+  function bindCursorTable() {
+    const host = $('plc-cursor-table');
+    function pick(e) {
+      const tr = e.target.closest('.plc-cursor-row');
+      if (!tr) return;
+      activeReaderKey = tr.dataset.reader;
+      drawCursorTable();
+      drawWhyTable();
+    }
+    host.addEventListener('click', pick);
+    host.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (!e.target.closest('.plc-cursor-row')) return;
+      e.preventDefault();
+      pick(e);
+    });
+  }
+
+  function bindModesTable() {
+    const host = $('plc-modes');
+    function pick(e) {
+      const tr = e.target.closest('.plc-mode-row');
+      if (!tr) return;
+      activeModeKey = (activeModeKey === tr.dataset.mode) ? null : tr.dataset.mode;
+      drawModesTable();
+      drawWhyTable();
+    }
+    host.addEventListener('click', pick);
+    host.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (!e.target.closest('.plc-mode-row')) return;
+      e.preventDefault();
+      pick(e);
+    });
+  }
+
+  // [시간 흐르기]·[새벽이 왔다]·[처음으로] — 셋 다 head·topicCursors 를
+  // 바꾸고 draw4() 를 다시 부른다. [처음으로]는 M.resetTicks() 도 함께
+  // 불러야 한다 — 안 그러면 micro 소비자가 "다섯 번째"를 세는 회차가
+  // 이전 방문의 것을 이어받아 버튼을 눌러도 안 맞게 움직인다.
+  function bindTopicButtons() {
+    $('plc-tick').addEventListener('click', function () {
+      head += 1;
+      if (head > stripEnd) stripEnd = head;
+      topicCursors = M.tick(topicCursors, head);
+      draw4();
+    });
+
+    $('plc-dawn').addEventListener('click', function () {
+      topicCursors = topicCursors.map(function (c) {
+        return reader(c.key).mode === 'batch' ? { key: c.key, offset: head } : c;
+      });
+      draw4();
+    });
+
+    $('plc-topic-reset').addEventListener('click', function () {
+      M.resetTicks();
+      head = CD.val.offsetOf;
+      stripEnd = head + STRIP_RIGHT_PAD;
+      topicCursors = M.initialCursors();
+      activeReaderKey = CD.CONSUMERS[0].key;
+      activeModeKey = null;
+      draw4();
+    });
+  }
+
+  buildTwoPaths();
+  bindCursorTable();
+  bindModesTable();
+  bindTopicButtons();
+  draw4();
 })();

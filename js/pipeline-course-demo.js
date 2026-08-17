@@ -2,6 +2,9 @@
 // 파이프라인 코스 2페이지 — 화면
 //   js/pipeline-course-demo.js
 //
+// 이 파일은 rail·detail·1~2절만 갖고 있다. 3절부터(3~7절)는
+// js/pipeline-course-sections.js 에 있다.
+//
 // 구성은 넷이다 (js/api-course-demo.js 와 같은 얼개).
 //   0) 참조   — PipelineCourseModel 을 집어 온다
 //   1) 상태   — 지금 보고 있는 자리 번호(stopIndex)와 재생 타이머 하나

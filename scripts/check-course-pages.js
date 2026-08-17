@@ -53,6 +53,10 @@ const PAGES = [
       'plc-nokafka', 'plc-fanout',
       '보내는 쪽이 받는 쪽 넷을 다 알아야 합니다',
       '읽는 속도가 서로 달라도 됩니다',
+      // 4절 — topic 에 놓인 뒤 누가 언제 읽어 가나
+      'plc-topic', 'plc-why', 'plc-modes', 'plc-twopaths', 'feature-store-serving',
+      '읽어 가도 안 지워집니다',
+      '늦으면 무엇을 잃나',
     ],
   },
 ];

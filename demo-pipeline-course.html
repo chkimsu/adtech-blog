@@ -245,6 +245,67 @@
     /* 배지 배경 — 글자 폭만큼만(.plc-fo-badge-bg 는 badge() 가 텍스트 길이에 맞춰 짓는다) */
     .plc-fo-badge-bg { fill: var(--bg-primary); stroke: var(--border-color); stroke-width: 1; }
     .plc-fo-badge-text { font-family: var(--font-mono); font-size: 11px; font-weight: 700; fill: var(--text-secondary); }
+
+    /* ---- 4절 — topic 에 놓인 뒤 누가 언제 읽어 가나 ---- */
+    .plc-concepts { margin: 0 0 1.1rem; padding-left: 1.15rem; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.75; }
+    .plc-concepts li { margin-bottom: 0.4rem; }
+    .plc-concepts li:last-child { margin-bottom: 0; }
+
+    .plc-topic { margin: 1rem 0; }
+    .plc-topic-strip { display: flex; gap: 0.3rem; padding-bottom: 0.4rem; margin-bottom: 0.9rem; }
+    .plc-topic-cell {
+      flex: 0 0 auto; width: 3.7rem; padding: 0.5rem 0.3rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      text-align: center; font-family: var(--font-mono); font-size: 0.78rem;
+      color: var(--text-secondary); font-variant-numeric: tabular-nums; border-radius: 0;
+    }
+    /* 아직 안 쓰인 자리 — 테두리 모양 자체로 갈린다(색만이 아니다), 속은 비운다 */
+    .plc-topic-cell.is-pending { border-style: dashed; background: var(--bg-primary); }
+    /* r-8f21 자리 — 테두리 굵기·배경·굵은 글자·꼬리표 넷으로 갈린다 */
+    .plc-topic-cell.is-target {
+      border-color: var(--accent-primary); border-width: 2px;
+      background: var(--oxide-bg); color: var(--accent-primary); font-weight: 700;
+    }
+    .plc-topic-tag { display: block; margin-top: 0.2rem; font-size: 0.64rem; font-weight: 700; color: var(--accent-primary); }
+
+    table.plc-cursor-table, table.plc-why, table.plc-modes { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .plc-cursor-table th, .plc-cursor-table td,
+    .plc-why th, .plc-why td,
+    .plc-modes th, .plc-modes td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .plc-cursor-table th, .plc-why th, .plc-modes th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .plc-cursor-table td:first-child, .plc-why td:first-child, .plc-modes td:first-child { white-space: nowrap; }
+
+    /* 커서 행·방식 행 — 고른 것은 색만이 아니라 ▸ 글리프·굵기·바탕으로도 갈린다 */
+    .plc-cursor-row, .plc-mode-row { cursor: pointer; }
+    .plc-cursor-row:hover, .plc-mode-row:hover { background: var(--bg-tertiary); }
+    .plc-cursor-row[aria-current="true"], .plc-mode-row[aria-current="true"] { background: var(--navy-bg); }
+    .plc-cursor-row[aria-current="true"] td:first-child,
+    .plc-mode-row[aria-current="true"] td:first-child { color: var(--accent-secondary); font-weight: 700; }
+    .plc-cursor-row[aria-current="true"] td:first-child::before,
+    .plc-mode-row[aria-current="true"] td:first-child::before { content: "▸ "; }
+
+    .plc-why tr.is-active { background: var(--navy-bg); }
+    .plc-why tr.is-active td:first-child { color: var(--accent-secondary); font-weight: 700; }
+    .plc-why tr.is-active td:first-child::before { content: "▸ "; }
+
+    .plc-principle {
+      margin: 0.7rem 0 0; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      font-size: 0.92rem; line-height: 1.65; color: var(--text-primary);
+    }
+
+    .plc-topic-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.1rem; }
+
+    .plc-twopaths-grid { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.9rem 0; }
+    @media (min-width: 760px) {
+      .plc-twopaths-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .plc-twopath-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 0.85rem 1rem; min-width: 0; }
+    .plc-twopath-head { font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .plc-twopath-body { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); }
   </style>
 </head>
 
@@ -380,7 +441,40 @@
 
         <p class="plc-lead" id="plc-fanout-speed"></p>
       </section>
-      <section class="plc-sec" id="plc-sec4"><h2>4. topic 에 놓인 뒤 누가 언제 읽어 갑니까</h2></section>
+      <section class="plc-sec" id="plc-sec4">
+        <h2>4. topic 에 놓인 뒤 누가 언제 읽어 갑니까</h2>
+        <p class="plc-lead">남기는 개념은 넷뿐입니다. 나머지는 안 부릅니다.</p>
+        <ul class="plc-concepts">
+          <li>topic 은 이름 붙은 줄입니다.</li>
+          <li>줄마다 번호가 붙습니다.</li>
+          <li>읽는 쪽은 "내가 몇 번까지 읽었다"만 기억합니다. 그게 전부입니다.</li>
+          <li>읽어 가도 안 지워집니다.</li>
+        </ul>
+
+        <div class="plc-topic" id="plc-topic">
+          <div class="plc-topic-strip plc-scroll" id="plc-topic-strip"></div>
+          <div class="plc-scroll"><table class="plc-cursor-table" id="plc-cursor-table"></table></div>
+          <div class="plc-topic-btns">
+            <button type="button" id="plc-tick" class="btn-try">시간 흐르기</button>
+            <button type="button" id="plc-dawn" class="btn-try">새벽이 왔다</button>
+            <button type="button" id="plc-topic-reset" class="btn-try">처음으로</button>
+          </div>
+        </div>
+
+        <h3>왜 그 주기라야 합니까</h3>
+        <p class="plc-lead">위 표에서 읽는 쪽을 누르면 그 사정이 여기서 굵어집니다.</p>
+        <div class="plc-scroll"><table class="plc-why" id="plc-why"></table></div>
+        <p class="plc-principle">
+          주기는 "얼마나 빨리 볼 수 있나"가 아니라 "늦으면 무엇을 잃나"가 정합니다.
+        </p>
+
+        <h3>읽는 방식은 셋입니다</h3>
+        <p class="plc-lead">방식을 누르면 위에서 고른 읽는 쪽의 「늦으면」 칸이 그 방식을 썼을 때로 바뀝니다.</p>
+        <div class="plc-scroll"><table class="plc-modes" id="plc-modes"></table></div>
+
+        <h3>같은 클릭이 두 경로로 갑니다</h3>
+        <div id="plc-twopaths"></div>
+      </section>
       <section class="plc-sec" id="plc-sec5"><h2>5. 기다렸다 가져가도 됩니까</h2></section>
       <section class="plc-sec" id="plc-sec6"><h2>6. 그 주기를 지키려면 무엇이 필요합니까</h2></section>
       <section class="plc-sec" id="plc-sec7"><h2>7. 내 학습 데이터는 여기서 나옵니다</h2></section>

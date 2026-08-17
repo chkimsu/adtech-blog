@@ -136,6 +136,52 @@ eq('직행은 서버 메모리에 쌓인다',    M.holdTime('direct').where, '�
 eq('파일 경유가 가정하는 용량은 100GB', M.holdTime('file').capacity, D.val.fileGB + 'GB');
 eq('직행이 가정하는 용량은 512MB',      M.holdTime('direct').capacity, D.val.directMB + 'MB');
 
+console.log('\n한글 조사 — 받침 유무로 이/가·은/는·와/과 를 고르나 (3절 리뷰에서 model.js 로 옮김)');
+eq('예산 소진 확인 — 받침 있음 → 이',     M.iGa('예산 소진 확인'), '이');
+eq('실시간 대시보드 — 받침 없음 → 가',    M.iGa('실시간 대시보드'), '가');
+eq('광고주 리포트 — 받침 없음 → 가',      M.iGa('광고주 리포트'), '가');
+eq('모델 학습 — 받침 있음 → 이',          M.iGa('모델 학습'), '이');
+eq('마감 5초 — 받침 없음 → 는',          M.eunNeun('5초'), '는');
+eq('마감 2초 — 받침 없음 → 는',          M.eunNeun('2초'), '는');
+eq('마감 5분 — 받침 있음 → 은',          M.eunNeun('5분'), '은');
+eq('마감 다음 날 새벽 — 받침 있음 → 은',  M.eunNeun('다음 날 새벽'), '은');
+eq('모음으로 끝나면(바나나) 가',          M.iGa('바나나'), '가');
+eq('자음 받침으로 끝나면(사람) 이',       M.iGa('사람'), '이');
+eq('모음으로 끝나면(바나나) 는',          M.eunNeun('바나나'), '는');
+eq('자음 받침으로 끝나면(사람) 은',       M.eunNeun('사람'), '은');
+eq('모음으로 끝나면(바나나) 와',          M.waGwa('바나나'), '와');
+eq('자음 받침으로 끝나면(사람) 과',       M.waGwa('사람'), '과');
+
+console.log('\n4절 — topic 커서가 각자 속도로 따라가나');
+M.resetTicks();                                     // 회차가 남아 있으면 결과가 달라진다
+const head0 = D.val.offsetOf;                       // 8,412 가 지금 끝이다
+const c0 = M.initialCursors();
+eq('커서는 넷',                c0.length, 4);
+eq('커서 순서는 읽는 쪽 넷과 같다', c0.map(c => c.key), D.CONSUMERS.map(x => x.key));
+eq('대시보드는 끝에 붙어 있다',   c0.find(c => c.key === 'dash').offset, head0);
+eq('학습은 한참 뒤에 있다',       c0.find(c => c.key === 'train').offset < head0 - 100, true);
+
+const c1 = M.tick(c0, head0 + 10);
+eq('한 회 흐르면 대시보드는 새 끝', c1.find(c => c.key === 'dash').offset, head0 + 10);
+eq('학습은 안 움직인다',           c1.find(c => c.key === 'train').offset, c0.find(c => c.key === 'train').offset);
+eq('커서는 끝을 못 넘는다',        c1.every(c => c.offset <= head0 + 10), true);
+
+console.log('\n4절 — 회차가 남아 있으면 다섯 번째에서 리포트가 확 당기나 (resetTicks 로 초기화하고 시작)');
+M.resetTicks();
+let rc = M.initialCursors();
+let rHead = head0;
+for (let i = 0; i < 4; i++) { rHead++; rc = M.tick(rc, rHead); }
+eq('네 번째 회까지는 리포트가 안 움직인다', rc.find(c => c.key === 'report').offset, c0.find(c => c.key === 'report').offset);
+rHead++; rc = M.tick(rc, rHead);
+eq('다섯 번째 회에서 리포트가 head 로 확 당긴다', rc.find(c => c.key === 'report').offset, rHead);
+
+console.log('\n4절 — 읽는 방식은 셋');
+eq('방식 셋의 키',      M.READ_MODES.map(m => m.key), ['stream', 'micro', 'batch']);
+eq('붙어 있는 잡은 24시간', M.READ_MODES[0].jobHours, 24);
+
+console.log('\n4절 — 예산 소진이 늦으면 잃는 노출이 곱셈과 맞나');
+eq('5초에 13,195건', D.BUDGET_LATE_IMPRESSIONS, 13195);
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

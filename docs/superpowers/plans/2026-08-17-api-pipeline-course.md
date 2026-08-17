@@ -446,7 +446,7 @@ Create `demo-api-course.html`. `demo-cart-pipeline.html` 의 머리·내비를 �
         <div class="nav-actions">
           <a href="posts-browse.html" class="btn-demo">Posts</a>
           <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
-          <a href="demos.html" class="btn-demo">데모</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
           <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
           <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
         </div>
@@ -1525,7 +1525,9 @@ Expected: PASS
 
 - [ ] **Step 5: 2페이지 뼈대를 만든다**
 
-Create `demo-pipeline-course.html`. Task 2 의 1페이지 뼈대와 같은 머리, 내비, 스타일 얼개를 쓰되 접두사만 `plc-` 로 바꾼다. 제목은 「로그 한 줄이 학습 데이터가 되기까지」, 부제는 「자리를 눌러 무엇이 들어오고 무엇이 나가는지 보기」다.
+Create `demo-pipeline-course.html`. Task 2 의 1페이지 뼈대와 같은 머리, 내비, 스타일 얼개를 쓰되 접두사만 `plc-` 로 바꾼다.
+
+🔴 **내비의 「데모」 링크에 `btn-demo-active` 를 빠뜨리지 말 것.** `class="btn-demo btn-demo-active"` 다. 저장소의 데모 페이지 31장과 `demos.html` 이 전부 이것을 지킨다 — 지금 보고 있는 자리를 표시하는 클래스이고, 이 두 장도 `demos.html` 에 카드로 올라가는 데모 페이지다. 빠뜨려도 어떤 검사기도 안 잡는다. 제목은 「로그 한 줄이 학습 데이터가 되기까지」, 부제는 「자리를 눌러 무엇이 들어오고 무엇이 나가는지 보기」다.
 
 절 일곱을 껍데기로 둔다.
 

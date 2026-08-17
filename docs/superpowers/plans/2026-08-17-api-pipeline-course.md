@@ -76,9 +76,12 @@ DOM 모듈 둘은 기존 데모 관행대로 평범한 IIFE 다 (`js/cart-pipeli
 - Consumes: `posts/*.md` (읽기만)
 - Produces:
   - `CourseData.FACTS` — `{ [key]: { value, src, needle } }`
+  - `CourseData.val` — `FACTS` 에서 값만 꺼낸 지름길
   - `CourseData.CONSUMERS` — 읽는 쪽 넷의 배열
-  - `CourseData.HOPS` — 자리 7칸의 배열 (Task 7 이 쓴다)
-  - `CourseData.ENDPOINTS` — 주소 다섯의 배열 (Task 6 이 쓴다)
+  - `CourseData.BUDGET_LATE_IMPRESSIONS` — 13,195 (초당 2,639 × 5초)
+  - `CourseData.DEPLOY_STACKED_ROWS` — 52,780 (초당 2,639 × 20초)
+
+⚠ **`HOPS` 와 `ENDPOINTS` 는 이 작업의 산출물이 아니다.** `ENDPOINTS` 와 `NAMING` 은 Task 6 이 이 파일에 덧붙이고, `HOPS` 는 Task 7 이 `js/pipeline-course-model.js` 안에 만든다. 여기서 미리 만들지 말 것.
 
 - [ ] **Step 1: 검사기를 먼저 쓴다**
 

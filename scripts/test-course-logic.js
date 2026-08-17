@@ -77,6 +77,8 @@ eq('앱 SDK 줄은 어느 경우에도 있다',    [S.logsFor('A', s({ server: '
 console.log('\n3절 — 방식마다 나오는 줄이 글에 실린 그 줄과 같나');
 eq('C 방식 nginx 줄은 183 B',     S.byteLen(S.logsFor('C', S.defaultState(), okV).nginx), D.val.byteAccess);
 eq('C 방식 줄이 글에 실린 그 줄',   S.logsFor('C', S.defaultState(), okV).nginx, D.val.collectLine);
+eq('A 방식 nginx 줄이 글에 실린 그 줄', S.logsFor('A', S.defaultState(), okV).nginx, D.val.accessLineStd);
+eq('B 방식 nginx 줄도 A 와 같은 표준 줄', S.logsFor('B', S.defaultState(), okV).nginx, D.val.accessLineStd);
 eq('B 방식 앱 줄이 글에 실린 그 줄', S.logsFor('B', S.defaultState(), okV).event, D.val.eventLine);
 eq('C 줄에서 본문을 뺀 앞머리가 98 B',
    S.byteLen(S.logsFor('C', S.defaultState(), okV).nginx) - S.byteLen(S.bodyText(S.defaultState())),

@@ -19,6 +19,7 @@
   // ==========================================
 
   const S = window.ApiCourseServer;
+  const CD = window.CourseData;
 
   // ==========================================
   // 1) 상태
@@ -113,12 +114,6 @@
     { axis: '앱이 죽어 있으면', nginx: '남습니다. 502 라고 적힙니다', code: '안 남습니다' },
     { axis: '붙일 수 있는 값', nginx: 'nginx 가 아는 것만 — IP, 시각, 경로, 상태, 걸린 시간',
       code: 'DB를 뒤져 붙일 수 있습니다 — 캠페인 id, 광고주 id, 비용' },
-  ];
-
-  // C 방식을 고르면 같이 보이는 nginx 설정. posts/log-hops-to-kafka.md 80~81행 그대로다.
-  const LOG_FORMAT_LINES = [
-    "log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '",
-    '                   \'$request_time "$http_user_agent" $request_body\';',
   ];
 
   function el(tag, cls, text) {
@@ -405,7 +400,11 @@
     const fmt = el('div', 'apc-logformat');
     fmt.id = 'apc-logformat';
     fmt.appendChild(el('p', 'apc-logformat-caption', '이 설정이 본문을 접속 로그 줄에 그대로 붙입니다.'));
-    fmt.appendChild(el('pre', 'apc-logformat-code', LOG_FORMAT_LINES.join('\n')));
+    // CourseData.val.logFormat 은 posts/log-hops-to-kafka.md 의 두 줄을 개행으로
+    // 이은 값이다. 여기서 다시 박지 않는다 — 글이 바뀌면 check-course-data.js 가
+    // 잡아낸다. <pre> 가 그 개행을 그대로 줄바꿈으로 보여 준다.
+    const logFormatLines = CD.val.logFormat.split('\n');
+    fmt.appendChild(el('pre', 'apc-logformat-code', logFormatLines.join('\n')));
     fmt.appendChild(el('p', 'apc-logformat-note',
       '캠페인 id, 광고주 id, 비용은 이 줄에 없습니다. nginx 가 모르는 값입니다.'));
     host.appendChild(fmt);

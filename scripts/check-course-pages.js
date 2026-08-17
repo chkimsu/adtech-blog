@@ -14,7 +14,10 @@ const root = path.join(__dirname, '..');
 const PAGES = [
   {
     name: 'demo-api-course.html',
-    files: ['demo-api-course.html', 'js/api-course-server.js', 'js/api-course-demo.js'],
+    // js/course-data.js 도 본다 — 3절의 log_format 문구가 이제 거기 한 곳에만
+    // 있다(js/api-course-demo.js 는 CourseData.val.logFormat 을 그대로 읽어
+    // 쓴다). 안 넣으면 실제로 페이지가 쓰는 문구인데도 이 검사에서만 안 보인다.
+    files: ['demo-api-course.html', 'js/api-course-server.js', 'js/api-course-demo.js', 'js/course-data.js'],
     must: [
       'apc-sec1', 'apc-sec2', 'apc-sec3', 'apc-sec4', 'apc-sec5', 'apc-sec6',
       '골라 읽는 법',

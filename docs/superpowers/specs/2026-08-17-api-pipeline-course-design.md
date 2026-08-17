@@ -149,21 +149,32 @@ state = {
   ctype: true,                              // Content-Type 헤더
   auth: 'none' | 'token' | 'apikey',
   body: { req_id, ad_id, slot, event, ts }, // 각각 채움/비움
-  server: 'ok' | 'down' | 'slow'            // 2절
+  server: 'ok' | 'hostdown' | 'appdown' | 'slow'   // 2절
 }
 ```
 
+🔴 **서버 상태는 넷입니다.** 초안은 셋(`ok`·`down`·`slow`)이었는데 3절 표에 「앱 프로세스가 죽음(502)」과 「서버 장비가 안 뜸(연결 실패)」이 둘 다 있습니다. **둘은 다른 사건이고, 그 둘이 갈리는 것이 3절의 값입니다** — 앱이 죽어도 nginx 는 줄을 남깁니다.
+
 **판정 순서** — 위에서부터, 먼저 걸리는 것이 이깁니다.
 
-| 순서 | 조건 | 응답 |
-|---|---|---|
-| 1 | `server === 'down'` | 응답 없음 (연결 실패) |
-| 2 | 요구 인증과 다름 | `401 Unauthorized` |
-| 3 | `method !== 'POST'` | `405 Method Not Allowed` |
-| 4 | `ctype === false` | `415 Unsupported Media Type` |
-| 5 | `req_id`·`ad_id`·`event` 중 빈 것 | `400 Bad Request` |
-| 6 | `server === 'slow'` | 서버는 `204`, **앱은 타임아웃** |
-| 7 | 통과 | `204 No Content` |
+| 순서 | 조건 | 응답 | nginx 줄 |
+|---|---|---|---|
+| 1 | `server === 'hostdown'` | 응답 없음 (연결 실패) | **없음** |
+| 2 | `server === 'appdown'` | `502 Bad Gateway` | **남음** |
+| 3 | 요구 인증과 다름 | `401 Unauthorized` | 남음 |
+| 4 | `method !== 'POST'` | `405 Method Not Allowed` | 남음 |
+| 5 | `ctype === false` | `415 Unsupported Media Type` | 남음 |
+| 6 | `req_id`·`ad_id`·`event` 중 빈 것 | `400 Bad Request` | 남음 |
+| 7 | `server === 'slow'` | 서버는 `204`, **앱은 타임아웃** | 남음 |
+| 8 | 통과 | `204 No Content` | 남음 |
+
+**방식별로 어느 줄이 나오나** — 3절 스위치가 이것을 고릅니다.
+
+| 방식 | nginx 줄 | 앱이 남긴 줄 | 본문이 어디 있나 |
+|---|---|---|---|
+| A | 표준 형식 (본문 없음) | 없음 | **아무 데도 없습니다** |
+| B | 표준 형식 (본문 없음) | 있음 (`204` 일 때만) | 앱이 남긴 줄 |
+| C | `$request_body` 가 붙은 183 B | 없음 | nginx 줄 안 |
 
 `204` 를 고른 이유는 글에 이미 있습니다 — 본문 `{"ok":true}` 11바이트 × 하루 5,928만 = 652MB 이고 그 요금은 사용자가 냅니다.
 

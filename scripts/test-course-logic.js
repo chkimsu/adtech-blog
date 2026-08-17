@@ -116,10 +116,17 @@ for (let i = 1; i < M.HOPS.length; i++) {
 console.log('\n머무는 시간의 합이 글의 1,112 ms 와 맞나');
 eq('탭에서 Kafka 까지',        M.totalMs(), D.val.msToKafka);
 eq('가장 오래 머무는 자리는 파일', M.HOPS[2].dwellMs, D.val.msInFile);
+// 총합 1,112 만 지키면 앞 다섯을 아무렇게나 재배분해도 통과한다 — 그러면
+// 글이 밝힌 "1,076 + Kafka 자신의 36" 이라는 쪼갬이 조용히 깨진다. 두 조각을
+// 같이 pin 해서 그 재배분 자체를 막는다.
+eq('앞 다섯(sdk~logstash) 합은 1,076, Kafka 자신의 몫은 36',
+   [M.HOPS.slice(0, 5).reduce((sum, h) => sum + h.dwellMs, 0), M.HOPS[5].dwellMs],
+   [1076, 36]);
 
 console.log('\n자리마다 실제 줄이 나오나');
 eq('nginx 자리의 줄은 글의 그 줄',  M.textAt('nginx'), D.val.collectLine);
 eq('변환기 자리의 줄은 글의 그 줄', M.textAt('logstash'), D.val.finalLine);
+eq('Filebeat 봉투 자리도 글의 346 바이트', S.byteLen(M.textAt('beat')), D.val.byteEnvelope);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

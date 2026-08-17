@@ -77,6 +77,11 @@
     accessLineStd: v('10.2.31.7 - - [16/Aug/2026:16:48:21 +0900] "POST /v1/events HTTP/1.1" 204 0 "-" "AdSDK/3.2.1" 0.002', A),
     eventLine:     v('{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786002501234,"app_ver":"3.2.1"}', A),
     collectLine:   v('121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}', L),
+    // Filebeat 봉투 실물. collectLine 이 message 칸에 그대로 들어간 형태이고,
+    // 이 줄 전체가 posts/log-hops-to-kafka.md 154행에 있다 — 346바이트로
+    // FACTS.byteEnvelope 와도 맞는다. js/pipeline-course-model.js 가 조각을
+    // 손으로 짜맞추지 않고 이 값을 그대로 쓴다.
+    filebeatEnvelope: v('{"@timestamp":"2026-08-16T07:48:22.104Z","host":{"name":"web-03"},"log":{"file":{"path":"/var/log/nginx/event.log"},"offset":88213},"message":"121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 \\"AdSDK/3.2.1 (iPhone; iOS 19.2)\\" {\\"event\\":\\"click\\",\\"ad_id\\":9931,\\"slot\\":\\"main_top\\",\\"req_id\\":\\"r-8f21\\",\\"ts\\":1786002501234}"}', L),
     finalLine:     v('{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","campaign_id":5502,"advertiser_id":311,"cost":182.4,"media":"A앱","client_ip":"121.130.8.24","device":"iPhone","os":"iOS 19.2","event_time":"2026-08-16T16:48:21+09:00","ingest_time":"2026-08-16T16:48:22.104+09:00","status":204,"latency_ms":2}', L),
     impLine:       v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786000101}', K),
     labelLine:     v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","bid":182.4,"y":1}', K),
@@ -148,7 +153,7 @@
   // check-course-data.js 대조 대상이 아니다 — posts/gateway-ingress-router.md 의
   // 서술을 그대로 옮긴 것이다.
   const NAMING = [
-    { how: '자원 이름이 어차피 다르다', sample: '/v1/events 대 /v1/conversions', common: '가장 흔합니다', splitBy: '경로',
+    { how: '자원 이름이 원래 다름', sample: '/v1/events 대 /v1/conversions', common: '가장 흔합니다', splitBy: '경로',
       why: '앱은 클릭을, 광고주 서버는 전환을 보냅니다. 보내는 것이 다르니 주소가 다릅니다' },
     { how: '호스트로', sample: 'api.example.com 대 partner.example.com', common: '흔합니다', splitBy: '호스트',
       why: '인증, 한도, 방화벽을 호스트 단위로 겁니다. 문 앞에서 제일 먼저 갈립니다' },

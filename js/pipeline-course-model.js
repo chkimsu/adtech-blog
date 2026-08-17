@@ -42,19 +42,6 @@
     CONSUMERS.reduce(function (acc, c) { return acc.concat(c.product.split(', ')); }, [])
   )).join(', ');
 
-  // Filebeat 봉투 실물. 고정 메타 넷(@timestamp·host·log.file.path·log.offset)은
-  // posts/log-hops-to-kafka.md 154행의 그 줄을 그대로 옮긴 값이고, message 칸만
-  // V.collectLine 이다 — 그 글이 바뀌면 이 줄도 같이 바뀐다. 바이트 수가 346 이
-  // 되는지는 이 파일이 만들 때마다 스스로 참이 되고(문자열을 새로 짓지 않고
-  // JSON.stringify 로 만들므로), check-course-data.js 가 이미 지키는
-  // V.byteEnvelope=346 과 별도로 다시 셀 필요가 없다.
-  const FILEBEAT_ENVELOPE = JSON.stringify({
-    '@timestamp': '2026-08-16T07:48:22.104Z',
-    host: { name: 'web-03' },
-    log: { file: { path: '/var/log/nginx/event.log' }, offset: 88213 },
-    message: V.collectLine,
-  });
-
   const HOPS = [
     {
       key: 'sdk', name: '앱 SDK',
@@ -107,7 +94,7 @@
     sdk: V.eventLine,
     nginx: V.collectLine,
     file: V.collectLine,
-    beat: FILEBEAT_ENVELOPE,
+    beat: V.filebeatEnvelope,
     logstash: V.finalLine,
     kafka: 'topic ' + V.topicClick + ' / partition ' + V.partitionOf +
       ' / offset ' + V.offsetOf.toLocaleString('en-US') + '\n' + V.finalLine,

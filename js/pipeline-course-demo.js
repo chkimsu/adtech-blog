@@ -174,12 +174,14 @@
     data.appendChild(dataBody);
     inner.appendChild(data);
 
+    // .plc-detail-meta 가 이미 flex + gap 이라 이 둘은 별도 규칙이 없어도
+    // 나란히 놓인다 — 그래서 클래스 없는 평범한 span 으로 감싼다.
     const meta = el('div', 'plc-detail-meta');
-    const whoItem = el('span', 'plc-detail-meta-item');
+    const whoItem = el('span');
     whoItem.appendChild(el('span', 'plc-detail-meta-label', '누가 쓰나'));
     const who = el('span'); who.id = 'plc-who';
     whoItem.appendChild(who);
-    const productsItem = el('span', 'plc-detail-meta-item');
+    const productsItem = el('span');
     productsItem.appendChild(el('span', 'plc-detail-meta-label', '흔히 쓰는 제품'));
     const products = el('span'); products.id = 'plc-products';
     productsItem.appendChild(products);

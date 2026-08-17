@@ -506,7 +506,8 @@ Run: `node scripts/check-design.js demo-api-course.html`
 Expected: PASS — `✓ 1개 파일 디자인 게이트 통과`
 
 Run: `node scripts/check-course-pages.js`
-Expected: FAIL — 2페이지 앵커 7개가 아직 없다. **1페이지 줄이 하나도 안 나오면 그것이 통과 신호다.**
+Expected: FAIL — 줄 하나. `✗ demo-pipeline-course.html — 파일이 하나도 없습니다`
+(2페이지 파일이 아직 없으므로 검사기가 그 페이지를 건너뛴다. **`apc-` 로 시작하는 줄이 하나도 안 나오면 1페이지는 통과다.**)
 
 - [ ] **Step 5: 눈으로 본다**
 
@@ -547,6 +548,7 @@ git commit -m "feat(course): API 코스 1페이지 뼈대와 구조 검사기
   - `ApiCourseServer.defaultState()` → `{ caller, method, path, ctype, auth, body, server }`
   - `ApiCourseServer.evaluate(state)` → `{ status, reason, message, missing }`
   - `ApiCourseServer.appView(verdict)` → `{ ok, label }`
+  - `ApiCourseServer.bodyText(state)` → 요청 본문 JSON 문자열. **Task 4 의 `logsFor` 와 시험이 이것을 부른다. 반드시 내놓을 것**
   - `ApiCourseServer.requestText(state)` → HTTP 요청 원문 문자열
   - `ApiCourseServer.responseText(verdict)` → HTTP 응답 원문 문자열 (`no-response` 면 `null`)
   - `ApiCourseServer.byteLen(str)` → UTF-8 바이트 수
@@ -1455,7 +1457,23 @@ Expected: FAIL — `Cannot find module '../js/pipeline-course-model.js'`
 
 - [ ] **Step 3: 모델을 만든다**
 
-Create `js/pipeline-course-model.js`. 감싸개는 File Structure 절의 것을 쓰고 `root.PipelineCourseModel` 로 내놓는다.
+Create `js/pipeline-course-model.js`. 🔴 **감싸개가 CourseData 를 받아야 한다.** 이 모듈과 뒤 작업(Task 8, 10, 11)이 안에서 `V.*` 와 `CONSUMERS` 를 쓴다. `js/api-course-server.js` 와 **똑같은 모양**으로 짓는다.
+
+```js
+(function (root, factory) {
+  const api = factory(
+    typeof require === 'function' ? require('./course-data.js') : root.CourseData
+  );
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.PipelineCourseModel = api;
+})(typeof self !== 'undefined' ? self : globalThis, function (CourseData) {
+  'use strict';
+  const V = CourseData.val;
+  const CONSUMERS = CourseData.CONSUMERS;
+  // …
+  return { HOPS: HOPS, textAt: textAt, totalMs: totalMs };
+});
+```
 
 ```js
 // ===================================================================

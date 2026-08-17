@@ -45,6 +45,7 @@ const PAGES = [
     must: [
       'plc-sec1', 'plc-sec2', 'plc-sec3', 'plc-sec4', 'plc-sec5', 'plc-sec6', 'plc-sec7',
       '골라 읽는 법',
+      'plc-hold', 'plc-stopkafka', 'plc-tools', 'plc-nologstash', 'plc-nologstash-effect',
     ],
   },
 ];

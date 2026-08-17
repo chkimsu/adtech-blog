@@ -111,5 +111,12 @@
     return HOPS.reduce(function (sum, h) { return sum + h.dwellMs; }, 0);
   }
 
-  return { HOPS: HOPS, textAt: textAt, totalMs: totalMs };
+  // 1절 — Kafka 가 멈추면 어디에 쌓이나. 값은 글이 계산해 둔 것을 그대로 쓴다.
+  const HOLD = {
+    file: { where: '로컬 파일', hours: V.fileHours, mins: null, note: '앞단(앱, 웹서버)은 아무 영향을 안 받습니다' },
+    direct: { where: '서버 메모리', hours: null, mins: V.directMins, note: '광고 서버가 같이 위험해집니다' },
+  };
+  function holdTime(route) { return HOLD[route]; }
+
+  return { HOPS: HOPS, textAt: textAt, totalMs: totalMs, holdTime: holdTime };
 });

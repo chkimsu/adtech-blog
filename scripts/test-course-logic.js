@@ -128,6 +128,12 @@ eq('nginx 자리의 줄은 글의 그 줄',  M.textAt('nginx'), D.val.collectLin
 eq('변환기 자리의 줄은 글의 그 줄', M.textAt('logstash'), D.val.finalLine);
 eq('Filebeat 봉투 자리도 글의 346 바이트', S.byteLen(M.textAt('beat')), D.val.byteEnvelope);
 
+console.log('\n1절 — Kafka 가 멈췄을 때 어디에 얼마나 버티나');
+eq('파일 경유는 100GB 로 237시간', M.holdTime('file').hours, D.val.fileHours);
+eq('직행은 512MB 로 10.9분',       M.holdTime('direct').mins, D.val.directMins);
+eq('파일 경유는 파일에 쌓인다',      M.holdTime('file').where, '로컬 파일');
+eq('직행은 서버 메모리에 쌓인다',    M.holdTime('direct').where, '서버 메모리');
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

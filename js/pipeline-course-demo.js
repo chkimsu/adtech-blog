@@ -23,6 +23,9 @@
 
   const M = window.PipelineCourseModel;
   const HOPS = M.HOPS;
+  // 1~2절은 CONSUMERS(읽는 쪽 이름)만 CourseData 에서 직접 가져온다. 나머지
+  // 숫자는 전부 M(HOPS·holdTime·textAt)을 거친 것을 그대로 쓴다.
+  const CD = window.CourseData;
 
   // ==========================================
   // 1) 상태
@@ -30,6 +33,8 @@
 
   let stopIndex = 0;     // 0..HOPS.length-1 — 지금 rail 이 가리키는 자리
   let playTimer = null;  // 재생 중일 때만 setInterval id, 아니면 null
+  let stopKafkaOn = false;  // 1절 — [Kafka 멈추기] 스위치
+  let logstashOff = false;  // 2절 — [Logstash 끄기] 스위치
 
   const $ = (id) => document.getElementById(id);
 
@@ -46,6 +51,37 @@
     if (d === 0) return { text: '그대로 (0 B)', sign: 'same' };
     if (d > 0) return { text: '▲ +' + d + ' B', sign: 'grow' };
     return { text: '▾ ' + d + ' B', sign: 'shrink' };
+  }
+
+  // ---- 2절 — Filebeat 대 Logstash 다섯 줄 비교. 스펙 5.2 2절을 그대로 옮긴
+  // 것이라 숫자가 없다. 유일한 숫자(파싱 후 필드 수)는 여기 적지 않고
+  // M.textAt('logstash') 를 실제로 파싱해서 얻는다 — 아래 fieldCount() 참고.
+  const TOOL_ROWS = [
+    { axis: '하는 일', beat: '파일을 읽어 그대로 보냅니다', logstash: '한 줄을 필드로 쪼개고 붙입니다' },
+    { axis: '원문', beat: null, logstash: null }, // draw 시점에 채운다 — logstash 칸에 필드 수가 들어간다
+    { axis: '무겁나', beat: '가볍습니다 (Go, 메모리 수십 MB)', logstash: '무겁습니다 (JVM, 수백 MB~GB)' },
+    { axis: '어디에 두나', beat: '로그가 있는 서버마다', logstash: '따로 몇 대' },
+    { axis: '없으면', beat: '아무도 파일을 안 줍니다', logstash: 'Kafka 에 원문 문자열만 쌓입니다' },
+  ];
+
+  // Kafka 실제 payload(M.textAt('logstash'))를 그대로 파싱해서 필드 수를 센다.
+  // "15" 를 여기 손으로 적지 않는다 — 글이 바뀌면 이 값도 같이 바뀐다.
+  function finalFieldCount() {
+    return Object.keys(JSON.parse(M.textAt('logstash'))).length;
+  }
+
+  // ---- 2절 — [Logstash 끄기] 를 누르면 읽는 쪽 넷 중 누가 곤란해지는지.
+  // 이름은 CD.CONSUMERS 에서 그대로 가져오고(중복 등록 안 함), 곤란한 이유만
+  // 여기서 새로 적는다 — 브리프가 준 문장 그대로다.
+  const NOLOGSTASH_ORDER = ['dash', 'budget', 'report', 'train'];
+  const NOLOGSTASH_EFFECT = {
+    dash:   { breaks: true,  reason: '못 그립니다. 필드가 없어 집계할 것이 없습니다' },
+    budget: { breaks: true,  reason: null }, // draw 시점에 cost 를 code 로 감싼다
+    report: { breaks: true,  reason: '못 만듭니다' },
+    train:  { breaks: false, reason: '덜 곤란합니다. 어차피 자기가 파싱합니다' },
+  };
+  function consumerName(key) {
+    return CD.CONSUMERS.find(function (c) { return c.key === key; }).name;
   }
 
   // ==========================================
@@ -86,10 +122,65 @@
     $('plc-products').textContent = hop.products;
   }
 
+  // 1절 — [Kafka 멈추기]. 카드 둘의 수치·문구·색조를 전부 여기서 다시 그린다.
+  // 꺼져 있을 때는 두 카드 다 'idle' 이고, 켜지면 direct 는 'bad'(위험해짐),
+  // file 은 'good'(버팀)이 된다 — 색만이 아니라 칸의 글자 자체도 같이 갈린다.
+  function drawHold() {
+    const direct = M.holdTime('direct');
+    const file = M.holdTime('file');
+    const costMs = HOPS[2].dwellMs; // 파일 자리(HOPS[2]='file')가 640 을 들고 있다
+
+    $('plc-route-direct').dataset.tone = stopKafkaOn ? 'bad' : 'idle';
+    $('plc-route-file').dataset.tone = stopKafkaOn ? 'good' : 'idle';
+    $('plc-route-direct-stat').textContent = stopKafkaOn ? direct.mins + '분' : '—';
+    $('plc-route-file-stat').textContent = stopKafkaOn ? file.hours + '시간' : '—';
+    $('plc-route-direct-note').textContent = stopKafkaOn ? direct.note : 'Kafka 를 멈춰 보면 나옵니다';
+    $('plc-route-file-note').textContent = stopKafkaOn ? file.note : 'Kafka 를 멈춰 보면 나옵니다';
+    // 대가(640 ms)는 Kafka 상태와 무관하게 항상 참인 사실이라 스위치와 상관없이 보인다.
+    $('plc-route-direct-cost').textContent = '없음';
+    $('plc-route-file-cost').textContent = costMs + ' ms 를 더 기다립니다';
+
+    $('plc-stopkafka').setAttribute('aria-pressed', String(stopKafkaOn));
+  }
+
+  // 2절 — Kafka 가 실제로 받는 값. Logstash 가 켜져 있으면 파싱된 finalLine(15
+  // 필드), 꺼지면 message 한 칸짜리 원문이다. 원문은 손으로 짜맞추지 않고
+  // JSON.stringify 로 만든다 — 안에 든 따옴표를 직접 이스케이프하지 않기 위해서다.
+  function drawKafkaValue() {
+    if (logstashOff) {
+      $('plc-kafka-value').textContent = JSON.stringify({ message: M.textAt('file') });
+      $('plc-kafka-value-bytes').textContent = 'message 한 칸';
+    } else {
+      $('plc-kafka-value').textContent = M.textAt('logstash');
+      $('plc-kafka-value-bytes').textContent = HOPS[4].outBytes + ' B, 필드 ' + finalFieldCount() + '개';
+    }
+    $('plc-nologstash').setAttribute('aria-pressed', String(logstashOff));
+  }
+
+  // 2절 — [Logstash 끄기]. 꺼졌을 때만 표와 요약 문장을 보인다. 요약은 곤란해지는
+  // 이름을 CONSUMERS 에서 그때그때 모아 만든다 — 순서를 바꾸거나 이름이 바뀌어도
+  // 손으로 다시 안 맞춘다.
+  function drawEffect() {
+    const table = $('plc-nologstash-effect');
+    table.hidden = !logstashOff;
+    const note = $('plc-effect-note');
+    if (!logstashOff) { note.textContent = ''; return; }
+
+    const broken = NOLOGSTASH_ORDER
+      .filter(function (k) { return NOLOGSTASH_EFFECT[k].breaks; })
+      .map(consumerName)
+      .join(', ');
+    const fine = consumerName('train');
+    note.textContent = broken + '는 못 씁니다. ' + fine + '만 어차피 자기가 파싱하니 덜 곤란합니다.';
+  }
+
   function draw() {
     drawRail();
     drawDetail();
     syncRailHeight();
+    drawHold();
+    drawKafkaValue();
+    drawEffect();
   }
 
   // ==========================================
@@ -192,6 +283,81 @@
     host.appendChild(inner);
   }
 
+  // 표 하나를 헤더 배열과 행 배열로 짓는다(js/api-course-demo.js 의 buildSimpleTable
+  // 과 같은 모양). 셀 값은 문자열이거나 DOM 노드다.
+  function buildSimpleTable(hostId, headers, rows) {
+    const host = $(hostId);
+    const thead = el('thead');
+    const trh = el('tr');
+    headers.forEach(function (t) { trh.appendChild(el('th', null, t)); });
+    thead.appendChild(trh);
+    host.appendChild(thead);
+
+    const tbody = el('tbody');
+    rows.forEach(function (cells) {
+      const tr = el('tr');
+      cells.forEach(function (c) {
+        const td = el('td');
+        if (c && c.nodeType) td.appendChild(c); else td.textContent = c;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    host.appendChild(tbody);
+  }
+
+  // 글자 사이에 code 조각 하나를 끼운 span 을 만든다 — 필드 이름(cost, message)을
+  // 표시할 때 쓴다.
+  function withCode(before, code, after) {
+    const span = el('span');
+    if (before) span.appendChild(document.createTextNode(before));
+    span.appendChild(el('code', null, code));
+    if (after) span.appendChild(document.createTextNode(after));
+    return span;
+  }
+
+  // 1절 — 파일을 거치는 이유 셋. 640·237 은 손으로 적지 않고 HOPS·holdTime 에서 가져온다.
+  function buildReasons() {
+    const host = $('plc-reasons');
+    const reason1 = HOPS[2].dwellMs + ' ms 를 주고 ' + M.holdTime('file').hours + '시간을 삽니다';
+    [
+      reason1,
+      '광고 서버가 Kafka 클라이언트를 안 들고 있어도 됩니다. Kafka 주소가 바뀌어도 서버 배포가 필요 없습니다',
+      'nginx 가 이미 파일에 쓰고 있습니다. 새로 만드는 것이 아니라 있는 것을 줍는 것입니다',
+    ].forEach(function (text) { host.appendChild(el('li', null, text)); });
+  }
+
+  // 2절 — Filebeat 대 Logstash 다섯 줄. TOOL_ROWS 의 null 칸(원문 행의 logstash
+  // 칸)만 여기서 실측 필드 수로 채운다.
+  function buildTools() {
+    const rows = TOOL_ROWS.map(function (r) {
+      if (r.axis === '원문') {
+        return [r.axis, withCode('안 건드립니다 — ', 'message', ' 칸에 통째로'),
+          '파싱해서 ' + finalFieldCount() + '개 필드로'];
+      }
+      return [r.axis, r.beat, r.logstash];
+    });
+    buildSimpleTable('plc-tools', ['', 'Filebeat', 'Logstash'], rows);
+  }
+
+  // 2절 — Filebeat 봉투 실물. Logstash 상태와 무관하게 항상 같은 값이라 한 번만 짓는다.
+  function buildBeatBody() {
+    $('plc-beat-body').textContent = M.textAt('beat');
+    $('plc-beat-bytes').textContent = HOPS[3].outBytes + ' B';
+  }
+
+  // 2절 — [Logstash 끄기] 효과표. 행은 고정이고 draw()(drawEffect)가 hidden 만 바꾼다.
+  function buildEffect() {
+    const rows = NOLOGSTASH_ORDER.map(function (key) {
+      const info = NOLOGSTASH_EFFECT[key];
+      const status = el('span', 'plc-status', info.breaks ? '× 못 씀' : '▾ 영향 적음');
+      status.dataset.tone = info.breaks ? 'break' : 'mild';
+      const reason = key === 'budget' ? withCode('못 셉니다. ', 'cost', ' 가 필드로 안 나와 있습니다') : info.reason;
+      return [consumerName(key), status, reason];
+    });
+    buildSimpleTable('plc-nologstash-effect', ['읽는 쪽', '상태', 'Logstash 를 끄면'], rows);
+  }
+
   // ==========================================
   // 3) 바인딩 — state(stopIndex, playTimer) 를 바꾸고 draw() 를 부른다
   // ==========================================
@@ -239,8 +405,30 @@
     window.addEventListener('resize', syncRailHeight);
   }
 
+  // 1절 — Kafka 멈추기. rail 이 보는 stopIndex 와는 무관한 절 전용 스위치다.
+  function bindStopKafka() {
+    $('plc-stopkafka').addEventListener('click', function () {
+      stopKafkaOn = !stopKafkaOn;
+      draw();
+    });
+  }
+
+  // 2절 — Logstash 끄기.
+  function bindNoLogstash() {
+    $('plc-nologstash').addEventListener('click', function () {
+      logstashOff = !logstashOff;
+      draw();
+    });
+  }
+
   buildRail();
   buildDetail();
+  buildReasons();
+  buildTools();
+  buildBeatBody();
+  buildEffect();
   bindRail();
+  bindStopKafka();
+  bindNoLogstash();
   draw();
 })();

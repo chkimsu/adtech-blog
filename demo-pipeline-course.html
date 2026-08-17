@@ -135,6 +135,87 @@
       display: flex; flex-wrap: wrap; gap: 0.35rem 1.5rem; font-size: 0.85rem; color: var(--text-secondary);
     }
     .plc-detail-meta-label { font-weight: 700; color: var(--text-muted); margin-right: 0.35rem; }
+
+    /* ---- 1절 — 왜 파일을 거치나 ---- */
+    .plc-hold-grid { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 1rem 0; }
+    @media (min-width: 760px) {
+      .plc-hold-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .plc-route { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 0.85rem 1rem; min-width: 0; }
+    .plc-route-name { font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.6rem; }
+    .plc-route-row {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem;
+      padding: 0.4rem 0; border-top: 1px solid var(--border-color); font-size: 0.85rem;
+    }
+    .plc-route-row:first-of-type { border-top: none; }
+    .plc-route-row-label { color: var(--text-muted); flex: 0 0 auto; }
+    .plc-route-row-value { color: var(--text-secondary); text-align: right; }
+    /* 상태는 색만이 아니라 수치·문구 자체로도 갈린다(idle="—", bad="위험해지는 문구", good="버티는 문구") */
+    .plc-route-stat { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .plc-route[data-tone="idle"] .plc-route-stat { color: var(--text-muted); font-weight: 400; }
+    .plc-route[data-tone="bad"] .plc-route-stat { color: var(--state-bad); }
+    .plc-route[data-tone="good"] .plc-route-stat { color: var(--state-good); }
+
+    #plc-stopkafka[aria-pressed="true"] {
+      border-color: var(--state-bad); background: var(--oxide-bg); color: var(--state-bad); font-weight: 700;
+    }
+    #plc-stopkafka[aria-pressed="true"]::before { content: "▸ "; }
+
+    .plc-reasons { margin: 0; padding-left: 1.15rem; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.75; }
+    .plc-reasons li { margin-bottom: 0.4rem; }
+    .plc-reasons li:last-child { margin-bottom: 0; }
+
+    table.plc-tools { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .plc-tools th, .plc-tools td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .plc-tools th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .plc-tools td:first-child { color: var(--text-muted); white-space: nowrap; }
+    .plc-tools code { font-family: var(--font-mono); }
+
+    /* ---- 2절 — Filebeat 와 Logstash ---- */
+    .plc-pair { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.9rem 0; }
+    @media (min-width: 760px) {
+      .plc-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .plc-raw { border: 1px solid var(--border-color); background: var(--bg-secondary); min-width: 0; }
+    .plc-raw-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary); font-size: 0.78rem; font-weight: 700; color: var(--text-primary);
+    }
+    .plc-raw-head span { font-weight: 400; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .plc-raw pre {
+      margin: 0; padding: 0.7rem 0.85rem; font-size: 0.78rem; line-height: 1.6;
+      font-family: var(--font-mono); white-space: pre-wrap; word-break: break-all;
+      overflow-x: auto; overflow-y: auto; max-height: 9rem; color: var(--text-primary);
+    }
+
+    #plc-nologstash[aria-pressed="true"] {
+      border-color: var(--state-bad); background: var(--oxide-bg); color: var(--state-bad); font-weight: 700;
+    }
+    #plc-nologstash[aria-pressed="true"]::before { content: "▸ "; }
+
+    table.plc-nologstash-effect { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.9rem; }
+    .plc-nologstash-effect th, .plc-nologstash-effect td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .plc-nologstash-effect th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .plc-nologstash-effect td:first-child { white-space: nowrap; }
+    .plc-nologstash-effect[hidden] { display: none; }
+    /* 곤란한 정도는 색만이 아니라 상태 칸의 글자(못 씀/영향 적음)로도 갈린다 */
+    .plc-status { font-weight: 700; white-space: nowrap; }
+    .plc-status[data-tone="break"] { color: var(--state-bad); }
+    .plc-status[data-tone="mild"] { color: var(--state-good); }
+
+    .plc-effect-note {
+      margin: 0.7rem 0 0; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      font-size: 0.9rem; line-height: 1.65; color: var(--text-primary);
+    }
+    .plc-effect-note:empty { display: none; padding: 0; border: none; }
   </style>
 </head>
 
@@ -174,8 +255,84 @@
     <div class="plc-detail" id="plc-detail"></div>
 
     <div class="plc-page">
-      <section class="plc-sec" id="plc-sec1"><h2>1. 왜 곧장 안 보내고 파일에 떨굽니까</h2></section>
-      <section class="plc-sec" id="plc-sec2"><h2>2. Filebeat 와 Logstash 는 무엇이 다릅니까</h2></section>
+      <section class="plc-sec" id="plc-sec1">
+        <h2>1. 왜 곧장 안 보내고 파일에 떨굽니까</h2>
+        <p class="plc-lead">
+          앱은 Kafka 로 바로 보내지 않고 파일에 한 번 내려놓습니다. 왜 그런지는
+          Kafka 를 멈춰 보면 바로 보입니다.
+        </p>
+
+        <div class="plc-hold-grid" id="plc-hold">
+          <div class="plc-route" id="plc-route-direct" data-tone="idle">
+            <div class="plc-route-name">앱 → Kafka 직행</div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">Kafka 가 멈추면</span>
+              <span class="plc-route-row-value plc-route-stat" id="plc-route-direct-stat">—</span>
+            </div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">그 다음</span>
+              <span class="plc-route-row-value" id="plc-route-direct-note">—</span>
+            </div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">대가</span>
+              <span class="plc-route-row-value" id="plc-route-direct-cost">—</span>
+            </div>
+          </div>
+          <div class="plc-route" id="plc-route-file" data-tone="idle">
+            <div class="plc-route-name">앱 → 파일 → Filebeat → Kafka</div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">Kafka 가 멈추면</span>
+              <span class="plc-route-row-value plc-route-stat" id="plc-route-file-stat">—</span>
+            </div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">그 다음</span>
+              <span class="plc-route-row-value" id="plc-route-file-note">—</span>
+            </div>
+            <div class="plc-route-row">
+              <span class="plc-route-row-label">대가</span>
+              <span class="plc-route-row-value" id="plc-route-file-cost">—</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="plc-stopkafka" class="btn-try" aria-pressed="false">Kafka 멈추기</button>
+
+        <h3>파일을 거치는 이유는 셋입니다</h3>
+        <ol class="plc-reasons" id="plc-reasons"></ol>
+      </section>
+      <section class="plc-sec" id="plc-sec2">
+        <h2>2. Filebeat 와 Logstash 는 무엇이 다릅니까</h2>
+        <p class="plc-lead">
+          <strong>Filebeat 는 옮기기만 하고, Logstash 는 바꿉니다.</strong> 표로 보면 이렇습니다.
+        </p>
+        <div class="plc-scroll"><table class="plc-tools" id="plc-tools"></table></div>
+
+        <h3>Filebeat 봉투와 Logstash 출력</h3>
+        <p class="plc-lead">
+          Filebeat 가 담아 보낸 봉투와, Logstash 가 그것을 파싱한 결과를 나란히 봅니다.
+        </p>
+        <div class="plc-pair">
+          <div class="plc-raw plc-scroll">
+            <div class="plc-raw-head">Filebeat 봉투 <span id="plc-beat-bytes"></span></div>
+            <pre id="plc-beat-body"></pre>
+          </div>
+          <div class="plc-raw plc-scroll">
+            <div class="plc-raw-head">Kafka 가 받는 값 <span id="plc-kafka-value-bytes"></span></div>
+            <pre id="plc-kafka-value"></pre>
+          </div>
+        </div>
+
+        <h3>Logstash 를 끄면</h3>
+        <p class="plc-lead">
+          스위치를 누르면 Kafka 가 받는 값이 바뀌고, 그 값을 읽는 쪽 중 누가 곤란해지는지 보입니다.
+        </p>
+        <button type="button" id="plc-nologstash" class="btn-try" aria-pressed="false">Logstash 끄기</button>
+        <div class="plc-scroll"><table class="plc-nologstash-effect" id="plc-nologstash-effect" hidden></table></div>
+        <p class="plc-effect-note" id="plc-effect-note"></p>
+
+        <p class="plc-lead">
+          Logstash 를 안 두고 Kafka 에 원문을 넣은 뒤 Flink, Spark 가 파싱하는 방식도 흔합니다.
+        </p>
+      </section>
       <section class="plc-sec" id="plc-sec3"><h2>3. Kafka 로 모으는 이유</h2></section>
       <section class="plc-sec" id="plc-sec4"><h2>4. topic 에 놓인 뒤 누가 언제 읽어 갑니까</h2></section>
       <section class="plc-sec" id="plc-sec5"><h2>5. 기다렸다 가져가도 됩니까</h2></section>

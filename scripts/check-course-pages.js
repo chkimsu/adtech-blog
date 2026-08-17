@@ -36,7 +36,7 @@ const PAGES = [
       'Idempotency-Key',
       'apc-endpoints', 'apc-naming', 'apc-merge', 'apc-final',
       'demo-pipeline-course.html',
-      '자원 이름이 어차피 다르다',
+      '자원 이름이 어차피 다르기',
     ],
   },
   {

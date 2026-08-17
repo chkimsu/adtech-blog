@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="log-hops-to-kafka 편의 그 로그 한 줄이 학습 데이터가 되기까지 지나는 일곱 자리를 눌러 보는 인터랙티브 페이지. 앱 SDK에서 시작해 nginx, 로컬 파일, Filebeat, Logstash, Kafka를 거쳐 대시보드, 예산 소진 확인, 광고주 리포트, 모델 학습 네 소비자에게 닿기까지, 자리마다 무엇이 들어오고 무엇이 나가는지, 누가 그 자리를 쓰고 어떤 제품을 흔히 쓰는지 본다.">
+  <title>로그 한 줄이 학습 데이터가 되기까지 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===================================================================
+       파이프라인 코스 — demo-pipeline-course.html
+       색 값은 이 파일에도 js/pipeline-course-*.js 에도 hex 로 하나도 없다.
+       전부 var(--...) 다. 상태는 색만이 아니라 글자·글리프로도 갈린다.
+       =================================================================== */
+
+    .plc-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .plc-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .plc-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .plc-guide {
+      max-width: 1040px; margin: 1.25rem auto 1.5rem; padding: 1rem 1.25rem;
+      border: 1px dashed var(--border-color); background: var(--bg-secondary);
+      font-size: 0.9rem; line-height: 1.75; color: var(--text-secondary);
+    }
+    .plc-guide strong { color: var(--accent-primary); }
+    .plc-guide ul { margin: 0.6rem 0 0; padding-left: 1.1rem; }
+
+    .plc-page { max-width: 1040px; margin: 0 auto; padding: 0 1rem; }
+
+    .plc-sec { margin: 0 0 3rem; }
+    .plc-sec > h2 {
+      font-size: 1.35rem; margin: 0 0 0.35rem;
+      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
+    }
+    .plc-sec > .plc-lead { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.1rem; }
+
+    /* 넓은 것은 제 스크롤 상자 안에서만 넘친다 — 페이지가 가로로 안 밀리게 */
+    .plc-scroll { overflow-x: auto; }
+
+    /* ---- 줄(rail) + 자리 상세(detail) — 절 밖에서 페이지 위에 붙어 있다.
+       절을 읽는 내내 지금 어느 자리인지가 보여야 한다. rail 은 top:0 에,
+       detail 은 rail 실제 높이(js 가 재서 --plc-rail-h 에 넣는다) 만큼
+       내려서 붙는다 — 폭이 좁아 rail 이 두 줄이 되어도 겹치지 않는다. ---- */
+    .plc-rail {
+      position: sticky; top: 0; z-index: 30;
+      background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
+      padding: 0.6rem 1rem;
+    }
+    .plc-rail-controls {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 0.5rem 1rem; margin-bottom: 0.5rem;
+    }
+    .plc-rail-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .plc-rail-now { font-size: 0.82rem; color: var(--text-secondary); white-space: nowrap; }
+    .plc-rail-now strong { color: var(--accent-secondary); }
+
+    .plc-rail-stops {
+      display: flex; align-items: center; gap: 0.25rem;
+      overflow-x: auto; padding-bottom: 0.15rem;
+    }
+    .plc-stop {
+      flex: 0 0 auto; padding: 0.35rem 0.7rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      color: var(--text-primary); font-family: inherit; font-size: 0.8rem;
+      cursor: pointer; border-radius: 0; white-space: nowrap;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+    .plc-stop:hover { background: var(--bg-tertiary); }
+    /* 지금 자리는 색만이 아니라 글리프·굵기로도 갈린다 */
+    .plc-stop[aria-current="true"] {
+      border-color: var(--accent-secondary); background: var(--navy-bg);
+      color: var(--accent-secondary); font-weight: 700;
+    }
+    .plc-stop[aria-current="true"]::before { content: "▸ "; }
+    .plc-rail-arrow { flex: 0 0 auto; color: var(--text-muted); font-size: 0.8rem; }
+
+    .plc-detail {
+      position: sticky; top: var(--plc-rail-h, 3.7rem); z-index: 29;
+      background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 1rem 1rem;
+    }
+    .plc-detail-inner { max-width: 1040px; margin: 0 auto; }
+    .plc-detail-head {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
+      gap: 0.4rem 0.8rem; margin-bottom: 0.6rem;
+    }
+    .plc-detail-name { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+    .plc-detail-pos { font-size: 0.78rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+    .plc-detail-grid {
+      display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin-bottom: 0.7rem;
+    }
+    @media (min-width: 760px) {
+      .plc-detail-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .plc-detail-cell {
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      padding: 0.55rem 0.75rem; min-width: 0;
+    }
+    .plc-detail-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em;
+      color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem;
+    }
+    .plc-detail-bytes { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .plc-detail-text { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); }
+    /* 늘고 준 바이트는 색만이 아니라 부호 있는 숫자와 글리프로도 갈린다 */
+    .plc-detail-delta {
+      display: inline-block; margin-top: 0.3rem; font-size: 0.78rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .plc-detail-delta[data-sign="grow"] { color: var(--accent-secondary); }
+    .plc-detail-delta[data-sign="shrink"] { color: var(--accent-primary); }
+    .plc-detail-delta[data-sign="same"] { color: var(--text-muted); font-weight: 400; }
+
+    .plc-detail-data {
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      margin-bottom: 0.7rem;
+    }
+    .plc-detail-data-head {
+      padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-secondary);
+    }
+    .plc-detail-data-body {
+      margin: 0; padding: 0.6rem 0.75rem; font-size: 0.78rem; line-height: 1.6;
+      font-family: var(--font-mono); white-space: pre-wrap; word-break: break-all;
+      overflow-x: auto; overflow-y: auto; max-height: 7.2rem; color: var(--text-primary);
+    }
+    .plc-detail-meta {
+      display: flex; flex-wrap: wrap; gap: 0.35rem 1.5rem; font-size: 0.85rem; color: var(--text-secondary);
+    }
+    .plc-detail-meta-label { font-weight: 700; color: var(--text-muted); margin-right: 0.35rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="plc-hero">
+      <h1>로그 한 줄이 학습 데이터가 되기까지</h1>
+      <p>자리를 눌러 무엇이 들어오고 무엇이 나가는지 보기</p>
+    </section>
+
+    <div class="plc-guide">
+      <strong>골라 읽는 법</strong> — 절이 7개인 긴 페이지입니다. 처음부터 다 볼 필요 없습니다.
+      <ul>
+        <li>왜 파일을 거치는지, Filebeat 와 Logstash 차이만 → 1~2절</li>
+        <li>Kafka 를 왜 두는지만 → 3절</li>
+        <li>topic 에 놓인 뒤 누가 언제 읽어 가는지만 → 4~5절</li>
+        <li>내 학습 데이터가 어디서 나오는지만 → 6~7절</li>
+      </ul>
+    </div>
+
+    <div class="plc-rail" id="plc-rail"></div>
+    <div class="plc-detail" id="plc-detail"></div>
+
+    <div class="plc-page">
+      <section class="plc-sec" id="plc-sec1"><h2>1. 왜 곧장 안 보내고 파일에 떨굽니까</h2></section>
+      <section class="plc-sec" id="plc-sec2"><h2>2. Filebeat 와 Logstash 는 무엇이 다릅니까</h2></section>
+      <section class="plc-sec" id="plc-sec3"><h2>3. Kafka 로 모으는 이유</h2></section>
+      <section class="plc-sec" id="plc-sec4"><h2>4. topic 에 놓인 뒤 누가 언제 읽어 갑니까</h2></section>
+      <section class="plc-sec" id="plc-sec5"><h2>5. 기다렸다 가져가도 됩니까</h2></section>
+      <section class="plc-sec" id="plc-sec6"><h2>6. 그 주기를 지키려면 무엇이 필요합니까</h2></section>
+      <section class="plc-sec" id="plc-sec7"><h2>7. 내 학습 데이터는 여기서 나옵니다</h2></section>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/course-data.js"></script>
+  <script src="js/pipeline-course-model.js"></script>
+  <script src="js/pipeline-course-demo.js"></script>
+</body>
+
+</html>

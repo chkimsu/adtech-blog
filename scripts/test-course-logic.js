@@ -4,6 +4,7 @@
 //   node scripts/test-course-logic.js
 const S = require('../js/api-course-server.js');
 const D = require('../js/course-data.js');
+const M = require('../js/pipeline-course-model.js');
 
 let pass = 0, fail = 0;
 function eq(name, got, want) {
@@ -96,6 +97,29 @@ const withKey = S.retryInflation(true);
 eq('요청 번호를 붙이면 1,000', withKey.reported, 1000);
 eq('그때 CPA 는 5,000',        withKey.cpa, 5000);
 eq('회차표 자체는 useKey 와 무관하다', withKey.rounds, noKey.rounds);
+
+console.log('\n2페이지 — 자리 7칸의 바이트가 글의 사슬과 맞나');
+eq('자리는 일곱',            M.HOPS.length, 7);
+eq('자리 이름 순서',          M.HOPS.map(h => h.key), ['sdk', 'nginx', 'file', 'beat', 'logstash', 'kafka', 'readers']);
+eq('앱 SDK 는 110 에서 85',   [M.HOPS[0].inBytes, M.HOPS[0].outBytes], [D.val.byteObject, D.val.byteHttpBody]);
+eq('nginx 는 85 에서 183',    [M.HOPS[1].inBytes, M.HOPS[1].outBytes], [D.val.byteHttpBody, D.val.byteAccess]);
+eq('파일은 그대로 지나간다',    [M.HOPS[2].inBytes, M.HOPS[2].outBytes], [D.val.byteAccess, D.val.byteAccess]);
+eq('에이전트는 183 에서 346', [M.HOPS[3].inBytes, M.HOPS[3].outBytes], [D.val.byteAccess, D.val.byteEnvelope]);
+eq('변환기는 346 에서 309',   [M.HOPS[4].inBytes, M.HOPS[4].outBytes], [D.val.byteEnvelope, D.val.byteFinal]);
+eq('Kafka 는 값을 안 바꾼다',  [M.HOPS[5].inBytes, M.HOPS[5].outBytes], [D.val.byteFinal, D.val.byteFinal]);
+
+console.log('\n앞 자리의 나간 것이 다음 자리의 들어온 것과 이어지나');
+for (let i = 1; i < M.HOPS.length; i++) {
+  eq(`${M.HOPS[i - 1].key} → ${M.HOPS[i].key}`, M.HOPS[i].inBytes, M.HOPS[i - 1].outBytes);
+}
+
+console.log('\n머무는 시간의 합이 글의 1,112 ms 와 맞나');
+eq('탭에서 Kafka 까지',        M.totalMs(), D.val.msToKafka);
+eq('가장 오래 머무는 자리는 파일', M.HOPS[2].dwellMs, D.val.msInFile);
+
+console.log('\n자리마다 실제 줄이 나오나');
+eq('nginx 자리의 줄은 글의 그 줄',  M.textAt('nginx'), D.val.collectLine);
+eq('변환기 자리의 줄은 글의 그 줄', M.textAt('logstash'), D.val.finalLine);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

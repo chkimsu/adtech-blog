@@ -186,6 +186,36 @@
     };
   }
 
+  // ------------------------------------------------------------------
+  // 4절 — 응답이 오는 길에서 유실되면 부르는 쪽이 다시 보낸다.
+  // 서버는 매번 성공적으로 기록하므로 그 재시도가 그대로 행이 된다.
+  // 회차 숫자는 posts/api-kinds-and-contracts.md 3절의 표를 그대로 쓴다.
+  // 지어낸 비율로 다시 계산하지 않는다 — 글과 어긋난다.
+  // ------------------------------------------------------------------
+  const RETRY_ROUNDS = [
+    { sent: 1000, lost: 150 },
+    { sent: 150, lost: 25 },
+    { sent: 25, lost: 5 },
+    { sent: 5, lost: 0 },
+  ];
+  const RETRY_SPEND = 5000000;   // 실제 전환 1,000건 × 진짜 CPA ₩5,000
+
+  function retryInflation(useKey) {
+    let cum = 0;
+    const rounds = RETRY_ROUNDS.map(function (r) {
+      cum += r.sent;
+      return { sent: r.sent, lost: r.lost, cumulative: cum };
+    });
+    const real = RETRY_ROUNDS[0].sent;
+    const reported = useKey ? real : cum;
+    return {
+      rounds: rounds,
+      real: real,
+      reported: reported,
+      cpa: Math.round(RETRY_SPEND / reported),
+    };
+  }
+
   return {
     defaultState: defaultState,
     evaluate: evaluate,
@@ -195,6 +225,7 @@
     responseText: responseText,
     byteLen: byteLen,
     logsFor: logsFor,
+    retryInflation: retryInflation,
     WANT_AUTH: WANT_AUTH,
     REQUIRED: REQUIRED,
   };

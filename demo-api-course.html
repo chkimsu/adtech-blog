@@ -175,6 +175,36 @@
       font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
     }
     .apc-axes td:first-child { color: var(--text-muted); white-space: nowrap; }
+
+    /* ---- 4절 — 앱이 부르냐 서버가 부르냐 ---- */
+    .apc-caller { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+
+    table.apc-compare { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .apc-compare th, .apc-compare td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .apc-compare th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .apc-compare td:first-child { color: var(--text-muted); white-space: nowrap; }
+
+    table.apc-retry { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.9rem; }
+    .apc-retry th, .apc-retry td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .apc-retry th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .apc-retry td { font-variant-numeric: tabular-nums; }
+
+    .apc-retry-note {
+      margin: 0.9rem 0 0; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      font-size: 0.92rem; line-height: 1.6; color: var(--text-primary);
+    }
+    /* 선택 상태는 색만이 아니라 굵기, 글리프로도 드러난다 (다른 pick 버튼과 같은 규칙) */
+    #apc-idem[aria-pressed="true"] {
+      border-color: var(--accent-secondary); background: var(--navy-bg); color: var(--accent-secondary); font-weight: 700;
+    }
+    #apc-idem[aria-pressed="true"]::before { content: "▸ "; }
   </style>
 </head>
 
@@ -261,6 +291,36 @@
       </section>
       <section class="apc-sec" id="apc-sec4">
         <h2>4. 부르는 쪽이 앱이냐 다른 서버냐</h2>
+        <p class="apc-lead">
+          같은 일을 하는데 부르는 쪽이 달라지면 요청도, 인증도, 검사도, 남는 로그도 달라집니다.
+          아래 스위치를 바꾸면 위의 1~3절이 통째로 그에 맞게 바뀝니다.
+        </p>
+        <div class="apc-caller" id="apc-caller"></div>
+        <div class="apc-scroll"><table class="apc-compare" id="apc-compare"></table></div>
+        <p class="apc-lead">
+          위 표의 사용자 토큰은 앱이 부를 때 흔히 쓰는 인증 방식입니다. 이 페이지의 <code>/v1/events</code>
+          주소는 예외로, 자격증명을 아예 받지 않고 앱이 보낸 값을 전부 다시 검사합니다. 2절에서 사용자
+          토큰을 골라 401을 받은 것은 이 때문입니다.
+        </p>
+
+        <div class="apc-raw apc-scroll">
+          <div class="apc-raw-head">광고주 서버가 보내는 실제 요청</div>
+          <pre>POST /v1/conversions HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+Idempotency-Key: O-00042
+
+{"click_id":"ck-8f21","order_id":"O-00042","value":39000,"ts":1786002501}</pre>
+        </div>
+
+        <h3>재시도가 만드는 것</h3>
+        <p class="apc-lead">
+          서버 쪽으로 부를 때만 생기는 일입니다. 앱은 못 닿으면 그냥 사라지는데,
+          서버는 다시 보냅니다. 응답이 오는 길에서 유실되면 서버는 매번 새로 기록합니다.
+        </p>
+        <button type="button" id="apc-idem" class="btn-try" aria-pressed="false">요청 번호 붙이기</button>
+        <div class="apc-scroll"><table class="apc-retry" id="apc-retry"></table></div>
+        <p class="apc-retry-note" id="apc-retry-note"></p>
       </section>
       <section class="apc-sec" id="apc-sec5">
         <h2>5. 그래서 주소 이름을 나눕니까</h2>

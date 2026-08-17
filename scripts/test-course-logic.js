@@ -84,6 +84,18 @@ eq('C 줄에서 본문을 뺀 앞머리가 98 B',
    S.byteLen(S.logsFor('C', S.defaultState(), okV).nginx) - S.byteLen(S.bodyText(S.defaultState())),
    D.val.bytePrefix);
 
+console.log('\n4절 — 재시도가 리포트를 부풀리는 것이 글의 숫자와 맞나');
+const noKey = S.retryInflation(false);
+eq('회차별로 보낸 건수',   noKey.rounds.map(r => r.sent), [1000, 150, 25, 5]);
+eq('회차별 유실',          noKey.rounds.map(r => r.lost), [150, 25, 5, 0]);
+eq('리포트 누적은 1,180',   noKey.reported, D.val.reportInflated);
+eq('실제는 1,000 그대로',   noKey.real, 1000);
+eq('CPA 가 4,237 로 싸 보임', noKey.cpa, D.val.cpaInflated);
+
+const withKey = S.retryInflation(true);
+eq('요청 번호를 붙이면 1,000', withKey.reported, 1000);
+eq('그때 CPA 는 5,000',        withKey.cpa, 5000);
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

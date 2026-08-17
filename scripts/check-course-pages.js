@@ -14,10 +14,12 @@ const root = path.join(__dirname, '..');
 const PAGES = [
   {
     name: 'demo-api-course.html',
-    // js/course-data.js 도 본다 — 3절의 log_format 문구가 이제 거기 한 곳에만
-    // 있다(js/api-course-demo.js 는 CourseData.val.logFormat 을 그대로 읽어
-    // 쓴다). 안 넣으면 실제로 페이지가 쓰는 문구인데도 이 검사에서만 안 보인다.
-    files: ['demo-api-course.html', 'js/api-course-server.js', 'js/api-course-demo.js', 'js/course-data.js'],
+    // js/course-data.js 는 안 본다 — 그 파일은 두 코스 페이지가 같이 쓰는 공용
+    // 데이터라, 넣으면 "공용 데이터에 문구가 있나"만 보게 되고 "1페이지가 실제로
+    // 그 문구를 그리나"는 못 본다. 3절의 C-모드 설정 노출 블록을 통째로 지워도
+    // js/course-data.js 만 보고 있으면 이 검사는 못 잡는다. 그래서 그 문구 자체
+    // 대신 1페이지 자기 렌더링 코드에만 있는 id(`apc-logformat`)를 본다.
+    files: ['demo-api-course.html', 'js/api-course-server.js', 'js/api-course-demo.js'],
     must: [
       'apc-sec1', 'apc-sec2', 'apc-sec3', 'apc-sec4', 'apc-sec5', 'apc-sec6',
       '골라 읽는 법',
@@ -25,7 +27,9 @@ const PAGES = [
       'apc-res', 'apc-verdict', 'apc-codes', 'apc-fake200',
       'apc-layers', 'apc-modes', 'apc-logs', 'apc-axes',
       'nginx 워커 프로세스가 남김', '우리가 짠 핸들러 함수가 남김',
-      'log_format collect',
+      'apc-logformat',
+      'apc-caller', 'apc-compare', 'apc-retry', 'apc-idem',
+      'Idempotency-Key',
     ],
   },
   {

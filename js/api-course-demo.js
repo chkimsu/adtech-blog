@@ -38,6 +38,8 @@
   // 3절 전용 상태 하나 — 어느 방식(A/B/C)을 보고 있는지. 위 둘과 마찬가지로
   // ApiCourseServer 의 state 모양이 아니라 이 화면만의 것이라 따로 둔다.
   let logMode = 'A';
+  // 4절 전용 스위치 — 재시도에 요청 번호를 붙였는지. S.retryInflation(useKey) 의 인자로만 쓴다.
+  let useKey = false;
 
   const $ = (id) => document.getElementById(id);
 
@@ -114,6 +116,27 @@
     { axis: '앱이 죽어 있으면', nginx: '남습니다. 502 라고 적힙니다', code: '안 남습니다' },
     { axis: '붙일 수 있는 값', nginx: 'nginx 가 아는 것만 — IP, 시각, 경로, 상태, 걸린 시간',
       code: 'DB를 뒤져 붙일 수 있습니다 — 캠페인 id, 광고주 id, 비용' },
+  ];
+
+  // ---- 4절 — 부르는 쪽이 앱이냐 다른 서버냐 ----
+
+  // 스위치 2택. 고르면 state.caller 뿐 아니라 path, auth 기본값도 같이 바뀐다 (buildCaller 에서 처리).
+  const CALLER_OPTS = [
+    { v: 'app', t: '앱이 부릅니다' },
+    { v: 'server', t: '광고주 서버가 부릅니다' },
+  ];
+
+  // 축 여덟 비교표. 스펙 4.2 4절의 표를 그대로 옮긴 것이다 (가운뎃점만 쉼표로 바꿨다 — 이 트랙의
+  // 나열 구분자 규칙).
+  const COMPARE_ROWS = [
+    { axis: '누가 부르나', app: '앱, 브라우저', server: '광고주 서버, 매체 서버' },
+    { axis: '인증', app: '사용자 토큰 (사람 단위)', server: 'API 키, 서명 (회사 단위)' },
+    { axis: '비밀키를 실을 수 있나', app: '못 싣습니다', server: '실을 수 있습니다' },
+    { axis: '보낸 값을 믿나', app: '안 믿고 다시 검사합니다', server: '상대적으로 믿습니다' },
+    { axis: '못 닿으면', app: '그냥 사라집니다', server: '재시도합니다' },
+    { axis: '건수와 두께', app: '많고 얇습니다 (초당 686)', server: '적고 두껍습니다 (하루 1,000)' },
+    { axis: '오는 시각', app: '사람이 누른 그때', server: '몇 분 뒤 몰아서 올 수 있습니다' },
+    { axis: '남는 IP', app: '사용자 IP', server: '서버 IP (고정)' },
   ];
 
   function el(tag, cls, text) {
@@ -203,6 +226,38 @@
     $('apc-logformat').hidden = logMode !== 'C';
   }
 
+  // 4절 — 캡션 버튼(앱/서버) 눌림 표시만 한다. 비교표는 상태와 무관해 여기서 안 만진다.
+  function drawCaller() {
+    markChoiceGroup($('apc-caller'), state.caller);
+  }
+
+  // 4절 — 회차표와 note 를 다시 그린다. ideal 은 항상 요청 번호를 붙였다고 가정한 참값
+  // 기준(real=1000, cpa=5000)이고, r 은 지금 스위치(useKey) 를 반영한 값이다. 회차별
+  // sent/lost/cumulative 는 useKey 와 무관하게 항상 같다 — 실제로 몇 번 다시 보냈는지는
+  // 바뀌지 않고, 그것을 리포트가 몇 건으로 세느냐만 바뀐다.
+  function drawRetry() {
+    const ideal = S.retryInflation(true);
+    const r = S.retryInflation(useKey);
+
+    const tbody = $('apc-retry').querySelector('tbody');
+    tbody.innerHTML = '';
+    r.rounds.forEach(function (row, i) {
+      const tr = el('tr');
+      tr.appendChild(el('td', null, String(i + 1)));
+      tr.appendChild(el('td', null, row.sent.toLocaleString('en-US')));
+      tr.appendChild(el('td', null, row.lost.toLocaleString('en-US')));
+      tr.appendChild(el('td', null, row.cumulative.toLocaleString('en-US')));
+      tbody.appendChild(tr);
+    });
+
+    $('apc-idem').setAttribute('aria-pressed', String(useKey));
+    $('apc-retry-note').textContent =
+      '실제 전환 ' + ideal.real.toLocaleString('en-US') + '건이 리포트에 ' +
+      r.reported.toLocaleString('en-US') + '건으로 잡힙니다. 진짜 CPA 는 ₩' +
+      ideal.cpa.toLocaleString('en-US') + '인데 리포트에는 ₩' +
+      r.cpa.toLocaleString('en-US') + '로 뜹니다.';
+  }
+
   function drawFake200() {
     $('apc-fake200').setAttribute('aria-pressed', String(fake200On));
     const note = $('apc-fake200-note');
@@ -215,6 +270,7 @@
   }
 
   function draw() {
+    drawCaller();
     drawControls();
     drawServerState();
     drawRequest();
@@ -225,7 +281,8 @@
     drawCodes(v);
     drawFake200();
     drawLogs();
-    // 절이 늘 때마다 여기에 한 줄씩 더한다 (drawCompare, …)
+    drawRetry();
+    // 절이 늘 때마다 여기에 한 줄씩 더한다
   }
 
   // ==========================================
@@ -403,8 +460,7 @@
     // CourseData.val.logFormat 은 posts/log-hops-to-kafka.md 의 두 줄을 개행으로
     // 이은 값이다. 여기서 다시 박지 않는다 — 글이 바뀌면 check-course-data.js 가
     // 잡아낸다. <pre> 가 그 개행을 그대로 줄바꿈으로 보여 준다.
-    const logFormatLines = CD.val.logFormat.split('\n');
-    fmt.appendChild(el('pre', 'apc-logformat-code', logFormatLines.join('\n')));
+    fmt.appendChild(el('pre', 'apc-logformat-code', CD.val.logFormat));
     fmt.appendChild(el('p', 'apc-logformat-note',
       '캠페인 id, 광고주 id, 비용은 이 줄에 없습니다. nginx 가 모르는 값입니다.'));
     host.appendChild(fmt);
@@ -429,6 +485,54 @@
     host.appendChild(tbody);
   }
 
+  // 4절 — 앱/서버 2택. 고르면 state.caller 와 함께 path, auth 기본값도 같이 바꾼다.
+  // (`server` 면 /v1/conversions 와 apikey, `app` 이면 /v1/events 와 none으로 되돌아간다.)
+  function buildCaller() {
+    const host = $('apc-caller');
+    buildChoiceGroup(host, CALLER_OPTS);
+    bindPick(host, function (v) {
+      state.caller = v;
+      if (v === 'server') {
+        state.path = '/v1/conversions';
+        state.auth = 'apikey';
+      } else {
+        state.path = '/v1/events';
+        state.auth = 'none';
+      }
+    });
+  }
+
+  // 4절 — 비교표는 state 와 무관한 고정 내용이라 한 번만 짓는다.
+  function buildCompare() {
+    const host = $('apc-compare');
+    const thead = el('thead');
+    const trh = el('tr');
+    ['축', '앱이 부를 때', '서버가 부를 때'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
+    thead.appendChild(trh);
+    host.appendChild(thead);
+
+    const tbody = el('tbody');
+    COMPARE_ROWS.forEach(function (r) {
+      const tr = el('tr');
+      tr.appendChild(el('td', null, r.axis));
+      tr.appendChild(el('td', null, r.app));
+      tr.appendChild(el('td', null, r.server));
+      tbody.appendChild(tr);
+    });
+    host.appendChild(tbody);
+  }
+
+  // 4절 — 회차표의 머리글만 한 번 짓는다. tbody 내용은 drawRetry() 가 매번 채운다.
+  function buildRetry() {
+    const host = $('apc-retry');
+    const thead = el('thead');
+    const trh = el('tr');
+    ['회차', '보낸 건수', '응답 유실', '누적'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
+    thead.appendChild(trh);
+    host.appendChild(thead);
+    host.appendChild(el('tbody'));
+  }
+
   function bindSend() {
     $('apc-send').addEventListener('click', function () {
       sent = true;
@@ -443,6 +547,14 @@
     });
   }
 
+  // 4절 — 요청 번호 붙이기. 실제 서버 상태는 안 건드리고 리포트 집계 방식(useKey)만 뒤집는다.
+  function bindIdem() {
+    $('apc-idem').addEventListener('click', function () {
+      useKey = !useKey;
+      draw();
+    });
+  }
+
   buildControls();
   buildServerState();
   buildCodes();
@@ -450,7 +562,11 @@
   buildModes();
   buildLogs();
   buildAxes();
+  buildCaller();
+  buildCompare();
+  buildRetry();
   bindSend();
   bindFake200();
+  bindIdem();
   draw();
 })();

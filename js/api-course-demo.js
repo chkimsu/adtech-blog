@@ -34,6 +34,9 @@
   //               고정된 예시 응답을 보여 준다.
   let sent = false;
   let fake200On = false;
+  // 3절 전용 상태 하나 — 어느 방식(A/B/C)을 보고 있는지. 위 둘과 마찬가지로
+  // ApiCourseServer 의 state 모양이 아니라 이 화면만의 것이라 따로 둔다.
+  let logMode = 'A';
 
   const $ = (id) => document.getElementById(id);
 
@@ -74,6 +77,48 @@
     { code: '415', status: 415, who: '부르는 쪽', retry: '아니요, 헤더를 바꿔야 합니다' },
     { code: '400', status: 400, who: '부르는 쪽', retry: '아니요, 그대로 또 틀립니다' },
     { code: '204', status: 204, who: '—', retry: '—' },
+  ];
+
+  // ---- 3절 — 이 줄은 누가 남기나 ----
+
+  // 방식 3택. 라벨은 스펙과 브리프가 정한 그대로다.
+  const LOG_MODE_OPTS = [
+    { v: 'A', t: 'A 접속만' },
+    { v: 'B', t: 'B 앱이 본문을' },
+    { v: 'C', t: 'C nginx 가 본문까지' },
+  ];
+
+  // 요청 한 건이 실제로 지나는 층 넷. 로드밸런서는 S.logsFor() 가 돌려주는
+  // 칸에 없다 — 지나가지만 우리가 볼 수 있는 로그가 아니기 때문이다.
+  // 그래도 "층마다 다른 프로세스가 남긴다"는 그림에서는 빠뜨리지 않는다.
+  const LAYERS = [
+    { tag: '앱 SDK', desc: '폰 안의 SDK 코드가 남김 — 사용자 기기라 우리가 못 봄' },
+    { tag: '로드밸런서', desc: 'LB 프로세스가 남김' },
+    { tag: 'nginx', desc: 'nginx 워커 프로세스가 남김' },
+    { tag: '우리 앱', desc: '우리가 짠 핸들러 함수가 남김' },
+  ];
+
+  // S.logsFor() 가 돌려주는 세 칸의 순서와 이름표.
+  const LOG_PANES = [
+    { key: 'sdk', tag: '앱 SDK', note: '우리는 못 봅니다' },
+    { key: 'nginx', tag: 'nginx', note: '액세스 로그' },
+    { key: 'event', tag: '우리 앱', note: '이벤트 로그' },
+  ];
+
+  // nginx 가 남기는 것과 우리 코드가 남기는 것이 갈리는 축 넷.
+  // 스펙 4.2 3절의 표를 그대로 옮긴 것이다.
+  const AXES = [
+    { axis: '파일에 실제로 쓰는 것', nginx: 'nginx 워커 프로세스', code: '앱 프로세스 안의 로거' },
+    { axis: '끄려면', nginx: '설정 고치고 reload', code: '코드 지우고 배포' },
+    { axis: '앱이 죽어 있으면', nginx: '남습니다. 502 라고 적힙니다', code: '안 남습니다' },
+    { axis: '붙일 수 있는 값', nginx: 'nginx 가 아는 것만 — IP, 시각, 경로, 상태, 걸린 시간',
+      code: 'DB를 뒤져 붙일 수 있습니다 — 캠페인 id, 광고주 id, 비용' },
+  ];
+
+  // C 방식을 고르면 같이 보이는 nginx 설정. posts/log-hops-to-kafka.md 80~81행 그대로다.
+  const LOG_FORMAT_LINES = [
+    "log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '",
+    '                   \'$request_time "$http_user_agent" $request_body\';',
   ];
 
   function el(tag, cls, text) {
@@ -143,6 +188,26 @@
     });
   }
 
+  // 3절 — 방식 버튼 상태와 로그 칸 셋을 갱신한다. 1~2절과 달리 "보내기"를
+  // 기다리지 않는다 — 방식을 눌러 보는 것 자체가 이 절의 시연이라, state 가
+  // 바뀌는 즉시 판정을 다시 돌린다.
+  function drawLogs() {
+    markChoiceGroup($('apc-modes'), logMode);
+    const v3 = S.evaluate(state);
+    const logs = S.logsFor(logMode, state, v3);
+    LOG_PANES.forEach(function (p) {
+      const pane = $('apc-logpane-' + p.key);
+      const body = pane.querySelector('.apc-logpane-body');
+      const line = logs[p.key];
+      const missing = line === null;
+      pane.dataset.missing = String(missing);
+      // null 인 칸도 지우지 않는다 — 「안 남았습니다」 글자가 이 절의 답이다.
+      body.textContent = missing ? '안 남았습니다' : line;
+    });
+    // C 방식일 때만 nginx 설정을 같이 보인다.
+    $('apc-logformat').hidden = logMode !== 'C';
+  }
+
   function drawFake200() {
     $('apc-fake200').setAttribute('aria-pressed', String(fake200On));
     const note = $('apc-fake200-note');
@@ -164,7 +229,8 @@
     drawResponse(v);
     drawCodes(v);
     drawFake200();
-    // 절이 늘 때마다 여기에 한 줄씩 더한다 (drawLogs, drawCompare, …)
+    drawLogs();
+    // 절이 늘 때마다 여기에 한 줄씩 더한다 (drawCompare, …)
   }
 
   // ==========================================
@@ -302,6 +368,68 @@
     host.appendChild(tbody);
   }
 
+  // 3절 — 층 넷은 상태와 무관한 고정 설명이라 한 번만 짓는다.
+  function buildLayers() {
+    const host = $('apc-layers');
+    LAYERS.forEach(function (l) {
+      const row = el('div', 'apc-layer');
+      row.appendChild(el('span', 'apc-layer-tag', l.tag));
+      row.appendChild(el('span', 'apc-layer-desc', l.desc));
+      host.appendChild(row);
+    });
+  }
+
+  function buildModes() {
+    const host = $('apc-modes');
+    buildChoiceGroup(host, LOG_MODE_OPTS);
+    bindPick(host, function (v) { logMode = v; });
+  }
+
+  // 로그 칸 셋 + C 방식일 때만 보이는 nginx 설정 블록을 한 번만 짓는다.
+  // 내용은 draw() 가 매번 다시 채운다.
+  function buildLogs() {
+    const host = $('apc-logs');
+    const panes = el('div', 'apc-logpanes');
+    LOG_PANES.forEach(function (p) {
+      const pane = el('div', 'apc-logpane');
+      pane.id = 'apc-logpane-' + p.key;
+      const head = el('div', 'apc-logpane-head');
+      head.appendChild(el('span', null, p.tag));
+      head.appendChild(el('span', 'apc-logpane-note', p.note));
+      pane.appendChild(head);
+      pane.appendChild(el('pre', 'apc-logpane-body'));
+      panes.appendChild(pane);
+    });
+    host.appendChild(panes);
+
+    const fmt = el('div', 'apc-logformat');
+    fmt.id = 'apc-logformat';
+    fmt.appendChild(el('p', 'apc-logformat-caption', '이 설정이 본문을 접속 로그 줄에 그대로 붙입니다.'));
+    fmt.appendChild(el('pre', 'apc-logformat-code', LOG_FORMAT_LINES.join('\n')));
+    fmt.appendChild(el('p', 'apc-logformat-note',
+      '캠페인 id, 광고주 id, 비용은 이 줄에 없습니다. nginx 가 모르는 값입니다.'));
+    host.appendChild(fmt);
+  }
+
+  function buildAxes() {
+    const host = $('apc-axes');
+    const thead = el('thead');
+    const trh = el('tr');
+    ['축', 'nginx (A, C)', '우리 코드 (B)'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
+    thead.appendChild(trh);
+    host.appendChild(thead);
+
+    const tbody = el('tbody');
+    AXES.forEach(function (r) {
+      const tr = el('tr');
+      tr.appendChild(el('td', null, r.axis));
+      tr.appendChild(el('td', null, r.nginx));
+      tr.appendChild(el('td', null, r.code));
+      tbody.appendChild(tr);
+    });
+    host.appendChild(tbody);
+  }
+
   function bindSend() {
     $('apc-send').addEventListener('click', function () {
       sent = true;
@@ -319,6 +447,10 @@
   buildControls();
   buildServerState();
   buildCodes();
+  buildLayers();
+  buildModes();
+  buildLogs();
+  buildAxes();
   bindSend();
   bindFake200();
   draw();

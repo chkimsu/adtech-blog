@@ -20,6 +20,9 @@ const PAGES = [
       '골라 읽는 법',
       'apc-controls', 'apc-req', 'apc-serverstate', 'apc-send',
       'apc-res', 'apc-verdict', 'apc-codes', 'apc-fake200',
+      'apc-layers', 'apc-modes', 'apc-logs', 'apc-axes',
+      'nginx 워커 프로세스가 남김', '우리가 짠 핸들러 함수가 남김',
+      'log_format collect',
     ],
   },
   {

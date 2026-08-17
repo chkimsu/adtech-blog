@@ -3,6 +3,7 @@
 //
 //   node scripts/test-course-logic.js
 const S = require('../js/api-course-server.js');
+const D = require('../js/course-data.js');
 
 let pass = 0, fail = 0;
 function eq(name, got, want) {
@@ -53,6 +54,33 @@ eq('서버가 인증 없이 부르면 401',        S.evaluate(s({ caller: 'serve
 
 console.log('\n요청 본문 바이트가 글의 85 와 맞나');
 eq('다 채운 본문은 85 B',               S.byteLen(S.bodyText(S.defaultState())), 85);
+
+console.log('\n3절 — 방식마다 어느 줄이 남나');
+const okV = S.evaluate(s());
+const badV = S.evaluate(sBody({ req_id: '' }));
+const hostV = S.evaluate(s({ server: 'hostdown' }));
+const appV = S.evaluate(s({ server: 'appdown' }));
+const slowV = S.evaluate(s({ server: 'slow' }));
+const has = (x) => x !== null;
+
+eq('A 는 본문을 아무 데도 안 남긴다', [has(S.logsFor('A', s(), okV).nginx), has(S.logsFor('A', s(), okV).event)], [true, false]);
+eq('B 는 nginx 줄과 앱 줄이 둘 다',   [has(S.logsFor('B', s(), okV).nginx), has(S.logsFor('B', s(), okV).event)], [true, true]);
+eq('C 는 nginx 줄 하나뿐',            [has(S.logsFor('C', s(), okV).nginx), has(S.logsFor('C', s(), okV).event)], [true, false]);
+
+eq('400 이면 B 의 앱 줄이 안 남는다',   has(S.logsFor('B', sBody({ req_id: '' }), badV).event), false);
+eq('400 이어도 nginx 줄은 남는다',      has(S.logsFor('B', sBody({ req_id: '' }), badV).nginx), true);
+eq('앱이 죽어도 nginx 줄은 남는다',     has(S.logsFor('C', s({ server: 'appdown' }), appV).nginx), true);
+eq('장비가 죽으면 nginx 줄도 없다',     has(S.logsFor('C', s({ server: 'hostdown' }), hostV).nginx), false);
+eq('앱이 포기해도 앱 줄은 남아 있다',    has(S.logsFor('B', s({ server: 'slow' }), slowV).event), true);
+eq('앱 SDK 줄은 어느 경우에도 있다',    [S.logsFor('A', s({ server: 'hostdown' }), hostV).sdk, S.logsFor('A', s(), okV).sdk], ['connect failed', 'ok']);
+
+console.log('\n3절 — 방식마다 나오는 줄이 글에 실린 그 줄과 같나');
+eq('C 방식 nginx 줄은 183 B',     S.byteLen(S.logsFor('C', S.defaultState(), okV).nginx), D.val.byteAccess);
+eq('C 방식 줄이 글에 실린 그 줄',   S.logsFor('C', S.defaultState(), okV).nginx, D.val.collectLine);
+eq('B 방식 앱 줄이 글에 실린 그 줄', S.logsFor('B', S.defaultState(), okV).event, D.val.eventLine);
+eq('C 줄에서 본문을 뺀 앞머리가 98 B',
+   S.byteLen(S.logsFor('C', S.defaultState(), okV).nginx) - S.byteLen(S.bodyText(S.defaultState())),
+   D.val.bytePrefix);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

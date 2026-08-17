@@ -124,6 +124,57 @@
       border-color: var(--state-bad); background: var(--oxide-bg); color: var(--state-bad); font-weight: 700;
     }
     #apc-fake200[aria-pressed="true"]::before { content: "▸ "; }
+
+    /* ---- 3절 — 이 줄은 누가 남깁니까 ---- */
+    .apc-layers { border: 1px solid var(--border-color); margin-bottom: 1.1rem; }
+    .apc-layer {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem;
+      padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--border-color);
+      font-size: 0.88rem;
+    }
+    .apc-layer:last-child { border-bottom: none; }
+    .apc-layer-tag { flex: 0 0 auto; min-width: 6rem; font-weight: 700; color: var(--accent-secondary); }
+    .apc-layer-desc { color: var(--text-secondary); }
+
+    .apc-modes { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+
+    .apc-logpanes { display: grid; grid-template-columns: 1fr; gap: 0.9rem; }
+    @media (min-width: 760px) {
+      .apc-logpanes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .apc-logpane { border: 1px solid var(--border-color); background: var(--bg-secondary); min-width: 0; }
+    .apc-logpane-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary); font-size: 0.82rem; font-weight: 700; color: var(--text-primary);
+    }
+    .apc-logpane-note { font-weight: 400; font-size: 0.72rem; color: var(--text-muted); }
+    .apc-logpane-body {
+      margin: 0; padding: 0.7rem 0.85rem; font-size: 0.8rem; line-height: 1.6;
+      font-family: var(--font-mono); white-space: pre; overflow-x: auto; color: var(--text-primary);
+    }
+    /* 안 남은 줄은 지우지 않고 글자로 표시한다 — 색만이 아니라 글자 자체가 상태다 */
+    .apc-logpane[data-missing="true"] .apc-logpane-body {
+      font-family: inherit; white-space: normal; color: var(--state-bad); font-weight: 700;
+    }
+
+    .apc-logformat { margin-top: 1rem; padding: 0.8rem 0.9rem; border: 1px solid var(--navy-bd); background: var(--navy-bg); }
+    .apc-logformat[hidden] { display: none; }
+    .apc-logformat-caption { margin: 0 0 0.5rem; font-size: 0.85rem; color: var(--text-primary); }
+    .apc-logformat-code {
+      margin: 0 0 0.6rem; padding: 0.6rem 0.75rem; background: var(--bg-secondary);
+      border: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.78rem;
+      line-height: 1.6; overflow-x: auto; white-space: pre;
+    }
+    .apc-logformat-note { margin: 0; font-size: 0.85rem; color: var(--text-secondary); }
+
+    table.apc-axes { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.9rem; }
+    .apc-axes th, .apc-axes td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .apc-axes th {
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .apc-axes td:first-child { color: var(--text-muted); white-space: nowrap; }
   </style>
 </head>
 
@@ -196,6 +247,17 @@
       </section>
       <section class="apc-sec" id="apc-sec3">
         <h2>3. 이 줄은 누가 남깁니까</h2>
+        <p class="apc-lead">
+          클릭 한 건이 한 곳에 남는 것이 아닙니다. 층마다 다른 프로세스가 자기 줄을 남깁니다.
+          그리고 누가 남기느냐가 그 줄에 무엇을 적을 수 있는지를 정합니다.
+        </p>
+
+        <div class="apc-layers" id="apc-layers"></div>
+
+        <h3>방식을 골라 보세요</h3>
+        <div class="apc-modes" id="apc-modes"></div>
+        <div class="apc-logs apc-scroll" id="apc-logs"></div>
+        <div class="apc-scroll"><table class="apc-axes" id="apc-axes"></table></div>
       </section>
       <section class="apc-sec" id="apc-sec4">
         <h2>4. 부르는 쪽이 앱이냐 다른 서버냐</h2>

@@ -135,6 +135,57 @@
     return Buffer.byteLength(str, 'utf8');
   }
 
+  // ------------------------------------------------------------------
+  // 3절 — 이 줄은 누가 남기나
+  //
+  // 방식 셋이 갈리는 것은 「본문이 어디에 있나」다.
+  //   A  nginx 가 접속만        본문이 아무 데도 없다
+  //   B  앱 코드가 본문을        nginx 줄 + 앱 줄 둘
+  //   C  nginx 가 본문까지       nginx 줄 하나에 본문이 들어 있다
+  //
+  // 남는 조건도 다르다.
+  //   nginx 줄 — 장비가 떠 있으면 남는다. 뒤의 앱이 죽어도 502 라고 남긴다
+  //   앱 줄   — 앱이 실제로 저장했을 때만 남는다 (204)
+  //   SDK 줄  — 폰 안이라 언제나 남는다. 다만 우리는 못 본다
+  // ------------------------------------------------------------------
+
+  // A 방식 — nginx 표준 형식. 본문이 없다.
+  function accessLineStd(s, v) {
+    return '10.2.31.7 - - [16/Aug/2026:16:48:21 +0900] "' + s.method + ' ' + s.path +
+      ' HTTP/1.1" ' + v.status + ' 0 "-" "AdSDK/3.2.1" 0.002';
+  }
+
+  // C 방식 — log_format 에 $request_body 를 더한 것. 통과했을 때 183 B 다.
+  function collectLine(s, v) {
+    return V.clientIp + ' 2026-08-16T16:48:21+09:00 ' + s.method + ' ' + s.path + ' ' +
+      v.status + ' 0.002 "' + V.userAgent + '" ' + bodyText(s);
+  }
+
+  // B 방식 — 우리가 짠 함수가 본문을 꺼내 적은 줄. 109 B 다.
+  // 🔴 키 이름이 요청 본문과 다르다. 요청은 `ts` 인데 이 줄은 `event_ts` 이고
+  //    `app_ver` 가 더 붙는다. posts/api-basics.md 8절의 그 줄이 정본이라
+  //    거기에 맞춘 것이지 실수가 아니다. 시험이 두 줄을 다 지킨다.
+  function appEventLine(s) {
+    return JSON.stringify({
+      req_id: s.body.req_id,
+      event: s.body.event,
+      ad_id: s.body.ad_id,
+      slot: s.body.slot,
+      event_ts: s.body.ts,
+      app_ver: '3.2.1',
+    });
+  }
+
+  function logsFor(mode, s, v) {
+    const hostUp = v.reason !== 'no-response';
+    const stored = v.status === 204;
+    return {
+      sdk: appView(v).label,
+      nginx: !hostUp ? null : (mode === 'C' ? collectLine(s, v) : accessLineStd(s, v)),
+      event: (mode === 'B' && stored) ? appEventLine(s) : null,
+    };
+  }
+
   return {
     defaultState: defaultState,
     evaluate: evaluate,
@@ -143,6 +194,7 @@
     requestText: requestText,
     responseText: responseText,
     byteLen: byteLen,
+    logsFor: logsFor,
     WANT_AUTH: WANT_AUTH,
     REQUIRED: REQUIRED,
   };

@@ -2017,27 +2017,39 @@ git commit -m "feat(course): 2페이지 7절 — 내 학습 데이터는 여기�
 
 - [ ] **Step 1: `demos.html` 에 카드 두 장을 더한다**
 
-기존 `.demo-card` 의 마크업을 그대로 따르고 배지는 `Infra` 를 쓴다 (`demos.html` 에 이미 정의된 색이다). **정의에 없는 색 이름을 주면 배지가 맨 글자로 나온다.**
+🔴 **아래 마크업을 그대로 쓴다.** `demos.html` 602~614행의 실물을 보고 맞춘 것이다. 카드는 `<a>` 가 아니라 `<div>` 이고, 안에 `demo-card-meta` 와 `btn-try` 링크가 따로 들어간다. `demo-card-level` 에는 `level-beginner` 가 같이 붙는다. 배지는 `Infra` 를 쓴다 — `demos.html` 에 정의된 여덟 색 중 하나다. **정의에 없는 색 이름을 주면 배지가 맨 글자로 나온다.**
 
 ```html
-<a href="demo-api-course.html" class="demo-card">
+<div class="demo-card">
   <div class="demo-card-badges">
     <span class="demo-card-badge" data-badge="Infra">Infra</span>
-    <span class="demo-card-level">입문</span>
+    <span class="demo-card-level level-beginner">입문</span>
   </div>
   <h3>API 한 건을 직접 만들어 보기</h3>
   <p>메서드, 주소, 헤더, 본문을 골라 요청을 조립해 보내면 응답과 로그가 같이 나옵니다. 액세스 로그와 이벤트 로그를 각각 누가 남기는지, 400 일 때 어느 줄이 안 남는지가 보입니다.</p>
-</a>
+  <div class="demo-card-meta">
+    <span class="demo-card-meta-item">⏱ 12분</span>
+    <span class="demo-card-meta-item">선수지식 거의 없음</span>
+  </div>
+  <a href="demo-api-course.html" class="btn-try">체험하기</a>
+</div>
 
-<a href="demo-pipeline-course.html" class="demo-card">
+<div class="demo-card">
   <div class="demo-card-badges">
     <span class="demo-card-badge" data-badge="Infra">Infra</span>
-    <span class="demo-card-level">입문</span>
+    <span class="demo-card-level level-beginner">입문</span>
   </div>
   <h3>로그 한 줄이 학습 데이터가 되기까지</h3>
   <p>자리 일곱을 눌러 무엇이 들어오고 무엇이 나가는지 봅니다. topic 에 놓인 뒤 읽는 쪽 넷이 각자 다른 주기로 읽어 가는 이유까지 이어집니다.</p>
-</a>
+  <div class="demo-card-meta">
+    <span class="demo-card-meta-item">⏱ 14분</span>
+    <span class="demo-card-meta-item">선수지식 거의 없음</span>
+  </div>
+  <a href="demo-pipeline-course.html" class="btn-try">체험하기</a>
+</div>
 ```
+
+⚠ **`⏱` 는 Global Constraints 의 이모지 금지에 걸리는 것처럼 보이지만 그대로 쓴다.** 형제 카드 스물몇 장이 전부 이것을 쓰고 있고 `scripts/check-design.js` 를 통과한다(`U+23F1` 은 게이트의 이모지 범위 밖이다). 여기서만 빼면 카드 하나가 형제와 다르게 보인다.
 
 왼쪽 목록에도 두 줄을 더한다. 기존 줄과 같은 인라인 스타일을 쓴다.
 

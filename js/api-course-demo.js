@@ -40,6 +40,8 @@
   let logMode = 'A';
   // 4절 전용 스위치 — 재시도에 요청 번호를 붙였는지. S.retryInflation(useKey) 의 인자로만 쓴다.
   let useKey = false;
+  // 5-1 전용 스위치 — /v1/bid 와 /v1/track 을 한 주소로 합치면 무엇이 깨지는지 보여 준다.
+  let mergeOn = false;
 
   const $ = (id) => document.getElementById(id);
 
@@ -272,6 +274,31 @@
     note.appendChild(el('strong', null, '정산 매출이 안 맞을 때까지 아무도 모릅니다.'));
   }
 
+  // 5-1 — 합치기 스위치와 note 를 다시 그린다. 12ms·100ms 는 CD.val 에서 그대로
+  // 끌어온다 — 여기서 새로 박지 않는다.
+  function drawMerge() {
+    $('apc-merge').setAttribute('aria-pressed', String(mergeOn));
+    const note = $('apc-merge-note');
+    note.textContent = '';
+    if (!mergeOn) return;
+    note.appendChild(el('code', null, '/v1/bid'));
+    note.appendChild(document.createTextNode('와 '));
+    note.appendChild(el('code', null, '/v1/track'));
+    note.appendChild(document.createTextNode(
+      '이 한 주소가 되면, 트래킹이 ' + CD.val.trackBudgetMs + ' ms 를 쓰는 동안 입찰이 슬롯을 못 잡아 ' +
+      CD.val.bidBudgetMs + ' ms 를 넘깁니다.'
+    ));
+  }
+
+  // 6절 — 1~4절이 같이 보는 그 state 가 지금 이 순간 C 방식에서 남기는 nginx 줄이다.
+  // 장비가 안 떠 있으면(hostdown) 줄 자체가 없을 수 있어 null 도 다룬다.
+  function drawFinal() {
+    const v = S.evaluate(state);
+    const line = S.logsFor('C', state, v).nginx;
+    $('apc-final').textContent = line === null ? '안 남았습니다. 요청이 서버에 닿지 못했습니다.' : line;
+    $('apc-final-bytes').textContent = line === null ? '—' : S.byteLen(line) + ' B';
+  }
+
   function draw() {
     drawCaller();
     drawControls();
@@ -285,6 +312,8 @@
     drawFake200();
     drawLogs();
     drawRetry();
+    drawMerge();
+    drawFinal();
     // 절이 늘 때마다 여기에 한 줄씩 더한다
   }
 
@@ -469,23 +498,36 @@
     host.appendChild(fmt);
   }
 
-  function buildAxes() {
-    const host = $('apc-axes');
+  // 표 하나를 헤더 배열과 행 배열로 짓는다. thead·tbody 를 손으로 매번 짜던
+  // buildAxes/buildCompare/buildRetry 세 벌을 여기로 합쳤다 — 5절에서 표가
+  // 둘 더 늘어 다섯 벌이 되기 전에 정리한다.
+  // rows 를 안 주면(undefined) tbody 를 빈 채로 남긴다 — 회차표처럼 내용을
+  // draw() 가 매번 새로 채우는 표를 위해서다. 셀 값은 문자열이거나 DOM
+  // 노드(예: 5-2 의 흔한가 칩)다.
+  function buildSimpleTable(hostId, headers, rows) {
+    const host = $(hostId);
     const thead = el('thead');
     const trh = el('tr');
-    ['축', 'nginx (A, C)', '우리 코드 (B)'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
+    headers.forEach(function (t) { trh.appendChild(el('th', null, t)); });
     thead.appendChild(trh);
     host.appendChild(thead);
 
     const tbody = el('tbody');
-    AXES.forEach(function (r) {
+    (rows || []).forEach(function (cells) {
       const tr = el('tr');
-      tr.appendChild(el('td', null, r.axis));
-      tr.appendChild(el('td', null, r.nginx));
-      tr.appendChild(el('td', null, r.code));
+      cells.forEach(function (c) {
+        const td = el('td');
+        if (c && c.nodeType) td.appendChild(c); else td.textContent = c;
+        tr.appendChild(td);
+      });
       tbody.appendChild(tr);
     });
     host.appendChild(tbody);
+  }
+
+  function buildAxes() {
+    buildSimpleTable('apc-axes', ['축', 'nginx (A, C)', '우리 코드 (B)'],
+      AXES.map(function (r) { return [r.axis, r.nginx, r.code]; }));
   }
 
   // 4절 — 앱/서버 2택. 고르면 state.caller 와 함께 path, auth 기본값도 같이 바꾼다.
@@ -507,33 +549,42 @@
 
   // 4절 — 비교표는 state 와 무관한 고정 내용이라 한 번만 짓는다.
   function buildCompare() {
-    const host = $('apc-compare');
-    const thead = el('thead');
-    const trh = el('tr');
-    ['축', '앱이 부를 때', '서버가 부를 때'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
-    thead.appendChild(trh);
-    host.appendChild(thead);
-
-    const tbody = el('tbody');
-    COMPARE_ROWS.forEach(function (r) {
-      const tr = el('tr');
-      tr.appendChild(el('td', null, r.axis));
-      tr.appendChild(el('td', null, r.app));
-      tr.appendChild(el('td', null, r.server));
-      tbody.appendChild(tr);
-    });
-    host.appendChild(tbody);
+    buildSimpleTable('apc-compare', ['축', '앱이 부를 때', '서버가 부를 때'],
+      COMPARE_ROWS.map(function (r) { return [r.axis, r.app, r.server]; }));
   }
 
   // 4절 — 회차표의 머리글만 한 번 짓는다. tbody 내용은 drawRetry() 가 매번 채운다.
   function buildRetry() {
-    const host = $('apc-retry');
-    const thead = el('thead');
-    const trh = el('tr');
-    ['회차', '보낸 건수', '응답 유실', '누적'].forEach(function (t) { trh.appendChild(el('th', null, t)); });
-    thead.appendChild(trh);
-    host.appendChild(thead);
-    host.appendChild(el('tbody'));
+    buildSimpleTable('apc-retry', ['회차', '보낸 건수', '응답 유실', '누적']);
+  }
+
+  // 5-1 — 주소 다섯을 표로. deadlineMs·rate 가 null 인 칸은 지어내지 않고 '—' 로 비운다.
+  function buildEndpoints() {
+    const rows = CD.ENDPOINTS.map(function (r) {
+      return [
+        r.path, r.caller, r.auth,
+        r.deadlineMs === null ? '—' : r.deadlineMs + ' ms',
+        r.rate === null ? '—' : r.rate,
+      ];
+    });
+    buildSimpleTable('apc-endpoints', ['주소', '부르는 쪽', '인증', '마감', '유량'], rows);
+  }
+
+  // 5-2 — 흔한가 칸을 칩으로 감싼다. '드뭅니다' 만 색을 다르게 해 눈에 띄게 한다 —
+  // 글자(드뭅니다/흔합니다 자체)가 이미 다르므로 색은 구분을 보태는 것이지 유일한 단서가 아니다.
+  function commonChip(text) {
+    const span = el('span', 'apc-chip', text);
+    span.dataset.tone = text.indexOf('드뭅니다') > -1 ? 'rare' : 'plain';
+    return span;
+  }
+
+  // 5-2 — 가르는 방법 다섯을 표로.
+  function buildNaming() {
+    const rows = CD.NAMING.map(function (r) {
+      return [r.how, r.sample, commonChip(r.common), r.splitBy, r.why];
+    });
+    buildSimpleTable('apc-naming',
+      ['가르는 방법', '예', '흔한가', '문 앞에서 갈리는 기준', '왜'], rows);
   }
 
   function bindSend() {
@@ -558,6 +609,14 @@
     });
   }
 
+  // 5-1 — 한 주소로 합치기. 실제 state 는 안 건드리고 note 표시 여부만 뒤집는다.
+  function bindMerge() {
+    $('apc-merge').addEventListener('click', function () {
+      mergeOn = !mergeOn;
+      draw();
+    });
+  }
+
   buildControls();
   buildServerState();
   buildCodes();
@@ -568,8 +627,11 @@
   buildCaller();
   buildCompare();
   buildRetry();
+  buildEndpoints();
+  buildNaming();
   bindSend();
   bindFake200();
   bindIdem();
+  bindMerge();
   draw();
 })();

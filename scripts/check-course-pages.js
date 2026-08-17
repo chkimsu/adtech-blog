@@ -34,6 +34,9 @@ const PAGES = [
       "fmt.id = 'apc-logformat';",
       'apc-caller', 'apc-compare', 'apc-retry', 'apc-idem',
       'Idempotency-Key',
+      'apc-endpoints', 'apc-naming', 'apc-merge', 'apc-final',
+      'demo-pipeline-course.html',
+      '자원 이름이 어차피 다르다',
     ],
   },
   {

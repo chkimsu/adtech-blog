@@ -127,5 +127,38 @@
     },
   ];
 
-  return { FACTS, val, CONSUMERS, BUDGET_LATE_IMPRESSIONS, DEPLOY_STACKED_ROWS };
+  // 주소 다섯. deadline 이 null 인 것은 글에 값이 없다는 뜻이다 — 화면에서는 '—' 로 그린다.
+  // 🔴 null 칸을 채우지 말 것 — 초안에서 /v1/events 에 100ms, /v1/feature 에
+  //    5ms 를 적었는데 둘 다 지어낸 값이었다. 100ms 는 /v1/track 의 값이다.
+  //    숫자는 전부 FACTS 에서 끌어온다 — 여기서 새로 박지 않는다.
+  const ENDPOINTS = [
+    { path: 'POST /v1/events', caller: '앱 SDK (C2S)', auth: '없음 — 값을 안 믿고 다시 검사',
+      deadlineMs: null, rate: '초당 ' + FACTS.perSecFile.value.toLocaleString('en-US') },
+    { path: 'POST /v1/bid', caller: '매체 서버 (S2S)', auth: 'API 키',
+      deadlineMs: FACTS.bidBudgetMs.value, rate: '초당 ' + FACTS.perSecImp.value.toLocaleString('en-US') },
+    { path: 'POST /v1/track', caller: '매체 서버 (S2S)', auth: 'API 키',
+      deadlineMs: FACTS.trackBudgetMs.value, rate: null },
+    { path: 'POST /v1/conversions', caller: '광고주 서버 (S2S)', auth: 'API 키 + 요청 번호',
+      deadlineMs: null, rate: '하루 ' + FACTS.convDaily.value.toLocaleString('en-US') },
+    { path: 'POST /v1/feature', caller: '우리 서비스끼리 (내부)', auth: '없음 — 망으로 막음',
+      deadlineMs: null, rate: null },
+  ];
+
+  // 가르는 방법 다섯. 문 앞에서 무엇을 보고 갈리는지가 splitBy 다. 숫자가 없어
+  // check-course-data.js 대조 대상이 아니다 — posts/gateway-ingress-router.md 의
+  // 서술을 그대로 옮긴 것이다.
+  const NAMING = [
+    { how: '자원 이름이 어차피 다르다', sample: '/v1/events 대 /v1/conversions', common: '가장 흔합니다', splitBy: '경로',
+      why: '앱은 클릭을, 광고주 서버는 전환을 보냅니다. 보내는 것이 다르니 주소가 다릅니다' },
+    { how: '호스트로', sample: 'api.example.com 대 partner.example.com', common: '흔합니다', splitBy: '호스트',
+      why: '인증, 한도, 방화벽을 호스트 단위로 겁니다. 문 앞에서 제일 먼저 갈립니다' },
+    { how: '/internal 접두사', sample: '/internal/v1/scores', common: '흔합니다', splitBy: '경로',
+      why: '주소만 보고 밖에 안 열려 있다는 것을 압니다' },
+    { how: '/s2s 접두사', sample: '/v1/s2s/conversions', common: '드뭅니다', splitBy: '경로',
+      why: 's2s 는 우리 사정입니다. 광고주는 그냥 전환 보내는 주소를 원합니다' },
+    { how: '헤더로', sample: 'x-api-version: 1', common: '버전 가를 때만', splitBy: '헤더',
+      why: '주소를 안 바꿔도 됩니다' },
+  ];
+
+  return { FACTS, val, CONSUMERS, BUDGET_LATE_IMPRESSIONS, DEPLOY_STACKED_ROWS, ENDPOINTS, NAMING };
 });

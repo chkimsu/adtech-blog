@@ -31,7 +31,12 @@ eq('느리면 서버는 204',                 S.evaluate(s({ server: 'slow' })).
 
 console.log('\n순서가 지켜지나 — 두 조건이 같이 틀렸을 때 앞의 것이 이긴다');
 eq('장비가 죽었으면 인증은 안 본다',     S.evaluate(s({ server: 'hostdown', auth: 'apikey' })).reason, 'no-response');
+eq('앱이 죽었으면 인증보다 먼저 걸린다', S.evaluate(s({ server: 'appdown', auth: 'apikey' })).status, 502);
 eq('인증이 틀리면 필드는 안 본다',       S.evaluate(Object.assign(sBody({ req_id: '' }), { auth: 'apikey' })).status, 401);
+eq('인증이 틀리면 메서드는 안 본다',     S.evaluate(s({ auth: 'apikey', method: 'GET' })).status, 401);
+eq('메서드가 틀리면 Content-Type 은 안 본다', S.evaluate(s({ method: 'GET', ctype: false })).status, 405);
+eq('Content-Type 이 없으면 필드는 안 본다',   S.evaluate(Object.assign(sBody({ req_id: '' }), { ctype: false })).status, 415);
+eq('필드가 비면 느려도 400',             S.evaluate(Object.assign(sBody({ req_id: '' }), { server: 'slow' })).status, 400);
 
 console.log('\n빠진 필드를 다 짚어 주나');
 eq('req_id 와 ad_id 가 같이 비면 둘 다', S.evaluate(sBody({ req_id: '', ad_id: null })).missing, ['req_id', 'ad_id']);

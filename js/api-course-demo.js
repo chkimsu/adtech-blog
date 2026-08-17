@@ -60,18 +60,20 @@
     { k: 'req_id', t: 'req_id' },
     { k: 'ts', t: 'ts' },
   ];
-  // 코드마다 누가 고치는지, 다시 보내면 뜻이 있는지. api-course-server.js 의
-  // evaluate() 가 실제로 내놓는 상태값 일곱 그대로다 — 표를 따로 지어내지 않는다.
-  // "다시 보내도 되나"는 responseText() 의 retryable(= status >= 500) 판단과
-  // posts/log-hops-to-kafka.md 2절의 "재전송이 있는 곳에는 중복이 있다"를 그대로 옮겼다.
+  // 코드마다 누가 고치는지, 다시 보내면 뜻이 있는지 — posts/api-kinds-and-contracts.md
+  // 2절의 표가 정본이다. 그 표는 "500 계열" 한 행이지만, evaluate() 는 그 안에서도
+  // 응답 없음(0)과 502 를 갈라서 내놓으므로 일곱 행으로 나눴다(행을 쪼갠 것뿐, 판단은
+  // 그대로 옮겼다). 401 은 "부르는 쪽" 이 고치는 것은 맞지만 다시 보내도 되는 쪽이다 —
+  // 자격증명을 갱신한 뒤 한 번 더 보내면 되기 때문이다. 400/405/415 처럼 값 자체를
+  // 다시 지어야 하는 경우와는 다르다.
   const CODE_ROWS = [
-    { code: '0', status: 0, who: '서버 담당자', retry: '예. 대신 중복이 생깁니다' },
-    { code: '502', status: 502, who: '서버 담당자', retry: '예' },
-    { code: '401', status: 401, who: '부르는 쪽', retry: '아니요. 자격증명을 바꿔야 합니다' },
-    { code: '405', status: 405, who: '부르는 쪽', retry: '아니요. 메서드를 바꿔야 합니다' },
-    { code: '415', status: 415, who: '부르는 쪽', retry: '아니요. 헤더를 바꿔야 합니다' },
-    { code: '400', status: 400, who: '부르는 쪽', retry: '아니요. 필드를 채워야 합니다' },
-    { code: '204', status: 204, who: '—', retry: '필요 없습니다. 이미 받았습니다' },
+    { code: '0', status: 0, who: '받는 쪽', retry: '됩니다, 간격을 늘려 가며. 대신 중복이 생길 수 있습니다' },
+    { code: '502', status: 502, who: '받는 쪽', retry: '됩니다, 간격을 늘려 가며' },
+    { code: '401', status: 401, who: '부르는 쪽', retry: '예, 갱신한 뒤 한 번만' },
+    { code: '405', status: 405, who: '부르는 쪽', retry: '아니요, 메서드를 바꿔야 합니다' },
+    { code: '415', status: 415, who: '부르는 쪽', retry: '아니요, 헤더를 바꿔야 합니다' },
+    { code: '400', status: 400, who: '부르는 쪽', retry: '아니요, 그대로 또 틀립니다' },
+    { code: '204', status: 204, who: '—', retry: '—' },
   ];
 
   function el(tag, cls, text) {
@@ -223,6 +225,11 @@
     const inputC = el('input');
     inputC.type = 'checkbox';
     inputC.id = 'apc-ctype-input';
+    inputC.checked = state.ctype;
+    // dataset.applied 를 지금 checked 값으로 미리 채워 둔다. 안 채우면 첫 클릭 때
+    // (아직 안 바뀐) 옛 값으로 한 번 헛불이 나간다 — apply() 가 지금은 단순 대입이라
+    // 안 드러나지만, 나중에 부작용이 생기는 순간 진짜 버그가 된다.
+    labelC.dataset.applied = String(state.ctype);
     labelC.appendChild(inputC);
     labelC.appendChild(el('span', null, 'application/json 붙이기'));
     rowC.appendChild(labelC);
@@ -245,6 +252,9 @@
       const ip = el('input');
       ip.type = 'checkbox';
       ip.id = 'apc-body-' + f.k;
+      ip.checked = state.body[f.k] !== '';
+      // 위 Content-Type 과 같은 이유로 첫 클릭의 헛불을 막는다
+      lb.dataset.applied = String(ip.checked);
       lb.appendChild(ip);
       lb.appendChild(el('span', null, f.t));
       wrapB.appendChild(lb);

@@ -86,6 +86,12 @@
   const val = {};
   for (const k of Object.keys(FACTS)) val[k] = FACTS[k].value;
 
+  // 13,195 = 초당 2,639 × 5초. 아래 CONSUMERS 의 budget.late 문구를 이
+  // 값에서 직접 만든다 — 숫자가 바뀌면 문구도 같이 바뀌어 갈릴 일이 없다.
+  const BUDGET_LATE_IMPRESSIONS = FACTS.perSecImp.value * 5;
+  // 52,780 = 초당 2,639 × 20초 배포. 3절이 쓴다. 숫자를 손으로 박지 않는다.
+  const DEPLOY_STACKED_ROWS = FACTS.perSecImp.value * 20;
+
   // 읽는 쪽 넷. 마감은 kafka-log-pipeline 1절, consumer 수는 4절, 저장소는
   // data-distribution-layer 1절이다. why/late/faster 는 그 글들의 서술을
   // 한 줄로 줄인 것이라 FACTS 대조 대상이 아니다.
@@ -94,7 +100,7 @@
       key: 'budget', name: '예산 소진 확인', deadline: '5초', deadlineSec: 5,
       consumers: 6, store: '집계 결과', product: 'Flink', mode: 'stream',
       why: '돈이 샙니다. 예산을 다 쓴 캠페인이 계속 나가면 그 광고비는 우리가 뭅니다',
-      late: '5초 늦으면 노출 13,195건이 더 나갑니다',
+      late: `5초 늦으면 노출 ${BUDGET_LATE_IMPRESSIONS.toLocaleString('en-US')}건이 더 나갑니다`,
       faster: '이득이 큽니다. 넷 중 여기가 제일 급합니다',
     },
     {
@@ -119,11 +125,6 @@
       faster: '불가능합니다. 라벨이 아직 안 왔습니다',
     },
   ];
-
-  // 13,195 = 초당 2,639 × 5초. 위 late 문구가 이 곱셈과 맞는지 지킨다.
-  const BUDGET_LATE_IMPRESSIONS = FACTS.perSecImp.value * 5;
-  // 52,780 = 초당 2,639 × 20초 배포. 3절이 쓴다. 숫자를 손으로 박지 않는다.
-  const DEPLOY_STACKED_ROWS = FACTS.perSecImp.value * 20;
 
   return { FACTS, val, CONSUMERS, BUDGET_LATE_IMPRESSIONS, DEPLOY_STACKED_ROWS };
 });

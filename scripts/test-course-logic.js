@@ -95,6 +95,7 @@ eq('CPA 가 4,237 로 싸 보임', noKey.cpa, D.val.cpaInflated);
 const withKey = S.retryInflation(true);
 eq('요청 번호를 붙이면 1,000', withKey.reported, 1000);
 eq('그때 CPA 는 5,000',        withKey.cpa, 5000);
+eq('회차표 자체는 useKey 와 무관하다', withKey.rounds, noKey.rounds);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

@@ -68,6 +68,7 @@
     // --- API ---
     reportInflated: v(1180, C, '리포트에 1,180건으로 잡힙니다'),
     cpaInflated:    v(4237, C, '리포트에는 ₩4,237로 뜹니다'),
+    convDaily:      v(1000, C, '하루 1,000건'),
     bidBudgetMs:    v(12,   G, '12ms 안에 답해야 하는 입찰 요청'),
     trackBudgetMs:  v(100,  G, '100ms 가 걸려도 됩니다'),
     deployStacked:  v(52780, K, '52,780줄이 `bidder` 메모리에 쌓입니다'),

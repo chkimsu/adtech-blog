@@ -17,8 +17,7 @@ const PAGES = [
     // js/course-data.js 는 안 본다 — 그 파일은 두 코스 페이지가 같이 쓰는 공용
     // 데이터라, 넣으면 "공용 데이터에 문구가 있나"만 보게 되고 "1페이지가 실제로
     // 그 문구를 그리나"는 못 본다. 3절의 C-모드 설정 노출 블록을 통째로 지워도
-    // js/course-data.js 만 보고 있으면 이 검사는 못 잡는다. 그래서 그 문구 자체
-    // 대신 1페이지 자기 렌더링 코드에만 있는 id(`apc-logformat`)를 본다.
+    // js/course-data.js 만 보고 있으면 이 검사는 못 잡는다.
     files: ['demo-api-course.html', 'js/api-course-server.js', 'js/api-course-demo.js'],
     must: [
       'apc-sec1', 'apc-sec2', 'apc-sec3', 'apc-sec4', 'apc-sec5', 'apc-sec6',
@@ -27,7 +26,12 @@ const PAGES = [
       'apc-res', 'apc-verdict', 'apc-codes', 'apc-fake200',
       'apc-layers', 'apc-modes', 'apc-logs', 'apc-axes',
       'nginx 워커 프로세스가 남김', '우리가 짠 핸들러 함수가 남김',
-      'apc-logformat',
+      // 그냥 'apc-logformat' 은 안 쓴다 — demo-api-course.html 의 <style> 이
+      // .apc-logformat-caption 등 형제 클래스로 이미 그 부분 문자열을 갖고
+      // 있어서, buildLogs() 의 블록을 통째로 지워도 CSS 만으로 통과해 버린다
+      // (실제로 겪은 구멍). el 을 지어 id 를 붙이는 코드 줄 자체를 봐야 한다 —
+      // js/api-course-demo.js 에만 있고 HTML 에는 없는 문자열이다.
+      "fmt.id = 'apc-logformat';",
       'apc-caller', 'apc-compare', 'apc-retry', 'apc-idem',
       'Idempotency-Key',
     ],

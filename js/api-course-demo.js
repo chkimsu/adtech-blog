@@ -127,14 +127,17 @@
   ];
 
   // 축 여덟 비교표. 스펙 4.2 4절의 표를 그대로 옮긴 것이다 (가운뎃점만 쉼표로 바꿨다 — 이 트랙의
-  // 나열 구분자 규칙).
+  // 나열 구분자 규칙). "건수와 두께" 행의 두 숫자만 CourseData 에서 끌어온다 — 글이 바뀌면
+  // check-course-data.js 가 잡아낸다. 나머지 일곱 행은 숫자가 없어 문자열 그대로 옮겼다.
   const COMPARE_ROWS = [
     { axis: '누가 부르나', app: '앱, 브라우저', server: '광고주 서버, 매체 서버' },
     { axis: '인증', app: '사용자 토큰 (사람 단위)', server: 'API 키, 서명 (회사 단위)' },
     { axis: '비밀키를 실을 수 있나', app: '못 싣습니다', server: '실을 수 있습니다' },
     { axis: '보낸 값을 믿나', app: '안 믿고 다시 검사합니다', server: '상대적으로 믿습니다' },
     { axis: '못 닿으면', app: '그냥 사라집니다', server: '재시도합니다' },
-    { axis: '건수와 두께', app: '많고 얇습니다 (초당 686)', server: '적고 두껍습니다 (하루 1,000)' },
+    { axis: '건수와 두께',
+      app: '많고 얇습니다 (초당 ' + CD.val.perSecFile.toLocaleString('en-US') + ')',
+      server: '적고 두껍습니다 (하루 ' + CD.val.convDaily.toLocaleString('en-US') + ')' },
     { axis: '오는 시각', app: '사람이 누른 그때', server: '몇 분 뒤 몰아서 올 수 있습니다' },
     { axis: '남는 IP', app: '사용자 IP', server: '서버 IP (고정)' },
   ];

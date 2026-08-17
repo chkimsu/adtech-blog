@@ -176,14 +176,45 @@
   // 4-2 — 읽는 방식은 셋. who 는 CONSUMERS 의 이름을 다시 손으로 적은 것이
   // 아니라 문장 그대로다(스펙 5.2 4-2 표) — 화면 쪽이 who 를 다시 쓸 필요가
   // 있으면 CONSUMERS.filter(mode===key) 로 이 문자열과 같은 답을 얻는다.
-  // jobHours 는 stream 만 안다(24시간 상시). micro·batch 의 "5분마다 몇
-  // 초"·"새벽 20분"은 6절 몫이라 여기서 앞당겨 쓰지 않는다 — null 로 두고
-  // 화면은 ENDPOINTS.deadlineMs 가 null 일 때처럼 '—' 로 비운다.
+  //
+  // jobHours: 24 는 구조 상수다(Task 10 review 항목 1) — "계속 붙어 있다"는
+  // 정의 자체가 하루 24시간 떠 있다는 뜻이라 그 정의에서 나온 숫자이지, 어느
+  // post 문장도 "상시 잡은 24시간 돈다"고 말하지 않는다. post 에 나오는
+  // 24시간은 전부 다른 이야기다(라벨 대기·예산 페이싱·조인 창). 그래서
+  // FACTS 에 넣지 않는다. micro·batch 는 jobHours 를 null 로 두고 화면은
+  // ENDPOINTS.deadlineMs 가 null 일 때처럼 '—' 로 비운다.
+  //
+  // dawnMinutes(batch 전용)도 같은 종류의 구조 상수다(Task 11, 6절) — 하루
+  // 한 번 새벽에 도는 잡이 짧게(수십 분 규모) 끝난다는 성격을 보여 주는
+  // 예시 값이지, post 가 잰 시간이 아니다. 6절이 "24시간 상시"와 대비해
+  // 이 값을 쓴다. micro 의 "5분마다 몇 초"는 숫자가 아니라 "몇 초"라는
+  // 뭉뚱그린 표현이라 별도 필드로 만들지 않는다.
   const READ_MODES = [
     { key: 'stream', name: '계속 붙어 있기', how: '새 줄이 생기면 바로 받습니다', who: '대시보드, 예산 소진', jobHours: 24 },
     { key: 'micro', name: '주기로 몰아 읽기', how: '5분마다 그동안 쌓인 것을', who: '광고주 리포트', jobHours: null },
-    { key: 'batch', name: '하루 한 번', how: '새벽에 하루치를 파일로', who: '모델 학습', jobHours: null },
+    { key: 'batch', name: '하루 한 번', how: '새벽에 하루치를 파일로', who: '모델 학습', jobHours: null, dawnMinutes: 20 },
   ];
+
+  // 4절 — 커서를 눌러 보는 미리보기가 "지금 방식이 실제보다 잦은지 뜸한지"를
+  // 판단하는 순서. stream 이 가장 잦고 batch 가 가장 뜸하다.
+  //
+  // (Task 11 에서 js/pipeline-course-sections.js 로부터 옮겨 왔다. lateFor 가
+  // 세 갈래 조건문으로 실제 로직이라 시험이 필요했는데, 그 파일은
+  // activeReaderKey·activeModeKey 를 자기 클로저 안에 감춰 두고 있어 시험이
+  // 그 상태를 흉내 낼 수 없었다. 여기서는 그 둘을 인자로 받는다 — 조사
+  // 헬퍼를 옮겼을 때와 같은 이유다.)
+  const MODE_RANK = { stream: 0, micro: 1, batch: 2 };
+
+  // c 가 지금 굵게 볼 읽는 쪽이 아니면, 또는 미리 보는 방식이 없거나 c 의
+  // 실제 방식과 같으면 실제 late 를 그대로 보인다. 미리 보는 방식이 실제보다
+  // 뜸하면(랭크가 크면) late 를, 더 잦으면(랭크가 작으면) faster 를 보인다 —
+  // 조합마다 새 문장을 짓지 않고 CONSUMERS 에 이미 있는 두 필드만 골라 쓴다.
+  function lateFor(c, activeReaderKey, activeModeKey) {
+    if (c.key !== activeReaderKey || activeModeKey == null || activeModeKey === c.mode) {
+      return c.late;
+    }
+    return MODE_RANK[activeModeKey] > MODE_RANK[c.mode] ? c.late : c.faster;
+  }
 
   // 1절 — Kafka 가 멈추면 어디에 쌓이나. 값은 글이 계산해 둔 것을 그대로 쓴다.
   // capacity 는 hours·mins 가 전제하는 용량이다 — "237시간"만 보여주면 그 시간이
@@ -196,9 +227,43 @@
   };
   function holdTime(route) { return HOLD[route]; }
 
+  // ------------------------------------------------------------------
+  // 5절 — 보존 기간과 되감기. DISK·CATCHUP 둘 다 posts/kafka-log-pipeline.md
+  // 5절("보존 기간 — 왜 지나간 것도 읽을 수 있나")의 표·문장을 그대로 옮긴
+  // 값이다. CONSUMERS 와 같은 이유로 FACTS 에 낱개로 등록하지 않는다 — 표
+  // 하나·문장 하나가 근거이지, 숫자마다 다른 문장에서 온 것이 아니다.
+  // ------------------------------------------------------------------
+
+  // 디스크 표 네 줄 — 그 글 표 그대로("| 3일 | 414.5 GB | 69.1 GB | 14% |" 등).
+  const DISK = [
+    { days: 3, totalGb: 414.5, perBrokerGb: 69.1, percent: 14 },
+    { days: 7, totalGb: 967.2, perBrokerGb: 161.2, percent: 32 },
+    { days: 14, totalGb: 1934.4, perBrokerGb: 322.4, percent: 64 },
+    { days: 30, totalGb: 4145.0, perBrokerGb: 690.8, percent: 138 },
+  ];
+
+  // 표 머리에 쓰는 가정 용량 — 같은 글, 같은 절의 "브로커 6대에 대당 디스크
+  // 500GB 로 잡습니다"에서 그대로다. DISK 각 줄의 percent 가 이 500GB 를
+  // 분모로 계산된 것이라 표 머리에 같이 밝힌다.
+  const DISK_CAPACITY_GB = 500;
+
+  function retentionVerdict(days, pausedDays) {
+    const lost = Math.max(0, pausedDays - days);
+    return { safe: lost === 0, lostDays: lost };
+  }
+
+  // 되감는 속도의 상한은 partition 수다(화면에는 이 이름을 안 쓴다). 글이
+  // 재어 둔 두 점만 쓴다 — 공식을 새로 만들면 글의 14.1 과 1.1 이 안 나온다.
+  const CATCHUP = [
+    { consumers: 4, backlogDays: 3, days: 14.1 },
+    { consumers: 12, backlogDays: 3, days: 1.1 },
+  ];
+
   return {
     HOPS: HOPS, textAt: textAt, totalMs: totalMs, holdTime: holdTime,
     hasBatchim: hasBatchim, iGa: iGa, eunNeun: eunNeun, waGwa: waGwa,
     initialCursors: initialCursors, tick: tick, resetTicks: resetTicks, READ_MODES: READ_MODES,
+    lateFor: lateFor, DISK: DISK, DISK_CAPACITY_GB: DISK_CAPACITY_GB,
+    retentionVerdict: retentionVerdict, CATCHUP: CATCHUP,
   };
 });

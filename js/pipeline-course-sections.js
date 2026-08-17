@@ -9,11 +9,12 @@
 // window.PipelineCourseModel 만 읽고, 자기 절의 DOM 만 건드린다.
 //
 // Task 10 이 4절을 같은 모양(상태 → 그리기/짓기 → 바인딩)으로 이어 붙였다.
-// Task 11~12(5~7절)도 같은 자리에 같은 모양으로 잇는다 — 공용 rail 을 다시
-// 그릴 필요가 있는 절이 생기면 그때는 window.PipelineCourseModel 수준으로
-// 인터페이스를 하나 더 뽑아야 한다. 이 파일이 600줄에 가까워지면(지금
-// 4절까지 포함해 488줄) 3절/4절 경계에서 두 번째 파일로 나눈다 — 두 절
-// 다 rail 과 상태를 안 주고받는 완결된 위젯이라 가르기 쉽다.
+//
+// Task 11 이 5~6절을 넣으면서 이 파일이 650줄을 넘겼다. 예고했던 대로
+// 3절/4절 경계에서 나눴다 — 5~6절은 js/pipeline-course-sections2.js 로
+// 옮겼다(demo-pipeline-course.html 이 그 파일을 이 파일 다음에 스크립트로
+// 문다). 이 파일은 이제 3~4절만 갖는다. 7절은 아직 빈 채로 남아 있고,
+// 다음 절을 어느 파일에 이을지는 그때 다시 판단한다.
 // ===================================================================
 (function () {
   'use strict';
@@ -246,11 +247,6 @@
   // 4절 — topic 에 놓인 뒤 누가 언제 읽어 가나
   // ==========================================
 
-  // 읽는 빈도 순서 — stream 이 가장 잦고 batch 가 가장 뜸하다. 4-2 에서
-  // 방식을 눌러 보는 미리보기가 "그 방식이 지금 방식보다 잦은지 뜸한지"만
-  // 알면 되므로, 그 판단에 필요한 순서만 여기서 정한다.
-  const MODE_RANK = { stream: 0, micro: 1, batch: 2 };
-
   // ---- 상태 ----
   // head — 지금 topic 의 끝. [시간 흐르기] 마다 하나씩 는다.
   // STRIP_LEFT_PAD·STRIP_RIGHT_PAD — 왼쪽은 고정, r-8f21(V.offsetOf)이 20칸
@@ -268,18 +264,6 @@
   let topicCursors = M.initialCursors();
   let activeReaderKey = CD.CONSUMERS[0].key;  // #plc-why 에서 굵게 볼 대상
   let activeModeKey = null;                   // #plc-modes 에서 미리 보는 방식. null = 실제 방식
-
-  // 그 소비자의 실제 mode 와 지금 고른 방식이 다를 때만 가상의 「늦으면」을
-  // 만든다 — 고른 쪽이 실제보다 뜸하면(랭크가 크면) late(실제로 늦었을 때
-  // 잃는 것)를, 고른 쪽이 더 잦으면(랭크가 작으면) faster(더 빨리 해도
-  // 소용없는 이유)를 그대로 재사용한다. 새 문장을 짓지 않고 CONSUMERS 에
-  // 이미 있는 두 필드만 고쳐 보여 준다 — 조합마다 새 판단을 지어내지 않는다.
-  function lateFor(c) {
-    if (c.key !== activeReaderKey || activeModeKey === null || activeModeKey === c.mode) {
-      return c.late;
-    }
-    return MODE_RANK[activeModeKey] > MODE_RANK[c.mode] ? c.late : c.faster;
-  }
 
   function drawTopicStrip() {
     const host = $('plc-topic-strip');
@@ -340,7 +324,7 @@
     CD.CONSUMERS.forEach(function (c) {
       const tr = el('tr');
       if (c.key === activeReaderKey) tr.className = 'is-active';
-      [c.name, c.deadline, c.why, lateFor(c), c.faster].forEach(function (t) {
+      [c.name, c.deadline, c.why, M.lateFor(c, activeReaderKey, activeModeKey), c.faster].forEach(function (t) {
         tr.appendChild(el('td', null, t));
       });
       tbody.appendChild(tr);
@@ -420,8 +404,13 @@
       const tr = e.target.closest('.plc-cursor-row');
       if (!tr) return;
       activeReaderKey = tr.dataset.reader;
+      // 읽는 쪽을 바꾸면 이전 읽는 쪽에서 미리 보던 방식(activeModeKey)을
+      // 지운다 — 안 지우면 새 읽는 쪽의 「늦으면」 칸이, 그 쪽을 직접 고른
+      // 적 없는 방식의 미리보기를 그대로 들고 있게 된다(review 항목 2).
+      activeModeKey = null;
       drawCursorTable();
       drawWhyTable();
+      drawModesTable();
     }
     host.addEventListener('click', pick);
     host.addEventListener('keydown', function (e) {

@@ -43,7 +43,7 @@ const PAGES = [
     name: 'demo-pipeline-course.html',
     files: [
       'demo-pipeline-course.html', 'js/pipeline-course-model.js', 'js/pipeline-course-demo.js',
-      'js/pipeline-course-sections.js',
+      'js/pipeline-course-sections.js', 'js/pipeline-course-sections2.js',
     ],
     must: [
       'plc-sec1', 'plc-sec2', 'plc-sec3', 'plc-sec4', 'plc-sec5', 'plc-sec6', 'plc-sec7',
@@ -57,6 +57,12 @@ const PAGES = [
       'plc-topic', 'plc-why', 'plc-modes', 'plc-twopaths', 'feature-store-serving',
       '읽어 가도 안 지워집니다',
       '늦으면 무엇을 잃나',
+      // 5절 — 기다렸다 가져가도 됩니까 (보존과 되감기)
+      'plc-retention', 'plc-pause', 'plc-disk', 'retentionVerdict', 'CATCHUP',
+      // 6절 — 그 주기를 지키려면 무엇이 필요합니까 (수단과 비용)
+      'plc-tools-table', 'plc-destinations',
+      '잡이 몇 시간 떠 있나',
+      '실시간 쪽 숫자와 배치 쪽 숫자가 안 맞는 것이 정상입니다',
     ],
   },
 ];

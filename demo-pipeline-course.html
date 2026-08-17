@@ -306,6 +306,48 @@
     .plc-twopath-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 0.85rem 1rem; min-width: 0; }
     .plc-twopath-head { font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; }
     .plc-twopath-body { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); }
+
+    /* ---- 굵게 콕 집는 한 줄(5절 "읽어 가도 안 지워집니다", 6절 비용 축)과
+       절을 닫는 함정 한 줄. 셋 다 같은 상자 모양이되 강조색으로만 갈리면
+       "색만으로 가른다"가 되므로, 굵기·왼쪽 표시는 CSS 가 아니라 내용
+       자체(문장의 strong)로 가른다 — 상자 색은 셋이 같다. ---- */
+    .plc-callout, .plc-trap {
+      margin: 0.9rem 0; padding: 0.75rem 0.95rem;
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      font-size: 0.92rem; line-height: 1.7; color: var(--text-primary);
+    }
+    .plc-callout strong, .plc-trap strong { color: var(--accent-primary); }
+
+    /* ---- 5절 — 보존 슬라이더와 되감기 ---- */
+    .plc-retention {
+      border: 1px solid var(--border-color); background: var(--bg-secondary);
+      padding: 0.9rem 1rem 1rem; margin: 1rem 0;
+    }
+    .plc-retention-label { display: block; font-size: 0.92rem; color: var(--text-primary); margin-bottom: 0.6rem; }
+    .plc-retention-label strong { color: var(--accent-secondary); font-variant-numeric: tabular-nums; }
+    #plc-retention { width: 100%; margin-bottom: 0.85rem; accent-color: var(--accent-primary); }
+
+    .plc-verdict {
+      margin: 0.8rem 0 0; padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border-color); background: var(--bg-primary);
+      font-size: 0.9rem; line-height: 1.6;
+    }
+    /* 판정은 색만이 아니라 글 자체가 "그대로 있습니다" 대 "지워졌습니다"로 갈린다 */
+    .plc-verdict[data-tone="idle"] { color: var(--text-muted); }
+    .plc-verdict[data-tone="good"] { color: var(--state-good); font-weight: 700; }
+    .plc-verdict[data-tone="bad"] { color: var(--state-bad); font-weight: 700; }
+
+    #plc-pause[aria-pressed="true"] {
+      border-color: var(--state-bad); background: var(--oxide-bg); color: var(--state-bad); font-weight: 700;
+    }
+    #plc-pause[aria-pressed="true"]::before { content: "▸ "; }
+
+    /* 디스크 표 — 지금 보존 슬라이더 값과 같은 줄을 굵게. 안 들어가는 줄의
+       상태 칸(.plc-status)은 2절 Logstash 끄기 효과표가 이미 쓰는 클래스를
+       그대로 재사용한다(같은 뜻 — 못 씀/영향 적음 대 들어감/안 들어감). */
+    .plc-disk-row[aria-current="true"] { background: var(--navy-bg); }
+    .plc-disk-row[aria-current="true"] td:first-child { color: var(--accent-secondary); font-weight: 700; }
+    .plc-disk-row[aria-current="true"] td:first-child::before { content: "▸ "; }
   </style>
 </head>
 
@@ -475,8 +517,49 @@
         <h3>같은 클릭이 두 경로로 갑니다</h3>
         <div id="plc-twopaths"></div>
       </section>
-      <section class="plc-sec" id="plc-sec5"><h2>5. 기다렸다 가져가도 됩니까</h2></section>
-      <section class="plc-sec" id="plc-sec6"><h2>6. 그 주기를 지키려면 무엇이 필요합니까</h2></section>
+      <section class="plc-sec" id="plc-sec5">
+        <h2>5. 기다렸다 가져가도 됩니까</h2>
+        <p class="plc-lead" id="plc-retention-answer"></p>
+
+        <p class="plc-callout">
+          <strong>읽어 가도 안 지워집니다.</strong> 시간이 지나서 지워지는 것입니다.
+        </p>
+        <p class="plc-lead">
+          커서 위치도 저장돼 있어서, 소비자를 새로 띄우면 처음부터 읽을지 이어서 읽을지 골라야 합니다.
+        </p>
+
+        <div class="plc-retention" id="plc-retention-widget">
+          <label class="plc-retention-label" for="plc-retention">
+            보존 <strong id="plc-retention-value"></strong>일
+          </label>
+          <input type="range" id="plc-retention" min="1" max="30" step="1" value="7">
+          <button type="button" id="plc-pause" class="btn-try" aria-pressed="false"></button>
+          <p class="plc-verdict" id="plc-verdict" data-tone="idle"></p>
+        </div>
+
+        <h3>디스크는 이렇게 찹니다</h3>
+        <p class="plc-lead">보존을 늘릴수록 브로커가 들고 있어야 하는 양이 늘어납니다.</p>
+        <div class="plc-scroll"><table class="plc-tools plc-disk" id="plc-disk"></table></div>
+
+        <p class="plc-lead" id="plc-catchup-note"></p>
+      </section>
+      <section class="plc-sec" id="plc-sec6">
+        <h2>6. 그 주기를 지키려면 무엇이 필요합니까</h2>
+        <p class="plc-lead">
+          <strong>같은 topic 을 넷이 각자 읽습니다.</strong> 실시간 쪽과 배치 쪽이 서로 방해하지 않습니다.
+          이것이 3절에서 Kafka 를 세운 값이 실제로 회수되는 자리입니다.
+        </p>
+
+        <div class="plc-scroll"><table class="plc-tools" id="plc-tools-table"></table></div>
+
+        <p class="plc-callout" id="plc-cost-axis"></p>
+
+        <h3>목적지마다 포맷과 재시도가 다릅니다</h3>
+        <div class="plc-scroll"><table class="plc-tools" id="plc-destinations"></table></div>
+        <p class="plc-lead" id="plc-retry-note"></p>
+
+        <p class="plc-trap" id="plc-ml-trap"></p>
+      </section>
       <section class="plc-sec" id="plc-sec7"><h2>7. 내 학습 데이터는 여기서 나옵니다</h2></section>
     </div>
   </main>
@@ -486,6 +569,7 @@
   <script src="js/pipeline-course-model.js"></script>
   <script src="js/pipeline-course-demo.js"></script>
   <script src="js/pipeline-course-sections.js"></script>
+  <script src="js/pipeline-course-sections2.js"></script>
 </body>
 
 </html>

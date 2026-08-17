@@ -107,35 +107,52 @@
   // 읽는 쪽 넷. 마감은 kafka-log-pipeline 1절, consumer 수는 4절, 저장소는
   // data-distribution-layer 1절이다. why/late/faster 는 그 글들의 서술을
   // 한 줄로 줄인 것이라 FACTS 대조 대상이 아니다.
+  // how(Task 11, 6절 표 "어떻게 읽나" 칸)도 같은 이유로 FACTS 대상이 아니다 —
+  // 숫자가 아니라 그 소비자가 읽는 모양을 문장으로 줄인 것이다.
   const CONSUMERS = [
     {
       key: 'budget', name: '예산 소진 확인', deadline: '5초', deadlineSec: 5,
-      consumers: 6, store: '집계 결과', product: 'Flink', mode: 'stream',
+      consumers: 6, store: '집계 결과', product: 'Flink', mode: 'stream', how: '붙어서 합계만',
       why: '돈이 샙니다. 예산을 다 쓴 캠페인이 계속 나가면 그 광고비는 우리가 뭅니다',
       late: `5초 늦으면 노출 ${BUDGET_LATE_IMPRESSIONS.toLocaleString('en-US')}건이 더 나갑니다`,
       faster: '이득이 큽니다. 넷 중 여기가 제일 급합니다',
     },
     {
       key: 'dash', name: '실시간 대시보드', deadline: '2초', deadlineSec: 2,
-      consumers: 6, store: 'ClickHouse', product: 'Flink, Kafka Streams', mode: 'stream',
+      consumers: 6, store: 'ClickHouse', product: 'Flink, Kafka Streams', mode: 'stream', how: '붙어서 한 건씩',
       why: '운영자가 화면을 보며 지금 잘 나가는지 판단합니다',
       late: '멈춘 화면으로 보입니다',
       faster: '이득 없습니다. 사람 눈이 2초 아래를 못 가립니다',
     },
     {
       key: 'report', name: '광고주 리포트', deadline: '5분', deadlineSec: 300,
-      consumers: 12, store: '리포트용 DB', product: 'Spark 마이크로배치', mode: 'micro',
+      consumers: 12, store: '리포트용 DB', product: 'Spark 마이크로배치', mode: 'micro', how: '5분마다 모아서',
       why: '그대로 청구서가 됩니다. 빠른 것보다 정확한 것이 먼저입니다',
       late: '광고주 문의가 옵니다',
       faster: '필요 없습니다',
     },
     {
       key: 'train', name: '모델 학습', deadline: '다음 날 새벽', deadlineSec: 86400,
-      consumers: 4, store: 'Iceberg + 스토리지', product: 'Spark, Airflow', mode: 'batch',
+      consumers: 4, store: 'Iceberg + 스토리지', product: 'Spark, Airflow', mode: 'batch', how: '하루치를 파일로',
       why: '하루치가 다 모여야 라벨이 확정됩니다',
       late: '어제 데이터로 오늘 모델을 못 만듭니다',
       faster: '불가능합니다. 라벨이 아직 안 왔습니다',
     },
+  ];
+
+  // 목적지 여섯(Task 11, 6절). posts/data-distribution-layer.md 1절 표를
+  // 그대로 옮긴 값이다. CONSUMERS 와 같은 이유로 낱개 숫자를 FACTS 에
+  // 등록하지 않는다 — 표 하나가 근거이지, 숫자마다 다른 문장에서 뽑아 온
+  // 것이 아니다. write 칸의 "파티션"은 이 페이지가 피하는 Kafka 파티션과는
+  // 다른 말(데이터 창고 테이블을 날짜 등으로 잘라 둔 조각)이지만, 화면에서
+  // 헷갈리지 않도록 "구간 단위"로 풀어 썼다.
+  const DESTINATIONS = [
+    { name: '스토리지 + Iceberg', purpose: '학습, 정산 원천', format: 'Parquet', write: '구간 단위로 덮어쓰기', retry: '5회, 2초' },
+    { name: 'ClickHouse', purpose: '실시간 대시보드', format: 'RowBinary', write: '같은 키면 덮어쓰기', retry: '3회, 0.2초' },
+    { name: 'OpenSearch', purpose: '운영자 검색', format: 'JSON', write: '문서 id 색인', retry: '3회, 1초' },
+    { name: '리포트용 DB', purpose: '광고주 리포트', format: '행', write: '배치 insert', retry: '5회, 2초' },
+    { name: '다른 팀 Kafka', purpose: '이상 탐지 팀', format: 'Avro', write: 'topic 에 붙이기', retry: '무한' },
+    { name: '피처 스토어', purpose: '서빙 피처', format: '키-값', write: '키 덮어쓰기', retry: '3회, 0.5초' },
   ];
 
   // 주소 다섯. deadline 이 null 인 것은 글에 값이 없다는 뜻이다 — 화면에서는 '—' 로 그린다.
@@ -171,5 +188,5 @@
       why: '주소를 안 바꿔도 됩니다' },
   ];
 
-  return { FACTS, val, CONSUMERS, BUDGET_LATE_IMPRESSIONS, DEPLOY_STACKED_ROWS, ENDPOINTS, NAMING };
+  return { FACTS, val, CONSUMERS, BUDGET_LATE_IMPRESSIONS, DEPLOY_STACKED_ROWS, ENDPOINTS, NAMING, DESTINATIONS };
 });

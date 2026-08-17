@@ -177,10 +177,52 @@ eq('다섯 번째 회에서 리포트가 head 로 확 당긴다', rc.find(c => c
 
 console.log('\n4절 — 읽는 방식은 셋');
 eq('방식 셋의 키',      M.READ_MODES.map(m => m.key), ['stream', 'micro', 'batch']);
-eq('붙어 있는 잡은 24시간', M.READ_MODES[0].jobHours, 24);
+// 예전엔 M.READ_MODES[0].jobHours 를 24 와 비교했는데, 그건 리터럴을 자기
+// 자신과 비교하는 것이라 값이 틀려도 못 잡는다. 대신 실제 구분 — 계속 붙어
+// 있는 방식만 잡이 도는 시간을 알고 나머지 둘은 6절 몫으로 비워 둔다 — 을 본다.
+eq('계속 붙어 있는 방식만 잡이 도는 시간을 안다', M.READ_MODES.map(m => m.jobHours != null), [true, false, false]);
 
 console.log('\n4절 — 예산 소진이 늦으면 잃는 노출이 곱셈과 맞나');
 eq('5초에 13,195건', D.BUDGET_LATE_IMPRESSIONS, 13195);
+
+console.log('\n4절 — lateFor 세 갈래 (Task 11 에서 js/pipeline-course-sections.js 로부터 model.js 로 옮김)');
+const dashC = D.CONSUMERS.find(c => c.key === 'dash');     // 실제 방식: stream
+const reportC = D.CONSUMERS.find(c => c.key === 'report'); // 실제 방식: micro
+const trainC = D.CONSUMERS.find(c => c.key === 'train');   // 실제 방식: batch
+
+eq('활성 읽는 쪽이 아니면 미리 보는 방식과 무관하게 실제 late',
+   M.lateFor(dashC, 'report', 'batch'), dashC.late);
+eq('활성인데 미리 보는 방식이 없으면 실제 late',
+   M.lateFor(dashC, 'dash', null), dashC.late);
+eq('미리 보는 방식이 실제 방식과 같으면 실제 late',
+   M.lateFor(dashC, 'dash', 'stream'), dashC.late);
+eq('미리 본 방식이 실제보다 뜸하면(batch) late',
+   M.lateFor(dashC, 'dash', 'batch'), dashC.late);
+eq('미리 본 방식이 실제보다 잦으면(stream) faster',
+   M.lateFor(trainC, 'train', 'stream'), trainC.faster);
+eq('리포트가 활성 — 더 뜸한 batch 를 미리 보면 late',
+   M.lateFor(reportC, 'report', 'batch'), reportC.late);
+eq('리포트가 활성 — 더 잦은 stream 을 미리 보면 faster',
+   M.lateFor(reportC, 'report', 'stream'), reportC.faster);
+
+console.log('\n5절 — 보존과 되감기');
+eq('디스크 표는 네 줄',        M.DISK.map(d => d.days), [3, 7, 14, 30]);
+eq('7일이면 32%',              M.DISK.find(d => d.days === 7).percent, 32);
+eq('30일은 안 들어간다',        M.DISK.find(d => d.days === 30).percent > 100, true);
+eq('보존 7일에 3일 멈추면 산다', M.retentionVerdict(7, 3), { safe: true, lostDays: 0 });
+eq('보존 2일에 3일 멈추면 하루를 잃는다', M.retentionVerdict(2, 3), { safe: false, lostDays: 1 });
+eq('되감기 두 점',              M.CATCHUP.map(c => c.consumers), [4, 12]);
+eq('4명이면 14.1일',            M.CATCHUP[0].days, 14.1);
+eq('12명이면 1.1일',            M.CATCHUP[1].days, 1.1);
+eq('디스크 표 머리가 가정하는 용량은 500GB', M.DISK_CAPACITY_GB, 500);
+eq('새벽 잡은 20분짜리 예시(6절 구조 상수)', M.READ_MODES.find(m => m.key === 'batch').dawnMinutes, 20);
+
+console.log('\n6절 — 읽는 쪽마다 어떻게 읽는지와 목적지 여섯');
+eq('읽는 쪽 how 넷', D.CONSUMERS.map(c => c.how),
+   ['붙어서 합계만', '붙어서 한 건씩', '5분마다 모아서', '하루치를 파일로']);
+eq('목적지는 여섯', D.DESTINATIONS.length, 6);
+eq('목적지 이름 순서', D.DESTINATIONS.map(d => d.name),
+   ['스토리지 + Iceberg', 'ClickHouse', 'OpenSearch', '리포트용 DB', '다른 팀 Kafka', '피처 스토어']);
 
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);

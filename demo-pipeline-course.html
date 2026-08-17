@@ -216,6 +216,35 @@
       font-size: 0.9rem; line-height: 1.65; color: var(--text-primary);
     }
     .plc-effect-note:empty { display: none; padding: 0; border: none; }
+
+    /* ---- 3절 — Kafka 로 모으는 이유. 그림은 js/pipeline-course-sections.js 가
+       매번 통째로 새로 그린다(상태마다 선 개수 자체가 다르기 때문). 선은 항상
+       먼저 그리고 상자·배지를 그 위에 얹어 선 끝을 덮는다 — 상자는 칸 전체가
+       불투명해 안전하지만, 배지(1개·4개 표시)는 상자가 아니라 선 위에 떠
+       있는 글자라 배경을 글자 폭만큼만 따로 깐다(.plc-fo-badge-bg). 줄 전체에
+       배경을 깔면 그 높이에서 선이 끊긴 것처럼 보인다 — 그래서 안 한다. ---- */
+    .plc-fanout { margin: 0.9rem 0; }
+    .plc-fanout-svg { display: block; }
+
+    .plc-fo-line { stroke: var(--accent-secondary); stroke-width: 1.8; fill: none; }
+    .plc-fo-line.is-dead { stroke: var(--state-bad); stroke-width: 1.6; stroke-dasharray: 5 4; }
+    .plc-fo-arrow { fill: var(--accent-secondary); }
+    .plc-fo-arrow-dead { fill: var(--state-bad); }
+
+    .plc-fo-box { fill: var(--bg-secondary); stroke: var(--border-color); stroke-width: 1; }
+    .plc-fo-box.is-hub { fill: var(--navy-bg); stroke: var(--accent-secondary); stroke-width: 1.4; }
+    .plc-fo-box.is-bad { stroke: var(--state-bad); stroke-width: 1.6; stroke-dasharray: 5 4; }
+
+    .plc-fo-reader { cursor: pointer; }
+    .plc-fo-reader:hover .plc-fo-box, .plc-fo-reader:focus .plc-fo-box { stroke: var(--accent-primary); stroke-width: 1.8; }
+
+    .plc-fo-name { font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; fill: var(--text-primary); }
+    .plc-fo-sub { font-family: var(--font-sans); font-size: 11px; fill: var(--text-muted); }
+    .plc-fo-name.is-bad, .plc-fo-sub.is-bad { fill: var(--state-bad); }
+
+    /* 배지 배경 — 글자 폭만큼만(.plc-fo-badge-bg 는 badge() 가 텍스트 길이에 맞춰 짓는다) */
+    .plc-fo-badge-bg { fill: var(--bg-primary); stroke: var(--border-color); stroke-width: 1; }
+    .plc-fo-badge-text { font-family: var(--font-mono); font-size: 11px; font-weight: 700; fill: var(--text-secondary); }
   </style>
 </head>
 
@@ -333,7 +362,24 @@
           Logstash 를 안 두고 Kafka 에 원문을 넣은 뒤 Flink, Spark 가 파싱하는 방식도 흔합니다.
         </p>
       </section>
-      <section class="plc-sec" id="plc-sec3"><h2>3. Kafka 로 모으는 이유</h2></section>
+      <section class="plc-sec" id="plc-sec3">
+        <h2>3. Kafka 로 모으는 이유</h2>
+        <p class="plc-lead">
+          <strong>한 번 쓰고 여럿이 읽습니다.</strong> 아래 스위치로 Kafka 를 빼 보면 그 뜻이 보입니다.
+        </p>
+
+        <div class="plc-fanout plc-scroll" id="plc-fanout"></div>
+        <p class="plc-lead" id="plc-fanout-hint">
+          읽는 쪽 상자를 누르면 그 자리가 멈춥니다. 다시 누르면 되살아납니다.
+        </p>
+        <button type="button" id="plc-nokafka" class="btn-try" aria-pressed="false">Kafka 빼기</button>
+        <p class="plc-effect-note" id="plc-fanout-kill-note"></p>
+
+        <h3>Kafka 없이 하면 생기는 문제는 셋입니다</h3>
+        <ol class="plc-reasons" id="plc-fanout-reasons"></ol>
+
+        <p class="plc-lead" id="plc-fanout-speed"></p>
+      </section>
       <section class="plc-sec" id="plc-sec4"><h2>4. topic 에 놓인 뒤 누가 언제 읽어 갑니까</h2></section>
       <section class="plc-sec" id="plc-sec5"><h2>5. 기다렸다 가져가도 됩니까</h2></section>
       <section class="plc-sec" id="plc-sec6"><h2>6. 그 주기를 지키려면 무엇이 필요합니까</h2></section>
@@ -345,6 +391,7 @@
   <script src="js/course-data.js"></script>
   <script src="js/pipeline-course-model.js"></script>
   <script src="js/pipeline-course-demo.js"></script>
+  <script src="js/pipeline-course-sections.js"></script>
 </body>
 
 </html>

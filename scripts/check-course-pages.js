@@ -41,11 +41,18 @@ const PAGES = [
   },
   {
     name: 'demo-pipeline-course.html',
-    files: ['demo-pipeline-course.html', 'js/pipeline-course-model.js', 'js/pipeline-course-demo.js'],
+    files: [
+      'demo-pipeline-course.html', 'js/pipeline-course-model.js', 'js/pipeline-course-demo.js',
+      'js/pipeline-course-sections.js',
+    ],
     must: [
       'plc-sec1', 'plc-sec2', 'plc-sec3', 'plc-sec4', 'plc-sec5', 'plc-sec6', 'plc-sec7',
       '골라 읽는 법',
       'plc-hold', 'plc-stopkafka', 'plc-tools', 'plc-nologstash', 'plc-nologstash-effect',
+      // 3절 — Kafka 로 모으는 이유
+      'plc-nokafka', 'plc-fanout',
+      '보내는 쪽이 받는 쪽 넷을 다 알아야 합니다',
+      '읽는 속도가 서로 달라도 됩니다',
     ],
   },
 ];

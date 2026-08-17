@@ -77,6 +77,7 @@
     bidBudgetMs:    v(12,   G, '12ms 안에 답해야 하는 입찰 요청'),
     trackBudgetMs:  v(100,  G, '100ms 가 걸려도 됩니다'),
     deployStacked:  v(52780, K, '52,780줄이 `bidder` 메모리에 쌓입니다'),
+    deploySeconds:  v(20,   K, '20초 배포하는 동안'),
 
     // --- 실물 줄 (값 자체가 근거다) ---
     accessLineStd: v('10.2.31.7 - - [16/Aug/2026:16:48:21 +0900] "POST /v1/events HTTP/1.1" 204 0 "-" "AdSDK/3.2.1" 0.002', A),
@@ -101,7 +102,7 @@
   // 값에서 직접 만든다 — 숫자가 바뀌면 문구도 같이 바뀌어 갈릴 일이 없다.
   const BUDGET_LATE_IMPRESSIONS = FACTS.perSecImp.value * 5;
   // 52,780 = 초당 2,639 × 20초 배포. 3절이 쓴다. 숫자를 손으로 박지 않는다.
-  const DEPLOY_STACKED_ROWS = FACTS.perSecImp.value * 20;
+  const DEPLOY_STACKED_ROWS = FACTS.perSecImp.value * FACTS.deploySeconds.value;
 
   // 읽는 쪽 넷. 마감은 kafka-log-pipeline 1절, consumer 수는 4절, 저장소는
   // data-distribution-layer 1절이다. why/late/faster 는 그 글들의 서술을

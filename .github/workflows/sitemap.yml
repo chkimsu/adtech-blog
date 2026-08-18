@@ -7,6 +7,7 @@ on:
     paths:
       - 'js/posts.js'
       - 'posts/**'
+      - 'demo-*.html'
       - 'generate-sitemap.js'
       - 'scripts/generate-feed.js'
       - 'scripts/build-search-index.js'

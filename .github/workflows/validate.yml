@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'js/posts.js'
+      - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'
       - 'scripts/validate-posts.js'
@@ -18,6 +19,7 @@ on:
   pull_request:
     paths:
       - 'js/posts.js'
+      - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'
       - 'scripts/validate-posts.js'
@@ -44,3 +46,9 @@ jobs:
         run: node scripts/test-long-sentences.js
       - name: 디자인 정합 (각진·무그림자·팔레트·serif 없음·장식글자 없음)
         run: node scripts/check-design.js
+      - name: 코스 표준 데이터가 글과 맞나
+        run: node scripts/check-course-data.js
+      - name: 코스 순수 로직 시험
+        run: node scripts/test-course-logic.js
+      - name: 코스 두 장 구조
+        run: node scripts/check-course-pages.js

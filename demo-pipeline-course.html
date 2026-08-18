@@ -512,7 +512,7 @@
           <div class="plc-scroll"><table class="plc-cursor-table" id="plc-cursor-table"></table></div>
           <div class="plc-topic-btns">
             <button type="button" id="plc-tick" class="btn-try">시간 흐르기</button>
-            <button type="button" id="plc-dawn" class="btn-try">새벽이 왔다</button>
+            <button type="button" id="plc-dawn" class="btn-try">새벽이 왔습니다</button>
             <button type="button" id="plc-topic-reset" class="btn-try">처음으로</button>
           </div>
         </div>
@@ -609,6 +609,40 @@
 
         <h3>ML 엔지니어가 실제로 만나는 것 셋</h3>
         <ol class="plc-reasons" id="plc-closing"></ol>
+      </section>
+
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>한 번 쓰고 여럿이 읽습니다</strong> — Kafka를 빼면 보내는 쪽이 받는 쪽 넷을 다 알아야 하고, 한 곳이 죽으면 보내는 쪽까지 밀립니다. Kafka가 있으면 읽는 쪽이 각자 다른 속도로 읽어도 서로 방해하지 않습니다.</li>
+            <li><strong>읽어 가도 안 지워집니다</strong> — 지워지는 것은 정해진 기간이 지났을 때뿐입니다. 그 기간 안에서는 멈췄다 다시 읽어도 되지만, 넘기면 그만큼은 이미 없고, 사람을 늘려도 따라잡는 데는 한계가 있습니다.</li>
+            <li><strong>주기를 정하는 것은 "늦으면 무엇을 잃나"입니다</strong> — 대시보드처럼 계속 봐야 하면 계속 떠 있는 잡이 필요하고, 학습처럼 하루 한 번이면 새벽에 짧게 돌면 됩니다. 노출과 클릭을 req_id로 다시 붙여야 그 학습 데이터에 라벨이 생깁니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=log-hops-to-kafka" class="demo-next-card">
+              <span class="demo-next-label">이 데모의 짝 글</span>
+              <span class="demo-next-title">로그 수집 — 자리마다 바뀌는 모양</span>
+              <span class="demo-next-excerpt">자리마다 뜨는 바이트와 밀리초가 전부 이 글의 표에서 왔습니다</span>
+            </a>
+            <a href="post.html?id=kafka-log-pipeline" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Kafka는 왜 있나</span>
+              <span class="demo-next-excerpt">topic, 보존 기간, 되감기, req_id 조인을 이 글에서 더 봅니다</span>
+            </a>
+            <a href="post.html?id=data-distribution-layer" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">데이터 유통 층 — 목적지를 늘리는 법</span>
+              <span class="demo-next-excerpt">6절의 목적지 표가 이 글에서 그대로 왔습니다</span>
+            </a>
+          </div>
+        </div>
       </section>
     </div>
   </main>

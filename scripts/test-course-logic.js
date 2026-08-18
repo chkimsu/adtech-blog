@@ -124,9 +124,15 @@ eq('앞 다섯(sdk~logstash) 합은 1,076, Kafka 자신의 몫은 36',
    [1076, 36]);
 
 console.log('\n자리마다 실제 줄이 나오나');
+eq('앱 SDK 자리 줄은 글의 그 ClickEvent 줄', M.textAt('sdk'), D.val.appObjectLine);
 eq('nginx 자리의 줄은 글의 그 줄',  M.textAt('nginx'), D.val.collectLine);
 eq('변환기 자리의 줄은 글의 그 줄', M.textAt('logstash'), D.val.finalLine);
 eq('Filebeat 봉투 자리도 글의 346 바이트', S.byteLen(M.textAt('beat')), D.val.byteEnvelope);
+// 앱 SDK 자리 줄은 원문처럼 2줄이다. 줄바꿈과 그 들여쓰기를 공백 하나로
+// 접으면 정확히 110 B — byteObject 와 맞아야 한다. C 방식 줄을 183 B 에
+// pin 한 것과 같은 방식으로, 문자열과 바이트 수를 같이 묶어 둔다.
+eq('그 줄의 줄바꿈을 접으면 110 B(byteObject)와 맞는다',
+   S.byteLen(M.textAt('sdk').replace(/\n[ \t]*/, ' ')), D.val.byteObject);
 
 console.log('\n1절 — Kafka 가 멈췄을 때 어디에 얼마나 버티나');
 eq('파일 경유는 100GB 로 237시간', M.holdTime('file').hours, D.val.fileHours);

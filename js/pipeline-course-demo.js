@@ -76,7 +76,7 @@
   // ---- 2절 — [Logstash 끄기] 를 누르면 읽는 쪽 넷 중 누가 곤란해지는지.
   // 이름은 CD.CONSUMERS 에서 그대로 가져오고(중복 등록 안 함), 곤란한 이유만
   // 여기서 새로 적는다 — 브리프가 준 문장 그대로다.
-  const NOLOGSTASH_ORDER = ['dash', 'budget', 'report', 'train'];
+  const NOLOGSTASH_ORDER = ['budget', 'dash', 'report', 'train'];
   const NOLOGSTASH_EFFECT = {
     dash:   { breaks: true,  reason: '못 그립니다. 필드가 없어 집계할 것이 없습니다' },
     budget: { breaks: true,  reason: null }, // draw 시점에 cost 를 code 로 감싼다

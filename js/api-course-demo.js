@@ -178,7 +178,9 @@
 
   function drawRequest() {
     $('apc-req').textContent = S.requestText(state);
-    $('apc-req-bytes').textContent = S.byteLen(S.bodyText(state)) + ' B';
+    // 배지는 본문만의 바이트다 — 위에 보이는 원문 전체(헤더 포함)보다 짧다.
+    // "본문"을 안 붙이면 6절의 같은 배지(그 자리는 줄 전체를 잰다)와 헷갈린다.
+    $('apc-req-bytes').textContent = '본문 ' + S.byteLen(S.bodyText(state)) + ' B';
   }
 
   // v 는 draw() 가 미리 계산해 넘긴다 — 보내기 전에는 null 이다.
@@ -554,8 +556,11 @@
   }
 
   // 4절 — 회차표의 머리글만 한 번 짓는다. tbody 내용은 drawRetry() 가 매번 채운다.
+  // "누적" 이 아니라 "보낸 누적"이다 — 이 칸은 요청 번호 스위치와 무관하게
+  // 항상 실제로 보낸 건수를 센다(rounds 는 useKey 와 무관). 리포트가 세는
+  // 건수(apc-retry-note 의 문구)와는 다른 숫자라 헷갈리지 않게 이름을 갈랐다.
   function buildRetry() {
-    buildSimpleTable('apc-retry', ['회차', '보낸 건수', '응답 유실', '누적']);
+    buildSimpleTable('apc-retry', ['회차', '보낸 건수', '응답 유실', '보낸 누적']);
   }
 
   // 5-1 — 주소 다섯을 표로. deadlineMs·rate 가 null 인 칸은 지어내지 않고 '—' 로 비운다.

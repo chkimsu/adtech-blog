@@ -90,8 +90,15 @@
   // 자리마다 「데이터 모양」 문자열. sdk 만 예외로 나가는 것(85 B 본문)이
   // 아니라 들어오는 것(110 B 앱 안 객체)을 보여 준다 — 브리프가 지정한
   // 그대로다. 나머지 여섯은 그 자리를 지나며 실제로 나가는 모양이다.
+  // 🔴 sdk 는 V.appObjectLine(log-hops-to-kafka.md 1절의 ClickEvent 리터럴,
+  //    줄바꿈을 접으면 110 B)이어야 한다. V.eventLine 은 다른 글
+  //    (api-basics.md)의 이벤트 로그 줄(109 B, tz·sdk 없음)이라 여기 쓰면
+  //    안 된다 — 1페이지 3절이 그 줄을 "우리가 짠 핸들러 함수가 남김"으로
+  //    이름 붙였는데, 2페이지가 그 바이트를 「앱 SDK」 밑에 다시 걸면 같은
+  //    바이트가 두 주체 밑에 놓여 "누가 남기느냐가 무엇을 적을 수 있는지
+  //    정한다"는 3절의 가르침이 무너진다(최종 리뷰 Important 1).
   const HOP_TEXT = {
-    sdk: V.eventLine,
+    sdk: V.appObjectLine,
     nginx: V.collectLine,
     file: V.collectLine,
     beat: V.filebeatEnvelope,

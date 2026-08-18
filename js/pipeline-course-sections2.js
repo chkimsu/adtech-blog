@@ -142,6 +142,9 @@
   buildRetentionAnswer();
   buildDiskTable();
   buildCatchupNote();
+  // HTML 의 value="7" 은 정적 속성이라 retentionDays 가 바뀌면 옆 문장과
+  // 갈린다. 첫 draw 전에 CourseData 값으로 맞춰 둔다.
+  $('plc-retention').value = CD.val.retentionDays;
   $('plc-pause').textContent = '학습을 ' + PAUSE_DAYS + '일 멈췄다';
   bindRetention();
   drawRetention();

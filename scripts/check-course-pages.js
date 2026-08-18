@@ -37,6 +37,9 @@ const PAGES = [
       'apc-endpoints', 'apc-naming', 'apc-merge', 'apc-final',
       'demo-pipeline-course.html',
       '자원 이름이 어차피 다르기',
+      // 최종 리뷰 Important 2 — 닫는 블록이 빠져 있었다(계획서 누락). 이제
+      // 있으니 다시 조용히 지워지지 않게 앵커를 건다.
+      '다음 배우기', '이 데모에서 알게 된 3가지',
     ],
   },
   {
@@ -65,6 +68,9 @@ const PAGES = [
       '실시간 쪽 숫자와 배치 쪽 숫자가 안 맞는 것이 정상입니다',
       // 7절 — 내 학습 데이터는 여기서 나옵니다 (req_id 조인)
       'plc-join', 'plc-window', 'demo-api-course.html',
+      // 최종 리뷰 Important 2 — 닫는 블록이 빠져 있었다(계획서 누락). 이제
+      // 있으니 다시 조용히 지워지지 않게 앵커를 건다.
+      '다음 배우기', '이 데모에서 알게 된 3가지',
     ],
   },
 ];

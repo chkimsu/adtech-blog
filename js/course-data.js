@@ -46,47 +46,64 @@
     byteFinal:    v(309, L, '건당 309바이트'),
 
     // --- 볼륨과 시간 ---
-    perSecFile:  v(686,  L, '686줄이 들어와 2,665건이 나갑니다'),
-    perSecKafka: v(2665, L, '686줄이 들어와 2,665건이 나갑니다'),
+    // 두 값 다 같은 문장("초당으로 바꾸면 686줄이 들어와 2,665건이 나갑니다")
+    // 에서 오지만, needle 은 각자 자기 숫자만 담게 좁혀 뒀다 — 공유 needle
+    // 이면 두 값을 맞바꿔도 검사기가 못 잡는다(최종 리뷰 Minor 3, 실증됨).
+    perSecFile:  v(686,  L, '686줄이 들어와'),
+    perSecKafka: v(2665, L, '2,665건이 나갑니다'),
     perSecImp:   v(2639, C, '초당 2,639건'),
     msToKafka:   v(1112, L, '탭에서 Kafka 도달까지 1,112 밀리초'),
     msInFile:    v(640,  L, '1,112 밀리초 중 640이 거기입니다'),
     // fileGB·directMB 는 fileHours·directMins 와 근거 문장이 같다 — 근거를 두 벌
     // 만드는 것이 아니라, 한 문장 안에 이미 같이 적혀 있는 용량과 시간을 각각
     // 뽑아서 값 두 개로 등록하는 것이다("100GB 면 237시간", "512MB 가 10.9분").
-    fileGB:      v(100,  L, '디스크 100GB 면 237시간입니다'),
-    fileHours:   v(237,  L, '디스크 100GB 면 237시간입니다'),
-    directMB:    v(512,  L, '512MB 가 10.9분에 찹니다'),
-    directMins:  v(10.9, L, '512MB 가 10.9분에 찹니다'),
+    // needle 은 그 문장을 통째로 공유하지 않고 각자 자기 숫자만 담게 좁혀
+    // 뒀다 — 공유 needle 이면 용량↔시간을 맞바꿔도 검사기가 못 잡는다
+    // (최종 리뷰 Minor 3, 실증됨).
+    fileGB:      v(100,  L, '100GB 면'),
+    fileHours:   v(237,  L, '237시간입니다'),
+    directMB:    v(512,  L, '512MB 가'),
+    directMins:  v(10.9, L, '10.9분에 찹니다'),
     nginxBufLoss: v(179, L, '없어질 수 있는 최대치는 **179줄**'),
     dailyClicks: v('하루 클릭 228만 건', P),
 
     // --- Kafka ---
     topicClick:    v('ad.click', K),
-    partitionOf:   v(5,    K, '`partition` 은 5, `offset` 은 8,412'),
-    offsetOf:      v(8412, K, '`partition` 은 5, `offset` 은 8,412'),
+    // needle 을 절반씩 나눠 각자 자기 숫자만 담게 좁혔다 — 원래 한 문장을
+    // 같이 썼을 때는 partition↔offset 값을 맞바꿔도 검사기가 못 잡았다.
+    partitionOf:   v(5,    K, '`partition` 은 5'),
+    offsetOf:      v(8412, K, '`offset` 은 8,412'),
     partitionN:    v(12,   K, '우리는 12개로 잡습니다'),
     retentionDays: v(7,    K, '우리 답은 7일입니다'),
     // 5절 — 되감는 속도의 상한(partition 수)을 보여주는 두 점. 이 프로젝트가
     // 특히 지키려던 두 숫자라(리뷰 요청) js/pipeline-course-model.js 의
-    // CATCHUP 이 계산식이 아니라 이 값을 그대로 쓴다.
-    catchup4Days:  v(14.1, K, '모델 학습이 4명으로 3일치를 따라잡으면 **14.1일**이 걸리고, 12명까지 늘려야 **1.1일**입니다.'),
-    catchup12Days: v(1.1,  K, '모델 학습이 4명으로 3일치를 따라잡으면 **14.1일**이 걸리고, 12명까지 늘려야 **1.1일**입니다.'),
+    // CATCHUP 이 계산식이 아니라 이 값을 그대로 쓴다. 두 점 다 같은 문장
+    // 에서 오지만 needle 은 각자 자기 숫자만 담게 좁혔다 — 공유 needle 이면
+    // 4명↔12명 결과를 맞바꿔도 검사기가 못 잡는다(최종 리뷰 Minor 3).
+    catchup4Days:  v(14.1, K, '4명으로 3일치를 따라잡으면 **14.1일**이 걸리고'),
+    catchup12Days: v(1.1,  K, '12명까지 늘려야 **1.1일**입니다'),
     joinHours:     v(3,    K, '우리 답은 3시간입니다'),
     // 7절 — 창을 3시간에서 24시간으로 늘렸을 때. 넷 다 같은 문장 하나("우리
     // 답은 3시간입니다. 24시간으로 늘리면...")에서 온다 — fileGB·fileHours
-    // 처럼 근거 문장 하나를 여럿이 나눠 쓴다.
-    joinWindowAlt:     v(24,    K, '24시간으로 늘리면 11,400건을 더 건지는데 228만의 0.5% 이고, 그 0.5% 를 사려고 학습 데이터 확정이 21시간 늦어집니다.'),
-    joinAltCatch:      v(11400, K, '24시간으로 늘리면 11,400건을 더 건지는데 228만의 0.5% 이고, 그 0.5% 를 사려고 학습 데이터 확정이 21시간 늦어집니다.'),
-    joinAltPct:        v('0.5%', K, '24시간으로 늘리면 11,400건을 더 건지는데 228만의 0.5% 이고, 그 0.5% 를 사려고 학습 데이터 확정이 21시간 늦어집니다.'),
-    joinAltDelayHours: v(21,    K, '24시간으로 늘리면 11,400건을 더 건지는데 228만의 0.5% 이고, 그 0.5% 를 사려고 학습 데이터 확정이 21시간 늦어집니다.'),
+    // 처럼 근거 문장 하나를 여럿이 나눠 쓴다. needle 은 그 문장을 통째로
+    // 공유하지 않고 각자 자기 조각만 담게 좁혔다 — 공유 needle 이면 넷 중
+    // 어느 쌍을 맞바꿔도 검사기가 못 잡는다(최종 리뷰 Minor 3, 24↔21 이 실증됨).
+    joinWindowAlt:     v(24,    K, '24시간으로 늘리면'),
+    joinAltCatch:      v(11400, K, '11,400건을 더 건지는데'),
+    joinAltPct:        v('0.5%', K),
+    joinAltDelayHours: v(21,    K, '확정이 21시간 늦어집니다'),
     ctr:           v('1.00%', K),
     // 7절 — CTR 의 분자·분모. ctr(1.00%)과 같은 문장(하루로 세면 노출 2억
     // 2,800만 줄에 클릭 228만 줄이라 1.00% 이고)에서 온다. ctrImpressions 는
     // 그 문장의 "2억 2,800만"을 나누기 표기에 맞춰 억 단위(2.28억)로 다시
-    // 적은 것이다 — 같은 값이고 새로 지어낸 수가 아니다.
-    ctrClicks:      v('228만', K, '하루로 세면 노출 2억 2,800만 줄에 클릭 228만 줄이라'),
-    ctrImpressions: v('2.28억', K, '하루로 세면 노출 2억 2,800만 줄에 클릭 228만 줄이라'),
+    // 적은 것이다 — 같은 값이고 새로 지어낸 수가 아니다. 둘 다 문자열 값이라
+    // needle 에 값의 숫자가 들어 있는지는 검사기가 안 본다(그 대조는
+    // typeof value === 'number' 일 때만 돈다) — 그래도 needle 은 서로 안
+    // 겹치게 좁혀 뒀다. ctrClicks 는 needle 을 안 줘 값 자신('228만')이
+    // 그대로 needle 이 되고, ctrImpressions 는 '2.28억' 이 글에 그대로 없어
+    // 그 근거인 "2억 2,800만"을 따로 준다.
+    ctrClicks:      v('228만', K),
+    ctrImpressions: v('2.28억', K, '2억 2,800만'),
 
     // --- API ---
     reportInflated: v(1180, C, '리포트에 1,180건으로 잡힙니다'),
@@ -100,6 +117,13 @@
     // --- 실물 줄 (값 자체가 근거다) ---
     accessLineStd: v('10.2.31.7 - - [16/Aug/2026:16:48:21 +0900] "POST /v1/events HTTP/1.1" 204 0 "-" "AdSDK/3.2.1" 0.002', A),
     eventLine:     v('{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786002501234,"app_ver":"3.2.1"}', A),
+    // 앱 안에서 만들어진 객체 그 자체 — posts/log-hops-to-kafka.md 1절의
+    // ClickEvent(...) 리터럴이다(글의 2줄 원문 그대로, 121바이트). 줄바꿈과
+    // 그 들여쓰기를 공백 하나로 접으면 정확히 110바이트가 되어 byteObject 와
+    // 맞는다(scripts/test-course-logic.js 가 그 접음을 확인한다). eventLine
+    // (api-basics.md, 우리 코드가 남기는 이벤트 로그)과는 출처 글도 필드도
+    // 다르다 — 이쪽은 tz·sdk 가 있고 event_ts·app_ver 는 없다.
+    appObjectLine: v('ClickEvent(event="click", ad_id=9931, slot="main_top", req_id="r-8f21",\n           ts=1786002501234, tz=540, sdk="3.2.1")', L),
     collectLine:   v('121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}', L),
     // Filebeat 봉투 실물. collectLine 이 message 칸에 그대로 들어간 형태이고,
     // 이 줄 전체가 posts/log-hops-to-kafka.md 154행에 있다 — 346바이트로

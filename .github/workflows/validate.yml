@@ -10,9 +10,7 @@ on:
       - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'
-      - 'scripts/validate-posts.js'
-      - 'scripts/check-design.js'
-      - 'scripts/test-long-sentences.js'
+      - 'scripts/**'
       - 'css/style.css'
       - '*.html'
   pull_request:
@@ -20,9 +18,7 @@ on:
       - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'
-      - 'scripts/validate-posts.js'
-      - 'scripts/check-design.js'
-      - 'scripts/test-long-sentences.js'
+      - 'scripts/**'
       - 'css/style.css'
       - '*.html'
   workflow_dispatch:

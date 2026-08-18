@@ -84,6 +84,18 @@
       background: var(--bg-primary); border-bottom: 1px solid var(--border-color);
       padding: 0.8rem 1rem 1rem;
     }
+
+    /* 레일과 상세는 sticky 라 배경 띠가 화면 끝까지 가야 한다 — 그래서 통 자체는
+       전체 폭으로 두고, 안쪽 내용만 .plc-page 와 같은 자리에 서게 좌우 여백을
+       계산해 준다. 통을 1040px 로 줄이면 스크롤할 때 띠 옆으로 본문이 비친다.
+       max() 는 좁은 화면에서 기본 1rem 로 떨어지게 하는 안전장치다.
+       🔴 이 규칙은 .plc-rail·.plc-detail 정의보다 **뒤**에 있어야 한다. 앞에 두면
+          그쪽의 padding 단축 속성이 같은 특이도로 덮어 버린다(실제로 한 번 겪음). */
+    .plc-rail, .plc-detail {
+      padding-left: max(1rem, calc((100% - 1040px) / 2 + 1rem));
+      padding-right: max(1rem, calc((100% - 1040px) / 2 + 1rem));
+    }
+
     .plc-detail-inner { max-width: 1040px; margin: 0 auto; }
     .plc-detail-head {
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;

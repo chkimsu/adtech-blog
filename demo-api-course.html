@@ -37,6 +37,14 @@
       font-size: 1.35rem; margin: 0 0 0.35rem;
       padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
     }
+
+    /* 제목은 위에 있는 것과 확실히 떨어뜨린다. 값은 지어내지 않고 사이트가 글
+       본문에서 쓰는 것을 그대로 가져왔다 — css/style.css 의 .post-content h3
+       가 margin-top: 2.5rem 이다.
+       h2 바로 밑의 h3 는 한 묶음의 제목쌍이라 그만큼 벌리지 않는다.
+       🔴 이 규칙은 위의 h2 규칙보다 뒤에 둔다. 앞에 두면 같은 특이도로 덮인다. */
+    .apc-sec h3 { margin: 2.5rem 0 0.7rem; }
+    .apc-sec h2 + h3 { margin-top: 1rem; }
     .apc-sec > .apc-lead { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.1rem; }
 
     /* 넓은 것은 제 스크롤 상자 안에서만 넘친다 — 페이지가 가로로 안 밀리게 */

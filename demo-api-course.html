@@ -406,6 +406,21 @@ Idempotency-Key: O-00042
         </div>
       </section>
 
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "그 요청이 로그에 없다"는 신고를 받으면 먼저 정하는 것은
+          <strong>세 자리 중 어디까지 왔나</strong>입니다. 자리마다 남기는 주체가 다르니,
+          없는 자리가 곧 어디서 끊겼는지를 말해 줍니다.
+        </p>
+        <ul>
+          <li><span class="step-text"><strong>액세스 로그에도 없다면:</strong> 요청이 서버에 닿지 못한 것입니다. 앱 쪽 기록에는 남아 있을 수 있으니 그쪽 건수와 맞대 보십시오. 배포 중이었거나 앞단이 끊긴 시간대인지부터 봅니다.</span></li>
+          <li><span class="step-text"><strong>액세스 로그에는 있는데 이벤트 로그에 없다면:</strong> 요청은 왔고 검증에서 떨어진 것입니다. 그 줄의 상태 코드가 무엇인지 보면 갈립니다. 400 이면 부르는 쪽이 고칠 것이고, 500 계열이면 우리 쪽입니다.</span></li>
+          <li><span class="step-text"><strong>앱이 센 수와 서버가 센 수가 다르다면:</strong> 네 경우로 갈립니다. 못 닿은 요청은 서버에 흔적이 아예 없고, 앱이 기다리다 포기한 요청은 반대로 서버에만 있습니다. 어느 쪽인지는 앱 쪽 실패 사유를 봐야 알 수 있습니다.</span></li>
+          <li><span class="step-text"><strong>새 주소를 열어 달라는 요청을 받으면:</strong> 먼저 정할 것은 부르는 쪽입니다. 앱이 부르는지 남의 서버가 부르는지에 따라 인증, 초당 한도, 응답 마감이 다 갈리고, 그 셋이 다르면 결국 주소도 갈리게 됩니다.</span></li>
+        </ul>
+      </section>
+
       <section class="demo-next">
         <div class="demo-next-inner">
           <h3>다음 배우기</h3>
@@ -433,6 +448,7 @@ Idempotency-Key: O-00042
 
   <script src="js/main.js"></script>
   <script src="js/course-data.js"></script>
+  <script src="js/course-dom.js"></script>
   <script src="js/api-course-server.js"></script>
   <script src="js/api-course-demo.js"></script>
 </body>

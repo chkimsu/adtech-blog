@@ -22,6 +22,11 @@
 (function () {
   'use strict';
 
+  // 공용 DOM 조각 — js/course-dom.js. 넷이 같은 것을 각자 들고 있던 것을 모았다.
+  const el = window.CourseDom.el;
+  const theadRow = window.CourseDom.theadRow;
+  const buildSimpleTable = window.CourseDom.buildSimpleTable;
+
   const M = window.PipelineCourseModel;
   const CD = window.CourseData;
   const $ = (id) => document.getElementById(id);
@@ -37,12 +42,6 @@
 
   // 작은 DOM 빌더 — js/pipeline-course-demo.js 의 el() 과 같은 모양이지만
   // 그 파일의 지역 함수라 여기서 못 부른다(이 파일은 window.* 만 본다).
-  function el(tag, cls, text) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined) n.textContent = text;
-    return n;
-  }
 
   // ==========================================
   // 3절 — Kafka 로 모으는 이유
@@ -283,13 +282,6 @@
     }
   }
 
-  function theadRow(host, labels) {
-    const thead = el('thead');
-    const tr = el('tr');
-    labels.forEach(function (t) { tr.appendChild(el('th', null, t)); });
-    thead.appendChild(tr);
-    host.appendChild(thead);
-  }
 
   // 커서 넷 — "몇 번까지 읽었나"(offset)와 "밀린 정도"(head 와의 차)만
   // 기억한다는 4절의 개념을 그대로 표로 옮긴 것. 행을 누르면 그 소비자가
@@ -442,7 +434,7 @@
     });
   }
 
-  // [시간 흐르기]·[새벽이 왔다]·[처음으로] — 셋 다 head·topicCursors 를
+  // [시간 흐르기]·[새벽이 왔습니다]·[처음으로] — 셋 다 head·topicCursors 를
   // 바꾸고 draw4() 를 다시 부른다. [처음으로]는 M.resetTicks() 도 함께
   // 불러야 한다 — 안 그러면 micro 소비자가 "다섯 번째"를 세는 회차가
   // 이전 방문의 것을 이어받아 버튼을 눌러도 안 맞게 움직인다.

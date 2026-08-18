@@ -22,6 +22,11 @@
 (function () {
   'use strict';
 
+  // 공용 DOM 조각 — js/course-dom.js. 넷이 같은 것을 각자 들고 있던 것을 모았다.
+  const el = window.CourseDom.el;
+  const theadRow = window.CourseDom.theadRow;
+  const buildSimpleTable = window.CourseDom.buildSimpleTable;
+
   const M = window.PipelineCourseModel;
   const CD = window.CourseData;
   const $ = (id) => document.getElementById(id);
@@ -30,20 +35,7 @@
     return CD.CONSUMERS.filter(function (c) { return c.key === key; })[0];
   }
 
-  function el(tag, cls, text) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined) n.textContent = text;
-    return n;
-  }
 
-  function theadRow(host, labels) {
-    const thead = el('thead');
-    const tr = el('tr');
-    labels.forEach(function (t) { tr.appendChild(el('th', null, t)); });
-    thead.appendChild(tr);
-    host.appendChild(thead);
-  }
 
   // ==========================================
   // 5절 — 기다렸다 가져가도 되나 (보존과 되감기)

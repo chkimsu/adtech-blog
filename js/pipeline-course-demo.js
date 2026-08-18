@@ -20,6 +20,11 @@
 (function () {
   'use strict';
 
+  // 공용 DOM 조각 — js/course-dom.js. 넷이 같은 것을 각자 들고 있던 것을 모았다.
+  const el = window.CourseDom.el;
+  const theadRow = window.CourseDom.theadRow;
+  const buildSimpleTable = window.CourseDom.buildSimpleTable;
+
   // ==========================================
   // 0) 참조
   // ==========================================
@@ -41,12 +46,6 @@
 
   const $ = (id) => document.getElementById(id);
 
-  function el(tag, cls, text) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined) n.textContent = text;
-    return n;
-  }
 
   // 바이트가 늘었는지 줄었는지를 색이 아니라 부호 있는 숫자와 글리프로 말한다.
   function deltaInfo(hop) {
@@ -289,26 +288,6 @@
 
   // 표 하나를 헤더 배열과 행 배열로 짓는다(js/api-course-demo.js 의 buildSimpleTable
   // 과 같은 모양). 셀 값은 문자열이거나 DOM 노드다.
-  function buildSimpleTable(hostId, headers, rows) {
-    const host = $(hostId);
-    const thead = el('thead');
-    const trh = el('tr');
-    headers.forEach(function (t) { trh.appendChild(el('th', null, t)); });
-    thead.appendChild(trh);
-    host.appendChild(thead);
-
-    const tbody = el('tbody');
-    rows.forEach(function (cells) {
-      const tr = el('tr');
-      cells.forEach(function (c) {
-        const td = el('td');
-        if (c && c.nodeType) td.appendChild(c); else td.textContent = c;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    host.appendChild(tbody);
-  }
 
   // 글자 사이에 code 조각 하나를 끼운 span 을 만든다 — 필드 이름(cost, message)을
   // 표시할 때 쓴다.

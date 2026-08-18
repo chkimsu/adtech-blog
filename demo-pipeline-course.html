@@ -622,6 +622,21 @@
         </div>
       </section>
 
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          "숫자가 안 맞는다"는 신고를 받으면 먼저 정하는 것은
+          <strong>몇 명이 같이 틀렸나</strong>입니다. 읽는 쪽 넷이 같은 줄을 보고 있으니,
+          몇 명이 어긋났는지가 곧 어느 자리에서 끊겼는지를 말해 줍니다.
+        </p>
+        <ul>
+          <li><span class="step-text"><strong>한 명만 이상하다면:</strong> 그 읽는 쪽의 문제입니다. 앞의 자리들은 볼 필요가 없습니다. 그 소비자가 어디까지 읽었는지와 집계 코드만 보면 됩니다.</span></li>
+          <li><span class="step-text"><strong>넷이 다 같이 모자라다면:</strong> 브로커 앞에서 끊긴 것입니다. 파일에 쌓인 줄 수와 브로커에 들어온 건수를 같은 시각으로 세어 보면, 에이전트가 밀린 것인지 변환기가 버리는 것인지 갈립니다.</span></li>
+          <li><span class="step-text"><strong>학습 데이터가 며칠 비었다면:</strong> 보존 기간 안인지부터 봅니다. 창 안이면 되감아 다시 읽으면 되고, 창 밖이면 브로커에는 이미 없으니 적재해 둔 파일에서 시작해야 합니다.</span></li>
+          <li><span class="step-text"><strong>실시간 숫자와 배치 숫자가 다르다면:</strong> 대개 정상입니다. 늦게 도착한 로그가 배치에만 들어가기 때문입니다. 두 값이 언제나 같기를 기대하지 말고, 얼마나 벌어지는 것이 정상인지를 먼저 정해 두십시오.</span></li>
+        </ul>
+      </section>
+
       <section class="demo-next">
         <div class="demo-next-inner">
           <h3>다음 배우기</h3>
@@ -649,6 +664,7 @@
 
   <script src="js/main.js"></script>
   <script src="js/course-data.js"></script>
+  <script src="js/course-dom.js"></script>
   <script src="js/pipeline-course-model.js"></script>
   <script src="js/pipeline-course-demo.js"></script> <!-- rail·자리 상세, 1~2절 -->
   <script src="js/pipeline-course-sections.js"></script> <!-- 3~4절 -->

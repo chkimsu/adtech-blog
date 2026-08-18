@@ -14,6 +14,11 @@
 (function () {
   'use strict';
 
+  // 공용 DOM 조각 — js/course-dom.js. 넷이 같은 것을 각자 들고 있던 것을 모았다.
+  const el = window.CourseDom.el;
+  const theadRow = window.CourseDom.theadRow;
+  const buildSimpleTable = window.CourseDom.buildSimpleTable;
+
   // ==========================================
   // 0) 참조
   // ==========================================
@@ -144,12 +149,6 @@
     { axis: '남는 IP', app: '사용자 IP', server: '서버 IP (고정)' },
   ];
 
-  function el(tag, cls, text) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined) n.textContent = text;
-    return n;
-  }
 
   // ==========================================
   // 2) 그리기 — state 를 읽기만 한다. 절마다 draw 함수 하나씩이고
@@ -506,26 +505,6 @@
   // rows 를 안 주면(undefined) tbody 를 빈 채로 남긴다 — 회차표처럼 내용을
   // draw() 가 매번 새로 채우는 표를 위해서다. 셀 값은 문자열이거나 DOM
   // 노드(예: 5-2 의 흔한가 칩)다.
-  function buildSimpleTable(hostId, headers, rows) {
-    const host = $(hostId);
-    const thead = el('thead');
-    const trh = el('tr');
-    headers.forEach(function (t) { trh.appendChild(el('th', null, t)); });
-    thead.appendChild(trh);
-    host.appendChild(thead);
-
-    const tbody = el('tbody');
-    (rows || []).forEach(function (cells) {
-      const tr = el('tr');
-      cells.forEach(function (c) {
-        const td = el('td');
-        if (c && c.nodeType) td.appendChild(c); else td.textContent = c;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    host.appendChild(tbody);
-  }
 
   function buildAxes() {
     buildSimpleTable('apc-axes', ['축', 'nginx (A, C)', '우리 코드 (B)'],

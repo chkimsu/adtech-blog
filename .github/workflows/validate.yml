@@ -7,7 +7,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'js/posts.js'
       - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'
@@ -18,7 +17,6 @@ on:
       - '*.html'
   pull_request:
     paths:
-      - 'js/posts.js'
       - 'js/**'
       - 'posts/**'
       - 'data/taxonomy.json'

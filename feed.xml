@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-16T00:00:00Z</updated>
+  <updated>2026-08-23T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>평균은 예산의 절반인데 하루 1,053만 건이 넘긴다 — 지연·처리량과 Grafana 읽는 법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=serving-latency-throughput"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=serving-latency-throughput</id>
+    <updated>2026-08-23T00:00:00Z</updated>
+    <summary>모델 팀은 평균 3.49ms 라고 보고하고 API 팀은 하루 1,699만 건이 예산을 넘겼다고 말합니다. 둘 다 맞습니다. 같은 요청도 추론 함수 안에서 재면 예산 초과가 3.74%, API 서버 전체 응답으로 재면 19.42% 입니다. 요청량이 3,000에서 3,300으로 10% 느는 동안 초과는 8.93%에서 35.76%가 되고, 타임아웃 재시도는 2,750 QPS 에서 멈추다 2,800 QPS 에서 서비스를 죽입니다. 서버 2대를 굴려 바꾸는 몇 분 동안에는 초과가 20.87% 입니다. Grafana 쪽도 같습니다 — 기본 버킷을 그대로 쓰면 p99 가 11.19ms 대신 16.43ms 로 뜨고, 서버별 p99 를 평균 내면 19.85ms 가 12.97ms 로 눌립니다. 대시보드 패널 여섯과 알람 쿼리까지 붙였습니다.</summary>
+    <category term="ML Infrastructure"/>
+    <category term="Software Engineering"/>
+  </entry>
   <entry>
     <title>데이터 파이프라인 입문 — 로그 한 건이 지나는 여섯 자리</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pipeline-push-and-pull"/>
@@ -165,14 +174,5 @@
     <summary>광고 여덟 개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 예산을 정해 버립니다. 진짜 클릭률 2.60%인 소재가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 예산을 받는 소재 넷은 사흘째에 고정되고 그 소재의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 소재가 102,500건을 가져가 매출 ₩980,500을 만들고, 리포트만 보면 진짜로 좋았던 쪽이 먼저 중단됩니다. 한 번 굳은 뒤 역확률 가중으로 되돌리려 하면 그 소재가 뜰 확률이 0이라 계산에서 아예 빠지고, 진짜 값 2.0875%가 1.880%로 도로 내려앉는 이유까지 숫자로 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Bandits &amp; Personalization"/>
-  </entry>
-  <entry>
-    <title>광고를 안 봤어도 살 사람 — 광고가 진짜 늘린 전환만 세는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=uplift-incrementality"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=uplift-incrementality</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>리포트에는 전환 9,000건, 전환당 비용 ₩1,400이 찍혔는데 매출은 안 늘었다. 광고를 일부러 안 보낸 대조군을 같이 돌려 보면, 그 9,000건 중 광고가 만든 것은 1,100건뿐이다. 같은 105,000명 예산을 광고가 잘 먹는 사람 순서로 다시 고르면 리포트 전환은 5,500건으로 39% 줄지만, 실제로 늘어난 전환은 1,350건으로 22.7% 는다. 사람은 설득 가능 6,400명·확실 구매 17,600명·청개구리 2,400명·무관심 773,600명 넷으로 갈리고, 광고비가 값을 하는 곳은 0.8%인 첫 칸뿐이다. 증분 모델을 만드는 세 가지 방법을 4만 명 가데이터로 돌려 참값과의 상관 +0.105 / +0.905 / +0.911을 비교하고, 정확도가 가장 높은 점수가 오히려 나쁜 선택인 이유까지 짚는다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-    <category term="Targeting &amp; Audience"/>
   </entry>
 </feed>

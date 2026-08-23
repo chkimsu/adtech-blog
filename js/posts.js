@@ -769,6 +769,18 @@ const posts = [
     contentUrl: 'posts/model-serving-architecture.md',
   },
   {
+    id: 'serving-latency-throughput',
+    worldPractical: '닫힌 생태계는 API 팀과 모델 팀이 같은 조직이라 12ms 예산을 8ms 대 4ms 로 나눈 것 자체를 다시 협상할 수 있고, 어제 이 시간의 요청량이 오늘도 맞아 3,000 QPS 상한을 걸고 운영하는 계획이 선다. 예산을 넘긴 하루 1,053만 건은 개인화 없는 폴백 값으로 랭킹되니 손실이 매출이 아니라 순위 품질로 나타난다. 열린 RTB 의 DSP 는 거래소가 준 창 안에 못 들어간 응찰이 그냥 버려지는데, 우리 서버는 200 을 냈으니 오류율 패널이 계속 초록이다. 대시보드가 멀쩡한데 낙찰률만 떨어지는 상태라, 거래소가 본 타임아웃을 따로 재는 패널을 붙이지 않으면 하루 126만 노출이 사라지는 것을 못 본다.',
+    world: 'both',
+    worldNote: '지연을 재고 읽는 법은 두 무대가 같다. 다른 건 예산을 누가 정하나와, 늦었을 때 그 사실이 어디에 남나다. 닫힌 생태계는 예산 자체가 협상 대상이고 초과분은 폴백 pCTR 로 랭킹돼 순위 품질로 나타난다. 열린 RTB 는 거래소가 창을 주고 늦은 응찰을 그냥 버려서, 우리 쪽 로그에는 성공으로 남는다.',
+    title: '평균은 예산의 절반인데 하루 1,053만 건이 넘긴다 — 지연·처리량과 Grafana 읽는 법',
+    excerpt: '모델 팀은 평균 3.49ms 라고 보고하고 API 팀은 하루 1,699만 건이 예산을 넘겼다고 말합니다. 둘 다 맞습니다. 같은 요청도 추론 함수 안에서 재면 예산 초과가 3.74%, API 서버 전체 응답으로 재면 19.42% 입니다. 요청량이 3,000에서 3,300으로 10% 느는 동안 초과는 8.93%에서 35.76%가 되고, 타임아웃 재시도는 2,750 QPS 에서 멈추다 2,800 QPS 에서 서비스를 죽입니다. 서버 2대를 굴려 바꾸는 몇 분 동안에는 초과가 20.87% 입니다. Grafana 쪽도 같습니다 — 기본 버킷을 그대로 쓰면 p99 가 11.19ms 대신 16.43ms 로 뜨고, 서버별 p99 를 평균 내면 19.85ms 가 12.97ms 로 눌립니다. 대시보드 패널 여섯과 알람 쿼리까지 붙였습니다.',
+    date: '2026-08-23',
+    categories: ['ML Infrastructure', 'Software Engineering'],
+    tags: ['Model Serving', 'ML Infra', 'System Design', 'DevOps'],
+    contentUrl: 'posts/serving-latency-throughput.md',
+  },
+  {
     id: 'online-learning-delayed-feedback',
     worldPractical: '담장 안에서 pCVR을 만들면 전환이 자사 결제 로그로 바로 들어온다. 유실이 없으니 1~6시간 창으로 자주 학습하면서 아직 안 들어온 전환은 역수 가중으로 되돌리는 게 실제로 먹힌다. 열린 RTB의 DSP는 포스트백이 광고주·MMP에서 넘어오니 지연이 광고주마다 다르고 일부는 영원히 안 온다. 유실을 지연으로 착각해 가중치를 부풀리면 pCVR이 반대로 과대추정된다. 담장 안은 “언제 오나”만 풀면 되고, 열린 RTB는 “오기는 하나”를 먼저 풀어야 한다.',
     world: 'both',
@@ -1027,7 +1039,8 @@ const mlTrack = {
       id: 'stage-2',
       title: '2단계 · 실무 — 데이터에서 서빙까지',
       goal: '이 단계를 마치면: 로그가 모델이 되기까지의 파이프라인과, 실서비스의 편향·지연 문제를 다룰 수 있습니다.',
-      posts: ['ad-log-pipeline', 'feature-store-serving', 'model-serving-architecture', 'negative-sampling-bias',
+      posts: ['ad-log-pipeline', 'feature-store-serving', 'model-serving-architecture',
+        'serving-latency-throughput', 'negative-sampling-bias',
         'online-learning-delayed-feedback', 'position-bias-ultr', 'multi-task-learning', 'two-tower-retrieval'],
     },
     {

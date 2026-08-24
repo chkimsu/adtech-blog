@@ -1,6 +1,6 @@
 광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike Modeling**의 핵심 질문이며, 리타겟팅 다음으로 가장 높은 ROI를 보이는 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발해 "아직 발견되지 않은 좋은 유저"로 넓히는 일입니다. 개념은 단순합니다. 하지만 구현은 까다롭습니다. 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 얽혀 있습니다.
 
-Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 해부합니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
+Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 해부합니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
 
 ---
 

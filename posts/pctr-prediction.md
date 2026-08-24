@@ -178,7 +178,7 @@ graph LR
 
 정확도만 좇을 수 없는 이유도 있다. 이 모델은 광고 요청이 올 때마다 **0.1초 안에** 답해야 한다. DIN처럼 무거운 모델을 후보 광고 전부에 다 돌리면 시간이 모자란다. 그래서 실무에서는 가벼운 모델로 후보를 빠르게 추리고 마지막 소수의 후보에만 무거운 모델을 돌리는 **랭킹 캐스케이드** 구조를 쓴다. 정확도와 지연(latency)이 서로 맞바꿔야 하는 설계 변수라는 뜻이다.
 
-> 모델 구조 자체가 더 궁금하면 → [Deep CTR 모델의 진화](post.html?id=deep-ctr-models), 캐스케이드 구조는 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
+> 모델 구조 자체가 더 궁금하면 → [Deep CTR 모델](post.html?id=deep-ctr-models), 캐스케이드 구조는 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 
 ---
 
@@ -270,10 +270,10 @@ LogLoss(binary cross-entropy)는 **proper scoring rule**이라 불리는 성질�
 ## 더 깊이 보기
 
 - eCPM과 세 시장의 랭킹 방식 → [eCPM 랭킹](post.html?id=ecpm-ranking)
-- 모델 아키텍처의 진화(LR→DeepFM→DIN) → [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)
+- 모델 아키텍처의 진화(LR→DeepFM→DIN) → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 캐스케이드로 지연과 정확도를 맞바꾸는 법 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 - 예측 확률을 실제에 맞추기 → [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
-- pCTR이 입찰가가 되는 과정 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
+- pCTR이 입찰가가 되는 과정 → [Bid Shading](post.html?id=bid-shading-censored)
 - 노출 편향과 탐색 설계 → [Negative Sampling & Bias](post.html?id=negative-sampling-bias)
 - pCTR 정확도가 매출에 주는 영향(데모) → [pCTR Impact](demo-pctr-impact.html)
 - 보정을 슬라이더로 직접 실험 → [Calibration 데모](demo-calibration.html)

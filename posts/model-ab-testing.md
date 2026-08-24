@@ -442,7 +442,7 @@ $m = 1$이면 5%, $m = 5$면 22.6%, $m = 10$이면 40.1%, $m = 20$이면 64.2%�
 
 **셋째, 전환이 외부에서 늦게 들어옵니다.** 광고주 포스트백이나 MMP를 거치므로 지연이 광고주마다 다르고 일부는 아예 안 옵니다. 3절에서 "도착 지연은 비율에서 상쇄된다"고 했는데, **유실률이 팔마다 다르면 상쇄되지 않습니다.**
 
-그래서 열린 RTB의 모델 실험은 **낙찰률을 먼저 맞추는 것**부터 시작합니다. 두 팔의 평균 입찰가와 낙찰률이 비슷해지도록 조정한 뒤에 성과를 비교합니다. 그러지 않으면 1절에서 본 +24.9%처럼 "더 많이 산 효과"를 실력으로 착각합니다. 패찰과 검열된 데이터 이야기는 [Bid Shading & Censored Data](post.html?id=bid-shading-censored)에 있습니다.
+그래서 열린 RTB의 모델 실험은 **낙찰률을 먼저 맞추는 것**부터 시작합니다. 두 팔의 평균 입찰가와 낙찰률이 비슷해지도록 조정한 뒤에 성과를 비교합니다. 그러지 않으면 1절에서 본 +24.9%처럼 "더 많이 산 효과"를 실력으로 착각합니다. 패찰과 검열된 데이터 이야기는 [Bid Shading](post.html?id=bid-shading-censored)에 있습니다.
 
 ---
 
@@ -469,5 +469,5 @@ $m = 1$이면 5%, $m = 5$면 22.6%, $m = 10$이면 40.1%, $m = 20$이면 64.2%�
 - [자동입찰과 예산 페이싱](post.html?id=auto-bidding-pacing) — 1절의 예산 소진 곡선이 왜 그렇게 생겼나
 - [Calibration](post.html?id=calibration) — 입찰가 수준을 맞추려면 보정이 필요하다
 - [모델 모니터링](post.html?id=model-monitoring) — 세그먼트별 감시와 알람 설계
-- [Bid Shading & Censored Data](post.html?id=bid-shading-censored) — 패찰하면 관측이 없다는 문제
+- [Bid Shading](post.html?id=bid-shading-censored) — 패찰하면 관측이 없다는 문제
 - [ML 엔지니어 트랙](ml-track.html) — pCTR/pCVR 실무 커리큘럼 전체

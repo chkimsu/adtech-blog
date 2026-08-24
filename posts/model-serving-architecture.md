@@ -723,7 +723,7 @@ print("유저 임베딩 | 담장 안 적중 65%% -> %5.3fms | 열린 RTB 적중 
 ## 더 깊이 보기
 
 - 피처를 꺼내와 모델에 넣기까지 → [Feature Store와 실시간 서빙](post.html?id=feature-store-serving)
-- 각 단계에 어떤 모델을 놓나 → [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)
+- 각 단계에 어떤 모델을 놓나 → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 수백만 후보에서 수천 개를 건져내는 1단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 광고 요청 한 건이 흐르는 전체 경로 → [광고 서빙 플로우](post.html?id=ad-serving-flow)
 - 보정 계층을 서빙 어디에 두나 → [Calibration](post.html?id=calibration)

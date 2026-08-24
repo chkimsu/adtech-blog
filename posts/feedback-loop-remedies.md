@@ -8,7 +8,7 @@
 
 > **한 줄 요약:** 굳음을 푸는 처방은 전부 노출을 떼어 주는 일이고, 떼어 준 노출은 그날의 매출이다. 그 지출이 값을 하는 판과 그냥 손해인 판이 갈리는데, 미리 어느 쪽인지 알 방법이 없어서 예산으로 잡는다.
 
-**앞 글을 먼저 보면 좋다** — [어제 띄운 광고만 학습 데이터가 된다](post.html?id=feedback-loop-bias)가 이 판을 만든다. 광고 여덟을 진짜 클릭률이 높은 순서로 A 부터 H 까지 부르고, 로그와 코드에는 광고 번호로 찍힌다. A 가 `9931`, H 가 `9938` 이다.
+**앞 글을 먼저 보면 좋다** — [피드백 루프 편향](post.html?id=feedback-loop-bias)가 이 판을 만든다. 광고 여덟을 진짜 클릭률이 높은 순서로 A 부터 H 까지 부르고, 로그와 코드에는 광고 번호로 찍힌다. A 가 `9931`, H 가 `9938` 이다.
 
 **무대 표시 읽는 법** — `열린 RTB` 는 남의 거래소에 입찰만 넣는 자리이고, `닫힌 생태계` 는 우리가 경매를 직접 돌리는 자리다. `공통` 은 두 자리 모두에 해당한다는 뜻이다.
 
@@ -48,7 +48,7 @@
 
 ```python
 import random
-# 앞 글([어제 띄운 광고만 학습 데이터가 된다](post.html?id=feedback-loop-bias))의
+# 앞 글([피드백 루프 편향](post.html?id=feedback-loop-bias))의
 # TRUE·ADS·N·CAP·GENS·allocate·gini·run 을 그대로 쓴다. 그 글의 코드를 먼저 붙여 놓고
 # 아래를 이어 붙이면 그대로 돌아간다.
 
@@ -235,7 +235,7 @@ print('틀린 판만: 기본 %.0f → ε탐색 %.0f'
 
 ## 더 깊이 보기
 
-- [어제 띄운 광고만 학습 데이터가 된다](post.html?id=feedback-loop-bias) — 이 글이 푸는 그 굳음을 만드는 편, 판과 코드가 여기서 온다
+- [피드백 루프 편향](post.html?id=feedback-loop-bias) — 이 글이 푸는 그 굳음을 만드는 편, 판과 코드가 여기서 온다
 - [탐색과 활용](post.html?id=exploration-exploitation) — ε 탐색·UCB·톰슨 샘플링을 고르는 기준
 - [위치 편향과 ULTR](post.html?id=position-bias-ultr) — 위치별 성향점수와 역확률 가중의 원형
 - [새 광고의 pCTR — 콜드 스타트](post.html?id=cold-start-pctr) — 표본이 적을 때 값을 빌려 오는 법

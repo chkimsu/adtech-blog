@@ -401,7 +401,7 @@ $$G = \frac{2\sum_{i=1}^{n} i \cdot x_i}{n \sum_i x_i} - \frac{n+1}{n}$$
 
 앞의 셋은 A 를 실제로 되살리지만, 되살리는 속도와 그동안 포기하는 매출이 서로 다르다. 같은 판에 넷을 걸어 잰 손익과 시드 100판 평균은 따로 뗐다.
 
-→ **[굳은 것을 푸는 네 방법과 그 대가](post.html?id=feedback-loop-remedies)**
+→ **[피드백 루프 끊기: 굳은 것을 푸는 네 방법과 그 대가](post.html?id=feedback-loop-remedies)**
 
 여기서는 넷 중 마지막 하나만 데리고 다음 절로 간다. 역확률 가중은 예산을 한 푼도 안 쓰는 유일한 처방이라, 한 번 굳은 뒤에 되돌리기가 왜 어려운지를 가장 선명하게 보여 주기 때문이다.
 
@@ -578,7 +578,7 @@ $e_a$ 가 진짜 무작위 배정 확률이면 이 추정은 치우침이 없다
 
 ## 더 깊이 보기
 
-- [굳은 것을 푸는 네 방법과 그 대가](post.html?id=feedback-loop-remedies) — 이 글에서 뗀 처방 편
+- [피드백 루프 끊기: 굳은 것을 푸는 네 방법과 그 대가](post.html?id=feedback-loop-remedies) — 이 글에서 뗀 처방 편
 - [탐색과 활용](post.html?id=exploration-exploitation) — 탐색 예산을 어떻게 쓸지 고르는 기준
 - [위치 편향과 ULTR](post.html?id=position-bias-ultr) — 역확률 가중의 원형
 - [네거티브 샘플링과 학습 데이터 편향](post.html?id=negative-sampling-bias) — 한 세대 안의 선택 편향

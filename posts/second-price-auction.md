@@ -191,7 +191,7 @@ $p$가 $v$와 $b$ 둘 다보다 낮은 경우, 정직하든 아니든 어차피 
 
 해법은 규칙을 단순하게 통일하는 것이었다. 1등 가격은 "이긴 값을 그대로 낸다"는 규칙이라 여러 경매를 동시에 돌려도 헷갈릴 이유가 없다. 2017년 무렵부터 거래소들이 하나둘 1등 가격으로 갈아탔다. AppNexus·Index Exchange·OpenX·Rubicon Project 같은 곳들이 먼저 움직였다. 그리고 2019년 무렵, 당시 최대 거래소였던 Google Ad Manager(AdX)까지 합류하며 사실상 업계 표준이 굳어졌다. 지금 대부분의 디스플레이 RTB는 1등 가격이다.
 
-그런데 4절의 코드가 이미 보여줬듯, 1등 가격에서 정직하게 부르면 이익이 정확히 0이다. 그래서 DSP들은 "이길 만큼만, 진짜 가치보다 살짝 낮춰서" 부르는 기술을 쓰기 시작했다. 이 기술이 **Bid Shading**이다. 4절에서 20% 낮춰 부른 것("과소×0.8")이 이 기술을 단순화한 버전이다. 실제로는 시장 상황을 학습해 얼마나 낮출지를 그때그때 계산한다. 이 계산을 실제로 어떻게 하는지는 그 자체로 깊은 주제다. 그 계산법은 [Bid Shading & Censored Data](post.html?id=bid-shading-censored)에서 다룬다. 헤더비딩이 이 문제를 정확히 어떻게 일으켰는지는 [헤더비딩](post.html?id=header-bidding) 글에서 볼 수 있다.
+그런데 4절의 코드가 이미 보여줬듯, 1등 가격에서 정직하게 부르면 이익이 정확히 0이다. 그래서 DSP들은 "이길 만큼만, 진짜 가치보다 살짝 낮춰서" 부르는 기술을 쓰기 시작했다. 이 기술이 **Bid Shading**이다. 4절에서 20% 낮춰 부른 것("과소×0.8")이 이 기술을 단순화한 버전이다. 실제로는 시장 상황을 학습해 얼마나 낮출지를 그때그때 계산한다. 이 계산을 실제로 어떻게 하는지는 그 자체로 깊은 주제다. 그 계산법은 [Bid Shading](post.html?id=bid-shading-censored)에서 다룬다. 헤더비딩이 이 문제를 정확히 어떻게 일으켰는지는 [헤더비딩](post.html?id=header-bidding) 글에서 볼 수 있다.
 
 ---
 
@@ -203,7 +203,7 @@ $p$가 $v$와 $b$ 둘 다보다 낮은 경우, 정직하든 아니든 어차피 
 
 이게 왜 문제가 되는지는 Bid Shading으로 돌아가면 뚜렷해진다. 4·5절에서 20% 낮춰 부르면 이익이 는다는 걸 봤다. 그런데 실제로 몇 %를 낮출지는 시장 가격 분포를 알아야 계산할 수 있다. 그 분포의 절반, 즉 패찰한 경매들의 실제 낙찰가는 통째로 안 보인다. 이긴 경매의 가격만 보고 시장가를 추정하면 어떻게 될까. "내가 이긴 싼 경매"만 표본에 남아, 시장가를 실제보다 낮게 착각하게 된다.
 
-담장 밖에서 일하는 DSP 엔지니어에게는 이 문제가 일상이다. 내 캠페인이 오늘 진 경매가 하루에도 수백만 건이다. 그 각각이 "얼마였는지 모르는" 정보 손실이다. 그 보정법은 [Bid Shading & Censored Data](post.html?id=bid-shading-censored)에서 다룬다.
+담장 밖에서 일하는 DSP 엔지니어에게는 이 문제가 일상이다. 내 캠페인이 오늘 진 경매가 하루에도 수백만 건이다. 그 각각이 "얼마였는지 모르는" 정보 손실이다. 그 보정법은 [Bid Shading](post.html?id=bid-shading-censored)에서 다룬다.
 
 ---
 
@@ -247,7 +247,7 @@ $p$가 $v$와 $b$ 둘 다보다 낮은 경우, 정직하든 아니든 어차피 
 
 - 거래소·경매의 역사와 구조 → [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange)
 - 헤더비딩이 2등가를 어떻게 무너뜨렸나 → [헤더비딩](post.html?id=header-bidding)
-- 1등 가격에서 얼마나 낮춰 부를지 계산하는 법 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
+- 1등 가격에서 얼마나 낮춰 부를지 계산하는 법 → [Bid Shading](post.html?id=bid-shading-censored)
 - 그래서 누가 이 경매를 여나 → [DSP·SSP·Ad Exchange가 각각 뭐 하나](post.html?id=dsp-ssp-exchange)
 - 그림으로 먼저(1등/2등 비교 슬라이드) → [쉬운 버전 '광고가 뜨기까지'](ecosystem-easy.html#rtb)
 - 약어가 헷갈리면 → [쉬운 용어 사전](ecosystem-terms.html#auction)

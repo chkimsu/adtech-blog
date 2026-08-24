@@ -246,7 +246,7 @@ for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, cli
 
 이 표에서 "전체 평균 1등"만 믿고 소재B 하나만 모든 지면에 튼다면, PC 상단 배너에서는 계속 손해를 본다. A/B도 밴딧도 이 손해를 못 잡아낸다. 둘 다 "지면"이라는 정보를 애초에 안 보기 때문이다. 트래픽을 어떻게 나누든, 나누는 기준이 "전체"뿐이라는 한계는 그대로다.
 
-이 지면·유저 정보를 **맥락(context)**이라 부른다. 맥락별로 다른 승자를 학습하는 밴딧을 **Contextual Bandit**이라 부른다. 맥락을 피처로 어떻게 넣고 학습하는지는 이 글의 범위를 넘는다. [UCB 알고리즘 패밀리](post.html?id=ucb-family)가 LinUCB로 확장하는 과정을 다룬다. [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)이 점수 구성을 시각적으로 뜯어본다.
+이 지면·유저 정보를 **맥락(context)**이라 부른다. 맥락별로 다른 승자를 학습하는 밴딧을 **Contextual Bandit**이라 부른다. 맥락을 피처로 어떻게 넣고 학습하는지는 이 글의 범위를 넘는다. [UCB 계열](post.html?id=ucb-family)가 LinUCB로 확장하는 과정을 다룬다. [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)이 점수 구성을 시각적으로 뜯어본다.
 
 ---
 
@@ -325,9 +325,9 @@ for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, cli
 - 밴딧 문제 자체와 알고리즘 계보 → [멀티암드 밴딧: 알고리즘 계보 지도](post.html?id=mab-summary)
 - UCB와 톰슨 샘플링, 결정적 vs 확률적 비교 → [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)
 - 무작위 배정·표본 크기·검출력·A/A 테스트 → [랜덤 실험(RCT)](post.html?id=rct-randomized-experiment)
-- 맥락을 반영하는 UCB 확장 → [UCB 알고리즘 패밀리](post.html?id=ucb-family)
+- 맥락을 반영하는 UCB 확장 → [UCB 계열](post.html?id=ucb-family)
 - 맥락을 반영하는 톰슨 샘플링 확장 → [Standard TS vs Linear TS](post.html?id=TS-linTS)
-- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)
+- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)
 - 탐색-활용 딜레마와 Cold-Start → [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
 - 두 방식을 직접 돌려보기 → [A/B vs Bandit 트래픽 시뮬레이터](demo-ab-vs-bandit.html)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

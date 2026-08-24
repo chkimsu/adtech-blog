@@ -406,7 +406,7 @@ $$\mathrm{ESS} = \frac{\left(\sum_i w_i\right)^2}{\sum_i w_i^2}, \qquad w_i = \f
 $$\hat{V}_{\mathrm{SNIPS}} = \frac{\sum_i w_i r_i}{\sum_i w_i}$$
 :::
 
-재료를 하나 더 쓰는 길도 있다. 클릭 확률을 예측하는 pCTR 모델로 답을 먼저 깔고, 확률의 역수 가중은 예측이 빗나간 몫에만 거는 방식이다. 그러면 둘 중 하나만 맞아도 값이 진짜에 붙어 결정을 받친다. 이 방법이 이중 강건이고, 절차와 실험은 [추정 방법 둘을 겹치면 왜 더 튼튼한가](post.html?id=doubly-robust)에 있다.
+재료를 하나 더 쓰는 길도 있다. 클릭 확률을 예측하는 pCTR 모델로 답을 먼저 깔고, 확률의 역수 가중은 예측이 빗나간 몫에만 거는 방식이다. 그러면 둘 중 하나만 맞아도 값이 진짜에 붙어 결정을 받친다. 이 방법이 이중 강건이고, 절차와 실험은 [Doubly Robust](post.html?id=doubly-robust)에 있다.
 
 손질을 무엇으로 하든 출발점은 하나다. 로그에 성향점수가 적혀 있어야 한다.
 
@@ -530,7 +530,7 @@ $$\hat{V}_{\mathrm{SNIPS}} = \frac{\sum_i w_i r_i}{\sum_i w_i}$$
 
 ## 더 깊이 보기
 
-- [추정 방법 둘을 겹치면 왜 더 튼튼한가](post.html?id=doubly-robust) — 성향점수와 예측 모델을 겹치는 이중 강건
+- [Doubly Robust](post.html?id=doubly-robust) — 성향점수와 예측 모델을 겹치는 이중 강건
 - [모델 A/B 테스트](post.html?id=model-ab-testing) — 거른 뒤에 하는 온라인 실험
 - [무작위 통제 실험(RCT)](post.html?id=rct-randomized-experiment) — 표본 크기와 검출력
 - [위치 편향과 ULTR](post.html?id=position-bias-ultr) — 로그에 실린 또 다른 치우침

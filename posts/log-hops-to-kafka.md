@@ -344,6 +344,6 @@ flowchart LR
 - 이 다음은 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다. 이 글이 브로커 문 앞에서 끝난 자리에서 시작해 topic·partition·consumer group·offset 을 봅니다.
 - 앞 글인 [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) 편은 같은 클릭 한 건을 모양이 아니라 **방향**으로 봅니다. 누가 밀고 누가 가지러 가는지입니다.
 - 2절의 재전송과 중복은 [API 연동 실무](post.html?id=api-kinds-and-contracts) 편 5절이 전환 1,000건으로 값을 냅니다.
-- 수집 계층의 나머지 — 스키마가 바뀌는 동안 읽는 쪽을 안 깨는 방법은 [광고 로그 시스템 완전 해부](post.html?id=ad-log-system) 편에 있습니다.
+- 수집 계층의 나머지 — 스키마가 바뀌는 동안 읽는 쪽을 안 깨는 방법은 [광고 로그 시스템 설계](post.html?id=ad-log-system) 편에 있습니다.
 - 이 글은 클릭 하나를 따라갔습니다. 입찰 한 건이 남기는 로그 열 종은 [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리했습니다.
 - 이어 붙이는 창의 확대판 — 클릭은 3시간이지만 전환은 며칠이 걸리는 이야기는 [지연 피드백과 온라인 학습](post.html?id=online-learning-delayed-feedback) 편입니다.

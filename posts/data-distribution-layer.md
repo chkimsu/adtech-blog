@@ -227,4 +227,4 @@ output {
 - 이 층을 품은 여섯 층 전체와 888 밀리초 예산의 출처는 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편에 있습니다.
 - 이 층 앞뒤의 여섯 자리와 Kafka 가 왜 며칠 들고 있는지는 [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) 편이 출발점입니다.
 - 이 층이 읽는 topic 안쪽 — 보존 기간을 비용으로 정하는 이야기는 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다.
-- 서빙 피처 목적지 쪽은 [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) 편이 다룹니다.
+- 서빙 피처 목적지 쪽은 [Feature Store](post.html?id=feature-store-serving) 편이 다룹니다.

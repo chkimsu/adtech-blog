@@ -363,7 +363,7 @@ print("   그러면 '3월 1일 데이터를 3월 8일에 본 버전'을 나중�
 
 **(A) 확정 정책의 대가는 편향입니다.** 1일에 굳히면 전환의 42%만 잡아서, 학습 라벨의 CVR이 1.26%로 참값 3.0%의 절반도 안 됩니다. 모델은 "전환은 드물다"고 배웁니다. 그리고 그 과소예측이 입찰가에 그대로 실려 물량이 줄어듭니다.
 
-다행히 이건 고칠 수 있습니다. **놓친 비율을 알면 보정할 수 있습니다.** 도착 확률의 역수로 가중하는 방법이 그것이고, [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)에서 그 계산을 다룹니다.
+다행히 이건 고칠 수 있습니다. **놓친 비율을 알면 보정할 수 있습니다.** 도착 확률의 역수로 가중하는 방법이 그것이고, [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)에서 그 계산을 다룹니다.
 
 **(B) 재수정 정책의 대가는 재현 불가입니다.** 이게 덜 알려진 함정입니다.
 
@@ -430,7 +430,7 @@ print("   그러면 '3월 1일 데이터를 3월 8일에 본 버전'을 나중�
 
 - [pCVR 모델링](post.html?id=pcvr-modeling) — 중복 전환과 지연 전환의 편향 보정
 - [어트리뷰션](post.html?id=attribution-basics) — 여러 접점 중 누구에게 공을 줄까
-- [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 도착 확률로 지연을 되돌리는 계산
+- [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback) — 도착 확률로 지연을 되돌리는 계산
 - [Multi-Task Learning](post.html?id=multi-task-learning) — 희소한 라벨을 풍부한 보조 라벨로 메우기
 - [Calibration](post.html?id=calibration) — 유형별 보정을 실제로 하는 방법
 - [모델 모니터링](post.html?id=model-monitoring) — 전체는 멀쩡한데 세그먼트가 무너지는 것을 잡기

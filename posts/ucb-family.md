@@ -121,7 +121,7 @@ $$\text{Score}_a = \underbrace{x^T\theta_a}_{\text{이 컨텍스트에서의 예
 
 $\theta_a$는 소재 $a$가 지금까지 배운 가중치다. "이 소재는 뉴스에서 강하고 저녁엔 약하더라" 같은 패턴이 여기 쌓인다. $A_a$는 그 배움이 어느 방향에서 왔는지를 기록한 행렬이다. 이 행렬이 왜 필요한지는 7절에서 따로 뜯어본다. 지금은 "소재마다 컨텍스트에 반응하는 자기만의 작은 모델을 가진다" 정도만 기억하면 된다.
 
-이 구조 덕분에 1절의 문제가 풀린다. 소재 A와 B를 하나의 평균으로 뭉치는 대신, 컨텍스트별로 다르게 배운다. "뉴스에서는 A, 커뮤니티에서는 B"처럼, 조합마다 다른 패턴이 남는다. 2절에서 컨텍스트별로 UCB1을 나눠 돌렸을 때 27.6%의 이득이 났다. 이게 바로 LinUCB가 실제로 만들어 내려는 효과다. 다만 $A_a$ 갱신 방법과 $\alpha$를 정하는 기준은 여기서 다루지 않는다. 역행렬 계산이 가벼워지는 원리도 이 글에서는 다루지 않는다. 구현 디테일은 [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)에 있다.
+이 구조 덕분에 1절의 문제가 풀린다. 소재 A와 B를 하나의 평균으로 뭉치는 대신, 컨텍스트별로 다르게 배운다. "뉴스에서는 A, 커뮤니티에서는 B"처럼, 조합마다 다른 패턴이 남는다. 2절에서 컨텍스트별로 UCB1을 나눠 돌렸을 때 27.6%의 이득이 났다. 이게 바로 LinUCB가 실제로 만들어 내려는 효과다. 다만 $A_a$ 갱신 방법과 $\alpha$를 정하는 기준은 여기서 다루지 않는다. 역행렬 계산이 가벼워지는 원리도 이 글에서는 다루지 않는다. 구현 디테일은 [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)에 있다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-linucb.html?embed=1" height="560" loading="lazy" title="LinUCB 미니 데모"></iframe>
@@ -264,7 +264,7 @@ DSP가 받는 입찰 요청에는 대개 컨텍스트가 딸려 있다. 매체·
 
 - 밴딧 문제 전체 지도와 계보 → [멀티암드 밴딧(MAB) 입문](post.html?id=mab-summary)
 - UCB1 vs 톰슨 샘플링, 결정적 vs 확률적 비교 → [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)
-- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)
+- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)
 - 톰슨 샘플링을 컨텍스트로 확장하면 → [Standard TS vs Linear TS](post.html?id=TS-linTS)
 - 탐색-활용 딜레마 자체가 궁금하다면 → [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
 - LinUCB를 직접 눌러보기 → [LinUCB 데모](demo-linucb.html)

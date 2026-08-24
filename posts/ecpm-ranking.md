@@ -513,7 +513,7 @@ DSP가 1st Price Auction에서 eCPM을 기반으로 입찰가를 최적화하는
 - 애드테크 생태계 전체 지도에서 eCPM의 위치 → [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)
 - 담장 안 생태계의 구조를 더 깊이 → [Walled Garden](post.html?id=walled-garden)
 - eCPM 너머, LTV 기준으로 랭킹을 다시 짜는 법 → [LTV: 광고 랭킹의 진짜 기준](post.html?id=ltv-ad-ranking)
-- DSP가 eCPM을 실제 입찰가로 바꾸는 법 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
+- DSP가 eCPM을 실제 입찰가로 바꾸는 법 → [Bid Shading](post.html?id=bid-shading-censored)
 - pCTR 모델을 실시간으로 서빙하는 구조 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 - pCTR 정확도가 매출에 주는 영향(데모) → [pCTR Impact](demo-pctr-impact.html)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

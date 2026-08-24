@@ -366,7 +366,7 @@ print(f"\n답 {lo} · 이때 얻는 양 {얻는양(lo)}")
 
 이 방법을 쓸 수 있는지 판단하는 기준은 하나다. **"답을 x라 두었을 때, x가 되면 되고 x보다 크면 안 되는가"** 를 물어서 그렇다면 통한다. 문제 지문의 "최소의 최대", "최대의 최소" 같은 표현이 이 꼴을 알리는 신호다.
 
-같은 구조가 광고 입찰가를 정할 때도 쓰인다. 입찰가를 올리면 이길 확률은 오르지만 남는 이익은 준다는 단조 관계 위에서 최적점을 찾는 것이다. 자세한 것은 [Bid Shading & Censored Data](post.html?id=bid-shading-censored) 편의 황금분할 탐색에 있다.
+같은 구조가 광고 입찰가를 정할 때도 쓰인다. 입찰가를 올리면 이길 확률은 오르지만 남는 이익은 준다는 단조 관계 위에서 최적점을 찾는 것이다. 자세한 것은 [Bid Shading](post.html?id=bid-shading-censored) 편의 황금분할 탐색에 있다.
 
 ## 5. 회전된 배열 — 반쪽은 항상 정렬돼 있다
 
@@ -668,5 +668,5 @@ print(f"\n답 {답}")
 
 - 앞 편의 [복잡도와 배열 훑기](post.html?id=algorithm-complexity-array)에서 양 끝 좁히기와 창 미끄러뜨리기를 다뤘다. 이 글의 단조 스택·단조 덱이 그 생각의 확장이다.
 - [해시와 정렬](post.html?id=algorithm-hash-sort) 편의 정렬이 이 글의 이분 탐색과 파라메트릭 서치의 전제가 된다.
-- 답의 범위를 좁혀 최적점을 찾는 같은 구조가 광고 입찰가 계산에 쓰인다. [Bid Shading & Censored Data](post.html?id=bid-shading-censored) 4절의 황금분할 탐색을 보면 된다.
+- 답의 범위를 좁혀 최적점을 찾는 같은 구조가 광고 입찰가 계산에 쓰인다. [Bid Shading](post.html?id=bid-shading-censored) 4절의 황금분할 탐색을 보면 된다.
 - 위 [이분 탐색 데모](demo-binary-search.html)에서 세 변형을 같은 배열 위에 번갈아 돌려 보면 경계 차이가 눈에 들어온다.

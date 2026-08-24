@@ -4,7 +4,7 @@
 
 > 한 줄 요약: 모델 구조를 고르기 전에 **무엇을 어떤 모양으로 넣을지**를 정해야 한다. 범주형 ID는 해싱과 임베딩으로 접고, 시퀀스는 고정 길이로 자르고, 집계 피처는 시간을 갈라 만든다. 마지막 하나를 틀리면 오프라인 AUC 0.89가 실서빙에서 0.78이 된다.
 
-이 글은 피처를 **만드는** 쪽만 다룬다. 만든 피처를 어떤 구조에 넣느냐는 [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)에 있다. 저장하고 조회하는 인프라는 [Feature Store & Real-Time Serving](post.html?id=feature-store-serving)에 있다.
+이 글은 피처를 **만드는** 쪽만 다룬다. 만든 피처를 어떤 구조에 넣느냐는 [Deep CTR 모델](post.html?id=deep-ctr-models)에 있다. 저장하고 조회하는 인프라는 [Feature Store](post.html?id=feature-store-serving)에 있다.
 
 ---
 
@@ -421,7 +421,7 @@ A의 오프라인 AUC는 0.8938이고 시간을 갈라 만든 C는 0.7767이다.
 
 B가 흥미롭다. "자기 행만 빼면 되지 않나"는 아주 흔한 제안이다. 실제로 부풀림은 사라져 오프라인 0.7795로 내려온다. 그런데 조합 CTR의 가중치가 C의 0.58에서 0.23으로 떨어졌다. 자기 행을 빼면 반대 방향 편향이 생기기 때문이다. 내가 클릭했다는 사실이 그 칸의 평균을 **낮추는** 쪽으로 작용해, 모델이 좋은 피처를 덜 믿게 된다.
 
-처방은 하나다. **피처를 만드는 창과 라벨이 나온 시각이 겹치지 않게 자른다.** D일 노출의 라벨을 맞히려면 피처는 D-1일 자정까지의 로그로만 만든다. 이 규칙의 SQL 구현이 point-in-time join이고 [Feature Store & Real-Time Serving](post.html?id=feature-store-serving)에 예제가 있다. 참고로 C의 오프라인과 실서빙이 0.02쯤 다른 것은 표본이 다른 날이라 생기는 잡음이다.
+처방은 하나다. **피처를 만드는 창과 라벨이 나온 시각이 겹치지 않게 자른다.** D일 노출의 라벨을 맞히려면 피처는 D-1일 자정까지의 로그로만 만든다. 이 규칙의 SQL 구현이 point-in-time join이고 [Feature Store](post.html?id=feature-store-serving)에 예제가 있다. 참고로 C의 오프라인과 실서빙이 0.02쯤 다른 것은 표본이 다른 날이라 생기는 잡음이다.
 
 노출이 적은 칸의 CTR을 그대로 쓰면 0%나 100%로 튄다. 그래서 코드의 `feat()`처럼 사전값을 섞는다. 이 스무딩이 없으면 꼬리 조합의 피처는 잡음 그 자체가 된다.
 
@@ -515,9 +515,9 @@ for n in (40, 80, 160):
 ## 10. 더 깊이 보기
 
 - [Deep CTR 모델의 진화: LR에서 DIN까지](post.html?id=deep-ctr-models) — 여기서 만든 피처를 어떤 구조가 조합하나
-- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 피처를 저장·조회하는 인프라와 training-serving skew
-- [Negative Sampling & Sample Selection Bias](post.html?id=negative-sampling-bias) — 어떤 노출을 학습 표본으로 쓸까
-- [Two-Tower Model & 광고 후보 생성](post.html?id=two-tower-retrieval) — 임베딩으로 후보를 추리는 단계
+- [Feature Store](post.html?id=feature-store-serving) — 피처를 저장·조회하는 인프라와 training-serving skew
+- [Negative Sampling](post.html?id=negative-sampling-bias) — 어떤 노출을 학습 표본으로 쓸까
+- [Two-Tower Retrieval](post.html?id=two-tower-retrieval) — 임베딩으로 후보를 추리는 단계
 - [오디언스 세그멘테이션](post.html?id=audience-segmentation) · [Lookalike Modeling](post.html?id=lookalike-modeling) — 유저 신호를 세그먼트로 만드는 쪽
 - [pCTR: 이 사람이 누를까](post.html?id=pctr-prediction) — 이 모델의 출력이 왜 돈이 되나
 - [Calibration](post.html?id=calibration) — 확률의 절댓값을 맞추는 문제

@@ -132,8 +132,8 @@ flowchart LR
 
 ### 더 깊이 보기
 - 서로 다른 시장에서 eCPM이 어떻게 1등을 결정하는가: [eCPM과 광고 랭킹](post.html?id=ecpm-ranking)
-- 1st Price 경매에서의 입찰가 최적화: [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
-- 하루 예산을 24시간 균등 분배하는 법: [Auto-Bidding & Budget Pacing](post.html?id=auto-bidding-pacing)
+- 1st Price 경매에서의 입찰가 최적화: [Bid Shading](post.html?id=bid-shading-censored)
+- 하루 예산을 24시간 균등 분배하는 법: [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing)
 - 눈에 보이는 RTB 경매 시뮬레이터: [RTB Auction Simulator 데모](demo-rtb.html)
 
 ---
@@ -250,7 +250,7 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 - 두 모델을 한 번에 학습하는 기법: [Multi-Task Learning — pCTR과 pCVR을 동시에](post.html?id=multi-task-learning)
 - pCVR 특유의 지연 전환 문제: [pCVR 모델링 & Deduplication 이슈](post.html?id=pcvr-modeling)
 - AUC만 믿으면 왜 위험한가: [Calibration — AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
-- 위치 편향을 제거하는 법: [Position Bias & Unbiased Learning to Rank](post.html?id=position-bias-ultr)
+- 위치 편향을 제거하는 법: [Position Bias](post.html?id=position-bias-ultr)
 - 탐색/활용의 근본 딜레마: [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
 - 밴딧 알고리즘 치트시트: [AdTech MAB Algorithm Collection](post.html?id=mab-summary)
 - 수백만 후보를 10ms에 줄이는 Retrieval: [Two-Tower Model](post.html?id=two-tower-retrieval)
@@ -292,10 +292,10 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌렀고, 얼마를 냈는지"** 로그가 있어야 합니다. 한 번의 광고 요청은 내부에 10종 가까운 로그를 만듭니다. Request, Candidate, Impression, Click, Conversion, Attribution 같은 이름들입니다. 이걸 일관되게 묶는 게 실무에서 가장 어려운 부분 중 하나입니다.
 
 ### 더 깊이 보기
-- 편향된 학습 데이터 보정법: [Negative Sampling & Sample Selection Bias](post.html?id=negative-sampling-bias)
+- 편향된 학습 데이터 보정법: [Negative Sampling](post.html?id=negative-sampling-bias)
 - 광고 시스템 10종 로그의 역할: [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline)
-- Request Log부터 Candidate Log까지: [광고 로그 시스템 완전 해부](post.html?id=ad-log-system)
-- 지연 전환을 처리하는 온라인 학습: [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)
+- Request Log부터 Candidate Log까지: [광고 로그 시스템 설계](post.html?id=ad-log-system)
+- 지연 전환을 처리하는 온라인 학습: [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)
 
 ---
 
@@ -336,9 +336,9 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 - **Online Learning**: 유저 행동은 매일 바뀌므로 모델도 주기적으로(혹은 스트리밍으로) 업데이트해야 한다. Delayed Feedback(전환까지 며칠 걸림) 처리는 이 블로그의 단골 주제다.
 
 ### 더 깊이 보기
-- 데이터 공급망 전체 지도: [Feature Store & Real-Time Serving](post.html?id=feature-store-serving)
+- 데이터 공급망 전체 지도: [Feature Store](post.html?id=feature-store-serving)
 - 10ms 안에 수백 개 광고 스코어링: [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture)
-- 8개 레이어로 본 Ad Tech 개발 맵: [Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)
+- 8개 레이어로 본 Ad Tech 개발 맵: [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)
 
 ---
 

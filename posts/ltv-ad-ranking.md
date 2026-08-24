@@ -537,7 +537,7 @@ DSP·매체는 클릭까지는 봅니다. 하지만 그 사람이 광고주의 �
 
 6. **eCPM은 이번 클릭의 즉시 가치만 봅니다. LTV는 그 클릭이 남기는 손님의 재구매까지 봅니다.** 다만 90일 뒤 값을 미리 알 수 없어 예측에 의존하고, 그 예측을 얼마나 믿을지(할인율)가 다시 랭킹을 바꿉니다. 그리고 이게 가능한 것 자체가 담장 안(닫힌 생태계)이라는 조건에 기댑니다. 담장 밖에서는 광고주가 넘겨주는 값에 의존할 수밖에 없습니다.
 
-> 다음 단계로 두 가지가 이어집니다. DSP는 입찰가를 [Bid Shading](post.html?id=bid-shading-censored)으로 최적화합니다. 예산은 [Auto-Bidding & Budget Pacing](post.html?id=auto-bidding-pacing)으로 배분합니다.
+> 다음 단계로 두 가지가 이어집니다. DSP는 입찰가를 [Bid Shading](post.html?id=bid-shading-censored)으로 최적화합니다. 예산은 [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing)으로 배분합니다.
 
 ---
 
@@ -547,7 +547,7 @@ DSP·매체는 클릭까지는 봅니다. 하지만 그 사람이 광고주의 �
 - pCTR 예측의 기초(피처·모델·보정) → [pCTR: '이 사람이 누를까?'를 맞히는 확률](post.html?id=pctr-prediction)
 - 전환 라벨과 지연 전환(이 글의 딥다이브와 같은 뼈대) → [pCVR 모델링](post.html?id=pcvr-modeling)
 - 광고가 '진짜로' 만든 가치(증분·홀드아웃) → [어트리뷰션: 그 전환은 누구 공인가](post.html?id=attribution-basics)
-- 입찰가를 실제로 최적화하는 법 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
-- 하루 예산을 배분하는 법 → [Auto-Bidding & Budget Pacing](post.html?id=auto-bidding-pacing)
+- 입찰가를 실제로 최적화하는 법 → [Bid Shading](post.html?id=bid-shading-censored)
+- 하루 예산을 배분하는 법 → [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing)
 - 광고 피로·최적 빈도를 직접 실험 → [Frequency Capping 데모](demo-frequency-capping.html)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

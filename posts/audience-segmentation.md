@@ -1,6 +1,6 @@
 "누구에게 보여줄 것인가?" — 광고가 노출되기 전, 시스템이 가장 먼저 답해야 할 질문입니다. 아무리 정교한 pCTR 모델을 만들고, 최적의 입찰 전략을 설계하더라도, **적절한 오디언스에게 도달하지 못하면** 모든 것이 무의미합니다. 오디언스 세그멘테이션은 수백만~수억 명의 유저를 **행동 가능한 그룹(Actionable Audience)**으로 묶는 일입니다. 이 그룹이 리타겟팅과 모든 타겟팅 전략의 출발점입니다. [Lookalike Modeling](post.html?id=lookalike-modeling)의 시드 오디언스도 여기서 나옵니다.
 
-세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [Feature Store](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [Walled Garden](post.html?id=walled-garden)과 Open RTB가 그렇습니다. 이 글이 다루는 범위는 넓습니다. Rule-based SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 해부합니다.
+세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [Feature Store](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [Walled Garden](post.html?id=walled-garden)과 Open RTB가 그렇습니다. 이 글이 다루는 범위는 넓습니다. Rule-based SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 해부합니다.
 
 > **골라 읽는 법** — 절이 12개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >

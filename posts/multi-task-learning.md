@@ -992,10 +992,10 @@ Multi-Task Learning의 핵심 5가지를 정리합니다.
 ## 더 깊이 보기
 
 - SSB·지연 전환·중복 전환의 문제 정의 → [pCVR 모델링](post.html?id=pcvr-modeling)
-- 각 Tower 내부 구조의 진화(LR→DeepFM→DIN) → [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)
+- 각 Tower 내부 구조의 진화(LR→DeepFM→DIN) → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 태스크가 여러 개면 보정도 태스크별로 → [Calibration](post.html?id=calibration)
 - 후보를 먼저 좁히는 단계 → [Two-Tower 리트리벌](post.html?id=two-tower-retrieval)
-- 지연 라벨로 온라인 학습하기 → [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)
+- 지연 라벨로 온라인 학습하기 → [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)
 - pCTR 기초부터 다시 → [pCTR 예측](post.html?id=pctr-prediction)
 - 보여준 광고만 배우는 편향 → [Negative Sampling & Bias](post.html?id=negative-sampling-bias)
 - pCTR × pCVR이 랭킹에 들어가는 자리 → [eCPM 랭킹](post.html?id=ecpm-ranking)

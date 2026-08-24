@@ -369,7 +369,7 @@ print("→ 즉 강도를 손으로 찍을 필요가 없다. 기존 광고들의 
 
 이력이 없어도 광고에는 특징이 있습니다. 이미지 크기, 영상 길이, 제목 글자 수, 업종, 랜딩 페이지 종류, 할인율 표기 여부. 모델이 이 특징들과 CTR의 관계를 이미 배워 뒀다면, **새 광고의 특징만 넣어도 예측이 나옵니다.**
 
-이게 딥러닝 CTR 모델이 콜드스타트에 유리한 이유입니다. 광고 ID 임베딩만 쓰는 모델은 새 ID에 아무 정보가 없습니다. 하지만 콘텐츠 피처를 함께 쓰면 ID가 새것이어도 나머지 피처가 일을 합니다. 어떤 피처를 어떻게 만드는지는 [CTR 피처 엔지니어링 실전](post.html?id=ctr-feature-engineering)에서, 모델 구조는 [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)에서 다룹니다.
+이게 딥러닝 CTR 모델이 콜드스타트에 유리한 이유입니다. 광고 ID 임베딩만 쓰는 모델은 새 ID에 아무 정보가 없습니다. 하지만 콘텐츠 피처를 함께 쓰면 ID가 새것이어도 나머지 피처가 일을 합니다. 어떤 피처를 어떻게 만드는지는 [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering)에서, 모델 구조는 [Deep CTR 모델](post.html?id=deep-ctr-models)에서 다룹니다.
 
 열린 RTB에서는 이 방법에 훨씬 더 기댑니다. 이유는 계층이 부실하기 때문입니다. DSP는 남의 인벤토리에 입찰하므로 **유저 쪽 계층이 아예 없습니다.** 쿠키가 매번 달라 "이 유저의 이력"을 쌓을 수 없고, 그래서 유저 콜드스타트가 예외가 아니라 기본값입니다.
 
@@ -395,7 +395,7 @@ $$P(p \mid k) \propto p^{k+\alpha-1} (1-p)^{n-k+\beta-1}$$
 
 실무에서 이 성질이 값진 이유는 계산이 아닙니다. **상태를 두 숫자로만 들고 있으면 된다는 점**입니다. 광고 하나당 (α, β) 두 개만 저장하면 되고, 노출·클릭이 올 때마다 더하기만 하면 됩니다. 광고가 수백만 개여도 감당이 됩니다.
 
-한 가지 주의할 점이 있습니다. 이 모형은 CTR이 시간에 따라 변하지 않는다고 가정합니다. 실제로는 변합니다(계절성, 소재 피로). 그래서 실무에서는 과거 관측에 감쇠를 걸어 오래된 데이터의 발언권을 줄입니다. 그 이야기는 [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)에 있습니다.
+한 가지 주의할 점이 있습니다. 이 모형은 CTR이 시간에 따라 변하지 않는다고 가정합니다. 실제로는 변합니다(계절성, 소재 피로). 그래서 실무에서는 과거 관측에 감쇠를 걸어 오래된 데이터의 발언권을 줄입니다. 그 이야기는 [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)에 있습니다.
 :::
 
 ---
@@ -425,9 +425,9 @@ $$P(p \mid k) \propto p^{k+\alpha-1} (1-p)^{n-k+\beta-1}$$
 ## 더 깊이 보기
 
 - [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation) — 이 광고에 노출을 얼마나 줄까. 이 글의 짝
-- [CTR 피처 엔지니어링 실전](post.html?id=ctr-feature-engineering) — 콘텐츠 피처를 실제로 어떻게 만드나
-- [Deep CTR 모델의 진화](post.html?id=deep-ctr-models) — ID 임베딩과 콘텐츠 피처를 함께 쓰는 구조
+- [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering) — 콘텐츠 피처를 실제로 어떻게 만드나
+- [Deep CTR 모델](post.html?id=deep-ctr-models) — ID 임베딩과 콘텐츠 피처를 함께 쓰는 구조
 - [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration) — 수축한 확률의 절대값을 맞추는 일
 - [톰슨 샘플링](post.html?id=ucb-vs-ts) — 같은 베타 분포를 탐색에 쓰는 방법
-- [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 사전확률이 시간에 따라 낡는 문제
+- [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback) — 사전확률이 시간에 따라 낡는 문제
 - [ML 엔지니어 트랙](ml-track.html) — pCTR/pCVR 실무 커리큘럼 전체

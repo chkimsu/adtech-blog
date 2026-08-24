@@ -196,7 +196,7 @@ $$\theta_a \sim \mathcal{N}(\mu_a, \Sigma_a)$$
 
 핵심은 "표본을 뽑는 대상"이 바뀌었다는 점이다. Standard TS는 "이 소재의 클릭률"에 대한 믿음에서 표본을 뽑았다. Linear TS는 "지면·연령대가 클릭률에 미치는 영향(계수)"에 대한 믿음에서 표본을 뽑는다. 계수 하나가 배워지면 그 계수는 모든 컨텍스트 조합에 곧바로 적용된다. 5절 표의 다섯 조합을 따로따로 외울 필요가 없다. "피드는 20·30대에게 유리하게 작용한다"는 패턴 하나만 배우면, 새로운 조합(예: 피드·25세)에도 곧장 써먹을 수 있다.
 
-같은 아이디어를 UCB 계열도 갖고 있다. LinUCB는 계수에 대한 믿음에서 표본을 뽑는 대신 다른 방법을 쓴다. 계수의 평균 예측값에 불확실성만큼의 보너스를 더해 낙관적 상한 점수를 계산한다. Linear TS는 확률적 제비뽑기이고, LinUCB는 결정적 상한 계산이다. 이 차이는 Standard TS와 UCB1 사이의 관계와 완전히 같은 구도다. LinUCB 자체의 구조는 [UCB 알고리즘 패밀리](post.html?id=ucb-family)에서 다룬다. 점수 구성을 뜯어본 자료는 [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)에 있다.
+같은 아이디어를 UCB 계열도 갖고 있다. LinUCB는 계수에 대한 믿음에서 표본을 뽑는 대신 다른 방법을 쓴다. 계수의 평균 예측값에 불확실성만큼의 보너스를 더해 낙관적 상한 점수를 계산한다. Linear TS는 확률적 제비뽑기이고, LinUCB는 결정적 상한 계산이다. 이 차이는 Standard TS와 UCB1 사이의 관계와 완전히 같은 구도다. LinUCB 자체의 구조는 [UCB 계열](post.html?id=ucb-family)에서 다룬다. 점수 구성을 뜯어본 자료는 [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)에 있다.
 
 ---
 
@@ -339,7 +339,7 @@ DSP가 특정 세그먼트나 지면에 응찰하기로 정했다고 해도, 경
 
 - 밴딧 전체 계보에서 톰슨 샘플링의 위치 → [멀티암드 밴딧: 어느 광고를 더 보여줄까](post.html?id=mab-summary)
 - UCB와 톰슨 샘플링의 성격 차이(결정적 vs 확률적) → [UCB vs Thompson Sampling](post.html?id=ucb-vs-ts)
-- LinUCB 등 UCB 계열 상세 비교 → [UCB 알고리즘 패밀리](post.html?id=ucb-family)
-- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB 모델 상세 해석](post.html?id=disjoint-linucb)
+- LinUCB 등 UCB 계열 상세 비교 → [UCB 계열](post.html?id=ucb-family)
+- LinUCB 점수 구성을 시각적으로 뜯어보기 → [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)
 - 베타 분포에서 표본 뽑는 과정을 직접 만져보기 → [베타 분포 샘플링 데모](demo-beta-sampling.html)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

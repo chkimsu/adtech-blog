@@ -490,6 +490,6 @@ Safari의 ITP, Firefox의 ETP는 오래전부터 서드파티 쿠키를 기본 �
 - 열린 RTB의 3자 구조와 수수료가 실제로 얼마나 쌓이는지 → [DSP·SSP·Ad Exchange](post.html?id=dsp-ssp-exchange)
 - 담장 안 실제 광고 상품이 궁금하면 → [카카오 광고 상품 지도](post.html?id=kakao-ads-products)
 - 담장 안/열린 RTB에서 측정(어트리뷰션)이 어떻게 갈리는지 → [어트리뷰션 입문](post.html?id=attribution-basics)
-- 정직한 입찰이 왜 무너지는지(Bid Shading) → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
+- 정직한 입찰이 왜 무너지는지(Bid Shading) → [Bid Shading](post.html?id=bid-shading-censored)
 - 자동입찰 알고리즘의 실제 구현 → [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

@@ -4,7 +4,7 @@
 
 문제는 두께다. 표제어가 2억 개를 넘고, 매일 수만 개가 새로 생기고 수만 개가 죽는다. 그리고 이 사전을 초당 수만 번 펼쳐 봐야 한다. 이걸 **임베딩 테이블(embedding table)** 이라고 부른다.
 
-왜 이런 사전이 필요한지는 [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)에서 다뤘다. 차원을 몇으로 잡을지는 [CTR 피처 엔지니어링 실전](post.html?id=ctr-feature-engineering)의 몫이다. 이 글은 그다음, **이미 정해진 사전을 매일 어떻게 굴리느냐**만 본다.
+왜 이런 사전이 필요한지는 [Deep CTR 모델](post.html?id=deep-ctr-models)에서 다뤘다. 차원을 몇으로 잡을지는 [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering)의 몫이다. 이 글은 그다음, **이미 정해진 사전을 매일 어떻게 굴리느냐**만 본다.
 
 > 한 줄 요약: 임베딩 테이블은 ID마다 한 줄씩 적힌 아주 긴 사전이다. 서버 한 대에 안 들어가서 쪼개고, 배치 하나가 건드리는 줄이 0.0005%뿐이라 희소하게 갱신한다. 죽은 줄은 계속 버려야 하고, 모델과 한 몸으로 배포해야 한다.
 
@@ -519,8 +519,8 @@ int8은 스케일 방식이 갈림길이다. 행별로 잡으면 상대오차 4%
 
 ## 더 깊이 보기
 
-- 이 테이블이 왜 필요한지, 모델 안에서 어떻게 쓰이는지 → [Deep CTR 모델의 진화](post.html?id=deep-ctr-models)
-- 차원 정하기·해싱 트릭·시퀀스 피처 → [CTR 피처 엔지니어링 실전](post.html?id=ctr-feature-engineering)
+- 이 테이블이 왜 필요한지, 모델 안에서 어떻게 쓰이는지 → [Deep CTR 모델](post.html?id=deep-ctr-models)
+- 차원 정하기·해싱 트릭·시퀀스 피처 → [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering)
 - 임베딩으로 후보를 검색하는 법 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 캐시 적중률·배칭·p99 같은 서빙 일반론 → [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

@@ -282,7 +282,7 @@ graph LR
 
 - 무엇이 팔리고 eCPM으로 어떻게 줄 세워지나 → [1편: 카카오 광고 상품 지도](post.html?id=kakao-ads-products)
 - 무엇으로 확률을 맞히고 누구를 겨냥하나 → [2편: 카카오는 무엇으로 광고를 고르나](post.html?id=kakao-ads-prediction-targeting)
-- 예산 페이싱의 PID·라그랑주 산수 → [Auto-Bidding & Budget Pacing](post.html?id=auto-bidding-pacing)
+- 예산 페이싱의 PID·라그랑주 산수 → [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing)
 - 패찰가 없이 입찰가를 추정하는 법 → [Bid Shading: Censored Data](post.html?id=bid-shading-censored)
 - 어트리뷰션 규칙과 증분의 차이 → [어트리뷰션 입문](post.html?id=attribution-basics)
 - 홀드아웃 실험을 제대로 설계하는 법 → [RCT: 무작위 실험](post.html?id=rct-randomized-experiment)

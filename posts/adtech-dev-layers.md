@@ -81,8 +81,8 @@ graph LR
 **관련 포스트:**
 - [오디언스 세그멘테이션](post.html?id=audience-segmentation) — Demographic, Behavioral, RFM, ML Clustering 기반 세그먼트 설계
 - [Lookalike Modeling](post.html?id=lookalike-modeling) — Seed에서 유사 유저를 발굴하는 Embedding/Propensity/Graph 접근법
-- [Position Bias & Unbiased Learning to Rank](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
-- [Two-Tower Model & 광고 후보 생성](post.html?id=two-tower-retrieval) — 유저-광고 매칭의 기반 기술
+- [Position Bias](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
+- [Two-Tower Retrieval](post.html?id=two-tower-retrieval) — 유저-광고 매칭의 기반 기술
 
 ---
 
@@ -116,7 +116,7 @@ graph LR
 | 경매 | Top K → 낙찰 | eCPM 계산 | ~1ms |
 
 **관련 포스트:**
-- [Ad Serving Flow: 광고가 유저에게 도달하는 전체 과정](post.html?id=ad-serving-flow)
+- [Ad Serving Flow: 후보 12만 건이 800건으로 좁혀지는 순서](post.html?id=ad-serving-flow)
 - [광고 모델 서빙 아키텍처: 10ms 안에 수백 개 광고를 스코어링하는 법](post.html?id=model-serving-architecture)
 
 ---
@@ -144,8 +144,8 @@ $$\text{eCPM} = \text{pCTR} \times \text{pCVR} \times \text{Bid} \times 1000$$
 **관련 포스트:**
 - [Deep CTR 모델의 진화: LR에서 DIN까지](post.html?id=deep-ctr-models)
 - [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
-- [Multi-Task Learning: pCTR과 pCVR을 동시에 학습하면 왜 더 좋은가](post.html?id=multi-task-learning)
-- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving)
+- [Multi-Task Learning: pCTR과 pCVR을 같이 배우면 왜 더 좋은가](post.html?id=multi-task-learning)
+- [Feature Store](post.html?id=feature-store-serving)
 
 ---
 
@@ -183,7 +183,7 @@ graph TD
 
 **관련 포스트:**
 - [Auto-Bidding & Budget Pacing: 일 예산 제약 하에서 입찰 최적화하는 법](post.html?id=auto-bidding-pacing)
-- [Bid Shading & Censored Data: 1st Price Auction에서 최적 입찰가를 찾는 법](post.html?id=bid-shading-censored)
+- [Bid Shading: 1st Price 경매에서 얼마를 깎아 부를까](post.html?id=bid-shading-censored)
 
 ---
 
@@ -311,7 +311,7 @@ print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 �
 여기서 이 레이어의 성격이 나옵니다. 소재는 **틀려도 되돌아오지 않습니다.** 나쁜 소재를 보여준 손해는 그 노출에서 끝나고, 다음 모델 학습을 오염시키지 않습니다. 그래서 마음껏 실험할 수 있고, 그게 밴딧이 여기서 특히 잘 통하는 이유입니다.
 
 **관련 포스트:**
-- [탐색과 활용(Exploration & Exploitation): 광고 시스템의 근본적 딜레마](post.html?id=exploration-exploitation) — MAB 기반 소재 최적화의 이론적 배경
+- [탐색과 활용(Exploration & Exploitation): 새 소재에 노출 몇 번을 걸까](post.html?id=exploration-exploitation) — MAB 기반 소재 최적화의 이론적 배경
 
 ---
 
@@ -375,7 +375,7 @@ graph LR
 프라이버시 규제는 여러 레이어를 한꺼번에 건드립니다. 타겟팅의 유저 데이터 활용, 측정의 크로스사이트 추적, 예측 모델의 학습 데이터 범위까지 **모든 레이어에 직접적 영향**을 미칩니다.
 
 **관련 포스트:**
-- [Online Learning & Delayed Feedback: 광고 모델은 왜 매일 낡아지는가](post.html?id=online-learning-delayed-feedback)
+- [Online Learning 과 지연 피드백: 광고 모델은 왜 매일 낡아지는가](post.html?id=online-learning-delayed-feedback)
 
 ---
 
@@ -505,29 +505,29 @@ $$\text{수익} = R \times p_{ctr} \times p_{cvr} \times V$$
 이 블로그의 기존 포스트를 레이어별로 정리하면:
 
 ### 예측 모델링 (가장 많은 포스트)
-- [Deep CTR 모델의 진화](post.html?id=deep-ctr-models) — CTR 예측 모델 계보
+- [Deep CTR 모델](post.html?id=deep-ctr-models) — CTR 예측 모델 계보
 - [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration) — 확률 보정
 - [Multi-Task Learning](post.html?id=multi-task-learning) — pCTR + pCVR 동시 학습
 - [Negative Sampling & Bias](post.html?id=negative-sampling-bias) — 학습 데이터 편향
 
 ### 입찰 최적화
-- [Auto-Bidding & Budget Pacing](post.html?id=auto-bidding-pacing) — 자동 입찰의 전체 그림
-- [Bid Shading & Censored Data](post.html?id=bid-shading-censored) — 1st Price 경매 최적화
+- [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing) — 자동 입찰의 전체 그림
+- [Bid Shading](post.html?id=bid-shading-censored) — 1st Price 경매 최적화
 - [eCPM과 광고 랭킹](post.html?id=ecpm-ranking) — 랭킹 기준의 이해
 
 ### 광고 생태계
-- [pCTR 모델러를 위한 광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map) — 생태계 개관
+- [광고 기술 생태계 지도: 요청 하나가 지나는 21개 모듈](post.html?id=adtech-ecosystem-map) — 생태계 개관
 - [Ad Serving Flow](post.html?id=ad-serving-flow) — 서빙 흐름
 - [Walled Garden](post.html?id=walled-garden) — 폐쇄형 vs 개방형 생태계
 
 ### 밴딧 · 개인화
 - [탐색과 활용 통합 가이드](post.html?id=exploration-exploitation) — MAB 이론과 실무
-- [UCB 알고리즘 패밀리](post.html?id=ucb-family) — UCB1 vs LinUCB
+- [UCB 계열](post.html?id=ucb-family) — UCB1 vs LinUCB
 - [MAB Algorithm Collection](post.html?id=mab-summary) — 밴딧 알고리즘 총정리
 
 ### 인프라
 - [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 10ms 서빙의 비밀
-- [Feature Store & Real-Time Serving](post.html?id=feature-store-serving) — 데이터 공급망
-- [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback) — 실시간 모델 업데이트
+- [Feature Store](post.html?id=feature-store-serving) — 데이터 공급망
+- [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback) — 실시간 모델 업데이트
 
 > 광고 시스템에 처음 입문한다면 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 큰 그림을 잡고, 관심 있는 레이어의 포스트로 깊이 들어가는 것을 추천합니다.

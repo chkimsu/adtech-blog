@@ -119,7 +119,7 @@ Request Log는 **가장 볼륨이 큽니다**. 전수 기록하고, 나머지 �
 | **Click** | 클릭된 광고 ID, 클릭 시각, 노출~클릭 간격(dwell time) | pCTR의 positive label |
 | **Conversion** | 전환 종류(purchase·sign_up·install), 금액, 클릭~전환 지연 | pCVR label, ROAS 측정 |
 
-> Conversion Log는 클릭 후 **수 시간~수 일** 뒤에 옵니다. 이게 Delayed Feedback 문제의 원인입니다. 자세히는 [Online Learning & Delayed Feedback](post.html?id=online-learning-delayed-feedback)에서 다룹니다.
+> Conversion Log는 클릭 후 **수 시간~수 일** 뒤에 옵니다. 이게 Delayed Feedback 문제의 원인입니다. 자세히는 [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)에서 다룹니다.
 
 ---
 
@@ -210,7 +210,7 @@ graph TD
     style F stroke:#b0442c
 ```
 
-Impression Log만으로 학습하면 모델은 **"이미 경쟁력 있는 광고들 사이의 미세한 차이"**만 배웁니다. Retrieval에서 걸러진 광고, 랭킹에서 탈락한 광고의 패턴은 배우지 못합니다. 이것이 [Negative Sampling & Sample Selection Bias](post.html?id=negative-sampling-bias)에서 다룬 구조적 편향의 원인입니다.
+Impression Log만으로 학습하면 모델은 **"이미 경쟁력 있는 광고들 사이의 미세한 차이"**만 배웁니다. Retrieval에서 걸러진 광고, 랭킹에서 탈락한 광고의 패턴은 배우지 못합니다. 이것이 [Negative Sampling](post.html?id=negative-sampling-bias)에서 다룬 구조적 편향의 원인입니다.
 
 Candidate Log가 있으면 "탈락한 광고가 왜 탈락했는지"까지 학습할 수 있습니다. 모델의 **판별력(discrimination)**이 크게 올라갑니다.
 
@@ -250,6 +250,8 @@ pCTR 학습 데이터는 Impression에 Click을 붙여 `label=1/0`을 만들고,
 ## 5. 실시간 피처 파이프라인 (Redis / Feature Store)
 
 로그는 학습 데이터뿐 아니라 **실시간 피처의 원천**입니다. 유저의 최근 행동, 광고의 실시간 성과는 로그 이벤트를 집계해 추론 서버에 공급합니다.
+
+갱신 주기가 갈리는 이유는 값이 변하는 속도가 다르기 때문입니다. 유저의 최근 10분 클릭 수는 초 단위로 바뀌지만, 과거 30일 구매 이력은 하루에 한 번만 움직입니다. 초 단위 피처를 배치로 만들면 모델이 방금 일어난 행동을 못 봅니다. 반대로 배치 피처를 요청마다 실시간으로 계산하면 같은 값을 매번 다시 세게 됩니다.
 
 ### 아키텍처
 
@@ -294,7 +296,7 @@ feature_vector = {
 }
 ```
 
-> 피처 파이프라인의 전체 아키텍처는 [Feature Store & Real-Time Serving](post.html?id=feature-store-serving)에서 상세히 다룹니다.
+> 피처 파이프라인의 전체 아키텍처는 [Feature Store](post.html?id=feature-store-serving)에서 상세히 다룹니다.
 
 ---
 
@@ -368,7 +370,7 @@ Position=3의 가중치는 높게 잡습니다. 잘 안 보이는데도 클릭�
 
 rank=1로 추론한 스코어에 position별 보정 계수를 곱해 실제 pCTR을 추정합니다. 계수는 사전에 통계로 뽑아 둡니다. 예를 들어 1번 자리 `1.0`, 2번 `0.65`, 3번 `0.40`을 쓰면, 3번에 놓일 광고의 pCTR은 rank=1 스코어의 40%로 내려 잡습니다.
 
-> Position Bias의 이론과 보정 기법은 [Position Bias & Unbiased Learning to Rank](post.html?id=position-bias-ultr)에서 다룹니다.
+> Position Bias의 이론과 보정 기법은 [Position Bias](post.html?id=position-bias-ultr)에서 다룹니다.
 > Calibration 문제는 [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)에서 다룹니다.
 
 ---
@@ -533,7 +535,7 @@ print("→ 타입 변경은 조용히 썩는다. 새 필드를 만들고 옛 필
 
 표의 다섯 줄은 모두 **모델을 건드리지 않고 내리는 결정**입니다. 그런데 결과는 전부 모델 성능으로 나타납니다. 그래서 로그 설계는 데이터 엔지니어링이 아니라 ML 엔지니어링의 첫 장에 놓입니다. 새 모델 구조를 얹기 전에 지금 쓰는 로그부터 보는 편이 훨씬 자주 이깁니다. 중복 없이 도착하는지, 스키마가 조용히 바뀌지 않았는지를요.
 
-[Ad Tech 개발 레이어 맵](post.html?id=adtech-dev-layers)에서 "측정 · 어트리뷰션 → 예측 모델"로 향하는 피드백 루프 — 그 실체가 바로 이 로그 파이프라인입니다.
+[Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 "측정 · 어트리뷰션 → 예측 모델"로 향하는 피드백 루프 — 그 실체가 바로 이 로그 파이프라인입니다.
 
 > 로그를 잘 설계하는 것은 모델 아키텍처를 바꾸는 것만큼, 때로는 그 이상으로 모델 성능에 영향을 미칩니다.
 

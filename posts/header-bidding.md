@@ -193,7 +193,7 @@ print(f"\n300ms · 2등가 규칙  낙찰 {winner_2nd}  ₩{price_2nd:,}")
 
 해법은 규칙을 단순하게 통일하는 것이었다. 2019년 Google Ad Manager가 1등 가격(적어낸 값을 그대로 내는 방식)으로 전환한 사건이 분기점이 됐다. 지금 대부분의 디스플레이 RTB는 1등 가격이다. 문제는 1등 가격에서는 부른 값을 그대로 내야 한다는 점이다. 진짜 가치를 그대로 부르면 이겨도 **남는 게 하나도 없다** — 딱 본전이다. 그래서 DSP들은 "이길 만큼만 살짝 낮춰 부르는" 기술, **Bid Shading**을 쓰기 시작했다.
 
-1등·2등 가격 차이가 궁금하면 → [2등 가격 경매(Second-Price)](post.html?id=second-price-auction). 낮춰 부르는 계산 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored).
+1등·2등 가격 차이가 궁금하면 → [2등 가격 경매(Second-Price)](post.html?id=second-price-auction). 낮춰 부르는 계산 → [Bid Shading](post.html?id=bid-shading-censored).
 
 :::deep 더 깊이 — Prebid.js 설정은 실제로 이렇게 생겼다
 말로만 설명한 "SSP들을 동시에 부른다"가 실제 코드에서는 어떻게 생겼는지 보자. 1절의 SSP 여섯 곳 중 네 곳(A·B·C·E)만 등록했다고 가정한 최소 설정이다.
@@ -267,7 +267,7 @@ pbjs.que.push(function () {
 - 요청부터 노출까지 전체 흐름 → [Ad Serving Flow](post.html?id=ad-serving-flow)
 - 누가 이 경매를 여나(파는 쪽 SSP) → [DSP·SSP·Ad Exchange가 각각 뭐 하나](post.html?id=dsp-ssp-exchange)
 - 1등/2등 가격의 차이와 역사 → [2등 가격 경매(Second-Price)](post.html?id=second-price-auction)
-- 1등 가격에서 입찰가를 깎는 법 → [Bid Shading & Censored Data](post.html?id=bid-shading-censored)
+- 1등 가격에서 입찰가를 깎는 법 → [Bid Shading](post.html?id=bid-shading-censored)
 - 동시 경쟁을 직접 돌려보기 → [Header Bidding 데모](demo-header-bidding.html)
 - 그림으로 먼저 → [쉬운 버전 '더 비싸게 파는 법'](ecosystem-easy.html#hb)
 - 약어가 헷갈리면 → [쉬운 용어 사전](ecosystem-terms.html#header-bidding)

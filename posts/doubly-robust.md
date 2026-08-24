@@ -8,7 +8,7 @@
 
 > **한 줄 요약:** 예측 모델로 답을 먼저 깔고, 확률의 역수 가중은 그 예측이 빗나간 몫에만 건다. 그러면 확률과 예측 모델 중 하나만 맞아도 치우침이 사라진다. 대신 흔들림은 거의 안 줄고, 예측 모델을 평가에 쓸 로그로 학습하면 값이 조용히 기운다.
 
-> 이 글은 [안 띄운 광고의 성적을 어떻게 아나](post.html?id=offpolicy-evaluation)에서 이어진다. 옛 정책·새 정책·성향점수·확률의 역수로 세기는 거기서 나온 말이다. 절 제목의 `[무대: 열린 RTB]`는 남의 거래소에 입찰만 넣는 자리를 뜻한다. **닫힌 생태계**는 우리가 경매를 직접 돌리는 자리이고, **공통**은 두 자리 모두라는 표시다.
+> 이 글은 [Off-Policy Evaluation](post.html?id=offpolicy-evaluation)에서 이어진다. 옛 정책·새 정책·성향점수·확률의 역수로 세기는 거기서 나온 말이다. 절 제목의 `[무대: 열린 RTB]`는 남의 거래소에 입찰만 넣는 자리를 뜻한다. **닫힌 생태계**는 우리가 경매를 직접 돌리는 자리이고, **공통**은 두 자리 모두라는 표시다.
 
 ---
 
@@ -191,7 +191,7 @@ $$\mathrm{Bias}(\hat{V}_{\mathrm{DR}}) = E\left[\left(1 - \frac{p}{\hat{p}}\righ
 
 이득은 보상이 연속인 지표에서 커진다. 클릭 대신 전환 매출이나 체류 시간을 재면 예측이 실제 값 가까이 붙고 잔차가 작아진다. 매출을 지표로 쓰는 캠페인 평가에서 더 값을 한다.
 
-흔들림은 따로 줄여야 한다. 가중치에 상한을 걸고 가중치 합으로 나누는 손질을 얹으면 된다. 대신 값이 내려가는 비용을 같이 치른다([안 띄운 광고의 성적을 어떻게 아나](post.html?id=offpolicy-evaluation) 4절).
+흔들림은 따로 줄여야 한다. 가중치에 상한을 걸고 가중치 합으로 나누는 손질을 얹으면 된다. 대신 값이 내려가는 비용을 같이 치른다([Off-Policy Evaluation](post.html?id=offpolicy-evaluation) 4절).
 
 ### 예측 모델은 평가에 쓸 로그로 학습하면 안 된다
 
@@ -227,7 +227,7 @@ $$\mathrm{Bias}(\hat{V}_{\mathrm{DR}}) = E\left[\left(1 - \frac{p}{\hat{p}}\righ
 
 ## 더 깊이 보기
 
-- [안 띄운 광고의 성적을 어떻게 아나](post.html?id=offpolicy-evaluation) — 성향점수와 유효표본크기의 본론
+- [Off-Policy Evaluation](post.html?id=offpolicy-evaluation) — 성향점수와 유효표본크기의 본론
 - [Calibration](post.html?id=calibration) — 예측한 확률의 크기가 실제와 맞는다는 말의 뜻
 - [Bid Shading과 검열된 데이터](post.html?id=bid-shading-censored) — 경매 통과 확률이 안 보이는 이유
 - [pCTR 예측](post.html?id=pctr-prediction) — 여기서 재료로 쓴 예측 모델

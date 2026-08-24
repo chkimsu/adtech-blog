@@ -1150,6 +1150,22 @@ nav {
   box-shadow: none;
 }
 
+/* 화면 캡쳐는 인라인 SVG 처럼 토큰을 못 따라간다. 그래서 라이트·다크 두 벌을
+   넣고 테마에 맞는 한 장만 보인다. data-theme 이 아직 안 붙은 순간에는
+   기본값인 라이트가 보이므로 깜빡임이 없다. */
+.post-content figure img { margin: 0 auto; }
+.post-content .fig-dark { display: none; }
+[data-theme="dark"] .post-content .fig-light { display: none; }
+[data-theme="dark"] .post-content .fig-dark { display: block; }
+
+.post-content figure figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  text-align: left;
+}
+
 .post-content .table-wrapper {
   overflow-x: auto;
   margin: 2rem 0;

@@ -727,4 +727,5 @@ print("유저 임베딩 | 담장 안 적중 65%% -> %5.3fms | 열린 RTB 적중 
 - 수백만 후보에서 수천 개를 건져내는 1단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 광고 요청 한 건이 흐르는 전체 경로 → [광고 서빙 플로우](post.html?id=ad-serving-flow)
 - 보정 계층을 서빙 어디에 두나 → [Calibration](post.html?id=calibration)
+- 배치 크기를 정한 뒤 그 지연을 실제로 재고 대시보드로 읽는 법 → [지연·처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

@@ -365,3 +365,4 @@ unzip -p app.apk classes.dex | strings | grep -oE 'sk_live_[A-Za-z0-9]{8,}'
 - 5절의 중복 전환이 라벨에 섞이면 모델이 틀어지는 경로는 [pCVR 모델링](post.html?id=pcvr-modeling) 편에 있습니다.
 - 전환이 며칠 뒤에 도착하는 문제는 [지연 피드백과 온라인 학습](post.html?id=online-learning-delayed-feedback) 편에서 다룹니다.
 - 요청 번호를 주문번호로 잡아도 되는지는 [전환을 무엇으로 셀 것인가](post.html?id=conversion-definition) 편이 답합니다.
+- 타임아웃과 재시도를 정한 뒤 그 값이 지켜지는지 재는 법은 [지연·처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput) 편에 있습니다.

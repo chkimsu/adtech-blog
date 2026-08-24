@@ -499,6 +499,7 @@ for name, need, span in (("1창 즉시", 1, 1), ("3창 중 2창", 2, 3),
 - 학습 표본이 한쪽으로 잘릴 때의 편향 → [Negative Sampling과 편향](post.html?id=negative-sampling-bias)
 - 지표 변화가 우리 조치 때문인지 가리기 → [RCT와 무작위 실험](post.html?id=rct-randomized-experiment)
 - 실험 설계와 밴딧 중 무엇을 쓸지 → [A/B 테스트 vs MAB](post.html?id=ab-test-vs-mab)
+- 모델 품질이 아니라 응답 시간을 재고 알람을 거는 쪽 → [지연·처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput)
 - 감시가 "지금 나빠졌나"라면 실험은 "바꾸면 나아지나" → [모델 온라인 A/B 설계](post.html?id=model-ab-testing)
 - 무엇을 전환으로 세는지가 지표의 뜻을 정한다 → [전환 정의와 라벨 지연](post.html?id=conversion-definition)
 - 광고 ML 전체 지도에서 이 글의 위치 → [ML 엔지니어 트랙](ml-track.html)

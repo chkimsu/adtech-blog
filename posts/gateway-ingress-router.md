@@ -435,3 +435,4 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 - 3절에서 서비스를 넷으로 쪼갠 판단은 [소프트웨어 아키텍처 패턴](post.html?id=software-architecture-patterns) 편에서 다룹니다.
 - `bidder` 가 시간을 떼어 준 `pctr` 안에서 실제로 벌어지는 일은 [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 편에 있습니다.
 - 이 경로로 들어온 입찰 한 건이 로그를 몇 줄 남기는지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리해 뒀습니다.
+- 여기서 쪼갠 12ms 를 실제로 지키는지 재고 대시보드로 읽는 법은 [지연·처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput) 편에 있습니다.

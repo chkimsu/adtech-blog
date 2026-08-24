@@ -64,7 +64,7 @@
       name: 'pCTR / pCVR', sub: '광고의 심장 — 누를·살 확률',
       def: '이 유저가 이 광고를 클릭할 확률(pCTR)과 전환할 확률(pCVR)을 예측. DeepFM·DIN 등 딥러닝 모델 활용.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: 'LinUCB', url: 'demo-linucb.html' }],
-      posts: [{ id: 'pctr-prediction', title: 'pCTR이 뭐고 왜 돈이 되나' }, { id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pCVR-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
+      posts: [{ id: 'pctr-prediction', title: 'pCTR이 뭐고 왜 돈이 되나' }, { id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pcvr-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
     },
     'brand': {
       x: 1060, y: 425, w: 160, h: 54, cat: 'buy',

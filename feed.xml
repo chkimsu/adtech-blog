@@ -12,7 +12,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=serving-latency-throughput"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=serving-latency-throughput</id>
     <updated>2026-08-23T00:00:00Z</updated>
-    <summary>모델 팀은 평균 3.49ms 라고 보고하고 API 팀은 하루 1,699만 건이 예산을 넘겼다고 말합니다. 둘 다 맞습니다. 같은 요청도 추론 함수 안에서 재면 예산 초과가 3.74%, API 서버 전체 응답으로 재면 19.42% 입니다. 요청량이 3,000에서 3,300으로 10% 느는 동안 초과는 8.93%에서 35.76%가 되고, 타임아웃 재시도는 2,750 QPS 에서 멈추다 2,800 QPS 에서 서비스를 죽입니다. 서버 2대를 굴려 바꾸는 몇 분 동안에는 초과가 20.87% 입니다. Grafana 쪽도 같습니다 — 기본 버킷을 그대로 쓰면 p99 가 11.19ms 대신 16.43ms 로 뜨고, 서버별 p99 를 평균 내면 19.85ms 가 12.97ms 로 눌립니다. 대시보드 패널 여섯과 알람 쿼리까지 붙였습니다.</summary>
+    <summary>모델 팀은 평균 3.49ms 라고 보고하고 API 팀은 하루 1,699만 건이 예산을 넘겼다고 말합니다. 둘 다 맞습니다. 같은 요청도 추론 함수 안에서 재면 예산 초과가 3.72%, API 서버 전체 응답으로 재면 19.42% 입니다. 요청량이 3,000에서 3,300으로 10% 느는 동안 초과는 8.93%에서 35.76%가 되고, 타임아웃 재시도는 2,750 QPS 에서 멈추다 2,800 QPS 에서 서비스를 죽입니다. 서버 2대를 굴려 바꾸는 몇 분 동안에는 초과가 20.87% 입니다. Grafana 쪽도 같습니다 — 기본 버킷을 그대로 쓰면 p99 가 11.19ms 대신 16.43ms 로 뜨고, 서버별 p99 를 평균 내면 19.85ms 가 12.97ms 로 눌립니다. 대시보드 패널 여섯과 알람 쿼리까지 붙였습니다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>

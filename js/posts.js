@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'data-engineer-first-six-months',
+    world: 'na',
+    title: '데이터 엔지니어 첫 6개월: 커밋 428개로 읽은 신입이 하는 일',
+    excerpt: '지훈 씨가 여덟째 주에 옆 데이터 플랫폼 팀 저장소를 열어 봅니다. 파일이 천 개 가까이라 어디부터 읽을지 몰라서, 가장 최근에 온 사람 한 명의 커밋 428개를 달별로 늘어놓았습니다. 첫 달은 수급 DAG 14줄, 둘째 달은 SQL 모델, 넷째 달은 실시간 잡 하나, 여섯째 달은 배포 자동화입니다. 폴더가 곧 일감의 종류이고 순서가 곧 배우는 순서입니다. 그 사이 「리뷰 반영」 커밋이 21개이고, 저장소에 pandas 와 PyTorch 는 0건입니다.',
+    date: '2026-09-20',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['System Design', 'ML Infra', '입문'],
+    contentUrl: 'posts/data-engineer-first-six-months.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'hadoop-hive-spark-roles',
     world: 'na',
     title: 'Hadoop, Hive, Spark: 한 워커 노드 위에서 셋이 어떻게 나뉘나',

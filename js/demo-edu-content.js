@@ -2618,5 +2618,33 @@ window.DEMO_EDU = {
             { el: '[data-card="spark"]', title: 'driver 와 executor', body: 'Spark 는 작업마다 driver 하나를 띄우고, driver 가 워커에 executor 를 띄웁니다. HiveServer2 같은 상주 서버가 없습니다.', waitFor: 'click' },
             { el: '[data-card="names"]', title: '이름표 정리', body: 'Hadoop 은 아래 두 층의 이름입니다. Hive 와 Spark 는 그 위에서 도는 프로그램입니다.' }
         ]
+    },
+
+    // ==========================================
+    // 데이터 엔지니어 첫 6개월 카드 여섯 장 (입문)
+    // ==========================================
+    'de-first-months': {
+        analogy: '저장소는 수급, 모델, 부품, 실시간 네 층이고 새로 온 사람은 그 순서로 올라간다. 점이 가는 방향이 데이터와 코드가 가는 방향이다',
+        anchor: '.dm-host',
+        embedKeep: ['.dm-grid'],
+        embedHide: ['.dm-hero', '.dm-real'],
+        explain: {
+            '.dm-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'map': return '헷갈리는 것은 <strong>DAG 가 데이터를 만들지 않는다</strong>는 점입니다. DAG 는 순서와 시각이고, 표를 어떻게 만드나는 SQL 모델에 있습니다. 파일 수가 가장 많은 층이 SQL 모델인 이유입니다.';
+                    case 'extract': return '헷갈리는 것은 <strong>파이썬 14줄이 하는 일</strong>입니다. 읽고 쓰는 것은 YAML 과 부품이 하고, 파이썬은 언제 돌리나만 적습니다. 원천을 바꾸려면 YAML 을 봅니다.';
+                    case 'dbt': return '헷갈리는 것은 <strong>순서를 누가 정하나</strong>입니다. 사람이 적지 않습니다. SQL 안의 source 와 ref 를 보고 도구가 태스크를 잇습니다. 순서를 따로 적으면 두 곳이 어긋납니다.';
+                    case 'operator': return '헷갈리는 것은 <strong>Spark 가 계산 엔진이 아니라는 점</strong>입니다. 이 저장소에서 Spark 는 읽고 쓰는 커넥터이고, repartition 이나 broadcast 같은 성능 조절 설정이 0건입니다.';
+                    case 'flink': return '헷갈리는 것은 <strong>워터마크</strong>입니다. 지연이 아니라 「이 시각까지는 다 왔다」고 보는 기준선입니다. 10초 늦게 긋고, 그 선이 지난 뒤 온 것이 늦은 로그입니다.';
+                    case 'ship': return '헷갈리는 것은 <strong>PR 라벨</strong>입니다. 이 저장소는 flink 라벨을 붙이면 test 배포가 돕니다. 장식이 아니라 스위치입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '[data-card="map"]', title: '저장소는 네 층', body: '폴더 넷이 층 넷입니다. 파일 수가 가장 많은 층은 <strong>SQL 모델</strong>이고, 실제 로직이 거기 있습니다.' },
+            { el: '[data-card="extract"]', title: '첫 달의 일', body: '표 하나를 매일 복사하는 DAG 한 장입니다. 34줄인데 커밋 47개가 붙습니다. 그 팀의 규칙을 처음 밟기 때문입니다.', waitFor: 'click' },
+            { el: '[data-card="flink"]', title: '넷째 달의 일', body: '실시간 잡 하나를 통째로 만듭니다. 원천에 맞는 커넥터가 없어서 <strong>Java 18개</strong>를 직접 만들었습니다.' }
+        ]
     }
 };

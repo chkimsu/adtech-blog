@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>데이터 엔지니어 첫 6개월 카드 여섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="어느 데이터 플랫폼 팀에 새로 온 사람의 커밋 428개를 여섯 장으로 봅니다. 저장소 네 층, 첫 달의 수급 DAG, SQL 모델, 오퍼레이터, 실시간 잡, PR 과 배포.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .dm-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .dm-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .dm-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+    .dm-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1rem auto 0; max-width: 1040px; padding: 0 1rem; }
+    .dm-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--border-color); background: var(--bg-primary); font-size: 0.82rem; font-weight: 600; }
+    .dm-chip i { display: inline-block; width: 13px; height: 13px; }
+    .dm-chip i.a { background: var(--navy); }
+    .dm-chip i.b { background: var(--oxide); }
+    .dm-chip i.k { background: var(--text-primary); }
+    .dm-chip i.c { background: var(--grey); }
+    .dm-chip svg { width: 13px; height: 13px; display: block; }
+    .dm-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .dm-host:empty { display: none; }
+
+    .dm-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    @media (max-width: 1000px) { .dm-grid { grid-template-columns: 1fr; } }
+    .dm-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
+    .dm-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
+    .dm-card .dm-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
+    .dm-easy { font-size: 0.92rem; line-height: 1.6; color: var(--text-primary); background: var(--plate); border-left: 3px solid var(--text-primary); padding: 0.55rem 0.8rem; margin: 0 0 0.8rem; }
+    .dm-easy b { font-weight: 800; margin-right: 0.3rem; }
+    html.is-embed .dm-easy { display: none; }
+    .dm-fig { overflow-x: auto; }
+    .dm-fig svg { display: block; width: 100%; min-width: 460px; height: auto; }
+    .dm-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
+    .dm-cap b { color: var(--text-primary); }
+    /* 임베드는 카드 하나만 남는다 — 폭이 1000px 를 넘어도 두 칸으로 나누지 않는다. 그림은 860px 에서 멈추고 가운데에 둔다 */
+    html.is-embed .dm-grid { margin-top: 0.5rem; padding: 0 0.5rem; grid-template-columns: 1fr; }
+    html.is-embed .dm-fig svg { max-width: 860px; margin: 0 auto; }
+    html.is-embed .dm-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
+
+    /* 그림 부품 — 색은 전부 토큰 */
+    .dm-fig svg text { font-family: var(--font-sans); }
+    .lbl { font-size: 11px; fill: var(--text-secondary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
+    .lbl.k { fill: var(--text-primary); font-weight: 750; }
+    .lbl.sm { font-size: 9.5px; fill: var(--text-muted); }
+    .on { fill: var(--bg-primary); font-weight: 750; font-size: 10.5px; }
+    .f-a { fill: var(--navy); } .f-b { fill: var(--oxide); } .f-k { fill: var(--text-primary); } .f-c { fill: var(--grey); } .f-sunk { fill: var(--plate); }
+    .srv-body { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .led { fill: var(--bg-primary); }
+    .fr { fill: var(--bg-primary); stroke-width: 1.5; }
+    .fr-k { stroke: var(--text-primary); } .fr-c { stroke: var(--grey); fill: var(--grey-bg); }
+    .fr-a { stroke: var(--navy); fill: var(--navy-bg); } .fr-b { stroke: var(--oxide); fill: var(--oxide-bg); }
+    .fr-t { font-size: 11px; font-weight: 800; }
+    .fr-t-k { fill: var(--text-primary); } .fr-t-c { fill: var(--grey); } .fr-t-a { fill: var(--navy); } .fr-t-b { fill: var(--oxide); }
+    .doc { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .doc-ear { fill: none; stroke: var(--text-primary); stroke-width: 1.2; }
+    .doc-t { font-size: 10.5px; font-weight: 800; fill: var(--text-primary); }
+    .doc-l { font-size: 9px; fill: var(--text-secondary); font-family: var(--font-mono); }
+    .list { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; stroke-width: 1.2; }
+    .list-t { font-size: 10px; fill: var(--text-secondary); }
+    .list-t.h { font-weight: 800; fill: var(--text-primary); }
+    .ar { fill: none; stroke-width: 1.5; }
+    .ar.k { stroke: var(--text-secondary); } .ar.a { stroke: var(--navy); } .ar.b { stroke: var(--oxide); } .ar.c { stroke: var(--grey); }
+    .ar.dash { stroke-dasharray: 4 3; }
+    .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
+    .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
+    .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
+    .usr { fill: var(--text-secondary); }
+    .num { fill: var(--text-primary); }
+    .num-t { font-size: 9.5px; font-weight: 800; fill: var(--bg-primary); font-family: var(--font-mono); }
+    @media (prefers-reduced-motion: reduce) { .dot { display: none; } }
+
+    .dm-real { max-width: 1240px; margin: 2.5rem auto 3rem; padding: 0 1rem; }
+    .dm-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .dm-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
+    .dm-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="dm-hero">
+      <h1>데이터 엔지니어 첫 6개월 카드 여섯 장</h1>
+      <p>어느 데이터 플랫폼 팀에 새로 온 사람의 커밋 428개를 폴더별로 늘어놓았습니다. 첫 달은 수급 DAG, 둘째 달은 SQL 모델, 넷째 달은 실시간 잡, 여섯째 달은 배포였습니다. 숫자는 실제로 센 값이고 이름과 경로는 전부 바꾼 것입니다.</p>
+      <div class="dm-legend">
+        <span class="dm-chip"><i class="a"></i>파랑 = 데이터가 놓인 자리 (원천, 표, 파일, 토픽)</span>
+        <span class="dm-chip"><i class="b"></i>벽돌색 = 시키는 것 (Airflow, DAG, workflow)</span>
+        <span class="dm-chip"><i class="k"></i>먹색 = 사람이 쓴 정의 (YAML, SQL, Java)</span>
+        <span class="dm-chip"><i class="c"></i>회색 = 실행 엔진 (Spark, Kyuubi, Flink)</span>
+        <span class="dm-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터, 코드</span>
+      </div>
+    </section>
+
+    <div class="dm-host"></div>
+
+    <div class="dm-grid">
+      <section class="dm-card" data-card="map"><h2>MAP</h2><p class="dm-k">저장소는 네 층</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 이 저장소는 「매일 몇 시에 어디서 데이터를 가져와 어떤 표로 만들어 어디에 놓나」를 코드로 적어 둔 곳입니다. 가져오는 것, 표로 만드는 것, 클러스터에 말을 거는 부품, 들어오는 대로 처리하는 것이 각각 폴더 하나입니다.</p>
+        <div class="dm-fig" id="dm-map"></div>
+        <p class="dm-cap">파일 수가 가장 많은 층은 <b>SQL 모델 267장</b>입니다. 실제 로직이 거기 있고, 파이썬 DAG 는 언제 어떤 순서로 돌리나만 적습니다.</p></section>
+      <section class="dm-card" data-card="extract"><h2>EXTRACT</h2><p class="dm-k">첫 달, 수급 DAG 한 장</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 남의 저장소에 있는 표 하나를 매일 새벽 우리 창고에 복사하는 일입니다. 어디서 읽고 어디에 쓰나를 YAML 에 적고, 언제 도나를 파이썬에 적습니다. 나머지는 팀이 만들어 둔 도구가 합니다.</p>
+        <div class="dm-fig" id="dm-extract"></div>
+        <p class="dm-cap">새로 온 사람이 쓴 것은 34줄인데 <b>2주 동안 커밋 47개</b>가 붙었습니다. 원천 접속, 이름 규칙, 스케줄, 배포 길을 처음 밟느라 규칙마다 한 번씩 걸립니다.</p></section>
+      <section class="dm-card" data-card="dbt"><h2>DBT MODEL</h2><p class="dm-k">SQL 한 장이 표 한 개</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 「이 표는 저 표에서 이렇게 골라 만든다」를 SQL 로 적어 두면 도구가 그 SQL 을 순서대로 돌려 표를 만들어 줍니다. 어느 것을 먼저 돌릴지는 SQL 안에서 다른 표를 부르는 자리를 보고 도구가 알아냅니다.</p>
+        <div class="dm-fig" id="dm-dbt"></div>
+        <p class="dm-cap">머리말 주석에 <b>옛 자바 배치의 어느 메서드</b>가 이 표를 만들었는지 적혀 있습니다. 옛 배치를 옮기는 중인 팀이라 모델마다 그 주석이 있습니다.</p></section>
+      <section class="dm-card" data-card="operator"><h2>OPERATOR</h2><p class="dm-k">Airflow 의 손</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> Airflow 는 「몇 시에 무엇을 하라」만 알고, 실제로 SQL 을 보내거나 파일을 옮기는 손은 오퍼레이터입니다. 표준 오퍼레이터로 안 되는 상대가 있으면 손을 직접 만듭니다.</p>
+        <div class="dm-fig" id="dm-operator"></div>
+        <p class="dm-cap">이 팀은 오퍼레이터 <b>16개를 직접 만들었습니다</b>. 새로 온 사람의 다섯째 달 커밋이 여기 몰립니다. 남이 만든 부품 위에서 쓰다가 부품 자체를 고치는 쪽으로 올라간 달입니다.</p></section>
+      <section class="dm-card" data-card="flink"><h2>STREAMING</h2><p class="dm-k">들어오는 대로 받아 묶는 잡</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 배치는 하루 한 번 표를 만들지만, 이 잡은 로그가 들어오는 대로 받아 10초 기다렸다가 같은 재생 건끼리 묶어 내보냅니다. 늦게 온 로그는 10분까지 받아 차이만 다시 내보냅니다.</p>
+        <div class="dm-fig" id="dm-flink"></div>
+        <p class="dm-cap">원천 저장소에서 읽어 오는 표준 커넥터가 없어서 <b>Java 18개로 직접 만들었습니다</b>. 새로 온 사람의 가장 깊은 코드가 여기 있고, 4월 한 달 이 폴더를 161번 바꿨습니다.</p></section>
+      <section class="dm-card" data-card="ship"><h2>SHIP</h2><p class="dm-k">코드가 서버에 닿는 길</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 코드를 고치면 바로 서버에 올리지 않습니다. PR 을 올리고, 동료가 읽고, 고치고, 머지되면 workflow 가 자동으로 배포합니다. 새로 온 사람이 8월에 만든 것이 그 마지막 단계입니다.</p>
+        <div class="dm-fig" id="dm-ship"></div>
+        <p class="dm-cap">커밋 428개 중 <b>리뷰 반영이 21개</b>이고, 팀의 최근 60일 머지 116건 중 115건에 사람 승인이 있었습니다. 리뷰가 형식이 아닙니다.</p></section>
+    </div>
+
+    <section class="dm-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>데이터 팀에 요청서를 낼 때</b> 「이 DB 에서 매일 가져와 주세요」는 수급 DAG 하나이고, 「이 로그로 이 표를 만들어 주세요」는 SQL 모델 한 장입니다. 어느 층의 일을 부탁하는지 알면 대화가 짧아집니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 층에서 자주 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=data-engineer-first-six-months">데이터 엔지니어 첫 6개월 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다. 여섯 달 월별 표와 새로 온 사람이 하는 일 다섯 가지도 거기 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="post.html?id=data-engineer-first-six-months">데이터 엔지니어 첫 6개월 글</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/de-first-months-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

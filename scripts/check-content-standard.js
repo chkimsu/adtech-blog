@@ -23,7 +23,8 @@ const NO_PYTHON_BY_DESIGN = new Set([
   'data-pipeline-design', 'data-distribution-layer',
   'hadoop-hive-basics',
   'data-handoff-methods',
-  'hadoop-hive-spark-roles'
+  'hadoop-hive-spark-roles',
+  'data-engineer-first-six-months'
 ]);
 
 // 코드블록·표·임베드 HTML을 걷어낸 '산문'만 남긴다 — 길이 계산의 분모.

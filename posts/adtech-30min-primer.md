@@ -1,4 +1,4 @@
-광고 기술(Ad Tech)은 처음 보면 용어가 산처럼 쌓여 있고, 어디서부터 봐야 할지 막막합니다. 이 글은 **완전 초보자**를 가정하고 30분 안에 전체 지도를 머릿속에 그릴 수 있도록 썼습니다. 수식은 쓰지 않고, **비유와 숫자 예시**로만 설명합니다. 끝까지 읽고 나면 이 블로그의 다른 포스트 30편이 "어느 방의 문인지" 보일 겁니다.
+광고 기술(Ad Tech)은 처음 보면 낯선 용어가 수십 개 쏟아지고, 어디서부터 봐야 할지 막막합니다. 이 글은 **완전 초보자**를 가정하고 30분 안에 전체 지도를 머릿속에 그릴 수 있도록 썼습니다. 수식은 쓰지 않고, **숫자 예시**로만 설명합니다. 끝까지 읽고 나면 이 블로그의 다른 글 80편 남짓이 어느 자리의 이야기인지 보일 겁니다.
 
 > 이 글은 내비게이션 허브입니다. 각 섹션 끝에 "자세히 보기" 링크가 있으니, 궁금한 주제로 바로 뛰어드세요.
 
@@ -18,15 +18,15 @@
 | **매체사**(Publisher) — 예: 유튜브, 뉴스 사이트, 게임 앱 | 같은 지면에서 최대한 많은 수익 | eCPM(1000회 노출당 매출) |
 | **사용자**(User) — 여러분과 저 | 관련 있고 방해되지 않는 경험 | 클릭률, 이탈률 |
 
-세 주체의 이해관계는 **항상 일치하지 않습니다**. 광고주는 싸게 노출하고 싶고, 매체는 비싸게 팔고 싶고, 사용자는 가능하면 광고를 피하고 싶죠. 광고 시스템의 본질은 이 **세 이해관계를 100ms(0.1초) 안에 균형 잡는 실시간 경매 시장**입니다.
+세 주체의 이해관계는 **항상 일치하지 않습니다**. 광고주는 싸게 노출하고 싶고, 매체는 비싸게 팔고 싶고, 사용자는 가능하면 광고를 피하고 싶습니다. 광고 시스템의 본질은 이 **세 이해관계를 100ms(0.1초) 안에 균형 잡는 실시간 경매 시장**입니다.
 
-숫자로 보면 감이 옵니다. 매체는 노출 1,000회에 3,000원을 받고 싶어 합니다. 광고주는 노출 1,000회에 2,000원만 쓰고 싶어 합니다. 사용자는 애초에 광고가 없었으면 합니다. 이 세 숫자 사이 어딘가에서 타협이 일어나야 광고 한 장이 화면에 뜹니다. 그 타협을 사람이 아니라 기계가 대신 봐 줍니다. 그것도 여러분이 피드를 내리는 딱 그 찰나에요. 이게 지금부터 볼 모든 시스템이 존재하는 이유입니다.
+숫자로 보면 감이 옵니다. 매체는 노출 1,000회에 3,000원을 받고 싶어 합니다. 광고주는 노출 1,000회에 2,000원만 쓰고 싶어 합니다. 사용자는 애초에 광고가 없었으면 합니다. 이 세 숫자 사이 어딘가에서 타협이 일어나야 광고 한 장이 화면에 뜹니다. 그 타협을 사람이 아니라 기계가 대신 봐 줍니다. 그것도 여러분이 피드를 내리는 바로 그 순간입니다. 이게 지금부터 볼 모든 시스템이 존재하는 이유입니다.
 
 ---
 
 ## 1. 생태계 한 장 요약 — 5분
 
-광고 요청 하나가 유저 화면에 닿기까지 타는 "지하철 노선도"입니다.
+광고 요청 하나가 유저 화면에 닿기까지 지나는 회사들의 순서입니다.
 
 ```mermaid
 flowchart LR
@@ -44,22 +44,22 @@ flowchart LR
 각 박스의 역할을 한 문장씩 풀어보면 다음과 같습니다.
 
 - **광고주(Advertiser)**: "이런 사람에게, 이 예산으로, 이 소재를 보여 주세요."
-- **DSP(Demand-Side Platform, 수요 측 플랫폼)**: 광고주를 대신해 **경매에 참가하고 입찰가를 결정**하는 로봇. 네이버 GFA, 카카오모먼트, Google DV360, The Trade Desk가 DSP다.
+- **DSP(Demand-Side Platform, 수요 측 플랫폼)**: 광고주를 대신해 **경매에 참가하고 입찰가를 결정**하는 프로그램입니다. 네이버 GFA, 카카오모먼트, Google DV360, The Trade Desk 가 DSP 입니다.
 - **Ad Exchange(광고 거래소)**: 수많은 DSP의 입찰을 받아 **1등을 고르는 경매장**.
 - **SSP(Supply-Side Platform, 공급 측 플랫폼)**: 매체사를 대신해 **경매를 운영**하고 매체 수익을 최적화. Google Ad Manager, Magnite, PubMatic 등.
 - **매체(Publisher)**: 광고 지면을 가진 앱/웹사이트.
 - **사용자(User)**: 결국 광고를 보는 사람.
 - **CDP(Customer Data Platform)**: 광고주의 **1st-party 데이터**(내 회원 DB)를 모으는 곳.
-- **DMP(Data Management Platform)**: **3rd-party 데이터**(외부 데이터 브로커)를 모으는 곳. 쿠키리스 전환으로 영향력이 줄고 있다.
+- **DMP(Data Management Platform)**: **3rd-party 데이터**(외부 데이터 브로커)를 모으는 곳입니다. 쿠키리스 전환으로 영향력이 줄고 있습니다.
 - **MMP(Mobile Measurement Partner)**: 광고가 실제로 설치/전환으로 이어졌는지 추적. AppsFlyer, Adjust 등.
 
 한 번의 광고 요청이 발생하면 어떤 일이 벌어질까요? SSP가 경매를 열고, Ad Exchange가 수백 개 DSP에게 "얼마 내실래요?"라고 100ms 안에 물어봅니다. 가장 높게 쓴 DSP의 소재가 사용자 화면에 뜹니다. 이 모든 일이 **사용자가 앱을 여는 바로 그 순간**에 일어납니다.
 
 ### 이 사슬, 사실은 두 가지 버전이 있다 [무대: 열린 RTB]
 
-**방금 본 지하철 노선도는 여러 회사가 릴레이하는 세계의 그림입니다.** 광고주에서 DSP, Exchange, SSP, 매체까지 순서대로 거칩니다.
+**방금 본 그림은 여러 회사가 차례로 넘겨 주는 세계의 그림입니다.** 광고주에서 DSP, Exchange, SSP, 매체까지 순서대로 거칩니다.
 
-이 블로그의 글 대부분이 이 그림을 전제로 합니다. DSP를 만드는 회사, Exchange를 운영하는 회사, SSP를 운영하는 회사가 각각 다릅니다. 택배가 물류센터 여러 곳을 거쳐야 도착하듯, 광고 하나도 여러 회사를 거쳐야 사용자에게 닿습니다.
+이 블로그의 글 대부분이 이 그림을 전제로 합니다. DSP를 만드는 회사, Exchange를 운영하는 회사, SSP를 운영하는 회사가 각각 다릅니다. 광고 하나가 사용자에게 닿기까지 회사 경계를 네 번 넘습니다. 광고주에서 DSP, DSP 에서 Exchange, Exchange 에서 SSP, SSP 에서 매체입니다.
 
 회사가 늘어나면 좋은 점도 있고 나쁜 점도 있습니다. 좋은 점은 경쟁입니다. 누구나 이 표준을 따르면 경매에 낄 수 있습니다. 나쁜 점은 회사 경계마다 수수료가 붙고, 데이터가 조금씩 끊긴다는 겁니다. 예를 들어 DSP는 경매에서 진 다른 회사가 얼마를 썼는지 알 수 없습니다. 이걸 Censored Data라 부릅니다(2.4절에서 다시 다룹니다).
 
@@ -87,7 +87,7 @@ flowchart LR
 
 ### 2.1 RTB(Real-Time Bidding, 실시간 입찰)
 
-과거에는 광고가 **팔리지 않은 재고를 다음 광고 네트워크로 차례차례 넘기는 폭포수(Waterfall)** 방식이었습니다. 느리고 비효율적이었죠. 2010년대부터 표준이 된 방식은 **실시간 경매**입니다.
+과거에는 광고가 **팔리지 않은 재고를 다음 광고 네트워크로 차례차례 넘기는 폭포수(Waterfall)** 방식이었습니다. 느리고 비효율적이었습니다. 2010년대부터 표준이 된 방식은 **실시간 경매**입니다.
 
 1. 사용자가 앱을 연다.
 2. 매체의 SDK가 SSP에 "광고 하나 필요"라고 요청.
@@ -102,13 +102,13 @@ flowchart LR
 
 경매에는 두 방식이 있습니다.
 
-- **2nd Price(차가 경매)**: "내가 쓴 값" 중 1등이 이기지만, **실제 지불은 2등의 가격**. 전통적으로 공정하다는 평가. 1st Price가 표준이 되기 전까진 다수였다.
-- **1st Price(최고가 경매)**: 1등이 **자기가 쓴 값 그대로 지불**. 2020년 전후로 업계 표준이 됨. 문제는 "진짜 가치보다 많이 쓰면 손해" — 그래서 **Bid Shading**이라는 기법이 필요하다.
+- **2nd Price(차가 경매)**: "내가 쓴 값" 중 1등이 이기지만, **실제 지불은 2등의 가격**입니다. 전통적으로 공정하다는 평가를 받았고, 1st Price 가 표준이 되기 전까지는 다수였습니다.
+- **1st Price(최고가 경매)**: 1등이 **자기가 쓴 값 그대로 지불**합니다. 2020년 전후로 업계 표준이 됐습니다. 문제는 진짜 가치보다 많이 쓰면 손해라는 것이고, 그래서 **Bid Shading**이라는 기법이 필요합니다.
 
 **예시 숫자**
 - 3개 DSP가 각각 `$5, $3, $2`를 쓴다.
 - 2nd Price: 1등 DSP가 `$3 + 약간`만 낸다.
-- 1st Price: 1등 DSP가 `$5`를 그대로 낸다. → 진짜 가치가 $4였다면 $1을 날린 셈.
+- 1st Price: 1등 DSP가 `$5`를 그대로 낸다. → 진짜 가치가 $4였다면 $1을 날린 셈입니다.
 
 ### 2.3 eCPM — 서로 다른 가격체계를 한 통화로
 
@@ -117,7 +117,7 @@ flowchart LR
 - `eCPM_CPM = CPM 가격 그대로`
 - `eCPM_CPC = CPC × 예상 CTR × 1000`
 
-여기서 **예상 CTR(Click-Through Rate)이 곧 pCTR 모델의 출력**입니다. eCPM 공식 하나가 이 블로그 절반의 존재 이유죠.
+여기서 **예상 CTR(Click-Through Rate)이 곧 pCTR 모델의 출력**입니다. eCPM 공식 하나가 이 블로그 절반의 존재 이유입니다.
 
 ### 2.4 Bid Shading — 1st Price 세상에서 살아남기
 
@@ -237,12 +237,12 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 
 ### 3.4 알아야 할 함정 두 가지
 
-- **Calibration(보정)**: AUC(순서 평가 지표)가 아무리 높아도 **출력 확률이 진짜 확률과 다르면 돈을 잃는다**. pCTR이 1%라고 나왔는데 실제로 0.5%라면, 입찰가가 2배 과대 계산되어 손해. Platt Scaling, Isotonic Regression 같은 기법으로 보정한다.
-- **Position Bias(위치 편향)**: 1등 자리의 광고는 단지 **눈에 띄어서** 클릭률이 높은 거지, 진짜 더 좋은 광고여서가 아닐 수 있다. 이를 무시하면 모델이 "좋은 자리"만 학습하게 된다.
+- **Calibration(보정)**: AUC(순서 평가 지표)가 아무리 높아도 **출력 확률이 진짜 확률과 다르면 돈을 잃습니다**. pCTR 이 1%라고 나왔는데 실제로 0.5%라면, 입찰가가 2배 과대 계산되어 손해입니다. Platt Scaling, Isotonic Regression 같은 기법으로 보정합니다.
+- **Position Bias(위치 편향)**: 1등 자리의 광고는 단지 **눈에 띄어서** 클릭률이 높은 것이지, 진짜 더 좋은 광고여서가 아닐 수 있습니다. 이를 무시하면 모델이 "좋은 자리"만 학습하게 됩니다.
 
 ### 3.5 탐색 vs 활용(Exploration vs Exploitation)
 
-완전히 새로 올라온 광고는 **학습 데이터가 없습니다**. 기존 모델은 "저걸 보여주면 뭐가 좋을지 모르겠다"고 판단해 아예 노출을 안 시킬 수도 있습니다. 이러면 영영 데이터가 안 쌓이죠. 그래서 일부 노출을 일부러 "모르는 광고"에 할당합니다 — 이것이 **밴딧(MAB) 알고리즘**의 영역입니다.
+완전히 새로 올라온 광고는 **학습 데이터가 없습니다**. 기존 모델은 "저걸 보여주면 뭐가 좋을지 모르겠다"고 판단해 아예 노출을 안 시킬 수도 있습니다. 이러면 영영 데이터가 안 쌓입니다. 그래서 일부 노출을 일부러 "모르는 광고"에 할당합니다 — 이것이 **밴딧(MAB) 알고리즘**의 영역입니다.
 
 ### 더 깊이 보기
 - "돈만 보지 말고 유저 경험도" — 랭킹의 상위 개념: [LTV 기반 광고 랭킹](post.html?id=ltv-ad-ranking)
@@ -252,7 +252,7 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 - AUC만 믿으면 왜 위험한가: [Calibration — AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
 - 위치 편향을 제거하는 법: [Position Bias](post.html?id=position-bias-ultr)
 - 탐색/활용의 근본 딜레마: [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
-- 밴딧 알고리즘 치트시트: [AdTech MAB Algorithm Collection](post.html?id=mab-summary)
+- 밴딧 알고리즘 계보: [멀티암드 밴딧](post.html?id=mab-summary)
 - 수백만 후보를 10ms에 줄이는 Retrieval: [Two-Tower Model](post.html?id=two-tower-retrieval)
 
 ---
@@ -269,19 +269,19 @@ CPM의 M은 로마 숫자 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mi
 | **ROAS**(Return On Ad Spend) | 광고비 1원당 매출 | 이커머스 |
 | **CTR**(Click-Through Rate) | 클릭률 = 클릭 ÷ 노출 | 모두 |
 | **CVR**(Conversion Rate) | 전환율 = 전환 ÷ 클릭 | 퍼포먼스 |
-| **VTR**(View-Through Rate) | 완주율(동영상) | 동영상 광고 |
+| **VTR**(View-Through Rate) | 동영상 시청률 = 시청 ÷ 노출 | 동영상 광고 |
 | **Viewability** | "실제로 눈에 보인" 비율(IAB 기준: 픽셀 50% 이상이 1초 이상 노출) | 브랜드 |
 
 **예시 숫자**
-- 예산 100만 원 → 100만 노출 (CPM $1) → 1%가 클릭(CTR 1%) = 1만 클릭 → 5%가 전환(CVR 5%) = 500건 전환 → 전환당 가치가 5천 원이면 매출 250만 원 → **ROAS 2.5** (1원 써서 2.5원 번 셈)
+- 예산 100만 원 → 100만 노출 (CPM 1,000원) → 1%가 클릭(CTR 1%) = 1만 클릭 → 5%가 전환(CVR 5%) = 500건 전환 → 전환당 가치가 5천 원이면 매출 250만 원 → **ROAS 2.5** (1원 써서 2.5원 번 셈)
 
 ### 4.2 어트리뷰션(Attribution) — 공로를 누구에게?
 
 유저가 전환하기 전에 여러 광고를 봤습니다. 누구 덕분에 전환이 일어났을까요?
 
-- **Last-click(마지막 클릭)**: 전환 직전 클릭에 100% 공로. 가장 단순하고 가장 많이 쓰이지만, 처음 관심을 끈 광고의 공은 사라진다.
+- **Last-click(마지막 클릭)**: 전환 직전 클릭에 100% 공로. 가장 단순하고 가장 많이 쓰이지만, 처음 관심을 끈 광고의 공은 사라집니다.
 - **Multi-Touch Attribution(MTA)**: 여러 터치포인트에 비율로 분배. Shapley Value, Markov Chain 기반.
-- **Media Mix Modeling(MMM)**: 개별 유저 추적 없이 **시계열 회귀**로 채널별 기여 추정. iOS ATT 시대에 다시 주목받는다.
+- **Media Mix Modeling(MMM)**: 개별 유저 추적 없이 **시계열 회귀**로 채널별 기여를 추정합니다. iOS ATT 시대에 다시 주목받습니다.
 
 ### 4.3 iOS ATT와 SKAdNetwork — "유저를 못 따라간다"
 
@@ -312,16 +312,17 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 
 ### 5.2 세그먼트와 Lookalike
 
-- **Segmentation(세그멘테이션)**: 유저들을 **규칙 또는 ML 클러스터링**으로 묶어 같은 메시지를 보낸다.
-- **Lookalike(유사 유저 확장)**: "전환한 100명의 유저"를 Seed로 두고, **임베딩/Propensity Score**로 수백만 유사 유저를 찾는다.
+- **Segmentation(세그멘테이션)**: 유저들을 **규칙 또는 ML 클러스터링**으로 묶어 같은 메시지를 보냅니다.
+- **Lookalike(유사 유저 확장)**: "전환한 100명의 유저"를 Seed로 두고, **임베딩/Propensity Score**로 수백만 유사 유저를 찾습니다.
 
 ### 5.3 1st / 3rd Party 데이터와 쿠키리스 전환
 
 - **1st-party 데이터**: 광고주가 자기 서비스에서 직접 수집(회원 DB, 구매 이력).
 - **3rd-party 데이터**: 외부 브로커가 여러 사이트에서 긁어모은 데이터. 쿠키 기반이 많다.
-- Chrome이 2024년 이후 **3rd-party 쿠키를 단계적으로 폐지** 중. 대안으로 Google이 내놓은 것이 **Privacy Sandbox**(Topics API, Protected Audience(예전 FLEDGE), Attribution Reporting). 핵심은 "개별 유저는 숨기고, 집계 수준에서만 광고가 작동"하는 방향이다.
+- Safari 와 Firefox 는 3rd-party 쿠키를 기본으로 막습니다. Chrome 은 없애겠다고 했다가 2025년에 계획을 접었습니다. 대안으로 만들던 **Privacy Sandbox** 의 광고용 기능(Topics, Protected Audience, Attribution Reporting)도 2025년 10월에 거두었습니다. 그래도 방향은 남았습니다. 개별 유저를 숨기고 집계 수준에서만 광고가 작동하는 쪽으로 규제와 플랫폼이 움직입니다.
 
 ### 더 깊이 보기
+- 타겟팅이 어느 순간 어느 서버에서 일어나나: [타겟팅 기초](post.html?id=targeting-basics)
 - 세그멘테이션 전체 체계: [오디언스 세그멘테이션](post.html?id=audience-segmentation)
 - 전환 유저 100명에서 100만 유사 유저 발굴: [Lookalike Modeling](post.html?id=lookalike-modeling)
 
@@ -332,8 +333,8 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 광고 ML 시스템을 현실에서 돌리려면 **데이터·모델·서빙**이 유기적으로 맞물려야 합니다.
 
 - **Feature Store(피처 저장소)**: 오프라인 배치 피처(어제의 CTR 등)와 스트리밍 피처(방금 클릭)가 한 곳에서 조회되도록 정리.
-- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않는다. Multi-Stage Ranking, Embedding Lookup 최적화, GPU/CPU 혼합 추론.
-- **Online Learning**: 유저 행동은 매일 바뀌므로 모델도 주기적으로(혹은 스트리밍으로) 업데이트해야 한다. Delayed Feedback(전환까지 며칠 걸림) 처리는 이 블로그의 단골 주제다.
+- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않습니다. Multi-Stage Ranking, Embedding Lookup 최적화, GPU/CPU 혼합 추론.
+- **Online Learning**: 유저 행동은 매일 바뀌므로 모델도 주기적으로(혹은 스트리밍으로) 업데이트해야 합니다. Delayed Feedback(전환까지 며칠 걸림) 처리는 이 블로그의 단골 주제입니다.
 
 ### 더 깊이 보기
 - 데이터 공급망 전체 지도: [Feature Store](post.html?id=feature-store-serving)
@@ -344,7 +345,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 
 ## 7. 어디부터 읽을까 — 관심사별 추천 경로
 
-지금까지 8개 섹션을 쭉 훑었다면, 이제 어디로 가야 할지 궁금하실 겁니다. 이 블로그의 다른 포스트는 30편이 넘습니다. 전부 순서대로 읽을 필요는 없습니다.
+지금까지 일곱 개 절을 쭉 훑었다면, 이제 어디로 가야 할지 궁금하실 겁니다. 이 블로그의 다른 글은 80편이 넘습니다. 전부 순서대로 읽을 필요는 없습니다.
 
 아래 표는 관심사별로 추천 경로를 짜 놓은 겁니다. 자신에게 가장 가까운 줄을 하나 고르세요. 그 줄의 번호 순서대로 읽으면 됩니다.
 
@@ -359,7 +360,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 | **ML 모델링이 궁금** | ① [Deep CTR 모델 진화](post.html?id=deep-ctr-models) → ② [Calibration](post.html?id=calibration) → ③ [Multi-Task Learning](post.html?id=multi-task-learning) → ④ [Position Bias](post.html?id=position-bias-ultr) |
 | **밴딧/탐색이 궁금** | ① [Exploration vs Exploitation](post.html?id=exploration-exploitation) → ② [MAB 치트시트](post.html?id=mab-summary) → ③ [UCB vs TS](post.html?id=ucb-vs-ts) → ④ [LinUCB](post.html?id=disjoint-linucb) |
 | **인프라/서빙이 궁금** | ① [Feature Store](post.html?id=feature-store-serving) → ② [모델 서빙 아키텍처](post.html?id=model-serving-architecture) → ③ [Two-Tower Retrieval](post.html?id=two-tower-retrieval) → ④ [로그 파이프라인](post.html?id=ad-log-pipeline) |
-| **타겟팅이 궁금** | ① [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ② [Lookalike Modeling](post.html?id=lookalike-modeling) → ③ [Walled Garden](post.html?id=walled-garden) |
+| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [Walled Garden](post.html?id=walled-garden) |
 
 경로 중간에 낯선 용어가 나와도 당황하지 마세요. 대부분 그 글 안에서 다시 설명됩니다.
 
@@ -369,15 +370,15 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 
 1. 광고 시스템은 **광고주·매체·사용자**의 이해관계를 100ms 안에 맞추는 실시간 경매.
 2. 경로는 **광고주 → DSP → Ad Exchange → SSP → 매체 → 사용자**. 측정은 MMP·Attribution이 담당.
-3. 경매는 대부분 **1st Price**. 그래서 DSP는 **Bid Shading**으로 입찰가를 깎는다.
+3. 경매는 대부분 **1st Price** 입니다. 그래서 DSP 는 **Bid Shading** 으로 입찰가를 깎습니다.
 4. 서로 다른 가격체계는 **eCPM**으로 환산해 비교하고, 여기에 **pCTR · pCVR**이 들어간다.
-5. 랭킹은 **Retrieval(후보 생성) → Ranking(정밀 스코어링)** 2단. 모델은 LR부터 DIN·DIEN까지 진화했다.
-6. 모델이 아무리 AUC가 높아도 **Calibration**이 안 되면 돈을 잃는다.
-7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만든다.
-8. 측정은 **CTR·CVR·ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork / Privacy Sandbox**로 패러다임이 바뀌는 중.
-9. 타겟팅은 **Demographic·Behavioral·Contextual·Retargeting** 네 축. 1st-party 데이터와 Lookalike의 중요성이 커지고 있다.
-10. 모든 건 **Feature Store + Real-Time Serving + Online Learning** 인프라 위에서 돌아간다.
+5. 랭킹은 **Retrieval(후보 생성) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN 까지 진화했습니다.
+6. 모델이 아무리 AUC 가 높아도 **Calibration** 이 안 되면 돈을 잃습니다.
+7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
+8. 측정은 **CTR·CVR·ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어졌습니다.
+9. 타겟팅은 **Demographic·Behavioral·Contextual·Retargeting** 네 갈래입니다. 1st-party 데이터와 Lookalike 의 중요성이 커지고 있습니다.
+10. 모든 것은 **Feature Store + Real-Time Serving + Online Learning** 인프라 위에서 돌아갑니다.
 
-여기까지 왔다면 이 블로그의 30편 포스트가 "어느 방에 있는 문"인지 보일 겁니다. 위의 관심사별 추천 경로에서 한 편을 골라 들어가 보세요.
+여기까지 왔다면 이 블로그의 다른 글들이 어느 자리의 이야기인지 보일 겁니다. 위의 관심사별 추천 경로에서 한 편을 골라 들어가 보세요.
 
 — 읽어주셔서 감사합니다. 궁금한 점이나 틀린 부분이 있다면 [GitHub](https://github.com/chkimsu/adtech-blog)로 알려주세요.

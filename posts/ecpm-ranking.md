@@ -179,13 +179,13 @@ sequenceDiagram
     EX->>DSP_A: Bid Request 전달
     EX->>DSP_B: Bid Request 전달
 
-    Note over DSP_A: 내부: pCTR 0.5% x CPC $20<br/>= True Value $10 CPM
-    Note over DSP_B: 내부: pCTR 0.25% x CPC $20<br/>= True Value $5 CPM
+    Note over DSP_A: 내부: pCTR 0.5% x CPC $20<br/>= True Value $100 CPM
+    Note over DSP_B: 내부: pCTR 0.25% x CPC $20<br/>= True Value $50 CPM
 
-    DSP_A->>EX: Bid Response: $10 CPM
-    DSP_B->>EX: Bid Response: $5 CPM
+    DSP_A->>EX: Bid Response: $80 CPM (20% 깎음)
+    DSP_B->>EX: Bid Response: $40 CPM (20% 깎음)
 
-    Note over EX: $10 > $5<br/>Nike 승리
+    Note over EX: $80 > $40<br/>Nike 승리
 
     EX->>PUB: 낙찰: Nike 광고
 ```
@@ -197,13 +197,13 @@ sequenceDiagram
 | 내부 pCTR 예측 | 0.5% | 0.25% |
 | CPC 입찰가 | `$20` | `$20` |
 | 내부 eCPM 계산 | `$0.005 x $20 x 1,000 = $100` | `$0.0025 x $20 x 1,000 = $50` |
-| Exchange에 제출하는 CPM 입찰가 | `$10` (Bid Shading 적용) | `$5` (Bid Shading 적용) |
-| Exchange가 보는 값 | `$10 CPM` | `$5 CPM` |
+| Exchange에 제출하는 CPM 입찰가 | `$80` (Bid Shading 으로 20% 깎음) | `$40` (Bid Shading 으로 20% 깎음) |
+| Exchange가 보는 값 | `$80 CPM` | `$40 CPM` |
 | **결과** | **승리** | 패배 |
 
 여기서 주목할 점이 두 가지 있습니다:
 
-1. **Exchange는 `$10`과 `$5`만 비교합니다.** DSP 내부의 pCTR 값이나 eCPM 계산 과정은 Exchange에게 블랙박스입니다.
+1. **Exchange 는 `$80` 과 `$40` 만 비교합니다.** DSP 내부의 pCTR 값이나 eCPM 계산 과정은 Exchange 에게 보이지 않습니다.
 2. **DSP가 제출하는 CPM 입찰가는 내부 eCPM과 다릅니다.** [Bid Shading](post.html?id=bid-shading-censored) 등의 전략으로 True Value보다 낮게 입찰하기 때문입니다.
 
 **리스크:** DSP의 pCTR 모델이 부정확하면, 가치를 잘못 평가한 입찰가를 제출하게 됩니다. pCTR을 과대 예측하면 과다입찰로 손해를 보고, 과소 예측하면 이길 수 있는 경매를 놓치는 기회손실이 발생합니다.
@@ -245,7 +245,7 @@ sequenceDiagram
 
 동일한 CPC 500원을 입찰했지만, eCPM은 **100배** 차이가 납니다. 다이어트 약 광고가 클릭률이 100배 높기 때문에, 플랫폼 입장에서 기대 수익이 압도적으로 큽니다.
 
-**핵심 포인트:** CPC Exchange에서는 Exchange가 보유한 **"과거 데이터 장부"가 심판 역할**을 합니다. 광고주가 아무리 높은 CPC를 입찰해도, Exchange의 데이터에서 해당 광고의 CTR이 낮다고 판단하면 랭킹이 밀립니다. 이것은 광고주에게 **광고 품질 개선의 동기**를 부여합니다 -- 클릭률 높은 소재를 만들수록 같은 CPC로도 더 많은 노출을 얻습니다.
+**핵심 포인트:** CPC Exchange 에서는 Exchange 가 쌓아 둔 **과거 CTR 기록이 순위를 정합니다.** 광고주가 아무리 높은 CPC를 입찰해도, Exchange의 데이터에서 해당 광고의 CTR이 낮다고 판단하면 랭킹이 밀립니다. 이것은 광고주에게 **광고 품질 개선의 동기**를 부여합니다 -- 클릭률 높은 소재를 만들수록 같은 CPC로도 더 많은 노출을 얻습니다.
 
 ### 4.3 Walled Garden: 플랫폼 AI 모델이 모든 것을 평가 [무대: 닫힌 생태계]
 
@@ -311,7 +311,7 @@ ranking_comparison()
 | **품질 반영도** | 간접적 (DSP 판단) | 직접적 (CTR 기반 환산) | 매우 직접적 (pCTR 가중) |
 | **주요 리스크** | DSP pCTR 모델 오류 | Exchange 데이터 편향 | 플랫폼 모델 독점적 권한 |
 
-이 표에서 핵심적인 패턴이 보입니다: **오른쪽으로 갈수록 "품질"의 비중이 커지고, "돈"만으로 이기기 어려워집니다.** Open RTB에서는 DSP가 알아서 pCTR을 반영하지만 Exchange는 강제하지 않습니다. CPC Exchange는 Exchange가 CTR을 반영합니다. Walled Garden은 플랫폼이 pCTR을 직접 곱하여 품질이 낮은 광고를 구조적으로 불이익합니다.
+이 표에서 핵심적인 패턴이 보입니다: **오른쪽으로 갈수록 "품질"의 비중이 커지고, "돈"만으로 이기기 어려워집니다.** Open RTB에서는 DSP가 알아서 pCTR을 반영하지만 Exchange는 강제하지 않습니다. CPC Exchange는 Exchange가 CTR을 반영합니다. Walled Garden 은 플랫폼이 pCTR 을 직접 곱하여 품질이 낮은 광고에 구조적으로 불이익을 줍니다.
 
 ---
 

@@ -1,4 +1,4 @@
-DSP, SSP, RTB, Header Bidding... 광고 기술(Ad Tech) 생태계를 처음 접하면 약어의 홍수에 빠집니다. 하지만 이 모든 개념의 출발점은 하나의 질문입니다: **"매체(Publisher)의 광고 지면을 광고주(Advertiser)에게 어떻게 연결할 것인가?"**
+DSP, SSP, RTB, Header Bidding... 광고 기술(Ad Tech) 생태계를 처음 접하면 약어가 한꺼번에 쏟아집니다. 하지만 이 모든 개념의 출발점은 하나의 질문입니다: **"매체(Publisher)의 광고 지면을 광고주(Advertiser)에게 어떻게 연결할 것인가?"**
 
 이 질문의 답은 시대에 따라 **Ad Network**에서 **Ad Exchange**로 진화했습니다. 그 과정에서 Waterfall, RTB, Header Bidding이라는 기술이 차례로 등장했습니다. 이 글은 그 **전환이 왜 일어났고 무엇을 바꿨는지**를 숫자로 따라갑니다.
 
@@ -8,13 +8,13 @@ DSP, SSP, RTB, Header Bidding... 광고 기술(Ad Tech) 생태계를 처음 접�
 
 ## 1. 핵심 비교 (Executive Summary)
 
-**Ad Network은 "묶음으로 파는 도매상", Ad Exchange는 "한 건씩 파는 거래소"입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
+**Ad Network 은 지면을 묶어 미리 정한 값으로 파는 중개자이고, Ad Exchange 는 노출 한 건씩 실시간 경매로 파는 장입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
 
-아래 표는 위에서 아래로 읽으면 인과가 보입니다. 앞 세 줄(거래 단위·가격 결정·속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
+아래 표는 위에서 아래로 읽으면 인과가 보입니다. 첫 줄 다음의 세 줄(거래 단위·가격 결정·속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
 
 | 차원 | Ad Network | Ad Exchange |
 |------|-----------|-------------|
-| **비유** | 도매상 (Wholesaler) | 주식 거래소 (Stock Exchange) |
+| **한 줄로** | 지면을 묶어 미리 정한 값으로 파는 중개자 | 노출 한 건씩 실시간 경매로 파는 장 |
 | **거래 단위** | 인벤토리 패키지 (묶음) | 개별 Impression (1건씩) |
 | **가격 결정** | 사전 협상 / 고정 CPM | 실시간 경매 (RTB) |
 | **의사결정 속도** | 수 시간~수 일 (캠페인 단위) | 100ms 이내 (impression 단위) |
@@ -195,7 +195,7 @@ def waterfall(bids, order):
 
 # 동시에 물으면 그중 최고가가 낙찰가다. '순서'라는 개념 자체가 없다.
 auc = sum(t for t in (max(b.values()) for b in rounds) if t >= FLOOR) / len(rounds)
-# 5! = 120가지 순서를 전부 돌린다. 같은 수요인데 순서만으로 성적이 어디까지 갈리나?
+# 5! = 120가지 순서를 전부 돌린다. 같은 수요인데 순서만으로 성적이 어디까지 벌어지나?
 sc = {o: sum(waterfall(b, o) for b in rounds) / len(rounds)
       for o in itertools.permutations(NET)}
 hi, lo = max(sc, key=sc.get), min(sc, key=sc.get)
@@ -237,7 +237,7 @@ print(f"하루 1,000만 노출이면 사라지는 노출 "
 # 하루 1,000만 노출이면 사라지는 노출 189,810건
 ```
 
-채움 비율은 두 방식이 같습니다. 갈리는 건 대기 시간뿐입니다. 253ms 대 120ms. 그 차이가 이탈로 바뀌어 하루 1,000만 노출에서 19만 건이 사라집니다. 이탈 계수는 가정치입니다.
+채움 비율은 두 방식이 같습니다. 다른 것은 대기 시간뿐입니다. 253ms 대 120ms. 그 차이가 이탈로 바뀌어 하루 1,000만 노출에서 19만 건이 사라집니다. 이탈 계수는 가정치입니다.
 :::
 
 ---
@@ -427,16 +427,16 @@ graph LR
 | 연도 | 사건 | 의미 |
 |------|------|------|
 | **1996** | DoubleClick 설립 | 최초의 대형 Ad Network. 배너 광고 서빙 + 리포팅 |
-| **2003** | Google, DoubleClick 인수 추진 | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
 | **2005** | Right Media 출시 | **최초의 Ad Exchange**. Impression 단위 실시간 거래 도입 |
-| **2007** | Google AdX (DoubleClick Ad Exchange) | 세계 최대 Exchange. RTB 프로토콜 표준화 선도 |
+| **2007** | DoubleClick Ad Exchange 출시. 같은 해 Google 이 DoubleClick 인수를 발표(2008년 완료) | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
+| **2009** | Google AdX 로 재출시 | 세계 최대 Exchange. RTB 프로토콜 표준화 선도 |
 | **2010** | OpenRTB 1.0 표준 발표 | Bid Request/Response 포맷 표준화 → DSP-Exchange 연동 비용 감소 |
 | **2014** | Header Bidding 등장 | Waterfall 우회. 모든 Exchange에 동시 입찰 요청 |
 | **2017~** | 1st Price Auction 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
 | **2019** | Google Open Bidding | Server-to-Server Header Bidding. 레이턴시 최적화 |
 | **현재** | SSP-Exchange 경계 소멸 | Magnite, PubMatic 등 SSP가 Exchange 기능 통합 |
 
-### Header Bidding: 게임 체인저
+### Header Bidding: 순차 호출을 없앤 전환점
 
 Waterfall의 근본적 문제는 **"순차 호출"**이었습니다. Header Bidding은 이를 **"병렬 호출"**로 바꿨습니다:
 
@@ -570,7 +570,7 @@ Exchange(RTB) 환경에서는 Bid Request에 포함된 **실시간 피처**를 �
 
 ## 마무리
 
-1. **Ad Network은 "묶음 판매의 중개상", Ad Exchange는 "impression 단위의 실시간 경매소"** — 거래 단위와 가격 결정 메커니즘이 근본적으로 다릅니다.
+1. **Ad Network 은 묶음 판매의 중개자, Ad Exchange 는 impression 단위의 실시간 경매장** — 거래 단위와 가격 결정 메커니즘이 근본적으로 다릅니다.
 
 2. **Waterfall의 비효율이 Exchange 등장의 직접적 원인** — 순차 호출은 가격 발견을 방해하고, 매체와 광고주 모두에게 불리합니다.
 

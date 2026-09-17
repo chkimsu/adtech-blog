@@ -6,7 +6,7 @@ pCTR 모델을 만드는 입장에서, "내 모델이 실제로 어디에서 어
 
 ## 1. 광고 생태계 전체 조감도
 
-먼저 숲을 보겠습니다. 광고 생태계의 모든 주요 참여자와 데이터 흐름입니다:
+먼저 전체를 보겠습니다. 광고 생태계의 모든 주요 참여자와 데이터 흐름입니다:
 
 ```mermaid
 graph TB
@@ -184,7 +184,7 @@ graph TB
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.7);"></div>
-<span>5. DSP: Feature 추출 &rarr; pCTR=0.032 &rarr; pCVR=0.15 &rarr; V=$0.24 &rarr; b*=$0.17</span>
+<span>5. DSP: Feature 추출 &rarr; pCTR=0.032 &rarr; pCVR=0.15 &rarr; V=$0.24 (ROAS 기준, 4절) &rarr; b*=$0.17</span>
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(176,38,255,0.5);"></div>
@@ -199,8 +199,8 @@ graph TB
 
 ### pCTR 모델러가 주목할 포인트
 
-- **5c**: pCTR 추론이 **~1ms 이내**에 완료되어야 합니다. 모델 복잡도 vs 레이턴시 트레이드오프
-- **5e**: pCTR의 작은 오차가 True Value에 증폭됩니다. pCTR이 0.032가 아니라 0.050이었다면 True Value는 $0.24 → $0.375로 56% 뛰고, 입찰가도 그만큼 올라갑니다
+- **5단계 안의 추론**: pCTR 추론이 **~1ms 이내**에 완료되어야 합니다. 모델 복잡도 vs 레이턴시 트레이드오프
+- **5단계 안의 가치 계산**: pCTR 의 작은 오차가 True Value 에 증폭됩니다. pCTR이 0.032가 아니라 0.050이었다면 True Value는 $0.24 → $0.375로 56% 뛰고, 입찰가도 그만큼 올라갑니다
 - **11-12**: 클릭 피드백은 수 초 내 도착하지만, 전환 피드백은 **수 시간~수 일 지연**(Delayed Feedback)될 수 있습니다. 이것이 pCVR 모델의 핵심 난관입니다
 
 ### 이 100ms가 지금 몇 번 겹쳐서 벌어지고 있나
@@ -444,7 +444,7 @@ $$\text{eCPM} = \text{1,000 노출당 기대 수익}$$
 | **CPC** | $\text{eCPM} = pCTR \times CPC \times 1{,}000$ | pCTR 2%, CPC $0.50 → eCPM $10.00 |
 | **CPA** | $\text{eCPM} = pCTR \times pCVR \times CPA \times 1{,}000$ | pCTR 2%, pCVR 10%, CPA $20 → eCPM $40.00 |
 
-**pCTR 모델의 정확도가 eCPM에 직결되는 이유**: CPC/CPA 캠페인의 eCPM은 pCTR을 곱해서 산출됩니다. pCTR이 2%인데 모델이 4%로 과대추정하면 eCPM이 2배로 뻥튀기되어, 실제 가치보다 훨씬 높은 가격에 입찰하게 됩니다. 반대로 과소추정하면 경쟁에서 밀려 노출 기회를 잃습니다.
+**pCTR 모델의 정확도가 eCPM에 직결되는 이유**: CPC/CPA 캠페인의 eCPM은 pCTR을 곱해서 산출됩니다. pCTR 이 2%인데 모델이 4%로 과대추정하면 eCPM 이 두 배로 부풀어, 실제 가치보다 훨씬 높은 가격에 입찰하게 됩니다. 반대로 과소추정하면 경쟁에서 밀려 노출 기회를 잃습니다.
 
 **SSP/Exchange 관점**: Exchange는 모든 입찰을 eCPM으로 변환한 뒤 비교하여 낙찰자를 결정합니다. 따라서 DSP가 보내는 입찰가는 이미 eCPM 기반이며, 앞서 본 True Value 계산이 바로 이 eCPM 산출 과정입니다.
 
@@ -724,4 +724,5 @@ for n in (1, 4, 24):
 - [DSP·SSP·Exchange](post.html?id=dsp-ssp-exchange)
 - [30분 입문 가이드](post.html?id=adtech-30min-primer)
 - [광고 서빙 플로우](post.html?id=ad-serving-flow)
+- [타겟팅 기초](post.html?id=targeting-basics) — 그림의 타겟팅 엔진이 하는 일
 - [Walled Garden](post.html?id=walled-garden)

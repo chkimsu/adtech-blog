@@ -33,9 +33,9 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 | **개선 방법** | 피처 엔지니어링, 모델 아키텍처, 학습 데이터 | Post-hoc Calibration (Platt, Isotonic 등) |
 | **광고에서의 역할** | 어떤 광고를 보여줄지 **순서** 결정 | 입찰가를 **얼마로** 설정할지 결정 |
 
-### 직관적 비유
+### 둘의 차이를 한 줄로
 
-Discrimination은 **시험 등수**와 같습니다. 1등이 2등보다 잘했다는 것만 알면 됩니다. Calibration은 **절대 점수**와 같습니다. 85점이라고 적었으면 실제 실력이 85점이어야 합니다.
+Discrimination은 **순서**만 봅니다. 클릭할 노출이 안 클릭할 노출보다 높은 점수를 받았는지만 셉니다. Calibration은 **값 자체**를 봅니다. pCTR 2%라고 적었으면 실제로 100번 중 2번 클릭이 나야 합니다.
 
 광고 시스템에서는 둘 다 필요하지만, Calibration이 더 치명적입니다. 이유는 명확합니다: **입찰가는 순서가 아니라 절대값으로 계산됩니다.** pCTR 0.01과 0.03은 "순서"로는 같은 방향이지만, 입찰가로는 3배 차이입니다.
 
@@ -418,7 +418,7 @@ Murphy(1973)는 이 값이 세 조각으로 정확히 쪼개진다는 것을 보
 $$BS = \underbrace{\frac{1}{n}\sum_{k} n_k (p_k - \bar{y}_k)^2}_{\text{reliability}} - \underbrace{\frac{1}{n}\sum_{k} n_k (\bar{y}_k - \bar{y})^2}_{\text{resolution}} + \underbrace{\bar{y}(1 - \bar{y})}_{\text{uncertainty}}$$
 
 - **reliability**: 그룹의 예측값 $p_k$와 그 그룹의 실제 비율 $\bar{y}_k$의 차이입니다. 이게 곧 보정 오차입니다. 작을수록 좋습니다.
-- **resolution**: 그룹별 실제 비율이 전체 평균 $\bar{y}$에서 얼마나 벌어지는지입니다. 순서를 가르는 힘, 즉 Discrimination에 대응합니다. 클수록 좋으니 부호가 마이너스입니다.
+- **resolution**: 그룹별 실제 비율이 전체 평균 $\bar{y}$에서 얼마나 벌어지는지입니다. 순서를 나누는 힘, 즉 Discrimination에 대응합니다. 클수록 좋으니 부호가 마이너스입니다.
 - **uncertainty**: 데이터 자체의 분산입니다. 모델이 무엇을 하든 바뀌지 않습니다.
 
 여기서 한 가지가 분명해집니다. Discrimination과 Calibration은 한 지표 안에서 **서로 다른 항**으로 앉아 있습니다. 뒤섞여 있는 게 아닙니다. reliability만 줄이는 작업이 Post-hoc Calibration입니다. resolution을 키우는 작업이 피처·모델 개선입니다. 6절에서 말하는 "먼저 AUC, 그다음 Calibration"이라는 순서의 수학적 근거가 바로 이 분해입니다.
@@ -540,7 +540,7 @@ Histogram Binning은 예측 확률을 bin으로 나눈 후, 각 bin의 예측값
 | Temperature Scaling | 1 ($T$) | 낮음 | 매우 낮음 | 극히 낮음 (나눗셈 1회) | 높음 -- NN 모델에 특히 |
 | Histogram Binning | $M$ (bin 수) | 높음 | 높음 | 극히 낮음 (lookup) | 낮음 -- 불연속성 문제 |
 
-> 실무 권장: **Platt Scaling부터 시작하라.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려하세요. Temperature Scaling은 Deep Learning 모델의 over-confidence가 주 문제일 때 가장 먼저 시도할 기법입니다.
+> 실무 권장: **Platt Scaling부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려하세요. Temperature Scaling은 Deep Learning 모델의 over-confidence가 주 문제일 때 가장 먼저 시도할 기법입니다.
 
 ---
 
@@ -600,7 +600,7 @@ Calibrator를 학습할 때 **가장 흔한 실수**는 모델 학습에 사용�
 
 ### 세그먼트별 보정
 
-Section 3의 P/O Ratio 테이블에서 확인했듯, Global Calibration으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 Calibrator**를 운영합니다.
+3절의 P/O Ratio 표에서 확인했듯, Global Calibration으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 Calibrator**를 운영합니다.
 
 **세그먼트 키 선정 기준:**
 
@@ -682,7 +682,7 @@ graph TD
 
 **실무 원칙:**
 
-> "먼저 AUC를 최대화하고, 그 다음 Calibration을 보정하라." 이 순서가 중요합니다. AUC(Discrimination)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, Calibration은 Post-hoc 보정의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
+> "먼저 AUC를 최대화하고, 그다음 Calibration을 보정한다." 이 순서가 중요합니다. AUC(Discrimination)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, Calibration은 Post-hoc 보정의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
 
 단, **Calibration-aware 학습**이라는 접근도 있습니다. Cross-entropy Loss 자체에 Calibration을 유도하는 성질이 있습니다. 그래서 학습 과정에서 Calibration을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 Cross-entropy Loss로 하고, 배포 전에 Calibration Layer를 한 번 더 얹습니다. 이런 **이중 보정** 전략입니다.
 
@@ -695,7 +695,7 @@ graph TD
 CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델이 아무리 잘 학습해도 Calibration이 깨집니다.
 
 - **Click Flooding**: 봇 트래픽이 클릭을 부풀립니다. 관측 CTR이 실제보다 높게 잡히니, 측정된 P/O Ratio는 1보다 작아집니다(COPC는 1보다 커짐). 모델이 과소 예측하는 것처럼 보입니다.
-- **Delayed Label**: 전환이 늦게 도착해 학습 시점에는 음성으로 찍힙니다. 방향이 두 갈래로 갈리니 조심해야 합니다. 그 데이터로 학습한 모델은 확률을 낮게 보도록 배웁니다(진짜 과소 예측). 반면 아직 도착하지 않은 전환 때문에 관측값이 낮게 잡히면, 그 순간의 P/O Ratio는 1보다 크게 나옵니다(과대 예측처럼 보임). 라벨이 다 도착한 뒤에 다시 재야 합니다. 자세한 구조는 [pCVR 모델링](post.html?id=pcvr-modeling)에 있습니다.
+- **Delayed Label**: 전환이 늦게 도착해 학습 시점에는 음성으로 찍힙니다. 방향이 두 가지로 나뉘니 조심해야 합니다. 그 데이터로 학습한 모델은 확률을 낮게 보도록 배웁니다(진짜 과소 예측). 반면 아직 도착하지 않은 전환 때문에 관측값이 낮게 잡히면, 그 순간의 P/O Ratio는 1보다 크게 나옵니다(과대 예측처럼 보임). 라벨이 다 도착한 뒤에 다시 재야 합니다. 자세한 구조는 [pCVR 모델링](post.html?id=pcvr-modeling)에 있습니다.
 - **Position Bias**: 상위 노출 광고의 클릭률이 부풀려집니다. 그래서 위치별로 Calibration 오류가 달라집니다. 보정 방법은 [Position Bias & ULTR](post.html?id=position-bias-ultr)에서 다룹니다.
 - **Negative Sampling**: 무클릭 샘플을 버리고 학습하면 확률이 통째로 위로 부풉니다. 보정 없이 쓰면 심한 과대 예측이 됩니다. 되돌리는 공식은 [Negative Sampling & Bias](post.html?id=negative-sampling-bias)에 있습니다.
 
@@ -708,7 +708,7 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 
 ### 함정 3: Calibration을 Global로만 확인한다
 
-Section 3에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로는 심각하게 틀릴 수 있습니다. **반드시 세그먼트별로 쪼개서** 확인해야 합니다. 특히 아래 세그먼트에서 편차가 큰 경우가 많습니다.
+3절에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로는 심각하게 틀릴 수 있습니다. **반드시 세그먼트별로 쪼개서** 확인해야 합니다. 특히 아래 세그먼트에서 편차가 큰 경우가 많습니다.
 
 - 새로 추가된 Exchange 또는 Publisher
 - 특정 디바이스/OS 버전
@@ -719,7 +719,7 @@ Section 3에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로
 
 ## 8. 담장 안에서는 모든 입찰을 관측한다 [무대: 닫힌 생태계]
 
-**보정에 쓸 데이터가 끊기지 않습니다. 대신 오차의 청구서도 전부 자기 앞으로 옵니다.**
+**보정에 쓸 데이터가 끊기지 않습니다. 대신 오차로 생긴 손실도 전부 자기 매출에서 빠집니다.**
 
 한 회사가 광고 요청부터 랭킹, 노출, 클릭 로그까지 모두 갖고 있는 구조를 담장 안(walled garden)이라 부릅니다. 여기서는 랭킹에 올린 후보의 예측값과, 실제로 노출된 광고의 클릭 결과가 같은 로그에 남습니다. 세그먼트별 P/O Ratio를 시간 단위로 갱신할 수 있습니다. 5절의 자동 재보정 파이프라인이 실제로 돌아가는 세계입니다.
 
@@ -735,7 +735,7 @@ Section 3에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로
 
 **DSP는 낙찰된 노출만 봅니다. 그래서 보정에 쓸 데이터부터 편향됩니다.**
 
-열린 RTB에서는 여러 회사가 릴레이로 한 노출을 처리합니다. DSP는 입찰에 참여하고, 이기면 광고를 내보내고, 그 노출의 클릭 로그를 받습니다. 문제는 **패찰한 입찰**입니다. 진 경매의 노출이 어떻게 됐는지는 알 수 없습니다. 클릭 로그가 아예 생기지 않습니다.
+열린 RTB에서는 여러 회사가 차례로 한 노출을 처리합니다. DSP는 입찰에 참여하고, 이기면 광고를 내보내고, 그 노출의 클릭 로그를 받습니다. 문제는 **패찰한 입찰**입니다. 진 경매의 노출이 어떻게 됐는지는 알 수 없습니다. 클릭 로그가 아예 생기지 않습니다.
 
 그래서 P/O Ratio를 계산할 재료가 이긴 경매에만 존재합니다. 이걸 승자 편향이라고 부릅니다. 게다가 이 편향은 스스로를 키웁니다. 어떤 세그먼트를 과대 예측하면 입찰가가 높아져 더 자주 이깁니다. 그 세그먼트 데이터만 잔뜩 쌓입니다. 반대로 과소 예측한 세그먼트는 계속 패찰합니다. 데이터가 마르니 보정할 기회조차 오지 않습니다. 7절의 함정 2가 열린 RTB에서 훨씬 독하게 나타나는 이유입니다.
 
@@ -753,13 +753,13 @@ Section 3에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로
 
 **2. Miscalibration은 시스템 전체로 전파된다.** pCTR의 Calibration 오류는 True Value 왜곡 → Bid Shading 오작동 → Budget Pacing 오작동 → 캠페인 성과 저하로 연쇄적으로 퍼집니다.
 
-**3. P/O Ratio를 세그먼트별로 모니터링하라.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 Miscalibration을 발견할 수 있습니다.
+**3. P/O Ratio는 세그먼트별로 봐야 한다.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 Miscalibration을 발견할 수 있습니다.
 
-**4. Platt Scaling부터 시작하라.** 대부분의 실무 상황에서 Platt Scaling이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입하세요.
+**4. Platt Scaling부터 시작하면 된다.** 대부분의 실무 상황에서 Platt Scaling이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입하세요.
 
 **5. Calibration은 일회성이 아니라 지속적 과정이다.** 시장은 끊임없이 변하고, Calibration은 반드시 깨집니다. 실시간 모니터링과 자동 재보정 파이프라인이 프로덕션 필수 요소입니다.
 
-> AUC는 모델의 **똑똑함**이고, Calibration은 모델의 **정직함**입니다. 광고 시스템은 정직한 모델을 원합니다. 똑똑하지만 부정직한 모델은 경매에서 체계적으로 잘못된 가격을 제시하고, 그 비용은 고스란히 광고주와 플랫폼이 부담합니다.
+> AUC는 **순서를 맞히는 힘**이고, Calibration은 **값을 맞히는 힘**입니다. 광고 시스템은 둘 다 필요합니다. 순서는 맞아도 값이 틀린 모델은 경매에서 체계적으로 잘못된 가격을 제시하고, 그 비용은 고스란히 광고주와 플랫폼이 부담합니다.
 
 ---
 

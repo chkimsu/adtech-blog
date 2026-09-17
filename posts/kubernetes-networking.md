@@ -1,8 +1,8 @@
 내 앱을 서버에 띄웠다고 합시다. 그런데 사용자가 휴대폰으로 `example.com`을 쳤을 때, 그 요청이 어떻게 내 앱까지 정확히 도착할까요?
 
-쿠버네티스(Kubernetes, 줄여서 k8s)에서는 이 길을 **세 가지 부품**이 이어서 만듭니다. **Pod → Service → Ingress.** 이름만 보면 막막하지만, 도시에 비유하면 아주 쉬워요.
+쿠버네티스(Kubernetes, 줄여서 k8s)에서는 이 길을 **세 가지 부품**이 이어서 만듭니다. **Pod → Service → Ingress.** 이름만 보면 막막하지만, 셋이 각자 앞 부품의 한계를 하나씩 메우는 구조라 순서대로 보면 쉬워요.
 
-> 한 줄 비유: **Pod는 집, Service는 길, Ingress는 성문.** 사람(요청)은 성문으로 들어와 길을 따라 집을 찾아간다.
+> 한 줄 요약: **Pod는 앱이 실제로 도는 자리, Service는 그 앞의 고정 주소, Ingress는 바깥에서 들어오는 입구.** 요청은 입구로 들어와 고정 주소를 거쳐 Pod에 닿는다.
 
 먼저 전체 그림을 한 장으로 봅시다. 요청은 왼쪽(사용자)에서 오른쪽(앱)으로 흐릅니다.
 
@@ -17,31 +17,31 @@
 <line x1="108" y1="102" x2="148" y2="102" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kov-arr)"/>
 <rect x="150" y="66" width="138" height="74" rx="10" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:1.8"/>
 <text x="219" y="94" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
-<text x="219" y="111" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">성문 · 외부 입구</text>
+<text x="219" y="111" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">외부 입구</text>
 <text x="219" y="127" text-anchor="middle" style="font-size:10px; fill:var(--text-primary); font-family:var(--font-mono)">example.com</text>
 <line x1="288" y1="102" x2="328" y2="102" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kov-arr)"/>
 <rect x="330" y="66" width="138" height="74" rx="10" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
 <text x="399" y="94" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--accent-secondary)">Service</text>
-<text x="399" y="111" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">길 · 안정적 주소</text>
+<text x="399" y="111" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">안정적 주소</text>
 <text x="399" y="127" text-anchor="middle" style="font-size:10px; fill:var(--text-primary); font-family:var(--font-mono)">10.96.0.1</text>
 <line x1="468" y1="102" x2="508" y2="102" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kov-arr)"/>
 <rect x="512" y="36" width="176" height="132" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.4; stroke-dasharray:6 4"/>
 <text x="600" y="54" text-anchor="middle" style="font-size:11px; fill:var(--text-muted)">Deployment</text>
 <rect x="528" y="64" width="144" height="28" rx="6" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.4"/>
-<text x="600" y="83" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod · 집</text>
+<text x="600" y="83" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod</text>
 <rect x="528" y="98" width="144" height="28" rx="6" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.4"/>
-<text x="600" y="117" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod · 집</text>
+<text x="600" y="117" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod</text>
 <rect x="528" y="132" width="144" height="28" rx="6" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.4"/>
-<text x="600" y="151" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod · 집</text>
+<text x="600" y="151" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">요청은 성문(Ingress) → 길(Service) → 집(Pod) 순으로 흐른다. 이제 세 부품을 하나씩 들여다본다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">요청은 Ingress → Service → Pod 순으로 흐른다. 이제 세 부품을 하나씩 들여다본다.</figcaption>
 </figure>
 
 ---
 
-## 1. Pod = 집 — 앱이 실제로 사는 곳
+## 1. Pod — 앱이 실제로 도는 자리
 
-> 비유: 사람(앱)이 실제로 사는 집. 그런데 이 집은 재개발이 잦아서, 헐리고 새로 지어지길 반복한다.
+> 한 줄로: 앱(컨테이너)이 실제로 도는 단위. 자주 죽고 새로 뜨며, 그때마다 IP가 바뀐다.
 
 **Pod**는 쿠버네티스에서 앱이 실제로 도는 가장 작은 단위입니다. 안에 여러분의 컨테이너(앱)가 들어 있어요. 쿠버네티스는 보통 Pod를 직접 만들지 않고, **Deployment**에게 "이 앱 Pod를 3개 유지해" 하고 맡깁니다. 그러면 알아서 3개를 띄우고 관리해요.
 
@@ -66,20 +66,20 @@
 <text x="423" y="117" text-anchor="middle" style="font-size:10px; fill:var(--accent-primary); font-family:var(--font-mono)">→ 10.1.2.17 (새 IP)</text>
 <text x="280" y="172" text-anchor="middle" style="font-size:12px; fill:var(--text-muted)">Pod는 언제든 죽고 새로 뜬다 — 그때마다 주소(IP)가 바뀐다.</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">Pod는 헐리고 새로 지어지는 집과 같다. 개수는 유지되지만, 주소는 계속 달라진다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">Pod는 죽고 새로 뜨기를 반복한다. 개수는 유지되지만, 주소는 계속 달라진다.</figcaption>
 </figure>
 
-자, 그럼 문제가 생깁니다. 다른 누군가가 이 앱을 부르려면 주소가 필요한데, **그 주소가 자꾸 바뀌면** 어떻게 찾아갈까요? 매번 "지금 그 집 주소가 뭐지?" 물어볼 순 없잖아요. 그래서 **고정된 주소**가 필요합니다. 그게 다음 부품입니다.
+자, 그럼 문제가 생깁니다. 다른 누군가가 이 앱을 부르려면 주소가 필요한데, **그 주소가 자꾸 바뀌면** 어떻게 찾아갈까요? 매번 "지금 그 Pod 주소가 뭐지?" 물어볼 순 없잖아요. 그래서 **고정된 주소**가 필요합니다. 그게 다음 부품입니다.
 
 ---
 
-## 2. Service = 길 — 바뀌는 집들 앞에 놓인 변하지 않는 주소
+## 2. Service — 바뀌는 Pod들 앞에 놓인 변하지 않는 주소
 
-> 비유: 집들은 재개발로 바뀌어도, 그 앞 도로명("강남대로 1길")은 그대로다. 사람들은 도로명만 알면 집을 찾아간다.
+> 한 줄로: Pod가 죽고 새로 떠도 Service의 IP와 이름은 그대로다. 부르는 쪽은 Service 주소만 알면 된다.
 
 **Service**는 자꾸 바뀌는 Pod들 앞에 놓이는 **변하지 않는 단일 주소**입니다. 고정 IP(예: `10.96.0.1`)와 이름(DNS)을 가져요. 누구든 이 Service 주소로 요청하면, Service가 **살아 있는 Pod 중 하나로 알아서 연결**해 줍니다.
 
-게다가 요청을 여러 Pod에 **고르게 나눠주는 부하 분산(load balancing)**까지 해줍니다. 한 집에 손님이 몰리지 않게 빈 집으로 안내하는 셈이에요.
+게다가 요청을 여러 Pod에 **고르게 나눠주는 부하 분산(load balancing)**까지 해줍니다. 한 Pod에 요청이 몰리지 않게 나누는 거예요.
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 560 220" role="img" aria-label="Service는 고정 IP를 가지고, 들어온 요청을 살아 있는 여러 Pod에 고르게 나눠 보낸다." style="width:100%; max-width:560px; height:auto; font-family:var(--font-sans)">
@@ -122,13 +122,13 @@
 # "집 주소를 그냥 외워 두면 안 되나?" — 안 되는 이유를 숫자로 본다.
 #
 # 상황: Pod 3개짜리 앱. 배포가 하루 4번 있고, 배포할 때마다 Pod가 새로 태어난다.
-#       Pod가 새로 태어나면 IP가 바뀐다(집이 헐리고 새로 지어지는 것).
+#       Pod가 새로 태어나면 IP가 바뀐다.
 # 질문: 클라이언트가 Pod IP를 직접 외워 두면 요청이 얼마나 실패하나?
 
 import random
 random.seed(42)
 
-PODS = 3                # 집(Pod) 3채
+PODS = 3                # Pod 3개
 DEPLOYS_PER_DAY = 4     # 하루 배포 4번
 DAYS = 30               # 한 달
 RPS = 100               # 초당 요청 100건
@@ -137,22 +137,22 @@ CACHE_TTL_SEC = 300     # 클라이언트가 IP를 5분간 외워 둔다고 가�
 
 total_ip_changes = PODS * DEPLOYS_PER_DAY * DAYS
 print(f"한 달 동안 Pod IP가 바뀌는 횟수  {total_ip_changes}회")
-print(f"  = 집 {PODS}채 × 배포 {DEPLOYS_PER_DAY}회/일 × {DAYS}일")
+print(f"  = Pod {PODS}개 × 배포 {DEPLOYS_PER_DAY}회/일 × {DAYS}일")
 print()
 
 # ── 방식 A: Pod IP를 직접 외워 둔다 ──
-# 배포 중에는 외워 둔 IP 중 일부가 이미 사라진 집을 가리킨다.
+# 배포 중에는 외워 둔 IP 중 일부가 이미 사라진 Pod를 가리킨다.
 # 최악의 경우 캐시 TTL이 다 지나기 전까지 그 IP로 계속 찔러 본다.
 #
 # 롤링 배포는 한 채씩 교체하므로, 배포 진행 중 평균적으로
-# 전체 집의 1/PODS 가 "방금 헐린 집"이다. 그 집을 외운 클라이언트는 실패한다.
+# 전체 Pod의 1/PODS 가 "방금 사라진 Pod"다. 그 IP를 외운 클라이언트는 실패한다.
 stale_window = min(CACHE_TTL_SEC, ROLLING_SEC + CACHE_TTL_SEC)  # 낡은 주소를 들고 있는 시간
 fail_share = 1 / PODS                                            # 그 시간에 실패하는 요청 비율
 fails_per_deploy = RPS * stale_window * fail_share
 fails_a = fails_per_deploy * DEPLOYS_PER_DAY * DAYS
 
 # ── 방식 B: Service 주소 하나만 외워 둔다 ──
-# Service의 IP는 배포와 무관하게 그대로다. Service가 살아 있는 집만 골라 보낸다.
+# Service의 IP는 배포와 무관하게 그대로다. Service가 살아 있는 Pod만 골라 보낸다.
 # 실패는 "교체 순간에 이미 연결이 진행 중이던 요청" 정도로 줄어든다.
 INFLIGHT_SEC = 1.0                                               # 교체 순간의 진행 중 요청 구간
 fails_b = RPS * INFLIGHT_SEC * PODS * DEPLOYS_PER_DAY * DAYS
@@ -168,12 +168,12 @@ print(f"  한 달 실패 요청        {fails_b:>12,.0f}건  (전체의 {fails_b
 print()
 print(f"차이  {fails_a/fails_b:,.0f}배")
 print()
-print("→ Pod 주소를 외우면 배포마다 실패가 쏟아진다. 집이 헐렸는데 주소를 들고 찾아가니까.")
-print("→ Service는 '길'이라 배포와 무관하게 그대로다. 그래서 외울 값은 이거 하나여야 한다.")
+print("→ Pod 주소를 외우면 배포마다 실패가 쏟아진다. 사라진 Pod의 주소를 들고 찾아가니까.")
+print("→ Service 주소는 배포와 무관하게 그대로다. 그래서 외울 값은 이거 하나여야 한다.")
 
 # 출력:
 # 한 달 동안 Pod IP가 바뀌는 횟수  360회
-#   = 집 3채 × 배포 4회/일 × 30일
+#   = Pod 3개 × 배포 4회/일 × 30일
 #
 # 방식 A — Pod IP를 직접 외운다
 #   배포 1회당 실패 요청         10,000건
@@ -184,30 +184,30 @@ print("→ Service는 '길'이라 배포와 무관하게 그대로다. 그래서
 #
 # 차이  33배
 #
-# → Pod 주소를 외우면 배포마다 실패가 쏟아진다. 집이 헐렸는데 주소를 들고 찾아가니까.
-# → Service는 '길'이라 배포와 무관하게 그대로다. 그래서 외울 값은 이거 하나여야 한다.
+# → Pod 주소를 외우면 배포마다 실패가 쏟아진다. 사라진 Pod의 주소를 들고 찾아가니까.
+# → Service 주소는 배포와 무관하게 그대로다. 그래서 외울 값은 이거 하나여야 한다.
 ```
 
-한 달에 IP가 **360번** 바뀝니다. 집 3채가 하루 4번씩 재개발되니까요.
+한 달에 IP가 **360번** 바뀝니다. Pod 3개가 하루 4번씩 새로 뜨니까요.
 
-주소를 직접 외운 쪽은 배포마다 만 건씩 실패합니다. 이미 헐린 집 주소를 들고 찾아가기 때문입니다. Service를 거친 쪽은 3만 6천 건으로, **33배 적습니다.** 남은 실패도 성질이 다릅니다. 교체되는 순간에 이미 연결이 진행 중이던 요청뿐입니다.
+주소를 직접 외운 쪽은 배포마다 만 건씩 실패합니다. 이미 사라진 Pod의 주소를 들고 찾아가기 때문입니다. Service를 거친 쪽은 3만 6천 건으로, **33배 적습니다.** 남은 실패도 성질이 다릅니다. 교체되는 순간에 이미 연결이 진행 중이던 요청뿐입니다.
 
 여기서 기억할 건 하나입니다. **외울 값은 Service 주소 하나여야 합니다.** Pod 주소는 외우는 순간 낡습니다.
 
 | 무엇을 외우나 | 배포와 함께 바뀌나 | 한 달 실패 요청 | 클라이언트가 해야 할 일 |
 |---|---|---|---|
-| Pod IP (집 주소) | 바뀐다 (360회) | 약 120만 건 | 바뀐 주소를 계속 다시 찾아야 함 |
-| Service IP (길 이름) | 안 바뀐다 | 약 3.6만 건 | 아무것도 안 해도 됨 |
+| Pod IP | 바뀐다 (360회) | 약 120만 건 | 바뀐 주소를 계속 다시 찾아야 함 |
+| Service IP | 안 바뀐다 | 약 3.6만 건 | 아무것도 안 해도 됨 |
 
 ---
 
-## 3. Ingress = 성문 — 바깥에서 안으로 들어오는 입구
+## 3. Ingress — 바깥에서 안으로 들어오는 입구
 
-> 비유: 도시(클러스터)로 들어오는 정문. 문지기가 "쇼핑하러 왔으면 상점가로, 민원이면 시청으로" 하고 길을 안내한다.
+> 한 줄로: 클러스터 바깥의 HTTP 요청이 들어오는 자리. 도메인과 경로를 보고 알맞은 Service로 보낸다.
 
 **Ingress**는 클러스터 **바깥의 HTTP/HTTPS 트래픽을 안으로 들이는 입구**입니다. `example.com` 같은 도메인을 받아서, **주소 규칙(host/path)에 따라 알맞은 Service로 보내줘요.**
 
-예를 들어 같은 `example.com`이라도 `/shop`으로 오면 상품 서비스로, `/api`로 오면 주문 서비스로 갈라 보냅니다. 입구 하나로 여러 서비스를 깔끔하게 나눠 받는 거예요. (HTTPS 인증서 처리도 보통 여기서 합니다.)
+예를 들어 같은 `example.com`이라도 `/shop`으로 오면 상품 서비스로, `/api`로 오면 주문 서비스로 나눠 보냅니다. 입구 하나로 여러 서비스를 깔끔하게 나눠 받는 거예요. (HTTPS 인증서 처리도 보통 여기서 합니다.)
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 600 230" role="img" aria-label="Ingress가 example.com 요청을 받아 경로 규칙에 따라 /shop은 상품 서비스로, /api는 주문 서비스로 나눠 보낸다." style="width:100%; max-width:580px; height:auto; font-family:var(--font-sans)">
@@ -233,21 +233,21 @@ print("→ Service는 '길'이라 배포와 무관하게 그대로다. 그래서
 <line x1="304" y1="128" x2="400" y2="166" style="stroke:var(--accent-primary); stroke-width:1.8" marker-end="url(#king-arr)"/>
 <text x="350" y="160" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">/api</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">Ingress는 도시의 정문. 같은 도메인이라도 경로(/shop, /api)에 따라 알맞은 Service로 갈라 보낸다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">Ingress는 클러스터의 입구. 같은 도메인이라도 경로(/shop, /api)에 따라 알맞은 Service로 나눠 보낸다.</figcaption>
 </figure>
 
 ---
 
-### 숫자로 보면 — 문을 여러 개 내면 얼마가 드나
+### 숫자로 보면 — 입구를 여러 개 내면 얼마가 드나
 
-성문 없이 집집마다 문을 내면 어떻게 되는지도 세어 봅시다. 클라우드 요금은 대략치이고 공급자마다 다릅니다.
+Ingress 없이 서비스마다 입구를 내면 어떻게 되는지도 세어 봅시다. 클라우드 요금은 대략치이고 공급자마다 다릅니다.
 
 ```python
-# "성문(Ingress) 없이 집집마다 문을 내면 안 되나?" — 비용으로 답한다.
+# "Ingress 없이 서비스마다 입구를 내면 안 되나?" — 비용으로 답한다.
 #
 # 서비스를 바깥에 노출하는 방법은 두 가지다.
-#   A) 서비스마다 LoadBalancer를 하나씩 붙인다 (문을 여러 개 낸다)
-#   B) Ingress 하나를 두고 경로로 나눈다     (성문 하나에서 길을 나눈다)
+#   A) 서비스마다 LoadBalancer를 하나씩 붙인다 (입구를 여러 개 낸다)
+#   B) Ingress 하나를 두고 경로로 나눈다     (입구 하나에서 경로로 나눈다)
 
 SERVICES = 12                 # 마이크로서비스 12개
 LB_MONTHLY_USD = 18           # 클라우드 LoadBalancer 1개 월 요금(대략치, 공급자마다 다름)
@@ -279,8 +279,8 @@ print()
 for n in (3, 12, 50):
     print(f"  서비스 {n:>2}개 → A) ${n * LB_MONTHLY_USD:>4}/월   B) ${LB_MONTHLY_USD}/월   ({n}배 차이)")
 print()
-print("→ 문을 집집마다 내면 문 개수만큼 돈과 관리가 늘어난다.")
-print("→ Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서비스가 늘어도 문은 하나다.")
+print("→ 입구를 서비스마다 내면 입구 개수만큼 돈과 관리가 늘어난다.")
+print("→ Ingress는 입구 하나에서 경로(/api, /admin)로 나누니, 서비스가 늘어도 입구는 하나다.")
 
 # 출력:
 # 마이크로서비스 12개를 바깥에 노출한다면
@@ -298,15 +298,15 @@ print("→ Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서
 #   서비스 12개 → A) $ 216/월   B) $18/월   (12배 차이)
 #   서비스 50개 → A) $ 900/월   B) $18/월   (50배 차이)
 #
-# → 문을 집집마다 내면 문 개수만큼 돈과 관리가 늘어난다.
-# → Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서비스가 늘어도 문은 하나다.
+# → 입구를 서비스마다 내면 입구 개수만큼 돈과 관리가 늘어난다.
+# → Ingress는 입구 하나에서 경로(/api, /admin)로 나누니, 서비스가 늘어도 입구는 하나다.
 ```
 
-핵심은 마지막 세 줄입니다. **서비스가 늘어날 때 문 개수가 함께 늘어나느냐**의 차이입니다.
+핵심은 마지막 세 줄입니다. **서비스가 늘어날 때 입구 개수가 함께 늘어나느냐**의 차이입니다.
 
-문을 집집마다 내는 방식은 서비스 50개면 문도 50개, 비용도 50배입니다. 성문 하나를 두면 서비스가 몇 개로 늘어도 문은 하나입니다. 경로(`/api`, `/admin`)로 나누기만 하면 되니까요.
+입구를 서비스마다 내는 방식은 서비스 50개면 입구도 50개, 비용도 50배입니다. Ingress 하나를 두면 서비스가 몇 개로 늘어도 입구는 하나입니다. 경로(`/api`, `/admin`)로 나누기만 하면 되니까요.
 
-돈보다 더 아픈 건 관리입니다. 인증서 12개를 각각 갱신하는 일은 매달 돌아오고, 하나라도 놓치면 그 서비스만 접속이 끊깁니다. 성문 하나면 인증서도 하나입니다.
+돈보다 더 아픈 건 관리입니다. 인증서 12개를 각각 갱신하는 일은 매달 돌아오고, 하나라도 놓치면 그 서비스만 접속이 끊깁니다. 입구 하나면 인증서도 하나입니다.
 
 ---
 
@@ -324,12 +324,12 @@ print("→ Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서
 <text x="58" y="90" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">사용자</text>
 <rect x="158" y="56" width="118" height="58" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:1.7"/>
 <text x="217" y="82" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
-<text x="217" y="99" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">성문</text>
+<text x="217" y="99" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">입구</text>
 <rect x="330" y="56" width="118" height="58" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.7"/>
 <text x="389" y="82" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-secondary)">Service</text>
-<text x="389" y="99" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">길</text>
+<text x="389" y="99" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">고정 주소</text>
 <rect x="506" y="32" width="190" height="106" rx="9" style="fill:none; stroke:var(--text-muted); stroke-width:1.4; stroke-dasharray:6 4"/>
-<text x="601" y="50" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">Pods · 집</text>
+<text x="601" y="50" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">Pods</text>
 <rect x="524" y="58" width="154" height="22" rx="5" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
 <text x="601" y="73" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">Pod</text>
 <rect x="524" y="84" width="154" height="22" rx="5" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.6"/>
@@ -354,13 +354,13 @@ print("→ Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서
 4. Service가 **살아 있는 Pod 하나**로 부하를 분산해 전달한다.
 5. **Pod**가 처리하고, 응답이 같은 길을 거꾸로 타고 사용자에게 돌아간다.
 
-세 부품의 역할을 도시 비유로 한 번에 정리하면 이렇습니다.
+세 부품의 역할을 한 번에 정리하면 이렇습니다.
 
-| 부품 | 비유 | 하는 일 | 핵심 성질 |
-|---|---|---|---|
-| **Pod** | 집 | 앱(컨테이너)이 실제로 돈다 | 자주 죽고 새로 뜸 → IP가 바뀜 |
-| **Service** | 길 | 바뀌는 Pod 앞의 고정 주소 + 부하 분산 | 안정적, 클러스터 안에서 유효 |
-| **Ingress** | 성문 | 외부 트래픽을 규칙대로 Service에 라우팅 | 바깥과 안을 잇는 입구 |
+| 부품 | 하는 일 | 핵심 성질 |
+|---|---|---|
+| **Pod** | 앱(컨테이너)이 실제로 돈다 | 자주 죽고 새로 뜸 → IP가 바뀜 |
+| **Service** | 바뀌는 Pod 앞의 고정 주소 + 부하 분산 | 안정적, 클러스터 안에서 유효 |
+| **Ingress** | 외부 트래픽을 규칙대로 Service에 라우팅 | 바깥과 안을 잇는 입구 |
 
 ---
 
@@ -373,11 +373,11 @@ print("→ Ingress는 성문 하나에서 경로(/api, /admin)로 나누니, 서
 각 부품은 바로 앞 부품의 한계를 메우려고 존재해요.
 
 - **Pod는 오고 간다** — 믿고 주소를 박아두면 안 된다.
-- **Service는 안정적이다** — 바뀌는 Pod 앞의 변하지 않는 길.
+- **Service는 안정적이다** — 바뀌는 Pod 앞의 변하지 않는 주소.
 - **Ingress가 입구다** — 바깥 트래픽은 여기로 들어온다.
 
-> 한 문장 요약: **Pod는 오고 가고, Service는 그대로 있고, Ingress가 들어오는 문이다.** 이 셋이 맞물려, 자꾸 바뀌는 앱을 바깥에서도 안정적으로 부를 수 있게 만든다.
+> 한 문장 요약: **Pod는 오고 가고, Service는 그대로 있고, Ingress가 들어오는 입구다.** 이 셋이 맞물려, 자꾸 바뀌는 앱을 바깥에서도 안정적으로 부를 수 있게 만든다.
 
 ---
 
-여기까지가 "앱을 어떻게 바깥에 내놓는가"입니다. 그럼 그 앱을 애초에 어떻게 쪼개고 합칠까요. 모놀리식부터 마이크로서비스까지는 [소프트웨어 아키텍처 패턴 글](post.html?id=software-architecture-patterns)에 같은 결의 비유로 정리해 두었습니다.
+여기까지가 "앱을 어떻게 바깥에 내놓는가"입니다. 그럼 그 앱을 애초에 어떻게 쪼개고 합칠까요. 모놀리식부터 마이크로서비스까지는 [소프트웨어 아키텍처 패턴 글](post.html?id=software-architecture-patterns)에 같은 방식으로 정리해 두었습니다.

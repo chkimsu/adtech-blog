@@ -32,7 +32,7 @@ README 첫 줄이 이 저장소를 한 문장으로 말합니다. 「Airflow 에
 |---|---|---|---|
 | 수급 DAG | `workflow/dag/extract` | Python | 원천에서 창고 테이블로 매일 끌어오기 |
 | SQL 모델 | `workflow/dbt/models` | SQL | 표 하나를 SQL 한 장으로 정의. 도구가 순서를 매겨 돌림 |
-| 오퍼레이터와 Spark | `workflow/operators`, `apps/spark-batch` | Python, Scala | Airflow 태스크가 실제로 하는 손. Spark 는 읽고 쓰는 커넥터 |
+| 오퍼레이터와 Spark | `workflow/operators`, `apps/spark-batch` | Python, Scala | Airflow 태스크가 실제로 하는 일을 담은 부품. Spark 는 읽고 쓰는 커넥터 |
 | Flink 실시간 | `apps/flink-streaming` | Java | 들어오는 대로 받아 묶어 내보내는 잡 하나 |
 
 <div class="demo-embed-wrap">
@@ -145,7 +145,7 @@ group by user_no, client_type, app_version, os_version, device_model
 
 **오퍼레이터는 Airflow 태스크 하나가 실제로 하는 일을 담은 파이썬 클래스입니다. 이 팀은 열 개 넘게 직접 만들었습니다. 넷째 달 커밋이 이 폴더와 Spark 폴더에 몰립니다.**
 
-쉽게 말하면 Airflow 는 「몇 시에 무엇을 하라」만 알고, 실제로 SQL 을 보내거나 파일을 옮기는 손은 오퍼레이터입니다. 표준 오퍼레이터로 안 되는 상대가 있으면 손을 직접 만듭니다.
+쉽게 말하면 Airflow 는 「몇 시에 무엇을 하라」만 알고, 실제로 SQL 을 보내거나 파일을 옮기는 것은 오퍼레이터입니다. 표준 오퍼레이터로 안 되는 상대가 있으면 직접 만듭니다.
 
 | 오퍼레이터 | 말을 거는 상대 | 무엇을 하나 |
 |---|---|---|
@@ -157,11 +157,11 @@ group by user_no, client_type, app_version, os_version, device_model
 | http, jdbc, kafka, mysql, mssql | 외부 API, 운영 DB, 토픽 | 원천에서 읽어 오는 수급 여러 종 |
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-de-first-months.html?embed=1&card=operator" height="500" loading="lazy" title="Airflow 의 손, 오퍼레이터"></iframe>
+<iframe class="demo-embed" src="demo-de-first-months.html?embed=1&card=operator" height="500" loading="lazy" title="Airflow 의 실행 부품, 오퍼레이터"></iframe>
 <a class="demo-embed-open" href="demo-de-first-months.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-표의 마지막 줄이 수급 오퍼레이터입니다. 2절의 YAML 에 `type: hbase` 라고 적으면 DAG 를 만드는 코드가 이 중 맞는 것을 고릅니다. 새로 온 사람의 넷째 달은 여기에 손 하나를 더한 달입니다. 다른 클러스터의 HDFS 에서 파일을 가져오는 오퍼레이터를 만들고, 파일이 생겼는지 보는 센서를 붙였습니다. 값을 옮길 때 형식을 검사하는 로직도 공통으로 뺐습니다. 그 달 커밋이 이 두 폴더에 몰려 있습니다.
+표의 마지막 줄이 수급 오퍼레이터입니다. 2절의 YAML 에 `type: hbase` 라고 적으면 DAG 를 만드는 코드가 이 중 맞는 것을 고릅니다. 새로 온 사람의 넷째 달은 여기에 오퍼레이터 하나를 더한 달입니다. 다른 클러스터의 HDFS 에서 파일을 가져오는 오퍼레이터를 만들고, 파일이 생겼는지 보는 센서를 붙였습니다. 값을 옮길 때 형식을 검사하는 로직도 공통으로 뺐습니다. 그 달 커밋이 이 두 폴더에 몰려 있습니다.
 
 Spark 는 이 저장소에서 계산 엔진이라기보다 읽고 쓰는 커넥터입니다. Scala 파일 수십 개가 HTTP, JDBC, Kafka, HDFS 에서 읽어 Hive 테이블에 쓰는 코드입니다. 성능을 조절하는 설정을 찾아 보면 거의 없습니다. `repartition`, `broadcast`, `persist` 가 하나도 없고, 자원은 오퍼레이터 기본값입니다. 유일한 조절이 SQL 힌트 `repartition(N)` 인데, 그것도 출력 파일 개수를 정하는 것입니다. 3절 모델의 첫 줄에 있던 것이 그것입니다.
 
@@ -289,7 +289,7 @@ on:
 | 새로 온 사람의 첫 커밋은 | 표 하나를 매일 끌어오는 DAG. 파이썬 열몇 줄과 YAML 스무 줄쯤 |
 | 왜 그 두 파일에 커밋이 수십 개 붙나 | 원천 접속, 이름 규칙, 스케줄, 배포 길을 처음 밟느라 규칙마다 한 번씩 걸린다 |
 | dbt 모델이 무엇인가 | SQL 파일 하나가 표 하나. 순서는 source 와 ref 를 보고 도구가 매긴다 |
-| 오퍼레이터가 무엇인가 | Airflow 태스크가 실제로 하는 손. 이 팀은 열 개 넘게 직접 만들었다 |
+| 오퍼레이터가 무엇인가 | Airflow 태스크가 실제로 하는 일을 담은 클래스. 이 팀은 열 개 넘게 직접 만들었다 |
 | Spark 는 무엇을 하나 | 계산 엔진이 아니라 읽고 쓰는 커넥터. 성능 조절 설정이 거의 없다 |
 | 실시간 잡은 무엇이 다른가 | 하루 한 번이 아니라 들어오는 대로. 워터마크로 조금 기다리고 늦은 것은 따로 받는다 |
 | 코드는 어떻게 서버에 가나 | PR, 리뷰, 머지, workflow 자동 배포. 머지에 거의 예외 없이 사람 승인 |

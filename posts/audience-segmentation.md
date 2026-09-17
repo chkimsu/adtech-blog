@@ -1,6 +1,6 @@
 "누구에게 보여줄 것인가?" — 광고가 노출되기 전, 시스템이 가장 먼저 답해야 할 질문입니다. 아무리 정교한 pCTR 모델을 만들고, 최적의 입찰 전략을 설계하더라도, **적절한 오디언스에게 도달하지 못하면** 모든 것이 무의미합니다. 오디언스 세그멘테이션은 수백만~수억 명의 유저를 **행동 가능한 그룹(Actionable Audience)**으로 묶는 일입니다. 이 그룹이 리타겟팅과 모든 타겟팅 전략의 출발점입니다. [Lookalike Modeling](post.html?id=lookalike-modeling)의 시드 오디언스도 여기서 나옵니다.
 
-세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [Feature Store](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [Walled Garden](post.html?id=walled-garden)과 Open RTB가 그렇습니다. 이 글이 다루는 범위는 넓습니다. Rule-based SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 해부합니다.
+세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [Feature Store](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [Walled Garden](post.html?id=walled-garden)과 Open RTB가 그렇습니다. 이 글이 다루는 범위는 넓습니다. Rule-based SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 정리합니다.
 
 > **골라 읽는 법** — 절이 12개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
@@ -35,10 +35,10 @@
 | **식별자** | Cookie ID, MAID (비결정론적) | 로그인 ID, 이메일 해시 (결정론적) |
 | **데이터 지속성** | 90일 (cookie 수명) | 무제한 (고객 동의 기반) |
 | **주요 용도** | 프로그래매틱 광고 타겟팅 | 전 채널 개인화 + 광고 |
-| **대표 서비스** | Oracle BlueKai, Lotame | Treasure Data, Segment (Twilio), mParticle |
-| **현재 추세** | 축소 (cookie 폐지) | 성장 (1st-party 데이터 중심) |
+| **대표 서비스** | Lotame, Oracle BlueKai(2024년 사업 종료) | Treasure Data, Segment (Twilio), mParticle |
+| **현재 추세** | 축소 (Safari, Firefox의 cookie 차단) | 성장 (1st-party 데이터 중심) |
 
-> **핵심 전환**: 3rd-party cookie 폐지와 GDPR/CCPA 규제 강화로, 세그멘테이션의 기반이 "외부 데이터 구매(DMP)"에서 "자사 데이터 구축(CDP)"으로 근본적으로 이동하고 있습니다. 이 전환에 실패한 광고주는 타겟팅 정밀도에서 구조적 열위에 놓입니다.
+> **핵심 전환**: Safari와 Firefox의 3rd-party cookie 차단과 GDPR/CCPA 규제 강화로, 세그멘테이션의 기반이 "외부 데이터 구매(DMP)"에서 "자사 데이터 구축(CDP)"으로 근본적으로 이동하고 있습니다. 이 전환에 실패한 광고주는 타겟팅 정밀도에서 구조적 열위에 놓입니다.
 
 ---
 
@@ -676,17 +676,17 @@ graph TB
 
 ### 8-1. DMP 시대 (3rd-Party Cookie)
 
-**DMP(Data Management Platform)**는 3rd-party cookie를 기반으로 유저 세그먼트를 수집하고 거래하는 플랫폼이었습니다. Oracle BlueKai, Lotame, Nielsen DMP 같은 서비스가 대표적입니다.
+**DMP(Data Management Platform)**는 3rd-party cookie를 기반으로 유저 세그먼트를 수집하고 거래하는 플랫폼이었습니다. Lotame, Nielsen DMP, 그리고 2024년에 사업을 접은 Oracle BlueKai 같은 서비스가 대표적입니다.
 
 **작동 방식**: 수천 개의 웹사이트에 DMP의 tracking pixel을 설치하고, 3rd-party cookie를 통해 유저의 크로스 사이트 행동을 추적합니다. 이 데이터를 바탕으로 "25-34세 남성, 자동차 관심" 같은 세그먼트를 생성하여 광고주에게 판매합니다. 광고주는 DSP에서 이 세그먼트를 구매(Segment Buying)하여 타겟팅에 활용합니다.
 
 **소멸 원인**:
 - **Safari ITP (Intelligent Tracking Prevention)**: 2017년부터 3rd-party cookie를 점진적으로 차단. 현재 완전 차단.
 - **Firefox ETP (Enhanced Tracking Protection)**: 2019년부터 3rd-party cookie 기본 차단.
-- **Chrome Privacy Sandbox**: Google Chrome도 3rd-party cookie를 단계적으로 제한. Privacy Sandbox API (Topics, FLEDGE/Protected Audiences)로 대체 추진.
+- **Chrome**: 3rd-party cookie 폐지를 추진했지만 2025년 4월 철회. cookie는 남았고, 대체용 광고 API(Topics, Protected Audience)는 2025년 10월 종료.
 - **GDPR/CCPA**: 명시적 동의(Consent) 없는 tracking이 법적으로 제한. DMP의 대규모 3rd-party data 수집이 점점 어려워짐.
 
-결과적으로, DMP 기반 세그먼트의 정확도와 도달 범위(Reach)가 급격히 축소되고 있습니다. Safari/Firefox 유저(전체의 약 30-40%)는 이미 DMP로 추적할 수 없습니다. Chrome까지 제한되면 DMP의 3rd-party 세그먼트는 사실상 소멸합니다.
+결과적으로, DMP 기반 세그먼트의 정확도와 도달 범위(Reach)가 크게 줄었습니다. Safari/Firefox 유저는 이미 DMP로 추적할 수 없습니다. Chrome은 cookie를 남겼지만, 동의 없는 추적은 규제로 계속 좁아지고 있습니다.
 
 ### 8-2. CDP 시대 (1st-Party ID)
 
@@ -712,7 +712,7 @@ graph TB
 
 ### 8-3. Walled Garden의 세그먼트 전략
 
-[Walled Garden](post.html?id=walled-garden)은 cookie 폐지의 영향을 상대적으로 적게 받습니다. 네이버, 카카오, Meta, Google이 여기 속합니다. 이들은 처음부터 **로그인 기반 1st-party 데이터**를 보유하고 있기 때문입니다.
+[Walled Garden](post.html?id=walled-garden)은 cookie 차단의 영향을 상대적으로 적게 받습니다. 네이버, 카카오, Meta, Google이 여기 속합니다. 이들은 처음부터 **로그인 기반 1st-party 데이터**를 보유하고 있기 때문입니다.
 
 **Walled Garden의 세그멘테이션 우위**:
 
@@ -769,7 +769,7 @@ user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 
 $$\text{noisy\_count}(\text{segment}) = \text{true\_count}(\text{segment}) + \text{Lap}\left(\frac{1}{\epsilon}\right)$$
 
-$\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 프라이버시를 보장하지만 통계의 정확도가 떨어집니다. Google의 Privacy Sandbox FLEDGE(현 Protected Audiences)도 차등 프라이버시를 적용합니다. 브라우저 안에서 세그먼트 기반 입찰을 돌리면서도 유저 프라이버시를 지키는 구조입니다.
+$\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 프라이버시를 보장하지만 통계의 정확도가 떨어집니다. Google의 Privacy Sandbox에 있던 Protected Audience API도 집계 결과에 노이즈를 더하는 방식을 썼습니다. 브라우저 안에서 세그먼트 기반 입찰을 돌리면서 유저 프라이버시를 지키는 구조였는데, 2025년 10월에 종료됐습니다.
 
 > 프라이버시 규제는 세그멘테이션의 "해상도 상한선"을 설정합니다. 아무리 정밀한 세그먼트를 만들 수 있더라도, 최소 크기 제한과 동의 관리로 인해 실제로 활용할 수 있는 해상도에는 한계가 있습니다. 이 제약을 설계 초기부터 반영해야, 나중에 규제 대응으로 시스템을 재설계하는 비용을 피할 수 있습니다.
 
@@ -786,7 +786,7 @@ $\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 
 | **세그먼트 해상도** | 낮음 (추정 기반, cookie 매칭 손실) | 높음 (확정 기반, 직접 관찰) |
 | **실시간 반영** | 시간 ~ 일 지연 (세그먼트 동기화) | 실시간 가능 (내부 시스템) |
 | **Cross-device** | 확률론적 매칭 (60-70%) | 결정론적 매칭 (95%+) |
-| **프라이버시 제약** | Cookie 폐지로 급격히 축소 | 상대적으로 안정 (1st-party) |
+| **프라이버시 제약** | Safari/Firefox의 cookie 차단으로 축소 | 상대적으로 안정 (1st-party) |
 | **세그먼트 활성화** | Bid Request에 segment ID 포함 | 플랫폼 내부 직접 매칭 |
 | **광고주 제어** | 높음 (직접 세그먼트 정의/구매) | 제한적 (플랫폼 제공 옵션만) |
 | **데이터 투명성** | 높음 (유저 레벨 로그 확인 가능) | 낮음 (집계 리포트만 제공) |
@@ -801,7 +801,7 @@ $\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 
     "data": [
       {
         "id": "dmp_provider_1",
-        "name": "Oracle BlueKai",
+        "name": "Lotame",
         "segment": [
           {"id": "seg_auto_intender", "name": "Auto Intender"},
           {"id": "seg_high_income", "name": "High Income HH"}
@@ -812,11 +812,11 @@ $\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 
 }
 ```
 
-DSP는 이 세그먼트 정보를 pCTR 모델의 피처로 사용하거나, 입찰 필터로 활용합니다. 하지만 cookie 매칭 손실(Match Rate)이 발목을 잡습니다. 세그먼트 정보가 실제로 담긴 bid request는 전체의 30-50%에 불과합니다.
+DSP는 이 세그먼트 정보를 pCTR 모델의 피처로 사용하거나, 입찰 필터로 활용합니다. 하지만 cookie 매칭 손실(Match Rate)이 문제가 됩니다. 세그먼트 정보가 실제로 담긴 bid request는 전체의 30-50%에 불과합니다.
 
 **Walled Garden에서의 세그먼트 활용**: 광고주는 Walled Garden의 광고 플랫폼(네이버 광고 관리, Meta Ads Manager, Google Ads)에서 타겟팅 조건을 설정합니다. "관심사: 패션, 연령: 25-34, 지역: 서울"과 같은 조건을 선택하면, 플랫폼 내부에서 해당 세그먼트에 매칭되는 유저에게 광고를 노출합니다. 유저 데이터는 플랫폼을 떠나지 않으며, 광고주는 유저 레벨 데이터에 접근할 수 없습니다.
 
-> 3rd-party cookie 폐지 이후의 세계에서, Open RTB의 세그멘테이션 역량은 구조적으로 Walled Garden에 열위합니다. 이를 극복하려는 시도가 이어집니다. Google은 Privacy Sandbox(Topics API, Protected Audiences)를 내놨습니다. IAB는 Seller Defined Audiences를 정의했습니다. UID 2.0 같은 공유 ID 솔루션도 있습니다. 하지만 이들 중 어느 것도 Walled Garden의 1st-party 데이터 우위를 완전히 대체하지 못할 것으로 전망됩니다.
+> 3rd-party cookie가 줄어든 세계에서, Open RTB의 세그멘테이션 역량은 구조적으로 Walled Garden에 열위합니다. 이를 극복하려는 시도가 이어졌습니다. Google은 Privacy Sandbox(Topics API, Protected Audience)를 내놨다가 2025년 10월 종료했습니다. IAB는 Seller Defined Audiences를 정의했습니다. UID 2.0 같은 공유 ID 솔루션도 있습니다. 하지만 이들 중 어느 것도 Walled Garden의 1st-party 데이터 우위를 대체하지 못했습니다.
 
 ---
 
@@ -845,7 +845,7 @@ Redis Value (Set): {"high_value", "fashion_interest", "active_searcher"}
 | Sorted Array | ~4 MB | O(n+m) | 중규모, 정렬된 접근 |
 | Roaring Bitmap | ~0.5-2 MB | O(n/64) (SIMD) | 대규모, 집합 연산 빈번 |
 
-Roaring Bitmap은 특히 세그먼트 Overlap 분석(Jaccard 계산)에서 위력을 발휘합니다. 수백만 유저의 교집합/합집합을 밀리초 단위로 계산할 수 있어, 실시간 오디언스 크기 추정(Reach Estimation)에도 활용됩니다.
+Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유용합니다. 수백만 유저의 교집합/합집합을 밀리초 단위로 계산할 수 있어, 실시간 오디언스 크기 추정(Reach Estimation)에도 활용됩니다.
 
 ### 11-2. 갱신 주기 전략
 
@@ -893,7 +893,7 @@ Roaring Bitmap은 특히 세그먼트 Overlap 분석(Jaccard 계산)에서 위�
 
 **시드 추출 요구사항**:
 1. **효율적 Export**: "Champions" 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 합니다. Forward Index(Segment → Users)가 필수인 이유입니다.
-2. **적절한 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 과적합되고, 너무 크면(> 100만) 시드 자체가 너무 일반적이어서 유사 유저를 찾는 의미가 희석됩니다. 일반적으로 1,000 ~ 50,000이 최적 범위입니다.
+2. **적절한 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 과적합되고, 너무 크면(> 100만) 시드 자체가 너무 일반적이어서 유사 유저를 찾는 의미가 희석됩니다. 일반적으로 1만 ~ 10만이 최적 범위입니다.
 3. **시드 품질**: 전환 데이터가 풍부하고, 명확한 행동 패턴을 가진 세그먼트가 좋은 시드입니다. "Champions (R5-F5-M5)" 또는 "최근 30일 3회+ 구매자"가 대표적입니다.
 4. **시드 신선도**: 오래된 시드로 만든 Lookalike는 현재 유저 행동 패턴을 반영하지 못합니다. 시드 세그먼트의 갱신 주기와 Lookalike 모델 재학습 주기를 동기화해야 합니다.
 
@@ -921,7 +921,7 @@ Roaring Bitmap은 특히 세그먼트 Overlap 분석(Jaccard 계산)에서 위�
 
 3. **Feature Store 연동이 세그먼트의 실질적 가치를 결정한다.** 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그것은 리포팅 도구에 불과합니다. [Feature Store](post.html?id=feature-store-serving)를 통해 10ms 이내에 세그먼트를 서빙하고, embedding으로 모델에 통합해야 입찰 결정에 실질적 영향을 미칩니다.
 
-4. **DMP → CDP 전환은 선택이 아닌 필수다.** 3rd-party cookie 폐지와 GDPR/CCPA가 이를 강제합니다. 자사 1st-party 데이터를 중심으로 세그멘테이션 역량을 구축하지 못하면, 타겟팅 정밀도에서 구조적 열위에 놓입니다. [Walled Garden](post.html?id=walled-garden)의 1st-party 데이터 우위가 더욱 공고해지는 환경에서, Open RTB 참여자는 CDP 기반 세그먼트 역량이 생존의 조건입니다.
+4. **DMP → CDP 전환은 선택이 아닌 필수다.** Safari/Firefox의 3rd-party cookie 차단과 GDPR/CCPA가 이를 강제합니다. 자사 1st-party 데이터를 중심으로 세그멘테이션 역량을 구축하지 못하면, 타겟팅 정밀도에서 구조적 열위에 놓입니다. [Walled Garden](post.html?id=walled-garden)의 1st-party 데이터 우위가 더욱 공고해지는 환경에서, Open RTB 참여자는 CDP 기반 세그먼트 역량이 생존의 조건입니다.
 
 5. **세그먼트 건강성 모니터링(PSI, Overlap, P/O)은 구축만큼 중요하다.** 방치된 세그먼트는 시간이 지남에 따라 분포가 드리프트하고, pCTR 모델의 Calibration을 점진적으로 훼손합니다. 세그먼트 카탈로그, 자동화된 건강성 대시보드, 세그먼트별 P/O 모니터링을 운영하세요.
 

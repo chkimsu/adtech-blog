@@ -1,6 +1,6 @@
 광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike Modeling**의 핵심 질문이며, 리타겟팅 다음으로 가장 높은 ROI를 보이는 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발해 "아직 발견되지 않은 좋은 유저"로 넓히는 일입니다. 개념은 단순합니다. 하지만 구현은 까다롭습니다. 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 얽혀 있습니다.
 
-Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 해부합니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
+Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 다룹니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
 
 ---
 
@@ -24,7 +24,7 @@ Lookalike Modeling에는 크게 세 가지 접근법이 있습니다. 각각의 
 |--------|---------|-----------|---------------|-----------|------|
 | **Meta (Facebook)** | Social + Interest Graph + ML | 로그인 기반 cross-platform | 1~10% 슬라이더 | 높음 (소스/비율 선택) | Walled Garden 내부만 |
 | **Google** | Search/Browse history + ML | Google Account cross-service | 자동 (Performance Max) | 낮음 (자동화 위주) | Similar Audiences 폐지 |
-| **DSP (TTD, DV360)** | 3rd-party data + ML | Cookie/MAID (제한적) | 커스텀 비율 설정 | 중간 | Cookie 폐지 영향 직격 |
+| **DSP (TTD, DV360)** | 3rd-party data + ML | Cookie/MAID (제한적) | 커스텀 비율 설정 | 중간 | Safari/Firefox cookie 차단, ATT 영향 직격 |
 | **네이버/카카오** | 1st-party 통합 데이터 | 검색+쇼핑+콘텐츠 | 플랫폼 제공 옵션 | 중간 | 플랫폼 외부 활용 불가 |
 
 ```mermaid
@@ -38,7 +38,7 @@ graph TD
   LA --> ACT["타겟팅 활성화<br/>DMP / DSP"]
 ```
 
-> **실무에서는 단일 접근법보다 조합이 강력합니다.** Embedding 유사도로 빠르게 후보 풀을 생성하고, Propensity Model로 순위를 재조정하면 — 속도(Embedding)와 정밀도(Propensity)를 동시에 달성할 수 있습니다. Facebook의 내부 Lookalike도 Graph + Embedding + Classifier의 앙상블입니다.
+> **실무에서는 단일 접근법보다 조합이 강력합니다.** Embedding 유사도로 빠르게 후보 풀을 생성하고, Propensity Model로 순위를 재조정하면 — 속도(Embedding)와 정밀도(Propensity)를 동시에 달성할 수 있습니다. 대형 플랫폼이 공개한 시스템 논문들도 한 방법만 쓰지 않습니다.
 
 ### Lookalike vs 다른 타겟팅 전략 비교
 
@@ -52,7 +52,7 @@ Lookalike의 위치를 다른 타겟팅 전략과 비교하면 그 가치가 더
 | **Interest Targeting** | 특정 관심사 유저 | 넓음 | 낮~중간 | 중간~높음 | 관심사 ≠ 구매 의도 |
 | **Broad Targeting** | 전체 모집단 | 매우 넓음 | 낮음 | 높음 | 비효율적 지출 |
 
-Retargeting은 가장 높은 전환율을 보이지만 **규모 확장이 불가능**합니다 — 이미 사이트를 방문한 유저만 대상이기 때문입니다. Lookalike는 Retargeting의 높은 전환율을 유지하면서 **신규 유저로 확장**할 수 있는 유일한 전략입니다. 이것이 Lookalike가 "리타겟팅 다음으로 가장 높은 ROI"라 불리는 이유입니다.
+Retargeting은 가장 높은 전환율을 보이지만 **규모 확장이 불가능**합니다 — 이미 사이트를 방문한 유저만 대상이기 때문입니다. Lookalike는 Retargeting의 높은 전환율을 유지하면서 **신규 유저로 확장**할 수 있는 대표적인 전략입니다. 이것이 Lookalike가 "리타겟팅 다음으로 가장 높은 ROI"라 불리는 이유입니다.
 
 ```mermaid
 graph LR
@@ -70,7 +70,7 @@ graph LR
 
 ## 2. Seed Audience: Lookalike의 출발점
 
-Lookalike의 성능은 모델 아키텍처보다 **Seed의 품질**에 더 크게 좌우됩니다. "좋은 유저"를 정확하게 정의하지 못하면, 아무리 정교한 확장 알고리즘을 사용해도 "좋은 유저와 비슷한 유저"를 찾을 수 없습니다. 이 섹션에서는 Seed 선정 전략과 품질 평가 방법을 다룹니다.
+Lookalike의 성능은 모델 아키텍처보다 **Seed의 품질**에 더 크게 좌우됩니다. "좋은 유저"를 정확하게 정의하지 못하면, 아무리 정교한 확장 알고리즘을 사용해도 "좋은 유저와 비슷한 유저"를 찾을 수 없습니다. 이 절에서는 Seed 선정 전략과 품질 평가 방법을 다룹니다.
 
 ### 2-1. Seed 선정 전략
 
@@ -113,7 +113,7 @@ $$\text{Signal Strength} = \frac{\text{CVR}_{\text{seed}}}{\text{CVR}_{\text{pop
 |-----------|-----------|---------|----------|
 | Intra-similarity | > 0.3 | < 0.15 | 이질적 유저 혼합 (LTV 편차 큼) |
 | CVR Uplift | > 3x | < 1.5x | 시그널 약함 (정의 기준 느슨) |
-| Size | 5K ~ 100K | < 500 or > 1M | 너무 작거나 너무 큼 |
+| Size | 10K ~ 100K | < 500 or > 1M | 너무 작거나 너무 큼 |
 | Feature Variance | 낮음 (집중된 분포) | 높음 (분산 분포) | 정의 기준 불명확 / 프로모션 유저 포함 |
 
 **Bad Seed 진단 시 조치**:
@@ -205,7 +205,7 @@ graph LR
   EmbeddingSpace --> Process
 ```
 
-**Expansion 비율 제어**: 유사도 임계값(threshold)을 조정하여 Lookalike 크기를 제어합니다. Threshold를 높이면 → Seed와 매우 유사한 소수만 포함 (High Precision, Low Reach). Threshold를 낮추면 → 더 넓은 범위 포함 (Low Precision, High Reach). 이것이 Facebook의 "1~10% 슬라이더"의 기술적 실체입니다.
+**Expansion 비율 제어**: 유사도 임계값(threshold)을 조정하여 Lookalike 크기를 제어합니다. Threshold를 높이면 → Seed와 매우 유사한 소수만 포함 (High Precision, Low Reach). Threshold를 낮추면 → 더 넓은 범위 포함 (Low Precision, High Reach). 이것이 Facebook의 "1~10% 슬라이더"가 안에서 하는 일입니다.
 
 ### 3-3. Multi-Centroid (이질적 Seed 처리)
 
@@ -362,7 +362,7 @@ $$P(\text{seed} \mid x) = \sigma(f(x; \theta))$$
 
 여기서 $\sigma$는 sigmoid 함수, $f$는 분류 모델, $x$는 유저 피처 벡터입니다. 모든 유저에 대해 이 확률(Propensity Score)을 계산하고, 높은 순서대로 Lookalike 오디언스를 구성합니다.
 
-Embedding 기반과의 핵심 차이는 **입력 데이터의 풍부함**입니다. Embedding 기반은 미리 학습된 고정 차원의 벡터만 씁니다. Propensity 기반은 원시 피처를 전부 씁니다. demographics, 행동 집계, 디바이스 정보, 시간대 패턴 같은 것들입니다. 모델이 "무엇이 Seed와 Non-Seed를 가르는지"를 직접 학습합니다. 그래서 임베딩에 포착되지 않은 패턴도 쓸 수 있습니다.
+Embedding 기반과의 핵심 차이는 **입력 데이터의 풍부함**입니다. Embedding 기반은 미리 학습된 고정 차원의 벡터만 씁니다. Propensity 기반은 원시 피처를 전부 씁니다. demographics, 행동 집계, 디바이스 정보, 시간대 패턴 같은 것들입니다. 모델이 "무엇이 Seed와 Non-Seed를 나누는지"를 직접 학습합니다. 그래서 임베딩에 포착되지 않은 패턴도 쓸 수 있습니다.
 
 **Feature Set 구성** (예시):
 - **Demographics**: 연령대, 성별, 지역
@@ -398,7 +398,7 @@ np.random.seed(42)
 rng = np.random.default_rng(42)
 population_features = rng.normal(size=(200_000, 32))  # (n_pop, d)
 seed_features = rng.normal(size=(3_000, 32))          # (n_seed, d)
-seed_features[:, :8] += 0.8      # 32개 중 8개 피처가 Seed와 일반 유저를 가른다
+seed_features[:, :8] += 0.8      # 32개 중 8개 피처가 Seed와 일반 유저를 나눈다
 
 # Negative sampling: 1:10 비율 (seed 대비 10배)
 n_neg = len(seed_features) * 10
@@ -597,7 +597,7 @@ Expansion Ratio는 전체 모집단 중 Lookalike에 포함할 비율입니다. 
 > Expansion을 1%에서 10%로 늘리면 도달(Reach)은 **10배 증가**하지만, Incremental Lift는 **1/6로 감소**합니다. 이것이 Lookalike의 근본적 트레이드오프입니다. "더 넓게 확장하면 더 좋은 것 아닌가?"라는 직관은 틀렸습니다. 확장할수록 Seed와의 유사성이 급격히 떨어집니다. 결국 Broad Targeting과 구분이 없어집니다.
 
 :::deep 더 깊이 — 반경이 1.8%만 늘어도 품질이 무너지는 이유
-임베딩 공간에서 Centroid 주변의 유저 밀도는 대략 거리의 역제곱에 비례합니다. 1% 확장은 Centroid에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 128차원 공간에서 볼륨은 $r^{128}$에 비례합니다. 그래서 10배 많은 유저를 담으려면 반경은 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역 유저가 대량으로 들어옵니다. 그래서 평균 품질이 크게 하락합니다.
+1% 확장은 Centroid에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 128차원 공간에서 볼륨은 $r^{128}$에 비례합니다. 그래서 10배 많은 유저를 담으려면 반경은 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역 유저가 대량으로 들어옵니다. 그래서 평균 품질이 크게 하락합니다.
 :::
 
 ### 6-2. 광고주 목표별 최적 Expansion
@@ -647,9 +647,9 @@ Lookalike 기능은 대부분의 주요 광고 플랫폼에서 제공하지만, 
 | **Expansion 옵션** | 1~10% 슬라이더, 국가별 설정 | 자동 (Performance Max 내 자동 확장) | 커스텀 비율 설정, 유사도 임계값 조정 | 플랫폼 제공 사전 정의 옵션 |
 | **Value-Based** | 지원 (LTV 기반 가중 Lookalike) | 지원 (Smart Bidding 내 Value 최적화) | 일부 지원 (DSP에 따라 상이) | 제한적 |
 | **Cross-device** | 결정론적 (로그인 기반 ID 매칭) | 결정론적 (Google Account ID) | 확률론적 (Device Graph 추정) | 결정론적 (네이버/카카오 계정 ID) |
-| **한계** | Walled Garden 내부 활성화만 가능 | Similar Audiences 폐지, 자동화 위주 | Cookie 폐지로 데이터 품질 급감 | 각 플랫폼 생태계 내부로 제한 |
+| **한계** | Walled Garden 내부 활성화만 가능 | Similar Audiences 폐지, 자동화 위주 | Cookie 차단과 ATT로 데이터 품질 하락 | 각 플랫폼 생태계 내부로 제한 |
 
-Walled Garden 플랫폼은 풍부한 1st-party 로그인 데이터를 갖고 있습니다. Meta, Google, 네이버, 카카오입니다. 그래서 본질적으로 더 높은 품질의 Lookalike를 제공합니다. 자세한 배경은 [Walled Garden](post.html?id=walled-garden)에 있습니다. Open Web DSP는 3rd-party cookie 의존도가 높습니다. 데이터 품질에서 구조적으로 열위이고, cookie 폐지로 격차가 더 벌어지고 있습니다.
+Walled Garden 플랫폼은 풍부한 1st-party 로그인 데이터를 갖고 있습니다. Meta, Google, 네이버, 카카오입니다. 그래서 본질적으로 더 높은 품질의 Lookalike를 제공합니다. 자세한 배경은 [Walled Garden](post.html?id=walled-garden)에 있습니다. Open Web DSP는 3rd-party cookie 의존도가 높습니다. 데이터 품질에서 구조적으로 열위이고, Safari/Firefox의 cookie 차단과 iOS ATT로 격차가 더 벌어졌습니다.
 
 같은 확장 비율이어도 두 무대의 정확도가 다릅니다. 담장 안(닫힌 생태계)은 로그인 ID로 씨앗을 결정론적으로 붙입니다. 열린 RTB는 쿠키·MAID 같은 확률적 신호에 기댑니다. 그래서 같은 5% 확장에서도 열린 RTB의 정확도가 더 빨리 무너집니다.
 
@@ -879,14 +879,14 @@ Lookalike 모델이나 Seed 정의를 변경할 때는 반드시 A/B 테스트�
 
 ## 10. Privacy & 미래: Cookieless 시대의 Lookalike [무대: 열린 RTB]
 
-Lookalike Modeling의 미래를 논의할 때 빠뜨릴 수 없는 주제가 **프라이버시 규제와 3rd-party cookie 폐지**입니다. GDPR, CCPA, Apple의 ATT(App Tracking Transparency) 정책이 있습니다. 이들이 Lookalike의 기반 데이터를 근본적으로 바꾸고 있습니다.
+Lookalike Modeling의 미래를 논의할 때 빠뜨릴 수 없는 주제가 **프라이버시 규제와 3rd-party cookie 차단**입니다. GDPR, CCPA, Apple의 ATT(App Tracking Transparency) 정책이 있습니다. 이들이 Lookalike의 기반 데이터를 근본적으로 바꾸고 있습니다.
 
-### 10-1. Cookie 폐지가 Lookalike에 미치는 영향
+### 10-1. Cookie 차단이 Lookalike에 미치는 영향
 
 | 영향 | Walled Garden (Meta/Google/네이버) | Open Web DSP |
 |------|-----------------------------------|-------------|
 | **유저 식별** | 영향 적음 (로그인 기반) | 심각 (Cookie/MAID 의존) |
-| **Seed 매칭** | 높은 매칭률 유지 | 매칭률 급감 (50%↓ 예상) |
+| **Seed 매칭** | 높은 매칭률 유지 | 매칭률 하락 (Safari/Firefox 이용자 손실) |
 | **임베딩 품질** | 유지 (자사 데이터) | 하락 (행동 데이터 축소) |
 | **Expansion 정밀도** | 유지 | 하락 |
 
@@ -896,11 +896,11 @@ Open Web에서 활동하는 DSP(The Trade Desk, DV360 등)의 Lookalike는 가�
 
 **1st-party Data 강화**: 광고주가 직접 수집한 데이터(이메일, 전화번호 해시)를 기반으로 Seed를 구성합니다. Google의 Customer Match, Meta의 Custom Audience가 이 방향의 대표적 제품입니다.
 
-**Cohort 기반 Lookalike**: 개인이 아닌 유사 관심사 그룹(Cohort) 단위로 Lookalike를 수행합니다. Google의 Topics API가 제공하는 관심사 카테고리를 Seed의 관심사 분포와 매칭하여, 유사한 관심사 분포를 가진 Cohort을 Lookalike으로 선정합니다.
+**Cohort 기반 Lookalike**: 개인이 아닌 유사 관심사 그룹(Cohort) 단위로 Lookalike를 수행합니다. Seed의 관심사 분포와 닮은 분포를 가진 Cohort를 고르는 방식입니다. Google의 Topics API가 이 방향의 시도였는데, 2025년 10월 종료됐습니다.
 
 **Clean Room 활용**: 광고주와 플랫폼이 데이터를 직접 공유하지 않고, 암호화된 환경(Clean Room)에서 Seed 매칭과 Lookalike 확장을 수행합니다. AWS Clean Rooms, Snowflake Data Clean Room, Google Ads Data Hub가 대표적입니다.
 
-> Cookieless 시대에 Lookalike의 핵심 경쟁력은 **"얼마나 풍부한 1st-party 데이터를 가지고 있는가"**로 전환됩니다. 3rd-party cookie에 의존하던 Lookalike는 소멸합니다. 로그인 기반 플랫폼과 1st-party 데이터가 풍부한 광고주만 고품질 Lookalike를 유지합니다.
+> Cookieless 시대에 Lookalike의 핵심 경쟁력은 **"얼마나 풍부한 1st-party 데이터를 가지고 있는가"**로 전환됩니다. 3rd-party cookie에 의존하던 Lookalike는 갈수록 약해집니다. 로그인 기반 플랫폼과 1st-party 데이터가 풍부한 광고주만 고품질 Lookalike를 유지합니다.
 
 ---
 
@@ -910,7 +910,7 @@ Lookalike Modeling은 "알려진 좋은 유저"에서 "아직 모르는 좋은 �
 
 1. **Embedding 기반은 빠르고, Propensity 기반은 정밀하다** — 첫 버전은 Two-Tower 임베딩 + Centroid ANN으로 빠르게 론칭하고, 성능 개선이 필요하면 Propensity Model(XGBoost/DNN)로 전환합니다. 두 접근법을 결합하면 속도와 정밀도를 동시에 달성할 수 있습니다.
 
-2. **Seed 품질이 Lookalike 성능의 80%를 결정한다** — 모델 아키텍처 튜닝보다 Seed 정의를 먼저 최적화해야 합니다. Intra-similarity > 0.3, CVR Uplift > 3x, Size 5K~100K가 Good Seed의 기준입니다. "전환 유저 전체"가 아니라 "가치 있는 전환 유저"를 Seed로 정의하는 것이 첫 번째 최적화입니다.
+2. **Seed 품질이 Lookalike 성능의 대부분을 결정한다** — 모델 아키텍처 튜닝보다 Seed 정의를 먼저 최적화해야 합니다. Intra-similarity > 0.3, CVR Uplift > 3x, Size 10K~100K가 Good Seed의 기준입니다. "전환 유저 전체"가 아니라 "가치 있는 전환 유저"를 Seed로 정의하는 것이 첫 번째 최적화입니다.
 
 3. **Multi-Centroid는 이질적 Seed의 가장 실용적 해법이다** — 단순 Mean Centroid는 다봉 분포에서 실패합니다. K-Means로 Seed를 K=3~5 서브클러스터로 분할하고 각각 ANN 검색하는 Multi-Centroid 방식이 구현 대비 효과가 가장 높습니다.
 
@@ -918,15 +918,15 @@ Lookalike Modeling은 "알려진 좋은 유저"에서 "아직 모르는 좋은 �
 
 5. **Lookalike는 "만들고 끝"이 아니다** — Seed Refresh(일 1회), Overlap 모니터링(vs 리타겟팅 < 15%), Incremental Lift 측정(Ghost Ad / PSA Control)이 지속적으로 필요합니다. 갱신 없이 30일이 지나면 CVR이 30% 이상 하락할 수 있습니다.
 
-> Lookalike Modeling의 본질은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장이다. 확장의 품질은 세 가지가 함께 결정한다. 첫째 [세그멘테이션](post.html?id=audience-segmentation)의 정밀도. 둘째 [임베딩](post.html?id=two-tower-retrieval)의 표현력. 셋째 Expansion 비율의 절제다. 셋 중 하나라도 부족하면 Lookalike는 비싼 Broad Targeting이 된다. "비슷한 유저"가 아니라 "그냥 아무 유저"를 타겟팅하게 된다.
+> Lookalike Modeling의 본질은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장입니다. 확장의 품질은 세 가지가 함께 결정합니다. 첫째 [세그멘테이션](post.html?id=audience-segmentation)의 정밀도. 둘째 [임베딩](post.html?id=two-tower-retrieval)의 표현력. 셋째 Expansion 비율의 절제입니다. 셋 중 하나라도 부족하면 Lookalike는 비싼 Broad Targeting이 됩니다. "비슷한 유저"가 아니라 "그냥 아무 유저"를 타겟팅하게 됩니다.
 
 ---
 
 ## 참고문헌
 
-1. Ma, J. et al. (2016). "Sub-linear Audience Expansion via Lookalike Modeling." *ADKDD Workshop*, Facebook. — Facebook의 Lookalike 핵심 알고리즘, Multi-seed expansion의 실무 적용을 다룬 원조 논문.
+1. Ma, Q., Wen, M., Xia, Z., & Chen, D. (2016). "A Sub-linear, Massive-scale Look-alike Audience Extension System." *BigMine Workshop, KDD*, Yahoo. — 수억 명 규모에서 씨앗을 닮은 사람으로 넓히는 시스템을 다룬 초기 논문.
 
-2. Liu, H. et al. (2019). "Real-time Attention Based Look-alike Model for Recommender System." *KDD*, JD.com. — Attention 기반 실시간 Lookalike, Seed 내 유저별 가중치를 동적으로 계산하는 RALM 아키텍처 제안.
+2. Liu, Y. et al. (2019). "Real-time Attention Based Look-alike Model for Recommender System." *KDD*, Tencent(WeChat). — Attention 기반 실시간 Lookalike, Seed 내 유저별 가중치를 동적으로 계산하는 RALM 아키텍처 제안.
 
 3. Johnson, J. et al. (2019). "Billion-scale similarity search with GPUs." *IEEE Transactions on Big Data*. — FAISS 라이브러리의 핵심 논문. 수십억 벡터에서 밀리초 단위 ANN 검색을 가능하게 한 기술적 기반.
 

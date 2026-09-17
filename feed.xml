@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-09-18T00:00:00Z</updated>
+  <updated>2026-09-19T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>Hadoop, Hive, Spark: 한 워커 노드 위에서 셋이 어떻게 나뉘나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-spark-roles"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-spark-roles</id>
+    <updated>2026-09-19T00:00:00Z</updated>
+    <summary>지훈 씨가 일곱째 주에 &quot;그 쿼리는 Hive 말고 Spark 로 돌리세요&quot;라는 말을 듣습니다. 같은 클러스터, 같은 테이블인데 무엇이 다를까요. 노드를 엣지, 마스터, 서비스, 워커 넷으로 나누고 워커 한 대를 세로로 잘라 보면 층이 셋입니다. 1층 저장(HDFS)과 2층 자리 배분(YARN)은 Hive 와 Spark 가 같이 쓰고, 다른 것은 3층에서 도는 프로그램뿐입니다. Hive 는 늘 켜진 HiveServer2 가 Tez 조각을 띄우고, Spark 는 작업마다 driver 가 executor 를 띄웁니다. 둘이 만나는 자리는 Metastore 목록과 HDFS 파일입니다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>데이터 건네기: 팀에서 팀으로 옮기는 여덟 가지 방법</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-handoff-methods"/>
@@ -166,13 +175,5 @@
     <summary>지훈 씨가 올린 티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 씁니다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 읽는 쪽 넷의 마감입니다. 대시보드 마감 2초에서 브로커까지 쓴 1,112밀리초를 빼면 888밀리초가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐입니다. 학습은 30시간이라 후보가 넷 다 들어 가장 싼 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻습니다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없습니다. 원본 하루 21.9GB 를 왜 남기는지와, 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라갑니다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
-  </entry>
-  <entry>
-    <title>GAUC 와 오프라인 지표: AUC 가 올라도 매출이 그대로인 이유</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=offline-metrics-gauc</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>배포 전 점수가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 범위는 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 노출 서른 건을 한 통에 섞어 재면 0.7778 이지만, 짝을 같은 요청 안으로 제한하면 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나누면 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되니, 승인을 취소하고 중단해야 하는 배포입니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
   </entry>
 </feed>

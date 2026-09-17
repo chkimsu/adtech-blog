@@ -4,8 +4,12 @@
 <head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="pCTR/pCVR 실무 커리큘럼 — 광고 ML 엔지니어를 위한 읽기 트랙. 입문(예측이 돈이 되는 원리)부터 실무(피처·서빙·편향)와 심화까지.">
-  <title>ML 엔지니어 트랙 — Ad Tech Blog</title>
+  <meta name="description" content="Ad Tech Blog 주제별 모아보기 — 글 전체를 일곱 주제로 묶고, 주제 안에서는 읽는 순서가 있는 트랙과 나머지 글로 나눠 한 페이지에서 봅니다.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="주제별 모아보기 — Ad Tech Blog">
+  <meta property="og:description" content="입찰과 경매, 측정과 모델링, 밴딧, 타겟팅, ML 인프라, 소프트웨어 엔지니어링, 면접과 알고리즘. 일곱 주제로 묶은 전체 글 목차.">
+  <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/topics.html">
+  <title>주제별 모아보기 — Ad Tech Blog</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
   <link rel="alternate" type="application/atom+xml" title="Ad Tech Blog Feed" href="/adtech-blog/feed.xml">
@@ -18,10 +22,10 @@
       <div class="nav-content">
         <div class="nav-actions">
           <a href="posts-browse.html" class="btn-demo">Posts</a>
-          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="topics.html" class="btn-demo btn-demo-active">주제별</a>
           <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
           <a href="demos.html" class="btn-demo">데모</a>
-          <a href="ml-track.html" class="btn-demo btn-ml btn-demo-active">▸ ML 트랙</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
           <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
         </div>
       </div>
@@ -32,10 +36,20 @@
   <aside id="category-rail" class="category-rail" aria-label="카테고리"></aside>
   <main>
     <section class="hero">
-      <div class="container" id="ml-track-head"></div>
+      <div class="container">
+        <h1>주제별 모아보기</h1>
+        <p id="topics-hero-sub">글 전체를 주제로 묶어 한 페이지에서 봅니다.</p>
+      </div>
     </section>
-    <section class="section">
-      <div class="container" id="ml-track-root"></div>
+
+    <nav class="topics-jump" aria-label="주제로 건너가기">
+      <div class="container">
+        <div id="topics-jump" class="topics-jump-inner"></div>
+      </div>
+    </nav>
+
+    <section class="section topics-section">
+      <div class="container" id="topics-root"></div>
     </section>
   </main>
   </div><!-- End of rail-layout -->
@@ -45,6 +59,7 @@
       <div class="footer-links">
         <a href="index.html">홈</a>
         <a href="posts-browse.html">Posts</a>
+        <a href="topics.html">주제별</a>
         <a href="ml-track.html">ML 트랙</a>
         <a href="demos.html">데모</a>
         <a href="ecosystem.html">Ecosystem</a>
@@ -57,7 +72,7 @@
   <script src="js/posts.js"></script>
   <script src="js/reading-state.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/ml-track.js"></script>
+  <script src="js/topics.js"></script>
 </body>
 
 </html>

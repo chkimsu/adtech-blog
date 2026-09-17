@@ -5914,3 +5914,51 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .post-content .katex-display > .katex {
   max-width: 100%;
 }
+
+/* ========================================
+   주제별 모아보기 (topics.html) — 2026-09-18
+   글 전체를 주제 7개로, 주제 안은 트랙(읽는 순서)과 그 밖의 글로.
+   토큰만 쓴다. 모서리 0, 그림자 없음.
+   ======================================== */
+.topics-jump { border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); }
+.topics-jump-inner { display: flex; flex-wrap: wrap; gap: 0.3rem 1.6rem; padding: 0.75rem 0; }
+.topics-jump-item { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--text-primary); text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; }
+.topics-jump-item b { font-weight: 500; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.78rem; }
+.topics-jump-item:hover { border-bottom-color: var(--accent-primary); }
+.topics-section { padding-top: 0; }
+.topic-section { padding: 2.4rem 0 0.8rem; border-bottom: 1px solid var(--border-color); scroll-margin-top: 90px; }
+.topic-section:last-child { border-bottom: none; }
+.topic-details > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; }
+.topic-details > summary::-webkit-details-marker { display: none; }
+.topic-head h2 { margin: 0; font-size: 1.65rem; letter-spacing: -0.01em; }
+.topic-head h2 small { font-size: 0.82rem; font-weight: 500; color: var(--text-muted); margin-left: 0.6rem; letter-spacing: 0; }
+.topic-head .rail-dot { width: 10px; height: 10px; align-self: center; }
+.topic-count { color: var(--text-muted); font-size: 0.88rem; }
+.topic-toggle { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0.15rem 0.6rem; }
+.topic-details[open] > summary .topic-toggle::after { content: '접기'; }
+.topic-details:not([open]) > summary .topic-toggle::after { content: '펼치기'; }
+.topic-desc { color: var(--text-secondary); margin: 0.7rem 0 1.5rem; max-width: 72ch; line-height: 1.6; }
+.topic-track { margin: 0 0 1.5rem; border: 1px solid var(--border-color); }
+.topic-track-head { display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; padding: 0.8rem 1rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+.topic-kicker { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-secondary); font-weight: 600; }
+.topic-track-head a { font-weight: 700; color: var(--text-primary); text-decoration: none; }
+.topic-track-head a:hover { color: var(--accent-primary); }
+.topic-track-count { margin-left: auto; font-size: 0.8rem; color: var(--text-muted); }
+.topic-track-desc { margin: 0; padding: 0.75rem 1rem 0.2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+.topic-list { list-style: none; margin: 0; padding: 0.4rem 0; }
+.topic-row { display: grid; grid-template-columns: 3rem 1fr auto; align-items: baseline; gap: 0.9rem; padding: 0.6rem 1rem; border-top: 1px solid var(--rule2); }
+.topic-row:first-child { border-top: none; }
+.topic-num { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); text-align: right; white-space: nowrap; }
+.topic-title { color: var(--text-primary); text-decoration: none; font-size: 1rem; line-height: 1.45; }
+.topic-title:hover { color: var(--accent-primary); }
+.topic-row.is-read .topic-title { color: var(--text-secondary); }
+.topic-meta { display: inline-flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; font-size: 0.78rem; color: var(--text-muted); }
+.topic-date { font-family: var(--font-mono); }
+.topic-read { color: var(--accent-secondary); border: 1px solid var(--navy-bd); padding: 0.05rem 0.45rem; }
+.topic-cross { color: var(--text-muted); }
+.rail-all { font-weight: 600; margin-top: 0.4rem; border-bottom: none; color: var(--accent-secondary); }
+@media (max-width: 720px) {
+  .topic-row { grid-template-columns: 2.4rem 1fr; }
+  .topic-meta { grid-column: 2; justify-content: flex-start; }
+  .topic-head h2 { font-size: 1.3rem; }
+}

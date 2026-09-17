@@ -44,6 +44,7 @@ urls.push(urlEntry(`${BASE_URL}/ml-track.html`, today, '0.8', 'weekly'));
 urls.push(urlEntry(`${BASE_URL}/demos.html`, today, '0.7'));
 urls.push(urlEntry(`${BASE_URL}/ecosystem.html`, today, '0.9', 'weekly'));
 urls.push(urlEntry(`${BASE_URL}/posts-browse.html`, today, '0.7'));
+urls.push(urlEntry(`${BASE_URL}/topics.html`, today, '0.8', 'weekly'));
 
 // 블로그 포스트
 posts.forEach(post => {

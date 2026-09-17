@@ -346,6 +346,11 @@ function renderWorldBadge(post, context) {
   }).join('');
 }
 
+// 주제 이름 → 앵커용 slug. topics.html 의 절 id(#topic-…)와 topics.js 가 같은 규칙을 쓴다.
+function topicSlug(c) {
+  return String(c).toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 // 좌측 카테고리 레일 — #category-rail 컨테이너가 있는 목록성 페이지에서 렌더 (없으면 no-op).
 // 레일 링크는 '새로 탐색'이 의도라 posts-browse의 기존 필터 상태를 초기화한다(전체 리로드).
 // 카테고리명은 taxonomy.json 통제 값 — 콤마 없음을 전제(browse.js가 category를 콤마 다중값으로 파싱).
@@ -355,9 +360,12 @@ function renderCategoryRail() {
   const counts = {};
   posts.forEach(p => (p.categories || []).forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
   const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  // topics.html 에서는 레일이 그 페이지 안의 절로 뛰고, 다른 곳에서는 탐색 페이지 필터로 간다.
+  const onTopics = !!document.getElementById('topics-root');
   const catItems = cats.map(c => {
     const cAttr = c.replace(/"/g, '&quot;');
-    return `<a class="rail-cat" href="posts-browse.html?category=${encodeURIComponent(c)}">
+    const href = onTopics ? `#topic-${topicSlug(c)}` : `posts-browse.html?category=${encodeURIComponent(c)}`;
+    return `<a class="rail-cat" href="${href}">
       <span class="rail-dot" data-category="${cAttr}"></span>${c}<span class="rail-count">${counts[c]}</span></a>`;
   }).join('');
   const legend = (typeof WORLD_META !== 'undefined') ? Object.keys(WORLD_META).map(id => {
@@ -368,7 +376,7 @@ function renderCategoryRail() {
   const hasOwnCategoryFilter = !!document.getElementById('browse-categories');
   el.innerHTML = `<div class="category-rail-inner">
     ${hasOwnCategoryFilter ? '' : `<div class="rail-title">주제로 찾기</div>
-    ${catItems}`}
+    ${catItems}${onTopics ? '' : `<a class="rail-cat rail-all" href="topics.html">전체를 주제별로 보기<span class="rail-count">${posts.length}</span></a>`}`}
     <a class="rail-ml" href="ml-track.html"><b>▸ ML 엔지니어 트랙</b><span>pCTR/pCVR 실무 커리큘럼 — 입문→실무→심화</span></a>
     <div class="rail-stage"><div class="rail-title">무대 — 이 글이 노는 곳</div>${legend}</div>
   </div>`;

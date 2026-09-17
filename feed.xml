@@ -8,11 +8,11 @@
   <updated>2026-09-20T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
-    <title>데이터 엔지니어 첫 6개월: 커밋 428개로 읽은 신입이 하는 일</title>
+    <title>데이터 엔지니어 첫 6개월: 커밋 기록으로 읽은 신입이 하는 일</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months</id>
     <updated>2026-09-20T00:00:00Z</updated>
-    <summary>지훈 씨가 여덟째 주에 옆 데이터 플랫폼 팀 저장소를 열어 봅니다. 파일이 천 개 가까이라 어디부터 읽을지 몰라서, 가장 최근에 온 사람 한 명의 커밋 428개를 달별로 늘어놓았습니다. 첫 달은 수급 DAG 14줄, 둘째 달은 SQL 모델, 넷째 달은 실시간 잡 하나, 여섯째 달은 배포 자동화입니다. 폴더가 곧 일감의 종류이고 순서가 곧 배우는 순서입니다. 그 사이 「리뷰 반영」 커밋이 21개이고, 저장소에 pandas 와 PyTorch 는 0건입니다.</summary>
+    <summary>지훈 씨가 여덟째 주에 옆 데이터 플랫폼 팀 저장소를 열어 봅니다. 파일이 수백 개라 어디부터 읽을지 몰라서, 가장 최근에 온 사람 한 명의 커밋을 달별로 늘어놓았습니다. 첫 달은 수급 DAG 한 장, 둘째 달은 SQL 모델, 셋째 달은 실시간 잡 하나, 여섯 달이 지나서는 배포 자동화입니다. 폴더가 곧 일감의 종류이고 순서가 곧 배우는 순서입니다. 그 사이사이에 「리뷰 반영」 커밋이 끼어 있고, 저장소에 pandas 와 PyTorch 는 없습니다.</summary>
     <category term="Software Engineering"/>
     <category term="ML Infrastructure"/>
   </entry>

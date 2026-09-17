@@ -2447,5 +2447,61 @@ window.DEMO_EDU = {
                     '<strong>답은 그대로인데 큐만 부푸는</strong> 것이라 코딩 테스트에서 원인을 찾기 어렵습니다.'
             }
         ]
+    },
+
+    // ==========================================
+    // 메서드별 요청과 응답 보기 (입문)
+    // ==========================================
+    'http-methods': {
+        analogy: '같은 주소에 메서드만 바꿔 보내면, 응답과 서버 데이터가 어디서 달라지는지가 보인다',
+        anchor: '.hm-form',
+        embedKeep: ['.hm-page'],
+        embedHide: ['#hm-lab > h2', '#hm-lab > .hm-lead', '.hm-log', '#hm-compare', '#hm-real'],
+        explain: {
+            // 메서드 버튼 — 고른 순간 무엇이 달라지는지. 보낸 뒤의 결과는 페이지 자체의 판정 칸이 말한다.
+            '.hm-m': ({ el }) => {
+                switch (el.dataset.method) {
+                    case 'GET':
+                        return 'GET 을 골랐습니다. 읽기만 하는 요청이라 <strong>본문 칸이 잠겼습니다</strong>. 주소만으로 뜻이 다 전해집니다.';
+                    case 'POST':
+                        return 'POST 를 골랐습니다. 목록 주소 <strong>/v1/posts</strong> 로 보내면 새 글이 만들어집니다. 본문에 title 이 꼭 있어야 합니다.';
+                    case 'PUT':
+                        return 'PUT 을 골랐습니다. 글 하나를 <strong>통째로 교체</strong>합니다. 본문에 없는 칸은 기본값으로 돌아가니 likes 칸을 지켜보세요.';
+                    case 'PATCH':
+                        return 'PATCH 를 골랐습니다. 본문에 적은 <strong>칸만</strong> 바뀌고 나머지는 그대로입니다.';
+                    case 'DELETE':
+                        return 'DELETE 를 골랐습니다. 본문 없이 주소의 글을 지웁니다. 잘 되면 <strong>본문 없는 204</strong> 가 옵니다.';
+                    default:
+                        return '';
+                }
+            },
+            '#hm-target': ({ value }) =>
+                value === 'one'
+                    ? '주소가 <strong>글 하나</strong>를 가리킵니다. 뒤의 번호가 어느 글인지 정합니다. 없는 번호를 넣으면 404 가 옵니다.'
+                    : '주소가 <strong>글 전체(목록)</strong>를 가리킵니다. GET 은 목록을 주고, POST 는 여기에 새 글을 만듭니다.',
+            '#hm-reset': () =>
+                '서버 데이터를 처음 세 글로 되돌렸습니다. 아래 기록 표는 그대로라 지금까지 무엇을 보냈는지는 남아 있습니다.'
+        },
+        tour: [
+            {
+                el: '.hm-chips',
+                title: '따라 해 보기',
+                body: '1번부터 8번까지 순서대로 누르면 다섯 메서드를 한 바퀴 돕니다. ' +
+                    '먼저 <strong>3 새 글 만들기</strong>를 눌러 보세요.',
+                waitFor: 'click'
+            },
+            {
+                el: '#hm-res',
+                title: '응답 원문',
+                body: '상태 줄이 <strong>201 Created</strong> 이고, 헤더의 <strong>Location</strong> 이 새 글의 주소를 알려 줍니다. ' +
+                    '본문에는 서버가 만든 글이 그대로 옵니다.'
+            },
+            {
+                el: '.hm-server',
+                title: '서버 데이터',
+                body: '표에 14번 글이 <strong>새로 생김</strong> 표시와 함께 늘었습니다. ' +
+                    '이제 <strong>4 제목만 고치기</strong>와 <strong>5 통째로 바꾸기</strong>를 번갈아 눌러 likes 칸이 어떻게 다른지 보세요.'
+            }
+        ]
     }
 };

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메서드별 요청과 응답 보기 — Ad Tech Blog</title>
+  <meta name="description" content="같은 주소 /v1/posts 에 GET, POST, PUT, PATCH, DELETE 를 바꿔 보내면 응답과 서버 데이터가 어떻게 달라지는지 눌러 보는 데모.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hm-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .hm-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .hm-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .hm-page { max-width: 1120px; margin: 0 auto; padding: 0 1rem; }
+    .hm-sec { margin: 0 0 3rem; }
+    .hm-sec > h2 {
+      font-size: 1.35rem; margin: 2.2rem 0 0.6rem; padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--text-primary);
+    }
+    .hm-sec > .hm-lead { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.1rem; line-height: 1.75; }
+    .hm-sec h3 { font-size: 1.02rem; margin: 1.6rem 0 0.6rem; }
+
+    /* 따라 해 보기 칩 */
+    .hm-try { border: 1px dashed var(--border-color); background: var(--bg-secondary); padding: 0.85rem 1rem; margin: 0 0 1.25rem; }
+    .hm-try-t { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.55rem; }
+    .hm-try-t span { font-weight: 400; color: var(--text-muted); margin-left: 0.5rem; }
+    .hm-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .hm-chip {
+      display: inline-flex; align-items: baseline; gap: 0.45rem;
+      border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);
+      padding: 0.38rem 0.7rem; font-size: 0.82rem; font-family: inherit; cursor: pointer; border-radius: 0;
+    }
+    .hm-chip:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .hm-chip b { font-family: var(--font-mono); font-weight: 600; font-size: 0.78rem; color: var(--text-muted); }
+    .hm-chip.is-on { border-color: var(--text-primary); background: var(--text-primary); color: var(--bg-primary); }
+    .hm-chip.is-on b { color: var(--bg-primary); }
+
+    /* 좌 요청 우 응답 */
+    .hm-grid { display: grid; grid-template-columns: 1fr; gap: 1.1rem; align-items: start; }
+    @media (min-width: 900px) { .hm-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+    .hm-col { min-width: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .hm-form { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 0.9rem 1rem 1rem; }
+    .hm-row { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.9rem; }
+    .hm-row:last-child { margin-bottom: 0; }
+    .hm-lab { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+    .hm-lab span { font-weight: 400; color: var(--text-muted); font-size: 0.76rem; }
+
+    .hm-methods { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .hm-m {
+      font-family: var(--font-mono); font-size: 0.84rem; font-weight: 600; letter-spacing: 0.01em;
+      border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);
+      padding: 0.42rem 0.75rem; cursor: pointer; border-radius: 0;
+    }
+    .hm-m:hover { border-color: var(--accent-primary); }
+    .hm-m.is-on { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
+    .hm-m:focus-visible, .hm-chip:focus-visible, .hm-send:focus-visible, .hm-reset:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+    .hm-path { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; font-family: var(--font-mono); font-size: 0.86rem; }
+    .hm-path select, .hm-path input {
+      font-family: var(--font-mono); font-size: 0.86rem; padding: 0.38rem 0.5rem; border-radius: 0;
+      border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);
+    }
+    .hm-path input { width: 4.6em; }
+    .hm-path input:disabled { opacity: 0.45; }
+    .hm-path-note { font-size: 0.76rem; color: var(--text-muted); font-family: var(--font-sans); }
+
+    .hm-form textarea {
+      width: 100%; min-height: 4.6em; resize: vertical; font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.55;
+      padding: 0.55rem 0.65rem; border-radius: 0; border: 1px solid var(--border-color);
+      background: var(--bg-primary); color: var(--text-primary);
+    }
+    .hm-form textarea:disabled { opacity: 0.5; }
+    .hm-body-note { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
+    .hm-body-note.is-warn { color: var(--oxide); }
+
+    .hm-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.4rem; }
+    .hm-send {
+      font-family: inherit; font-size: 0.9rem; font-weight: 700; padding: 0.55rem 1.2rem; cursor: pointer; border-radius: 0;
+      border: 1px solid var(--accent-primary); background: var(--accent-primary); color: var(--bg-primary);
+    }
+    .hm-send:hover { background: transparent; color: var(--accent-primary); }
+    .hm-reset {
+      font-family: inherit; font-size: 0.82rem; padding: 0.5rem 0.85rem; cursor: pointer; border-radius: 0;
+      border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-secondary);
+    }
+    .hm-reset:hover { border-color: var(--text-primary); color: var(--text-primary); }
+
+    /* 원문 상자 — 왼쪽 라벨 + 오른쪽 pre */
+    .hm-raw { border: 1px solid var(--border-color); background: var(--bg-secondary); min-width: 0; }
+    .hm-raw-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary); font-size: 0.8rem; font-weight: 700; color: var(--text-primary);
+    }
+    .hm-raw-head span { font-weight: 400; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .hm-part { display: grid; grid-template-columns: 96px minmax(0, 1fr); border-bottom: 1px solid var(--rule2); }
+    .hm-part:last-child { border-bottom: none; }
+    .hm-part-l {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted);
+      padding: 0.6rem 0.6rem 0.6rem 0.75rem; border-right: 1px solid var(--rule2); line-height: 1.5;
+    }
+    .hm-part pre {
+      margin: 0; border: none; background: none; padding: 0.55rem 0.8rem; font-size: 0.82rem; line-height: 1.65;
+      overflow-x: auto; white-space: pre; min-width: 0;
+    }
+    .hm-part pre .dim { color: var(--text-muted); }
+    .hm-part pre .st-ok { color: var(--navy); font-weight: 700; }
+    .hm-part pre .st-bad { color: var(--oxide); font-weight: 700; }
+    .hm-part pre .hl { background: var(--navy-bg); }
+    @media (max-width: 520px) {
+      .hm-part { grid-template-columns: 1fr; }
+      .hm-part-l { border-right: none; border-bottom: 1px dashed var(--rule2); padding-bottom: 0.3rem; }
+    }
+
+    .hm-status {
+      display: inline-block; font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; padding: 0.1rem 0.5rem; border: 1px solid;
+    }
+    .hm-status.ok { color: var(--navy); background: var(--navy-bg); border-color: var(--navy-bd); }
+    .hm-status.bad { color: var(--oxide); background: var(--oxide-bg); border-color: var(--oxide-bd); }
+    .hm-status.none { color: var(--text-muted); background: transparent; border-color: var(--border-color); }
+    .hm-verdict { font-size: 0.86rem; line-height: 1.65; color: var(--text-secondary); padding: 0.75rem 0.9rem; border: 1px solid var(--border-color); background: var(--bg-primary); }
+    .hm-verdict b { color: var(--text-primary); }
+
+    /* 서버 데이터 */
+    .hm-server { margin-top: 1.4rem; }
+    .hm-server-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin: 0 0 0.5rem; }
+    .hm-server-head h3 { margin: 0; }
+    .hm-server-head p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+    .hm-tw { overflow-x: auto; border: 1px solid var(--border-color); }
+    .hm-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .hm-table th { text-align: left; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); padding: 0.5rem 0.75rem; border-bottom: 2px solid var(--text-primary); background: var(--bg-secondary); white-space: nowrap; }
+    .hm-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+    .hm-table tbody tr:last-child td { border-bottom: none; }
+    .hm-table td.mono { font-family: var(--font-mono); font-size: 0.82rem; white-space: nowrap; }
+    .hm-table td.num { font-family: var(--font-mono); font-size: 0.82rem; text-align: right; font-variant-numeric: tabular-nums; }
+    .hm-table th.num { text-align: right; }
+    .hm-table tr.added td { background: var(--navy-bg); }
+    .hm-table tr.changed td { background: var(--navy-bg); }
+    .hm-table tr.changed td.diff { font-weight: 700; color: var(--navy); }
+    .hm-table tr.removed td { background: var(--oxide-bg); color: var(--text-muted); text-decoration: line-through; }
+    .hm-table tr.removed td.tag { text-decoration: none; }
+    .hm-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.08rem 0.45rem; border: 1px solid; white-space: nowrap; }
+    .hm-tag.a { color: var(--navy); border-color: var(--navy-bd); background: var(--bg-primary); }
+    .hm-tag.b { color: var(--oxide); border-color: var(--oxide-bd); background: var(--bg-primary); }
+    .hm-empty td { color: var(--text-muted); text-align: center; padding: 1rem; }
+
+    /* 보낸 요청 기록 */
+    .hm-log { margin-top: 1.6rem; }
+    .hm-log .hm-table td.mono b { font-weight: 600; }
+    .hm-log-note { font-size: 0.8rem; color: var(--text-muted); margin: 0.45rem 0 0; }
+
+    /* 비교 표 */
+    .hm-cmp th, .hm-cmp td { padding: 0.55rem 0.75rem; }
+    .hm-cmp td:first-child { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
+    .hm-cmp .code { font-family: var(--font-mono); font-size: 0.8rem; }
+
+    /* 현업 */
+    .hm-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
+    .hm-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+    .hm-real pre { font-size: 0.8rem; line-height: 1.65; }
+    .hm-note { font-size: 0.86rem; color: var(--text-secondary); border-left: 3px solid var(--text-primary); padding: 0.6rem 0.9rem; background: var(--bg-secondary); margin: 1rem 0 0; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hm-hero">
+      <h1>메서드별 요청과 응답 보기</h1>
+      <p>같은 주소 <code>/v1/posts</code> 에 GET, POST, PUT, PATCH, DELETE 를 바꿔 보내 봅니다.
+        보낸 요청 원문, 돌아온 응답 원문, 서버 쪽 데이터가 어떻게 달라지는지 그 자리에서 보입니다.</p>
+    </section>
+
+    <div class="hm-page">
+      <section class="hm-sec" id="hm-lab">
+        <h2>1. 눌러 보기</h2>
+        <p class="hm-lead">
+          왼쪽에서 메서드와 주소를 고르고 보내기를 누르면 오른쪽에 응답이 옵니다.
+          아래 서버 데이터 표에서 새로 생긴 줄, 바뀐 줄, 지워진 줄이 표시됩니다.
+          이 서버는 이 페이지 안에서만 도는 가짜 서버라 마음껏 눌러도 됩니다.
+        </p>
+
+        <div class="hm-try">
+          <div class="hm-try-t">따라 해 보기 <span>순서대로 누르면 다섯 메서드를 한 바퀴 돕니다</span></div>
+          <div class="hm-chips" id="hm-chips"></div>
+        </div>
+
+        <div class="hm-grid">
+          <div class="hm-col">
+            <div class="hm-form">
+              <div class="hm-row">
+                <div class="hm-lab">메서드 <span>무엇을 시키나</span></div>
+                <div class="hm-methods" id="hm-methods" role="group" aria-label="메서드"></div>
+              </div>
+              <div class="hm-row">
+                <div class="hm-lab">주소 <span>무엇에 대해</span></div>
+                <div class="hm-path">
+                  <select id="hm-target" aria-label="주소">
+                    <option value="list">/v1/posts</option>
+                    <option value="one">/v1/posts/{id}</option>
+                  </select>
+                  <span id="hm-id-wrap">id = <input id="hm-id" type="number" min="1" step="1" value="12" aria-label="글 번호"></span>
+                  <span class="hm-path-note" id="hm-path-note"></span>
+                </div>
+              </div>
+              <div class="hm-row">
+                <div class="hm-lab">본문 <span>딸려 보내는 데이터, JSON</span></div>
+                <textarea id="hm-body" spellcheck="false" aria-label="요청 본문"></textarea>
+                <div class="hm-body-note" id="hm-body-note"></div>
+              </div>
+              <div class="hm-actions">
+                <button type="button" class="hm-send" id="hm-send">보내기</button>
+                <button type="button" class="hm-reset" id="hm-reset">서버 데이터 처음으로</button>
+              </div>
+            </div>
+
+            <div class="hm-raw" id="hm-req">
+              <div class="hm-raw-head">보내는 요청 원문 <span id="hm-req-bytes"></span></div>
+              <div id="hm-req-parts"></div>
+            </div>
+          </div>
+
+          <div class="hm-col">
+            <div class="hm-raw" id="hm-res">
+              <div class="hm-raw-head">돌아온 응답 원문 <span id="hm-res-bytes"></span></div>
+              <div id="hm-res-parts"></div>
+            </div>
+            <div class="hm-verdict" id="hm-verdict"></div>
+          </div>
+        </div>
+
+        <div class="hm-server">
+          <div class="hm-server-head">
+            <h3>서버 데이터 <span class="hm-status none" id="hm-server-count"></span></h3>
+            <p>요청 하나가 끝날 때마다 이 표가 어떻게 달라지는지 봅니다.</p>
+          </div>
+          <div class="hm-tw">
+            <table class="hm-table" id="hm-server-table">
+              <thead>
+                <tr><th>id</th><th>title</th><th>author</th><th class="num">likes</th><th>이번 요청으로</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="hm-log">
+          <h3>지금까지 보낸 요청</h3>
+          <div class="hm-tw">
+            <table class="hm-table" id="hm-log-table">
+              <thead>
+                <tr><th>요청 번호</th><th>요청</th><th>상태</th><th class="num">응답 본문</th><th>서버 데이터</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="hm-log-note">브라우저 개발자 도구의 Network 탭이 보여 주는 것이 이 표와 같은 모양입니다. 한 줄이 요청 하나입니다.</p>
+        </div>
+      </section>
+
+      <section class="hm-sec" id="hm-compare">
+        <h2>2. 다섯 메서드 한눈에</h2>
+        <p class="hm-lead">위에서 눌러 본 것을 표 하나로 모았습니다. 잘 되면 오는 상태 코드는 이 데모의 서버가 돌려주는 값이고, 실제 서버도 대개 같습니다.</p>
+        <div class="hm-tw">
+          <table class="hm-table hm-cmp">
+            <thead>
+              <tr><th>메서드</th><th>시키는 일</th><th>본문을 보내나</th><th>잘 되면 오는 상태</th><th>서버 데이터가 바뀌나</th><th>같은 요청을 두 번 보내면</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>GET</td><td>주세요</td><td>안 보냅니다</td><td><span class="code">200 OK</span></td><td>안 바뀝니다</td><td>같은 답이 두 번 옵니다</td></tr>
+              <tr><td>POST</td><td>이걸 처리해 주세요<br>여기서는 새 글 만들기</td><td>보냅니다</td><td><span class="code">201 Created</span><br>새 주소가 <span class="code">Location</span> 헤더에 옵니다</td><td>줄이 하나 늘어납니다</td><td>글이 두 개 생깁니다</td></tr>
+              <tr><td>PUT</td><td>이 자리를 통째로 바꿔 주세요</td><td>보냅니다<br>전체를</td><td><span class="code">200 OK</span></td><td>그 줄이 통째로 바뀝니다<br>안 보낸 칸은 기본값이 됩니다</td><td>결과가 같습니다</td></tr>
+              <tr><td>PATCH</td><td>이 부분만 바꿔 주세요</td><td>보냅니다<br>바꿀 칸만</td><td><span class="code">200 OK</span></td><td>보낸 칸만 바뀝니다</td><td>결과가 같습니다</td></tr>
+              <tr><td>DELETE</td><td>지워 주세요</td><td>안 보냅니다</td><td><span class="code">204 No Content</span><br>본문이 없습니다</td><td>그 줄이 사라집니다</td><td>두 번째는 <span class="code">404</span> 가 옵니다</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hm-note">
+          PUT 과 PATCH 의 차이는 위 데모에서 12번 글의 <code>likes</code> 칸을 보면 드러납니다.
+          PATCH 로 제목만 고치면 likes 가 그대로인데, PUT 으로 제목과 저자만 보내면 likes 가 0 으로 돌아갑니다.
+          PUT 은 「이 내용으로 통째로 교체」라서 안 보낸 칸이 사라지기 때문입니다.
+        </p>
+      </section>
+
+      <section class="hm-sec hm-real" id="hm-real">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p class="hm-lead">진짜 서버에 보내고 응답을 눈으로 보는 방법은 셋입니다. 셋 다 위 데모와 같은 것을 보여 줍니다.</p>
+        <ul>
+          <li><b>브라우저 개발자 도구</b> — 아무 웹사이트에서 F12 를 누르고 Network 탭을 엽니다. 페이지가 보내는 요청이 한 줄씩 쌓이고, 한 줄을 누르면 Headers, Payload, Response 가 나옵니다. 위 「지금까지 보낸 요청」 표와 같은 모양입니다.</li>
+          <li><b>터미널의 curl</b> — <code>-i</code> 를 붙이면 상태 줄과 헤더까지 같이 찍힙니다. 아래는 연습용 공개 서버에 보내는 예입니다. 이 서버는 어떤 메서드를 보내도 받아 주지만 데이터를 실제로 바꾸지는 않습니다.</li>
+          <li><b>Postman, Insomnia 같은 도구</b> — 화면에서 메서드를 고르고 주소와 본문을 채워 보내기를 누릅니다. 위 데모의 왼쪽 칸이 그 도구의 화면과 같은 구성입니다.</li>
+        </ul>
+<pre><code># 하나 받기
+curl -i https://jsonplaceholder.typicode.com/posts/1
+
+# 새로 만들기 — 본문을 실어 보내므로 Content-Type 헤더를 같이 줍니다
+curl -i -X POST https://jsonplaceholder.typicode.com/posts \
+  -H "Content-Type: application/json" \
+  -d '{"title":"첫 글","body":"내용","userId":1}'
+
+# 일부만 고치기
+curl -i -X PATCH https://jsonplaceholder.typicode.com/posts/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"제목만 바꿨습니다"}'
+
+# 지우기 — 본문 없이 200 이 옵니다 (204 를 주는 서버도 많습니다)
+curl -i -X DELETE https://jsonplaceholder.typicode.com/posts/1</code></pre>
+        <p class="hm-note">
+          메서드가 무엇인지, 왜 POST 로 보냈는데 데이터가 돌아오는지는
+          <a href="post.html?id=api-basics">API 기초 글</a> 3절과 4절에 있습니다.
+          상태 코드를 어디까지 외워야 하는지도 그 글에 있습니다.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="post.html?id=api-basics">API 기초 글</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/http-methods-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

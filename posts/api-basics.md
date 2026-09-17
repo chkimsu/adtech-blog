@@ -101,6 +101,13 @@
 | `PATCH` | 이 자리에서 이 부분만 바꿔 주세요 | 12번 글의 제목만 교체 |
 | `DELETE` | 지워 주세요 | 12번 글을 지워 주세요 |
 
+표만 보면 감이 잘 안 옵니다. 아래에서 같은 주소에 메서드만 바꿔 직접 보내 보세요. 보낸 요청 원문, 돌아온 응답 원문, 서버 쪽 데이터가 어떻게 달라지는지 그 자리에서 보입니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-http-methods.html?embed=1" height="1220" loading="lazy" title="메서드별 요청과 응답 미니 데모"></iframe>
+<a class="demo-embed-open" href="demo-http-methods.html" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
+</div>
+
 **"수정"에 가장 가까운 것은 `PUT` 과 `PATCH` 입니다.** `POST` 는 수정이 아니라 **제출**에 가깝습니다. 무언가를 서버에 넘기면서 "알아서 처리해 주세요"라고 말하는 것입니다.
 
 그래서 `POST` 의 결과는 상황마다 다릅니다. 글을 새로 만들기도 하고, 로그인을 시켜 주기도 하고, 결제를 걸기도 합니다. **공통점은 "서버 쪽에서 무슨 일이 일어난다"는 것뿐입니다.**

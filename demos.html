@@ -447,7 +447,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 33개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 34개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -475,6 +475,7 @@
               <a href="demo-signal-loss.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 신호 소실 계단</a>
               <a href="demo-api-contract.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ API 계약 실험실</a>
               <a href="demo-api-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ API 한 건 만들기</a>
+              <a href="demo-http-methods.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 메서드별 요청과 응답</a>
               <a href="demo-pipeline-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 학습 데이터까지</a>
             </div>
           </div>
@@ -1020,6 +1021,20 @@
               <span class="demo-card-meta-item">선수지식 거의 없음</span>
             </div>
             <a href="demo-api-course.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Infra">Infra</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>메서드별 요청과 응답 보기</h3>
+            <p>같은 주소 /v1/posts 에 GET, POST, PUT, PATCH, DELETE 를 바꿔 보내면 응답 원문과 서버 데이터가 어떻게 달라지는지 눌러 봅니다. PUT 과 PATCH 의 차이가 likes 칸 하나로 드러나고, 지운 것을 다시 지우면 404 가 옵니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 8분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-http-methods.html" class="btn-try">체험하기</a>
           </div>
 
           <div class="demo-card">

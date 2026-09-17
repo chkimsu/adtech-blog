@@ -35,7 +35,7 @@ $$eCPM = 0.02 \times 0.05 \times 10{,}000 \times 1{,}000 = 10{,}000\text{원}$$
 
 ### 왜 "effective"인가
 
-eCPM의 "e"는 **effective**, 즉 "실질적"이라는 뜻입니다. 실제 CPM 과금이 아닌 캠페인도 CPM 기준으로 **환산**했다는 의미입니다. CPC 캠페인이든 CPA 캠페인이든, eCPM이라는 공통 잣대 위에서 비교할 수 있게 됩니다.
+eCPM의 "e"는 **effective**, 즉 "실질적"이라는 뜻입니다. 실제 CPM 과금이 아닌 캠페인도 CPM 기준으로 **환산**했다는 의미입니다. CPC 캠페인이든 CPA 캠페인이든, eCPM이라는 공통 기준 위에서 비교할 수 있게 됩니다.
 
 > [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)를 참고하세요. eCPM이 전체 파이프라인에서 어디에 위치하는지 확인할 수 있습니다. DSP의 Ad Ranking 단계에서 True Value 계산의 핵심이 바로 eCPM입니다.
 

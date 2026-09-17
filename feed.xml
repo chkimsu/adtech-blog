@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-08-23T00:00:00Z</updated>
+  <updated>2026-09-17T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>Hadoop 과 Hive: 접속 주소 한 줄이 가리키는 상자들</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-basics"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-basics</id>
+    <updated>2026-09-17T00:00:00Z</updated>
+    <summary>지훈 씨가 다섯째 주에 데이터 팀에서 받은 것은 서버 이름 다섯 개가 이어진 긴 접속 주소 한 줄입니다. 붙으니 클릭 로그 표가 보이는데, 어느 서버가 표를 내주고 파일은 어디 있는지 모르겠습니다. 서버 한 대를 상자 하나로 그려서 봅니다. 주소에 적힌 다섯 상자는 Hive 가 아니라 ZooKeeper 이고, 파일은 128 MB 조각으로 나뉘어 워커 상자에 세 벌씩 있고, 큐는 서버가 아니라 자원을 나누는 줄입니다. 내가 직접 말하는 상자는 둘뿐이고 나머지는 서로 알고 있습니다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>서빙 지연 · 처리량과 Grafana: 평균이 멀쩡한데 하루 1,053만 건이 넘긴다</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=serving-latency-throughput"/>
@@ -163,15 +172,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation</id>
     <updated>2026-08-14T00:00:00Z</updated>
     <summary>지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 나아진 폭이 진짜 22.5%가 아니라 56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 1.669%에서 2.469%로 밀어 올립니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림은 절반이 되지만 400주 평균이 2.124%로 내려앉아, 가중치 합으로 나누기를 같이 걸어야 그 몫이 대부분 돌아옵니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-    <category term="Bandits &amp; Personalization"/>
-  </entry>
-  <entry>
-    <title>피드백 루프 편향: 어제 띄운 광고만 학습 데이터가 되면 무엇이 굳나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=feedback-loop-bias</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>광고 여덟 개를 하루 한 번씩 40일 돌려 봅니다. 첫날 500건에서 뽑힌 클릭 수 하나가 그 뒤 39일의 예산을 정해 버립니다. 진짜 클릭률 2.60%인 소재가 첫날 8클릭을 받아 추정값 1.793%에 얼어붙으면, 예산을 받는 소재 넷은 사흘째에 고정되고 그 소재의 누적 노출은 500건에서 멈춥니다. 대신 진짜 1.90%인 소재가 102,500건을 가져가 매출 ₩980,500을 만들고, 리포트만 보면 진짜로 좋았던 쪽이 먼저 중단됩니다. 한 번 굳은 뒤 역확률 가중으로 되돌리려 하면 그 소재가 뜰 확률이 0이라 계산에서 아예 빠지고, 진짜 값 2.0875%가 1.880%로 도로 내려앉는 이유까지 숫자로 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
     <category term="Bandits &amp; Personalization"/>
   </entry>

@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-09-17T00:00:00Z</updated>
+  <updated>2026-09-18T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>데이터 건네기: 팀에서 팀으로 옮기는 여덟 가지 방법</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-handoff-methods"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-handoff-methods</id>
+    <updated>2026-09-18T00:00:00Z</updated>
+    <summary>지훈 씨가 여섯째 주에 옆 팀에서 &quot;클릭 로그를 우리도 쓰고 싶다&quot;는 말을 듣습니다. csv 로 뽑아 드릴까요, 하고 답하려다 선배에게 붙잡힙니다. 방법은 여덟이지만 오가는 모양은 테이블, 파일, 토픽, API 넷뿐입니다. 하루 228만 건을 방법마다 옮겨 보면 API 는 요청 228만 번, 파일은 705 MB 하나, 토픽은 초당 26.4 건이 됩니다. 어디에 어떤 모양으로 있나, 얼마나 자주 새로 와야 하나, 누가 옮기나 세 가지를 답하면 방법이 하나로 좁혀집니다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>Hadoop 과 Hive: 접속 주소 한 줄이 가리키는 상자들</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-basics"/>
@@ -165,14 +174,5 @@
     <updated>2026-08-14T00:00:00Z</updated>
     <summary>배포 전 점수가 0.7412 에서 0.7434 로 올랐는데 A/B 매출은 +0.1%, 범위는 -0.4% 에서 +0.6% 로 제자리였던 배포를 점수 다섯 개로 다시 읽습니다. 노출 서른 건을 한 통에 섞어 재면 0.7778 이지만, 짝을 같은 요청 안으로 제한하면 0.6000 입니다. 짝 144개 중 124개가 요청을 가로지른 짝이라, 경매가 쓰지도 않는 것을 재고 있었기 때문입니다. 확률 벌점만 보면 검색(0.05418)이 뉴스피드(0.15296)보다 세 배 좋아 보이지만, 기저엔트로피로 나누면 0.9788 대 0.8989 로 순서가 뒤집힙니다. 예측에 3을 곱하면 순위 점수는 소수점까지 그대로인데 정규화 엔트로피는 1.2093 이 되니, 승인을 취소하고 중단해야 하는 배포입니다.</summary>
     <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>Off-Policy Evaluation: 안 띄운 광고를 지난주 로그로 채점하는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=offpolicy-evaluation</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>지난주 로그에는 옛 정책이 고른 광고의 결과만 있습니다. 두 정책이 같은 광고를 고른 건만 세면 요청 10,000건 중 2,595건이 남고, 나아진 폭이 진짜 22.5%가 아니라 56.3%로 부풉니다. 겹친 건을 확률의 역수만큼 크게 세면 치우침은 사라지지만, 가중치 80짜리 한 건이 추정치를 1.669%에서 2.469%로 밀어 올립니다. 실제로 값을 받치는 건수는 10,000건이 아니라 339건이고, 클릭 9.5건이 그 숫자를 지탱하는 셈입니다. 가중치 상한 20을 걸면 흔들림은 절반이 되지만 400주 평균이 2.124%로 내려앉아, 가중치 합으로 나누기를 같이 걸어야 그 몫이 대부분 돌아옵니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-    <category term="Bandits &amp; Personalization"/>
   </entry>
 </feed>

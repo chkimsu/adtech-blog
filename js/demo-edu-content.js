@@ -2503,5 +2503,62 @@ window.DEMO_EDU = {
                     '이제 <strong>4 제목만 고치기</strong>와 <strong>5 통째로 바꾸기</strong>를 번갈아 눌러 likes 칸이 어떻게 다른지 보세요.'
             }
         ]
+    },
+
+    // ==========================================
+    // 하둡 상자 그림 여섯 장 (입문)
+    // ==========================================
+    'hadoop-boxes': {
+        analogy: '상자 하나가 서버 한 대. 접속 주소에 적힌 다섯 상자는 Hive 서버가 아니라 ZooKeeper 다',
+        anchor: '.hb-host',
+        embedKeep: ['.hb-page'],
+        embedHide: ['.hb-hero', '.hb-sec > h2', '.hb-real'],
+        explain: {
+            // 그림을 누르면 그 그림이 말로 안 한 것 하나
+            '.hb-sec': ({ el }) => {
+                switch (el.dataset.fig) {
+                    case '1': return '워커는 <strong>수십에서 수백 대</strong>인데 역할이 하나씩인 서버는 몇 대뿐입니다. 클러스터가 커진다는 말은 워커 상자가 늘어난다는 뜻입니다.';
+                    case '2': return '조각을 세 벌 두는 값은 디스크입니다. 384 MB 파일이 디스크 <strong>1,152 MB</strong> 를 씁니다. 대신 상자 두 대가 동시에 꺼져도 파일이 살아 있습니다.';
+                    case '3': return '큐가 가득 차면 쿼리는 ACCEPTED 상태로 줄에 서 있습니다. 실행 중이 아니라 <strong>기다리는 중</strong>이라 아무 일도 안 일어나는 것처럼 보입니다.';
+                    case '4': return 'Spark 나 Trino 는 HiveServer2 를 거치지 않고 <strong>Metastore 에 직접</strong> 붙어 목록을 읽습니다. 그래서 같은 테이블을 여러 엔진이 읽을 수 있습니다.';
+                    case '5': return 'ZooKeeper 가 다섯 대인 이유는 <strong>과반</strong>입니다. 셋만 살아 있으면 답합니다. 짝수로 두면 반반으로 갈라질 수 있어 홀수로 둡니다.';
+                    case '6': return '내가 직접 붙는 곳은 1 과 3 두 자리뿐입니다. 4 부터 7 은 HiveServer2 가 대신 다니는 길이라 <strong>내 컴퓨터에는 그 주소가 없습니다</strong>.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '#hb-fig1', title: '상자 하나가 서버 한 대', body: '상자에 적힌 글자는 그 서버에서 돌아가는 프로그램입니다. 맨 아래 워커 상자는 역할이 <strong>둘</strong>입니다.' },
+            { el: '#hb-fig5', title: '주소가 가리키는 상자', body: '주소 조각에서 나가는 화살표를 따라가 보세요. 다섯 서버는 <strong>ZooKeeper</strong> 로, 큐 이름 하나만 ResourceManager 로 갑니다.' },
+            { el: '#hb-fig6', title: '쿼리 한 건의 길', body: '번호 1 부터 7 까지가 순서입니다. 내가 직접 가는 곳은 1 과 3 두 자리뿐입니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 하둡 카드 여섯 장 (입문)
+    // ==========================================
+    'hadoop-cards': {
+        analogy: '카드 하나가 개념 하나. 점이 흐르는 방향이 데이터와 요청이 가는 방향이다',
+        anchor: '.hc-host',
+        embedKeep: ['.hc-grid'],
+        embedHide: ['.hc-hero', '.hc-real'],
+        explain: {
+            '.hc-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'cluster': return '워커 상자의 두 색 칸이 두 역할입니다. 파랑 칸이 저장(DataNode), 벽돌색 칸이 계산(NodeManager)입니다. 같은 상자라서 <strong>데이터 있는 자리에서 계산</strong>합니다.';
+                    case 'hdfs': return '점이 세 갈래로 흘러가는 것이 세 벌 복제입니다. DataNode 하나가 꺼져도 같은 번호 조각이 <strong>다른 두 대</strong>에 남아 있습니다.';
+                    case 'yarn': return '벽돌색 네모(T)가 워커로 내려가는 것이 계산 조각 배치입니다. 어느 워커로 가는지는 <strong>데이터 조각이 어디 있나</strong>로 정해집니다.';
+                    case 'hive': return '점이 1 부터 5 까지 순서대로 한 바퀴 돕니다. 2 에서 Metastore 가 돌려주는 답은 데이터가 아니라 <strong>HDFS 경로</strong>입니다.';
+                    case 'zookeeper': return 'HiveServer2 가 켜질 때 올라가는 점이 <strong>등록</strong>입니다. 그래서 주소에 HiveServer2 이름을 적지 않아도 찾아갈 수 있습니다.';
+                    case 'jdbc': return '주소 조각 다섯 개가 상자 셋으로 갑니다. 회색은 ZooKeeper, 먹색 둘은 HiveServer2, 벽돌색 하나만 <strong>YARN 큐</strong>입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.hc-legend', title: '색 네 가지', body: '파랑은 저장, 벽돌색은 계산, 먹색은 Hive 서버, 회색은 ZooKeeper 입니다. 점은 지금 가고 있는 데이터나 요청입니다.' },
+            { el: '[data-card="jdbc"]', title: '주소 한 줄이 가리키는 곳', body: '주소 조각에서 나가는 점을 따라가 보세요. 다섯 서버는 <strong>ZooKeeper</strong> 입니다.', waitFor: 'click' },
+            { el: '[data-card="hive"]', title: '쿼리 한 건의 길', body: '점이 1 부터 5 까지 순서대로 돕니다. 내가 직접 말하는 상대는 <strong>HiveServer2</strong> 하나입니다.' }
+        ]
     }
 };

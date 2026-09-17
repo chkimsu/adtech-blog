@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'hadoop-hive-basics',
+    world: 'na',
+    title: 'Hadoop 과 Hive: 접속 주소 한 줄이 가리키는 상자들',
+    excerpt: '지훈 씨가 다섯째 주에 데이터 팀에서 받은 것은 서버 이름 다섯 개가 이어진 긴 접속 주소 한 줄입니다. 붙으니 클릭 로그 표가 보이는데, 어느 서버가 표를 내주고 파일은 어디 있는지 모르겠습니다. 서버 한 대를 상자 하나로 그려서 봅니다. 주소에 적힌 다섯 상자는 Hive 가 아니라 ZooKeeper 이고, 파일은 128 MB 조각으로 나뉘어 워커 상자에 세 벌씩 있고, 큐는 서버가 아니라 자원을 나누는 줄입니다. 내가 직접 말하는 상자는 둘뿐이고 나머지는 서로 알고 있습니다.',
+    date: '2026-09-17',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['System Design', 'ML Infra', '입문'],
+    contentUrl: 'posts/hadoop-hive-basics.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'pipeline-push-and-pull',
     world: 'na',
     title: '데이터 파이프라인 입문: 로그 한 건이 지나는 여섯 자리',
@@ -1016,7 +1027,7 @@ const series = {
     posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking',
       'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
       'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
-      'data-pipeline-design', 'data-distribution-layer'],
+      'data-pipeline-design', 'data-distribution-layer', 'hadoop-hive-basics'],
   },
 };
 

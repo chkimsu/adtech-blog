@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하둡 카드 여섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="클러스터, HDFS, YARN, Hive, ZooKeeper, JDBC 주소를 카드 여섯 장으로. 서버 아이콘과 화살표 위로 점이 흘러가며 데이터와 요청이 가는 방향을 보여 줍니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hc-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .hc-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .hc-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+    .hc-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1rem auto 0; max-width: 1040px; padding: 0 1rem; }
+    .hc-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--border-color); background: var(--bg-primary); font-size: 0.82rem; font-weight: 600; }
+    .hc-chip i { display: inline-block; width: 13px; height: 13px; }
+    .hc-chip i.a { background: var(--navy); }
+    .hc-chip i.b { background: var(--oxide); }
+    .hc-chip i.k { background: var(--text-primary); }
+    .hc-chip i.c { background: var(--grey); }
+    .hc-chip svg { width: 13px; height: 13px; display: block; }
+
+    .hc-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    @media (max-width: 1000px) { .hc-grid { grid-template-columns: 1fr; } }
+    .hc-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
+    .hc-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
+    .hc-card .hc-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
+    .hc-fig { overflow-x: auto; }
+    .hc-fig svg { display: block; width: 100%; min-width: 460px; height: auto; }
+    .hc-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
+    .hc-cap b { color: var(--text-primary); }
+    html.is-embed .hc-grid { margin-top: 0.5rem; padding: 0 0.5rem; }
+    html.is-embed .hc-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
+
+    /* 그림 부품 — 색은 전부 토큰 */
+    .hc-fig svg text { font-family: var(--font-sans); }
+    .lbl { font-size: 11px; fill: var(--text-secondary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
+    .lbl.k { fill: var(--text-primary); font-weight: 750; }
+    .lbl.sm { font-size: 9.5px; fill: var(--text-muted); }
+    .on { fill: var(--bg-primary); font-weight: 750; }
+    .f-a { fill: var(--navy); } .f-b { fill: var(--oxide); } .f-k { fill: var(--text-primary); } .f-c { fill: var(--grey); } .f-sunk { fill: var(--plate); }
+    .srv-body { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .led { fill: var(--bg-primary); }
+    .sq-a { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .sq-b { fill: var(--oxide-bg); stroke: var(--oxide); stroke-width: 1.3; }
+    .sq-t { font-size: 9px; font-weight: 800; fill: var(--text-primary); }
+    .list { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; stroke-width: 1.2; }
+    .list-t { font-size: 10px; fill: var(--text-secondary); }
+    .list-t.h { font-weight: 800; fill: var(--text-primary); }
+    .list-t.mono { font-family: var(--font-mono); font-size: 9.5px; }
+    .ar { fill: none; stroke-width: 1.5; }
+    .ar.k { stroke: var(--text-secondary); } .ar.a { stroke: var(--navy); } .ar.b { stroke: var(--oxide); } .ar.c { stroke: var(--grey); }
+    .ar.dash { stroke-dasharray: 4 3; }
+    .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
+    .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
+    .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
+    .mv { stroke: var(--bg-primary); stroke-width: 1; } .mv.b { fill: var(--oxide); } .mv.a { fill: var(--navy); }
+    .file { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .usr { fill: var(--text-secondary); }
+    .num { fill: var(--text-primary); }
+    .num-t { font-size: 9.5px; font-weight: 800; fill: var(--bg-primary); font-family: var(--font-mono); }
+    .lane { fill: var(--grey-bg); stroke: var(--rule); } .lane.on { fill: var(--oxide); }
+    .lane-t { font-size: 9.5px; fill: var(--text-secondary); font-weight: 650; } .lane-t.on { fill: var(--bg-primary); font-weight: 800; }
+    .tok { stroke-width: 1.2; }
+    .tok.c { fill: var(--grey); } .tok.k { fill: var(--text-primary); } .tok.b { fill: var(--oxide); }
+    .tok.n { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; }
+    .tok-t { font-family: var(--font-mono); font-size: 9.5px; fill: var(--bg-primary); font-weight: 650; }
+    .tok-t.dark { fill: var(--text-primary); }
+    @media (prefers-reduced-motion: reduce) { .dot, .mv { display: none; } }
+
+    .hc-real { max-width: 1240px; margin: 2.5rem auto 3rem; padding: 0 1rem; }
+    .hc-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .hc-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
+    .hc-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+    .hc-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .hc-host:empty { display: none; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hc-hero">
+      <h1>하둡 카드 여섯 장</h1>
+      <p>카드 하나가 개념 하나입니다. 서버 아이콘 하나가 서버 한 대이고, 움직이는 점이 데이터나 요청이 가는 방향입니다. 주소와 숫자는 설명용 예시입니다.</p>
+      <div class="hc-legend">
+        <span class="hc-chip"><i class="a"></i>파랑 = 저장 (HDFS)</span>
+        <span class="hc-chip"><i class="b"></i>벽돌색 = 계산 (YARN)</span>
+        <span class="hc-chip"><i class="k"></i>먹색 = Hive 서버</span>
+        <span class="hc-chip"><i class="c"></i>회색 = ZooKeeper</span>
+        <span class="hc-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터, 요청</span>
+      </div>
+    </section>
+
+    <div class="hc-host"></div>
+
+    <div class="hc-grid">
+      <section class="hc-card" data-card="cluster"><h2>CLUSTER</h2><p class="hc-k">클러스터 = 서버 여러 대, 역할은 프로그램</p><div class="hc-fig" id="hc-cluster"></div>
+        <p class="hc-cap">위 줄은 역할이 하나씩인 서버들입니다. 아래 줄 <b>워커</b>는 한 대에 저장(DN)과 계산(NM) 두 역할이 같이 있습니다.</p></section>
+      <section class="hc-card" data-card="hdfs"><h2>HDFS</h2><p class="hc-k">파일을 조각내어 여러 상자에 세 벌씩</p><div class="hc-fig" id="hc-hdfs"></div>
+        <p class="hc-cap"><b>NameNode 는 목록만</b> 듭니다. 조각은 DataNode 에 세 벌씩 있어서 한 대가 꺼져도 파일은 살아 있습니다.</p></section>
+      <section class="hc-card" data-card="yarn"><h2>YARN</h2><p class="hc-k">계산할 자리를 나눠 줍니다</p><div class="hc-fig" id="hc-yarn"></div>
+        <p class="hc-cap"><b>큐는 서버가 아닙니다.</b> ResourceManager 안에서 자원을 나누는 줄입니다. 계산 조각은 데이터 조각이 있는 워커로 갑니다.</p></section>
+      <section class="hc-card" data-card="hive"><h2>HIVE</h2><p class="hc-k">쿼리 한 건이 지나는 길</p><div class="hc-fig" id="hc-hive"></div>
+        <p class="hc-cap">내가 직접 말하는 상대는 <b>HiveServer2</b> 하나입니다. 그 서버가 Metastore 에 위치를 묻고, YARN 에서 자원을 받아, 워커에서 세고, 결과를 돌려줍니다.</p></section>
+      <section class="hc-card" data-card="zookeeper"><h2>ZOOKEEPER</h2><p class="hc-k">살아 있는 서버 목록을 다섯 벌</p><div class="hc-fig" id="hc-zookeeper"></div>
+        <p class="hc-cap">HiveServer2 는 켜질 때 여기 <b>등록</b>합니다. 나는 ZooKeeper 에 「어디로 가?」를 묻고 답을 받아 그 서버로 갑니다.</p></section>
+      <section class="hc-card" data-card="jdbc"><h2>JDBC 주소</h2><p class="hc-k">한 줄이 가리키는 곳</p><div class="hc-fig" id="hc-jdbc"></div>
+        <p class="hc-cap">주소에 적힌 <b>다섯 서버는 ZooKeeper</b> 입니다. 계정과 http 는 HiveServer2 에, 큐 이름 하나만 YARN 에 갑니다.</p></section>
+    </div>
+
+    <section class="hc-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 카드가 놓친 한 가지가 더 나옵니다.</li>
+        <li><b>같은 그림을 상자 그림으로</b> 보고 싶으면 <a href="demo-hadoop-boxes.html">하둡 상자 그림 여섯 장</a>이 있습니다. 층이 나뉘는 구조는 그쪽이 더 잘 보입니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=hadoop-hive-basics">하둡과 Hive 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="post.html?id=hadoop-hive-basics">하둡과 Hive 글</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/hadoop-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

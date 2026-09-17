@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'data-handoff-methods',
+    world: 'na',
+    title: '데이터 건네기: 팀에서 팀으로 옮기는 여덟 가지 방법',
+    excerpt: '지훈 씨가 여섯째 주에 옆 팀에서 "클릭 로그를 우리도 쓰고 싶다"는 말을 듣습니다. csv 로 뽑아 드릴까요, 하고 답하려다 선배에게 붙잡힙니다. 방법은 여덟이지만 오가는 모양은 테이블, 파일, 토픽, API 넷뿐입니다. 하루 228만 건을 방법마다 옮겨 보면 API 는 요청 228만 번, 파일은 705 MB 하나, 토픽은 초당 26.4 건이 됩니다. 어디에 어떤 모양으로 있나, 얼마나 자주 새로 와야 하나, 누가 옮기나 세 가지를 답하면 방법이 하나로 좁혀집니다.',
+    date: '2026-09-18',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['System Design', 'Event-Driven', 'Kafka', '입문'],
+    contentUrl: 'posts/data-handoff-methods.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'hadoop-hive-basics',
     world: 'na',
     title: 'Hadoop 과 Hive: 접속 주소 한 줄이 가리키는 상자들',
@@ -1027,7 +1038,7 @@ const series = {
     posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking',
       'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
       'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
-      'data-pipeline-design', 'data-distribution-layer', 'hadoop-hive-basics'],
+      'data-pipeline-design', 'data-distribution-layer', 'hadoop-hive-basics', 'data-handoff-methods'],
   },
 };
 

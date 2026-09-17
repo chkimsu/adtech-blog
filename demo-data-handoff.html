@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>데이터 건네기 카드 여덟 장 — Ad Tech Blog</title>
+  <meta name="description" content="팀에서 팀으로 데이터를 옮기는 여덟 가지 방법을 카드 한 장씩으로. 테이블 권한, DB 배치, CDC, 파일, 토픽, API, 로그 파이프라인, reverse ETL. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .dh-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .dh-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .dh-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+    .dh-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1rem auto 0; max-width: 1040px; padding: 0 1rem; }
+    .dh-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--border-color); background: var(--bg-primary); font-size: 0.82rem; font-weight: 600; }
+    .dh-chip i { display: inline-block; width: 13px; height: 13px; }
+    .dh-chip i.a { background: var(--navy); }
+    .dh-chip i.b { background: var(--oxide); }
+    .dh-chip i.k { background: var(--text-primary); }
+    .dh-chip i.c { background: var(--grey); }
+    .dh-chip svg { width: 13px; height: 13px; display: block; }
+    .dh-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .dh-host:empty { display: none; }
+
+    .dh-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    @media (max-width: 1000px) { .dh-grid { grid-template-columns: 1fr; } }
+    .dh-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
+    .dh-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
+    .dh-card .dh-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
+    .dh-fig { overflow-x: auto; }
+    .dh-fig svg { display: block; width: 100%; min-width: 460px; height: auto; }
+    .dh-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
+    .dh-cap b { color: var(--text-primary); }
+    html.is-embed .dh-grid { margin-top: 0.5rem; padding: 0 0.5rem; }
+    html.is-embed .dh-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
+
+    /* 그림 부품 — 색은 전부 토큰 */
+    .dh-fig svg text { font-family: var(--font-sans); }
+    .lbl { font-size: 11px; fill: var(--text-secondary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
+    .lbl.k { fill: var(--text-primary); font-weight: 750; }
+    .lbl.sm { font-size: 9.5px; fill: var(--text-muted); }
+    .on { fill: var(--bg-primary); font-weight: 750; }
+    .f-a { fill: var(--navy); } .f-b { fill: var(--oxide); } .f-k { fill: var(--text-primary); } .f-c { fill: var(--grey); } .f-sunk { fill: var(--plate); }
+    .srv-body { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .led { fill: var(--bg-primary); }
+    .tbl-body { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .tbl-ln { stroke: var(--navy-bd); stroke-width: 1; }
+    .db { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .tp { fill: var(--oxide-bg); stroke: var(--oxide); stroke-width: 1.3; }
+    .tp-ln { stroke: var(--oxide-bd); stroke-width: 1; }
+    .file { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .fold { fill: var(--navy-bd); stroke: var(--navy); stroke-width: 1.3; }
+    .fold-tab { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .tool { fill: var(--grey); }
+    .tool-t { font-size: 11px; font-weight: 800; fill: var(--bg-primary); }
+    .tool-s { font-size: 9.5px; fill: var(--bg-primary); }
+    .clk { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.3; }
+    .clk-h { stroke: var(--text-primary); stroke-width: 1.4; }
+    .list { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; stroke-width: 1.2; }
+    .list-t { font-size: 10px; fill: var(--text-secondary); }
+    .list-t.h { font-weight: 800; fill: var(--text-primary); }
+    .list-t.mono { font-family: var(--font-mono); font-size: 9.5px; }
+    .ar { fill: none; stroke-width: 1.5; }
+    .ar.k { stroke: var(--text-secondary); } .ar.a { stroke: var(--navy); } .ar.b { stroke: var(--oxide); } .ar.c { stroke: var(--grey); }
+    .ar.dash { stroke-dasharray: 4 3; }
+    .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
+    .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
+    .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
+    .usr { fill: var(--text-secondary); }
+    .tok { stroke-width: 1.2; }
+    .tok.c { fill: var(--grey); } .tok.k { fill: var(--text-primary); } .tok.b { fill: var(--oxide); }
+    .tok.n { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; }
+    .tok-t { font-family: var(--font-mono); font-size: 9.5px; fill: var(--bg-primary); font-weight: 650; }
+    .tok-t.dark { fill: var(--text-primary); }
+    @media (prefers-reduced-motion: reduce) { .dot { display: none; } }
+
+    .dh-real { max-width: 1240px; margin: 2.5rem auto 3rem; padding: 0 1rem; }
+    .dh-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .dh-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
+    .dh-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="dh-hero">
+      <h1>데이터 건네기 카드 여덟 장</h1>
+      <p>팀에서 팀으로 데이터를 옮기는 방법 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향이고, 점이 몰려서 지나가면 하루 한 번 배치입니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <div class="dh-legend">
+        <span class="dh-chip"><i class="a"></i>파랑 = 놓여 있는 것 (테이블, 파일, DB)</span>
+        <span class="dh-chip"><i class="b"></i>벽돌색 = 흐르는 것 (토픽, 변경 로그)</span>
+        <span class="dh-chip"><i class="k"></i>먹색 = 부르는 것 (서비스, API)</span>
+        <span class="dh-chip"><i class="c"></i>회색 = 옮기는 도구 (배치 작업, 수집기)</span>
+        <span class="dh-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="dh-host"></div>
+
+    <div class="dh-grid">
+      <section class="dh-card" data-card="grant"><h2>TABLE GRANT</h2><p class="dh-k">같은 창고면 권한만 준다</p><div class="dh-fig" id="dh-grant"></div>
+        <p class="dh-cap">데이터는 <b>그 자리에 있고</b> 권한 한 줄만 갑니다. 두 팀이 같은 창고를 쓸 때 가장 싸고 빠릅니다.</p></section>
+      <section class="dh-card" data-card="batch"><h2>BATCH PULL</h2><p class="dh-k">남의 DB 를 하루 한 번 끌어온다</p><div class="dh-fig" id="dh-batch"></div>
+        <p class="dh-cap">점이 <b>몰려서 한 번</b> 지나가는 것이 배치입니다. 어제까지의 값이면 충분할 때 씁니다. Sqoop 이 하던 일을 지금은 Spark JDBC 나 Airbyte 가 합니다.</p></section>
+      <section class="dh-card" data-card="cdc"><h2>CDC</h2><p class="dh-k">바뀐 행만 흘려보낸다</p><div class="dh-fig" id="dh-cdc"></div>
+        <p class="dh-cap">DB 가 남기는 <b>변경 로그</b>를 읽어 토픽으로 보냅니다. 운영 DB 의 지금 상태를 몇 초 뒤에 창고에서 볼 수 있습니다.</p></section>
+      <section class="dh-card" data-card="file"><h2>FILE DROP</h2><p class="dh-k">파일을 놓고 경로를 알려 준다</p><div class="dh-fig" id="dh-file"></div>
+        <p class="dh-cap">하루 한 번, 대량이면 이것입니다. 받는 팀은 <b>자기 시간에</b> 읽고, 어제 파일은 그대로 남아 다시 읽을 수 있습니다.</p></section>
+      <section class="dh-card" data-card="topic"><h2>TOPIC</h2><p class="dh-k">토픽에 넣어 두고 여러 팀이 구독한다</p><div class="dh-fig" id="dh-topic"></div>
+        <p class="dh-cap">같은 메시지를 <b>세 팀이 각자 속도로</b> 받습니다. 실시간이고 받는 쪽이 여럿일 때 씁니다.</p></section>
+      <section class="dh-card" data-card="api"><h2>API</h2><p class="dh-k">건별로 지금 값을 물어본다</p><div class="dh-fig" id="dh-api"></div>
+        <p class="dh-cap">건 하나가 요청 하나입니다. 228만 건이면 요청 228만 번이라 <b>대량 전달에는 안 맞고</b> 조회에 맞습니다.</p></section>
+      <section class="dh-card" data-card="log"><h2>LOG PIPELINE</h2><p class="dh-k">행동 기록을 수집기에 태운다</p><div class="dh-fig" id="dh-log"></div>
+        <p class="dh-cap">서비스 팀에 오는 요청은 <b>「이 로그 한 줄 남겨 주세요」</b> 모양입니다. 한 번 남기면 뒤 자리들은 이미 깔려 있습니다.</p></section>
+      <section class="dh-card" data-card="reverse"><h2>REVERSE ETL</h2><p class="dh-k">창고 결과를 서비스로 되돌린다</p><div class="dh-fig" id="dh-reverse"></div>
+        <p class="dh-cap">창고는 느리고 서비스는 1ms 안에 답해야 합니다. 그래서 결과를 <b>서비스 옆 DB 에 옮겨 두고</b> 건별로 읽게 합니다.</p></section>
+    </div>
+
+    <section class="dh-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>데이터 엔지니어에게 세 가지만 물으면</b> 카드 하나로 좁혀집니다. 지금 어디에 어떤 모양으로 있나, 얼마나 자주 새로 와야 하나, 누가 옮기나(우리가 당겨 가나, 그쪽이 밀어 주나).</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 방법의 함정 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=data-handoff-methods">데이터 건네기 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="post.html?id=data-handoff-methods">데이터 건네기 글</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/data-handoff-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

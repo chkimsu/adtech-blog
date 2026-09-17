@@ -21,7 +21,8 @@ const NO_PYTHON_BY_DESIGN = new Set([
   'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
   'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
   'data-pipeline-design', 'data-distribution-layer',
-  'hadoop-hive-basics'
+  'hadoop-hive-basics',
+  'data-handoff-methods'
 ]);
 
 // 코드블록·표·임베드 HTML을 걷어낸 '산문'만 남긴다 — 길이 계산의 분모.

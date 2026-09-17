@@ -92,17 +92,17 @@
         s += srv(14, 104, { cls: 'a', scale: 0.75, label: 'HTTP API' });
         s += srv(14, 214, { cls: 'a', scale: 0.75, label: '토픽' });
         s += T(120, 22, '시키는 것', 'lbl sm');
-        s += frame(120, 34, 130, 64, 'Airflow', 'b', { center: true, ty: 24, sub: 'DAG 92 (수급 42, 변환 41)' });
-        s += doc(120, 124, 130, 72, '정의 파일', ['YAML  원천 정의', 'SQL   모델 267장', 'Java  실시간 잡 30']);
+        s += frame(120, 34, 130, 64, 'Airflow', 'b', { center: true, ty: 24, sub: 'DAG 수십 개 (수급, 변환)' });
+        s += doc(120, 124, 130, 72, '정의 파일', ['YAML  원천 정의', 'SQL   모델 수백 장', 'Java  실시간 잡 코드']);
         s += T(290, 22, '엔진', 'lbl sm');
         s += frame(290, 34, 110, 64, 'Spark, Kyuubi', 'c', { center: true, ty: 24, sub: 'SQL 과 배치가 여기서 돈다' });
         s += T(290, 196, '실시간', 'lbl sm');
         s += frame(290, 208, 110, 50, 'Flink', 'c', { center: true, ty: 20, sub: '잡 1개, 들어오는 대로' });
         s += T(440, 16, '창고', 'lbl sm');
         s += srv(440, 24, { cls: 'a', label: '창고 테이블' });
-        s += T(462, 126, 'staging 114', 'lbl sm', 'middle');
-        s += T(462, 139, 'mart 118', 'lbl sm', 'middle');
-        s += T(462, 152, 'serving 31', 'lbl sm', 'middle');
+        s += T(462, 126, 'staging', 'lbl sm', 'middle');
+        s += T(462, 139, 'mart', 'lbl sm', 'middle');
+        s += T(462, 152, 'serving', 'lbl sm', 'middle');
         s += arrow('mp1', 'M48,44 C90,44 100,60 116,62', 'a', { svg: S });
         s += arrow('mp2', 'M48,124 C90,124 100,72 116,68', 'a', { svg: S });
         s += arrow('mp3', 'M48,236 C120,236 200,233 286,233', 'a', { svg: S });
@@ -121,9 +121,9 @@
     // ---------- 2. 첫 달, 수급 DAG 한 장 ----------
     (function () {
         const S = 'dm-extract'; let s = '';
-        s += T(14, 16, '새로 온 사람이 쓴 것 (34줄)', 'lbl sm');
-        s += doc(14, 26, 150, 58, 'category.py 14줄', ['cron  5 0 * * *', 'days=-1  (어제 날짜)']);
-        s += doc(14, 110, 150, 70, 'sources.yaml 20줄', ['type: hbase', 'path: hdfs://…/raw_category', 'format: orc']);
+        s += T(14, 16, '새로 온 사람이 쓴 것 (두 파일)', 'lbl sm');
+        s += doc(14, 26, 150, 58, 'category.py', ['cron  5 0 * * *', 'days=-1  (어제 날짜)']);
+        s += doc(14, 110, 150, 70, 'sources.yaml', ['type: hbase', 'path: hdfs://…/raw_category', 'format: orc']);
         s += frame(180, 44, 120, 54, 'Airflow 태스크', 'b', { center: true, ty: 22, sub: '매일 00:05' });
         s += frame(340, 54, 100, 36, 'Spark 커넥터', 'c', { center: true, ty: 22 });
         s += srv(356, 150, { cls: 'a', scale: 0.8, label: 'HBase 원천' });
@@ -135,7 +135,7 @@
         s += arrow('ex3', 'M440,80 C470,80 468,120 468,146', 'a', { svg: S }); s += num(484, 112, 3);
         const cyc = 8;
         s += dots('ex1', 'b', { seq: [0.02, 0.15], cyc }) + dots('ex2', 'a', { seq: [0.2, 0.4], cyc }) + dots('ex3', 'a', { seq: [0.45, 0.65], cyc });
-        s += list(14, 206, 230, 72, ['1 시각이 되면 태스크가 커넥터를 부른다', '2 커넥터가 원천 표를 읽고', '3 창고 경로에 orc 로 쓴다', '2주 동안 커밋 47개가 여기 붙었다']);
+        s += list(14, 206, 230, 72, ['1 시각이 되면 태스크가 커넥터를 부른다', '2 커넥터가 원천 표를 읽고', '3 창고 경로에 orc 로 쓴다', '첫 두 주의 커밋이 거의 다 여기 붙었다']);
         s += T(14, 292, '첫 일감은 표 하나를 매일 복사하는 것. 그 팀의 규칙을 한 번에 다 밟는다', 'lbl');
         svg(S, s);
     })();
@@ -144,7 +144,7 @@
     (function () {
         const S = 'dm-dbt'; let s = '';
         s += doc(14, 24, 164, 92, 'agg_active_user.sql', ['config: 어디에, 어떤 형식으로', '-- 옛 배치 7-1 | AppUsageStats', 'select … from source(hourly)', 'group by user, client, version']);
-        s += list(14, 150, 164, 76, ['모델 267장, 세 층', 'staging 114  원본 정리', 'mart 118  묶은 표', 'serving 31  내보내는 표']);
+        s += list(14, 150, 164, 76, ['모델 수백 장, 세 층', 'staging  원본 정리', 'mart  묶은 표', 'serving  내보내는 표']);
         s += frame(210, 30, 110, 40, 'Cosmos', 'b', { center: true, ty: 17, sub: 'SQL 을 태스크로 바꾼다' });
         s += frame(210, 100, 110, 80, 'Airflow', 'b', { ty: 14 });
         s += box(222, 124, 86, 18, 'hourly 태스크', 'b', 9.5);
@@ -169,7 +169,7 @@
     (function () {
         const S = 'dm-operator'; let s = '';
         s += frame(14, 116, 116, 66, 'Airflow 태스크', 'b', { center: true, ty: 28, sub: '몇 시에 무엇을' });
-        s += T(160, 16, '오퍼레이터 (직접 만든 16개 중 여섯)', 'lbl sm');
+        s += T(160, 16, '오퍼레이터 (직접 만든 것 중 여섯)', 'lbl sm');
         s += T(330, 16, '말을 거는 상대', 'lbl sm');
         const rows = [
             ['spark', 'YARN 클러스터', 'c'],
@@ -196,7 +196,7 @@
         const S = 'dm-flink'; let s = '';
         s += T(14, 16, '원천 저장소', 'lbl sm');
         s += srv(40, 24, { cls: 'a', scale: 0.8, label: '시청 로그 스트림' });
-        s += doc(120, 34, 120, 50, '소스 커넥터', ['직접 만든 Java 18개']);
+        s += doc(120, 34, 120, 50, '소스 커넥터', ['직접 만든 Java 클래스들']);
         s += frame(270, 24, 170, 190, 'Flink 잡', 'c', { ty: 15 });
         s += frame(282, 50, 146, 26, '워터마크: 10초 뒤에 선', 'k', { center: true, ty: 17 });
         s += frame(282, 90, 146, 26, '키: 재생 건 | 미디어 | 종류', 'k', { center: true, ty: 17 });
@@ -213,7 +213,7 @@
         s += T(120, 176, '늦게 온 로그', 'lbl sm');
         s += dots('fl1', 'a', { n: 3, dur: 3 }) + dots('fl2', 'k', { n: 2, dur: 2 }) + dots('fl3', 'a', { n: 2, dur: 2.2 }) + dots('fl4', 'a', { n: 2, dur: 2.6 });
         s += dots('fl5', 'c', { n: 1, dur: 6 });
-        s += list(14, 206, 230, 72, ['4월 14일 하루에 커밋 17개', '4월 Flink 폴더 변경 161번', 'Java 30개 중 커넥터 18개', '실시간 잡은 팀에 이것 하나']);
+        s += list(14, 206, 230, 72, ['어느 하루에 커밋이 한꺼번에', '그 달 커밋은 거의 전부 Flink 폴더', 'Java 파일의 절반 넘게가 커넥터', '실시간 잡은 팀에 이것 하나']);
         s += T(14, 296, '들어오는 대로 받아 10초 기다려 묶는다. 늦은 것은 차이만 다시 낸다', 'lbl');
         svg(S, s, 310);
     })();
@@ -222,26 +222,26 @@
     (function () {
         const S = 'dm-ship'; let s = '';
         s += user(34, 40, '새로 온 사람');
-        s += doc(70, 24, 90, 44, '코드', ['커밋 428개']);
+        s += doc(70, 24, 90, 44, '코드', ['여섯 달의 커밋']);
         s += frame(190, 30, 80, 36, 'PR', 'b', { center: true, ty: 23 });
         s += user(312, 34, '') + user(338, 34, '');
         s += T(325, 86, '리뷰', 'lbl k', 'middle');
         s += frame(390, 30, 116, 36, 'main 에 머지', 'b', { center: true, ty: 23 });
-        s += frame(14, 150, 150, 44, '로컬 pytest', 'k', { center: true, ty: 18, sub: 'DAG 92개가 다 뜨나' });
+        s += frame(14, 150, 150, 44, '로컬 pytest', 'k', { center: true, ty: 18, sub: 'DAG 가 전부 뜨나' });
         s += frame(190, 150, 200, 44, 'workflow: jar 빌드 → HDFS', 'b', { center: true, ty: 18, sub: 'main 이면 prod, 라벨이면 test' });
         s += frame(416, 150, 94, 44, 'Flink, Airflow', 'c', { center: true, ty: 18, sub: '집어 쓴다' });
         s += arrow('sh1', 'M160,48 L186,48', 'k', { svg: S });
         s += arrow('sh2', 'M270,48 L300,48', 'b', { svg: S });
         s += arrow('sh3', 'M352,48 L386,48', 'b', { svg: S });
         s += arrow('sh4', 'M325,64 C325,112 115,112 115,72', 'k', { svg: S, dash: true });
-        s += T(220, 106, '리뷰 반영 21번', 'lbl sm', 'middle');
+        s += T(220, 106, '리뷰 반영', 'lbl sm', 'middle');
         s += arrow('sh5', 'M448,66 C448,116 290,120 290,146', 'b', { svg: S });
         s += arrow('sh6', 'M390,172 L412,172', 'b', { svg: S });
         s += arrow('sh7', 'M100,68 C100,100 89,120 89,146', 'k', { svg: S, dash: true });
         const cyc = 10;
         s += dots('sh1', 'k', { seq: [0.02, 0.1], cyc }) + dots('sh2', 'b', { seq: [0.12, 0.2], cyc }) + dots('sh4', 'k', { seq: [0.22, 0.36], cyc });
         s += dots('sh3', 'b', { seq: [0.4, 0.5], cyc }) + dots('sh5', 'b', { seq: [0.52, 0.66], cyc }) + dots('sh6', 'b', { seq: [0.68, 0.78], cyc });
-        s += list(14, 220, 330, 58, ['리뷰 반영 커밋 21개 / 428', '최근 60일 머지 116건 중 115건에 사람 승인', 'prod 는 확인 문구 deploy-prod 를 쳐야 올라간다']);
+        s += list(14, 220, 330, 58, ['리뷰 반영 커밋이 여섯 달 내내 끼어 있다', '머지에는 거의 예외 없이 사람 승인이 붙는다', 'prod 는 확인 문구 deploy-prod 를 쳐야 올라간다']);
         s += T(14, 296, '고친 코드는 사람 눈과 자동 배포를 지나 서버에 닿는다', 'lbl');
         svg(S, s, 310);
     })();

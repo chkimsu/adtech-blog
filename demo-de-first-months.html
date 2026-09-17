@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>데이터 엔지니어 첫 6개월 카드 여섯 장 — Ad Tech Blog</title>
-  <meta name="description" content="어느 데이터 플랫폼 팀에 새로 온 사람의 커밋 428개를 여섯 장으로 봅니다. 저장소 네 층, 첫 달의 수급 DAG, SQL 모델, 오퍼레이터, 실시간 잡, PR 과 배포.">
+  <meta name="description" content="어느 데이터 플랫폼 팀에 새로 온 사람의 여섯 달 커밋을 여섯 장으로 봅니다. 저장소 네 층, 첫 달의 수급 DAG, SQL 모델, 오퍼레이터, 실시간 잡, PR 과 배포.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -98,7 +98,7 @@
   <main>
     <section class="dm-hero">
       <h1>데이터 엔지니어 첫 6개월 카드 여섯 장</h1>
-      <p>어느 데이터 플랫폼 팀에 새로 온 사람의 커밋 428개를 폴더별로 늘어놓았습니다. 첫 달은 수급 DAG, 둘째 달은 SQL 모델, 넷째 달은 실시간 잡, 여섯째 달은 배포였습니다. 숫자는 실제로 센 값이고 이름과 경로는 전부 바꾼 것입니다.</p>
+      <p>어느 데이터 플랫폼 팀에 새로 온 사람의 여섯 달 커밋을 폴더별로 늘어놓았습니다. 첫 달은 수급 DAG, 둘째 달은 SQL 모델, 셋째 달은 실시간 잡, 여섯 달이 지나서는 배포였습니다. 이름과 경로는 전부 바꿨고 정확한 개수는 적지 않았습니다.</p>
       <div class="dm-legend">
         <span class="dm-chip"><i class="a"></i>파랑 = 데이터가 놓인 자리 (원천, 표, 파일, 토픽)</span>
         <span class="dm-chip"><i class="b"></i>벽돌색 = 시키는 것 (Airflow, DAG, workflow)</span>
@@ -114,11 +114,11 @@
       <section class="dm-card" data-card="map"><h2>MAP</h2><p class="dm-k">저장소는 네 층</p>
         <p class="dm-easy"><b>쉽게 말하면</b> 이 저장소는 「매일 몇 시에 어디서 데이터를 가져와 어떤 표로 만들어 어디에 놓나」를 코드로 적어 둔 곳입니다. 가져오는 것, 표로 만드는 것, 클러스터에 말을 거는 부품, 들어오는 대로 처리하는 것이 각각 폴더 하나입니다.</p>
         <div class="dm-fig" id="dm-map"></div>
-        <p class="dm-cap">파일 수가 가장 많은 층은 <b>SQL 모델 267장</b>입니다. 실제 로직이 거기 있고, 파이썬 DAG 는 언제 어떤 순서로 돌리나만 적습니다.</p></section>
+        <p class="dm-cap">파일 수가 가장 많은 층은 <b>SQL 모델</b>입니다. 실제 로직이 거기 있고, 파이썬 DAG 는 언제 어떤 순서로 돌리나만 적습니다.</p></section>
       <section class="dm-card" data-card="extract"><h2>EXTRACT</h2><p class="dm-k">첫 달, 수급 DAG 한 장</p>
         <p class="dm-easy"><b>쉽게 말하면</b> 남의 저장소에 있는 표 하나를 매일 새벽 우리 창고에 복사하는 일입니다. 어디서 읽고 어디에 쓰나를 YAML 에 적고, 언제 도나를 파이썬에 적습니다. 나머지는 팀이 만들어 둔 도구가 합니다.</p>
         <div class="dm-fig" id="dm-extract"></div>
-        <p class="dm-cap">새로 온 사람이 쓴 것은 34줄인데 <b>2주 동안 커밋 47개</b>가 붙었습니다. 원천 접속, 이름 규칙, 스케줄, 배포 길을 처음 밟느라 규칙마다 한 번씩 걸립니다.</p></section>
+        <p class="dm-cap">새로 온 사람이 쓴 것은 두 파일인데 <b>첫 두 주의 커밋이 거의 다</b> 여기 붙었습니다. 원천 접속, 이름 규칙, 스케줄, 배포 길을 처음 밟느라 규칙마다 한 번씩 걸립니다.</p></section>
       <section class="dm-card" data-card="dbt"><h2>DBT MODEL</h2><p class="dm-k">SQL 한 장이 표 한 개</p>
         <p class="dm-easy"><b>쉽게 말하면</b> 「이 표는 저 표에서 이렇게 골라 만든다」를 SQL 로 적어 두면 도구가 그 SQL 을 순서대로 돌려 표를 만들어 줍니다. 어느 것을 먼저 돌릴지는 SQL 안에서 다른 표를 부르는 자리를 보고 도구가 알아냅니다.</p>
         <div class="dm-fig" id="dm-dbt"></div>
@@ -126,15 +126,15 @@
       <section class="dm-card" data-card="operator"><h2>OPERATOR</h2><p class="dm-k">Airflow 의 손</p>
         <p class="dm-easy"><b>쉽게 말하면</b> Airflow 는 「몇 시에 무엇을 하라」만 알고, 실제로 SQL 을 보내거나 파일을 옮기는 손은 오퍼레이터입니다. 표준 오퍼레이터로 안 되는 상대가 있으면 손을 직접 만듭니다.</p>
         <div class="dm-fig" id="dm-operator"></div>
-        <p class="dm-cap">이 팀은 오퍼레이터 <b>16개를 직접 만들었습니다</b>. 새로 온 사람의 다섯째 달 커밋이 여기 몰립니다. 남이 만든 부품 위에서 쓰다가 부품 자체를 고치는 쪽으로 올라간 달입니다.</p></section>
+        <p class="dm-cap">이 팀은 오퍼레이터를 <b>열 개 넘게 직접 만들었습니다</b>. 새로 온 사람의 넷째 달 커밋이 여기 몰립니다. 남이 만든 부품 위에서 쓰다가 부품 자체를 고치는 쪽으로 올라간 달입니다.</p></section>
       <section class="dm-card" data-card="flink"><h2>STREAMING</h2><p class="dm-k">들어오는 대로 받아 묶는 잡</p>
         <p class="dm-easy"><b>쉽게 말하면</b> 배치는 하루 한 번 표를 만들지만, 이 잡은 로그가 들어오는 대로 받아 10초 기다렸다가 같은 재생 건끼리 묶어 내보냅니다. 늦게 온 로그는 10분까지 받아 차이만 다시 내보냅니다.</p>
         <div class="dm-fig" id="dm-flink"></div>
-        <p class="dm-cap">원천 저장소에서 읽어 오는 표준 커넥터가 없어서 <b>Java 18개로 직접 만들었습니다</b>. 새로 온 사람의 가장 깊은 코드가 여기 있고, 4월 한 달 이 폴더를 161번 바꿨습니다.</p></section>
+        <p class="dm-cap">원천 저장소에서 읽어 오는 표준 커넥터가 없어서 <b>Java 클래스를 처음부터 직접 만들었습니다</b>. 새로 온 사람의 가장 깊은 코드가 여기 있고, 그 달 커밋은 거의 전부 이 폴더였습니다.</p></section>
       <section class="dm-card" data-card="ship"><h2>SHIP</h2><p class="dm-k">코드가 서버에 닿는 길</p>
-        <p class="dm-easy"><b>쉽게 말하면</b> 코드를 고치면 바로 서버에 올리지 않습니다. PR 을 올리고, 동료가 읽고, 고치고, 머지되면 workflow 가 자동으로 배포합니다. 새로 온 사람이 8월에 만든 것이 그 마지막 단계입니다.</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 코드를 고치면 바로 서버에 올리지 않습니다. PR 을 올리고, 동료가 읽고, 고치고, 머지되면 workflow 가 자동으로 배포합니다. 새로 온 사람이 여섯 달을 넘기며 만든 것이 그 마지막 단계입니다.</p>
         <div class="dm-fig" id="dm-ship"></div>
-        <p class="dm-cap">커밋 428개 중 <b>리뷰 반영이 21개</b>이고, 팀의 최근 60일 머지 116건 중 115건에 사람 승인이 있었습니다. 리뷰가 형식이 아닙니다.</p></section>
+        <p class="dm-cap"><b>리뷰 반영 커밋이 여섯 달 내내</b> 끼어 있고, 팀의 머지에는 거의 예외 없이 사람 승인이 붙어 있습니다. 리뷰가 형식이 아닙니다.</p></section>
     </div>
 
     <section class="dm-real">

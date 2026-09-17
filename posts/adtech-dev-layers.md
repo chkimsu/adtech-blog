@@ -6,7 +6,7 @@
 
 ---
 
-<img src="diagrams/adtech-layers.png" alt="Ad Tech 개발 레이어 맵" style="max-width: 100%; border-radius: 12px; margin: 1rem 0;">
+<img src="diagrams/adtech-layers.png" alt="Ad Tech 개발 레이어 맵" style="max-width: 100%; margin: 1rem 0;">
 
 > 위 다이어그램은 광고 요청이 유저에게 도달하기까지 통과하는 전체 파이프라인입니다. 아래에서 각 레이어를 하나씩 해부합니다.
 
@@ -58,11 +58,11 @@ graph LR
 
 ---
 
-## 2. 타겟팅 · 오디언스 — 누구에게 보여줄까 [무대: 닫힌 생태계]
+## 2. 타겟팅 · 오디언스 — 누구에게 보여줄까 [무대: 공통]
 
 타겟팅 레이어는 "이 광고를 누구에게 보여줄 것인가"를 결정합니다. 전체 유저 풀에서 광고주의 목표에 맞는 후보 유저를 필터링하는 첫 번째 관문입니다.
 
-이 레이어가 두 무대에서 가장 크게 갈립니다. **재료의 확실성이 다릅니다.**
+이 레이어가 두 무대에서 가장 크게 다릅니다. **재료의 확실성이 다릅니다.**
 
 담장 안(네이버·카카오)은 로그인 ID가 있어 "이 사람이 이 사람"이라는 걸 확정할 수 있습니다. 기기를 바꿔도 같은 사람으로 이어지고, 세그먼트를 실시간으로 갱신해 바로 랭킹에 반영합니다. 열린 RTB는 쿠키·기기 ID 같은 확률적 신호에 기대야 하고, 크로스디바이스 매칭 정확도가 60~70%에 그칩니다. 세그먼트를 데이터 업체에서 사 와야 하는 경우도 많습니다.
 
@@ -79,6 +79,7 @@ graph LR
 | **Position Bias 보정** | 광고 위치에 따른 클릭률 편향을 제거하여 공정한 랭킹 보장 |
 
 **관련 포스트:**
+- [타겟팅 기초](post.html?id=targeting-basics) — 광고주의 조건과 유저 정보가 만나는 자리. 기초 4편의 첫 글
 - [오디언스 세그멘테이션](post.html?id=audience-segmentation) — Demographic, Behavioral, RFM, ML Clustering 기반 세그먼트 설계
 - [Lookalike Modeling](post.html?id=lookalike-modeling) — Seed에서 유사 유저를 발굴하는 Embedding/Propensity/Graph 접근법
 - [Position Bias](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
@@ -135,7 +136,7 @@ graph LR
 | **Multi-Task Learning** | pCTR + pCVR을 동시 학습하여 Sample Selection Bias 해결 (ESMM, MMoE, PLE) |
 | **Feature Store** | Batch/Streaming/Real-Time 피처를 통합 관리하여 10ms 안에 모델에 공급 |
 
-광고에서 eCPM(수익 기대값)은 다음과 같이 계산됩니다:
+광고에서 eCPM(수익 기대값)은, 전환당 과금(CPA) 캠페인이라면 다음과 같이 계산됩니다:
 
 $$\text{eCPM} = \text{pCTR} \times \text{pCVR} \times \text{Bid} \times 1000$$
 
@@ -182,7 +183,7 @@ graph TD
 ```
 
 **관련 포스트:**
-- [Auto-Bidding & Budget Pacing: 일 예산 제약 하에서 입찰 최적화하는 법](post.html?id=auto-bidding-pacing)
+- [Auto-Bidding 과 예산 페이싱: 하루 예산을 언제 얼마씩 쓰나](post.html?id=auto-bidding-pacing)
 - [Bid Shading: 1st Price 경매에서 얼마를 깎아 부를까](post.html?id=bid-shading-censored)
 
 ---
@@ -368,7 +369,7 @@ graph LR
 
 | 컴포넌트 | 역할 |
 |---------|------|
-| **쿠키리스 대응** | 3rd Party Cookie 폐지 후 대안 — Topics API, Attribution Reporting API, FLEDGE |
+| **쿠키리스 대응** | 쿠키 없이 타겟팅하고 측정하는 대안 — 1st-party 데이터, 집계 리포팅(SKAdNetwork 류), 컨텍스트 타겟팅. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어짐 |
 | **동의 관리 (CMP)** | GDPR/CCPA 준수를 위한 유저 동의 수집·관리 |
 | **차등 프라이버시** | 집계 데이터에 노이즈를 추가하여 개인 식별 방지 |
 
@@ -381,12 +382,12 @@ graph LR
 
 ## 9. 어디서부터 시작할까? [무대: 공통]
 
-레이어가 8개면 "다 중요하다"는 말은 도움이 안 됩니다. **무엇부터 손봐야 하는지**를 숫자로 가려 봅시다. 가상 데이터입니다.
+레이어가 8개면 "다 중요하다"는 말은 도움이 안 됩니다. **무엇부터 손봐야 하는지**를 숫자로 정해 봅시다. 가상 데이터입니다.
 
 ```python
 # 레이어 8개가 다 중요하다면, 무엇부터 손봐야 하나.
 #
-# 답은 "곱셈 사슬에서 어디에 있느냐"로 갈린다.
+# 답은 "곱셈 사슬에서 어디에 있느냐"로 정해진다.
 # 광고 하나의 기대수익은 각 레이어의 결과가 곱해져 만들어진다.
 #   기대수익 = 도달가능유저 × pCTR × pCVR × 전환가치 × (소재계수) × (측정신뢰도)
 # 곱셈이므로 어느 한 칸이 10% 틀리면 결과도 10% 틀린다 — 여기까진 똑같다.
@@ -479,7 +480,7 @@ print("→ 소재는 되돌아오지 않으니 마음껏 실험해도 된다 —
 
 **위쪽 표를 보면 모든 레이어가 똑같습니다.** 기대수익이 곱셈 사슬(도달 × pCTR × pCVR × 전환가치)이라, 어느 칸이 10% 나빠져도 매출은 10% 줄어듭니다. 여기까지만 보면 우선순위를 못 정합니다.
 
-**아래쪽에서 갈립니다.** 차이는 오차가 **몇 층으로 번지는가**입니다. 타겟팅이 틀리면 잘못된 유저에게 노출되고, 그 노출로 만든 클릭·전환 로그가 **다시 모델 학습 데이터가 됩니다.** 오차가 다음 학습에 실려 되돌아옵니다. 같은 10%가 34.4%로 커집니다.
+**아래쪽에서 달라집니다.** 차이는 오차가 **몇 층으로 번지는가**입니다. 타겟팅이 틀리면 잘못된 유저에게 노출되고, 그 노출로 만든 클릭·전환 로그가 **다시 모델 학습 데이터가 됩니다.** 오차가 다음 학습에 실려 되돌아옵니다. 같은 10%가 34.4%로 커집니다.
 
 측정도 마찬가지입니다. 측정이 틀리면 모든 판단의 근거가 틀립니다. 잘못된 숫자를 보고 잘못된 곳을 고치게 되니, 노력이 오히려 상황을 나쁘게 만듭니다.
 
@@ -520,10 +521,14 @@ $$\text{수익} = R \times p_{ctr} \times p_{cvr} \times V$$
 - [Ad Serving Flow](post.html?id=ad-serving-flow) — 서빙 흐름
 - [Walled Garden](post.html?id=walled-garden) — 폐쇄형 vs 개방형 생태계
 
+### 타겟팅 · 오디언스
+- [타겟팅 기초](post.html?id=targeting-basics), [오디언스와 세그먼트](post.html?id=audience-and-segments), [Lookalike 기초](post.html?id=lookalike-basics), [리타겟팅과 빈도 상한](post.html?id=retargeting-frequency-cap) — 기초 네 편
+- [오디언스 세그멘테이션](post.html?id=audience-segmentation), [Lookalike Modeling](post.html?id=lookalike-modeling) — 심화 두 편
+
 ### 밴딧 · 개인화
-- [탐색과 활용 통합 가이드](post.html?id=exploration-exploitation) — MAB 이론과 실무
+- [탐색과 활용](post.html?id=exploration-exploitation) — MAB 이론과 실무
 - [UCB 계열](post.html?id=ucb-family) — UCB1 vs LinUCB
-- [MAB Algorithm Collection](post.html?id=mab-summary) — 밴딧 알고리즘 총정리
+- [멀티암드 밴딧 계보](post.html?id=mab-summary) — 밴딧 알고리즘 총정리
 
 ### 인프라
 - [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 10ms 서빙의 비밀

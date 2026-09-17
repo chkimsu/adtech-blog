@@ -8,6 +8,58 @@
 
 const posts = [
   {
+    id: 'retargeting-frequency-cap',
+    world: 'both',
+    worldNote: '리타겟팅 목록과 빈도 카운터는 두 무대가 다 씁니다. 다른 것은 「이 사람」을 알아보는 열쇠입니다. 담장 안은 회원 ID 이고 열린 RTB 는 쿠키라, 쿠키가 막히면 열린 RTB 에서 둘 다 멈춥니다.',
+    worldPractical: '담장 안에서는 로그인한 회원 ID 로 사이트의 픽셀 기록도 광고 서버의 카운터도 같은 줄에 적혀서, 폰과 PC 를 오가도 한 사람으로 세고 쿠키가 막혀도 영향이 적습니다. 열린 RTB 에서는 쿠키가 같아야 픽셀 기록이 붙고 쿠키마다 카운터가 따로 있어, 폰과 PC 가 다른 사람으로 보이고 쿠키가 지워지면 0 부터 다시 셉니다. 쿠키가 막히면 리타겟팅 목록이 비고 같은 사람이 상한 없이 반복해서 보는 것이 가장 먼저 생기는 일입니다.',
+    title: '리타겟팅과 빈도 상한: 다시 보이기와 그만 보이기',
+    excerpt: '친구는 「네 광고 오늘 다섯 번 봤어」라 하고 대표는 「장바구니에 담고 안 산 사람에게만 다시 보여 줄 수 있어요?」라 묻습니다. 반대처럼 보이는 둘이 같은 재료를 씁니다. 그 사람이 전에 무엇을 했나입니다. 리타겟팅은 광고주 사이트에 심은 픽셀 한 줄이 보낸 기록으로 10분마다 새로 만드는 목록이고, 「담고 안 산 사람」은 장바구니 7일 목록에서 구매 목록을 뺀 것입니다. 빈도 상한은 사람과 광고의 짝마다 오늘 본 횟수를 세는 카운터이고, 후보 2,310건 중 절반이 여기서 빠집니다. 상한을 1, 3, 5회로 두면 100만 노출이 몇 명에게 닿는지 세어 3회를 고릅니다.',
+    date: '2026-09-24',
+    categories: ['Targeting & Audience'],
+    tags: ['Retargeting', 'Frequency Capping', 'Targeting', '입문'],
+    contentUrl: 'posts/retargeting-frequency-cap.md',
+    series: 'targeting-track'
+  },
+  {
+    id: 'lookalike-basics',
+    world: 'both',
+    worldNote: '닮은 사람을 찾는 방법은 두 무대가 같습니다. 담장 안은 로그인 ID 로 씨앗을 확정으로 붙이고, 열린 RTB 는 쿠키로 붙여 씨앗에 잡음이 섞입니다.',
+    worldPractical: '담장 안에서는 씨앗 8만 8천 명 중 8만 명이 로그인 ID 로 확정으로 맞고, 플랫폼 안의 행동 전체와 친구 관계까지 닮음을 재는 데 쓸 수 있어 10% 확장까지도 닮음이 늦게 흐려집니다. 열린 RTB 에서는 씨앗이 쿠키로 60~70% 만 맞고 일부는 다른 사람이라, 같은 비율에서 정확도가 빨리 무너집니다. 그래서 비율을 보수적으로 잡고 광고를 보인 쪽과 안 보인 쪽을 나눠 효과를 따로 잽니다.',
+    title: 'Lookalike 기초: 씨앗 8만 명에서 닮은 사람 140만 명을 찾는 법',
+    excerpt: '구매자 8만 명으로 맞춤타겟을 만들자 「유사타겟 만들기」 슬라이더가 생겼습니다. 1% 에서 14만 명, 10% 에서 140만 명입니다. 닮았다는 것은 무엇을 보고 정하고, 1% 는 무엇의 1% 일까요. 회원마다 붙은 숫자 묶음이 씨앗 평균과 얼마나 다른가로 닮음을 재고, 전체 회원 1,400만 명을 그 순서로 세워 앞에서 자른 것이 유사타겟입니다. 도달에 전환율을 곱하면 가장 닮은 1% 가 4,480건, 10% 가 12,600건으로 가장 많습니다. 씨앗이 300명이면 우연을 배우고 300만이면 평균이 흐려지는 이유까지 봅니다.',
+    date: '2026-09-23',
+    categories: ['Targeting & Audience'],
+    tags: ['Lookalike', 'Targeting', 'Segmentation', '입문'],
+    contentUrl: 'posts/lookalike-basics.md',
+    series: 'targeting-track'
+  },
+  {
+    id: 'audience-and-segments',
+    world: 'both',
+    worldNote: '조건으로 목록을 만드는 방법은 두 무대가 같습니다. 담장 안은 플랫폼이 자기 회원 데이터로 목록을 만들어 광고주가 고르게 하고, 열린 RTB 는 광고주가 쿠키 데이터로 자기 목록을 직접 만듭니다.',
+    worldPractical: '담장 안에서는 플랫폼 담당자가 조건을 적고 배치가 매일 새벽 회원 ID 목록을 만들어 광고 서버 옆 저장소로 옮깁니다. 회원 ID 라 목록이 확정이고 광고주는 있는 세그먼트를 고르고 집계 리포트만 받습니다. 열린 RTB 에서는 광고주 쪽 DSP 가 조건을 직접 적고 유저 단위 기록까지 보지만, 쿠키라서 같은 사람이 둘로 세어지거나 못 알아보는 일이 생기고 동기화가 몇 시간에서 하루 늦습니다.',
+    title: '오디언스와 세그먼트: 조건 한 벌이 사람 목록이 되는 과정',
+    excerpt: '플랫폼 담당자는 「세그먼트 317」이라 하고 화면은 「오디언스 160만 명, 04:10 갱신」이라 합니다. 같은 것일까요. 세그먼트는 사람이 적은 조건 한 벌이고, 오디언스는 배치 작업이 매일 새벽 그 조건으로 만든 회원 ID 목록입니다. 조건 셋에 걸린 사람을 그냥 더하면 213만인데 겹치는 사람을 한 번만 세면 160만이 되는 것, 목록이 창고에서 광고 서버 옆 저장소로 옮겨지는 것, 한 사람이 여러 목록에 드는 것, 조건을 더할수록 160만이 92만으로 주는 것을 봅니다. 광고주가 올린 고객 파일이 맞춤타겟이 되는 과정까지입니다.',
+    date: '2026-09-22',
+    categories: ['Targeting & Audience'],
+    tags: ['Segmentation', 'Targeting', 'DMP', 'CDP', '입문'],
+    contentUrl: 'posts/audience-and-segments.md',
+    series: 'targeting-track'
+  },
+  {
+    id: 'targeting-basics',
+    world: 'both',
+    worldNote: '조건을 대 보는 방법은 두 무대가 같습니다. 다른 것은 유저 정보가 오는 길입니다. 담장 안은 회원 ID 로 바로 찾고, 열린 RTB 는 쿠키로 자기 목록을 뒤져야 합니다.',
+    worldPractical: '담장 안에서는 요청에 회원 ID 가 실려 와서 프로필과 세그먼트 목록을 한 번에 가져오고, 폰과 PC 도 같은 사람으로 봅니다. 열린 RTB 에서는 쿠키 ID 로 광고주 쪽 목록을 찾아야 해서 폰과 PC 가 60~70% 만 같은 사람으로 붙고, 쿠키가 지워지면 그 사람의 정보가 비어 버립니다. 그래서 같은 조건이라도 열린 RTB 에서는 「모르는 사람」이 더 많이 생깁니다.',
+    title: '타겟팅 기초: 광고주의 조건과 유저 정보가 만나는 자리',
+    excerpt: '운동화 브랜드의 마케터 서연 씨가 첫 캠페인 화면에서 나이, 성별, 지역, 관심사 네 줄을 고르고 멈춥니다. 이 조건은 어디에 저장되고 누구와 언제 비교될까요. 조건은 캠페인에 놓여 있고, 유저 정보는 누군가 화면을 열어 광고 자리가 생긴 순간 요청과 함께 옵니다. 광고 서버가 둘을 대 보는 자리에서 후보 12만 건이 4,200건으로 줄어듭니다. 타겟 방식 여덟 가지를 셋으로 묶어 보고, 조건을 좁힐수록 전환율은 오르고 도달은 주는 것을 표로 곱해 봅니다.',
+    date: '2026-09-21',
+    categories: ['Targeting & Audience'],
+    tags: ['Targeting', 'Segmentation', 'Ad Ecosystem', '입문'],
+    contentUrl: 'posts/targeting-basics.md',
+    series: 'targeting-track'
+  },
+  {
     id: 'data-engineer-first-six-months',
     world: 'na',
     title: '데이터 엔지니어 첫 6개월: 커밋 기록으로 읽은 신입이 하는 일',
@@ -632,6 +684,7 @@ const posts = [
     categories: ['Targeting & Audience'],
     tags: ['Segmentation', 'Targeting', 'Ad Ecosystem', 'DMP', 'CDP', 'ML Infra'],
     contentUrl: 'posts/audience-segmentation.md',
+    series: 'targeting-track',
   },
   {
     id: 'lookalike-modeling',
@@ -644,6 +697,7 @@ const posts = [
     categories: ['Targeting & Audience'],
     tags: ['Lookalike', 'Targeting', 'Ad Ecosystem', 'ML Infra', 'Two-Tower'],
     contentUrl: 'posts/lookalike-modeling.md',
+    series: 'targeting-track',
   },
   {
     id: 'git-practical-guide',
@@ -1035,8 +1089,9 @@ const series = {
   },
   'targeting-track': {
     title: '타겟팅 & 오디언스 트랙',
-    desc: '세그멘테이션에서 룩얼라이크 확장까지',
-    posts: ['audience-segmentation', 'lookalike-modeling'],
+    desc: '마케터 서연 씨의 첫 캠페인을 따라 타겟팅이 일어나는 자리, 세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한까지 기초 네 편을 카드 그림으로 읽고, 그 뒤에 심화 두 편으로 넘어갑니다',
+    posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap',
+      'audience-segmentation', 'lookalike-modeling'],
   },
   'advanced-bidding-track': {
     title: '입찰·생태계 심화 트랙',

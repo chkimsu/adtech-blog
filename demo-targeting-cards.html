@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>타겟팅 카드 아홉 장 — Ad Tech Blog</title>
+  <meta name="description" content="누구에게 광고를 보여 줄지가 정해지는 자리를 카드 한 장씩으로. 조건과 유저 정보가 만나는 자리, 후보가 줄어드는 순서, 타겟 방식 여덟 가지, 세그먼트 만들기, 맞춤타겟, Lookalike, 리타겟팅, 빈도 상한, 유저 정보가 오는 길. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .tg-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .tg-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .tg-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+    .tg-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1rem auto 0; max-width: 1040px; padding: 0 1rem; }
+    .tg-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--border-color); background: var(--bg-primary); font-size: 0.82rem; font-weight: 600; }
+    .tg-chip i { display: inline-block; width: 13px; height: 13px; }
+    .tg-chip i.a { background: var(--navy); }
+    .tg-chip i.b { background: var(--oxide); }
+    .tg-chip i.k { background: var(--text-primary); }
+    .tg-chip i.c { background: var(--grey); }
+    .tg-chip i.n { background: var(--bg-primary); border: 1.5px dashed var(--grey2); }
+    .tg-chip svg { width: 13px; height: 13px; display: block; }
+    .tg-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .tg-host:empty { display: none; }
+
+    .tg-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    @media (max-width: 1000px) { .tg-grid { grid-template-columns: 1fr; } }
+    .tg-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
+    .tg-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
+    .tg-card .tg-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
+    .tg-easy { font-size: 0.92rem; line-height: 1.6; color: var(--text-primary); background: var(--plate); border-left: 3px solid var(--text-primary); padding: 0.55rem 0.8rem; margin: 0 0 0.8rem; }
+    .tg-easy b { font-weight: 800; margin-right: 0.3rem; }
+    html.is-embed .tg-easy { display: none; }
+    .tg-fig { overflow-x: auto; }
+    .tg-fig svg { display: block; width: 100%; min-width: 460px; height: auto; }
+    .tg-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
+    .tg-cap b { color: var(--text-primary); }
+    /* 임베드는 카드 하나만 남는다 — 폭이 1000px 를 넘어도 두 칸으로 나누지 않는다. 그림은 860px 에서 멈추고 가운데에 둔다 */
+    html.is-embed .tg-grid { margin-top: 0.5rem; padding: 0 0.5rem; grid-template-columns: 1fr; }
+    html.is-embed .tg-fig svg { max-width: 860px; margin: 0 auto; }
+    html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
+
+    /* 그림 부품 — 색은 전부 토큰 */
+    .tg-fig svg text { font-family: var(--font-sans); }
+    .lbl { font-size: 11px; fill: var(--text-secondary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
+    .lbl.k { fill: var(--text-primary); font-weight: 750; }
+    .lbl.sm { font-size: 9.5px; fill: var(--text-muted); }
+    .lbl.b { fill: var(--oxide); font-weight: 750; }
+    .on { fill: var(--bg-primary); font-weight: 750; }
+    .f-a { fill: var(--navy); } .f-b { fill: var(--oxide); } .f-k { fill: var(--text-primary); } .f-c { fill: var(--grey); } .f-sunk { fill: var(--plate); }
+    .srv-body { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
+    .led { fill: var(--bg-primary); }
+    .tbl-body { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .tbl-ln { stroke: var(--navy-bd); stroke-width: 1; }
+    .db { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .file { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
+    .tool { fill: var(--grey); }
+    .tool-t { font-size: 11px; font-weight: 800; fill: var(--bg-primary); }
+    .tool-s { font-size: 9.5px; fill: var(--bg-primary); }
+    .clk { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.3; }
+    .clk-h { stroke: var(--text-primary); stroke-width: 1.4; }
+    .list { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; stroke-width: 1.2; }
+    .list-t { font-size: 10px; fill: var(--text-secondary); }
+    .list-t.h { font-weight: 800; fill: var(--text-primary); }
+    .list-t.b { font-weight: 800; fill: var(--oxide); }
+    .grp { fill: none; stroke: var(--border-color); stroke-width: 1.2; }
+    .track { fill: var(--plate); stroke: var(--border-color); stroke-width: 1; }
+    .tick { stroke: var(--text-primary); stroke-width: 1.4; }
+    .split { stroke: var(--border-color); stroke-width: 1.2; stroke-dasharray: 4 4; }
+    .ar { fill: none; stroke-width: 1.5; }
+    .ar.k { stroke: var(--text-secondary); } .ar.a { stroke: var(--navy); } .ar.b { stroke: var(--oxide); } .ar.c { stroke: var(--grey); }
+    .ar.dash { stroke-dasharray: 4 3; }
+    .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
+    .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
+    .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
+    .usr { fill: var(--text-secondary); }
+    .tok { stroke-width: 1.2; }
+    .tok.c { fill: var(--grey); } .tok.k { fill: var(--text-primary); } .tok.b { fill: var(--oxide); } .tok.a { fill: var(--navy); }
+    .tok.n { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; }
+    .tok-t { font-family: var(--font-mono); font-size: 9.5px; fill: var(--bg-primary); font-weight: 650; }
+    .tok-t.dark { fill: var(--text-primary); }
+    @media (prefers-reduced-motion: reduce) { .dot { display: none; } }
+
+    .tg-real { max-width: 1240px; margin: 2.5rem auto 3rem; padding: 0 1rem; }
+    .tg-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .tg-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
+    .tg-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>타겟팅 카드 아홉 장</h1>
+      <p>누구에게 광고를 보여 줄지가 정해지는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향이고, 점이 몰려서 지나가면 하루 한 번 배치입니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 목록 (세그먼트, 프로필, 카운터)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (광고 요청, 행동 기록)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 정하는 서버 (광고 서버)</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (배치, 매칭, 닮음 계산)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 광고주가 적어 둔 조건</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="meet"><h2>MATCH AT REQUEST</h2><p class="tg-k">조건과 유저 정보가 만나는 자리</p><p class="tg-easy"><b>쉽게 말하면</b> 광고주는 「이런 사람에게 보여 주세요」 하고 조건을 적어 두고, 광고 자리가 하나 생기면 광고 서버가 그 사람의 정보를 조건에 대 보는 것입니다.</p><div class="tg-fig" id="tg-meet"></div>
+        <p class="tg-cap">조건은 <b>캠페인에 놓여 있고</b>, 유저 정보는 <b>요청과 함께</b> 옵니다. 둘을 대 보는 자리가 광고 서버입니다.</p></section>
+      <section class="tg-card" data-card="funnel"><h2>CANDIDATE FUNNEL</h2><p class="tg-k">후보 12만 건이 800건으로 줄어드는 순서</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 자리 하나에 붙을 수 있는 광고가 처음에는 12만 개인데, 조건을 하나씩 대 보며 800개까지 줄이고 그중 1개를 내보내는 것입니다.</p><div class="tg-fig" id="tg-funnel"></div>
+        <p class="tg-cap">가장 크게 줄어드는 자리가 <b>타겟 조건</b>입니다. 12만 개 중 3.5%만 이 사람에게 보여도 되는 광고입니다.</p></section>
+      <section class="tg-card" data-card="types"><h2>TARGET TYPES</h2><p class="tg-k">타겟 방식 여덟 가지</p><p class="tg-easy"><b>쉽게 말하면</b> 「누구에게」를 정하는 방법은 여덟 가지인데, 묶어 보면 「이 사람이 누구인가」, 「광고주가 아는 사람인가」, 「어디에 뜨나, 누구는 빼나」 셋입니다.</p><div class="tg-fig" id="tg-types"></div>
+        <p class="tg-cap">여덟 방식 전부 <b>조건</b>입니다. 이름이 달라 보여도 광고 서버가 대 보는 것은 같습니다.</p></section>
+      <section class="tg-card" data-card="segment"><h2>SEGMENT</h2><p class="tg-k">조건 한 벌이 사람 목록이 된다</p><p class="tg-easy"><b>쉽게 말하면</b> 「관심사가 러닝인 사람」이라는 조건을 적어 두면, 매일 새벽 배치 작업이 그 조건에 맞는 사람의 ID 를 모아 목록 하나를 만드는 것입니다. 그 목록이 오디언스입니다.</p><div class="tg-fig" id="tg-segment"></div>
+        <p class="tg-cap">세그먼트는 <b>조건</b>이고 오디언스는 <b>그 조건으로 만든 목록</b>입니다. 목록은 광고 서버 옆 저장소로 옮겨 두고 요청마다 읽습니다.</p></section>
+      <section class="tg-card" data-card="custom"><h2>CUSTOM AUDIENCE</h2><p class="tg-k">광고주가 올린 목록을 회원과 맞춘다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고주가 자기 구매 고객 목록을 올리면, 플랫폼이 그 목록과 자기 회원을 하나씩 맞춰 보고 맞은 사람만 모아 세그먼트로 등록하는 것입니다.</p><div class="tg-fig" id="tg-custom"></div>
+        <p class="tg-cap">올린 8만 8천 명 중 <b>회원과 맞은 8만 명</b>이 맞춤타겟입니다. 이메일은 해시로 바꿔 올리므로 플랫폼은 원문을 보지 않습니다.</p></section>
+      <section class="tg-card" data-card="lookalike"><h2>LOOKALIKE</h2><p class="tg-k">씨앗에서 닮은 사람으로 넓힌다</p><p class="tg-easy"><b>쉽게 말하면</b> 이미 산 사람 8만 명(씨앗)과 닮은 사람을 전체 회원에서 찾아 줄을 세우고, 앞에서 1%, 5%, 10% 까지를 잘라 새 목록으로 만드는 것입니다.</p><div class="tg-fig" id="tg-lookalike"></div>
+        <p class="tg-cap">확장 비율을 올리면 <b>도달은 늘고 닮음은 옅어집니다.</b> 씨앗 8만 명에서 10% 확장이면 140만 명입니다.</p></section>
+      <section class="tg-card" data-card="retarget"><h2>RETARGETING</h2><p class="tg-k">이미 만난 사람의 목록</p><p class="tg-easy"><b>쉽게 말하면</b> 브랜드 사이트에서 장바구니에 담고 안 산 사람을, 사이트에 심어 둔 픽셀이 알려 주면 몇 분 안에 목록으로 모아 두는 것입니다. 그 목록에 다시 광고를 보여 줍니다.</p><div class="tg-fig" id="tg-retarget"></div>
+        <p class="tg-cap">사이트에서 한 행동이 <b>몇 분 뒤 목록</b>이 됩니다. 매일 새벽 한 번인 세그먼트보다 훨씬 자주 갱신됩니다.</p></section>
+      <section class="tg-card" data-card="freqcap"><h2>FREQUENCY CAP</h2><p class="tg-k">한 사람에게 하루 3회까지만</p><p class="tg-easy"><b>쉽게 말하면</b> 「이 사람이 이 광고를 오늘 몇 번 봤나」를 세어 두고, 3번을 채웠으면 오늘은 그 광고를 후보에서 빼는 것입니다.</p><div class="tg-fig" id="tg-freqcap"></div>
+        <p class="tg-cap">노출 한 번마다 카운터가 <b>1 오릅니다.</b> 후보 2,310건 중 절반이 이 자리에서 빠집니다.</p></section>
+      <section class="tg-card" data-card="signal"><h2>WHERE THE INFO COMES FROM</h2><p class="tg-k">유저 정보가 오는 길이 두 가지</p><p class="tg-easy"><b>쉽게 말하면</b> 담장 안에서는 로그인한 회원 ID 로 그 사람의 목록을 바로 찾고, 열린 RTB 에서는 쿠키 ID 로 자기 목록을 뒤져 봐야 해서 못 찾는 사람이 생기는 것입니다.</p><div class="tg-fig" id="tg-signal"></div>
+        <p class="tg-cap">같은 타겟팅이라도 <b>유저 정보가 오는 길</b>이 다릅니다. 담장 안은 회원 ID 하나로 확정이고, 열린 RTB 는 쿠키라 흔들립니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>타겟팅 이야기를 들을 때 세 가지만 물으면</b> 어느 카드인지 정해집니다. 조건은 어디에 적혀 있나, 유저 정보는 어디서 오나, 목록은 얼마나 자주 새로 만드나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=targeting-basics">타겟팅 기초</a>부터 네 편에 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="ecosystem.html">Ecosystem</a>
+        <a href="demos.html">데모</a>
+        <a href="post.html?id=targeting-basics">타겟팅 기초 글</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/targeting-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

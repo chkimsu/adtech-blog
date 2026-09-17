@@ -14,7 +14,7 @@
     "Online Learning", "A/B Testing", "입문",
     "pCTR", "pCVR", "Calibration", "Attribution", "Causal Inference", "Incrementality", "Ad Ranking", "Model Serving", "Two-Tower", "ML Infra",
     "RTB", "DSP", "SSP", "Ad Ecosystem", "eCPM", "Bid Shading", "Auto-Bidding",
-    "Segmentation", "Targeting", "Lookalike", "DMP", "CDP",
+    "Segmentation", "Targeting", "Lookalike", "DMP", "CDP", "Retargeting", "Frequency Capping",
     "Git", "DevOps", "Workflow", "Collaboration",
     "Software Architecture", "System Design", "Microservices", "Event-Driven", "Kubernetes", "Networking", "Kafka",
     "Algorithm", "Data Structure", "Coding Test"

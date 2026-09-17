@@ -206,6 +206,10 @@
     .demo-card-badge[data-badge="Measurement"]  { background: var(--series-6); }
     /* 인프라 배관 데모(요청 경로·Kafka). 3색조 중 회색 — 나머지 배지와 안 겹친다. */
     .demo-card-badge[data-badge="Infra"]        { background: var(--grey); }
+    /* 타겟팅 카드 데모. 채움색이 다 찼으니 테두리형으로, 알고리즘 배지(네이비)와 달리 산화철로 둔다. */
+    .demo-card-badge[data-badge="Targeting"]    {
+      background: transparent; color: var(--oxide); border: 1px solid var(--oxide-bd);
+    }
     /* 알고리즘 데모. series 여섯 색이 이미 다 찼으니 채우기 대신 테두리로 가른다.
        글 카테고리 Interview & Algorithms 를 style.css 에서 처리한 방식과 같다. */
     .demo-card-badge[data-badge="Algorithms"]   {
@@ -481,6 +485,7 @@
               <a href="demo-data-handoff.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터 건네기 카드 여덟 장</a>
               <a href="demo-cluster-roles.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Hadoop, Hive, Spark 자리 카드</a>
               <a href="demo-de-first-months.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터 엔지니어 첫 6개월 카드</a>
+              <a href="demo-targeting-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 타겟팅 카드 아홉 장</a>
               <a href="demo-pipeline-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 학습 데이터까지</a>
             </div>
           </div>
@@ -1110,6 +1115,20 @@
               <span class="demo-card-meta-item">데이터 건네기 카드 먼저 보면 좋음</span>
             </div>
             <a href="demo-de-first-months.html" class="btn-try">체험하기</a>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card-badges">
+              <span class="demo-card-badge" data-badge="Targeting">Targeting</span>
+              <span class="demo-card-level level-beginner">입문</span>
+            </div>
+            <h3>타겟팅 카드 아홉 장</h3>
+            <p>누구에게 광고를 보여 줄지가 정해지는 자리를 카드 한 장씩으로. 조건과 유저 정보가 만나는 자리, 후보가 줄어드는 순서, 타겟 방식 여덟 가지, 세그먼트, 맞춤타겟, Lookalike, 리타겟팅, 빈도 상한, 유저 정보가 오는 길. 점이 흐르는 방향이 데이터가 가는 방향입니다.</p>
+            <div class="demo-card-meta">
+              <span class="demo-card-meta-item">⏱ 9분</span>
+              <span class="demo-card-meta-item">선수지식 거의 없음</span>
+            </div>
+            <a href="demo-targeting-cards.html" class="btn-try">체험하기</a>
           </div>
 
           <div class="demo-card">

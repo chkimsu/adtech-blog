@@ -2590,5 +2590,33 @@ window.DEMO_EDU = {
             { el: '[data-card="file"]', title: '팀 간에 가장 흔한 것', body: '파일을 놓고 경로만 알려 줍니다. 점이 한 번 몰려 들어가고, 받는 쪽이 나중에 읽어 갑니다.', waitFor: 'click' },
             { el: '[data-card="api"]', title: 'API 는 조회용', body: '건 하나가 요청 하나입니다. 228만 건을 이렇게 받지는 않습니다.' }
         ]
+    },
+
+    // ==========================================
+    // Hadoop, Hive, Spark 자리 카드 여섯 장 (입문)
+    // ==========================================
+    'cluster-roles': {
+        analogy: '세 이름은 프로그램이고 노드는 자리다. 워커 한 대의 1층 저장, 2층 자리 배분은 같이 쓰고 3층 프로그램만 다르다',
+        anchor: '.cr-host',
+        embedKeep: ['.cr-grid'],
+        embedHide: ['.cr-hero', '.cr-real'],
+        explain: {
+            '.cr-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'nodes': return '헷갈리는 것은 <strong>엣지 노드</strong>입니다. 클러스터 안이지만 데이터도 계산도 없는 서버입니다. 내가 명령을 치는 자리이고, Spark 의 driver 가 여기서 뜨는 경우가 많습니다.';
+                    case 'layers': return '헷갈리는 것은 <strong>NodeManager 와 executor 의 차이</strong>입니다. NodeManager 는 늘 켜져 있는 자리 배분 담당이고, executor 는 그 자리를 받아 작업 동안만 도는 프로세스입니다.';
+                    case 'hive': return '헷갈리는 것은 <strong>Hive 가 계산을 안 한다</strong>는 점입니다. HiveServer2 는 계획을 세우고 결과를 모을 뿐, 세는 일은 Tez 컨테이너가 합니다. 엔진을 Spark 로 바꾸는 설정도 있습니다.';
+                    case 'spark': return '헷갈리는 것은 <strong>driver 가 뜨는 자리</strong>입니다. 클라이언트 모드면 내 엣지 노드에, 클러스터 모드면 워커의 컨테이너 하나에 뜹니다. 엣지 노드를 닫으면 클라이언트 모드 작업은 같이 죽습니다.';
+                    case 'shared': return '헷갈리는 것은 <strong>Trino 는 YARN 을 안 쓴다</strong>는 점입니다. 자기 워커 서버가 따로 있고 Metastore 목록과 HDFS 파일만 빌려 씁니다. 그래서 큐 이름이 없습니다.';
+                    case 'names': return '헷갈리는 것은 <strong>Spark 는 두 층에 걸쳐 있다</strong>는 점입니다. 엔진이면서 사람이 쓰는 Spark SQL 과 DataFrame 도 갖습니다. Hive 는 엔진이 없어서 Tez 나 Spark 를 빌립니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '[data-card="layers"]', title: '워커 한 대의 단면', body: '1층 저장과 2층 자리 배분은 Hive 와 Spark 가 같이 씁니다. 다른 것은 <strong>3층의 프로그램</strong>뿐입니다.' },
+            { el: '[data-card="spark"]', title: 'driver 와 executor', body: 'Spark 는 작업마다 driver 하나를 띄우고, driver 가 워커에 executor 를 띄웁니다. HiveServer2 같은 상주 서버가 없습니다.', waitFor: 'click' },
+            { el: '[data-card="names"]', title: '이름표 정리', body: 'Hadoop 은 아래 두 층의 이름입니다. Hive 와 Spark 는 그 위에서 도는 프로그램입니다.' }
+        ]
     }
 };

@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'hadoop-hive-spark-roles',
+    world: 'na',
+    title: 'Hadoop, Hive, Spark: 한 워커 노드 위에서 셋이 어떻게 나뉘나',
+    excerpt: '지훈 씨가 일곱째 주에 "그 쿼리는 Hive 말고 Spark 로 돌리세요"라는 말을 듣습니다. 같은 클러스터, 같은 테이블인데 무엇이 다를까요. 노드를 엣지, 마스터, 서비스, 워커 넷으로 나누고 워커 한 대를 세로로 잘라 보면 층이 셋입니다. 1층 저장(HDFS)과 2층 자리 배분(YARN)은 Hive 와 Spark 가 같이 쓰고, 다른 것은 3층에서 도는 프로그램뿐입니다. Hive 는 늘 켜진 HiveServer2 가 Tez 조각을 띄우고, Spark 는 작업마다 driver 가 executor 를 띄웁니다. 둘이 만나는 자리는 Metastore 목록과 HDFS 파일입니다.',
+    date: '2026-09-19',
+    categories: ['Software Engineering', 'ML Infrastructure'],
+    tags: ['System Design', 'ML Infra', '입문'],
+    contentUrl: 'posts/hadoop-hive-spark-roles.md',
+    series: 'engineering-foundations'
+  },
+  {
     id: 'data-handoff-methods',
     world: 'na',
     title: '데이터 건네기: 팀에서 팀으로 옮기는 여덟 가지 방법',
@@ -1038,7 +1049,8 @@ const series = {
     posts: ['git-practical-guide', 'software-architecture-patterns', 'kubernetes-networking',
       'api-basics', 'api-kinds-and-contracts', 'gateway-ingress-router',
       'pipeline-push-and-pull', 'log-hops-to-kafka', 'kafka-log-pipeline',
-      'data-pipeline-design', 'data-distribution-layer', 'hadoop-hive-basics', 'data-handoff-methods'],
+      'data-pipeline-design', 'data-distribution-layer', 'hadoop-hive-basics', 'data-handoff-methods',
+      'hadoop-hive-spark-roles'],
   },
 };
 

@@ -5,8 +5,17 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-09-19T00:00:00Z</updated>
+  <updated>2026-09-20T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>데이터 엔지니어 첫 6개월: 커밋 428개로 읽은 신입이 하는 일</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months</id>
+    <updated>2026-09-20T00:00:00Z</updated>
+    <summary>지훈 씨가 여덟째 주에 옆 데이터 플랫폼 팀 저장소를 열어 봅니다. 파일이 천 개 가까이라 어디부터 읽을지 몰라서, 가장 최근에 온 사람 한 명의 커밋 428개를 달별로 늘어놓았습니다. 첫 달은 수급 DAG 14줄, 둘째 달은 SQL 모델, 넷째 달은 실시간 잡 하나, 여섯째 달은 배포 자동화입니다. 폴더가 곧 일감의 종류이고 순서가 곧 배우는 순서입니다. 그 사이 「리뷰 반영」 커밋이 21개이고, 저장소에 pandas 와 PyTorch 는 0건입니다.</summary>
+    <category term="Software Engineering"/>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>Hadoop, Hive, Spark: 한 워커 노드 위에서 셋이 어떻게 나뉘나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=hadoop-hive-spark-roles"/>
@@ -165,15 +174,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=api-kinds-and-contracts</id>
     <updated>2026-08-14T00:00:00Z</updated>
     <summary>지훈 씨가 둘째 주에 남의 회사 서버와 처음 붙습니다. 코드는 30분이면 쓰는데 막히는 것은 그다음입니다 — 답이 안 와서 다시 보내면 그 전환이 한 건인지 두 건인지를 문서가 말해 주지 않습니다. 요청마다 번호를 안 붙이면 전환 1,000건이 1,180건으로 부풀어 전환당 광고비가 ₩5,000에서 ₩4,237로 싸 보이고, 그 숫자로 예산이 움직입니다. 상태코드, 5만 행을 커서로 나눠 받기, 필드를 지우기 전에 세어 보는 법, 다시 보내는 시각을 흩는 이유, 인증 셋을 실제 요청과 응답으로 봅니다.</summary>
-    <category term="Software Engineering"/>
-  </entry>
-  <entry>
-    <title>데이터 파이프라인 설계: 배치와 스트림을 무엇으로 고르나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-pipeline-design</id>
-    <updated>2026-08-14T00:00:00Z</updated>
-    <summary>지훈 씨가 올린 티켓 하나를 받고 어떤 팀은 반나절 만에 배포 승인을 받고, 어떤 팀은 처리 잡 다섯 개를 열어 두 주를 씁니다. 갈리는 자리는 파이프라인을 처음 그린 날이고, 먼저 적어야 할 것은 부품이 아니라 읽는 쪽 넷의 마감입니다. 대시보드 마감 2초에서 브로커까지 쓴 1,112밀리초를 빼면 888밀리초가 남고, 그 안에 드는 경로는 스트림 집계 하나뿐입니다. 학습은 30시간이라 후보가 넷 다 들어 가장 싼 하루 배치를 고르는데, 여기서 스트림을 고르면 25배를 더 내고 같은 결과를 얻습니다. 같은 클릭을 스트림은 2,202,480건, 배치는 2,273,160건으로 세는데 틀린 쪽은 없습니다. 원본 하루 21.9GB 를 왜 남기는지와, 필드 하나를 지운 배포가 사흘 뒤 학습을 나빠지게 하는 경로까지 따라갑니다.</summary>
-    <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>
 </feed>

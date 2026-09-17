@@ -62,7 +62,7 @@
 파일 하나가 디스크를 384 MB 가 아니라 세 배인 1,152 MB 씁니다. 그 값으로 사는 것이 있습니다. 워커 3 이 꺼져도 조각 1 은 워커 1 과 워커 5 에 남아 있어서 파일은 그대로 읽힙니다. 복사본을 두 벌로 줄이면 디스크는 768 MB 로 줄지만, 상자 두 대가 같이 꺼지면 조각 하나가 통째로 사라질 수 있습니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=hdfs" height="700" loading="lazy" title="HDFS 카드"></iframe>
+<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=hdfs" height="520" loading="lazy" title="HDFS 카드"></iframe>
 <a class="demo-embed-open" href="demo-hadoop-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
@@ -77,7 +77,7 @@
 ResourceManager 는 클러스터 전체의 CPU 와 메모리를 큐라는 줄로 나눠 둡니다. 큐는 서버가 아닙니다. 팀마다, 용도마다 자원을 얼마나 쓸 수 있는지 정한 줄입니다. 지훈 씨가 받은 주소의 마지막 조각 `tez.queue.name=analytics` 가 이 줄 이름입니다. 클러스터 CPU 가 1,000개이고 analytics 줄이 30% 라면, 이 줄에 선 쿼리들은 300개 안에서 나눠 씁니다. 300개가 다 쓰이는 중이면 새 쿼리는 줄에서 기다립니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=yarn" height="700" loading="lazy" title="YARN 카드"></iframe>
+<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=yarn" height="520" loading="lazy" title="YARN 카드"></iframe>
 <a class="demo-embed-open" href="demo-hadoop-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
@@ -92,7 +92,7 @@ ResourceManager 는 클러스터 전체의 CPU 와 메모리를 큐라는 줄로
 Metastore 가 가진 것은 목록뿐입니다. 테이블 이름은 `adlog.ad_click` 이고 컬럼은 `req_id, ad_id, ts` 입니다. 형식은 parquet 이고 위치는 `hdfs://…/warehouse/adlog.db/ad_click/` 입니다. 이 넷을 보통의 관계형 DB(MySQL 같은 것)에 저장해 둡니다. 그래서 Metastore 뒤에는 DB 상자가 하나 더 있습니다. HiveServer2 가 「ad_click 어디 있어」를 물으면 Metastore 는 HDFS 경로를 돌려줍니다. 데이터가 아니라 경로입니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=hive" height="700" loading="lazy" title="Hive 카드 — 쿼리 한 건이 지나는 길"></iframe>
+<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=hive" height="520" loading="lazy" title="Hive 카드 — 쿼리 한 건이 지나는 길"></iframe>
 <a class="demo-embed-open" href="demo-hadoop-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
@@ -107,7 +107,7 @@ Metastore 가 가진 것은 목록뿐입니다. 테이블 이름은 `adlog.ad_cl
 ZooKeeper 는 그 목록을 다섯 상자가 똑같이 들고 있습니다. 다섯 중 셋만 살아 있으면 답합니다. 홀수로 두는 이유는 반반으로 나뉘는 일을 막기 위해서입니다. 지훈 씨의 컴퓨터는 다섯 중 응답하는 한 대에 붙어 목록을 읽고, 거기 적힌 hs2-a 나 hs2-b 중 하나로 갑니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=zookeeper" height="700" loading="lazy" title="ZooKeeper 카드"></iframe>
+<iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=zookeeper" height="520" loading="lazy" title="ZooKeeper 카드"></iframe>
 <a class="demo-embed-open" href="demo-hadoop-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 

@@ -5553,6 +5553,13 @@ html.is-embed [hidden] {
   display: none !important;
 }
 
+/* body 의 min-height: 100vh 는 iframe 안에서 "iframe 높이" 가 된다. 그러면 자식이 알려 주는
+   scrollHeight 가 iframe 높이 아래로 내려가지 못해, 그림이 짧은 임베드 아래에 흰 여백이 남는다.
+   임베드에서는 바닥값을 풀어 실제 내용 높이만 보고하게 한다. */
+html.is-embed body {
+  min-height: 0;
+}
+
 html.is-embed main {
   padding-top: 1rem !important;
   padding-bottom: 0.75rem !important;

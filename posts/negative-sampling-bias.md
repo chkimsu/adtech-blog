@@ -96,6 +96,11 @@ graph TD
 
 **안 눌린 로그를 다 쓰면 학습이 안 끝나고, 줄이면 확률이 부풉니다. 줄이고 되돌리는 게 정답입니다.**
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=negsample" height="480" loading="lazy" title="줄이고 되돌린다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ### 문제: 극단적 Class Imbalance
 
 광고 CTR은 도메인에 따라 다르지만, 대략 아래 범위에 있습니다.

@@ -393,6 +393,11 @@ for n in models:
 
 Online Learning의 가장 큰 장애물이 **Delayed Feedback**입니다. 클릭은 즉시 관측되지만, 전환은 수 시간~수 일 후에 발생합니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=delay" height="480" loading="lazy" title="전환은 며칠 뒤에 도착한다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 <div class="chart-timeline">
   <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:12px;">클릭 후 전환까지의 시간 분포 (가상 데이터).</div>
   <div class="chart-timeline-bar">

@@ -8,85 +8,6 @@
   <meta name="description" content="누구에게 광고를 보여 줄지가 정해지는 자리를 카드 한 장씩으로. 조건과 유저 정보가 만나는 자리, 후보가 줄어드는 순서, 타겟 방식 여덟 가지, 세그먼트 만들기, 맞춤타겟, Lookalike, 리타겟팅, 빈도 상한, 유저 정보가 오는 길. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .tg-hero { text-align: center; padding: 2rem 1rem 1rem; }
-    .tg-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
-    .tg-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
-    .tg-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 1rem auto 0; max-width: 1040px; padding: 0 1rem; }
-    .tg-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--border-color); background: var(--bg-primary); font-size: 0.82rem; font-weight: 600; }
-    .tg-chip i { display: inline-block; width: 13px; height: 13px; }
-    .tg-chip i.a { background: var(--navy); }
-    .tg-chip i.b { background: var(--oxide); }
-    .tg-chip i.k { background: var(--text-primary); }
-    .tg-chip i.c { background: var(--grey); }
-    .tg-chip i.n { background: var(--bg-primary); border: 1.5px dashed var(--grey2); }
-    .tg-chip svg { width: 13px; height: 13px; display: block; }
-    .tg-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
-    .tg-host:empty { display: none; }
-
-    .tg-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-    @media (max-width: 1000px) { .tg-grid { grid-template-columns: 1fr; } }
-    .tg-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
-    .tg-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
-    .tg-card .tg-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
-    .tg-easy { font-size: 0.92rem; line-height: 1.6; color: var(--text-primary); background: var(--plate); border-left: 3px solid var(--text-primary); padding: 0.55rem 0.8rem; margin: 0 0 0.8rem; }
-    .tg-easy b { font-weight: 800; margin-right: 0.3rem; }
-    html.is-embed .tg-easy { display: none; }
-    .tg-fig { overflow-x: auto; }
-    .tg-fig svg { display: block; width: 100%; min-width: 460px; height: auto; }
-    .tg-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
-    .tg-cap b { color: var(--text-primary); }
-    /* 임베드는 카드 하나만 남는다 — 폭이 1000px 를 넘어도 두 칸으로 나누지 않는다. 그림은 860px 에서 멈추고 가운데에 둔다 */
-    html.is-embed .tg-grid { margin-top: 0.5rem; padding: 0 0.5rem; grid-template-columns: 1fr; }
-    html.is-embed .tg-fig svg { max-width: 860px; margin: 0 auto; }
-    html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
-
-    /* 그림 부품 — 색은 전부 토큰 */
-    .tg-fig svg text { font-family: var(--font-sans); }
-    .lbl { font-size: 11px; fill: var(--text-secondary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
-    .lbl.k { fill: var(--text-primary); font-weight: 750; }
-    .lbl.sm { font-size: 9.5px; fill: var(--text-muted); }
-    .lbl.b { fill: var(--oxide); font-weight: 750; }
-    .on { fill: var(--bg-primary); font-weight: 750; }
-    .f-a { fill: var(--navy); } .f-b { fill: var(--oxide); } .f-k { fill: var(--text-primary); } .f-c { fill: var(--grey); } .f-sunk { fill: var(--plate); }
-    .srv-body { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.4; }
-    .led { fill: var(--bg-primary); }
-    .tbl-body { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
-    .tbl-ln { stroke: var(--navy-bd); stroke-width: 1; }
-    .db { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
-    .file { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.3; }
-    .tool { fill: var(--grey); }
-    .tool-t { font-size: 11px; font-weight: 800; fill: var(--bg-primary); }
-    .tool-s { font-size: 9.5px; fill: var(--bg-primary); }
-    .clk { fill: var(--bg-primary); stroke: var(--text-primary); stroke-width: 1.3; }
-    .clk-h { stroke: var(--text-primary); stroke-width: 1.4; }
-    .list { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; stroke-width: 1.2; }
-    .list-t { font-size: 10px; fill: var(--text-secondary); }
-    .list-t.h { font-weight: 800; fill: var(--text-primary); }
-    .list-t.b { font-weight: 800; fill: var(--oxide); }
-    .grp { fill: none; stroke: var(--border-color); stroke-width: 1.2; }
-    .track { fill: var(--plate); stroke: var(--border-color); stroke-width: 1; }
-    .tick { stroke: var(--text-primary); stroke-width: 1.4; }
-    .split { stroke: var(--border-color); stroke-width: 1.2; stroke-dasharray: 4 4; }
-    .ar { fill: none; stroke-width: 1.5; }
-    .ar.k { stroke: var(--text-secondary); } .ar.a { stroke: var(--navy); } .ar.b { stroke: var(--oxide); } .ar.c { stroke: var(--grey); }
-    .ar.dash { stroke-dasharray: 4 3; }
-    .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
-    .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
-    .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
-    .usr { fill: var(--text-secondary); }
-    .tok { stroke-width: 1.2; }
-    .tok.c { fill: var(--grey); } .tok.k { fill: var(--text-primary); } .tok.b { fill: var(--oxide); } .tok.a { fill: var(--navy); }
-    .tok.n { fill: var(--bg-primary); stroke: var(--grey2); stroke-dasharray: 3 2.5; }
-    .tok-t { font-family: var(--font-mono); font-size: 9.5px; fill: var(--bg-primary); font-weight: 650; }
-    .tok-t.dark { fill: var(--text-primary); }
-    @media (prefers-reduced-motion: reduce) { .dot { display: none; } }
-
-    .tg-real { max-width: 1240px; margin: 2.5rem auto 3rem; padding: 0 1rem; }
-    .tg-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
-    .tg-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
-    .tg-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
-  </style>
 </head>
 
 <body>
@@ -167,6 +88,7 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
   <script src="js/targeting-cards-demo.js"></script>
   <script src="js/demo-edu-content.js"></script>
   <script src="js/demo-edu.js"></script>

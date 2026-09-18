@@ -42,6 +42,11 @@ Retrieval 방법론은 여러 가지입니다. 그런데 프로덕션에서 실�
 
 수백만 개의 광고 후보에 DeepFM 같은 복잡한 모델을 돌린다고 해봅시다. 광고 하나당 추론이 0.1ms라고 가정합니다. 그러면 100만 개에 100초가 필요합니다. RTB의 100ms 타임아웃 안에서 이것은 불가능합니다. 그래서 깔때기 구조가 필수입니다. **단계별로 후보를 줄이면서 모델 복잡도를 올리는** 방식입니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=retrieval" height="480" loading="lazy" title="10만 개에서 수백 개로 추린다"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 ```mermaid
 graph LR
     subgraph Stage1["Stage 1: Retrieval"]

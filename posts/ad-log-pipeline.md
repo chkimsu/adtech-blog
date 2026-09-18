@@ -18,6 +18,11 @@ pCTR 모델을 학습시키려면 impression log를 열어야 합니다. 그런�
 
 시간 폭이 넓다는 점도 함께 담아두세요. 앞의 다섯 개는 0~10ms 안에 다 끝납니다. 마지막 두 개는 며칠 뒤에야 도착합니다. 같은 요청 하나를 설명하는 로그인데, 도착 시각은 100만 배 이상 벌어집니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=tenlogs" height="480" loading="lazy" title="요청 하나가 남기는 로그"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ```mermaid
 sequenceDiagram
   participant U as User

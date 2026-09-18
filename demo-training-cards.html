@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학습 데이터 카드 여섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="로그가 모델에 들어가기 전에 뒤틀리는 자리를 카드 한 장씩으로. 지연 피드백, 배우는 칸과 쓰이는 칸, 자리 효과, 줄이고 되돌리기, 전환 정의, 요청 하나가 남기는 로그 열 개. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>학습 데이터 카드 여섯 장</h1>
+      <p>로그가 모델에 들어가기 전에 뒤틀리는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향이고, 점이 몰려서 지나가면 하루 한 번 배치입니다. 숫자는 각 글의 가상 데이터 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (로그, 테이블, 카운터)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (요청, 클릭, 전환)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (샘플링, 배치, 보정)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것 (정의, 조건)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="delay"><h2>DELAYED FEEDBACK</h2><p class="tg-k">전환은 며칠 뒤에 도착한다</p><p class="tg-easy"><b>쉽게 말하면</b> 클릭은 지금 찍히는데 전환은 몇 시간에서 며칠 뒤에 옵니다. 언제 학습을 돌리느냐에 따라 「안 샀다」로 잘못 배우는 양이 정해집니다.</p><div class="tg-fig" id="mc-delay"></div>
+        <p class="tg-cap">6시간만 기다리면 전환의 <b>59.7%</b>만 잡히고, 7일을 기다리면 97.2%를 잡지만 데이터가 252시간 묵습니다. 지연을 무시하면 CVR 3%가 1.89%로 보입니다.</p></section>
+
+      <section class="tg-card" data-card="ssb"><h2>WHERE IT LEARNS</h2><p class="tg-k">배우는 칸과 쓰이는 칸이 다르다</p><p class="tg-easy"><b>쉽게 말하면</b> 「누른 다음 살 확률」은 누른 사람에게서만 배울 수 있는데, 정작 쓸 때는 아직 안 누른 노출 전체에 씁니다. 배운 자리와 쓰는 자리가 다른 것입니다.</p><div class="tg-fig" id="mc-ssb"></div>
+        <p class="tg-cap">클릭한 노출에서만 배우면 노출 가중 오차가 0.637%p, 노출 전체에서 배우면 <b>0.042%p</b>입니다. 15.2배 차이입니다.</p></section>
+
+      <section class="tg-card" data-card="position"><h2>POSITION BIAS</h2><p class="tg-k">자리가 만드는 착각</p><p class="tg-easy"><b>쉽게 말하면</b> 위에 있는 광고가 더 눌리는 건 당연한데, 로그만 보면 그게 광고가 좋아서인지 자리가 좋아서인지 구분이 안 됩니다.</p><div class="tg-fig" id="mc-position"></div>
+        <p class="tg-cap">같은 광고가 1위와 5위에서 <b>6.7배</b> 차이 납니다. 눈길이 닿는 확률로 나누면 4위였던 광고가 1위로 올라옵니다.</p></section>
+
+      <section class="tg-card" data-card="negsample"><h2>NEGATIVE SAMPLING</h2><p class="tg-k">줄이고 되돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 안 눌린 로그가 너무 많아 다 쓰면 학습이 안 끝납니다. 그래서 10분의 1만 남기는데, 그러면 클릭이 흔해 보여 모델이 확률을 부풉니다. 공식 한 줄로 되돌립니다.</p><div class="tg-fig" id="mc-negsample"></div>
+        <p class="tg-cap">진짜 2%인 클릭률이 학습셋에서 16.86%가 되고 예측은 진짜의 <b>7.7배</b>로 부풉니다. 보정하면 1.98%로 돌아옵니다.</p></section>
+
+      <section class="tg-card" data-card="convdef"><h2>WHAT COUNTS AS A CONVERSION</h2><p class="tg-k">광고주마다 전환이 다르다</p><p class="tg-easy"><b>쉽게 말하면</b> 어떤 광고주는 상담 신청을 전환으로 세고 어떤 광고주는 재구매를 셉니다. 둘의 확률이 50배 차이인데 모델은 하나입니다.</p><div class="tg-fig" id="mc-convdef"></div>
+        <p class="tg-cap">유형을 모르는 모델은 한쪽에 2.5배 과소, 다른 쪽에 20배 과대예측합니다. 그런데 <b>전체 COPC 는 1.00</b>이라 대시보드는 멀쩡해 보입니다.</p></section>
+
+      <section class="tg-card" data-card="tenlogs"><h2>TEN LOGS PER REQUEST</h2><p class="tg-k">요청 하나가 남기는 로그</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 요청 한 건이 지나가며 단계마다 기록을 남깁니다. 뒤로 갈수록 건수가 급격히 줄고, 마지막 전환 로그는 며칠 뒤에야 도착합니다.</p><div class="tg-fig" id="mc-tenlogs"></div>
+        <p class="tg-cap">요청 대비 전환은 <b>1/31,328</b>입니다. 3만 건이 넘어야 전환 한 건이니 pCVR 모델은 늘 데이터가 모자랍니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>모델이 이상하다는 말을 들으면</b> 이 여섯 자리부터 봅니다. 라벨이 아직 안 왔나, 배운 자리와 쓰는 자리가 다른가, 자리 효과를 품질로 배웠나, 샘플링을 되돌렸나, 전환 정의가 섞였나, 로그가 애초에 모자란가.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>이어서 볼 것은</b> <a href="demo-serving-cards.html">서빙 카드 다섯 장</a>입니다. 학습이 끝난 모델이 요청 하나에 답하기까지를 다룹니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="demo-serving-cards.html">서빙 카드</a>
+        <a href="demo-targeting-cards.html">타겟팅 카드</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/model-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

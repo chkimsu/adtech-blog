@@ -42,6 +42,11 @@
 
 광고의 전환 퍼널은 세 단계입니다. 각 단계에서 사용 가능한 데이터의 규모가 급격히 줄어듭니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=ssb" height="480" loading="lazy" title="배우는 칸과 쓰이는 칸이 다르다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ```mermaid
 graph LR
     subgraph Funnel["전환 퍼널"]

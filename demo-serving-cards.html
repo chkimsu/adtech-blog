@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>서빙 카드 다섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="모델이 요청 하나에 답하기까지 시간과 메모리가 정해지는 자리를 카드 한 장씩으로. 후보 추리기, 학습과 서빙의 피처 어긋남, 배치로 묶기, ID 를 칸에 넣기, 임베딩 테이블 쪼개기. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>서빙 카드 다섯 장</h1>
+      <p>학습이 끝난 모델이 요청 하나에 답하기까지, 시간과 메모리가 정해지는 자리 하나가 카드 한 장입니다. 예산은 100ms 이고 테이블은 수십 GB 입니다. 숫자는 각 글의 가상 데이터 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (테이블, 벡터, 카운터)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (요청, 실시간 값)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (해시, 배치 묶기, 샤딩)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="retrieval"><h2>RETRIEVAL</h2><p class="tg-k">10만 개에서 수백 개로 추린다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 후보 10만 개에 정밀한 모델을 다 돌리면 30초가 걸립니다. 예산은 0.1초입니다. 그래서 먼저 가벼운 방법으로 훑어 수백 개만 남기고, 거기에만 정밀 모델을 씁니다.</p><div class="tg-fig" id="mc-retrieval"></div>
+        <p class="tg-cap">정밀 모델 전수는 30,000ms, 벡터 내적은 <b>13.6ms</b>입니다. 후보가 100만 개가 되면 내적도 128.8ms 라 2%만 훑는 ANN 이 3.4ms 로 받습니다.</p></section>
+
+      <section class="tg-card" data-card="skew"><h2>TRAIN / SERVE SKEW</h2><p class="tg-k">같은 피처 이름, 다른 값</p><p class="tg-easy"><b>쉽게 말하면</b> 「지난 7일 클릭 수」라는 같은 이름의 피처를, 학습은 자정에 만든 표에서 읽고 서빙은 실시간 카운터에서 읽습니다. 이름이 같으니 아무도 모릅니다.</p><div class="tg-fig" id="mc-skew"></div>
+        <p class="tg-cap">평균 <b>3.366%p</b> 어긋나고, 심한 유저는 pCTR 3.4%가 14.2%로, 입찰가가 34원에서 142원이 됩니다. 활발해진 유저를 늘 낮게 봅니다.</p></section>
+
+      <section class="tg-card" data-card="batch"><h2>BATCHING</h2><p class="tg-k">몇 건씩 묶어 한 번에</p><p class="tg-easy"><b>쉽게 말하면</b> 요청을 한 건씩 처리하면 서버가 많이 필요하고, 여러 건 모아 한 번에 처리하면 서버는 줄지만 모이기를 기다리는 시간이 붙습니다.</p><div class="tg-fig" id="mc-batch"></div>
+        <p class="tg-cap">배치 1이면 서버 41대, 32면 <b>3대</b>입니다. 128까지 키우면 p99 가 14.75ms 가 되어 10ms 예산에서 탈락합니다.</p></section>
+
+      <section class="tg-card" data-card="hashing"><h2>HASHING IDS</h2><p class="tg-k">광고 ID 100만 개를 칸 26만 개에</p><p class="tg-easy"><b>쉽게 말하면</b> 광고마다 칸을 하나씩 주면 표가 너무 커집니다. 그래서 ID 를 계산해 정해진 칸 수 안에 밀어 넣는데, 서로 다른 광고가 같은 칸을 쓰게 됩니다.</p><div class="tg-fig" id="mc-hashing"></div>
+        <p class="tg-cap">배치 하나 3.8GB 가 테이블 <b>16MB</b>가 됩니다. 머리끼리 부딪친 200쌍만 오차 19.0%라, 상위 1만 개에 전용 칸 0.6MB 를 주면 0%가 됩니다.</p></section>
+
+      <section class="tg-card" data-card="embtable"><h2>EMBEDDING TABLE</h2><p class="tg-k">2억 줄을 서버에 나눠 담는다</p><p class="tg-easy"><b>쉽게 말하면</b> 유저마다 숫자 묶음을 하나씩 들고 있는 큰 표가 있습니다. 서빙만 하면 서버 한 대에 들어가는데, 학습하면 3배로 불어 쪼개야 합니다.</p><div class="tg-fig" id="mc-embtable"></div>
+        <p class="tg-cap">서빙 23.8GB 가 학습에서 <b>83.2GB</b>가 됩니다. 배치 1,024건이 건드리는 줄은 0.0005%뿐이라, 갱신을 밀집으로 짜면 하루치에 6.6일이 걸립니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>서빙이 느리다는 말을 들으면</b> 이 다섯 자리를 순서대로 봅니다. 후보를 너무 많이 넘겼나, 피처 조회가 느린가, 배치가 너무 큰가, 테이블 조회가 흩어졌나, 샤드가 모자란가.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>먼저 볼 것은</b> <a href="demo-training-cards.html">학습 데이터 카드 여섯 장</a>입니다. 여기 오는 모델이 무엇을 배웠는지를 다룹니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="demo-training-cards.html">학습 데이터 카드</a>
+        <a href="demo-targeting-cards.html">타겟팅 카드</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/model-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

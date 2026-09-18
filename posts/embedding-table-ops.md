@@ -40,6 +40,11 @@
 
 학습은 다르다. 옵티마이저가 값마다 상태를 따로 들기 때문이다. Adam은 1차·2차 모멘트를 각각 저장해 값 하나가 숫자 세 개가 된다. 27.7GB가 83.2GB로 뛴다. 이 3배를 놓쳐서 "서빙은 되는데 학습이 안 뜨는" 일이 자주 생긴다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=embtable" height="480" loading="lazy" title="2억 줄을 서버에 나눠 담는다"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 ```python
 # 임베딩 테이블이 메모리를 얼마나 먹는지 직접 곱해 본다.
 # 서빙은 파라미터만 들면 되지만 학습은 옵티마이저 상태까지 든다. 표준 라이브러리만 쓴다.

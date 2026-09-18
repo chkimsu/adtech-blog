@@ -24,6 +24,11 @@
 
 세 기준이 같은 답을 주면 고민이 없습니다. 문제는 모델 A/B에서는 **거의 항상 다른 답을 준다**는 것입니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-experiment-cards.html?embed=1&card=abarms" height="480" loading="lazy" title="예산이 먼저 마르는 팔이 진다"></iframe>
+<a class="demo-embed-open" href="demo-experiment-cards.html" target="_blank" rel="noopener">↗ 카드 두 장 전체로 열기</a>
+</div>
+
 ### 같은 실험, 두 기준 — 가상 데이터로 계산
 
 새 모델 B가 같은 노출에서 전환을 8% 더 만든다고 하겠습니다. 그리고 예측이 높아진 만큼 자동입찰이 12% 높게 부릅니다. 이 둘은 붙어 다닙니다 — 예측을 높이면 입찰도 높아지는 게 자동입찰의 정의니까요.

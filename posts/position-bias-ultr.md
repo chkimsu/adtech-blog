@@ -53,6 +53,11 @@ $$P(\text{click}) = \underbrace{P(\text{examine} | \text{position})}_{\text{Posi
 
 같은 광고가 위치만 바뀌어도 CTR이 **6.7배** 차이납니다 (1위 5.0% vs 5위 0.75%). Position Bias를 보정하지 않으면, 모델은 이 차이를 "광고 품질 차이"로 학습합니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=position" height="480" loading="lazy" title="자리가 만드는 착각"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ### Rich-Get-Richer 문제
 
 Position Bias를 보정하지 않으면 강화 루프가 발생합니다.

@@ -18,6 +18,11 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 
 **피처 저장소(Feature Store)는 이 둘을 같게 만드는 장치입니다.** 학습과 서빙이 같은 정의, 같은 값을 보게 합니다. 이 글은 그 장치가 어떻게 생겼는지, 그리고 100밀리초 안에 재료를 꺼내오려면 무엇을 포기해야 하는지를 다룹니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=skew" height="480" loading="lazy" title="같은 피처 이름, 다른 값"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 모델을 돌리는 쪽 이야기는 [Model Serving Architecture](post.html?id=model-serving-architecture)에 있습니다. 여기는 **재료를 꺼내오는 쪽**입니다. 재료가 만들어지기 전 단계, 즉 로그가 흘러오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)을 보세요.
 
 먼저 전체 경로를 봅니다. 광고 ML 시스템에서 피처가 흐르는 전체 경로입니다.

@@ -18,6 +18,11 @@ pCVR 모델을 만들라는 일을 받았습니다. 클릭 다음에 전환이 �
 
 무엇이 문제인지는 **기저 전환율의 차이**를 보면 바로 드러납니다. 가상 데이터로 계산해 봅시다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=convdef" height="480" loading="lazy" title="광고주마다 전환이 다르다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ```python
 # 광고주마다 '전환'이 다른데 모델은 하나다 — 무슨 일이 생기나.
 #

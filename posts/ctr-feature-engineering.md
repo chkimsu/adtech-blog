@@ -38,6 +38,11 @@
 
 무너지는 이유는 셋이다. 조밀한 배열로 진짜 만들면 한 행이 4MB다. 희소하게 "켜진 칸 번호"만 들고 다니면 저장은 해결되지만 사전이 남는다. 사전은 ID 문자열을 칸 번호로 바꿔 주는 표다. 그리고 사전에 없는 새 ID가 오면 넣을 칸이 없다. 광고는 매일 새로 만들어진다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=hashing" height="480" loading="lazy" title="광고 ID 100만 개를 칸 26만 개에"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 셋을 곱셈으로만 비교해 보자. 광고 ID 100만 개, float32 4바이트, 배치 1024개, 임베딩 16차원이다. 사전 크기는 어림값이다(ID 문자열 12B + 사전 엔트리 60B).
 
 | 넣는 방식 | 입력 한 행 | 배치 1024개 | 사전 | 임베딩 테이블 |

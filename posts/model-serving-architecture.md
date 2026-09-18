@@ -486,6 +486,11 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 그러면 최대한 많이 모아 넣으면 되지 않을까요. 아닙니다. 배치가 찰 때까지 먼저 온 요청은 기다려야 합니다. 처리량과 지연이 맞붙는 지점이고, 배치 크기가 그 조절값입니다. 배치 크기를 1, 8, 32, 128로 바꿔 보겠습니다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=batch" height="480" loading="lazy" title="몇 건씩 묶어 한 번에"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 ```python
 # 배칭의 맞교환 — 크게 묶으면 처리량은 오르고, 먼저 온 요청은 기다린다
 # (가상 수치입니다. 사내에서 잰 값이 아니라 자리 크기만 맞춘 대략치예요.)

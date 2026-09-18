@@ -14,6 +14,11 @@
 
 이 쏠림을 숫자로 보려면, 유저를 원래 살 마음(구매 의향)이 높은 층과 낮은 층으로 나눠야 한다. 아래 표는 20만 명의 유저를 이 두 층으로 나눈 결과다. 타겟팅이 노출을 어떻게 몰아주는지, 그리고 그 결과 층을 무시한 비교(naive)가 얼마나 부풀려지는지를 함께 보여준다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-experiment-cards.html?embed=1&card=confound" height="480" loading="lazy" title="숨은 원인이 광고 효과처럼 보인다"></iframe>
+<a class="demo-embed-open" href="demo-experiment-cards.html" target="_blank" rel="noopener">↗ 카드 두 장 전체로 열기</a>
+</div>
+
 **표 ① — 층별로 나눠 보면 줄어드는 '광고 효과'**
 
 | 층 (원래 구매 의향) | 인원 | 노출 | 비노출 | 노출군 구매율 | 비노출군 구매율 | 차이 |

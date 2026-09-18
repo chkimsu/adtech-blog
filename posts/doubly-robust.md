@@ -34,6 +34,11 @@
 
 표의 마지막 줄이 이 글의 주제다. 두 재료를 겹쳐 두면 하나가 틀려도 다른 하나가 받친다. 어느 쪽이 맞을지 미리 알 수 없는 자리에서 이 성질이 배포 승인과 중단을 정한다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-explore-cards.html?embed=1&card=dr" height="480" loading="lazy" title="재료 둘을 겹쳐 둔다"></iframe>
+<a class="demo-embed-open" href="demo-explore-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 ---
 
 ## 2. 예측을 먼저 깔고, 빗나간 몫에만 가중한다

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탐색과 채점 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="노출을 어떻게 나누고 그 결과를 어떻게 채점하나. 밀려난 소재를 되살리는 처방 넷, A/B 와 밴딧이 남기는 성적표, 맥락을 뭉치면 놓치는 것, 재료 하나가 틀려도 버티는 채점법.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>탐색과 채점 카드 네 장</h1>
+      <p>노출을 어떻게 나누고, 그 결과를 어떻게 채점하나. 네 자리가 카드 한 장씩입니다. 넷 다 그날의 매출과 다음 날의 정보를 맞바꾸는 자리입니다. 숫자는 각 글의 가상 데이터 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 나은 쪽과 결론</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 견주는 값</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 손해와 틀린 값</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="abmab"><h2>A/B OR BANDIT</h2><p class="tg-k">남는 성적표가 다르다</p><p class="tg-easy"><b>쉽게 말하면</b> A/B 는 끝까지 반씩 태워 두 소재를 다 알아 갑니다. 밴딧은 이기는 쪽에 몰아줘 클릭을 더 벌지만, 진 소재에 대해서는 거의 모르는 채로 끝납니다.</p><div class="tg-fig" id="mc-abmab"></div>
+        <p class="tg-cap">밴딧이 459클릭을 더 법니다. 대신 진 소재의 구간이 ±0.124%p 에서 ±0.453%p 로 <b>3.7배</b> 넓어집니다.</p></section>
+
+      <section class="tg-card" data-card="ucbctx"><h2>CONTEXT MATTERS</h2><p class="tg-k">평균 하나로 뭉치면 놓친다</p><p class="tg-easy"><b>쉽게 말하면</b> 지면과 시간대에 따라 이기는 소재가 바뀝니다. 그런데 맥락을 못 보는 방식은 전체 평균만 봐서, 평균에서 근소하게 앞선 소재 하나를 어디서나 밀어붙입니다.</p><div class="tg-fig" id="mc-ucbctx"></div>
+        <p class="tg-cap">전체 평균은 4.75% 대 5.0% 로 거의 같아 4,000회를 겪고도 반반으로 나눠 씁니다. 맥락별로 쪼개면 클릭이 192에서 245로 <b>27.6%</b> 늘어납니다.</p></section>
+
+      <section class="tg-card" data-card="remedies"><h2>FOUR REMEDIES</h2><p class="tg-k">되살리는 속도와 그날 포기하는 몫</p><p class="tg-easy"><b>쉽게 말하면</b> 한 번 밀려난 소재는 노출이 없어 데이터도 안 쌓입니다. 되살리려면 하루 노출에서 얼마를 떼어 줘야 하고, 그 몫이 그날 포기하는 매출입니다.</p><div class="tg-fig" id="mc-remedies"></div>
+        <p class="tg-cap">처방 셋은 사흘에서 여드레 만에 되살립니다. 역확률 가중만 노출을 한 푼도 안 쓰는 대신 <b>굳음을 풀지도 못합니다.</b></p></section>
+
+      <section class="tg-card" data-card="dr"><h2>DOUBLY ROBUST</h2><p class="tg-k">재료 둘을 겹쳐 둔다</p><p class="tg-easy"><b>쉽게 말하면</b> 지난 로그로 새 모델을 채점할 때 재료가 둘 있습니다. 하나만 써서 틀리면 결과가 통째로 기웁니다. 둘을 겹쳐 두면 하나가 틀려도 나머지가 받쳐 줍니다.</p><div class="tg-fig" id="mc-dr"></div>
+        <p class="tg-cap">성향점수가 틀리면 역수로 세기가 2.442%로 내려앉는데, 두 겹은 <b>2.797%</b>로 진짜 값 2.807% 옆에 붙습니다. 대신 흔들림은 줄지 않습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>탐색을 늘리자는 말이 나오면</b> 두 가지를 같이 적습니다. 하루 노출에서 몇 건을 떼는가, 그리고 그 몫으로 며칠 만에 되살아나는가. 둘을 같이 적어야 그날의 매출과 맞바꿀지 판단할 수 있습니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>같이 볼 것은</b> <a href="demo-causal-cards.html">인과추론 카드 네 장</a>입니다. 여기서 채점한 숫자가 진짜 효과인지를 다룹니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="demo-causal-cards.html">인과추론 카드</a>
+        <a href="demo-training-cards.html">학습 데이터 카드</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/explore-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

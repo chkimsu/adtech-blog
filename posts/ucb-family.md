@@ -32,6 +32,11 @@ UCB1은 이 차이를 볼 방법이 없다. 지금이 뉴스 지면인지 커뮤
 
 만약 조합마다 맞는 소재를 골랐다면 평균 클릭률은 6.75%다(8·6·7·6의 평균). 어느 한 소재만 계속 미는 경우(4.75~5.0%)보다 35~42% 높다. 이 차이, 즉 컨텍스트를 아는 것과 모르는 것 사이의 격차가 LinUCB가 존재하는 이유의 전부다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-explore-cards.html?embed=1&card=ucbctx" height="480" loading="lazy" title="평균 하나로 뭉치면 놓친다"></iframe>
+<a class="demo-embed-open" href="demo-explore-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 ---
 
 ## 2. 파이썬으로 확인 — 컨텍스트를 무시한 대가

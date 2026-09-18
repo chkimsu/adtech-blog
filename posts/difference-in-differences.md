@@ -51,6 +51,11 @@
 
 이 가데이터는 사실 설계된 것이다. 이 표를 만들 때 넣은 참값은 정확히 15억이었다. 세 추정치 중 DiD(+15.40억)만 이 참값에 근접했다. 단순 전후비교(+19.79억)와 단순 지역비교(+35.36억)는 둘 다 크게 벗어났다. 어떻게 이런 설계가 가능했는지는 5절 파이썬 코드에서 그대로 확인한다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-causal-cards.html?embed=1&card=did" height="480" loading="lazy" title="나란히 가던 선 하나가 꺾인다"></iframe>
+<a class="demo-embed-open" href="demo-causal-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 ---
 
 ## 3. 평행추세부터 확인한다 — 표②

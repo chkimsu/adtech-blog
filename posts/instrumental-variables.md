@@ -43,6 +43,11 @@
 
 셋째, 이 둘을 나누면 **LATE(Local Average Treatment Effect, 실제 노출자에 대한 평균 효과)**가 나온다. ITT(+1.00%p) ÷ 순응률(0.40) = **+2.50%p**. 이게 바로 도구변수 추정량이다. 배정 효과를 순응률로 "확대"해서, 실제로 노출된 사람들에게 광고가 준 진짜 효과를 복원한 값이다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-causal-cards.html?embed=1&card=iv" height="480" loading="lazy" title="배정 효과를 순응률로 나눈다"></iframe>
+<a class="demo-embed-open" href="demo-causal-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 여기서 naive 비교와 나란히 놓아 보면 함정이 또렷해진다. 표의 첫 줄(순응자, 5.00%)과 "노출 안 된 사람 전체"를 비교해 보자. 후자는 비순응자 6만 명과 대조군 10만 명을 합친 값이라 3,000명 ÷ 16만 명 = 1.875%다. 둘을 그냥 빼면 +3.13%p, 이게 naive 비교다. LATE(+2.50%p)보다 훨씬 크다. 순응자는 원래 활동적이어서 광고 없이도 잘 사는 사람들이 몰려 있으니, naive는 그 몫까지 광고 효과로 착각한 것이다. **ITT는 정직하지만 다른 질문의 답이고, naive는 같은 질문의 답이지만 틀렸다. LATE만이 옳은 질문에 옳은 답을 낸다.**
 
 ---

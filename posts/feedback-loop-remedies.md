@@ -29,6 +29,11 @@
 
 같은 판에 넷을 걸어 보자. 아래 표는 각 처방이 하루 20,000건 중 얼마를 탐색에 쓰고, 그 몫이 한 광고에게 얼마씩 돌아가는지를 정리한 것이다.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-explore-cards.html?embed=1&card=remedies" height="480" loading="lazy" title="되살리는 속도와 그날 포기하는 몫"></iframe>
+<a class="demo-embed-open" href="demo-explore-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 | 처방 | 규칙 | 탐색에 쓰는 노출 | 한 광고가 받는 몫 |
 |---|---|---|---|
 | ε 탐색 5% | 20,000건 중 1,000건을 여덟에 균등 분배 | 1,000건 | 125건 (모든 광고) |

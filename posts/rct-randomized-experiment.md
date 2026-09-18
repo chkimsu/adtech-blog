@@ -14,6 +14,11 @@
 
 앞 글의 층별 보정과 결정적으로 다른 지점이 여기다. 층별 보정은 '의향'이라는 교란변수를 분석가가 미리 알고, 그 기준으로 직접 나눠야 작동했다. 실무에서 교란변수 후보는 훨씬 많고, 로그에 아예 안 찍히는 성향도 있다. 무작위 배정은 교란변수의 이름을 몰라도, 심지어 그런 게 있는지조차 몰라도 작동한다. 배정을 모든 특성과 무관하게 만들면, 알려지지 않은 교란변수까지 자동으로 같이 섞이기 때문이다. 다음 절에서 이 주장을 직접 데이터로 확인해보자.
 
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-causal-cards.html?embed=1&card=rct" height="480" loading="lazy" title="동전 하나가 두 무리를 같게 만든다"></iframe>
+<a class="demo-embed-open" href="demo-causal-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
+</div>
+
 ---
 
 ## 2. 표 ① — 무작위 배정은 '모르는 것'까지 같게 만든다

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인과추론 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="광고가 진짜 만든 차이를 재는 네 방법을 카드 한 장씩으로. 이중차분, 회귀 불연속, 도구변수, 랜덤 실험. 나란히 가던 두 선이 꺾이는 높이, 컷에서의 점프, 배정 효과를 순응률로 나눈 값, 저절로 같아지는 두 무리.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>인과추론 카드 네 장</h1>
+      <p>광고가 진짜 만든 차이를 재는 방법 하나가 카드 한 장입니다. 네 방법 모두 그림으로 보면 한눈에 듭니다. 숫자는 각 글의 가상 데이터 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 처치받은 쪽과 결론</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 대조군과 견주는 값</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 착시와 틀린 값</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것, 그리고 광고가 없었다면</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="rct"><h2>RANDOM ASSIGNMENT</h2><p class="tg-k">동전 하나가 두 무리를 같게 만든다</p><p class="tg-easy"><b>쉽게 말하면</b> 누구에게 광고를 보여 줄지 동전으로 정하면, 나이나 구매 이력뿐 아니라 우리가 이름도 모르는 특성까지 두 무리에서 평균적으로 같아집니다. 그래서 남은 차이가 광고 효과입니다.</p><div class="tg-fig" id="mc-rct"></div>
+        <p class="tg-cap">관측할 수 없는 구매 의향까지 49.75 대 50.02 로 같아집니다. 대신 잡으려는 리프트가 +5%면 집단당 <b>315,207명</b>이 필요합니다.</p></section>
+
+      <section class="tg-card" data-card="did"><h2>DIFFERENCE IN DIFFERENCES</h2><p class="tg-k">나란히 가던 선 하나가 꺾인다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고를 켠 지역의 전후 변화에서, 안 켠 지역의 전후 변화를 한 번 더 뺍니다. 그러면 계절 같은 공통 변화가 걷히고 광고만의 몫이 남습니다.</p><div class="tg-fig" id="mc-did"></div>
+        <p class="tg-cap">같은 데이터에서 전후비교는 +19.79억, 지역비교는 +35.36억이 나옵니다. 참값 15억에 닿는 것은 이중차분 <b>+15.40억</b>뿐입니다.</p></section>
+
+      <section class="tg-card" data-card="rdd"><h2>REGRESSION DISCONTINUITY</h2><p class="tg-k">컷 바로 앞뒤만 견준다</p><p class="tg-easy"><b>쉽게 말하면</b> 품질점수 7.00점에서 대우가 갈립니다. 6.99점과 7.01점은 실력이 사실상 같은데 한쪽만 좋은 지면을 받습니다. 이 경계 바로 앞뒤를 견주면 실험에 가까워집니다.</p><div class="tg-fig" id="mc-rdd"></div>
+        <p class="tg-cap">컷 양옆은 평평한데 경계에서만 1.98%가 2.63%로 뜁니다. 그 <b>점프 0.65%p</b>가 효과입니다. 멀리 떨어진 구간을 비교하면 실력 차이가 섞입니다.</p></section>
+
+      <section class="tg-card" data-card="iv"><h2>INSTRUMENTAL VARIABLE</h2><p class="tg-k">배정 효과를 순응률로 나눈다</p><p class="tg-easy"><b>쉽게 말하면</b> 캠페인을 걸어도 실제로 광고를 본 사람은 일부입니다. 본 사람만 골라 비교하면 활동적인 사람이 몰려 부풀고, 배정 전체로 비교하면 희석됩니다. 나눗셈 한 번이 그 사이를 이어 줍니다.</p><div class="tg-fig" id="mc-iv"></div>
+        <p class="tg-cap">배정 10만 명 중 노출은 4만 명입니다. 배정 효과 +1.00%p 를 순응률 0.40 으로 나누면 <b>+2.50%p</b>이고, 본 사람만 비교한 +3.13%p 는 부풀어 있습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>어느 방법을 쓸지는 무엇을 손에 쥐고 있나로 정해집니다.</b> 배정을 내가 정할 수 있으면 랜덤 실험, 지역이나 시점으로 나뉘어 있으면 이중차분, 플랫폼 규칙에 칼같은 경계가 있으면 회귀 불연속, 배정은 정하는데 노출은 못 정하면 도구변수입니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=causal-inference-101">인과추론 입문</a>부터 다섯 편이 한 트랙입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="posts-browse.html">Posts</a>
+        <a href="ml-track.html">ML 트랙</a>
+        <a href="demos.html">데모</a>
+        <a href="demo-explore-cards.html">탐색과 채점 카드</a>
+        <a href="demo-training-cards.html">학습 데이터 카드</a>
+      </div>
+      <p class="footer-text">&copy; 2026 AdTech Blog. Built for pCTR modelers.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/causal-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

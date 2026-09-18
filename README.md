@@ -9,7 +9,7 @@ A calm, editorial blog about Ad Tech, built with vanilla HTML, CSS, and JavaScri
 
 ##  Features
 
--  **Squared Modern Design** - Flat paper/ink surfaces, 1px rules, no rounded corners, no shadows; navy/oxide/grey accents, Pretendard throughout (no serif)
+-  **Newsprint Blueprint Design** - A newspaper front page drawn on blueprint paper: faint grid, 1px blue rules, mono labels and post codes, serif headlines (Noto Serif KR), Pretendard body, IBM Plex Mono for labels and code; no rounded corners, no shadows. Light = white paper with blue ink, dark = navy paper with light lines
 -  **Real-time Search** - Instantly filter posts by title, content, or keywords
 -  **Category & Tag Filtering** - Organize and discover content easily
 -  **Theme Toggle** - Switch between dark and light modes (persisted in localStorage)
@@ -155,8 +155,8 @@ Edit CSS variables in `css/style.css`:
 Update Google Fonts import in `css/style.css`:
 
 ```css
-/* Actual fonts are imported in css/style.css (lines 6-7):
-   Pretendard (body AND headings — no serif) · Fira Code (code).
+/* Actual fonts are imported at the top of css/style.css:
+   Pretendard (body), Noto Serif KR (headings, via --font-serif only), IBM Plex Mono (labels and code).
    Swap them there, then reference via the CSS variables: */
 
 body {

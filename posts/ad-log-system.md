@@ -3,7 +3,7 @@
 이 글이 맡은 것은 **로그 시스템을 어떻게 설계하고 운영하나**입니다. 수집 계층, 스키마 진화, 저장소 선택, 품질 감시 네 가지입니다.
 형제 글 [광고 로그 파이프라인 완전 해부](post.html?id=ad-log-pipeline)는 **로그 10종이 각각 왜 남는지, 볼륨이 얼마나 되는지**를 맡습니다. 겹치는 대목은 그 글로 넘깁니다.
 
-앞쪽에서는 **Candidate Log**의 역할, **실시간 피처 파이프라인**, 멀티슬롯 **rank=1 추론 문제**를 봅니다. 뒤쪽에서는 로그를 잃지 않고 옮기는 수집 계층과, 필드가 바뀌어도 어제 로그가 안 깨지는 스키마 규칙을 다룹니다.
+Candidate Log 는 후보로 뽑힌 광고를 남기는 기록입니다. 앞쪽에서는 **Candidate Log**의 역할, **실시간 피처 파이프라인**, 멀티슬롯 **rank=1 추론 문제**를 봅니다. 뒤쪽에서는 로그를 잃지 않고 옮기는 수집 계층과, 필드가 바뀌어도 어제 로그가 안 깨지는 스키마 규칙을 다룹니다.
 
 ---
 
@@ -44,11 +44,11 @@ graph LR
 
 #### 핵심 역할
 
-Request Log는 단순한 "트래픽 분석, 디버깅" 이상의 역할을 합니다:
+Request Log(요청이 들어온 것을 남기는 기록)는 단순한 "트래픽 분석, 디버깅" 이상의 역할을 합니다:
 
 - **`request_id` 생성**: 이후 모든 로그를 잇는 **조인 키의 출발점**. 없으면 연결 고리가 끊어집니다.
-- **No-Fill 분석의 유일한 소스**: 빈 응답을 준 요청은 Impression Log에 안 남습니다. `Fill Rate = Impressions / Requests`의 **분모**가 이 로그입니다.
-- **필터링·모니터링 기준점**: 봇 탐지, 빈도 캡(frequency capping), 사전 타겟팅 필터의 결정과 QPS·응답 시간이 남습니다.
+- **No-Fill(채울 광고가 없어 빈 자리로 끝난 것) 분석의 유일한 소스**: 빈 응답을 준 요청은 Impression Log(광고가 실제로 그려진 것을 남기는 기록)에 안 남습니다. `Fill Rate = Impressions / Requests`의 **분모**가 이 로그입니다.
+- **필터링·모니터링 기준점**: 봇 탐지, 빈도 캡(frequency capping), 사전 타겟팅 필터의 결정과 QPS(초당 요청 수)·응답 시간이 남습니다.
 - **Context Feature의 원천**: 시간대·지역·디바이스 같은 Request-level 컨텍스트가 학습 때 **context feature**로 쓰입니다.
 
 #### 일반적인 구조
@@ -119,7 +119,7 @@ Request Log는 **가장 볼륨이 큽니다**. 전수 기록하고, 나머지 �
 | **Click** | 클릭된 광고 ID, 클릭 시각, 노출~클릭 간격(dwell time) | pCTR의 positive label |
 | **Conversion** | 전환 종류(purchase·sign_up·install), 금액, 클릭~전환 지연 | pCVR label, ROAS 측정 |
 
-> Conversion Log는 클릭 후 **수 시간~수 일** 뒤에 옵니다. 이게 Delayed Feedback 문제의 원인입니다. 자세히는 [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)에서 다룹니다.
+> Conversion Log(구매나 설치가 일어난 것을 남기는 기록)는 클릭 후 **수 시간~수 일** 뒤에 옵니다. 이게 Delayed Feedback(라벨이 늦게 도착하는 것) 문제의 원인입니다. 자세히는 [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback)에서 다룹니다.
 
 ---
 
@@ -233,7 +233,7 @@ graph LR
     style G stroke:#5b7d6a
 ```
 
-pCTR 학습 데이터는 Impression에 Click을 붙여 `label=1/0`을 만들고, pCVR은 Click에 Conversion을 붙여 만듭니다. Candidate Log가 있으면 negative sample이 요청당 1건에서 수십~수백 건으로 넓어집니다.
+pCTR 학습 데이터는 Impression에 Click을 붙여 `label=1/0`을 만듭니다. pCVR은 Click에 Conversion을 붙여 만듭니다. Candidate Log가 있으면 negative sample이 요청당 1건에서 수십~수백 건으로 넓어집니다.
 
 > 조인 체인과 시간축, pCTR 학습 데이터를 만드는 코드까지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)이 자세히 다룹니다. 여기서는 시스템 설계 결정만 봅니다.
 
@@ -283,7 +283,7 @@ graph LR
 
 ### 세 갈래 피처의 결합
 
-추론 시 **Batch + Streaming + Real-Time** 세 갈래 피처가 하나의 Feature Vector로 합쳐집니다:
+추론 시 **Batch + Streaming + Real-Time** 세 갈래 피처가 하나의 Feature Vector 로 합쳐집니다. Feature Vector 는 모델에 넣는 숫자 묶음입니다.
 
 ```python
 # (구조 예시 — 자리만 보여 줍니다. 그대로 실행해도 출력은 없습니다.)
@@ -368,7 +368,7 @@ Position=3의 가중치는 높게 잡습니다. 잘 안 보이는데도 클릭�
 
 #### 2. 사후 보정 계수
 
-rank=1로 추론한 스코어에 position별 보정 계수를 곱해 실제 pCTR을 추정합니다. 계수는 사전에 통계로 뽑아 둡니다. 예를 들어 1번 자리 `1.0`, 2번 `0.65`, 3번 `0.40`을 쓰면, 3번에 놓일 광고의 pCTR은 rank=1 스코어의 40%로 내려 잡습니다.
+rank=1로 추론한 스코어에 position별 보정 계수를 곱해 실제 pCTR을 추정합니다. 계수는 사전에 통계로 뽑아 둡니다. 예를 들어 1번 자리 `1.0`, 2번 `0.65`, 3번 `0.40`을 쓴다고 하겠습니다. 3번에 놓일 광고의 pCTR은 rank=1 스코어의 40%로 내려 잡습니다.
 
 > Position Bias의 이론과 보정 기법은 [Position Bias](post.html?id=position-bias-ultr)에서 다룹니다.
 > Calibration 문제는 [Calibration(확률 보정): AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)에서 다룹니다.

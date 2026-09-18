@@ -4,7 +4,7 @@
 
 지난 15년간 CTR 모델의 역사는 이 조합을 누가 만드느냐의 역사였습니다. 처음엔 사람이 손으로 적어 넣었습니다. 다음엔 모델이 스스로 만들었습니다. 마지막엔 모델이 유저의 행동 순서까지 읽기 시작했습니다.
 
-> 한 줄 요약: CTR 모델의 진화는 두 방향이다. 피처 조합을 사람 손에서 모델로 넘긴 방향, 유저 행동을 평균에서 attention으로 바꾼 방향.
+> 한 줄 요약: CTR 모델의 진화는 두 방향이다. 피처 조합을 사람 손에서 모델로 넘긴 방향, 유저 행동을 평균에서 attention(어느 행동에 더 무게를 둘지 고르는 방식)으로 바꾼 방향.
 
 pCTR은 광고 시스템의 모든 계산이 시작되는 값입니다. 이 확률이 틀리면 그 뒤가 전부 틀립니다.
 
@@ -19,7 +19,7 @@ pCTR의 정의와 eCPM으로 이어지는 길은 [pCTR 예측](post.html?id=pctr
 > **골라 읽는 법** — 절이 11개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
 > - 모델 계보만 훑으려면 → 1~3절
-> - 유저 행동 시퀀스(DIN·DIEN)만 → 4절
+> - 유저 행동 시퀀스(DIN, DIEN)만 → 4절
 > - 고르는 기준과 서빙 제약만 → 5~6절
 > - 두 무대 비교만 → 7~8절
 
@@ -40,7 +40,7 @@ pCTR의 정의와 eCPM으로 이어지는 길은 [pCTR 예측](post.html?id=pctr
 | **DIN** | 2018 | 후보 광고 기반 Attention으로 행동 가중 | 고차 (DNN) | Attention 기반 | 높음 |
 | **DIEN** | 2019 | GRU + AUGRU로 관심사의 시간적 변화 모델링 | 고차 (DNN) | 시퀀스 + Attention | 매우 높음 |
 
-> 핵심 관찰: 모델의 진화는 크게 두 방향을 따릅니다. (1) Feature Interaction을 더 풍부하게 포착하는 방향, (2) 유저 행동 시퀀스를 더 정교하게 반영하는 방향. 이 두 방향이 합쳐질 때 CTR 예측의 정확도가 비약적으로 향상됩니다.
+> 핵심 관찰: 모델의 진화는 크게 두 방향을 따릅니다. (1) Feature Interaction(피처 조합)을 더 풍부하게 포착하는 방향, (2) 유저 행동 시퀀스를 더 정교하게 반영하는 방향. 이 두 방향이 합쳐질 때 CTR 예측의 정확도가 비약적으로 향상됩니다.
 
 표를 위에서 아래로 읽으면 두 흐름이 보입니다.
 
@@ -48,7 +48,7 @@ pCTR의 정의와 eCPM으로 이어지는 길은 [pCTR 예측](post.html?id=pctr
 
 둘째, **유저 행동 열이 "없음"에서 "시퀀스"로 바뀝니다.** 2017년까지의 모델은 유저를 ID 하나로만 봤습니다. DIN부터는 "이 유저가 최근에 무엇을 눌렀는가"를 직접 읽습니다.
 
-두 방향은 서로 독립입니다. 그래서 실무에서는 섞어 씁니다. DCN-v2의 cross network 위에 DIN의 attention을 얹은 구조가 흔합니다. 표의 아래로 갈수록 정확도는 오르고 지연도 같이 오릅니다. 6절에서 이 맞교환을 숫자로 봅니다.
+두 방향은 서로 독립입니다. 그래서 실무에서는 섞어 씁니다. DCN-v2(피처 조합 전용 구조의 개선판)의 cross network 위에 DIN의 attention을 얹은 구조가 흔합니다. 표의 아래로 갈수록 정확도는 오르고 지연도 같이 오릅니다. 6절에서 이 맞교환을 숫자로 봅니다.
 
 한 가지를 미리 못 박아 둡니다. 구조를 아무리 키워도 예측의 **절대값**이 실제 클릭률과 안 맞으면 낙찰자가 틀립니다. 순위 지표만 좋아진 모델은 돈을 잃습니다. 이건 구조가 아니라 보정이 푸는 문제입니다. 자세한 건 [Calibration](post.html?id=calibration)에 있습니다.
 
@@ -157,7 +157,7 @@ feature["gender_X_adcat"] = feature["gender"] + "_" + feature["ad_category"]
 feature["gender_X_adcat_X_hour"] = feature["gender"] + "_" + feature["ad_category"] + "_" + str(feature["hour"])
 ```
 
-**한계**: 2차 interaction만 해도 feature 수가 $O(n^2)$으로 폭발하고, 3차 이상은 사실상 수동으로 만들 수 없습니다. 어떤 feature 쌍이 유용한지 도메인 지식에 의존해야 하며, 새로운 feature가 추가될 때마다 cross feature를 다시 설계해야 합니다.
+**한계**: 2차 interaction만 해도 feature 수가 $O(n^2)$으로 폭발하고, 3차 이상은 사실상 수동으로 만들 수 없습니다. 어떤 feature 쌍이 유용한지는 도메인 지식에 기댈 수밖에 없습니다. 게다가 새 feature가 붙을 때마다 cross feature를 다시 설계해야 합니다.
 
 **실무에서의 위치**: 그럼에도 LR은 여전히 중요합니다. [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 포스트의 Multi-Stage Ranking에서 Pre-Ranking 단계의 경량 모델로 널리 사용됩니다. 해석 가능성, 학습 속도, 서빙 레이턴시 면에서 타의 추종을 불허합니다.
 
@@ -294,7 +294,7 @@ $$\hat{y} = w_0 + \sum_{i=1}^{n} w_i x_i + \sum_{i=1}^{n} \sum_{j=i+1}^{n} \lang
 
 여기서 $v_i \in \mathbb{R}^k$는 feature $i$의 latent vector입니다. $\langle v_i, v_j \rangle$는 두 벡터의 내적입니다. 즉 $\sum_{f=1}^{k} v_{i,f} v_{j,f}$를 뜻합니다.
 
-**왜 혁신인가**: LR에서 interaction weight $w_{ij}$를 직접 학습하면, feature $i$와 $j$가 함께 등장한 데이터가 있어야 합니다. Sparse 데이터에서는 대부분의 쌍이 한 번도 함께 등장하지 않으므로 학습이 불가능합니다. FM은 각 feature의 latent vector를 독립적으로 학습한 뒤, interaction을 내적으로 계산하므로 **한 번도 함께 등장하지 않은 feature 쌍의 interaction도 추정**할 수 있습니다.
+**왜 혁신인가**: LR에서 interaction weight $w_{ij}$를 직접 학습한다고 하겠습니다. 그러면 feature $i$와 $j$가 함께 등장한 데이터가 있어야 합니다. Sparse 데이터에서는 대부분의 쌍이 한 번도 함께 등장하지 않으므로 학습이 불가능합니다. FM은 각 feature의 latent vector를 따로 학습한 뒤 interaction을 내적으로 계산합니다. 그래서 **한 번도 함께 등장하지 않은 feature 쌍의 interaction도 추정**할 수 있습니다.
 
 **계산 트릭**: 나이브하게 계산하면 $O(kn^2)$이지만, 수식을 변환하면 $O(kn)$으로 줄일 수 있습니다:
 
@@ -516,7 +516,7 @@ FM의 2차 interaction과 DNN의 고차 interaction이 함께 작동한 결과�
 
 ### ⑤ DCN / DCN-v2 (Google, 2017/2021)
 
-DCN(Deep & Cross Network)은 Feature Interaction 학습에 대한 또 다른 접근입니다. FM이 2차까지만 포착하는 한계를, **Cross Network**으로 극복합니다. Cross Network는 **명시적으로 고차 feature interaction을 학습**하되, DNN보다 파라미터 효율적입니다.
+DCN(Deep & Cross Network)은 Feature Interaction 학습에 대한 또 다른 접근입니다. Cross Network 는 피처 조합을 층마다 쌓는 부분입니다. FM이 2차까지만 포착하는 한계를, **Cross Network**으로 극복합니다. Cross Network는 **명시적으로 고차 feature interaction을 학습**하되, DNN보다 파라미터 효율적입니다.
 
 #### Cross Layer의 수식
 
@@ -657,7 +657,7 @@ graph TD
     style WeightedSum fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
-**직관**: 러닝화 광고를 볼 때, 유저의 과거 러닝화/운동화/운동복 구매 이력에 높은 weight가 부여되고, 노트북이나 여행 상품에는 거의 0에 가까운 weight가 부여됩니다. 동일한 유저라도 **후보 광고가 바뀌면 유저 표현 $v_U$가 달라집니다** -- 이것이 DIN의 핵심 혁신입니다.
+**직관**: 러닝화 광고를 볼 때는 유저의 과거 러닝화, 운동화, 운동복 구매 이력에 높은 weight가 붙습니다. 노트북이나 여행 상품에는 거의 0에 가까운 weight가 붙습니다. 동일한 유저라도 **후보 광고가 바뀌면 유저 표현 $v_U$가 달라집니다** -- 이것이 DIN의 핵심 혁신입니다.
 
 같은 유저를 두 광고로 채점하면 가중치가 어떻게 달라지는지, 직접 돌려서 봅니다.
 
@@ -741,11 +741,11 @@ mean pooling은 어느 광고를 채점하든 60.0%로 고정입니다. 광고�
 | 계산 비용 | $O(H)$ | $O(H \cdot d)$ (attention 계산) |
 | 후보 광고 수 $N$일 때 | 유저 표현 1번 계산 | **$N$번 계산 (서빙 비용 증가)** |
 
-> 서빙 관점의 주의점: DIN에서 유저 표현은 후보 광고마다 달라집니다. 후보가 50개면 attention을 50번 계산해야 합니다. Multi-Stage Ranking이 필수인 이유가 여기 있습니다. DIN 같은 무거운 모델은 Ranking 단계(50개 이하)에서만 씁니다. 단계별 배치는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
+> 서빙 관점의 주의점: DIN에서 유저 표현은 후보 광고마다 달라집니다. 후보가 50개면 attention을 50번 계산해야 합니다. Multi-Stage Ranking(후보를 단계마다 줄이며 고르는 구조)이 필수인 이유가 여기 있습니다. DIN 같은 무거운 모델은 Ranking 단계(50개 이하)에서만 씁니다. 단계별 배치는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
 
 ### ② DIEN (Alibaba, 2019)
 
-DIN은 유저 행동의 **관련성**은 포착합니다. 하지만 **시간적 변화(temporal evolution)**는 반영하지 못합니다. 1주 전엔 운동화, 3일 전엔 러닝화, 어제부터는 트레일 러닝화. 이런 관심사의 **흐름**을 DIN은 보지 못합니다. 순서를 섞어도 결과가 똑같기 때문입니다. DIEN(Deep Interest Evolution Network)은 이 한계를 넘습니다.
+DIEN 은 유저 행동의 변해 가는 관심을 읽는 구조입니다. DIN은 유저 행동의 **관련성**은 포착합니다. 하지만 **시간적 변화(temporal evolution)**는 반영하지 못합니다. 1주 전엔 운동화, 3일 전엔 러닝화, 어제부터는 트레일 러닝화. 이런 관심사의 **흐름**을 DIN은 보지 못합니다. 순서를 섞어도 결과가 똑같기 때문입니다. DIEN(Deep Interest Evolution Network)은 이 한계를 넘습니다.
 
 DIEN은 두 개의 핵심 layer로 구성됩니다.
 
@@ -991,7 +991,7 @@ print(f"  → embedding table의 {att_mlp/emb_table*100:.4f}%")
 
 복잡한 모델의 성능을 유지하면서 서빙 레이턴시를 줄이는 기법들입니다.
 
-**Knowledge Distillation**: 복잡한 teacher 모델(DIN, DIEN)의 예측을 가벼운 student 모델(DeepFM, MLP)이 학습합니다. Teacher의 soft label은 hard label보다 더 풍부한 정보를 담고 있어, student가 원래 능력 이상의 성능을 낼 수 있습니다.
+**Knowledge Distillation**: 복잡한 teacher 모델(DIN, DIEN)의 예측을 가벼운 student 모델(DeepFM, MLP)이 학습합니다. Teacher의 soft label은 hard label보다 더 풍부한 정보를 담고 있습니다. 그래서 student가 원래 능력 이상의 성능을 낼 수 있습니다.
 
 $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L_{KD}(\hat{y}_{teacher}, \hat{y}_{student})$$
 

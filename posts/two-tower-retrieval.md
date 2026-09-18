@@ -26,7 +26,7 @@ Retrieval 방법론은 여러 가지입니다. 그런데 프로덕션에서 실�
 | **Multi-Interest** | 수백만 → 수백~수천 | 3~10ms | 매우 높음 (관심사별) | 높음 |
 | **Graph-based** | 수백만 → 수백~수천 | 5~15ms | 매우 높음 (관계 기반) | 매우 높음 |
 
-> 핵심 관찰: Rule-based와 Inverted Index는 빠르고 단순하지만 개인화에 한계가 있습니다. Two-Tower는 개인화와 레이턴시의 **최적 균형점**으로, 대부분의 프로덕션 광고 시스템에서 Retrieval의 핵심 엔진입니다.
+> 핵심 관찰: Rule-based(사람이 조건을 손으로 적는 방식)와 Inverted Index는 빠르고 단순하지만 개인화에 한계가 있습니다. Two-Tower는 개인화와 레이턴시의 **최적 균형점**으로, 대부분의 프로덕션 광고 시스템에서 Retrieval의 핵심 엔진입니다.
 
 표의 '후보 수 처리' 열을 보면 다섯 방법 모두 결국 수백~수천 개로 줄입니다. 다른 것은 **줄이는 기준**입니다. Rule-based는 광고주가 미리 적어 둔 타겟 조건으로 줄입니다. Two-Tower는 유저와 광고를 벡터로 바꿔, 방향이 비슷한 쪽으로 줄입니다. 이 기준의 차이가 개인화 수준의 차이로 그대로 이어집니다.
 
@@ -523,7 +523,7 @@ ANN(Approximate Nearest Neighbor)은 정확한 nearest neighbor 대신 근사 �
 
 위 두 표의 시간과 recall도 대략치입니다. 하드웨어와 파라미터 설정에 따라 크게 달라집니다.
 
-**FAISS-HNSW**는 recall이 가장 높지만 메모리를 많이 사용합니다. **ScaNN**은 Google이 개발한 라이브러리로, anisotropic vector quantization을 통해 recall과 속도 모두에서 우수한 성능을 보입니다. 실무에서는 FAISS-IVF와 HNSW를 조합하거나, ScaNN을 사용하는 경우가 가장 많습니다.
+**FAISS-HNSW**는 recall이 가장 높지만 메모리를 많이 사용합니다. **ScaNN**은 Google이 만든 라이브러리입니다. anisotropic vector quantization 을 써서 recall과 속도 모두 좋습니다. 실무에서는 FAISS-IVF와 HNSW를 조합하거나, ScaNN을 사용하는 경우가 가장 많습니다.
 
 :::deep 더 깊이 — '근사'가 정확한 탐색과 정확히 뭐가 다른가
 2절의 계산에서 100만 개 전수 내적은 128.8ms였습니다. 예산을 넘습니다. ANN은 여기서 **일부만 보고 답합니다**. 전체의 2%만 훑으면 3.4ms입니다. 대신 진짜 1위를 놓칠 확률이 생깁니다. 표의 Recall@100 90~99%가 바로 "놓치는 비율"입니다.
@@ -565,7 +565,7 @@ $$u_{\text{평균}} = \frac{1}{3}(u_{\text{패션}} + u_{\text{전자}} + u_{\te
 
 #### 해법: K개의 관심사 벡터
 
-**MIND**(Multi-Interest Network with Dynamic Routing, Alibaba, 2019)는 유저를 단일 벡터가 아닌 $K$개의 관심사 벡터로 표현합니다:
+**MIND**(Multi-Interest Network with Dynamic Routing, Alibaba, 2019)를 봅니다. 유저를 벡터 하나가 아니라 $K$개의 관심사 벡터로 표현합니다.
 
 $$u_1, u_2, \ldots, u_K = \text{CapsuleRouting}(\text{유저 행동 시퀀스})$$
 

@@ -110,7 +110,7 @@ Open RTB에서 DSP는 Bid Request에 담긴 제한된 정보(유저 ID, 지면, 
 
 이것이 pCTR 모델에 주는 의미:
 - **Feature 풍부도**: Open RTB의 DSP가 사용하는 피처가 수십 개라면, Walled Garden은 수백~수천 개의 1st party 피처를 활용 가능
-- **라벨 정확도**: 전환 추적이 자사 시스템 안에서 완결되므로 Delayed Feedback, Attribution 문제가 크게 완화됨
+- **라벨 정확도**: 전환 추적이 자사 시스템 안에서 완결되므로 Delayed Feedback(라벨이 늦게 도착하는 것), Attribution 문제가 크게 완화됨
 - **Privacy 내성**: 3rd Party Cookie 차단(Safari, Firefox)과 ATT 의 영향을 거의 받지 않음
 - **실험 속도**: 홀드아웃(A/B 테스트)을 자사 트래픽에 바로 걸 수 있어, 효과를 실험으로 직접 확인하는 주기가 짧음 ([어트리뷰션 입문](post.html?id=attribution-basics)의 담장 안 측정 참고)
 
@@ -477,7 +477,7 @@ Safari의 ITP, Firefox의 ETP는 오래전부터 서드파티 쿠키를 기본 �
 
 4. **현실은 하이브리드** — 순수한 Walled Garden은 없습니다. 모든 주요 플랫폼이 자사 매체(내부 경매)와 외부 네트워크(Open RTB)를 동시에 운영하며, 이 두 세계를 잇는 통합 데이터 플랫폼이 경쟁력의 핵심입니다.
 
-5. **AdTech 엔지니어에게 시사점** — Open RTB 기술(Bid Shading, MAB, Censored Regression)과 Walled Garden 기술(Position Bias 보정, IPS, Counterfactual Evaluation) 모두를 이해해야 현대 광고 시스템의 전체 그림이 그려집니다.
+5. **AdTech 엔지니어에게 시사점** — Open RTB 기술(Bid Shading, MAB, Censored Regression)과 Walled Garden 기술(Position Bias 보정, IPS, Counterfactual Evaluation) 모두를 이해해야 현대 광고 시스템의 전체 그림이 그려집니다. Censored Regression 은 보이지 않는 절반을 감안해 맞추는 회귀입니다.
 
 6. **담장이 돈이 되는 이유는 구조와 데이터, 둘 다입니다** — 중개 회사가 없어 수수료가 덜 새고(8절 가상 계산에서 1.49배), 데이터가 모여 pCTR 예측이 더 정확해지는 효과까지 곱해지면 격차는 더 벌어집니다(1.59배). 프라이버시 규제로 3rd-party 신호가 약해질수록 이 격차는 오히려 커지는 역설도 함께 기억해야 합니다.
 

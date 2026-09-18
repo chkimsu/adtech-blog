@@ -22,7 +22,7 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 ## 1. Discrimination vs Calibration: 무엇이 다른가
 
-모델 평가에서 가장 흔한 혼동은 **Discrimination**과 **Calibration**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
+모델 평가에서 가장 흔한 혼동은 **Discrimination(순서를 맞히는 능력)**과 **Calibration**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
 
 | 속성 | Discrimination (AUC) | Calibration |
 |------|---------------------|-------------|
@@ -264,7 +264,7 @@ graph TD
 
 ### Reliability Diagram (Calibration Plot)
 
-Reliability Diagram은 Calibration을 **시각적으로** 진단하는 가장 직관적인 도구입니다.
+Reliability Diagram 은 예측 확률과 실제 빈도를 맞대 그린 그림입니다. Calibration을 **시각적으로** 진단하는 가장 직관적인 도구입니다.
 
 **구성 방법:**
 1. 모델의 예측 확률을 M개 bin으로 나눈다 (예: [0, 0.1), [0.1, 0.2), ...)
@@ -323,7 +323,7 @@ for c, a, n in zip(centers, accs, counts):
 
 ### ECE (Expected Calibration Error)
 
-Reliability Diagram을 **하나의 숫자**로 요약한 것이 ECE입니다.
+Reliability Diagram을 **하나의 숫자**로 요약한 것이 ECE(예측과 실제의 평균 격차)입니다.
 
 $$ECE = \sum_{m=1}^{M} \frac{|B_m|}{n} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|$$
 
@@ -662,7 +662,7 @@ graph TD
 - Platt Scaling의 경우 $(A, B)$를 exponential moving average로 업데이트
 - P/O Ratio 보정의 경우, rolling P/O ratio를 직접 적용
 
-> Calibration Drift는 Concept Drift의 직접적인 결과입니다. Concept Drift와 모델 Staleness 문제는 따로 다뤘습니다. [Online Learning](post.html?id=online-learning-delayed-feedback) 글을 보세요. Online Learning 파이프라인과 Calibration 모니터링은 붙어 있어야 합니다.
+> Calibration Drift는 Concept Drift(세상이 변해 모델이 낡는 것)의 직접적인 결과입니다. Concept Drift와 모델 Staleness 문제는 따로 다뤘습니다. [Online Learning](post.html?id=online-learning-delayed-feedback) 글을 보세요. Online Learning 파이프라인과 Calibration 모니터링은 붙어 있어야 합니다.
 
 ---
 
@@ -670,7 +670,7 @@ graph TD
 
 자주 받는 질문이 있습니다. "Calibration을 보정하면 AUC가 떨어지지 않나요?"
 
-**답: 일반적으로 No.** Post-hoc Calibration 기법(Platt, Isotonic, Temperature)은 모두 **단조 변환(monotonic transformation)**입니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
+**답: 일반적으로 No.** Isotonic 은 순서를 지키며 계단으로 맞추는 보정입니다. Post-hoc Calibration 기법은 모두 **단조 변환(monotonic transformation)**입니다. Platt, Isotonic, Temperature 가 그렇습니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
 
 직관적으로 보겠습니다. $f(x_1) > f(x_2)$이면 단조 변환 후에도 $g(f(x_1)) > g(f(x_2))$입니다. 순서가 바뀌지 않으니 AUC는 동일합니다.
 
@@ -751,7 +751,7 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 
 **1. AUC와 Calibration은 다른 속성이다.** AUC는 순서(ranking)의 정확도, Calibration은 확률값 자체의 정확도입니다. 광고 시스템에서는 확률값이 직접 입찰가로 변환되므로, Calibration이 비즈니스에 더 직접적인 영향을 미칩니다.
 
-**2. Miscalibration은 시스템 전체로 전파된다.** pCTR의 Calibration 오류는 True Value 왜곡 → Bid Shading 오작동 → Budget Pacing 오작동 → 캠페인 성과 저하로 연쇄적으로 퍼집니다.
+**2. Miscalibration은 시스템 전체로 전파된다.** pCTR의 Calibration 오류는 연쇄적으로 퍼집니다. True Value 왜곡, Bid Shading 오작동, Budget Pacing 오작동, 캠페인 성과 저하 순입니다.
 
 **3. P/O Ratio는 세그먼트별로 봐야 한다.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 Miscalibration을 발견할 수 있습니다.
 

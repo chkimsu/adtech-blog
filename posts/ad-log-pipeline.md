@@ -183,7 +183,7 @@ sequenceDiagram
 | `exchange_id` | 어떤 Exchange에서 온 요청인지 | `google-adx` |
 
 **다운스트림 활용**:
-- **QPS 모니터링**: 초당 request log 수 = 시스템 부하
+- **QPS(초당 요청 수) 모니터링**: 초당 request log 수 = 시스템 부하
 - **전체 로그 체인의 JOIN key**: `request_id`가 이후 모든 로그를 관통
 - **Budget Pacing 분모**: 전체 요청 수 대비 입찰 비율 계산
 - **트래픽 분석**: Exchange별, 매체별, 시간대별 트래픽 분포
@@ -192,7 +192,7 @@ sequenceDiagram
 
 ### 2.2 Candidate Log — 후보 깔때기의 기록
 
-**언제 기록되는가**: [Multi-Stage Ranking Pipeline](post.html?id=model-serving-architecture)의 Retrieval → Pre-Ranking 단계가 완료되어 **상위 후보가 확정된 시점** (~1-2ms). 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
+**언제 기록되는가**: [Multi-Stage Ranking Pipeline](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. Retrieval 과 Pre-Ranking 이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
 
 **누가 기록하는가**: DSP Ranking Pipeline (Retrieval + Pre-Ranking 모듈)
 
@@ -339,7 +339,7 @@ sequenceDiagram
 - **Budget 차감**: 낙찰 시 win_price만큼 예산에서 차감
 - **Exchange별 경쟁 분석**: Exchange마다 다른 가격 분포와 경쟁 강도 파악
 
-> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. Win/Loss Log의 이 비대칭성이 Censored Regression이 필요한 이유입니다.
+> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. Win/Loss Log의 이 비대칭성이 Censored Regression(보이지 않는 절반을 감안해 맞추는 회귀)이 필요한 이유입니다.
 
 ---
 
@@ -476,7 +476,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, ML Pipeline 로그는 **"�
 
 **Feature Log**는 [Feature Store 포스트](post.html?id=feature-store-serving)에서 다룬 Training-Serving Skew의 **감지 수단**입니다. 서빙 시점에 모델이 실제로 받은 피처 값을 기록하지 않으면, 학습 환경과 서빙 환경의 피처가 다른지 확인할 방법이 없습니다.
 
-**Model Score Log**는 [Model Serving Architecture 포스트](post.html?id=model-serving-architecture)의 Timeout Fallback 계층에서 fallback이 발동되었는지를 추적하는 수단입니다. `fallback_used=true`가 급증하면 서빙 인프라에 문제가 있다는 신호입니다.
+**Model Score Log**는 fallback 이 발동됐는지를 추적하는 수단입니다. 그 계층은 [Model Serving Architecture 포스트](post.html?id=model-serving-architecture)의 Timeout Fallback 입니다. `fallback_used=true`가 급증하면 서빙 인프라에 문제가 있다는 신호입니다.
 
 ---
 

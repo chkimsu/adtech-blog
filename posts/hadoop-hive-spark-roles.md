@@ -6,7 +6,7 @@
 
 노드를 넷으로 나누고 워커 노드 한 대를 세로로 잘라 보면 답이 보입니다. 층이 셋입니다. 1층 저장과 2층 자리 배분은 둘이 같이 쓰고, 다른 것은 3층에서 도는 프로그램뿐입니다. 이것을 알면 「Hive 로 돌린다」와 「Spark 로 돌린다」가 무엇을 바꾸는 말인지 알게 됩니다. 데이터 팀이 하는 말의 절반이 그림으로 들립니다.
 
-> **한 줄 요약:** Hadoop 은 아래 두 층(HDFS 저장, YARN 자리 배분)의 이름이고, Hive 와 Spark 는 그 위 3층에서 도는 프로그램입니다. 둘은 같은 워커 노드에서 같은 조각을 읽고, 만나는 자리는 Metastore 목록과 HDFS 파일입니다.
+> **한 줄 요약:** Hadoop 은 아래 두 층(HDFS 저장, YARN 자리 배분)의 이름이고, Hive 와 Spark 는 그 위 3층에서 도는 프로그램입니다. 둘은 같은 워커 노드에서 같은 조각을 읽습니다. 만나는 자리는 Metastore 목록과 HDFS 파일입니다.
 
 > **골라 읽는 법** — 절이 8개인 글입니다. 절마다 카드 한 장이 들어 있어 카드만 보고 넘어가도 됩니다.
 >
@@ -16,7 +16,7 @@
 > - 둘이 만나는 자리 → 6절
 > - 무엇을 언제 쓰나, 이름표 정리 → 7~8절
 
-이 글의 서버 이름, 컨테이너 수, 시간은 설명을 위한 가상 값입니다. 하루 클릭 228만 건은 이 트랙의 앞 글들과 같은 값입니다. 카드 속 색은 넷입니다. 파랑은 저장(HDFS)이고 벽돌색은 자리 배분(YARN)입니다. 먹색은 Hive 와 Tez 이고 회색은 Spark 와 그 밖의 엔진입니다.
+이 글의 서버 이름, 컨테이너 수, 시간은 설명을 위한 가상 값입니다. 하루 클릭 228만 건은 이 트랙의 앞 글들과 같은 값입니다. 카드 속 색은 넷입니다. 파랑은 저장(HDFS)이고 벽돌색은 자리 배분(YARN)입니다. 먹색은 Hive 와 Tez(질의를 잘게 나눠 돌리는 실행 엔진) 이고 회색은 Spark 와 그 밖의 엔진입니다.
 
 ---
 
@@ -26,7 +26,7 @@
 
 쉽게 말하면 클러스터는 서버 수십에서 수백 대이고, 그 서버 한 대를 노드라고 부릅니다. Hadoop, Hive, Spark 는 프로그램 이름이고, 노드는 그 프로그램이 도는 자리입니다. 어떤 프로그램이 도는지에 따라 노드를 넷으로 나눕니다.
 
-엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터도 계산도 없습니다. 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있어서, 데이터를 갖고 있는 자리에서 계산합니다.
+엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터도 계산도 없습니다. 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 앞은 파일이 어디에 있는지 적어 둔 서버이고, 뒤는 일감을 어느 서버에 줄지 정하는 서버입니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. 앞은 질의를 받아 주는 문 역할의 서버이고, 뒤는 표가 어디에 어떤 모양으로 있는지 적어 둔 곳입니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있습니다. 앞은 파일 조각을 담고 뒤는 일감을 돌립니다. 그래서 데이터를 갖고 있는 자리에서 계산합니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=nodes" height="480" loading="lazy" title="노드는 넷으로 나뉜다"></iframe>
@@ -81,7 +81,7 @@ Hadoop 에는 원래 계산 엔진이 하나 들어 있었습니다. MapReduce �
 <a class="demo-embed-open" href="demo-cluster-roles.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-여기서 「Hive 는 엔진이 아니다」가 나옵니다. HiveServer2 는 SQL 을 읽고 계획을 세우는 프로그램이고, 세는 일은 Tez 가 합니다. 설정 하나로 엔진을 Spark 로 바꿀 수도 있습니다. 그래도 지훈 씨가 붙는 곳은 HiveServer2 이고 SQL 도 그대로입니다. 접속 주소와 ZooKeeper 가 어떻게 얽히는지는 [Hadoop 과 Hive](post.html?id=hadoop-hive-basics) 편에 있습니다.
+여기서 「Hive 는 엔진이 아니다」가 나옵니다. HiveServer2 는 SQL 을 읽고 계획을 세우는 프로그램이고, 세는 일은 Tez 가 합니다. 설정 하나로 엔진을 Spark 로 바꿀 수도 있습니다. 그래도 지훈 씨가 붙는 곳은 HiveServer2 이고 SQL 도 그대로입니다. ZooKeeper 는 서버들이 서로 누가 살아 있는지 맞추는 조정 서비스입니다. 접속 주소와 ZooKeeper 가 어떻게 얽히는지는 [Hadoop 과 Hive](post.html?id=hadoop-hive-basics) 편에 있습니다.
 
 ## 5. Spark 는 엔진이면서 코드로 씁니다
 

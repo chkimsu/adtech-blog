@@ -127,6 +127,174 @@ const GLOSSARY = [
     term: 'Walled Garden',
     abbr: '폐쇄형 생태계',
     body: '네이버·카카오·Meta·Google처럼 <strong>DSP부터 매체까지 한 회사가 다 소유</strong>한 구조. Open RTB의 외부 DSP는 들어올 수 없고, 내부에서만 경매·측정이 완결된다. 데이터 독점 vs 효율의 트레이드오프.'
+  },
+
+  // 2026-09-18 추가 — 글에서 세 번 이상 나오면서 한 번도 안 풀리던 용어들
+  {
+    term: 'Sample Selection Bias',
+    abbr: '배운 자리와 쓰는 자리가 다른 편향',
+    body: '모델이 <strong>클릭한 노출에서만 배우고</strong> 노출 전체에 쓰이는 어긋남. 배운 칸과 쓰는 칸이 달라서, 노출은 많고 클릭은 적은 자리에서 크게 틀린다. ESMM 이 노출 전체에서 배우게 해 이 문제를 피한다.',
+    match: ['Sample Selection Bias', 'SSB']
+  },
+  {
+    term: 'MMoE',
+    abbr: 'Multi-gate Mixture-of-Experts',
+    body: '태스크마다 <strong>다른 전문가 조합</strong>을 쓰는 구조. 클릭과 전환처럼 성격이 다른 태스크가 같은 바닥을 쓰면 서로 방해하는데, 게이트가 태스크별로 전문가 비중을 달리 준다.'
+  },
+  {
+    term: 'PLE',
+    abbr: 'Progressive Layered Extraction',
+    body: '공용 전문가와 <strong>태스크 전용 전문가</strong>를 층으로 나눈 구조. MMoE 에서 전문가가 섞여 생기는 간섭을 층으로 떼어 줄인다.'
+  },
+  {
+    term: 'Feature Interaction',
+    abbr: '피처 조합',
+    body: '피처를 따로 보는 대신 <strong>둘 이상을 곱해</strong> 보는 것. "20대"만으로는 뜻이 없지만 "20대 × 저녁 × 화장품"이 되면 뜻이 생긴다. 이 조합을 누가 만드느냐가 CTR 모델 계보의 축이다.'
+  },
+  {
+    term: 'Cross Network',
+    abbr: '피처 조합을 층마다 쌓는 부분',
+    body: 'DCN 의 한 갈래로, 층을 하나 올릴 때마다 <strong>조합의 차수가 하나 올라간다</strong>. DNN 보다 파라미터가 적게 들면서 고차 조합을 명시적으로 배운다.'
+  },
+  {
+    term: 'DIEN',
+    abbr: 'Deep Interest Evolution Network',
+    body: '유저 행동의 <strong>변해 가는 관심</strong>을 읽는 구조. DIN 이 관련성만 보는 데 비해, GRU 로 순서를 읽어 1주 전 운동화에서 어제 트레일 러닝화로 옮겨 간 흐름을 잡는다.'
+  },
+  {
+    term: 'Discrimination',
+    abbr: '순서를 맞히는 능력',
+    body: '누를 광고를 안 누를 광고보다 <strong>높은 점수로 세우는</strong> 능력. AUC 가 재는 것이 이것이다. 확률의 크기가 맞는지는 따로 재야 하고, 그것이 Calibration 이다.'
+  },
+  {
+    term: 'Reliability Diagram',
+    abbr: '보정 그림',
+    body: '예측 확률을 가로축에, 그 구간에서 <strong>실제로 일어난 빈도</strong>를 세로축에 찍은 그림. 점선(y=x)에 붙을수록 잘 보정된 모델이다.'
+  },
+  {
+    term: 'ECE',
+    abbr: 'Expected Calibration Error',
+    body: '보정 그림을 <strong>숫자 하나</strong>로 요약한 값. 예측과 실제의 평균 격차이고, 작을수록 확률이 맞는다.'
+  },
+  {
+    term: 'Examination Hypothesis',
+    abbr: '먼저 봐야 누른다는 전제',
+    body: '클릭이 두 단계라는 가정. <strong>그 자리를 봤나</strong>와 <strong>보고 눌렀나</strong>다. 앞은 자리에만 달렸고 뒤가 광고 품질이라, 둘을 나눠야 자리 효과가 걷힌다.'
+  },
+  {
+    term: 'MNAR',
+    abbr: 'Missing Not At Random',
+    body: '빠진 데이터가 <strong>무작위로 빠진 게 아닌</strong> 상태. 광고 로그가 그렇다. 모델이 좋게 본 광고만 노출되니, 안 보인 것은 이유가 있어서 안 보인 것이다.'
+  },
+  {
+    term: 'Concept Drift',
+    abbr: '세상이 변해 모델이 낡는 것',
+    body: '유저 취향, 경쟁 상황, 계절이 바뀌면 <strong>어제의 정답이 오늘 틀린다</strong>. 코드도 데이터 파이프라인도 멀쩡한데 성능만 조용히 내려간다.'
+  },
+  {
+    term: 'Delayed Feedback',
+    abbr: '라벨이 늦게 도착하는 것',
+    body: '클릭은 즉시 찍히지만 전환은 <strong>몇 시간에서 며칠 뒤</strong>에 온다. 안 기다리고 학습하면 아직 안 온 전환이 "안 샀다"로 들어가 pCVR 이 낮게 배워진다.'
+  },
+  {
+    term: 'GMM',
+    abbr: 'Gaussian Mixture Model',
+    body: '한 사람이 <strong>여러 무리에 확률로</strong> 걸리는 묶기 방법. K-Means 가 한 무리에만 넣는 것과 달리, 패션 0.7 스포츠 0.3 처럼 나눠 담는다.'
+  },
+  {
+    term: 'Propensity Model',
+    abbr: '살 것 같은 정도를 점수로 매기는 모델',
+    body: '유저마다 <strong>전환할 확률</strong>을 찍어 순위를 매긴다. Lookalike 에서 임베딩으로 후보를 넓게 뽑고, 이 점수로 순위를 다시 매기는 조합을 많이 쓴다.'
+  },
+  {
+    term: 'Label Propagation',
+    abbr: '이웃에게 표를 퍼뜨리는 방법',
+    body: '그래프에서 아는 사람의 라벨을 <strong>연결된 이웃으로 번지게</strong> 하는 방식. 씨앗과 직접 닿지 않은 사람까지 닮음이 전해진다.'
+  },
+  {
+    term: 'Censored Regression',
+    abbr: '보이지 않는 절반을 감안해 맞추는 회귀',
+    body: '1등 가격 경매에서 <strong>패찰하면 경쟁가를 못 본다</strong>. 이긴 것만 보고 맞추면 시장가를 낮게 보게 되므로, 못 본 쪽이 내 입찰가보다 높았다는 사실만이라도 넣어 맞춘다.'
+  },
+  {
+    term: 'PID',
+    abbr: '되돌려 잡는 제어 방식',
+    body: '목표에서 <strong>벗어난 만큼</strong>, 그리고 <strong>벗어난 채 흘러온 시간</strong>과 <strong>벗어나는 속도</strong>를 같이 봐서 되돌린다. 예산 페이싱에서 하루 예산을 24시간에 고르게 태우는 데 쓴다.'
+  },
+  {
+    term: 'Feature Vector',
+    abbr: '모델에 넣는 숫자 묶음',
+    body: '한 요청에 대해 모아 온 피처를 <strong>정해진 순서의 숫자 줄</strong>로 만든 것. 이 줄의 자리가 학습과 서빙에서 어긋나면 모델이 조용히 틀린다.'
+  },
+  {
+    term: 'Candidate Log',
+    abbr: '후보 로그',
+    body: '후보로 <strong>뽑힌 광고</strong>를 남기는 기록. 이것이 있으면 안 뽑힌 광고까지 학습의 음성 표본으로 쓸 수 있어, 요청당 음성이 한 건에서 수백 건으로 넓어진다.'
+  },
+  {
+    term: 'No-Fill',
+    abbr: '빈 자리로 끝난 요청',
+    body: '채울 광고가 없어 <strong>아무것도 안 뜬</strong> 경우. 노출 로그에는 안 남으므로 요청 로그가 유일한 단서다. Fill Rate 를 재는 분모가 여기서 나온다.'
+  },
+  {
+    term: 'Multi-Stage Ranking',
+    abbr: '단계마다 줄이며 고르는 구조',
+    body: '후보 수십만 개에 정밀 모델을 다 돌릴 수 없어서, <strong>가벼운 모델로 줄이고 무거운 모델로 고른다</strong>. 뒤로 갈수록 후보는 적어지고 모델은 무거워진다.'
+  },
+  {
+    term: 'QPS',
+    abbr: 'Queries Per Second',
+    body: '<strong>초당 요청 수</strong>. 서버 한 대가 받아 낼 수 있는 양과 필요한 서버 대수를 정하는 값이다.'
+  },
+  {
+    term: 'DAG',
+    abbr: 'Directed Acyclic Graph',
+    body: '<strong>순서가 있고 되돌아오지 않는</strong> 작업 그림. A 가 끝나야 B 를 돌린다는 관계를 적어 두면 스케줄러가 순서대로 실행한다.'
+  },
+  {
+    term: 'Airflow',
+    abbr: '작업 순서를 짜고 돌리는 도구',
+    body: '작업 사이의 순서를 파이썬으로 적어 두면 <strong>정해진 시각에 순서대로</strong> 돌려 주고, 실패한 것만 다시 돌릴 수 있다.'
+  },
+  {
+    term: 'Flink',
+    abbr: '실시간 처리 도구',
+    body: '흘러오는 데이터를 <strong>쌓아 두지 않고 지나가며</strong> 처리한다. 최근 10분 클릭 수 같은 값을 몇 초 안에 갱신할 때 쓴다.'
+  },
+  {
+    term: 'Metastore',
+    abbr: '표의 목록과 모양을 적어 둔 곳',
+    body: '어떤 테이블이 있고, 칸 이름이 무엇이고, 파일이 <strong>어느 경로에 어떤 형식</strong>으로 있는지를 담는다. Hive 와 Spark 가 같은 표를 보는 것은 이것을 같이 쓰기 때문이다.'
+  },
+  {
+    term: 'HiveServer2',
+    abbr: 'SQL 을 받아 주는 문',
+    body: '지훈 씨가 붙는 <strong>접속 창구</strong>. SQL 을 받아 계획을 세우고 실행 엔진에 넘긴다. 세는 일은 Tez 나 Spark 가 한다.'
+  },
+  {
+    term: 'ZooKeeper',
+    abbr: '서버들을 맞춰 주는 조정 서비스',
+    body: '서버 여럿 중 <strong>누가 살아 있고 누가 대표인지</strong>를 맞춘다. 접속 주소에 여러 서버가 적혀 있는 이유가 여기 있다.'
+  },
+  {
+    term: 'NameNode',
+    abbr: '파일이 어디에 있는지 적어 둔 서버',
+    body: 'HDFS 에서 <strong>파일 조각이 어느 서버에 있는지</strong>를 기억한다. 데이터 자체는 담지 않고 위치만 담는다.'
+  },
+  {
+    term: 'DataNode',
+    abbr: '파일 조각을 담는 서버',
+    body: 'HDFS 에서 <strong>실제 데이터 조각</strong>을 담는다. 워커 한 대에 NodeManager 와 같이 있어서, 데이터가 있는 자리에서 바로 계산한다.'
+  },
+  {
+    term: 'HEAD',
+    abbr: '지금 서 있는 자리',
+    body: 'Git 에서 <strong>현재 체크아웃한 곳</strong>을 가리킨다. 보통 브랜치를 가리키고, 커밋을 직접 가리키면 detached HEAD 가 된다.'
+  },
+  {
+    term: 'Staging Area',
+    abbr: '커밋에 담을 것을 골라 두는 자리',
+    body: '작업 폴더와 저장소 사이의 <strong>중간 칸</strong>. <code>git add</code> 로 여기에 올린 것만 커밋에 들어간다.'
   }
 ];
 

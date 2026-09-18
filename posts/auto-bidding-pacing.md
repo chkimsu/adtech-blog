@@ -79,7 +79,7 @@ Bid Shading과 Budget Pacing은 모두 "입찰 최적화"에 속하지만, **최
 
 > Bid Shading 없이 Pacing만 있으면 개별 경매에서 매번 과다 지불합니다. 거꾸로 Pacing 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
 
-Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 Budget Pacing에 집중합니다.
+Surplus 는 가치에서 낸 값을 뺀 남는 몫입니다. Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 Budget Pacing에 집중합니다.
 
 ### 왜 Budget Pacing이 필요한가?
 
@@ -681,13 +681,13 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
 
 2. **PID Controller가 실무의 주력** — 단순하고 안정적이며, 대부분의 예산 제약을 충분히 처리합니다. $K_p$, $K_i$, $K_d$ 튜닝이 핵심입니다.
 
-3. **Lagrangian은 PID의 이론적 근거** — $\lambda$(pacing multiplier)와 $\mu$(shadow price)는 같은 것의 다른 표현입니다. 수학적으로 최적임이 보장됩니다.
+3. **Lagrangian은 PID(목표에서 벗어난 만큼 되돌려 잡는 제어 방식)의 이론적 근거** — $\lambda$(pacing multiplier)와 $\mu$(shadow price)는 같은 것의 다른 표현입니다. 수학적으로 최적임이 보장됩니다.
 
 4. **RL은 다중 제약 최적화의 열쇠** — 예산 + CPA + ROAS + 노출 균등성을 동시에 최적화할 때 PID/Lagrangian의 한계를 극복합니다.
 
 5. **pCTR 정확도가 모든 것의 기초** — Auto-Bidding이 아무리 정교해도, 입력인 pCTR이 부정확하면 예산을 낭비합니다. 모델 정확도 → 입찰 정확도 → 예산 효율의 체인이 끊어집니다.
 
-> 이 글에서 다룬 Auto-Bidding은 [Bid Shading 포스트](post.html?id=bid-shading-censored)의 자연스러운 후속편입니다. Bid Shading이 "한 번의 b*"를 계산하고, Auto-Bidding이 "$\lambda$로 스케일링"하여 최종 입찰가가 결정됩니다. 이 모든 것을 지탱하는 구조는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)(Multi-Stage Ranking, 모델 경량화, A/B 실험)에서 다룹니다.
+> 이 글에서 다룬 Auto-Bidding은 [Bid Shading 포스트](post.html?id=bid-shading-censored)의 자연스러운 후속편입니다. Bid Shading이 "한 번의 b*"를 계산하고, Auto-Bidding이 "$\lambda$로 스케일링"하여 최종 입찰가가 결정됩니다. Multi-Stage Ranking 은 후보를 단계마다 줄이며 고르는 구조입니다. 이 모든 것을 지탱하는 구조는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
 
 ---
 

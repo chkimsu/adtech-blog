@@ -2,7 +2,7 @@
 
 이 글은 Position Bias의 구조를 해부합니다. 그리고 진짜 광고 품질을 편향된 클릭에서 분리하는 방법인 **Unbiased Learning to Rank (ULTR)** 을 다룹니다. 관점은 ML Engineer, 즉 모델을 실제로 고치는 사람의 시선입니다.
 
-> [Walled Garden 포스트](post.html?id=walled-garden)에서 Position Bias를 소개했습니다. Examination Hypothesis도 그 글에서 처음 나왔습니다. 이 글은 그 개념을 확장해, 실제로 어떻게 보정하는지를 다룹니다.
+> [Walled Garden 포스트](post.html?id=walled-garden)에서 Position Bias를 소개했습니다. Examination Hypothesis(먼저 봐야 누른다는 전제)도 그 글에서 처음 나왔습니다. 이 글은 그 개념을 확장해, 실제로 어떻게 보정하는지를 다룹니다.
 
 ---
 
@@ -456,7 +456,11 @@ IPS에는 전제가 하나 있습니다. **Propensity(자리별로 볼 확률)�
   </div>
 </div>
 
-**핵심 통찰**: Examination Hypothesis에서 $P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$이므로, 한쪽을 알면 다른 쪽을 추정할 수 있습니다. DLA는 이 대칭성을 활용하여 두 모델을 번갈아 학습시킵니다.
+**핵심 통찰**: Examination Hypothesis 에서는 클릭 확률이 두 확률의 곱입니다.
+
+$$P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$$
+
+곱으로 이어져 있으니 한쪽을 알면 다른 쪽을 추정할 수 있습니다. DLA는 이 대칭성을 활용하여 두 모델을 번갈아 학습시킵니다.
 
 ---
 
@@ -532,7 +536,7 @@ IPS에는 전제가 하나 있습니다. **Propensity(자리별로 볼 확률)�
 
 3. **IPS가 가장 실용적인 출발점** — Propensity를 추정하고, 클릭에 역수 가중치를 부여합니다. 분산 문제는 Clipping이나 SNIPS로 대응합니다.
 
-4. **DLA는 실험 없이 보정 가능** — Relevance Model과 Propensity Model을 번갈아 학습시켜, 랜덤 실험 없이도 Position Bias를 추정합니다.
+4. **DLA는 실험 없이 보정 가능** — Relevance Model과 Propensity Model(살 것 같은 정도를 점수로 매기는 모델)을 번갈아 학습시켜, 랜덤 실험 없이도 Position Bias를 추정합니다.
 
 5. **광고 랭킹의 공정성이 곧 매출** — Position Bias를 보정하면 진짜 좋은 광고가 상위에 노출되고, 유저 클릭률과 광고주 전환율이 모두 올라갑니다. pCTR 모델의 정확도 → 랭킹 공정성 → 비즈니스 성과의 체인입니다.
 

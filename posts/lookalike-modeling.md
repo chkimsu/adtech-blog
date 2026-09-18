@@ -1,6 +1,6 @@
 광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike Modeling**의 핵심 질문이며, 리타겟팅 다음으로 가장 높은 ROI를 보이는 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발해 "아직 발견되지 않은 좋은 유저"로 넓히는 일입니다. 개념은 단순합니다. 하지만 구현은 까다롭습니다. 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 얽혀 있습니다.
 
-Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 다룹니다. Embedding 유사도, Propensity Model, Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
+Seed는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower Model](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 다룹니다. Embedding 유사도, Propensity Model(살 것 같은 정도를 점수로 매기는 모델), Graph Expansion입니다. Seed 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
 
 ---
 
@@ -38,7 +38,7 @@ graph TD
   LA --> ACT["타겟팅 활성화<br/>DMP / DSP"]
 ```
 
-> **실무에서는 단일 접근법보다 조합이 강력합니다.** Embedding 유사도로 빠르게 후보 풀을 생성하고, Propensity Model로 순위를 재조정하면 — 속도(Embedding)와 정밀도(Propensity)를 동시에 달성할 수 있습니다. 대형 플랫폼이 공개한 시스템 논문들도 한 방법만 쓰지 않습니다.
+> **실무에서는 단일 접근법보다 조합이 강력합니다.** Embedding 유사도로 후보 풀을 빠르게 만들고, Propensity Model로 순위를 다시 매깁니다. 그러면 속도와 정밀도를 같이 얻습니다. 대형 플랫폼이 공개한 시스템 논문들도 한 방법만 쓰지 않습니다.
 
 ### Lookalike vs 다른 타겟팅 전략 비교
 
@@ -205,15 +205,15 @@ graph LR
   EmbeddingSpace --> Process
 ```
 
-**Expansion 비율 제어**: 유사도 임계값(threshold)을 조정하여 Lookalike 크기를 제어합니다. Threshold를 높이면 → Seed와 매우 유사한 소수만 포함 (High Precision, Low Reach). Threshold를 낮추면 → 더 넓은 범위 포함 (Low Precision, High Reach). 이것이 Facebook의 "1~10% 슬라이더"가 안에서 하는 일입니다.
+**Expansion(씨앗에서 닮은 사람으로 넓히는 것) 비율 제어**: 유사도 임계값(threshold)을 조정하여 Lookalike 크기를 제어합니다. Threshold를 높이면 → Seed와 매우 유사한 소수만 포함 (High Precision, Low Reach). Threshold를 낮추면 → 더 넓은 범위 포함 (Low Precision, High Reach). 이것이 Facebook의 "1~10% 슬라이더"가 안에서 하는 일입니다.
 
 ### 3-3. Multi-Centroid (이질적 Seed 처리)
 
-**문제**: 단순 Mean Centroid는 Seed가 이질적(Heterogeneous)일 때 실패합니다. 예를 들어, 쇼핑몰의 전환 유저 Seed에 "명품 구매자"와 "초특가 사냥꾼"이 함께 포함되어 있다면 — 이 두 그룹의 임베딩은 벡터 공간에서 매우 다른 위치에 있습니다. 두 그룹의 평균인 Centroid는 **어느 그룹에도 속하지 않는 빈 공간**에 놓이게 됩니다.
+**문제**: 단순 Mean Centroid는 Seed가 이질적(Heterogeneous)일 때 실패합니다. 예를 들어 쇼핑몰의 전환 유저 Seed에 "명품 구매자"와 "초특가 사냥꾼"이 같이 들어 있다고 하겠습니다. 이 두 그룹의 임베딩은 벡터 공간에서 아주 다른 자리에 있습니다. 두 그룹의 평균인 Centroid는 **어느 그룹에도 속하지 않는 빈 공간**에 놓이게 됩니다.
 
 이것을 "평균의 함정(Averaging Fallacy)"이라 부릅니다. 평균이 의미 있으려면 분포가 단봉(Unimodal)이어야 하는데, 이질적 Seed는 다봉(Multimodal) 분포를 가집니다.
 
-**해결**: Seed 임베딩에 K-Means 클러스터링을 적용하여 K개의 서브클러스터를 찾고, 각 서브클러스터의 Centroid로 별도 ANN 검색을 수행합니다.
+**해결**: Seed 임베딩에 K-Means 클러스터링을 걸어 K개의 서브클러스터를 찾습니다. 그리고 서브클러스터마다 Centroid를 잡아 따로 ANN 검색을 돌립니다.
 
 $$\{c_1, c_2, \ldots, c_K\} = \text{K-Means}(\{u_i\}_{i \in S}, K)$$
 
@@ -223,7 +223,7 @@ $$\text{Lookalike}_{\text{multi}}(S, k) = \bigcup_{j=1}^{K} \text{TopK}_{u \noti
 
 $$\text{score}(u) = \max_{j=1}^{K} \text{sim}(u, c_j)$$
 
-**K 선택**: 보통 K=3~5로 시작합니다. K가 너무 크면 각 서브클러스터의 Seed가 너무 작아져서 의미 없는 Centroid가 생기고, K=1이면 단순 Mean Centroid와 동일합니다. Silhouette Score를 기반으로 최적 K를 자동 탐색할 수도 있지만, 실무에서는 K=3으로 시작한 후 Lookalike 성과를 보면서 조정하는 것이 일반적입니다.
+**K 선택**: 보통 K=3~5로 시작합니다. K가 너무 크면 서브클러스터마다 Seed가 너무 작아져 의미 없는 Centroid가 생깁니다. K=1이면 단순 Mean Centroid와 같습니다. Silhouette Score로 최적 K를 자동 탐색할 수도 있습니다. 다만 실무에서는 K=3으로 시작해 Lookalike 성과를 보면서 조정하는 쪽이 일반적입니다.
 
 다음은 Multi-Centroid Lookalike의 전체 구현 예시입니다.
 
@@ -500,7 +500,7 @@ Graph 기반 Lookalike는 유저 간의 **관계(Edge)**를 통해 Seed의 레�
 - **행동 Edge**: 같은 시간대 앱 사용, 같은 상품 조회
 - **구매 Edge**: 같은 상품 구매, 같은 브랜드 구매
 
-**Label Propagation**: Seed 노드에 레이블 1을 부여하고, 그래프를 따라 반복적으로 전파합니다:
+**Label Propagation(아는 사람의 표를 이웃에게 퍼뜨리는 방법)**: Seed 노드에 레이블 1을 부여하고, 그래프를 따라 반복적으로 전파합니다:
 
 $$f^{(t+1)} = \alpha S f^{(t)} + (1-\alpha) y$$
 
@@ -538,7 +538,7 @@ graph TD
 
 User B가 Seed 1과 Seed 2 모두와 연결되어 있으므로 f=0.65로 높은 스코어를 받습니다. User D는 Hop 2이지만 A와 B 두 경로를 통해 Seed와 연결되므로 f=0.41을 받습니다. **다중 경로(Multi-path)**로 연결된 유저는 단일 경로 유저보다 높은 스코어를 받습니다. 이것이 Label Propagation의 핵심 특성입니다.
 
-**Meta(Facebook) Lookalike가 강력한 이유**: Meta는 세계 최대의 소셜 그래프(친구 연결), 관심사 그래프(페이지 좋아요, 그룹 멤버십), 인게이지먼트 그래프(포스트 반응, 댓글)를 보유하고 있습니다. 이 다층적 그래프 구조가 전파 경로를 풍부하게 만들어, 단일 채널 데이터로는 발견할 수 없는 유사 유저를 찾아냅니다. [Walled Garden](post.html?id=walled-garden)에서 다룬 것처럼, 이 그래프 데이터는 플랫폼 외부로 유출되지 않으므로 — Meta의 Lookalike 품질은 외부에서 복제가 불가능합니다.
+**Meta(Facebook) Lookalike가 강력한 이유**: Meta는 그래프 셋을 갖고 있습니다. 소셜 그래프(친구 연결), 관심사 그래프(페이지 좋아요, 그룹 멤버십), 인게이지먼트 그래프(포스트 반응, 댓글)입니다. 이 다층적 그래프 구조가 전파 경로를 풍부하게 만들어, 단일 채널 데이터로는 발견할 수 없는 유사 유저를 찾아냅니다. [Walled Garden](post.html?id=walled-garden)에서 다룬 것처럼, 이 그래프 데이터는 플랫폼 밖으로 나가지 않습니다. 그래서 Meta의 Lookalike 품질은 외부에서 복제할 수 없습니다.
 
 ### 5-2. GNN Embedding + Lookalike
 
@@ -854,7 +854,7 @@ graph TD
   Metrics --> Alerts
 ```
 
-실무에서는 Airflow/Prefect 같은 도구로 Batch 파이프라인을 스케줄링합니다. 각 단계의 메트릭은 DataDog/Prometheus에 기록합니다. 임계값을 넘으면 Slack/PagerDuty로 알려 빠르게 대응합니다.
+실무에서는 Airflow(작업 순서를 짜고 돌리는 도구)/Prefect 같은 도구로 Batch 파이프라인을 스케줄링합니다. 각 단계의 메트릭은 DataDog/Prometheus에 기록합니다. 임계값을 넘으면 Slack/PagerDuty로 알려 빠르게 대응합니다.
 
 **일반적인 장애 시나리오와 대응**:
 

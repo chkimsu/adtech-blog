@@ -139,7 +139,7 @@ graph TB
 
 눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 21개 모듈을 **두 층**으로 놓았습니다.
 
-- **위층 = 두뇌 층.** Feature Store → Training → Model Serving → **pCTR/pCVR** → Calibration → Monitoring.
+- **위층 = 두뇌 층.** Feature Store 에서 Training, Model Serving 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 Monitoring 입니다.
 - **아래층 = 거래 층.** 사용자 → 매체·SSP → Ad Exchange → DSP → 광고주.
 
 두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다.
@@ -201,7 +201,7 @@ graph TB
 
 - **5단계 안의 추론**: pCTR 추론이 **~1ms 이내**에 완료되어야 합니다. 모델 복잡도 vs 레이턴시 트레이드오프
 - **5단계 안의 가치 계산**: pCTR 의 작은 오차가 True Value 에 증폭됩니다. pCTR이 0.032가 아니라 0.050이었다면 True Value는 $0.24 → $0.375로 56% 뛰고, 입찰가도 그만큼 올라갑니다
-- **11-12**: 클릭 피드백은 수 초 내 도착하지만, 전환 피드백은 **수 시간~수 일 지연**(Delayed Feedback)될 수 있습니다. 이것이 pCVR 모델의 핵심 난관입니다
+- **11-12**: 클릭 피드백은 수 초 내 도착하지만, 전환 피드백은 **수 시간~수 일 지연**(Delayed Feedback)될 수 있습니다. Delayed Feedback 은 라벨이 늦게 도착하는 것입니다. 이것이 pCVR 모델의 핵심 난관입니다
 
 ### 이 100ms가 지금 몇 번 겹쳐서 벌어지고 있나
 
@@ -561,7 +561,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
 
-지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다: `로그 → Feature Store → Training → Model Serving → pCTR/pCVR → Monitoring → Training`. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누르세요.
+지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 Feature Store, Training, Model Serving 을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누르세요.
 
 ```python
 # 두뇌 층은 고리다. 로그가 한 바퀴 돌아 다시 심장에 닿는 시간을 더한다.

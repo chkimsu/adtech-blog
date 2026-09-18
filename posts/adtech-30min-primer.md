@@ -123,7 +123,7 @@ flowchart LR
 
 1st Price 경매에서 DSP는 "이길 최소 금액"을 알고 싶어합니다. 시장 분포를 보고 `내가 $3으로도 이길 수 있는데 굳이 $5 쓸 필요 없다`고 판단해 **입찰가를 깎는 기술**이 Bid Shading입니다. 경쟁 DSP의 입찰가는 볼 수 없습니다(Censored Data). 내가 진 경우엔 "상대가 얼마였는지"조차 모릅니다. 그래서 통계적 추정이 까다롭습니다.
 
-말로만 들으면 감이 잘 안 옵니다. 아래 데모에서 직접 경매를 돌려 보세요. First Price·Second Price를 바꿔 보고, Floor Price를 움직이면 낙찰가가 어떻게 변하는지 확인할 수 있습니다.
+말로만 들으면 감이 잘 안 옵니다. 아래 데모에서 직접 경매를 돌려 보세요. First Price·Second Price를 바꿔 보세요. Floor Price 는 이보다 낮으면 안 판다는 최저가입니다. 그 값을 움직이면 낙찰가가 어떻게 변하는지 보입니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-rtb.html?embed=1" height="560" loading="lazy" title="RTB 경매 미니 데모"></iframe>
@@ -144,7 +144,7 @@ flowchart LR
 
 광고 후보는 많으면 수백만 개입니다. 100ms 안에 하나를 고르려면 **다단 랭킹(Multi-Stage Ranking)**을 씁니다.
 
-1. **Retrieval(후보 생성)**: 수백만 개에서 **수백 개**로 대충 줄이기. Two-Tower 임베딩, Rule-based 필터 등이 쓰인다.
+1. **Retrieval(후보 생성)**: 수백만 개에서 **수백 개**로 대충 줄이기. Two-Tower 임베딩, Rule-based(사람이 조건을 손으로 적는 방식) 필터 등이 쓰인다.
 2. **Ranking(정밀 평가)**: 수백 개를 정교한 모델로 스코어링해 1등을 고른다.
 
 ### 3.2 pCTR / pCVR — 스코어의 핵심
@@ -372,7 +372,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 2. 경로는 **광고주 → DSP → Ad Exchange → SSP → 매체 → 사용자**. 측정은 MMP·Attribution이 담당.
 3. 경매는 대부분 **1st Price** 입니다. 그래서 DSP 는 **Bid Shading** 으로 입찰가를 깎습니다.
 4. 서로 다른 가격체계는 **eCPM**으로 환산해 비교하고, 여기에 **pCTR · pCVR**이 들어간다.
-5. 랭킹은 **Retrieval(후보 생성) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN 까지 진화했습니다.
+5. 랭킹은 **Retrieval(후보 생성) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN(유저 행동의 변해 가는 관심을 읽는 구조) 까지 진화했습니다.
 6. 모델이 아무리 AUC 가 높아도 **Calibration** 이 안 되면 돈을 잃습니다.
 7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
 8. 측정은 **CTR·CVR·ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어졌습니다.

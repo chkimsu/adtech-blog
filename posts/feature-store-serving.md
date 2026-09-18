@@ -144,7 +144,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   </div>
 </div>
 
-핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(Batch / Streaming / Real-Time)이 하나의 Feature Store로 합류합니다. 그리고 서빙 시점에 이들이 단일 Feature Vector로 조합됩니다.
+핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(Batch / Streaming / Real-Time)이 하나의 Feature Store로 합류합니다. 그리고 서빙 시점에 이들이 단일 Feature Vector(모델에 넣는 숫자 묶음)로 조합됩니다.
 
 ### 광고 요청 1건에 필요한 피처 분류
 
@@ -472,7 +472,7 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-**Batch 피처의 핵심:** 학습과 추론에서 **같은 피처 정의**를 사용하지만, 읽는 저장소가 다릅니다 — 학습은 Offline Store(과거 시점 복원), 추론은 Online Store(최신 값).
+**Batch 피처의 핵심:** 학습과 추론이 **같은 피처 정의**를 쓰지만 읽는 저장소는 다릅니다. 학습은 Offline Store(과거 시점 복원), 추론은 Online Store(최신 값)입니다.
 
 ### 4-2. Streaming 피처의 Lifecycle
 
@@ -515,7 +515,7 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-**Streaming 피처의 핵심:** 추론 시에는 Flink가 실시간으로 계산한 값을 Redis에서 읽지만, 학습 시에는 원본 이벤트 로그를 다시 읽어서 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
+**Streaming 피처의 핵심:** 추론할 때는 Flink가 실시간으로 계산한 값을 Redis에서 읽습니다. 학습할 때는 원본 이벤트 로그를 다시 읽어 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
 
 **"Redis에 바로 쓰면 학습은 어떻게 하지?"** — 핵심은 Kafka에서 이벤트가 나올 때 **두 갈래**로 간다는 것입니다:
 
@@ -682,7 +682,7 @@ flowchart LR
 | 시간대 (hour) | **Real-Time** | 서버 시각 | 저장 안 함 | Request Log 파싱 | 서버 시각 계산 | 요청마다 |
 | 지면 URL 카테고리 | **Real-Time** | Bid Request URL | 저장 안 함 | Request Log 파싱 | URL 패턴 매칭 | 요청마다 |
 
-> **이 표의 핵심 패턴:** Batch 피처는 학습/추론 모두 같은 계산 로직이지만 **읽는 저장소가 다르고** (S3 vs Redis), Streaming 피처는 추론에서는 Flink가 실시간 계산하지만 **학습에서는 원본 로그로 재현**해야 하고, Real-Time 피처는 **저장소 자체가 없어서** 학습/추론 모두 원본(Request/Log)에서 파싱합니다.
+> **이 표의 핵심 패턴:** Batch 피처는 학습과 추론의 계산 로직이 같지만 **읽는 저장소가 다릅니다**(S3 대 Redis). Streaming 피처는 추론에서 Flink가 실시간 계산하고 **학습에서는 원본 로그로 재현**합니다. Real-Time 피처는 **저장소 자체가 없어서** 학습과 추론 모두 원본(Request/Log)에서 파싱합니다.
 
 ---
 
@@ -794,7 +794,7 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
 
 **Feature Registry**: Feature Store의 "카탈로그"입니다. 모든 피처의 이름, 타입, 차원, 생성 파이프라인, 담당 팀을 중앙에서 관리합니다. 새 피처를 등록하면 스키마 검증이 자동으로 파이프라인에 적용됩니다.
 
-**Offline Store**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때 **Point-in-Time Join**이 핵심입니다 — "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
+**Offline Store**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때는 **Point-in-Time Join**이 핵심입니다. "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
 
 **Online Store**: Redis나 DynamoDB에 최신 피처 값을 Key-Value로 저장합니다. 서빙 시 `GET user:12345` 한 번으로 유저의 전체 피처 벡터를 가져옵니다. p99 레이턴시 1ms 이내가 목표입니다.
 

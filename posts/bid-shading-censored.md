@@ -363,7 +363,7 @@ $$\mathcal{L} = \underbrace{\sum_{i \in \mathcal{W}} \log P(w_i \mid x_i)}_{\tex
 
 **직관적 해석**: 낙찰한 경매에서는 실제 관측된 시장 가격 $w_i$의 likelihood를 최대화합니다. 패찰한 경매에서는 "시장 가격이 내 입찰가보다 높다"는 **부분 정보**의 likelihood를 최대화합니다. 이렇게 하면 Lose 데이터의 하한(lower bound)도 학습에 쓰입니다. 그래서 Naive의 과소추정이 보정됩니다.
 
-이것이 Censored Regression의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
+이것이 Censored Regression(보이지 않는 절반을 감안해 맞추는 회귀)의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
 
 ---
 
@@ -452,7 +452,7 @@ $$s(b) = (V - b) \cdot \Phi\!\left(\frac{\ln b - \mu(x)}{\sigma(x)}\right)$$
 - $\Phi$ : 표준 정규분포 CDF
 - $\mu(x), \sigma(x)$ : 네트워크가 출력한 log-normal 파라미터
 
-**Theorem 1 (Zhou et al.)**: Truncated-normal, Exponential, Gamma, Log-normal 분포 모두에서 surplus 함수 $s(b)$는 구간 $(0, V)$에서 **정확히 하나의 극대값(global maximum)**을 가지며, 극소값은 없다.
+**Theorem 1 (Zhou et al.)**: Truncated-normal, Exponential, Gamma, Log-normal 분포 모두에서 같은 성질이 성립한다. surplus 함수 $s(b)$는 구간 $(0, V)$에서 **극대값(global maximum)을 정확히 하나** 갖고 극소값은 없다.
 
 :::deep 더 깊이 — 단봉성은 어떻게 증명하는가
 

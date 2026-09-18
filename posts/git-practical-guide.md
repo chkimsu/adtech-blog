@@ -1,4 +1,4 @@
-코드를 작성하는 것보다 Git을 잘못 써서 코드를 날리는 것이 더 무섭습니다. `git pull`과 `git fetch`의 차이를 모르고, `merge`와 `rebase`를 감으로 선택하고, 충돌이 나면 일단 `--force`부터 쓰는 — 이런 상황에서 이 글이 출발합니다. Git의 핵심 명령어를 **다이어그램으로 시각화**하여, 각 명령이 어떤 공간에서 어떤 데이터를 어디로 옮기는지 한눈에 보이게 정리했습니다.
+코드를 작성하는 것보다 Git을 잘못 써서 코드를 날리는 것이 더 무섭습니다. `git pull`과 `git fetch`의 차이를 모릅니다. `merge`와 `rebase`를 감으로 고릅니다. 충돌이 나면 일단 `--force`부터 씁니다. 이런 상황에서 이 글이 출발합니다. Git의 핵심 명령어를 **다이어그램으로 시각화**하여, 각 명령이 어떤 공간에서 어떤 데이터를 어디로 옮기는지 한눈에 보이게 정리했습니다.
 
 ---
 
@@ -451,7 +451,7 @@ gitGraph
 
 이 경우 Local의 `main` 포인터를 Remote의 최신 커밋으로 **그냥 앞으로 옮기면** 됩니다. merge도 rebase도 필요 없이 포인터만 "빨리 감기(fast-forward)"합니다. 충돌 가능성이 0이므로 가장 안전합니다.
 
-**`pull.ff only`의 의미**: "fast-forward가 가능한 상황에서만 pull을 수행하고, 내가 로컬 커밋을 쌓아서 분기가 발생한 상태라면 pull을 거부한다." 즉, **분기가 생기기 전에 먼저 해결하라**는 엄격한 정책입니다. 이 경우 사용자는 직접 `git rebase` 또는 `git merge`를 선택해서 분기를 해소한 뒤 다시 pull해야 합니다.
+**`pull.ff only`의 의미**: "fast-forward가 가능한 상황에서만 pull을 한다. 내가 로컬 커밋을 쌓아 분기가 생긴 상태라면 pull을 거부한다." 즉, **분기가 생기기 전에 먼저 해결하라**는 엄격한 정책입니다. 이 경우 사용자는 직접 `git rebase` 또는 `git merge`를 선택해서 분기를 해소한 뒤 다시 pull해야 합니다.
 
 ### git config로 기본 전략 설정하기
 
@@ -658,7 +658,11 @@ gitGraph
 
 `git push`는 Local Repository의 커밋을 Remote Repository로 업로드합니다.
 
-대개 잘 되는데, 어느 날 이런 거절을 만납니다. `Updates were rejected because the remote contains work that you do not have locally.`
+대개 잘 되는데, 어느 날 이런 거절을 만납니다. 원격에 내가 안 가진 작업이 있다는 뜻입니다.
+
+```
+Updates were rejected because the remote contains work that you do not have locally.
+```
 
 **Git이 거절하는 이유는 안전 때문입니다.** 내가 커밋을 만드는 동안 다른 사람도 커밋을 올렸습니다. 내 것을 그냥 올리면 상대의 커밋이 히스토리에서 밀려납니다. Git은 그걸 막고 "먼저 받아서 합쳐라"라고 말합니다.
 
@@ -705,7 +709,7 @@ sequenceDiagram
 | `git push --force-with-lease` | 강제 push (다른 사람 커밋 확인) | 보통 |
 | `git push --force` | 강제 push (확인 없이 덮어쓰기) | 위험 |
 
-> **항상 `--force-with-lease`를 쓰세요.** `--force`는 다른 팀원이 push한 커밋도 무조건 덮어쓰지만, `--force-with-lease`는 마지막으로 fetch한 이후 다른 사람이 push했다면 거부합니다.
+> **항상 `--force-with-lease`를 쓰세요.** `--force`는 다른 팀원이 push한 커밋도 무조건 덮어씁니다. `--force-with-lease`는 마지막으로 fetch한 뒤 다른 사람이 push했다면 거부합니다.
 
 ---
 
@@ -755,7 +759,7 @@ learning_rate = 0.005  # 둘 다 참고하여 결정
 
 그리고 `git add`로 해결한 파일을 스테이징한 뒤 `git commit` (또는 `git rebase --continue`)으로 마무리합니다.
 
-> **Tip:** VS Code, IntelliJ 등 대부분의 에디터에서 충돌 마커를 감지하고 "Accept Current / Accept Incoming / Accept Both" 버튼을 제공합니다.
+> **Tip:** VS Code, IntelliJ 같은 대부분의 에디터가 충돌 마커를 알아챕니다. 그리고 "Accept Current / Accept Incoming / Accept Both" 버튼을 띄웁니다.
 
 ---
 
@@ -769,7 +773,7 @@ learning_rate = 0.005  # 둘 다 참고하여 결정
 
 **되돌리는 명령**(`reset`, `revert`, `restore`)은 가장 조심해야 합니다. 셋이 비슷해 보이지만 되돌리는 대상이 다릅니다. `restore`는 파일 내용, `reset`은 브랜치 포인터, `revert`는 "취소하는 새 커밋"입니다. **이미 push한 것을 되돌릴 때는 `revert`만 쓰세요.** `reset`으로 히스토리를 바꾸면 남의 작업 기준이 흔들립니다.
 
-**찾는 명령**(`reflog`, `bisect`)은 사고가 난 뒤에 씁니다. `git reflog`는 "내가 지난 며칠 HEAD를 어디로 옮겼는지"를 다 기억하고 있어서, 잘못 지운 브랜치나 날린 커밋을 되살릴 마지막 수단입니다. `git bisect`는 "어느 커밋부터 망가졌나"를 이분 탐색으로 찾습니다. 커밋 1,000개 중 원인 커밋을 찾는 데 열 번만 확인하면 됩니다.
+**찾는 명령**(`reflog`, `bisect`)은 사고가 난 뒤에 씁니다. `git reflog`는 "내가 지난 며칠 HEAD를 어디로 옮겼는지"를 다 기억합니다. 잘못 지운 브랜치나 날린 커밋을 되살릴 마지막 수단입니다. `git bisect`는 "어느 커밋부터 망가졌나"를 이분 탐색으로 찾습니다. 커밋 1,000개 중 원인 커밋을 찾는 데 열 번만 확인하면 됩니다.
 
 <div class="chart-cards">
   <div class="chart-card">
@@ -1064,7 +1068,7 @@ gitGraph
   </div>
 </div>
 
-> **현실적인 선택:** 대부분의 중소 규모 팀은 **GitHub Flow**가 적합합니다. Git Flow는 모바일 앱처럼 릴리스 관리가 복잡한 경우에, Trunk-Based는 Google/Netflix 같은 고도의 자동화가 갖춰진 환경에 적합합니다.
+> **현실적인 선택:** 대부분의 중소 규모 팀은 **GitHub Flow**가 적합합니다. Git Flow는 모바일 앱처럼 릴리스 관리가 복잡한 경우에 맞습니다. Trunk-Based는 Google 이나 Netflix 같은 고도의 자동화가 갖춰진 환경에 맞습니다.
 
 ---
 

@@ -447,10 +447,19 @@ function renderPosts(postsToRender) {
 // 표지(랜딩) — 살아있는 미니 지도 아래 '지금 읽을거리' 채움 (#cover-root 가드)
 function renderCover() {
   const featured = document.getElementById('cover-featured');
-  if (featured && typeof getAllPosts === 'function') {
-    featured.innerHTML = '';
-    getAllPosts().slice(0, 3).forEach(p => featured.appendChild(renderPostCard(p)));
+  if (!featured || typeof getAllPosts !== 'function') return;
+  // 최신 글부터 훑되 주제가 겹치지 않게 셋을 고른다 — 표지에서 한 주제만 보이던 것을 고친다
+  const seen = new Set();
+  const pick = [];
+  for (const p of getAllPosts()) {
+    const cat = (p.categories || [])[0] || '';
+    if (seen.has(cat)) continue;
+    seen.add(cat); pick.push(p);
+    if (pick.length === 3) break;
   }
+  while (pick.length < 3) { const p = getAllPosts()[pick.length]; if (!p) break; if (!pick.includes(p)) pick.push(p); }
+  featured.innerHTML = '';
+  pick.forEach(p => featured.appendChild(renderPostCard(p)));
 }
 
 // 큐레이션 홈 — 시작하기/최신/시리즈 (renderPostCard + posts.js 게터 재사용)

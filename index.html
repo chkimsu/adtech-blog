@@ -58,32 +58,37 @@
       <div class="container">
         <div class="cover-kicker">한국어로 읽는 애드테크</div>
         <h1 class="cover-head">0.1초 안에 벌어지는<br>광고 한 편의 여정</h1>
-        <p class="cover-dek">페이지가 뜨는 사이 경매가 열리고, 모델이 '누를 확률'을 찍고, 낙찰이 끝납니다.
-        그 안쪽을 그림·데모·코드로 풀어 쓴 글 — 심장은 pCTR/pCVR입니다.</p>
-        <div class="cover-cta-row">
-          <a href="post.html?id=adtech-30min-primer" class="btn-try cover-cta-primary">30분 입문 가이드 →</a>
-          <a href="posts-browse.html" class="btn-try">글 전체 둘러보기 →</a>
-        </div>
+        <p class="cover-dek">페이지가 뜨는 사이 경매가 열립니다. 모델이 「누를 확률」을 찍고 낙찰이 끝납니다. 아래 그림이 이 블로그의 목차입니다.</p>
+        <div class="cover-map">
+          <div class="cover-map-tag">
+            <span>FIG. 1 — 요청 한 건이 지나는 길. 칸을 누르면 그 자리의 글로 갑니다</span>
+            <a class="cover-map-open" href="ecosystem.html">움직이는 지도로 열기 →</a>
+          </div>
 
-        <a class="cover-map" href="ecosystem.html" aria-label="LIVE 광고 생태계 미니 지도 — 클릭하면 전체 지도로">
-          <div class="cover-map-tag" aria-hidden="true"><span>LIVE — 광고 생태계 미니 지도</span><b>클릭하면 전체 지도로 →</b></div>
-          <div class="cover-brain" aria-hidden="true">
-            <span class="cover-layer-label">두뇌 층</span>
-            <div class="cover-bnode">Feature Store<small>피처 공급</small></div>
-            <div class="cover-bnode cover-heart">pCTR / pCVR<small>누를·살 확률 예측</small></div>
-            <div class="cover-bnode">Calibration<small>확률 보정</small></div>
+          <div class="cover-brain">
+            <span class="cover-layer-label">위층 — 모델이 사는 두뇌 층</span>
+            <a class="cover-bnode" href="posts-browse.html?tag=ML%20Infra">피처와 학습 데이터<small>모델에 넣을 재료</small><b>23편</b></a>
+            <a class="cover-bnode" href="posts-browse.html?tag=Targeting">타겟팅<small>누구에게 보여 줄까</small><b>9편</b></a>
+            <a class="cover-bnode" href="posts-browse.html?tag=MAB">탐색과 밴딧<small>무엇을 더 띄워 볼까</small><b>8편</b></a>
+            <a class="cover-bnode cover-heart" href="posts-browse.html?tag=pCTR">pCTR / pCVR<small>누를 확률, 살 확률</small><b>29편</b></a>
+            <a class="cover-bnode" href="posts-browse.html?tag=Calibration">보정<small>확률의 크기 맞추기</small><b>5편</b></a>
           </div>
-          <div class="cover-lane" aria-hidden="true">
-            <span class="cover-layer-label">거래 층</span>
-            <div class="cover-wire"></div>
-            <div class="cover-dot"></div><div class="cover-dot d2"></div><div class="cover-dot d3"></div>
-            <div class="cover-node">사용자<small>페이지 열림</small></div>
-            <div class="cover-node">Publisher · SSP<small>지면 판매</small></div>
-            <div class="cover-node">Ad Exchange<small>경매장</small></div>
-            <div class="cover-node cover-dsp">DSP<small>입찰 — 두뇌에 질문</small><span class="cover-vlink-up"></span></div>
-            <div class="cover-node">광고주<small>낙찰·집행</small></div>
+
+          <div class="cover-lane">
+            <span class="cover-layer-label">아래층 — 돈과 소재가 흐르는 거래 층</span>
+            <div class="cover-wire" aria-hidden="true"></div>
+            <div class="cover-dot" aria-hidden="true"></div><div class="cover-dot d2" aria-hidden="true"></div><div class="cover-dot d3" aria-hidden="true"></div>
+            <div class="cover-node cover-node-start">사용자<small>페이지 열림</small><b>여기서 시작</b></div>
+            <a class="cover-node" href="posts-browse.html?tag=SSP">매체와 SSP<small>지면 판매</small><b>7편</b></a>
+            <a class="cover-node" href="posts-browse.html?tag=Ad%20Ecosystem">광고 거래소<small>경매장</small><b>20편</b></a>
+            <a class="cover-node cover-dsp" href="posts-browse.html?tag=DSP">DSP<small>입찰가를 정한다</small><b>8편</b><span class="cover-vlink-up" aria-hidden="true"></span></a>
+            <a class="cover-node" href="posts-browse.html?tag=Attribution">광고주<small>낙찰과 전환</small><b>6편</b></a>
           </div>
-        </a>
+
+          <div class="cover-scale" aria-hidden="true">
+            <span>|&lt;— 12 ms —&gt;|</span><span>|&lt;— 45 ms —&gt;|</span><span>|&lt;— 100 ms 예산 —&gt;|</span>
+          </div>
+        </div>
         <!-- 흐름 칩은 지도 앵커 '밖'에 둔다 (중첩 링크 방지) — 각각 해당 흐름으로 딥링크 -->
         <div class="cover-flows">
           <a class="cover-flow is-on" href="ecosystem.html?flow=modeler">▸ 모델러의 눈으로 보는 0.1초</a>
@@ -91,7 +96,13 @@
           <a class="cover-flow" href="ecosystem.html?flow=modeling">▸ 모델 학습·서빙</a>
           <a class="cover-flow" href="ecosystem.html?flow=attribution">▸ 어트리뷰션</a>
           <a class="cover-flow" href="ecosystem.html?flow=hb">▸ Header Bidding</a>
-          <a class="cover-flow" href="ecosystem.html?flow=targeting">▸ 데이터·타겟팅</a>
+          <a class="cover-flow" href="ecosystem.html?flow=targeting">▸ 데이터와 타겟팅</a>
+        </div>
+
+        <div class="cover-cta-row">
+          <a href="post.html?id=adtech-30min-primer" class="btn-try cover-cta-primary">30분 입문 가이드 →</a>
+          <a href="topics.html" class="btn-try">주제별로 보기 →</a>
+          <a href="posts-browse.html" class="btn-try">글 86편 전체 →</a>
         </div>
       </div>
     </section>

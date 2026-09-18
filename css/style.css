@@ -6328,3 +6328,33 @@ html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
 .tg-real h2 { font-size: 1.35rem; margin: 0 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
 .tg-real ul { padding-left: 1.1rem; margin: 0.5rem 0 0; }
 .tg-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+
+/* ---- 표지: 지도가 주인공 (2026-09-18) — 칸마다 그 자리의 글로 간다 ---- */
+.cover-map { padding: 1.5rem 1.6rem 2.3rem; border-width: 2px; }
+.cover-map:hover { background: var(--paper); }
+.cover-map-tag { align-items: baseline; margin-bottom: 1.6rem; }
+.cover-map-open { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 600; color: var(--navy); text-decoration: none; white-space: nowrap; }
+.cover-map-open:hover { text-decoration: underline; }
+/* 두뇌 칸이 다섯이라 셋만 오른쪽에 붙이던 규칙을 푼다 */
+.cover-brain > .cover-bnode:nth-of-type(1) { grid-column: auto; }
+.cover-brain { margin: 1.4rem 0 1.9rem; }
+.cover-bnode, .cover-node { display: block; width: 100%; padding: 0.62rem 0.7rem 0.55rem; text-decoration: none; text-align: left; }
+a.cover-bnode:hover, a.cover-node:hover { background: var(--navy-bg); }
+a.cover-heart:hover { background: var(--ink); border-color: var(--ink); }
+.cover-bnode b, .cover-node b { display: block; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.03em; color: var(--navy); margin-top: 0.4rem; }
+.cover-heart b { color: var(--paper); }
+.cover-node-start b { color: var(--ink3); }
+.cover-scale { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.04em; color: var(--navy); border-top: 1px dashed var(--navy); margin-top: 1.1rem; padding-top: 0.5rem; }
+.cover-cta-row { margin-top: 1.1rem; display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-start; }
+@media (max-width: 768px) {
+  .cover-brain, .cover-lane { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .cover-map { padding: 1.1rem 1rem 1.6rem; }
+  .cover-map-tag { flex-direction: column; align-items: flex-start; gap: 0.3rem; margin-bottom: 1.2rem; }
+  .cover-scale { font-size: 0.55rem; }
+  .cover-vlink-up { display: none; }
+}
+/* 흐르는 점은 칸 아래 띠에서 지나간다 — 칸이 커져 점이 글자를 덮던 것을 고친다 */
+.cover-lane { padding: 1.1rem 0 1.7rem; }
+.cover-wire { top: auto; bottom: 0.7rem; left: 1%; right: 1%; }
+.cover-dot { top: auto; bottom: calc(0.7rem - 4px); }
+.cover-layer-label { top: -1.15rem; }

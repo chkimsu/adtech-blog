@@ -1,38 +1,38 @@
-DSP, SSP, RTB, Header Bidding... 광고 기술(Ad Tech) 생태계를 처음 접하면 약어가 한꺼번에 쏟아집니다. 하지만 이 모든 개념의 출발점은 하나의 질문입니다: **"매체(Publisher)의 광고 지면을 광고주(Advertiser)에게 어떻게 연결할 것인가?"**
+DSP, SSP, RTB, 헤더비딩(Header Bidding)... 광고 기술(Ad Tech) 생태계를 처음 접하면 약어가 한꺼번에 쏟아집니다. 하지만 이 모든 개념의 출발점은 하나의 질문입니다: **"매체(Publisher)의 광고 지면을 광고주(Advertiser)에게 어떻게 연결할 것인가?"**
 
-이 질문의 답은 시대에 따라 **Ad Network**에서 **Ad Exchange**로 진화했습니다. 그 과정에서 Waterfall, RTB, Header Bidding이라는 기술이 차례로 등장했습니다. 이 글은 그 **전환이 왜 일어났고 무엇을 바꿨는지**를 숫자로 따라갑니다.
+이 질문의 답은 시대에 따라 **광고 네트워크(Ad Network)**에서 **광고 거래소(Ad Exchange)**로 진화했습니다. 그 과정에서 순차 호출(Waterfall), RTB, 헤더비딩이라는 기술이 차례로 등장했습니다. 이 글은 그 **전환이 왜 일어났고 무엇을 바꿨는지**를 숫자로 따라갑니다.
 
-> 각 회사가 정확히 무슨 일을 하는지는 [DSP·SSP·Ad Exchange](post.html?id=dsp-ssp-exchange)에서 다룹니다. 전체 조감도는 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에 있습니다.
+> 각 회사가 정확히 무슨 일을 하는지는 [DSP·SSP·광고 거래소](post.html?id=dsp-ssp-exchange)에서 다룹니다. 전체 조감도는 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에 있습니다.
 
 ---
 
 ## 1. 핵심 비교 (Executive Summary)
 
-**Ad Network 은 지면을 묶어 미리 정한 값으로 파는 중개자이고, Ad Exchange 는 노출 한 건씩 실시간 경매로 파는 장입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
+**광고 네트워크는 지면을 묶어 미리 정한 값으로 파는 중개자이고, 광고 거래소는 노출 한 건씩 실시간 경매로 파는 장입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
 
 아래 표는 위에서 아래로 읽으면 인과가 보입니다. 첫 줄 다음의 세 줄(거래 단위·가격 결정·속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
 
-| 차원 | Ad Network | Ad Exchange |
+| 차원 | 광고 네트워크 | 광고 거래소 |
 |------|-----------|-------------|
 | **한 줄로** | 지면을 묶어 미리 정한 값으로 파는 중개자 | 노출 한 건씩 실시간 경매로 파는 장 |
 | **거래 단위** | 인벤토리 패키지 (묶음) | 개별 Impression (1건씩) |
 | **가격 결정** | 사전 협상 / 고정 CPM | 실시간 경매 (RTB) |
 | **의사결정 속도** | 수 시간~수 일 (캠페인 단위) | 100ms 이내 (impression 단위) |
-| **투명성** | 낮음 (매체·가격 불투명) | 높음 (Bid Request에 지면 정보 포함) |
-| **참여자** | Publisher ↔ Advertiser (중개) | DSP, SSP, Agency, Ad Network 모두 참여 |
+| **투명성** | 낮음 (매체·가격 불투명) | 높음 (입찰 요청(Bid Request)에 지면 정보 포함) |
+| **참여자** | Publisher ↔ Advertiser (중개) | DSP, SSP, Agency, 광고 네트워크 모두 참여 |
 | **타겟팅** | 세그먼트 단위 (카테고리, 지면 등급) | 유저 단위 (실시간 피처 활용) |
-| **매체 제어권** | 제한적 (Network이 가격·배치 결정) | 높음 (Floor Price, Block List 설정 가능) |
+| **매체 제어권** | 제한적 (Network이 가격·배치 결정) | 높음 (최저가(Floor Price), Block List 설정 가능) |
 | **등장 시기** | 1990년대 후반 | 2005년~ (Right Media) |
 
 ---
 
-## 2. Ad Network: 디지털 광고의 첫 번째 중개자
+## 2. 광고 네트워크: 디지털 광고의 첫 번째 중개자
 
 ### 역할과 동작 원리
 
-1990년대 후반, 웹사이트 수가 폭발적으로 증가하면서 개별 매체가 직접 광고주를 찾아 영업하는 것이 불가능해졌습니다. **Ad Network**는 이 문제를 해결한 최초의 중개 플랫폼입니다.
+1990년대 후반, 웹사이트 수가 폭발적으로 증가하면서 개별 매체가 직접 광고주를 찾아 영업하는 것이 불가능해졌습니다. **광고 네트워크**는 이 문제를 해결한 최초의 중개 플랫폼입니다.
 
-Ad Network의 핵심 역할은 **인벤토리 애그리게이션(Aggregation)**입니다:
+광고 네트워크의 핵심 역할은 **인벤토리 애그리게이션(Aggregation)**입니다:
 
 ```mermaid
 graph LR
@@ -78,7 +78,7 @@ graph LR
 
 ### 가격 모델: 고정 가격의 한계
 
-Ad Network의 가격은 **사전 협상 기반**입니다. 광고주와 Network이 캠페인 시작 전에 CPM $2.00 같은 고정 단가를 합의합니다. 이 모델의 문제:
+광고 네트워크의 가격은 **사전 협상 기반**입니다. 광고주와 Network이 캠페인 시작 전에 CPM $2.00 같은 고정 단가를 합의합니다. 이 모델의 문제:
 
 - **시장 가격 미반영**: 프라임타임(출퇴근 시간)에도, 새벽 3시에도 같은 가격
 - **수요-공급 불일치**: 인벤토리가 넘쳐도 가격이 내려가지 않고, 경쟁이 치열해도 올라가지 않음
@@ -133,9 +133,9 @@ print(f"최선의 고정가 ₩{best[1]:,}조차 경매의 {best[0]/auc:.0%}밖�
 
 손실 두 열을 보세요. 고정가를 올리면 헐값 손실은 줄지만 유찰 손실이 커지고, 내리면 그 반대입니다. 값이 하나뿐이라 둘을 같이 줄일 수 없습니다. ₩1,101은 수수료를 뺀 상한이라 실제로 이만큼은 아닙니다. 방향만 보세요. **쪼갤수록 매체가 받는 값은 올라갑니다.**
 
-### Waterfall: 순차 호출의 비효율
+### 순차 호출: 순차 호출의 비효율
 
-매체는 수익을 극대화하기 위해 여러 Ad Network에 동시에 등록합니다. 이때 **Waterfall(폭포수)** 방식으로 Network를 순차 호출합니다:
+매체는 수익을 극대화하기 위해 여러 광고 네트워크에 동시에 등록합니다. 이때 **순차 호출(폭포수)** 방식으로 Network를 순차 호출합니다:
 
 ```mermaid
 graph TD
@@ -160,7 +160,7 @@ graph TD
     style PASS fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
-Waterfall의 치명적 문제:
+순차 호출의 치명적 문제:
 
 | 문제 | 설명 |
 |------|------|
@@ -169,11 +169,11 @@ Waterfall의 치명적 문제:
 | **가격 최적화 불가** | Network A가 Fill하면 거기서 끝. B, C가 더 높은 가격을 제시할 기회조차 없음 |
 | **불투명한 마진** | Network이 매체에 $2.00을 지불하면서 광고주에게 $5.00을 청구해도, 매체는 알 수 없음 |
 
-이 비효율성이 Ad Exchange 등장의 직접적 원인입니다.
+이 비효율성이 광고 거래소 등장의 직접적 원인입니다.
 
 ### 순서가 수익을 정한다 — 숫자로
 
-**Waterfall의 성적은 Network의 실력이 아니라 매체가 세운 순서가 정합니다.** 같은 5곳·같은 입찰가로 순서만 120가지 바꿔 봅니다.
+**순차 호출의 성적은 Network의 실력이 아니라 매체가 세운 순서가 정합니다.** 같은 5곳·같은 입찰가로 순서만 120가지 바꿔 봅니다.
 
 ```python
 import itertools, random
@@ -242,13 +242,13 @@ print(f"하루 1,000만 노출이면 사라지는 노출 "
 
 ---
 
-## 3. Ad Exchange: 실시간 경매 마켓플레이스
+## 3. 광고 거래소: 실시간 경매 마켓플레이스
 
 ### 역할과 동작 원리
 
-Waterfall 은 순차 호출로 첫 번째 응답을 채택하는 방식이었습니다. **Ad Exchange**는 이것을 **모든 바이어에게 동시에 입찰 기회를 주고 경매로 최고가를 고르는 방식**으로 바꿨습니다.
+순차 호출은 순차 호출로 첫 번째 응답을 채택하는 방식이었습니다. **광고 거래소**는 이것을 **모든 바이어에게 동시에 입찰 기회를 주고 경매로 최고가를 고르는 방식**으로 바꿨습니다.
 
-핵심 기술은 **RTB(Real-Time Bidding)**: 유저가 페이지를 로딩하는 100ms 안에 수십~수백 개의 DSP가 동시에 입찰하고, 경매를 통해 낙찰자를 결정합니다.
+핵심 기술은 **RTB(Real-Time 입찰(Bidding))**: 유저가 페이지를 로딩하는 100ms 안에 수십~수백 개의 DSP가 동시에 입찰하고, 경매를 통해 낙찰자를 결정합니다.
 
 ```mermaid
 sequenceDiagram
@@ -283,9 +283,9 @@ sequenceDiagram
     Note over User,DSP3: 전체 과정 ~100ms
 ```
 
-### Waterfall과의 결정적 차이
+### 순차 호출과의 결정적 차이
 
-Waterfall에서는 Network A가 거절해야 B에게 기회가 갔습니다. Exchange에서는 **모든 바이어가 동시에 입찰**합니다. 따라서:
+순차 호출에서는 Network A가 거절해야 B에게 기회가 갔습니다. Exchange에서는 **모든 바이어가 동시에 입찰**합니다. 따라서:
 
 - **가격 발견(Price Discovery)**: 시장의 수요-공급이 실시간으로 가격에 반영
 - **매체 수익 극대화**: 가장 높은 가격을 제시한 바이어에게 판매
@@ -293,7 +293,7 @@ Waterfall에서는 Network A가 거절해야 B에게 기회가 갔습니다. Exc
 
 ### 참여자의 확장
 
-Ad Exchange의 핵심적 특징은 **Ad Network도 바이어로 참여**할 수 있다는 점입니다:
+광고 거래소의 핵심적 특징은 **광고 네트워크도 바이어로 참여**할 수 있다는 점입니다:
 
 ```mermaid
 graph TB
@@ -325,16 +325,16 @@ graph TB
     style AN fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
-Ad Network이 Exchange의 바이어로 참여한다는 것은, **Network과 Exchange가 경쟁 관계가 아닌 보완 관계**임을 의미합니다. Network은 자체 광고주 풀의 수요를 모아 Exchange에서 입찰합니다. Exchange는 Network에게 더 넓은 인벤토리를 열어 줍니다.
+광고 네트워크가 Exchange의 바이어로 참여한다는 것은, **Network과 Exchange가 경쟁 관계가 아닌 보완 관계**임을 의미합니다. Network은 자체 광고주 풀의 수요를 모아 Exchange에서 입찰합니다. Exchange는 Network에게 더 넓은 인벤토리를 열어 줍니다.
 
 ### 경매 메커니즘: 1st Price vs 2nd Price
 
-Ad Exchange 초기에는 **2nd Price Auction**이 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 True Value 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st Price Auction**으로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
+광고 거래소 초기에는 **2nd 가격 경매(Price Auction)**이 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 참 가치(True Value) 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st 가격 경매**으로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
 
 | 경매 방식 | 지불 금액 | DSP 전략 | 시기 |
 |-----------|----------|----------|------|
 | 2nd Price | 2등 가격 + $0.01 | Truthful Bidding ($b = V$) | ~2017 |
-| 1st Price | 내 입찰가 그대로 | Bid Shading ($b < V$) | 2017~ |
+| 1st Price | 내 입찰이 그대로 | Bid Shading ($b < V$) | 2017~ |
 
 ---
 
@@ -385,9 +385,9 @@ graph LR
 - 실시간에는 **단순 Lookup**: 미리 계산된 배치 결과를 조회하여 서빙
 - ML 모델의 역할이 제한적: 유저 단위 실시간 예측이 불필요
 
-### Ad Exchange: 실시간 추론 아키텍처
+### 광고 거래소: 실시간 추론 아키텍처
 
-Ad Exchange를 활용하는 DSP의 아키텍처는 **실시간 ML 추론**이 핵심입니다:
+광고 거래소를 활용하는 DSP의 아키텍처는 **실시간 ML 추론**이 핵심입니다:
 
 ```mermaid
 graph LR
@@ -414,31 +414,31 @@ graph LR
     style BS fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
-- **Bid Request마다 ML 추론**: 유저 특성, 지면 특성, 시간대 등을 입력으로 pCTR/pCVR을 실시간 예측
+- **입찰 요청마다 ML 추론**: 유저 특성, 지면 특성, 시간대 등을 입력으로 pCTR/pCVR을 실시간 예측
 - **개인화된 입찰**: 같은 지면이라도 유저마다 다른 가격으로 입찰
 - **모델 서빙 인프라**: [10ms 안에 수백 개 광고를 스코어링](post.html?id=model-serving-architecture)해야 하므로, GPU 추론, 모델 경량화, Feature Store 등 고도화된 ML 인프라 필요
 
 ---
 
-## 5. 진화의 역사: Waterfall에서 Header Bidding까지 [무대: 열린 RTB]
+## 5. 진화의 역사: 순차 호출에서 헤더비딩까지 [무대: 열린 RTB]
 
 ### 타임라인
 
 | 연도 | 사건 | 의미 |
 |------|------|------|
-| **1996** | DoubleClick 설립 | 최초의 대형 Ad Network. 배너 광고 서빙 + 리포팅 |
-| **2005** | Right Media 출시 | **최초의 Ad Exchange**. Impression 단위 실시간 거래 도입 |
-| **2007** | DoubleClick Ad Exchange 출시. 같은 해 Google 이 DoubleClick 인수를 발표(2008년 완료) | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
+| **1996** | DoubleClick 설립 | 최초의 대형 광고 네트워크. 배너 광고 서빙 + 리포팅 |
+| **2005** | Right Media 출시 | **최초의 광고 거래소**. Impression 단위 실시간 거래 도입 |
+| **2007** | DoubleClick 광고 거래소 출시. 같은 해 Google 이 DoubleClick 인수를 발표(2008년 완료) | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
 | **2009** | Google AdX 로 재출시 | 세계 최대 Exchange. RTB 프로토콜 표준화 선도 |
-| **2010** | OpenRTB 1.0 표준 발표 | Bid Request/Response 포맷 표준화 → DSP-Exchange 연동 비용 감소 |
-| **2014** | Header Bidding 등장 | Waterfall 우회. 모든 Exchange에 동시 입찰 요청 |
-| **2017~** | 1st Price Auction 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
-| **2019** | Google Open Bidding | Server-to-Server Header Bidding. 레이턴시 최적화 |
+| **2010** | OpenRTB 1.0 표준 발표 | 입찰 요청/Response 포맷 표준화 → DSP-Exchange 연동 비용 감소 |
+| **2014** | 헤더비딩 등장 | 순차 호출 우회. 모든 Exchange에 동시 입찰 요청 |
+| **2017~** | 1st 가격 경매 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
+| **2019** | Google Open 입찰 | Server-to-Server 헤더비딩. 레이턴시 최적화 |
 | **현재** | SSP-Exchange 경계 소멸 | Magnite, PubMatic 등 SSP가 Exchange 기능 통합 |
 
-### Header Bidding: 순차 호출을 없앤 전환점
+### 헤더비딩: 순차 호출을 없앤 전환점
 
-Waterfall의 근본적 문제는 **"순차 호출"**이었습니다. Header Bidding은 이를 **"병렬 호출"**로 바꿨습니다:
+순차 호출의 근본적 문제는 **"순차 호출"**이었습니다. 헤더비딩은 이를 **"병렬 호출"**로 바꿨습니다:
 
 ```mermaid
 graph TB
@@ -467,21 +467,21 @@ graph TB
     style H_AUCTION fill:#4a6b8a,stroke:#4a6b8a,color:#fff
 ```
 
-Header Bidding의 핵심 효과:
+헤더비딩의 핵심 효과:
 
-| 효과 | Waterfall | Header Bidding |
+| 효과 | 순차 호출 | 헤더비딩 |
 |------|-----------|----------------|
 | **입찰 기회** | 순차 (앞 Network이 거절해야 다음으로) | 동시 (모든 Exchange가 동시 입찰) |
 | **가격 발견** | 불완전 (첫 Fill에서 종료) | 완전 (전체 시장 수요 반영) |
-| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰가 선택) |
+| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰이 선택) |
 | **레이턴시** | 순차 누적 (최악 N x timeout) | 병렬 (최대 1 x timeout) |
 | **Network/Exchange 구분** | 명확 (순서대로 호출) | 모호 (모두 같은 경매에 참여) |
 
-마지막 행이 핵심입니다. Header Bidding 이후 **Ad Network와 Ad Exchange의 기술적 경계가 희미해졌습니다**. 둘 다 동일한 경매에 바이어로 참여하기 때문입니다.
+마지막 행이 핵심입니다. 헤더비딩 이후 **광고 네트워크와 광고 거래소의 기술적 경계가 희미해졌습니다**. 둘 다 동일한 경매에 바이어로 참여하기 때문입니다.
 
-### 담장 안에는 Waterfall이 없었다 [무대: 닫힌 생태계]
+### 담장 안에는 순차 호출이 없었다 [무대: 닫힌 생태계]
 
-**위 타임라인은 열린 RTB의 역사입니다.** 네이버·카카오는 지면도 광고주도 자기 것이라 중개를 맡길 Network이 없었습니다. 순서를 정할 일이 없으니 Waterfall도, 그 뒤의 [헤더비딩](post.html?id=header-bidding)도 필요하지 않았습니다.
+**위 타임라인은 열린 RTB의 역사입니다.** 네이버·카카오는 지면도 광고주도 자기 것이라 중개를 맡길 Network이 없었습니다. 순서를 정할 일이 없으니 순차 호출도, 그 뒤의 [헤더비딩](post.html?id=header-bidding)도 필요하지 않았습니다.
 
 ---
 
@@ -489,7 +489,7 @@ Header Bidding의 핵심 효과:
 
 ### SSP = Exchange?
 
-현대 Ad Tech에서 **SSP와 Ad Exchange의 경계는 사실상 소멸**했습니다:
+현대 Ad Tech에서 **SSP와 광고 거래소의 경계는 사실상 소멸**했습니다:
 
 - **Magnite** (구 Rubicon Project): SSP로 출발했지만 현재 자체 Exchange 운영
 - **PubMatic**: SSP + Exchange 통합 플랫폼
@@ -497,15 +497,15 @@ Header Bidding의 핵심 효과:
 
 매체 입장에서 "SSP에 연동하는 것"과 "Exchange에 인벤토리를 올리는 것"은 사실상 같은 행위가 되었습니다.
 
-### Ad Network의 현대적 형태
+### 광고 네트워크의 현대적 형태
 
-전통적 Ad Network이 사라진 것은 아닙니다. **형태가 진화**했습니다:
+전통적 광고 네트워크가 사라진 것은 아닙니다. **형태가 진화**했습니다:
 
 | 유형 | 예시 | 특징 |
 |------|------|------|
 | **Audience Network** | Meta Audience Network, TikTok for Business | 자사 광고주 수요를 외부 매체에 확장. Network의 핵심 역할(수요 애그리게이션) 유지 |
 | **Vertical Network** | Criteo (리타겟팅 특화), AdMob (모바일 특화) | 특정 도메인에 특화된 수요와 인벤토리 매칭 |
-| **Walled Garden** | Google, Meta, Amazon, 네이버, 카카오 | DSP + Exchange + Network + Publisher를 모두 자사 내에서 운영. [Walled Garden 상세 분석](post.html?id=walled-garden) 참고 |
+| **닫힌 생태계(Walled Garden)** | Google, Meta, Amazon, 네이버, 카카오 | DSP + Exchange + Network + Publisher를 모두 자사 내에서 운영. [닫힌 생태계 상세 분석](post.html?id=walled-garden) 참고 |
 
 ### 통합의 흐름
 
@@ -537,13 +537,13 @@ graph TB
 
 ## 7. 실무적 시사점: 엔지니어가 알아야 하는 이유
 
-"Ad Network vs Ad Exchange"가 역사 이야기로만 끝나는 것이 아닙니다. **현재도 두 구조가 공존**하며, 엔지니어의 시스템 설계에 직접적 영향을 미칩니다.
+"광고 네트워크 vs 광고 거래소"가 역사 이야기로만 끝나는 것이 아닙니다. **현재도 두 구조가 공존**하며, 엔지니어의 시스템 설계에 직접적 영향을 미칩니다.
 
 ### pCTR/pCVR 모델 학습 데이터의 차이
 
 | 차원 | Network 경유 트래픽 | Exchange(RTB) 트래픽 |
 |------|---------------------|---------------------|
-| **Bid Request 정보** | 제한적 (카테고리, 사이즈 정도) | 풍부 (URL, 유저 ID, 디바이스, 위치 등) |
+| **입찰 요청 정보** | 제한적 (카테고리, 사이즈 정도) | 풍부 (URL, 유저 ID, 디바이스, 위치 등) |
 | **가격 피드백** | 고정 가격 (시장 가격 정보 없음) | Winning Price, Clearing Price 관측 가능 |
 | **유저 피처** | 세그먼트 레벨 (25-34세 남성) | 유저 레벨 (실시간 브라우징 이력) |
 | **모델 학습 영향** | Feature sparse → 모델 정확도 한계 | Feature rich → 개인화 정밀 예측 가능 |
@@ -555,30 +555,30 @@ graph TB
 - **Exchange 트래픽**: Bid Shading, Budget Pacing, Auto-Bidding 등 모든 입찰 최적화 기법이 적용 가능. 시장 가격 분포를 학습하여 최적 입찰가를 탐색
 - **Network 트래픽**: 가격이 사전 고정되므로 Bid Shading이 무의미. 최적화 대상은 "어떤 Network에 얼마의 예산을 배분할 것인가" (Allocation 문제)
 
-### Feature Engineering 전략
+### 피처 엔지니어링(Feature Engineering) 전략
 
-Exchange(RTB) 환경에서는 Bid Request에 포함된 **실시간 피처**를 활용할 수 있습니다:
+Exchange(RTB) 환경에서는 입찰 요청에 포함된 **실시간 피처**를 활용할 수 있습니다:
 
 - **유저 컨텍스트**: 디바이스, OS, 브라우저, IP 기반 위치
 - **지면 컨텍스트**: URL, 도메인, 카테고리, 광고 사이즈, 위치(above/below fold)
 - **시간 컨텍스트**: 시간대, 요일, 계절성
-- **경매 컨텍스트**: Exchange ID, Floor Price(이보다 낮으면 안 판다는 최저가), 경매 유형(1st/2nd Price)
+- **경매 컨텍스트**: Exchange ID, 최저가(이보다 낮으면 안 판다는 최저가), 경매 유형(1st/2nd Price)
 
-이 피처들이 pCTR 모델의 정확도를 결정합니다. 정확한 pCTR이 True Value를 정확하게 만들고, True Value가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 선순환 구조입니다.
+이 피처들이 pCTR 모델의 정확도를 결정합니다. 정확한 pCTR이 참 가치를 정확하게 만들고, 참 가치가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 선순환 구조입니다.
 
 ---
 
 ## 마무리
 
-1. **Ad Network 은 묶음 판매의 중개자, Ad Exchange 는 impression 단위의 실시간 경매장** — 거래 단위와 가격 결정 메커니즘이 근본적으로 다릅니다.
+1. **광고 네트워크는 묶음 판매의 중개자, 광고 거래소는 impression 단위의 실시간 경매장** — 거래 단위와 가격 결정 메커니즘이 근본적으로 다릅니다.
 
-2. **Waterfall의 비효율이 Exchange 등장의 직접적 원인** — 순차 호출은 가격 발견을 방해하고, 매체와 광고주 모두에게 불리합니다.
+2. **순차 호출의 비효율이 Exchange 등장의 직접적 원인** — 순차 호출은 가격 발견을 방해하고, 매체와 광고주 모두에게 불리합니다.
 
-3. **Header Bidding이 두 세계의 경계를 허물었다** — 모든 바이어가 같은 경매에 참여하면서, Network과 Exchange의 기술적 구분이 희미해졌습니다.
+3. **헤더비딩이 두 세계의 경계를 허물었다** — 모든 바이어가 같은 경매에 참여하면서, Network과 Exchange의 기술적 구분이 희미해졌습니다.
 
-4. **현대 Ad Tech은 통합의 시대** — SSP가 Exchange를 흡수하고, Walled Garden이 모든 역할을 통합합니다. 하지만 두 구조의 설계 철학(배치 매칭 vs 실시간 경매)은 여전히 시스템 아키텍처의 근간입니다.
+4. **현대 Ad Tech은 통합의 시대** — SSP가 Exchange를 흡수하고, 닫힌 생태계가 모든 역할을 통합합니다. 하지만 두 구조의 설계 철학(배치 매칭 vs 실시간 경매)은 여전히 시스템 아키텍처의 근간입니다.
 
-5. **엔지니어에게 이 구분은 실무적으로 중요** — 학습 데이터 특성, 입찰 최적화 전략, Feature Engineering 전략이 트래픽 소스(Network vs Exchange)에 따라 달라집니다.
+5. **엔지니어에게 이 구분은 실무적으로 중요** — 학습 데이터 특성, 입찰 최적화 전략, 피처 엔지니어링 전략이 트래픽 소스(Network vs Exchange)에 따라 달라집니다.
 
 ---
 
@@ -590,7 +590,7 @@ Exchange(RTB) 환경에서는 Bid Request에 포함된 **실시간 피처**를 �
 
 ### 참고 자료
 
-- Mintegral. (2023). *Ad Tech 101: Ad Network vs. Ad Exchange*. YouTube.
+- Mintegral. (2023). *Ad Tech 101: 광고 네트워크 vs. 광고 거래소*. YouTube.
 - IAB Tech Lab. *OpenRTB Specification*. https://iabtechlab.com/standards/openrtb/
-- Google Ad Manager Help. *How Ad Exchange works*.
-- Prebid.org. *Header Bidding Overview*.
+- Google Ad Manager Help. *How 광고 거래소 works*.
+- Prebid.org. *헤더비딩 Overview*.

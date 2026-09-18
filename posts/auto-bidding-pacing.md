@@ -1,11 +1,11 @@
-광고주가 "CPA $10, 일 예산 $1,000"을 설정하면, DSP는 하루 동안 수십만 번의 입찰 기회를 만납니다. 매번 최적의 입찰가를 결정하되, 하루가 끝나기 전에 예산이 소진되지 않아야 합니다. 이 글은 **Auto-Bidding(자동 입찰)**과 **Budget Pacing(예산 분배)**이 이 문제를 어떻게 푸는지 해부합니다.
+광고주가 "CPA $10, 일 예산 $1,000"을 설정하면, DSP는 하루 동안 수십만 번의 입찰 기회를 만납니다. 매번 최적의 입찰가를 결정하되, 하루가 끝나기 전에 예산이 소진되지 않아야 합니다. 이 글은 **자동 입찰(Auto-Bidding)**과 **예산 페이싱(Budget Pacing)**이 이 문제를 어떻게 푸는지 해부합니다.
 
 > "얼마를 부를까"는 두 층입니다 — 아래층은 경매 한 번의 최적가를 찾고, 위층은 목표·예산에 맞춰 그 값을 밉니다.
 > [Bid Shading 포스트](post.html?id=bid-shading-censored)에서는 "한 번의 입찰에서 최적 입찰가 b*를 계산하는 방법"을 다뤘습니다. 이 글은 그 다음 단계 — **수십만 번의 입찰을 하루 예산 안에서 어떻게 배분하는가**를 다룹니다.
 
 ---
 
-## 1. Auto-Bidding이 풀어야 할 문제
+## 1. 자동 입찰이 풀어야 할 문제
 
 ### 광고주가 원하는 것 vs DSP가 해야 할 것
 
@@ -40,7 +40,7 @@
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">이길 수 있는 최소 가격은? (Bid Shading)</div>
-      <div class="chart-step-desc">시장 분포 F(b|x)를 추정하고, Surplus를 극대화하는 b*를 계산.</div>
+      <div class="chart-step-desc">시장 분포 F(b|x)를 추정하고, 남는 몫(Surplus)를 극대화하는 b*를 계산.</div>
       <span class="chart-step-badge blue">Bid Shading 모델 담당</span>
     </div>
   </div>
@@ -49,25 +49,25 @@
       <div class="chart-step-dot green">3</div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">지금 입찰해도 예산이 괜찮은가? (Budget Pacing)</div>
+      <div class="chart-step-title">지금 입찰해도 예산이 괜찮은가? (예산 페이싱)</div>
       <div class="chart-step-desc">남은 예산과 남은 시간을 비교하여, 입찰 강도를 조절하거나 입찰을 건너뜀.</div>
       <span class="chart-step-badge green">Budget Pacer 담당 &mdash; 이 글의 핵심</span>
     </div>
   </div>
 </div>
 
-질문 1-2는 이전 포스트에서 다뤘습니다. 가치 V의 재료는 [pCTR](post.html?id=pctr-prediction)·[pCVR](post.html?id=pcvr-modeling)이고, 그 값을 순위로 바꾸는 규칙은 [eCPM](post.html?id=ecpm-ranking)입니다. 이 글은 **질문 3: Budget Pacing**에 집중합니다.
+질문 1-2는 이전 포스트에서 다뤘습니다. 가치 V의 재료는 [pCTR](post.html?id=pctr-prediction)·[pCVR](post.html?id=pcvr-modeling)이고, 그 값을 순위로 바꾸는 규칙은 [eCPM](post.html?id=ecpm-ranking)입니다. 이 글은 **질문 3: 예산 페이싱**에 집중합니다.
 
-### Bid Shading vs Budget Pacing: 스코프가 다르다
+### Bid Shading vs 예산 페이싱: 스코프가 다르다
 
-Bid Shading과 Budget Pacing은 모두 "입찰 최적화"에 속하지만, **최적화하는 대상과 시간 범위가 근본적으로 다릅니다**:
+Bid Shading과 예산 페이싱은 모두 "입찰 최적화"에 속하지만, **최적화하는 대상과 시간 범위가 근본적으로 다릅니다**:
 
-| 구분 | Bid Shading | Budget Pacing (PID) |
+| 구분 | Bid Shading | 예산 페이싱 (PID) |
 |------|-------------|---------------------|
 | **최적화 스코프** | 개별 경매 1건 (미시적) | 하루 전체 입찰 (거시적) |
-| **풀고 있는 질문** | "이 경매에서 얼마에 입찰해야 Surplus가 최대인가?" | "지금 입찰해도 하루 예산이 버틸 수 있는가?" |
+| **풀고 있는 질문** | "이 경매에서 얼마에 입찰해야 남는 몫이 최대인가?" | "지금 입찰해도 하루 예산이 버틸 수 있는가?" |
 | **핵심 수식** | $b^* = \arg\max (V - b) \cdot F(b \mid x)$ | $\lambda_{t+1} = \lambda_t + K_p \cdot e_t + K_i \cdot \sum e$ |
-| **입력** | 시장 가격 분포 $F(b \mid x)$, True Value $V$ | 남은 예산, 남은 시간, 현재 소비 속도 |
+| **입력** | 시장 가격 분포 $F(b \mid x)$, 참 가치(True Value) $V$ | 남은 예산, 남은 시간, 현재 소비 속도 |
 | **출력** | 최적 입찰가 $b^*$ | 입찰 강도 배수 $\lambda$ |
 | **없으면 생기는 문제** | 1st Price 경매에서 매번 과다 지불 | 오전에 예산 소진, 오후 최적 시간대 놓침 |
 
@@ -77,15 +77,15 @@ Bid Shading과 Budget Pacing은 모두 "입찰 최적화"에 속하지만, **최
 2. **Budget Pacer**가 현재 예산 상황에 따라 배수 $\lambda$를 결정
 3. **최종 입찰가** = $b^* \times \lambda$ (예산이 빨리 소진되면 $\lambda < 1$로 억제, 여유가 있으면 $\lambda > 1$로 공격적)
 
-> Bid Shading 없이 Pacing만 있으면 개별 경매에서 매번 과다 지불합니다. 거꾸로 Pacing 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
+> Bid Shading 없이 페이싱(Pacing)만 있으면 개별 경매에서 매번 과다 지불합니다. 거꾸로 페이싱 없이 Bid Shading만 있으면 하루 예산 분배가 불균형해집니다. **둘 다 있어야 완전한 입찰 최적화**입니다.
 
-Surplus 는 가치에서 낸 값을 뺀 남는 몫입니다. Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, Surplus 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 Budget Pacing에 집중합니다.
+남는 몫은 가치에서 낸 값을 뺀 남는 몫입니다. Bid Shading의 상세 메커니즘(Censored Data, 분포 추정, 남는 몫 최적화)은 [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다룹니다. 아래부터는 예산 페이싱에 집중합니다.
 
-### 왜 Budget Pacing이 필요한가?
+### 왜 예산 페이싱이 필요한가?
 
-예산 $1,000을 Pacing 없이 사용하면 이런 일이 벌어집니다:
+예산 $1,000을 페이싱 없이 사용하면 이런 일이 벌어집니다:
 
-| 시간 | 입찰 기회 | Pacing 없음 | Pacing 적용 |
+| 시간 | 입찰 기회 | 페이싱 없음 | 페이싱 적용 |
 |------|---------|------------|------------|
 | 00:00 - 06:00 | 적음 (새벽) | 기회가 오면 무조건 입찰 | 기회가 오면 적극 입찰 |
 | 06:00 - 12:00 | 보통 | 높은 가격에도 입찰 | 적정 가격에 입찰 |
@@ -94,7 +94,7 @@ Surplus 는 가치에서 낸 값을 뺀 남는 몫입니다. Bid Shading의 상�
 | 18:00 - 24:00 | 보통 | 입찰 불가 | 남은 예산 소진 |
 | **결과** | | 오전에 예산 소진, **오후 최적 시간대 놓침** | 하루 전체에 걸쳐 균등하게 노출 |
 
-오후 14-18시는 전환율이 가장 높은 시간대인 경우가 많습니다. Pacing 없이 오전에 예산을 다 쓰면, **가장 좋은 기회를 놓치게 됩니다**.
+오후 14-18시는 전환율이 가장 높은 시간대인 경우가 많습니다. 페이싱 없이 오전에 예산을 다 쓰면, **가장 좋은 기회를 놓치게 됩니다**.
 
 ### 세 가지 배분안을 숫자로 — 가상 데이터
 
@@ -146,9 +146,9 @@ for name, clicks in [("(a) 아침 몰아쓰기", rush), ("(b) 균등", even), ("
 
 ---
 
-## 2. Budget Pacing의 두 가지 접근법
+## 2. 예산 페이싱의 두 가지 접근법
 
-Budget Pacing에는 크게 두 가지 방식이 있습니다:
+예산 페이싱에는 크게 두 가지 방식이 있습니다:
 
 <div class="chart-cards">
   <div class="chart-card">
@@ -330,7 +330,7 @@ $$\lambda(t+1) = \text{clamp}\Big(\lambda(t) + K_p \cdot e(t) + K_i \cdot \sum_{
 | $K_i \cdot \sum e$ | **누적 오차** 보정 | 계속 목표보다 적게 쓰면 서서히 $\lambda$ 상향 |
 | $K_d \cdot \Delta e$ | **오차 변화율** 반영 | 급격히 소진율이 변하면 빠르게 대응 |
 
-### 실전 예시: 하루 동안의 Pacing 동작
+### 실전 예시: 하루 동안의 페이싱 동작
 
 ```text
 시간   예산잔여  목표소진  실제소진  error   λ 조절
@@ -647,21 +647,21 @@ RL은 이 한계를 극복합니다:
 
 ---
 
-## 7. Auto-Bidding이 pCTR 모델에 미치는 영향
+## 7. 자동 입찰이 pCTR 모델에 미치는 영향
 
-Auto-Bidding과 ML 모델은 서로 영향을 주고받습니다:
+자동 입찰과 ML 모델은 서로 영향을 주고받습니다:
 
-### pCTR 정확도가 Pacing에 미치는 영향
+### pCTR 정확도가 페이싱에 미치는 영향
 
-| pCTR 상태 | True Value 영향 | Pacing 영향 |
+| pCTR 상태 | 참 가치 영향 | 페이싱 영향 |
 |-----------|---------------|------------|
 | **과대추정** | V 과대 → 과다 입찰 | Win Rate 급증 → 예산 빠르게 소진 → $\lambda$ 급락 |
 | **과소추정** | V 과소 → 과소 입찰 | Win Rate 급감 → 예산 잔여 → $\lambda$ 상승해도 효과 제한 |
 | **정확** | V 정확 → 적정 입찰 | Win Rate 안정 → 예산 균등 소진 → $\lambda$ 안정 |
 
-**pCTR이 과대추정되면 Pacing이 아무리 잘 동작해도 ROI가 하락합니다.** $\lambda$가 0.3까지 떨어져도, 과대추정된 V에 0.3을 곱한 값이 여전히 적정가보다 높을 수 있기 때문입니다.
+**pCTR이 과대추정되면 페이싱이 아무리 잘 동작해도 ROI가 하락합니다.** $\lambda$가 0.3까지 떨어져도, 과대추정된 V에 0.3을 곱한 값이 여전히 적정가보다 높을 수 있기 때문입니다.
 
-### Pacing이 학습 데이터에 미치는 영향
+### 페이싱이 학습 데이터에 미치는 영향
 
 $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다. 이는 **Selection Bias를 증가**시킵니다:
 
@@ -671,13 +671,13 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
          → 모델이 "저가 지면 = 높은 CTR"이라고 잘못 학습할 위험
 ```
 
-이것이 **Bid-Learning Feedback Loop** 문제입니다. Auto-Bidding 시스템을 설계할 때, 학습 데이터의 다양성을 위한 [탐색(exploration) 예산](post.html?id=exploration-exploitation)을 별도로 확보하는 것이 중요합니다.
+이것이 **Bid-Learning Feedback Loop** 문제입니다. 자동 입찰 시스템을 설계할 때, 학습 데이터의 다양성을 위한 [탐색(exploration) 예산](post.html?id=exploration-exploitation)을 별도로 확보하는 것이 중요합니다.
 
 ---
 
 ## 마무리
 
-1. **Budget Pacing은 "언제, 얼마나 입찰할까"의 문제** — Bid Shading이 "한 번의 입찰"을 최적화한다면, Budget Pacing은 "하루 전체의 입찰"을 최적화합니다.
+1. **예산 페이싱은 "언제, 얼마나 입찰할까"의 문제** — Bid Shading이 "한 번의 입찰"을 최적화한다면, 예산 페이싱은 "하루 전체의 입찰"을 최적화합니다.
 
 2. **PID Controller가 실무의 주력** — 단순하고 안정적이며, 대부분의 예산 제약을 충분히 처리합니다. $K_p$, $K_i$, $K_d$ 튜닝이 핵심입니다.
 
@@ -685,9 +685,9 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
 
 4. **RL은 다중 제약 최적화의 열쇠** — 예산 + CPA + ROAS + 노출 균등성을 동시에 최적화할 때 PID/Lagrangian의 한계를 극복합니다.
 
-5. **pCTR 정확도가 모든 것의 기초** — Auto-Bidding이 아무리 정교해도, 입력인 pCTR이 부정확하면 예산을 낭비합니다. 모델 정확도 → 입찰 정확도 → 예산 효율의 체인이 끊어집니다.
+5. **pCTR 정확도가 모든 것의 기초** — 자동 입찰이 아무리 정교해도, 입력인 pCTR이 부정확하면 예산을 낭비합니다. 모델 정확도 → 입찰 정확도 → 예산 효율의 체인이 끊어집니다.
 
-> 이 글에서 다룬 Auto-Bidding은 [Bid Shading 포스트](post.html?id=bid-shading-censored)의 자연스러운 후속편입니다. Bid Shading이 "한 번의 b*"를 계산하고, Auto-Bidding이 "$\lambda$로 스케일링"하여 최종 입찰가가 결정됩니다. Multi-Stage Ranking 은 후보를 단계마다 줄이며 고르는 구조입니다. 이 모든 것을 지탱하는 구조는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
+> 이 글에서 다룬 자동 입찰은 [Bid Shading 포스트](post.html?id=bid-shading-censored)의 자연스러운 후속편입니다. Bid Shading이 "한 번의 b*"를 계산하고, 자동 입찰이 "$\lambda$로 스케일링"하여 최종 입찰가가 결정됩니다. Multi-Stage Ranking 은 후보를 단계마다 줄이며 고르는 구조입니다. 이 모든 것을 지탱하는 구조는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
 
 ---
 

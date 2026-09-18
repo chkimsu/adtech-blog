@@ -1,6 +1,6 @@
 pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나오는 것은 아닙니다. **100ms RTB 타임아웃 안에서, 수백 개 후보 광고에 대해, 초당 수만 QPS 로 추론**할 수 있어야 비로소 모델이 가치를 만듭니다. QPS 는 초당 요청 수입니다. 이 글은 광고 ML 모델이 학습 환경을 떠나 프로덕션에서 서빙되는 전체 아키텍처를 해부합니다.
 
-> **피처를 꺼내오는 쪽은 [Feature Store 포스트](post.html?id=feature-store-serving), 모델을 돌리는 쪽이 이 글입니다.** 모델이 낡지 않게 갱신하는 이야기는 [Online Learning 포스트](post.html?id=online-learning-delayed-feedback)에 있습니다. 이 글은 그 사이 — **모델이 피처를 받아 예측값을 반환하는 서빙 계층** 자체에 집중합니다.
+> **피처를 꺼내오는 쪽은 [피처 저장소(Feature Store) 포스트](post.html?id=feature-store-serving), 모델을 돌리는 쪽이 이 글입니다.** 모델이 낡지 않게 갱신하는 이야기는 [온라인 학습(Online Learning) 포스트](post.html?id=online-learning-delayed-feedback)에 있습니다. 이 글은 그 사이 — **모델이 피처를 받아 예측값을 반환하는 서빙 계층** 자체에 집중합니다.
 
 ---
 
@@ -21,23 +21,23 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
 
 가장 자주 과소평가되는 칸은 **후보 수**입니다. 레이턴시가 10배 빡빡한 것보다, 한 요청에서 점수를 매길 광고가 수백 배 많다는 게 더 아픕니다. 단건 0.02ms인 가벼운 모델도 후보가 2,000개면 40ms입니다. 모델만 빠르게 만들어서는 풀리지 않습니다.
 
-10ms 안에 500개 후보 광고를 모두 스코어링하는 것은 불가능합니다. 이것이 **Multi-Stage Ranking(후보를 단계마다 줄이며 고르는 구조)**이 필요한 이유입니다.
+10ms 안에 500개 후보 광고를 모두 스코어링하는 것은 불가능합니다. 이것이 **단계별 랭킹(Multi-Stage Ranking)**이 필요한 이유입니다.
 
 ---
 
-## 2. Multi-Stage Ranking: 깔때기 구조
+## 2. 단계별 랭킹: 깔때기 구조
 
 전체 광고 후보를 한 번에 복잡한 모델로 스코어링하는 대신, **단계별로 후보를 줄이면서 모델 복잡도를 올리는** 깔때기 구조를 사용합니다:
 
 <div class="chart-steps">
-  <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:12px;">Multi-Stage Ranking Pipeline (수천 &rarr; 1)</div>
+  <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:12px;">단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline) (수천 &rarr; 1)</div>
   <div class="chart-step">
     <div class="chart-step-indicator">
       <div class="chart-step-dot green">1</div>
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Retrieval (후보 생성) &mdash; 수천 &rarr; 수백</div>
+      <div class="chart-step-title">후보 추리기(Retrieval) (후보 생성) &mdash; 수천 &rarr; 수백</div>
       <div class="chart-step-desc">타겟팅 조건 매칭 + 간단한 규칙 기반 필터. 예산 소진 캠페인 제외, 타겟 불일치 제외. 0.1ms 이내.</div>
       <span class="chart-step-badge green">규칙 기반, DB 조회</span>
     </div>
@@ -48,7 +48,7 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Pre-Ranking (경량 스코어링) &mdash; 수백 &rarr; 50</div>
+      <div class="chart-step-title">앞단 랭킹(Pre-Ranking) (경량 스코어링) &mdash; 수백 &rarr; 50</div>
       <div class="chart-step-desc">경량 모델(Logistic Regression, 작은 MLP)로 빠르게 스코어링. 피처 수 제한(상위 20개). 후보 대폭 축소.</div>
       <span class="chart-step-badge yellow">경량 모델, ~1ms</span>
     </div>
@@ -59,8 +59,8 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Ranking (정밀 스코어링) &mdash; 50 &rarr; 5</div>
-      <div class="chart-step-desc">복잡한 모델(DeepFM, DCN, DIN)로 정밀 pCTR/pCVR 예측. 전체 피처 사용. True Value 계산.</div>
+      <div class="chart-step-title">랭킹(Ranking) (정밀 스코어링) &mdash; 50 &rarr; 5</div>
+      <div class="chart-step-desc">복잡한 모델(DeepFM, DCN, DIN)로 정밀 pCTR/pCVR 예측. 전체 피처 사용. 참 가치(True Value) 계산.</div>
       <span class="chart-step-badge orange">복잡 모델, ~3-5ms</span>
     </div>
   </div>
@@ -69,7 +69,7 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
       <div class="chart-step-dot pink">4</div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Re-Ranking (최종 선택) &mdash; 5 &rarr; 1</div>
+      <div class="chart-step-title">뒷단 랭킹(Re-Ranking) (최종 선택) &mdash; 5 &rarr; 1</div>
       <div class="chart-step-desc">비즈니스 로직 적용: 다양성(같은 광고주 중복 방지), 빈도 제한(frequency cap), 광고 품질 점수. 최종 1개 선택 후 Bid Shading.</div>
       <span class="chart-step-badge pink">비즈니스 로직, ~0.5ms</span>
     </div>
@@ -78,7 +78,7 @@ pCTR 모델의 AUC가 0.82라고 해서 프로덕션에서 0.82의 성능이 나
 
 ### 각 단계별 상세 비교
 
-| | Retrieval | Pre-Ranking | Ranking | Re-Ranking |
+| | 후보 추리기 | 앞단 랭킹 | 랭킹 | 뒷단 랭킹 |
 |---|---|---|---|---|
 | **후보 수** | 수천 → 수백 | 수백 → 50 | 50 → 5 | 5 → 1 |
 | **모델** | 규칙/인덱스 | LR, 작은 MLP | DeepFM, DCN, DIN | 규칙 + 점수 보정 |
@@ -229,18 +229,18 @@ print("→ 그 좁히는 단계가 Two-Tower 같은 retrieval이다.")
 
 계산해 보면 예산 안에 들어가는 최대 후보는 **2,242개**입니다. 고정 비용 21.5ms를 빼면 후보에 쓸 수 있는 시간이 78.5ms이고, 후보 하나에 0.035ms가 들기 때문입니다.
 
-이 숫자가 아키텍처를 결정합니다. 광고가 10만 개 있어도 정밀 모델에 넣을 수 있는 건 2천 개뿐입니다. **그래서 정밀 랭킹 앞에 후보를 좁히는 단계가 반드시 옵니다.** 그 단계가 [Two-Tower Retrieval](post.html?id=two-tower-retrieval)입니다.
+이 숫자가 아키텍처를 결정합니다. 광고가 10만 개 있어도 정밀 모델에 넣을 수 있는 건 2천 개뿐입니다. **그래서 정밀 랭킹 앞에 후보를 좁히는 단계가 반드시 옵니다.** 그 단계가 [Two-Tower 후보 추리기(Two-Tower Retrieval)](post.html?id=two-tower-retrieval)입니다.
 
 ## 3. 모델 경량화: 정확도와 속도의 트레이드오프
 
-Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 없습니다. 경량화 기법으로 속도를 확보합니다:
+랭킹 단계에서 사용하는 복잡한 모델을 앞단 랭킹에 쓸 수는 없습니다. 경량화 기법으로 속도를 확보합니다:
 
 <div class="chart-cards">
   <div class="chart-card">
     <div class="chart-card-header">
       <div class="chart-card-icon yellow">D</div>
       <div>
-        <div class="chart-card-name">Knowledge Distillation</div>
+        <div class="chart-card-name">Knowledge 증류(Distillation)</div>
         <div class="chart-card-subtitle">Teacher → Student 학습</div>
       </div>
     </div>
@@ -259,7 +259,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">적합</span>
-        <span class="chart-card-row-value">Pre-Ranking 모델 생성</span>
+        <span class="chart-card-row-value">앞단 랭킹 모델 생성</span>
       </div>
     </div>
   </div>
@@ -267,7 +267,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
     <div class="chart-card-header">
       <div class="chart-card-icon green">Q</div>
       <div>
-        <div class="chart-card-name">Quantization</div>
+        <div class="chart-card-name">양자화(Quantization)</div>
         <div class="chart-card-subtitle">FP32 → INT8/FP16</div>
       </div>
     </div>
@@ -286,7 +286,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">적합</span>
-        <span class="chart-card-row-value">Ranking 모델 가속</span>
+        <span class="chart-card-row-value">랭킹 모델 가속</span>
       </div>
     </div>
   </div>
@@ -294,7 +294,7 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
     <div class="chart-card-header">
       <div class="chart-card-icon orange">P</div>
       <div>
-        <div class="chart-card-name">Pruning</div>
+        <div class="chart-card-name">가지치기(Pruning)</div>
         <div class="chart-card-subtitle">불필요한 뉴런/레이어 제거</div>
       </div>
     </div>
@@ -319,9 +319,9 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
   </div>
 </div>
 
-세 기법을 한 문장씩 풀면 이렇습니다. **Distillation**은 큰 모델(Teacher)이 낸 확률값을 작은 모델(Student)이 따라 배우는 것입니다. 정답 라벨이 아니라 큰 모델이 매긴 확률값을 따라 하니, 작은 모델이 큰 모델의 판단을 물려받습니다. **Quantization**은 소수점 자리를 줄이는 일입니다. 32비트로 재던 가중치를 8비트로 재면 2~4배 빨라집니다. **Pruning**은 거의 안 쓰이는 뉴런을 잘라냅니다. 정확도는 거의 그대로고 계산만 줄어듭니다.
+세 기법을 한 문장씩 풀면 이렇습니다. **증류**은 큰 모델(Teacher)이 낸 확률값을 작은 모델(Student)이 따라 배우는 것입니다. 정답 라벨이 아니라 큰 모델이 매긴 확률값을 따라 하니, 작은 모델이 큰 모델의 판단을 물려받습니다. **양자화**은 소수점 자리를 줄이는 일입니다. 32비트로 재던 가중치를 8비트로 재면 2~4배 빨라집니다. **가지치기**은 거의 안 쓰이는 뉴런을 잘라냅니다. 정확도는 거의 그대로고 계산만 줄어듭니다.
 
-고를 때 기준은 **AUC를 얼마 잃고 속도를 얼마 얻는가** 하나입니다. Pre-Ranking은 recall만 지키면 되니 속도를 크게 사는 Distillation이 맞습니다. Ranking은 정확도가 곧 매출이니 손실이 가장 작은 Quantization이 맞습니다.
+고를 때 기준은 **AUC를 얼마 잃고 속도를 얼마 얻는가** 하나입니다. 앞단 랭킹은 recall만 지키면 되니 속도를 크게 사는 증류가 맞습니다. 랭킹은 정확도가 곧 매출이니 손실이 가장 작은 양자화가 맞습니다.
 
 ### 실전 경량화 전략
 
@@ -344,11 +344,11 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 ---
 
-## 4. Embedding Lookup 최적화: 숨은 병목
+## 4. 임베딩 조회(Embedding Lookup) 최적화: 숨은 병목
 
-광고 추천 모델(DeepFM, DIN 등)에서 가장 큰 병목은 Dense Layer 연산이 아니라 **Embedding Lookup**입니다.
+광고 추천 모델(DeepFM, DIN 등)에서 가장 큰 병목은 조밀 층(Dense Layer) 연산이 아니라 **임베딩 조회**입니다.
 
-### 왜 Embedding이 병목인가
+### 왜 임베딩(Embedding)이 병목인가
 
 ```text
 유저 ID: 1억 개   × 64차원 × 4B(FP32) = 25.6GB
@@ -358,9 +358,9 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 총 Embedding 테이블: ~28GB → 단일 GPU 메모리(16-80GB) 초과 가능
 ```
 
-추론 시 매 요청마다 해당 유저/광고의 Embedding을 조회해야 합니다. 이 조회가 **랜덤 메모리 접근**이라 캐시 미스가 빈번합니다.
+추론 시 매 요청마다 해당 유저/광고의 임베딩을 조회해야 합니다. 이 조회가 **랜덤 메모리 접근**이라 캐시 미스가 빈번합니다.
 
-왜 랜덤 접근이 나쁜지는 메모리를 읽는 방식에 있습니다. Dense Layer 연산은 메모리의 이어진 자리를 순서대로 읽습니다. Embedding Lookup은 메모리 여기저기 흩어진 자리를 한 칸씩 찾아 읽습니다. 읽는 양은 같은데 흩어진 자리를 찾아가는 시간이 전체를 지배합니다.
+왜 랜덤 접근이 나쁜지는 메모리를 읽는 방식에 있습니다. 조밀 층 연산은 메모리의 이어진 자리를 순서대로 읽습니다. 임베딩 조회는 메모리 여기저기 흩어진 자리를 한 칸씩 찾아 읽습니다. 읽는 양은 같은데 흩어진 자리를 찾아가는 시간이 전체를 지배합니다.
 
 그래서 이 구간의 최적화는 연산을 줄이는 일이 아니라 **찾아가는 거리를 줄이는 일**입니다.
 
@@ -368,11 +368,11 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 
 | 기법 | 원리 | 효과 |
 |------|------|------|
-| **Embedding 캐시** | Hot user/ad의 Embedding을 L1 캐시에 유지 | 조회 레이턴시 10x 감소 |
+| **임베딩 캐시** | Hot user/ad의 임베딩을 L1 캐시에 유지 | 조회 레이턴시 10x 감소 |
 | **Mixed-Dimension** | 빈도 높은 ID는 64차원, 낮은 ID는 16차원 | 메모리 50% 절감 |
-| **Hash Embedding** | ID → hash → 공유 Embedding (충돌 허용) | 메모리 90%+ 절감 |
-| **CPU/GPU Split** | Embedding은 CPU(대용량 메모리), Dense는 GPU | 메모리 제약 해소 |
-| **Embedding 압축** | PQ(Product Quantization)로 벡터 압축 | 메모리 4-8x 절감 |
+| **해시 임베딩(Hash Embedding)** | ID → hash → 공유 임베딩 (충돌 허용) | 메모리 90%+ 절감 |
+| **CPU/GPU Split** | 임베딩은 CPU(대용량 메모리), Dense는 GPU | 메모리 제약 해소 |
+| **임베딩 압축** | PQ(Product 양자화)로 벡터 압축 | 메모리 4-8x 절감 |
 
 ---
 
@@ -394,23 +394,23 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
   <div class="chart-layer-title">MODEL SERVER CLUSTER</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Pre-Ranking Server</div>
+      <div class="chart-layer-group-label">앞단 랭킹 Server</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item yellow">경량 모델 (CPU)</span>
         <span class="chart-layer-item yellow">수평 확장 N대</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Ranking Server</div>
+      <div class="chart-layer-group-label">랭킹 Server</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item pink">DeepFM/DCN (GPU)</span>
         <span class="chart-layer-item pink">Batch 추론</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Embedding Service</div>
+      <div class="chart-layer-group-label">임베딩 서비스(Embedding Service)</div>
       <div class="chart-layer-items">
-        <span class="chart-layer-item cyan">대용량 Embedding 테이블</span>
+        <span class="chart-layer-item cyan">대용량 임베딩 테이블</span>
         <span class="chart-layer-item cyan">Redis / 자체 KV Store</span>
       </div>
     </div>
@@ -479,8 +479,8 @@ Ranking 단계에서 사용하는 복잡한 모델을 Pre-Ranking에 쓸 수는 
 | **레이턴시** | 단건 빠름 (~0.5ms) | 단건 느림 (~2ms, 커널 오버헤드) |
 | **처리량** | 낮음 (직렬) | 높음 (배치 병렬) |
 | **비용** | 서버당 저렴 | 서버당 비쌈 |
-| **적합** | Pre-Ranking (단건 빠른 응답) | Ranking (배치 스코어링) |
-| **Embedding** | 대용량 메모리 가능 | 메모리 제한 (16-80GB) |
+| **적합** | 앞단 랭킹 (단건 빠른 응답) | 랭킹 (배치 스코어링) |
+| **임베딩** | 대용량 메모리 가능 | 메모리 제한 (16-80GB) |
 
 표의 첫 두 줄이 헷갈리기 쉬운데 이유는 단순합니다. GPU는 한 번 실행할 때마다 고정 비용(커널 실행, 텐서 복사)이 2ms쯤 듭니다. 후보 하나만 넣으면 그 고정 비용 때문에 CPU보다 느립니다. 후보 40개를 한 번에 넣으면 고정 비용이 40개에 나눠져 하나당 시간이 훨씬 짧아집니다. 그래서 GPU를 쓸지는 모델 크기가 아니라 **한 번에 몇 개를 같이 넣는가**로 결정됩니다.
 
@@ -528,7 +528,7 @@ for B in (1, 8, 32, 128):
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
-        <span class="chart-arch-section-title yellow">Pre-Ranking: CPU</span>
+        <span class="chart-arch-section-title yellow">앞단 랭킹: CPU</span>
       </div>
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
@@ -543,7 +543,7 @@ for B in (1, 8, 32, 128):
     </div>
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
-        <span class="chart-arch-section-title pink">Ranking: GPU</span>
+        <span class="chart-arch-section-title pink">랭킹: GPU</span>
       </div>
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
@@ -574,7 +574,7 @@ for B in (1, 8, 32, 128):
 | **Model Server 다운** | 추론 불가 | Auto-scaling + 다중 AZ 배포 |
 | **레이턴시 스파이크** | 타임아웃 증가 → Win Rate 하락 | 타임아웃 시 캐시된 예측값 사용 |
 | **새 모델 성능 저하** | CPX 악화, 예산 낭비 | Canary 자동 롤백 (5분 이내) |
-| **Embedding Service 장애** | 피처 누락 → 부정확한 예측 | Default Embedding + Degraded Model |
+| **임베딩 서비스 장애** | 피처 누락 → 부정확한 예측 | Default 임베딩 + Degraded Model |
 | **GPU OOM** | 추론 실패 | 배치 크기 자동 조절 + CPU 폴백 |
 
 ### Timeout Fallback 계층
@@ -711,17 +711,17 @@ print("유저 임베딩 | 담장 안 적중 65%% -> %5.3fms | 열린 RTB 적중 
 
 ## 마무리
 
-1. **Multi-Stage Ranking이 핵심 아키텍처** — 수천 후보를 한 번에 스코어링할 수 없습니다. Retrieval → Pre-Ranking → Ranking → Re-Ranking 깔때기로 후보를 줄이면서 모델 복잡도를 올리세요.
+1. **단계별 랭킹이 핵심 아키텍처** — 수천 후보를 한 번에 스코어링할 수 없습니다. 후보 추리기 → 앞단 랭킹 → 랭킹 → 뒷단 랭킹 깔때기로 후보를 줄이면서 모델 복잡도를 올리세요.
 
-2. **Pre-Ranking의 recall이 전체 성능을 좌우** — Pre-Ranking에서 탈락한 광고는 Ranking의 정밀한 모델을 만날 기회가 없습니다. Pre-Ranking은 정확도보다 recall이 중요합니다.
+2. **앞단 랭킹의 recall이 전체 성능을 좌우** — 앞단 랭킹에서 탈락한 광고는 랭킹의 정밀한 모델을 만날 기회가 없습니다. 앞단 랭킹은 정확도보다 recall이 중요합니다.
 
-3. **경량화는 AUC 손실과의 trade-off** — Distillation(5-10x 빠름, AUC -1.5%), Quantization(2-4x 빠름, AUC -0.2%), Pruning(2-5x 빠름, AUC -1%). 용도에 맞게 선택하세요.
+3. **경량화는 AUC 손실과의 trade-off** — 증류(5-10x 빠름, AUC -1.5%), 양자화(2-4x 빠름, AUC -0.2%), 가지치기(2-5x 빠름, AUC -1%). 용도에 맞게 선택하세요.
 
-4. **Embedding이 숨은 병목** — 수십 GB의 Embedding 테이블이 메모리와 레이턴시를 지배합니다. Hash Embedding, Mixed-Dimension, CPU/GPU Split으로 대응하세요.
+4. **임베딩이 숨은 병목** — 수십 GB의 임베딩 테이블이 메모리와 레이턴시를 지배합니다. 해시 임베딩, Mixed-Dimension, CPU/GPU Split으로 대응하세요.
 
 5. **배포는 Canary가 기본** — 새 모델은 항상 5% 트래픽으로 시작하고, 24시간 모니터링 후 점진 확대하세요. 성능 하락 시 자동 롤백이 필수입니다.
 
-> 이 글에서 다룬 서빙 아키텍처는 [Feature Store](post.html?id=feature-store-serving)가 공급하는 피처를 소비합니다. [Online Learning](post.html?id=online-learning-delayed-feedback)이 그 모델을 갱신하고, [Auto-Bidding](post.html?id=auto-bidding-pacing)이 최종 입찰가를 결정합니다. 서빙은 그 파이프라인의 핵심 계층입니다.
+> 이 글에서 다룬 서빙 아키텍처는 [피처 저장소](post.html?id=feature-store-serving)가 공급하는 피처를 소비합니다. [온라인 학습](post.html?id=online-learning-delayed-feedback)이 그 모델을 갱신하고, [Auto-Bidding](post.html?id=auto-bidding-pacing)이 최종 입찰가를 결정합니다. 서빙은 그 파이프라인의 핵심 계층입니다.
 
 ---
 

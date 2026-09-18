@@ -1,6 +1,6 @@
 pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 안에 피처를 모아 추론하는 시스템**이 없으면, 그 모델은 프로덕션에서 아무 일도 못 합니다. 이 글은 광고 ML 시스템의 **데이터 공급망**을 해부합니다. 피처가 어디서 만들어져 어디에 저장되고, 서빙 때 어떻게 꺼내지는지 순서대로 봅니다.
 
-> [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 Feature Store는 한 줄이었습니다. 이 글은 그 한 줄을 확대합니다.
+> [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 피처 저장소(Feature Store)는 한 줄이었습니다. 이 글은 그 한 줄을 확대합니다.
 
 > **골라 읽는 법** — 절이 8개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
@@ -10,7 +10,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 > - 장애 대응만 → 7절
 
 ---
-## 1. Feature Serving 전체 조감도
+## 1. 피처(Feature) Serving 전체 조감도
 
 모델이 "이 사람이 이 광고를 누를 확률"을 계산하려면 재료가 필요합니다. 나이, 관심사, 어제 뭘 봤는지, 지금 몇 시인지 같은 것들입니다. 이 재료를 **피처(feature)** 라고 부릅니다.
 
@@ -23,7 +23,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 <a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
-모델을 돌리는 쪽 이야기는 [Model Serving Architecture](post.html?id=model-serving-architecture)에 있습니다. 여기는 **재료를 꺼내오는 쪽**입니다. 재료가 만들어지기 전 단계, 즉 로그가 흘러오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)을 보세요.
+모델을 돌리는 쪽 이야기는 [모델(Model) Serving Architecture](post.html?id=model-serving-architecture)에 있습니다. 여기는 **재료를 꺼내오는 쪽**입니다. 재료가 만들어지기 전 단계, 즉 로그가 흘러오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)을 보세요.
 
 먼저 전체 경로를 봅니다. 광고 ML 시스템에서 피처가 흐르는 전체 경로입니다.
 
@@ -66,21 +66,21 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-layer-title">FEATURE PIPELINES</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Batch Pipeline (수 시간)</div>
+      <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline) (수 시간)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item yellow">Spark / Hive</span>
         <span class="chart-layer-item yellow">집계 &middot; 통계 &middot; 임베딩</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Streaming Pipeline (수 분)</div>
+      <div class="chart-layer-group-label">스트리밍 파이프라인(Streaming Pipeline) (수 분)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item orange">Flink / Kafka</span>
         <span class="chart-layer-item orange">윈도우 집계</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Real-Time (요청 시점)</div>
+      <div class="chart-layer-group-label">실시간(Real-Time) (요청 시점)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item green">Application 내부</span>
         <span class="chart-layer-item green">파싱 &middot; 변환</span>
@@ -91,7 +91,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-layer-title">FEATURE STORE</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Feature Registry</div>
+      <div class="chart-layer-group-label">피처 명세 목록(Feature Registry)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item purple">스키마</span>
         <span class="chart-layer-item purple">버전</span>
@@ -99,14 +99,14 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Offline Store (학습용)</div>
+      <div class="chart-layer-group-label">오프라인 저장소(Offline Store) (학습용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item blue">S3 / Hive</span>
         <span class="chart-layer-item blue">Point-in-Time</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Online Store (서빙용)</div>
+      <div class="chart-layer-group-label">온라인 저장소(Online Store) (서빙용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item cyan">Redis</span>
         <span class="chart-layer-item cyan">DynamoDB</span>
@@ -117,19 +117,19 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-layer-title">ONLINE SERVING (~10ms)</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Feature Lookup</div>
+      <div class="chart-layer-group-label">피처 조회(Feature Lookup)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item cyan">Key: user_id, ad_id</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Feature Vector 조합</div>
+      <div class="chart-layer-group-label">피처 벡터(Feature Vector) 조합</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item cyan">Pre-computed + On-the-fly</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">Model Inference</div>
+      <div class="chart-layer-group-label">모델 추론(Model Inference)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item pink">pCTR</span>
         <span class="chart-layer-item pink">pCVR</span>
@@ -138,43 +138,43 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
     <div class="chart-layer-group">
       <div class="chart-layer-group-label">DSP Bidder</div>
       <div class="chart-layer-items">
-        <span class="chart-layer-item pink">True Value &rarr; Bid Shading</span>
+        <span class="chart-layer-item pink">참 가치(True Value) &rarr; Bid Shading</span>
       </div>
     </div>
   </div>
 </div>
 
-핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(Batch / Streaming / Real-Time)이 하나의 Feature Store로 합류합니다. 그리고 서빙 시점에 이들이 단일 Feature Vector(모델에 넣는 숫자 묶음)로 조합됩니다.
+핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(배치(Batch) / 스트리밍(Streaming) / 실시간)이 하나의 피처 저장소로 합류합니다. 그리고 서빙 시점에 이들이 단일 피처 벡터(모델에 넣는 숫자 묶음)로 조합됩니다.
 
 ### 광고 요청 1건에 필요한 피처 분류
 
 | 피처 유형 | 예시 | 생성 방식 | 갱신 주기 | 저장 위치 |
 |-----------|------|----------|----------|----------|
-| **유저 피처** | 과거 7일 CTR, 관심사 세그먼트, 최근 본 카테고리 | Batch / Streaming | 수 시간 ~ 수 분 | Online Store |
-| **광고 피처** | 광고 과거 CTR, 소재 임베딩, 캠페인 잔여 예산 | Batch / Streaming | 수 시간 ~ 수 분 | Online Store |
-| **지면 피처** | 지면 카테고리, 평균 CTR, 광고 슬롯 위치 | Batch | 수 시간 | Online Store |
-| **컨텍스트 피처** | 디바이스, OS, 시간대, 요일, 지역 | Real-Time | 요청 시점 | 계산 후 즉시 사용 |
-| **교차 피처** | 유저×광고 과거 노출 횟수, 유저×카테고리 선호도 | Batch / Streaming | 수 시간 ~ 수 분 | Online Store |
+| **유저 피처** | 과거 7일 CTR, 관심사 세그먼트, 최근 본 카테고리 | 배치 / 스트리밍 | 수 시간 ~ 수 분 | 온라인 저장소 |
+| **광고 피처** | 광고 과거 CTR, 소재 임베딩, 캠페인 잔여 예산 | 배치 / 스트리밍 | 수 시간 ~ 수 분 | 온라인 저장소 |
+| **지면 피처** | 지면 카테고리, 평균 CTR, 광고 슬롯 위치 | 배치 | 수 시간 | 온라인 저장소 |
+| **컨텍스트 피처** | 디바이스, OS, 시간대, 요일, 지역 | 실시간 | 요청 시점 | 계산 후 즉시 사용 |
+| **교차 피처** | 유저×광고 과거 노출 횟수, 유저×카테고리 선호도 | 배치 / 스트리밍 | 수 시간 ~ 수 분 | 온라인 저장소 |
 
 ---
 
 ## 2. 한 번의 광고 요청에서 피처가 모이는 과정
 
-유저가 페이지를 열고 Bid Request가 도착한 순간부터, 피처가 조합되어 모델 추론이 완료되기까지의 타임라인입니다:
+유저가 페이지를 열고 입찰 요청(Bid Request)가 도착한 순간부터, 피처가 조합되어 모델 추론이 완료되기까지의 타임라인입니다:
 
 <div class="chart-timeline">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
     <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">DSP 내부 처리 타임라인</span>
     <span style="font-size:0.75rem; color:var(--text-muted);">목표: ~10ms 이내</span>
   </div>
-  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. Bid Request 수신 &rarr; Feature Gateway</div>
+  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. 입찰 요청 수신 &rarr; 피처 Gateway</div>
   <div class="chart-timeline-bar">
     <div class="chart-timeline-segment blue" style="width:12%;">유저 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment cyan" style="width:14%;">광고 피처 N개<br/>1ms</div>
     <div class="chart-timeline-segment purple" style="width:8%;">지면 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment green" style="width:4%;">컨텍스트<br/>0.1ms</div>
-    <div class="chart-timeline-segment orange" style="width:8%;">Vector 조합<br/>0.5ms</div>
-    <div class="chart-timeline-segment pink" style="width:38%;">Model Inference (pCTR, pCVR)<br/>2-5ms</div>
+    <div class="chart-timeline-segment orange" style="width:8%;">벡터(Vector) 조합<br/>0.5ms</div>
+    <div class="chart-timeline-segment pink" style="width:38%;">모델 추론 (pCTR, pCVR)<br/>2-5ms</div>
     <div class="chart-timeline-segment" style="width:16%; background:rgba(176,38,255,0.5);">Bid Logic<br/>1ms</div>
   </div>
   <div class="chart-timeline-labels">
@@ -191,15 +191,15 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-timeline-legend">
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(54,162,235,0.7);"></div>
-      <span>Feature Lookup (Redis)</span>
+      <span>피처 조회 (Redis)</span>
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(75,192,192,0.6);"></div>
-      <span>Real-Time 계산 (CPU only)</span>
+      <span>실시간 계산 (CPU only)</span>
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(255,159,64,0.6);"></div>
-      <span>Vector 조합 (메모리)</span>
+      <span>벡터 조합 (메모리)</span>
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.6);"></div>
@@ -216,18 +216,18 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 
 | 단계 | 소요 시간 (p50) | 비고 |
 |------|----------------|------|
-| Feature Lookup (병렬) | ~1ms | Redis MGET, 네트워크 왕복 포함 |
+| 피처 조회 (병렬) | ~1ms | Redis MGET, 네트워크 왕복 포함 |
 | 컨텍스트 피처 계산 | ~0.1ms | CPU 연산만 (I/O 없음) |
-| Feature Vector 조합 | ~0.5ms | 메모리 내 concat + 정규화 |
-| Model Inference | ~2-5ms | 모델 복잡도에 비례 |
-| Bid Logic | ~1ms | True Value + Shading |
+| 피처 벡터 조합 | ~0.5ms | 메모리 내 concat + 정규화 |
+| 모델 추론 | ~2-5ms | 모델 복잡도에 비례 |
+| Bid Logic | ~1ms | 참 가치 + Shading |
 | **합계** | **~5-8ms** | DSP 내부 처리 총합 |
 
 **병렬 조회가 핵심입니다.** 유저/광고/지면/컨텍스트 피처를 순차적으로 가져오면 4ms → 병렬로 가져오면 1ms. 이 차이가 후보 광고 수를 2배 이상 늘릴 여유를 만듭니다.
 
 ### 실전 예시: Redis에서 피처 조회하기
 
-실제 Bid Request가 도착했을 때 Feature Gateway가 수행하는 Redis 명령입니다:
+실제 입찰 요청이 도착했을 때 피처 Gateway가 수행하는 Redis 명령입니다:
 
 ```bash
 # 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
@@ -255,7 +255,7 @@ HGETALL slot:S50
 # device=mobile, os=iOS, hour=14, weekday=Thu, geo=KR
 ```
 
-이렇게 모인 피처들이 하나의 Feature Vector로 concat됩니다:
+이렇게 모인 피처들이 하나의 피처 벡터로 concat됩니다:
 
 ```python
 # Feature Vector 조합 (간략화)
@@ -289,7 +289,7 @@ feature_vector = {
 
 ---
 
-## 3. Offline vs Near-Real-Time vs Real-Time Feature Pipeline [무대: 공통]
+## 3. 오프라인(Offline) vs Near-Real-Time vs 실시간 피처 파이프라인(Pipeline) [무대: 공통]
 
 피처를 하나의 파이프라인으로 다 만들면 안 될까요? 안 됩니다. **피처마다 "언제까지 신선해야 하는가"가 다르기 때문입니다.**
 
@@ -304,7 +304,7 @@ feature_vector = {
     <div class="chart-card-header">
       <div class="chart-card-icon yellow">B</div>
       <div>
-        <div class="chart-card-name">Batch Pipeline</div>
+        <div class="chart-card-name">배치 파이프라인</div>
         <div class="chart-card-subtitle">수 시간 ~ 1일 주기</div>
       </div>
     </div>
@@ -340,7 +340,7 @@ feature_vector = {
     <div class="chart-card-header">
       <div class="chart-card-icon orange">S</div>
       <div>
-        <div class="chart-card-name">Streaming Pipeline</div>
+        <div class="chart-card-name">스트리밍 파이프라인</div>
         <div class="chart-card-subtitle">수 초 ~ 수 분 주기</div>
       </div>
     </div>
@@ -376,7 +376,7 @@ feature_vector = {
     <div class="chart-card-header">
       <div class="chart-card-icon green">RT</div>
       <div>
-        <div class="chart-card-name">Real-Time</div>
+        <div class="chart-card-name">실시간</div>
         <div class="chart-card-subtitle">요청 시점 (0ms 지연)</div>
       </div>
     </div>
@@ -428,11 +428,11 @@ feature_vector = {
 
 ---
 
-## 4. 파이프라인별 피처 Lifecycle — 수집 → 저장 → 학습 → 추론
+## 4. 파이프라인별 피처 생애주기(Lifecycle) — 수집 → 저장 → 학습 → 추론
 
-1절의 조감도는 전체를 한눈에 보여주지만, "이 피처 하나가 어떤 경로를 타는가"가 잘 안 보입니다. 여기서는 **Batch / Streaming / Real-Time 각각을 독립적으로** 추적합니다.
+1절의 조감도는 전체를 한눈에 보여주지만, "이 피처 하나가 어떤 경로를 타는가"가 잘 안 보입니다. 여기서는 **배치 / 스트리밍 / 실시간 각각을 독립적으로** 추적합니다.
 
-### 4-1. Batch 피처의 Lifecycle
+### 4-1. 배치 피처의 생애주기
 
 ```mermaid
 flowchart LR
@@ -472,9 +472,9 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-**Batch 피처의 핵심:** 학습과 추론이 **같은 피처 정의**를 쓰지만 읽는 저장소는 다릅니다. 학습은 Offline Store(과거 시점 복원), 추론은 Online Store(최신 값)입니다.
+**배치 피처의 핵심:** 학습과 추론이 **같은 피처 정의**를 쓰지만 읽는 저장소는 다릅니다. 학습은 오프라인 저장소(과거 시점 복원), 추론은 온라인 저장소(최신 값)입니다.
 
-### 4-2. Streaming 피처의 Lifecycle
+### 4-2. 스트리밍 피처의 생애주기
 
 ```mermaid
 flowchart LR
@@ -515,7 +515,7 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-**Streaming 피처의 핵심:** 추론할 때는 Flink가 실시간으로 계산한 값을 Redis에서 읽습니다. 학습할 때는 원본 이벤트 로그를 다시 읽어 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 Training-Serving Skew의 주요 원인입니다.
+**스트리밍 피처의 핵심:** 추론할 때는 Flink가 실시간으로 계산한 값을 Redis에서 읽습니다. 학습할 때는 원본 이벤트 로그를 다시 읽어 **같은 윈도우 집계를 재현**해야 합니다. 이 불일치가 학습과 서빙의 피처 어긋남(Training-Serving Skew)의 주요 원인입니다.
 
 **"Redis에 바로 쓰면 학습은 어떻게 하지?"** — 핵심은 Kafka에서 이벤트가 나올 때 **두 갈래**로 간다는 것입니다:
 
@@ -534,7 +534,7 @@ GROUP BY user_id
 -- → "그 시점에 Redis에 들어있었을 값"을 과거 데이터로부터 복원
 ```
 
-### 4-3. Real-Time 피처의 Lifecycle
+### 4-3. 실시간 피처의 생애주기
 
 ```mermaid
 flowchart LR
@@ -572,12 +572,12 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-**Real-Time 피처의 핵심:** 저장소를 거치지 않습니다. 추론 시에는 Bid Request를 직접 파싱하고, 학습 시에는 Request Log에 기록된 같은 필드를 파싱합니다.
+**실시간 피처의 핵심:** 저장소를 거치지 않습니다. 추론 시에는 입찰 요청을 직접 파싱하고, 학습 시에는 요청 로그(Request Log)에 기록된 같은 필드를 파싱합니다.
 
-**"저장을 안 하면 학습은 어떻게 하지?"** — Bid Request 자체를 **Request Log**로 기록해둡니다. 추론에 쓰는 것과는 별개의 경로입니다:
+**"저장을 안 하면 학습은 어떻게 하지?"** — 입찰 요청 자체를 **요청 로그**로 기록해둡니다. 추론에 쓰는 것과는 별개의 경로입니다:
 
-1. **추론 경로:** Bid Request JSON → 앱 내부 파싱 → 즉시 Feature Vector에 합류
-2. **학습 경로:** Bid Request JSON → Request Log로 S3에 기록 → 학습 시 같은 파싱
+1. **추론 경로:** 입찰 요청 JSON → 앱 내부 파싱 → 즉시 피처 벡터에 합류
+2. **학습 경로:** 입찰 요청 JSON → 요청 로그로 S3에 기록 → 학습 시 같은 파싱
 
 ```json
 // Request Log (S3에 저장됨)
@@ -611,16 +611,16 @@ flowchart LR
     </div>
     <div class="chart-card-body">
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Batch 피처</span>
-        <span class="chart-card-row-value">Offline Store (S3/Hive) → Point-in-Time Join</span>
+        <span class="chart-card-row-label">배치 피처</span>
+        <span class="chart-card-row-value">오프라인 저장소 (S3/Hive) → 그 시점으로 되돌려 잇기(Point-in-Time Join)</span>
       </div>
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Streaming 피처</span>
+        <span class="chart-card-row-label">스트리밍 피처</span>
         <span class="chart-card-row-value">이벤트 로그 아카이브 → 윈도우 집계 재현</span>
       </div>
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Real-Time 피처</span>
-        <span class="chart-card-row-value">Request Log → 같은 파싱 로직 적용</span>
+        <span class="chart-card-row-label">실시간 피처</span>
+        <span class="chart-card-row-value">요청 로그 → 같은 파싱 로직 적용</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">시간 제약</span>
@@ -642,16 +642,16 @@ flowchart LR
     </div>
     <div class="chart-card-body">
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Batch 피처</span>
-        <span class="chart-card-row-value">Online Store (Redis) → HGETALL</span>
+        <span class="chart-card-row-label">배치 피처</span>
+        <span class="chart-card-row-value">온라인 저장소 (Redis) → HGETALL</span>
       </div>
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Streaming 피처</span>
-        <span class="chart-card-row-value">Online Store (Redis) → HGETALL (별도 Key)</span>
+        <span class="chart-card-row-label">스트리밍 피처</span>
+        <span class="chart-card-row-value">온라인 저장소 (Redis) → HGETALL (별도 Key)</span>
       </div>
       <div class="chart-card-row">
-        <span class="chart-card-row-label">Real-Time 피처</span>
-        <span class="chart-card-row-value">Bid Request → 즉석 파싱 (I/O 없음)</span>
+        <span class="chart-card-row-label">실시간 피처</span>
+        <span class="chart-card-row-value">입찰 요청 → 즉석 파싱 (I/O 없음)</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">시간 제약</span>
@@ -665,40 +665,40 @@ flowchart LR
   </div>
 </div>
 
-### 4-5. 피처별 전체 Lifecycle 매트릭스
+### 4-5. 피처별 전체 생애주기 매트릭스
 
 각 피처가 수집 → 파이프라인 → 저장 → 학습 → 추론의 전체 경로를 한 눈에 봅니다:
 
 | 피처 | 파이프라인 | 수집 소스 | 저장 위치 | 학습 시 읽는 곳 | 추론 시 읽는 곳 | 갱신 주기 |
 |------|-----------|----------|----------|---------------|---------------|----------|
-| 유저 7일 CTR | **Batch** | Click/Impression 로그 | Offline: S3, Online: Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
-| 유저 임베딩 (128d) | **Batch** | 유저 행동 로그 전체 | Offline: S3, Online: Redis | S3 (모델 학습 시점 스냅샷) | Redis `user:{id}` | 일 1회 |
-| 광고 과거 CTR | **Batch** | Impression/Click 로그 | Offline: S3, Online: Redis | S3 (Point-in-Time Join) | Redis `ad:{id}` | 1시간~일 1회 |
-| 소재 임베딩 (64d) | **Batch** | 광고 소재 이미지/텍스트 | Offline: S3, Online: Redis | S3 (모델 학습 시점) | Redis `ad:{id}` | 소재 변경 시 |
-| 유저 최근 5분 클릭 수 | **Streaming** | Kafka click_events | Online: Redis (TTL 10분) | 이벤트 로그 → 윈도우 재현 | Redis `user:{id}:rt` | 5분 |
-| 광고 최근 1시간 CTR | **Streaming** | Kafka impression/click | Online: Redis (TTL 2시간) | 이벤트 로그 → 윈도우 재현 | Redis `ad:{id}:rt` | 1분 |
-| 캠페인 잔여 예산 | **Streaming** | Kafka budget_events | Online: Redis (TTL 30분) | 이벤트 로그 → 소진 재현 | Redis `campaign:{id}` | 실시간 |
-| 디바이스 타입 | **Real-Time** | Bid Request UA | 저장 안 함 | Request Log 파싱 | Bid Request 즉석 파싱 | 요청마다 |
-| 시간대 (hour) | **Real-Time** | 서버 시각 | 저장 안 함 | Request Log 파싱 | 서버 시각 계산 | 요청마다 |
-| 지면 URL 카테고리 | **Real-Time** | Bid Request URL | 저장 안 함 | Request Log 파싱 | URL 패턴 매칭 | 요청마다 |
+| 유저 7일 CTR | **배치** | Click/Impression 로그 | 오프라인: S3, 온라인(Online): Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
+| 유저 임베딩 (128d) | **배치** | 유저 행동 로그 전체 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점 스냅샷) | Redis `user:{id}` | 일 1회 |
+| 광고 과거 CTR | **배치** | Impression/Click 로그 | 오프라인: S3, 온라인: Redis | S3 (Point-in-Time Join) | Redis `ad:{id}` | 1시간~일 1회 |
+| 소재 임베딩 (64d) | **배치** | 광고 소재 이미지/텍스트 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점) | Redis `ad:{id}` | 소재 변경 시 |
+| 유저 최근 5분 클릭 수 | **스트리밍** | Kafka click_events | 온라인: Redis (TTL 10분) | 이벤트 로그 → 윈도우 재현 | Redis `user:{id}:rt` | 5분 |
+| 광고 최근 1시간 CTR | **스트리밍** | Kafka impression/click | 온라인: Redis (TTL 2시간) | 이벤트 로그 → 윈도우 재현 | Redis `ad:{id}:rt` | 1분 |
+| 캠페인 잔여 예산 | **스트리밍** | Kafka budget_events | 온라인: Redis (TTL 30분) | 이벤트 로그 → 소진 재현 | Redis `campaign:{id}` | 실시간 |
+| 디바이스 타입 | **실시간** | 입찰 요청 UA | 저장 안 함 | 요청 로그 파싱 | 입찰 요청 즉석 파싱 | 요청마다 |
+| 시간대 (hour) | **실시간** | 서버 시각 | 저장 안 함 | 요청 로그 파싱 | 서버 시각 계산 | 요청마다 |
+| 지면 URL 카테고리 | **실시간** | 입찰 요청 URL | 저장 안 함 | 요청 로그 파싱 | URL 패턴 매칭 | 요청마다 |
 
-> **이 표의 핵심 패턴:** Batch 피처는 학습과 추론의 계산 로직이 같지만 **읽는 저장소가 다릅니다**(S3 대 Redis). Streaming 피처는 추론에서 Flink가 실시간 계산하고 **학습에서는 원본 로그로 재현**합니다. Real-Time 피처는 **저장소 자체가 없어서** 학습과 추론 모두 원본(Request/Log)에서 파싱합니다.
+> **이 표의 핵심 패턴:** 배치 피처는 학습과 추론의 계산 로직이 같지만 **읽는 저장소가 다릅니다**(S3 대 Redis). 스트리밍 피처는 추론에서 Flink가 실시간 계산하고 **학습에서는 원본 로그로 재현**합니다. 실시간 피처는 **저장소 자체가 없어서** 학습과 추론 모두 원본(Request/Log)에서 파싱합니다.
 
 ---
 
-## 5. Feature Store 아키텍처 심층 해부
+## 5. 피처 저장소 아키텍처 심층 해부
 
-Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 동일한 피처를 보장**하는 시스템입니다:
+피처 저장소는 단순한 저장소가 아닙니다. **학습과 서빙에서 동일한 피처를 보장**하는 시스템입니다:
 
 <div class="chart-arch">
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
       <span class="chart-arch-section-icon">1</span>
-      <span class="chart-arch-section-title purple">Feature Registry (중앙 메타데이터)</span>
+      <span class="chart-arch-section-title purple">피처 명세 목록 (중앙 메타데이터)</span>
     </div>
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
-        <div class="chart-arch-node-name">Feature 스키마</div>
+        <div class="chart-arch-node-name">피처 스키마</div>
         <div class="chart-arch-node-desc">이름, 타입, 차원</div>
       </div>
       <div class="chart-arch-node">
@@ -720,7 +720,7 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
         <span class="chart-arch-section-icon">2</span>
-        <span class="chart-arch-section-title blue">Offline Store (학습용)</span>
+        <span class="chart-arch-section-title blue">오프라인 저장소 (학습용)</span>
       </div>
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
@@ -729,14 +729,14 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
         </div>
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">학습 데이터셋</div>
-          <div class="chart-arch-node-desc">Label + Feature Join</div>
+          <div class="chart-arch-node-desc">Label + 피처 잇기(Join)</div>
         </div>
       </div>
     </div>
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
         <span class="chart-arch-section-icon">S</span>
-        <span class="chart-arch-section-title blue">Online Store (서빙용)</span>
+        <span class="chart-arch-section-title blue">온라인 저장소 (서빙용)</span>
       </div>
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
@@ -744,8 +744,8 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
           <div class="chart-arch-node-desc">Key-Value 조회</div>
         </div>
         <div class="chart-arch-node">
-          <div class="chart-arch-node-name">Local Cache</div>
-          <div class="chart-arch-node-desc">Hot Feature 캐싱</div>
+          <div class="chart-arch-node-name">로컬 캐시(Local Cache)</div>
+          <div class="chart-arch-node-desc">Hot 피처 캐싱</div>
         </div>
       </div>
     </div>
@@ -754,12 +754,12 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
   <div class="chart-arch-section">
     <div class="chart-arch-section-header">
       <span class="chart-arch-section-icon">3</span>
-      <span class="chart-arch-section-title orange">Materialization (Offline &rarr; Online 동기화)</span>
+      <span class="chart-arch-section-title orange">Materialization (오프라인 &rarr; 온라인 동기화)</span>
     </div>
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">동기화 Job</div>
-        <div class="chart-arch-node-desc">주기적 Offline &rarr; Online 복사</div>
+        <div class="chart-arch-node-desc">주기적 오프라인 &rarr; 온라인 복사</div>
       </div>
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">일관성 검증</div>
@@ -776,15 +776,15 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">모델 학습</div>
-        <div class="chart-arch-node-desc">Offline Store 읽기</div>
+        <div class="chart-arch-node-desc">오프라인 저장소 읽기</div>
       </div>
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">모델 서빙</div>
-        <div class="chart-arch-node-desc">Online Store 읽기</div>
+        <div class="chart-arch-node-desc">온라인 저장소 읽기</div>
       </div>
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">분석 / 디버깅</div>
-        <div class="chart-arch-node-desc">Offline Store 읽기</div>
+        <div class="chart-arch-node-desc">오프라인 저장소 읽기</div>
       </div>
     </div>
   </div>
@@ -792,17 +792,17 @@ Feature Store는 단순한 저장소가 아닙니다. **학습과 서빙에서 �
 
 ### 핵심 컴포넌트
 
-**Feature Registry**: Feature Store의 "카탈로그"입니다. 모든 피처의 이름, 타입, 차원, 생성 파이프라인, 담당 팀을 중앙에서 관리합니다. 새 피처를 등록하면 스키마 검증이 자동으로 파이프라인에 적용됩니다.
+**피처 명세 목록**: 피처 저장소의 "카탈로그"입니다. 모든 피처의 이름, 타입, 차원, 생성 파이프라인, 담당 팀을 중앙에서 관리합니다. 새 피처를 등록하면 스키마 검증이 자동으로 파이프라인에 적용됩니다.
 
-**Offline Store**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때는 **Point-in-Time Join**이 핵심입니다. "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
+**오프라인 저장소**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때는 **그 시점으로 되돌려 잇기**이 핵심입니다. "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
 
-**Online Store**: Redis나 DynamoDB에 최신 피처 값을 Key-Value로 저장합니다. 서빙 시 `GET user:12345` 한 번으로 유저의 전체 피처 벡터를 가져옵니다. p99 레이턴시 1ms 이내가 목표입니다.
+**온라인 저장소**: Redis나 DynamoDB에 최신 피처 값을 Key-Value로 저장합니다. 서빙 시 `GET user:12345` 한 번으로 유저의 전체 피처 벡터를 가져옵니다. p99 레이턴시 1ms 이내가 목표입니다.
 
-**Materialization Job**: Offline Store의 피처를 Online Store로 동기화합니다. 이 과정에서 **피처 일관성 검증**(값 분포, null 비율, 범위 체크)을 수행하여, Offline과 Online의 피처가 일치하는지 확인합니다.
+**Materialization Job**: 오프라인 저장소의 피처를 온라인 저장소로 동기화합니다. 이 과정에서 **피처 일관성 검증**(값 분포, null 비율, 범위 체크)을 수행하여, 오프라인과 온라인의 피처가 일치하는지 확인합니다.
 
-### Training-Serving Skew: Feature Store가 풀어야 할 근본 문제
+### 학습과 서빙의 피처 어긋남: 피처 저장소가 풀어야 할 근본 문제
 
-Feature Store가 없던 시절에는 이런 일이 일상이었습니다:
+피처 저장소가 없던 시절에는 이런 일이 일상이었습니다:
 
 ```text
 # 학습 코드 (Python)
@@ -812,17 +812,17 @@ user_ctr = clicks_7d / impressions_7d          # 0으로 나누기 처리 없음
 user_ctr = clicks_7d / max(impressions_7d, 1)  # 0으로 나누기 방지
 ```
 
-같은 피처인데 학습과 서빙에서 계산 로직이 다릅니다. 이것이 **Training-Serving Skew**입니다.
+같은 피처인데 학습과 서빙에서 계산 로직이 다릅니다. 이것이 **학습과 서빙의 피처 어긋남**입니다.
 
-| Skew 유형 | 원인 | 결과 |
+| 어긋남(Skew) 유형 | 원인 | 결과 |
 |-----------|------|------|
-| **로직 Skew** | 학습/서빙 코드가 다른 언어·로직 | 동일 입력에 다른 피처 값 → 모델 성능 저하 |
-| **시간 Skew** | 학습 시 미래 데이터 포함 (data leakage) | 오프라인 AUC 높지만 온라인 성능 낮음 |
-| **분포 Skew** | 학습 데이터와 서빙 데이터의 분포 차이 | 입력 분포가 벗어나면 예측 신뢰도 하락 |
+| **로직 어긋남** | 학습/서빙 코드가 다른 언어·로직 | 동일 입력에 다른 피처 값 → 모델 성능 저하 |
+| **시간 어긋남** | 학습 시 미래 데이터 포함 (data leakage) | 오프라인 AUC 높지만 온라인 성능 낮음 |
+| **분포 어긋남** | 학습 데이터와 서빙 데이터의 분포 차이 | 입력 분포가 벗어나면 예측 신뢰도 하락 |
 
-Feature Store는 **피처 정의를 한 곳에서 관리**해 로직 Skew를 막습니다. 시간 Skew는 **Point-in-Time Join**으로 막습니다. 분포 Skew는 막을 수 없어 모니터링으로 감지합니다.
+피처 저장소는 **피처 정의를 한 곳에서 관리**해 로직 어긋남을 막습니다. 시간 어긋남은 **그 시점으로 되돌려 잇기**으로 막습니다. 분포 어긋남은 막을 수 없어 모니터링으로 감지합니다.
 
-#### 숫자로 보는 시간 Skew — 하루 지난 값을 쓰면 얼마가 어긋나나
+#### 숫자로 보는 시간 어긋남 — 하루 지난 값을 쓰면 얼마가 어긋나나
 
 표로 보면 "성능 저하"라는 말이 추상적입니다. 실제로 얼마나 어긋나는지 재 봅시다.
 
@@ -922,7 +922,7 @@ u01·u04·u09를 보세요. 오늘 클릭이 없어서 어긋남이 **0**입니�
 
 이게 신선한 피처를 위해 스트리밍 인프라를 세우는 이유입니다. 비용을 쓰는 대가로 이 왜곡을 줄입니다.
 
-:::deep 더 깊이 — Point-in-Time Join: 미래를 몰래 훔쳐보지 않는 법
+:::deep 더 깊이 — 그 시점으로 되돌려 잇기: 미래를 몰래 훔쳐보지 않는 법
 
 학습 데이터를 만들 때 가장 흔한 사고가 여기서 납니다. "8월 1일 클릭"에 "8월 3일 시점의 피처"를 붙이는 것입니다. 그러면 오프라인 성능은 근사하게 나오고 실서빙에서 무너집니다. 모델이 미래를 본 채로 시험을 치른 셈이니까요. 아래는 그걸 막는 조인 방법입니다.
 
@@ -1038,7 +1038,7 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 - **24시간 전 CTR 피처**: 어제까지의 행동만 반영 → 자동차 관심사를 모름 → 자동차 광고 pCTR 과소추정 → 입찰 기회 손실
 - **5분 전 CTR 피처**: 직전 클릭 패턴 반영 → 자동차 관심사 포착 → 자동차 광고 pCTR 정확 추정 → 적정 입찰 → 낙찰
 
-이 차이가 **Streaming Pipeline의 존재 이유**입니다. 다만 모든 피처를 5분 갱신할 필요는 없고, 위 표처럼 **피처의 변화 속도에 맞춰 갱신 주기를 차등 설정**하는 것이 비용 대비 효과적입니다.
+이 차이가 **스트리밍 파이프라인의 존재 이유**입니다. 다만 모든 피처를 5분 갱신할 필요는 없고, 위 표처럼 **피처의 변화 속도에 맞춰 갱신 주기를 차등 설정**하는 것이 비용 대비 효과적입니다.
 
 ### 실전 예시: Freshness가 입찰가에 미치는 영향 (숫자 시뮬레이션)
 
@@ -1046,37 +1046,39 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 **상황**: 유저가 오전 10시부터 자동차 기사를 집중적으로 클릭 중. 현재 오후 2시.
 
-| | Batch Only (24시간) | + Streaming (5분) |
+| | 배치 Only (24시간) | + 스트리밍 (5분) |
 |---|---|---|
 | **user_ctr_7d** | 0.023 (어제 기준) | 0.023 (동일) |
 | **user_click_count_5m** | 0 (피처 없음) | 3 (직전 5분) |
 | **user_interest_auto** | 0 (어제엔 관심 없었음) | 1 (오늘 클릭 패턴 반영) |
 | **pCTR 예측** | 0.018 | 0.042 |
-| **True Value** (pCTR × pCVR × CPA) | `$0.018 × 0.12 × $50 = $0.108` | `$0.042 × 0.12 × $50 = $0.252` |
+| **참 가치** (pCTR × pCVR × CPA) | `$0.018 × 0.12 × $50 = $0.108` | `$0.042 × 0.12 × $50 = $0.252` |
 | **Bid Shading 후 입찰가** | `$0.076` | `$0.177` |
 | **시장 평균가** | `$0.15` | `$0.15` |
 | **결과** | **패찰** (입찰가 < 시장가) | **낙찰** (입찰가 > 시장가) |
 
-Streaming 피처 하나(`user_click_count_5m`)를 더하면 pCTR이 0.018에서 0.042로 올라갑니다. 그러면 입찰가가 `$0.076`에서 `$0.177`로 바뀌고, **패찰이 낙찰로 전환**됩니다.
+스트리밍 피처 하나(`user_click_count_5m`)를 더하면 pCTR이 0.018에서 0.042로 올라갑니다. 그러면 입찰가가 `$0.076`에서 `$0.177`로 바뀌고, **패찰이 낙찰로 전환**됩니다.
 
-이것이 하루 수억 건의 입찰에서 반복되면, Streaming Pipeline 도입의 ROI는 명확해집니다.
+이것이 하루 수억 건의 입찰에서 반복되면, 스트리밍 파이프라인 도입의 ROI는 명확해집니다.
 
 ---
 
 ## 7. 장애 시나리오 & Reliability
 
-Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장애가 곧 매출 손실입니다.
+피처 저장소는 광고 입찰의 **크리티컬 패스**에 있습니다. 장애가 곧 매출 손실입니다.
+
+여기서 갈리는 것은 장애가 났느냐가 아니라, 장애가 났을 때 무엇으로 대신하느냐입니다. 온라인 저장소가 통째로 죽으면 대신할 것이 없어 입찰이 멈춥니다. 반면 실시간 피처만 끊기면 배치 피처로 내려앉아 계속 입찰할 수 있습니다. 정확도는 떨어지지만 매출은 이어집니다. 그래서 아래 표에서 볼 것은 증상이 아니라 마지막 칸입니다.
 
 ### 장애 유형별 영향과 대응
 
 | 장애 유형 | 증상 | 영향 | 대응 전략 |
 |-----------|------|------|----------|
-| **Online Store 전체 장애** | 피처 조회 실패 | 모든 입찰 중단 | Multi-AZ 복제, 핫 스탠바이 |
-| **Online Store 지연** | p99 레이턴시 급증 | 입찰 타임아웃 증가 → Win Rate 하락 | 타임아웃 설정 + Default Value 폴백 |
-| **Batch Pipeline 지연** | 피처가 점점 stale | 모델 정확도 서서히 저하 | Freshness 모니터링 + 알림 |
-| **Streaming Pipeline 장애** | 실시간 피처 갱신 중단 | 최근 행동 미반영 → 개인화 품질 하락 | Batch 피처로 자동 폴백 |
+| **온라인 저장소 전체 장애** | 피처 조회 실패 | 모든 입찰 중단 | Multi-AZ 복제, 핫 스탠바이 |
+| **온라인 저장소 지연** | p99 레이턴시 급증 | 입찰 타임아웃 증가 → Win Rate 하락 | 타임아웃 설정 + 기본값(Default Value) 폴백 |
+| **배치 파이프라인 지연** | 피처가 점점 stale | 모델 정확도 서서히 저하 | Freshness 모니터링 + 알림 |
+| **스트리밍 파이프라인 장애** | 실시간 피처 갱신 중단 | 최근 행동 미반영 → 개인화 품질 하락 | 배치 피처로 자동 폴백 |
 | **특정 피처 null 급증** | 파이프라인 버그/스키마 변경 | 모델 입력 오류 → 비정상 예측 | null 비율 모니터링 + 임계치 알림 |
-| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | Feature Drift 감지 (PSI, KL Divergence) |
+| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | 피처 Drift 감지 (PSI, KL Divergence) |
 
 ### Fallback 전략 계층
 
@@ -1089,7 +1091,7 @@ Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장�
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Online Store 최신 피처 사용</div>
+      <div class="chart-step-title">온라인 저장소 최신 피처 사용</div>
       <div class="chart-step-desc">정상 경로. Redis/DynamoDB에서 최신 피처를 조회합니다. p99 레이턴시 1ms 이내.</div>
       <span class="chart-step-badge green">정상 &mdash; 최고 품질</span>
     </div>
@@ -1100,8 +1102,8 @@ Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장�
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Local Cache에서 캐시된 피처 사용</div>
-      <div class="chart-step-desc">Online Store 장애 또는 타임아웃 시, 로컬에 캐싱된 이전 값을 사용합니다. 약간 stale하지만 유효합니다.</div>
+      <div class="chart-step-title">로컬 캐시에서 캐시된 피처 사용</div>
+      <div class="chart-step-desc">온라인 저장소 장애 또는 타임아웃 시, 로컬에 캐싱된 이전 값을 사용합니다. 약간 stale하지만 유효합니다.</div>
       <span class="chart-step-badge yellow">경고 &mdash; 약간 stale</span>
     </div>
   </div>
@@ -1111,7 +1113,7 @@ Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장�
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">Default Value 사용</div>
+      <div class="chart-step-title">기본값 사용</div>
       <div class="chart-step-desc">캐시도 없을 때, 미리 정의된 글로벌 평균/중앙값을 사용합니다. 개인화 품질 하락.</div>
       <span class="chart-step-badge orange">위험 &mdash; 개인화 없음</span>
     </div>
@@ -1122,15 +1124,15 @@ Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장�
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">해당 피처 제외 (Degraded Model)</div>
-      <div class="chart-step-desc">Default Value도 없으면 해당 피처 없이 추론합니다. 예측 품질 크게 저하되지만, 입찰은 유지됩니다.</div>
+      <div class="chart-step-desc">기본값도 없으면 해당 피처 없이 추론합니다. 예측 품질 크게 저하되지만, 입찰은 유지됩니다.</div>
       <span class="chart-step-badge pink">심각 &mdash; 품질 저하</span>
     </div>
   </div>
 </div>
 
-각 계층으로 갈수록 예측 품질은 떨어지지만, **입찰 자체를 중단하는 것보다는 낫습니다**. Feature Store 설계 시 모든 피처에 대해 Default Value를 정의해두는 것이 안전합니다.
+각 계층으로 갈수록 예측 품질은 떨어지지만, **입찰 자체를 중단하는 것보다는 낫습니다**. 피처 저장소 설계 시 모든 피처에 대해 기본값을 정의해두는 것이 안전합니다.
 
-### Feature Drift 모니터링
+### 피처 Drift 모니터링
 
 프로덕션에서 피처 분포가 변하면 모델 성능이 저하됩니다. 주요 감지 지표:
 
@@ -1145,14 +1147,14 @@ Feature Store는 광고 입찰의 **크리티컬 패스**에 있습니다. 장�
 
 ## 마무리
 
-1. **피처 파이프라인은 세 갈래** — Batch(수 시간), Streaming(수 분), Real-Time(요청 시점)이 각각 다른 시간 해상도의 피처를 담당합니다. 피처의 변화 속도에 맞춰 파이프라인을 선택하세요.
+1. **피처 파이프라인은 세 갈래** — 배치(수 시간), 스트리밍(수 분), 실시간(요청 시점)이 각각 다른 시간 해상도의 피처를 담당합니다. 피처의 변화 속도에 맞춰 파이프라인을 선택하세요.
 
 2. **병렬 조회가 레이턴시의 핵심** — 10ms 예산 안에서 유저/광고/지면 피처를 순차적으로 가져오면 시간이 부족합니다. 병렬 조회와 local caching으로 I/O를 최소화하세요.
 
-3. **Training-Serving Skew는 Feature Store가 해결** — 학습과 서빙에서 같은 피처 정의를 사용하도록 Feature Registry로 중앙 관리하고, Point-in-Time Join으로 data leakage를 방지하세요.
+3. **학습과 서빙의 피처 어긋남은 피처 저장소가 해결** — 학습과 서빙에서 같은 피처 정의를 사용하도록 피처 명세 목록으로 중앙 관리하고, 그 시점으로 되돌려 잇기로 data leakage를 방지하세요.
 
 4. **Freshness는 무조건 높을수록 좋지 않다** — 피처별 최적 갱신 주기가 다릅니다. 인프라 복잡도와 비용 대비 성능 개선 효과를 따져서 차등 설정하세요.
 
-5. **장애 대비는 설계 단계에서** — Online Store 장애 시 Local Cache → Default Value → Degraded Model로 이어지는 fallback 계층을 미리 구축하고, Feature Drift 모니터링으로 조기 감지하세요.
+5. **장애 대비는 설계 단계에서** — 온라인 저장소 장애 시 로컬 캐시 → 기본값 → Degraded 모델로 이어지는 fallback 계층을 미리 구축하고, 피처 Drift 모니터링으로 조기 감지하세요.
 
-> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 내부의 "Feature Store" 노드 하나를 확대한 것입니다. 그 피처를 받아 실제로 모델을 돌리는 쪽은 [Model Serving Architecture](post.html?id=model-serving-architecture)에서 다룹니다.
+> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 내부의 "피처 저장소" 노드 하나를 확대한 것입니다. 그 피처를 받아 실제로 모델을 돌리는 쪽은 [모델 Serving Architecture](post.html?id=model-serving-architecture)에서 다룹니다.

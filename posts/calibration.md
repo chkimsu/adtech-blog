@@ -4,7 +4,7 @@ pCTR 모델의 AUC가 0.85입니다. 팀원들과 자축하며 프로덕션에 �
 
 $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
-입찰의 근거가 되는 확률이 늘 같은 방향으로 틀리면 어떻게 될까요. 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **Calibration**(보정) 문제입니다.
+입찰의 근거가 되는 확률이 늘 같은 방향으로 틀리면 어떻게 될까요. 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **보정(Calibration)**(보정) 문제입니다.
 
 <a href="demo-calibration.html" class="btn-demo">보정 왜곡을 직접 슬라이더로 실험해보기 →</a>
 
@@ -12,46 +12,46 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 > 이어지는 글들을 먼저 적어 둡니다.
 > - pCTR이 무엇이고 eCPM에 어떻게 곱해지는지 → [pCTR 예측](post.html?id=pctr-prediction)
-> - True Value로 최적 입찰가를 만드는 구조 → [Bid Shading](post.html?id=bid-shading-censored)
-> - True Value가 예산 페이싱의 입력이 되는 과정 → [Auto-Bidding](post.html?id=auto-bidding-pacing)
+> - 참 가치(True Value)로 최적 입찰가를 만드는 구조 → [Bid Shading](post.html?id=bid-shading-censored)
+> - 참 가치가 예산 페이싱의 입력이 되는 과정 → [Auto-Bidding](post.html?id=auto-bidding-pacing)
 > - pCTR이 광고 랭킹의 핵심 입력인 이유 → [eCPM 랭킹](post.html?id=ecpm-ranking)
 >
-> 이 시스템들의 **전제 조건**은 하나입니다. "pCTR 값 자체가 정확할 것" — 즉 Calibration입니다.
+> 이 시스템들의 **전제 조건**은 하나입니다. "pCTR 값 자체가 정확할 것" — 즉 보정입니다.
 
 ---
 
-## 1. Discrimination vs Calibration: 무엇이 다른가
+## 1. 순서 맞히기(Discrimination) vs 보정: 무엇이 다른가
 
-모델 평가에서 가장 흔한 혼동은 **Discrimination(순서를 맞히는 능력)**과 **Calibration**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
+모델 평가에서 가장 흔한 혼동은 **순서 맞히기(순서를 맞히는 능력)**과 **보정**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
 
-| 속성 | Discrimination (AUC) | Calibration |
+| 속성 | 순서 맞히기 (AUC) | 보정 |
 |------|---------------------|-------------|
 | **측정 대상** | 양성/음성 샘플의 순서를 맞추는 능력 | 예측 확률이 실제 확률과 일치하는 정도 |
 | **핵심 질문** | "클릭할 광고가 안 클릭할 광고보다 높은 점수를 받았는가?" | "pCTR 2%로 예측한 광고가 실제로 2% 클릭되는가?" |
 | **완벽한 상태** | AUC = 1.0 (모든 양성이 모든 음성보다 높음) | 예측 = 실제 (모든 구간에서) |
-| **평가 도구** | ROC Curve, AUC | Reliability Diagram, ECE, P/O Ratio |
-| **개선 방법** | 피처 엔지니어링, 모델 아키텍처, 학습 데이터 | Post-hoc Calibration (Platt, Isotonic 등) |
+| **평가 도구** | ROC 곡선(ROC Curve), AUC | 보정 그림(Reliability Diagram), ECE, P/O Ratio |
+| **개선 방법** | 피처 엔지니어링, 모델 아키텍처, 학습 데이터 | 사후 보정(Post-hoc Calibration) (Platt, Isotonic 등) |
 | **광고에서의 역할** | 어떤 광고를 보여줄지 **순서** 결정 | 입찰가를 **얼마로** 설정할지 결정 |
 
 ### 둘의 차이를 한 줄로
 
-Discrimination은 **순서**만 봅니다. 클릭할 노출이 안 클릭할 노출보다 높은 점수를 받았는지만 셉니다. Calibration은 **값 자체**를 봅니다. pCTR 2%라고 적었으면 실제로 100번 중 2번 클릭이 나야 합니다.
+순서 맞히기는 **순서**만 봅니다. 클릭할 노출이 안 클릭할 노출보다 높은 점수를 받았는지만 셉니다. 보정은 **값 자체**를 봅니다. pCTR 2%라고 적었으면 실제로 100번 중 2번 클릭이 나야 합니다.
 
-광고 시스템에서는 둘 다 필요하지만, Calibration이 더 치명적입니다. 이유는 명확합니다: **입찰가는 순서가 아니라 절대값으로 계산됩니다.** pCTR 0.01과 0.03은 "순서"로는 같은 방향이지만, 입찰가로는 3배 차이입니다.
+광고 시스템에서는 둘 다 필요하지만, 보정이 더 치명적입니다. 이유는 명확합니다: **입찰가는 순서가 아니라 절대값으로 계산됩니다.** pCTR 0.01과 0.03은 "순서"로는 같은 방향이지만, 입찰가로는 3배 차이입니다.
 
 ---
 
-## 2. Calibration이 광고 비즈니스에 미치는 영향
+## 2. 보정이 광고 비즈니스에 미치는 영향
 
-### Over-confident (과대 예측) 시나리오
+### 과대 예측(Over-confident) (과대 예측) 시나리오
 
-pCTR을 실제보다 높게 예측하면, True Value가 과대 계산되고, 입찰가를 높게 제출합니다.
+pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입찰가를 높게 제출합니다.
 
 | 항목 | 실제 | 모델 예측 |
 |------|------|----------|
 | CTR | 1% | 3% (3배 과대) |
-| Conversion Value | `$10` | `$10` |
-| True Value | `$0.10` | `$0.30` |
+| 전환 가치(Conversion Value) | `$10` | `$10` |
+| 참 가치 | `$0.10` | `$0.30` |
 | 입찰가 (Bid Shading 후) | `~$0.07` | `~$0.21` |
 
 결과:
@@ -59,21 +59,21 @@ pCTR을 실제보다 높게 예측하면, True Value가 과대 계산되고, 입
 - 광고주 CPA가 3배 상승 (목표 `$10` → 실제 `$30`)
 - 광고주 이탈, 플랫폼 신뢰도 하락
 
-### Under-confident (과소 예측) 시나리오
+### 과소 예측(Under-confident) (과소 예측) 시나리오
 
-pCTR을 실제보다 낮게 예측하면, True Value가 과소 계산되고, 입찰가를 낮게 제출합니다.
+pCTR을 실제보다 낮게 예측하면, 참 가치가 과소 계산되고, 입찰가를 낮게 제출합니다.
 
 | 항목 | 실제 | 모델 예측 |
 |------|------|----------|
 | CTR | 3% | 1% (3배 과소) |
-| Conversion Value | `$10` | `$10` |
-| True Value | `$0.30` | `$0.10` |
+| 전환 가치 | `$10` | `$10` |
+| 참 가치 | `$0.30` | `$0.10` |
 | 입찰가 (Bid Shading 후) | `~$0.21` | `~$0.07` |
 
 결과:
 - 경매에서 **거의 못 이김** (win rate 급감)
 - 노출 자체가 사라짐 → 캠페인 예산 소진 못함
-- Budget Pacing이 예산을 쓰려고 입찰 강도를 높여도, True Value 자체가 낮으니 효과 없음
+- 예산 페이싱(Budget Pacing)이 예산을 쓰려고 입찰 강도를 높여도, 참 가치 자체가 낮으니 효과 없음
 
 ### 가상 데이터로 손해액을 계산해 본다
 
@@ -256,25 +256,25 @@ graph TD
     style I fill:#8a6a3a,stroke:#8a6a3a,color:#fff
 ```
 
-핵심은 이것입니다. **AUC가 높은 모델의 Miscalibration은 오히려 더 위험합니다.** AUC가 높으면 팀은 자신감을 갖고 배포합니다. 그런데 Calibration이 틀어져 있으면, 잘못된 확률값이 그 자신감을 타고 시스템 전체로 퍼집니다.
+핵심은 이것입니다. **AUC가 높은 모델의 보정 어긋남(Miscalibration)은 오히려 더 위험합니다.** AUC가 높으면 팀은 자신감을 갖고 배포합니다. 그런데 보정이 틀어져 있으면, 잘못된 확률값이 그 자신감을 타고 시스템 전체로 퍼집니다.
 
 ---
 
-## 3. Calibration 측정: 모델이 잘 보정되었는지 어떻게 아는가
+## 3. 보정 측정: 모델이 잘 보정되었는지 어떻게 아는가
 
-### Reliability Diagram (Calibration Plot)
+### 보정 그림 (Calibration Plot)
 
-Reliability Diagram 은 예측 확률과 실제 빈도를 맞대 그린 그림입니다. Calibration을 **시각적으로** 진단하는 가장 직관적인 도구입니다.
+보정 그림은 예측 확률과 실제 빈도를 맞대 그린 그림입니다. 보정을 **시각적으로** 진단하는 가장 직관적인 도구입니다.
 
 **구성 방법:**
-1. 모델의 예측 확률을 M개 bin으로 나눈다 (예: [0, 0.1), [0.1, 0.2), ...)
-2. 각 bin에 속한 샘플들의 **평균 예측 확률**(X축)과 **실제 양성 비율**(Y축)을 계산한다
+1. 모델의 예측 확률을 M개 구간(bin)으로 나눈다 (예: [0, 0.1), [0.1, 0.2), ...)
+2. 각 구간에 속한 샘플들의 **평균 예측 확률**(X축)과 **실제 양성 비율**(Y축)을 계산한다
 3. 점들을 찍어 연결한다
 
 **해석:**
-- **Perfect Calibration**: 모든 점이 대각선에 딱 붙는다 (예측 = 실제)
-- **Over-confident**: 점들이 대각선보다 **아래쪽**에 앉는다 (예측 > 실제, 과대 예측)
-- **Under-confident**: 점들이 대각선보다 **위쪽**에 뜬다 (예측 < 실제, 과소 예측)
+- **Perfect 보정**: 모든 점이 대각선에 딱 붙는다 (예측 = 실제)
+- **과대 예측**: 점들이 대각선보다 **아래쪽**에 앉는다 (예측 > 실제, 과대 예측)
+- **과소 예측**: 점들이 대각선보다 **위쪽**에 뜬다 (예측 < 실제, 과소 예측)
 
 | 패턴 | 대각선 대비 위치 | 의미 | 광고 임팩트 |
 |------|----------------|------|------------|
@@ -321,22 +321,22 @@ for c, a, n in zip(centers, accs, counts):
 #   예측=0.120  실제=0.032  (n=280)  Over ↓
 ```
 
-### ECE (Expected Calibration Error)
+### ECE (Expected 보정 Error)
 
-Reliability Diagram을 **하나의 숫자**로 요약한 것이 ECE(예측과 실제의 평균 격차)입니다.
+보정 그림을 **하나의 숫자**로 요약한 것이 ECE(예측과 실제의 평균 격차)입니다.
 
 $$ECE = \sum_{m=1}^{M} \frac{|B_m|}{n} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|$$
 
-- $M$ : bin 개수
-- $B_m$ : $m$번째 bin에 속한 샘플 집합
-- $|B_m|$ : $m$번째 bin의 샘플 수
+- $M$ : 구간 개수
+- $B_m$ : $m$번째 구간에 속한 샘플 집합
+- $|B_m|$ : $m$번째 구간의 샘플 수
 - $n$ : 전체 샘플 수
-- $\text{acc}(B_m)$ : bin $m$의 실제 양성 비율 (accuracy)
-- $\text{conf}(B_m)$ : bin $m$의 평균 예측 확률 (confidence)
+- $\text{acc}(B_m)$ : 구간 $m$의 실제 양성 비율 (accuracy)
+- $\text{conf}(B_m)$ : 구간 $m$의 평균 예측 확률 (confidence)
 
-직관적으로 해석하면: **각 bin에서 "예측 확률"과 "실제 비율"의 차이를 샘플 수로 가중 평균**한 것입니다. ECE = 0이면 완벽한 Calibration, 높을수록 miscalibrated입니다.
+직관적으로 해석하면: **각 구간에서 "예측 확률"과 "실제 비율"의 차이를 샘플 수로 가중 평균**한 것입니다. ECE = 0이면 완벽한 보정, 높을수록 miscalibrated입니다.
 
-> ECE를 계산할 때 bin 개수 $M$의 선택이 결과에 영향을 미칩니다. 일반적으로 $M = 10 \sim 20$을 사용하되, bin당 샘플 수가 충분한지(최소 수백 개) 확인해야 합니다. 샘플이 적은 bin은 노이즈가 크므로 equal-frequency binning(각 bin의 샘플 수를 균등하게)을 권장합니다.
+> ECE를 계산할 때 구간 개수 $M$의 선택이 결과에 영향을 미칩니다. 일반적으로 $M = 10 \sim 20$을 사용하되, 구간당 샘플 수가 충분한지(최소 수백 개) 확인해야 합니다. 샘플이 적은 구간은 노이즈가 크므로 equal-frequency binning(각 구간의 샘플 수를 균등하게)을 권장합니다.
 
 ```python
 import numpy as np
@@ -375,7 +375,7 @@ $$\text{P/O Ratio} = \frac{\bar{p}}{\bar{y}} = \frac{\text{평균 예측 CTR}}{\
 | P/O Ratio | 해석 | 조치 |
 |-----------|------|------|
 | 1.0 | 완벽하게 보정됨 | 유지 |
-| > 1.0 (예: 1.3) | Over-confident (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
+| > 1.0 (예: 1.3) | 과대 예측 (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
 | < 1.0 (예: 0.7) | Under-confident (30% 과소 예측) | 입찰가 30% 과소 → 보정 필요 |
 
 P/O Ratio의 진정한 가치는 **세그먼트별로 쪼개서 모니터링**할 수 있다는 점입니다.
@@ -505,7 +505,7 @@ Temperature Scaling은 **파라미터 하나**로 전체 확률 분포의 "날�
 $$q = \sigma\left(\frac{f(x)}{T}\right)$$
 
 - $T$ : Temperature 파라미터 (validation set에서 학습)
-- $T > 1$ : 확률을 부드럽게 (confident한 예측을 완화) → Over-confident 보정
+- $T > 1$ : 확률을 부드럽게 (confident한 예측을 완화) → 과대 예측 보정
 - $T < 1$ : 확률을 날카롭게 (불확실한 예측을 강화) → Under-confident 보정
 - $T = 1$ : 원래 모델 그대로
 
@@ -540,13 +540,13 @@ Histogram Binning은 예측 확률을 bin으로 나눈 후, 각 bin의 예측값
 | Temperature Scaling | 1 ($T$) | 낮음 | 매우 낮음 | 극히 낮음 (나눗셈 1회) | 높음 -- NN 모델에 특히 |
 | Histogram Binning | $M$ (bin 수) | 높음 | 높음 | 극히 낮음 (lookup) | 낮음 -- 불연속성 문제 |
 
-> 실무 권장: **Platt Scaling부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려하세요. Temperature Scaling은 Deep Learning 모델의 over-confidence가 주 문제일 때 가장 먼저 시도할 기법입니다.
+> 실무 권장: **Platt 보정(Platt Scaling)부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려하세요. Temperature 보정은 Deep Learning 모델이 과대 예측할 때 가장 먼저 시도할 기법입니다.
 
 ---
 
-## 5. 프로덕션 Calibration 파이프라인
+## 5. 프로덕션 보정 파이프라인
 
-Calibration 보정은 일회성 작업이 아닙니다. 프로덕션 환경에서는 **지속적인 모니터링과 재보정** 파이프라인이 필요합니다.
+보정은 일회성 작업이 아닙니다. 프로덕션 환경에서는 **지속적인 모니터링과 재보정** 파이프라인이 필요합니다.
 
 ```mermaid
 graph LR
@@ -580,27 +580,27 @@ graph LR
 
 ### 학습-보정 분리 원칙
 
-Calibrator를 학습할 때 **가장 흔한 실수**는 모델 학습에 사용한 데이터로 Calibrator도 학습하는 것입니다. 모델은 자기가 본 데이터에서는 실제보다 잘 맞춥니다. 그 과적합된 예측값을 기준으로 보정하면, 새 데이터에서 Calibration이 깨집니다.
+보정기(Calibrator)를 학습할 때 **가장 흔한 실수**는 모델 학습에 사용한 데이터로 보정기도 학습하는 것입니다. 모델은 자기가 본 데이터에서는 실제보다 잘 맞춥니다. 그 과적합된 예측값을 기준으로 보정하면, 새 데이터에서 보정이 깨집니다.
 
 **올바른 방법:**
 
 | 데이터셋 | 용도 | 비율 (예시) |
 |---------|------|-----------|
-| Train Set | 모델 $f(x)$ 학습 | 70% |
-| Calibration Set | Calibrator $g(\cdot)$ 학습 | 15% |
+| 학습 셋(Train Set) | 모델 $f(x)$ 학습 | 70% |
+| 보정 Set | 보정기 $g(\cdot)$ 학습 | 15% |
 | Test Set | 최종 평가 (AUC + ECE + P/O) | 15% |
 
-데이터가 부족하면 **Cross-Validation Calibration**을 씁니다.
+데이터가 부족하면 **Cross-Validation 보정**을 씁니다.
 
-1. Train Set을 K-fold로 나눈다
-2. 각 fold에서 K-1개 fold로 모델 학습, 나머지 1개 fold에서 예측값 생성
-3. 모든 fold의 예측값을 합쳐서 Calibrator 학습
+1. 학습 셋을 K-fold로 나눈다
+2. 각 조각(fold)에서 K-1개 조각으로 모델 학습, 나머지 1개 조각에서 예측값 생성
+3. 모든 조각의 예측값을 합쳐서 보정기 학습
 
-이 방법은 학습 데이터를 전부 Calibration에 쓰면서도 데이터 오염을 막습니다.
+이 방법은 학습 데이터를 전부 보정에 쓰면서도 데이터 오염을 막습니다.
 
 ### 세그먼트별 보정
 
-3절의 P/O Ratio 표에서 확인했듯, Global Calibration으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 Calibrator**를 운영합니다.
+3절의 P/O Ratio 표에서 확인했듯, Global 보정으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 보정기**를 운영합니다.
 
 **세그먼트 키 선정 기준:**
 
@@ -613,7 +613,7 @@ Calibrator를 학습할 때 **가장 흔한 실수**는 모델 학습에 사용�
 
 **구현 방식은 두 가지입니다:**
 
-**방식 1: 세그먼트별 Platt Scaling**
+**방식 1: 세그먼트별 Platt 보정**
 - 각 세그먼트에 대해 별도의 $(A_s, B_s)$를 학습
 - 장점: 세그먼트 특성에 맞는 정밀 보정
 - 단점: 세그먼트가 많으면 파라미터 관리 복잡, 데이터가 적은 세그먼트는 불안정
@@ -628,7 +628,7 @@ Calibrator를 학습할 때 **가장 흔한 실수**는 모델 학습에 사용�
 
 ### 시간에 따른 드리프트 대응
 
-Calibration은 **시간이 지나면 반드시 깨집니다.** 유저 행동, 시즌, 경쟁 환경은 계속 바뀝니다. CTR 분포가 그렇게 움직이면, 과거 데이터로 학습한 Calibrator는 더 이상 맞지 않습니다.
+보정은 **시간이 지나면 반드시 깨집니다.** 유저 행동, 시즌, 경쟁 환경은 계속 바뀝니다. CTR 분포가 그렇게 움직이면, 과거 데이터로 학습한 보정기는 더 이상 맞지 않습니다.
 
 **실시간 모니터링 체계:**
 
@@ -658,55 +658,55 @@ graph TD
 | 긴급 | < 0.8 또는 > 1.2 | 자동 재보정 트리거 |
 
 **Online Recalibration** 전략:
-- 최근 N시간(예: 6시간)의 데이터로 Calibrator 파라미터를 **온라인 갱신**
-- Platt Scaling의 경우 $(A, B)$를 exponential moving average로 업데이트
+- 최근 N시간(예: 6시간)의 데이터로 보정기 파라미터를 **온라인 갱신**
+- Platt 보정의 경우 $(A, B)$를 exponential moving average로 업데이트
 - P/O Ratio 보정의 경우, rolling P/O ratio를 직접 적용
 
-> Calibration Drift는 Concept Drift(세상이 변해 모델이 낡는 것)의 직접적인 결과입니다. Concept Drift와 모델 Staleness 문제는 따로 다뤘습니다. [Online Learning](post.html?id=online-learning-delayed-feedback) 글을 보세요. Online Learning 파이프라인과 Calibration 모니터링은 붙어 있어야 합니다.
+> 보정이 낡는 것(Calibration Drift)는 세상이 변해 모델이 낡는 것(Concept Drift)의 직접적인 결과입니다. 세상이 변해 모델이 낡는 것과 모델 Staleness 문제는 따로 다뤘습니다. [온라인 학습(Online Learning)](post.html?id=online-learning-delayed-feedback) 글을 보세요. 온라인 학습 파이프라인과 보정 모니터링은 붙어 있어야 합니다.
 
 ---
 
-## 6. Calibration vs Discrimination: Trade-off는 있는가
+## 6. 보정 vs 순서 맞히기: Trade-off는 있는가
 
-자주 받는 질문이 있습니다. "Calibration을 보정하면 AUC가 떨어지지 않나요?"
+자주 받는 질문이 있습니다. "보정을 보정하면 AUC가 떨어지지 않나요?"
 
-**답: 일반적으로 No.** Isotonic 은 순서를 지키며 계단으로 맞추는 보정입니다. Post-hoc Calibration 기법은 모두 **단조 변환(monotonic transformation)**입니다. Platt, Isotonic, Temperature 가 그렇습니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
+**답: 일반적으로 No.** Isotonic 은 순서를 지키며 계단으로 맞추는 보정입니다. 사후 보정 기법은 모두 **단조 변환(monotonic transformation)**입니다. Platt, Isotonic, Temperature 가 그렇습니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
 
 직관적으로 보겠습니다. $f(x_1) > f(x_2)$이면 단조 변환 후에도 $g(f(x_1)) > g(f(x_2))$입니다. 순서가 바뀌지 않으니 AUC는 동일합니다.
 
-| 상황 | AUC 변화 | Calibration 변화 | 설명 |
+| 상황 | AUC 변화 | 보정 변화 | 설명 |
 |------|---------|-----------------|------|
-| Post-hoc Calibration 적용 | 불변 | 개선 | 단조 변환이므로 ranking 보존 |
+| 사후 보정 적용 | 불변 | 개선 | 단조 변환이므로 ranking 보존 |
 | Calibration-aware Loss로 재학습 | 미세 변화 가능 | 개선 | Loss 함수 변경으로 모델 자체가 변함 |
 | 극단적 Isotonic 보정 (데이터 부족) | 미세 하락 가능 | 개선 (과적합 위험) | 비단조적 노이즈가 끼어들 수 있음 |
 
 **실무 원칙:**
 
-> "먼저 AUC를 최대화하고, 그다음 Calibration을 보정한다." 이 순서가 중요합니다. AUC(Discrimination)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, Calibration은 Post-hoc 보정의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
+> "먼저 AUC를 최대화하고, 그다음 보정을 보정한다." 이 순서가 중요합니다. AUC(순서 맞히기)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, 보정은 사후 보정(Post-hoc 보정)의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
 
-단, **Calibration-aware 학습**이라는 접근도 있습니다. Cross-entropy Loss 자체에 Calibration을 유도하는 성질이 있습니다. 그래서 학습 과정에서 Calibration을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 Cross-entropy Loss로 하고, 배포 전에 Calibration Layer를 한 번 더 얹습니다. 이런 **이중 보정** 전략입니다.
+단, **Calibration-aware 학습**이라는 접근도 있습니다. 교차 엔트로피 손실(Cross-entropy Loss) 자체에 보정을 유도하는 성질이 있습니다. 그래서 학습 과정에서 보정을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 교차 엔트로피 손실로 하고, 배포 전에 보정 Layer를 한 번 더 얹습니다. 이런 **이중 보정** 전략입니다.
 
 ---
 
-## 7. 실무에서 자주 만나는 Calibration 함정
+## 7. 실무에서 자주 만나는 보정 함정
 
 ### 함정 1: Label이 이미 편향되어 있다
 
-CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델이 아무리 잘 학습해도 Calibration이 깨집니다.
+CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델이 아무리 잘 학습해도 보정이 깨집니다.
 
 - **Click Flooding**: 봇 트래픽이 클릭을 부풀립니다. 관측 CTR이 실제보다 높게 잡히니, 측정된 P/O Ratio는 1보다 작아집니다(COPC는 1보다 커짐). 모델이 과소 예측하는 것처럼 보입니다.
 - **Delayed Label**: 전환이 늦게 도착해 학습 시점에는 음성으로 찍힙니다. 방향이 두 가지로 나뉘니 조심해야 합니다. 그 데이터로 학습한 모델은 확률을 낮게 보도록 배웁니다(진짜 과소 예측). 반면 아직 도착하지 않은 전환 때문에 관측값이 낮게 잡히면, 그 순간의 P/O Ratio는 1보다 크게 나옵니다(과대 예측처럼 보임). 라벨이 다 도착한 뒤에 다시 재야 합니다. 자세한 구조는 [pCVR 모델링](post.html?id=pcvr-modeling)에 있습니다.
-- **Position Bias**: 상위 노출 광고의 클릭률이 부풀려집니다. 그래서 위치별로 Calibration 오류가 달라집니다. 보정 방법은 [Position Bias & ULTR](post.html?id=position-bias-ultr)에서 다룹니다.
-- **Negative Sampling**: 무클릭 샘플을 버리고 학습하면 확률이 통째로 위로 부풉니다. 보정 없이 쓰면 심한 과대 예측이 됩니다. 되돌리는 공식은 [Negative Sampling & Bias](post.html?id=negative-sampling-bias)에 있습니다.
+- **자리 편향(Position Bias)**: 상위 노출 광고의 클릭률이 부풀려집니다. 그래서 위치별로 보정 오류가 달라집니다. 보정 방법은 [자리 편향 & ULTR](post.html?id=position-bias-ultr)에서 다룹니다.
+- **안 눌린 로그 줄이기(Negative Sampling)**: 무클릭 샘플을 버리고 학습하면 확률이 통째로 위로 부풉니다. 보정 없이 쓰면 심한 과대 예측이 됩니다. 되돌리는 공식은 [안 눌린 로그 줄이기 & Bias](post.html?id=negative-sampling-bias)에 있습니다.
 
 ### 함정 2: 학습 데이터와 서빙 데이터의 분포 차이
 
-모델은 과거 데이터로 학습하고 미래 데이터에 적용됩니다. 이 시간 차이가 Calibration을 깨뜨립니다.
+모델은 과거 데이터로 학습하고 미래 데이터에 적용됩니다. 이 시간 차이가 보정을 깨뜨립니다.
 
 - **Train/Serve Skew**: 학습 데이터의 CTR 분포와 서빙 시점의 CTR 분포가 다름
-- **Selection Bias**: 학습 데이터는 이전 모델이 선택한 광고에서만 생성 → 탐색되지 않은 영역의 Calibration 불확실
+- **Selection Bias**: 학습 데이터는 이전 모델이 선택한 광고에서만 생성 → 탐색되지 않은 영역의 보정 불확실
 
-### 함정 3: Calibration을 Global로만 확인한다
+### 함정 3: 보정을 Global로만 확인한다
 
 3절에서 강조했듯, Global P/O Ratio = 1.0이어도 세그먼트별로는 심각하게 틀릴 수 있습니다. **반드시 세그먼트별로 쪼개서** 확인해야 합니다. 특히 아래 세그먼트에서 편차가 큰 경우가 많습니다.
 
@@ -741,7 +741,7 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 
 세그먼트 키 자체도 담장 안보다 믿기 어렵습니다. 같은 Exchange 안에서도 지면 정보가 가려지거나 뭉뚱그려 오는 경우가 있습니다. 3절의 Exchange별 P/O 테이블은 열린 RTB에서 특히 중요합니다. 그런데 그 키의 신뢰도가 낮다는 게 함정입니다.
 
-낙찰가 정보도 잘려 있습니다. 진 경매의 상대 입찰가는 볼 수 없습니다. 이 잘린 데이터(censored data) 문제는 따로 정리했습니다. [Bid Shading](post.html?id=bid-shading-censored) 글을 보세요. 그래서 열린 RTB의 DSP는 예산의 일부를 일부러 탐색에 씁니다. 확실히 이길 입찰만 계속하면, 모델은 자기가 이미 아는 구간만 다시 확인하게 됩니다. 이 구조적 차이는 [Walled Garden](post.html?id=walled-garden)에 더 정리돼 있습니다.
+낙찰가 정보도 잘려 있습니다. 진 경매의 상대 입찰가는 볼 수 없습니다. 이 잘린 데이터(censored data) 문제는 따로 정리했습니다. [Bid Shading](post.html?id=bid-shading-censored) 글을 보세요. 그래서 열린 RTB의 DSP는 예산의 일부를 일부러 탐색에 씁니다. 확실히 이길 입찰만 계속하면, 모델은 자기가 이미 아는 구간만 다시 확인하게 됩니다. 이 구조적 차이는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에 더 정리돼 있습니다.
 
 ---
 
@@ -749,17 +749,17 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 
 핵심을 다섯 가지로 정리합니다.
 
-**1. AUC와 Calibration은 다른 속성이다.** AUC는 순서(ranking)의 정확도, Calibration은 확률값 자체의 정확도입니다. 광고 시스템에서는 확률값이 직접 입찰가로 변환되므로, Calibration이 비즈니스에 더 직접적인 영향을 미칩니다.
+**1. AUC와 보정은 다른 속성이다.** AUC는 순서(ranking)의 정확도, 보정은 확률값 자체의 정확도입니다. 광고 시스템에서는 확률값이 직접 입찰가로 변환되므로, 보정이 비즈니스에 더 직접적인 영향을 미칩니다.
 
-**2. Miscalibration은 시스템 전체로 전파된다.** pCTR의 Calibration 오류는 연쇄적으로 퍼집니다. True Value 왜곡, Bid Shading 오작동, Budget Pacing 오작동, 캠페인 성과 저하 순입니다.
+**2. 보정 어긋남은 시스템 전체로 전파된다.** pCTR의 보정 오류는 연쇄적으로 퍼집니다. 참 가치 왜곡, Bid Shading 오작동, 예산 페이싱 오작동, 캠페인 성과 저하 순입니다.
 
-**3. P/O Ratio는 세그먼트별로 봐야 한다.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 Miscalibration을 발견할 수 있습니다.
+**3. P/O Ratio는 세그먼트별로 봐야 한다.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 보정 어긋남을 발견할 수 있습니다.
 
-**4. Platt Scaling부터 시작하면 된다.** 대부분의 실무 상황에서 Platt Scaling이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입하세요.
+**4. Platt 보정부터 시작하면 된다.** 대부분의 실무 상황에서 Platt 보정이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입하세요.
 
-**5. Calibration은 일회성이 아니라 지속적 과정이다.** 시장은 끊임없이 변하고, Calibration은 반드시 깨집니다. 실시간 모니터링과 자동 재보정 파이프라인이 프로덕션 필수 요소입니다.
+**5. 보정은 일회성이 아니라 지속적 과정이다.** 시장은 끊임없이 변하고, 보정은 반드시 깨집니다. 실시간 모니터링과 자동 재보정 파이프라인이 프로덕션 필수 요소입니다.
 
-> AUC는 **순서를 맞히는 힘**이고, Calibration은 **값을 맞히는 힘**입니다. 광고 시스템은 둘 다 필요합니다. 순서는 맞아도 값이 틀린 모델은 경매에서 체계적으로 잘못된 가격을 제시하고, 그 비용은 고스란히 광고주와 플랫폼이 부담합니다.
+> AUC는 **순서를 맞히는 힘**이고, 보정은 **값을 맞히는 힘**입니다. 광고 시스템은 둘 다 필요합니다. 순서는 맞아도 값이 틀린 모델은 경매에서 체계적으로 잘못된 가격을 제시하고, 그 비용은 고스란히 광고주와 플랫폼이 부담합니다.
 
 ---
 

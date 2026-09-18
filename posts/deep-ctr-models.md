@@ -4,11 +4,11 @@
 
 지난 15년간 CTR 모델의 역사는 이 조합을 누가 만드느냐의 역사였습니다. 처음엔 사람이 손으로 적어 넣었습니다. 다음엔 모델이 스스로 만들었습니다. 마지막엔 모델이 유저의 행동 순서까지 읽기 시작했습니다.
 
-> 한 줄 요약: CTR 모델의 진화는 두 방향이다. 피처 조합을 사람 손에서 모델로 넘긴 방향, 유저 행동을 평균에서 attention(어느 행동에 더 무게를 둘지 고르는 방식)으로 바꾼 방향.
+> 한 줄 요약: CTR 모델의 진화는 두 방향이다. 피처 조합을 사람 손에서 모델로 넘긴 방향, 유저 행동을 평균에서 어텐션(attention)으로 바꾼 방향.
 
 pCTR은 광고 시스템의 모든 계산이 시작되는 값입니다. 이 확률이 틀리면 그 뒤가 전부 틀립니다.
 
-- 최적 입찰가를 계산하려면 True Value가 정확해야 합니다. 그 핵심이 pCTR입니다 → [Bid Shading](post.html?id=bid-shading-censored)
+- 최적 입찰가를 계산하려면 참 가치(True Value)가 정확해야 합니다. 그 핵심이 pCTR입니다 → [Bid Shading](post.html?id=bid-shading-censored)
 - 하루 수십만 번의 입찰을 배분하려면 매 기회의 가치를 알아야 합니다 → [Auto-Bidding](post.html?id=auto-bidding-pacing)
 - 어느 단계에 어떤 모델을 놓느냐는 정확도와 지연의 맞교환입니다 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 
@@ -28,44 +28,44 @@ pCTR의 정의와 eCPM으로 이어지는 길은 [pCTR 예측](post.html?id=pctr
 
 먼저 전체 지형을 봅니다. LR부터 DIEN까지, 각 모델이 CTR 예측의 어떤 문제를 해결했는지 한눈에 비교합니다.
 
-| 모델 | 연도 | 핵심 혁신 | Feature Interaction | 유저 행동 반영 | 복잡도 |
+| 모델 | 연도 | 핵심 혁신 | 피처 조합(Feature Interaction) | 유저 행동 반영 | 복잡도 |
 |------|------|----------|-------------------|-------------|-------|
-| **LR** | - | Baseline, 해석 가능 | 수동 Cross Feature | 없음 | 매우 낮음 |
-| **FM** | 2010 | Latent Vector로 Interaction 자동 학습 | 2차 (자동) | 없음 | 낮음 |
-| **FFM** | 2016 | Field-aware: 필드별 다른 Latent Vector | 2차 (필드별) | 없음 | 중간 |
+| **LR** | - | Baseline, 해석 가능 | 수동 교차 피처(Cross Feature) | 없음 | 매우 낮음 |
+| **FM** | 2010 | 숨은 벡터(Latent Vector)로 조합(Interaction) 자동 학습 | 2차 (자동) | 없음 | 낮음 |
+| **FFM** | 2016 | Field-aware: 필드별 다른 숨은 벡터 | 2차 (필드별) | 없음 | 중간 |
 | **Wide & Deep** | 2016 | Memorization + Generalization 결합 | 수동(Wide) + 암묵적(Deep) | 없음 | 중간 |
-| **DeepFM** | 2017 | FM + DNN, Embedding 공유로 End-to-End | 2차(FM) + 고차(DNN) | 없음 | 중간 |
-| **DCN** | 2017 | Cross Network으로 명시적 고차 Interaction | 명시적 고차 (L-layer) | 없음 | 중간 |
-| **DCN-v2** | 2021 | Weight Matrix + Mixture of Experts | 명시적 고차 (풍부한 표현력) | 없음 | 중~높음 |
-| **DIN** | 2018 | 후보 광고 기반 Attention으로 행동 가중 | 고차 (DNN) | Attention 기반 | 높음 |
-| **DIEN** | 2019 | GRU + AUGRU로 관심사의 시간적 변화 모델링 | 고차 (DNN) | 시퀀스 + Attention | 매우 높음 |
+| **DeepFM** | 2017 | FM + DNN, 임베딩(Embedding) 공유로 End-to-End | 2차(FM) + 고차(DNN) | 없음 | 중간 |
+| **DCN** | 2017 | 조합 층 망(Cross Network)으로 명시적 고차 조합 | 명시적 고차 (L-layer) | 없음 | 중간 |
+| **DCN-v2** | 2021 | 가중치 행렬(Weight Matrix) + Mixture of Experts | 명시적 고차 (풍부한 표현력) | 없음 | 중~높음 |
+| **DIN** | 2018 | 후보 광고 기반 어텐션(Attention)으로 행동 가중 | 고차 (DNN) | 어텐션 기반 | 높음 |
+| **DIEN** | 2019 | GRU + AUGRU로 관심사의 시간적 변화 모델링 | 고차 (DNN) | 시퀀스 + 어텐션 | 매우 높음 |
 
-> 핵심 관찰: 모델의 진화는 크게 두 방향을 따릅니다. (1) Feature Interaction(피처 조합)을 더 풍부하게 포착하는 방향, (2) 유저 행동 시퀀스를 더 정교하게 반영하는 방향. 이 두 방향이 합쳐질 때 CTR 예측의 정확도가 비약적으로 향상됩니다.
+> 핵심 관찰: 모델의 진화는 크게 두 방향을 따릅니다. (1) 피처 조합(피처 조합)을 더 풍부하게 포착하는 방향, (2) 유저 행동 시퀀스를 더 정교하게 반영하는 방향. 이 두 방향이 합쳐질 때 CTR 예측의 정확도가 비약적으로 향상됩니다.
 
 표를 위에서 아래로 읽으면 두 흐름이 보입니다.
 
-첫째, **Feature Interaction 열이 "수동"에서 "자동"으로 넘어갑니다.** LR 시대에는 엔지니어가 "관심사 × 카테고리" 같은 조합을 손으로 적어 넣었습니다. FM이 그 일을 모델에게 넘겼습니다. DCN은 3차, 4차 조합까지 자동으로 올라갔습니다.
+첫째, **피처 조합 열이 "수동"에서 "자동"으로 넘어갑니다.** LR 시대에는 엔지니어가 "관심사 × 카테고리" 같은 조합을 손으로 적어 넣었습니다. FM이 그 일을 모델에게 넘겼습니다. DCN은 3차, 4차 조합까지 자동으로 올라갔습니다.
 
 둘째, **유저 행동 열이 "없음"에서 "시퀀스"로 바뀝니다.** 2017년까지의 모델은 유저를 ID 하나로만 봤습니다. DIN부터는 "이 유저가 최근에 무엇을 눌렀는가"를 직접 읽습니다.
 
-두 방향은 서로 독립입니다. 그래서 실무에서는 섞어 씁니다. DCN-v2(피처 조합 전용 구조의 개선판)의 cross network 위에 DIN의 attention을 얹은 구조가 흔합니다. 표의 아래로 갈수록 정확도는 오르고 지연도 같이 오릅니다. 6절에서 이 맞교환을 숫자로 봅니다.
+두 방향은 서로 독립입니다. 그래서 실무에서는 섞어 씁니다. DCN-v2(피처 조합 전용 구조의 개선판)의 cross network 위에 DIN의 어텐션을 얹은 구조가 흔합니다. 표의 아래로 갈수록 정확도는 오르고 지연도 같이 오릅니다. 6절에서 이 맞교환을 숫자로 봅니다.
 
 한 가지를 미리 못 박아 둡니다. 구조를 아무리 키워도 예측의 **절대값**이 실제 클릭률과 안 맞으면 낙찰자가 틀립니다. 순위 지표만 좋아진 모델은 돈을 잃습니다. 이건 구조가 아니라 보정이 푸는 문제입니다. 자세한 건 [Calibration](post.html?id=calibration)에 있습니다.
 
 ---
 
-## 2. Sparse Feature의 도전: 왜 광고 CTR이 특별한가
+## 2. 희소 피처(Sparse Feature)의 도전: 왜 광고 CTR이 특별한가
 
 ### 광고 CTR 예측의 특수성
 
-이미지 분류나 NLP와 달리, 광고 CTR 예측은 **극도로 sparse한 categorical feature**가 지배합니다. 유저 ID, 광고 ID, 퍼블리셔 ID, 광고주 ID, 캠페인 ID, 크리에이티브 ID. 전부 categorical입니다. 각각 수십만에서 수억 개의 고유값을 가집니다.
+이미지 분류나 NLP와 달리, 광고 CTR 예측은 **극도로 sparse한 categorical 피처(feature)**가 지배합니다. 유저 ID, 광고 ID, 퍼블리셔 ID, 광고주 ID, 캠페인 ID, 크리에이티브 ID. 전부 categorical입니다. 각각 수십만에서 수억 개의 고유값을 가집니다.
 
 | 특성 | 일반 ML (이미지, NLP) | 광고 CTR 예측 |
 |------|---------------------|-------------|
-| **주요 Feature 타입** | Dense (픽셀, 임베딩) | Sparse Categorical |
-| **Feature Space 차원** | 수백~수천 | **수천만~수억** |
-| **Feature 밀도** | 거의 모든 값이 non-zero | 대부분 0 (One-hot) |
-| **Feature Interaction** | CNN/Transformer가 자동 학습 | **명시적 설계 또는 전용 아키텍처 필요** |
+| **주요 피처(Feature) 타입** | Dense (픽셀, 임베딩) | Sparse Categorical |
+| **피처 공간(Feature Space) 차원** | 수백~수천 | **수천만~수억** |
+| **피처 밀도** | 거의 모든 값이 non-zero | 대부분 0 (One-hot) |
+| **피처 조합** | CNN/Transformer가 자동 학습 | **명시적 설계 또는 전용 아키텍처 필요** |
 | **데이터 분포** | 비교적 균일 | **극도의 Long-tail** (인기 광고 << 전체) |
 
 ### One-hot의 한계와 Embedding의 필수성
@@ -415,8 +415,8 @@ graph TD
     style Output fill:#5b7d6a,stroke:#5b7d6a,color:#fff
 ```
 
-- **Wide (Memorization)**: Cross-product feature 변환을 통해 **특정 패턴을 직접 기억**합니다. "25-34세 AND 최근 게임 앱 설치 이력 AND 게임 앱 → 높은 설치율"과 같은 직접적 패턴을 기억합니다.
-- **Deep (Generalization)**: Sparse feature를 embedding한 뒤 DNN에 넣어 **본 적 없는 feature 조합에도 일반화**합니다.
+- **Wide (Memorization)**: Cross-product 피처 변환을 통해 **특정 패턴을 직접 기억**합니다. "25-34세 AND 최근 게임 앱 설치 이력 AND 게임 앱 → 높은 설치율"과 같은 직접적 패턴을 기억합니다.
+- **Deep (Generalization)**: Sparse 피처를 임베딩(embedding)한 뒤 DNN에 넣어 **본 적 없는 피처 조합에도 일반화**합니다.
 
 두 갈래는 마지막에 하나의 sigmoid로 합쳐집니다.
 
@@ -426,11 +426,11 @@ $$\hat{y} = \sigma \left( w_{wide}^T [x, \phi(x)] + w_{deep}^T a^{(l_f)} + b \ri
 
 Google Play Store에서 Wide & Deep을 적용한 결과, 기존 모델 대비 앱 설치율이 3.9% 향상되었다고 보고했습니다.
 
-**한계**: Wide 파트의 cross-product feature를 **수동으로 설계**해야 합니다. 어떤 feature 쌍을 cross할지 도메인 전문가의 개입이 필요하며, 이것이 모델의 성능 상한을 결정합니다. 수백 개의 feature가 있을 때 최적의 cross-product 조합을 찾는 것은 사실상 불가능합니다.
+**한계**: Wide 파트의 cross-product 피처를 **수동으로 설계**해야 합니다. 어떤 피처 쌍을 cross할지 도메인 전문가의 개입이 필요하며, 이것이 모델의 성능 상한을 결정합니다. 수백 개의 피처가 있을 때 최적의 cross-product 조합을 찾는 것은 사실상 불가능합니다.
 
 ### ④ DeepFM (2017)
 
-DeepFM은 Wide & Deep의 핵심 한계 — Wide 파트의 수동 feature engineering — 를 해결합니다. 핵심 아이디어: **Wide를 FM으로 대체**하고, FM과 DNN이 **embedding을 공유**하여 end-to-end로 학습합니다.
+DeepFM은 Wide & Deep의 핵심 한계 — Wide 파트의 수동 피처 engineering — 를 해결합니다. 핵심 아이디어: **Wide를 FM으로 대체**하고, FM과 DNN이 **임베딩을 공유**하여 end-to-end로 학습합니다.
 
 ```mermaid
 graph TD
@@ -494,33 +494,33 @@ graph TD
 
 $$\hat{y} = \sigma(y_{FM} + y_{DNN})$$
 
-여기서 $y_{FM}$은 FM Component의 출력입니다. 1차항과 2차 interaction을 담습니다. $y_{DNN}$은 DNN Component의 출력으로, 고차 interaction을 담습니다.
+여기서 $y_{FM}$은 FM Component의 출력입니다. 1차항과 2차 조합(interaction)을 담습니다. $y_{DNN}$은 DNN Component의 출력으로, 고차 조합을 담습니다.
 
-핵심은 FM과 DNN이 **동일한 Embedding Table을 공유**한다는 점입니다. 덕분에 세 가지가 달라집니다.
+핵심은 FM과 DNN이 **동일한 임베딩 테이블(Embedding Table)을 공유**한다는 점입니다. 덕분에 세 가지가 달라집니다.
 
-- 별도의 feature engineering이 필요 없습니다 (Wide & Deep과의 가장 큰 차이)
-- FM이 low-order interaction을, DNN이 high-order interaction을 분담합니다
-- End-to-end 학습으로 embedding이 두 component 모두에 최적화됩니다
+- 별도의 피처 engineering이 필요 없습니다 (Wide & Deep과의 가장 큰 차이)
+- FM이 low-order 조합을, DNN이 high-order 조합을 분담합니다
+- End-to-end 학습으로 임베딩이 두 component 모두에 최적화됩니다
 
 | 비교 항목 | Wide & Deep | DeepFM |
 |----------|-------------|--------|
-| Low-order Interaction | 수동 Cross Feature (Wide) | **FM이 자동 학습** |
-| High-order Interaction | DNN (Deep) | DNN (Deep) |
-| Feature Engineering | **필요 (Wide 파트)** | 불필요 |
-| Embedding 공유 | Wide와 Deep 별도 | **FM과 DNN 공유** |
+| Low-order 조합 | 수동 교차 피처 (Wide) | **FM이 자동 학습** |
+| High-order 조합 | DNN (Deep) | DNN (Deep) |
+| 피처 엔지니어링(Feature Engineering) | **필요 (Wide 파트)** | 불필요 |
+| 임베딩 공유 | Wide와 Deep 별도 | **FM과 DNN 공유** |
 | End-to-End 학습 | 부분적 | **완전한 End-to-End** |
 
 [Bid Shading](post.html?id=bid-shading-censored) 글에 실험 비교가 나옵니다. Zhou et al.이 시장 가격 분포 추정에 여러 네트워크 구조를 붙여 봤습니다. 그중 **DeepFM이 Surplus Lift +7.10%로 최고 성능**을 기록했습니다.
 
-FM의 2차 interaction과 DNN의 고차 interaction이 함께 작동한 결과입니다. 시장 가격은 exchange, 시간대, 디바이스, 광고 카테고리가 얽혀서 정해집니다. 이런 복잡한 조합을 두 갈래가 나눠서 포착했습니다.
+FM의 2차 조합과 DNN의 고차 조합이 함께 작동한 결과입니다. 시장 가격은 exchange, 시간대, 디바이스, 광고 카테고리가 얽혀서 정해집니다. 이런 복잡한 조합을 두 갈래가 나눠서 포착했습니다.
 
 ### ⑤ DCN / DCN-v2 (Google, 2017/2021)
 
-DCN(Deep & Cross Network)은 Feature Interaction 학습에 대한 또 다른 접근입니다. Cross Network 는 피처 조합을 층마다 쌓는 부분입니다. FM이 2차까지만 포착하는 한계를, **Cross Network**으로 극복합니다. Cross Network는 **명시적으로 고차 feature interaction을 학습**하되, DNN보다 파라미터 효율적입니다.
+DCN(Deep & 조합 층 망)은 피처 조합 학습에 대한 또 다른 접근입니다. 조합 층 망은 피처 조합을 층마다 쌓는 부분입니다. FM이 2차까지만 포착하는 한계를, **조합 층 망**으로 극복합니다. 조합 층 망은 **명시적으로 고차 피처 조합을 학습**하되, DNN보다 파라미터 효율적입니다.
 
-#### Cross Layer의 수식
+#### 조합 층(Cross Layer)의 수식
 
-Cross Network의 각 layer는 이렇게 정의됩니다.
+조합 층 망의 각 layer는 이렇게 정의됩니다.
 
 $$x_{l+1} = x_0 \odot (W_l x_l + b_l) + x_l$$
 
@@ -530,8 +530,8 @@ $$x_{l+1} = x_0 \cdot x_l^T w_l + b_l + x_l$$
 
 핵심 특성은 세 가지입니다.
 
-- **$L$-layer Cross Network은 $(L+1)$차까지의 feature interaction을 명시적으로 학습**합니다
-- 각 layer가 $x_0$과의 interaction을 추가하므로, interaction 차수가 layer마다 1씩 증가합니다
+- **$L$-layer 조합 층 망은 $(L+1)$차까지의 피처 조합을 명시적으로 학습**합니다
+- 각 layer가 $x_0$과의 조합을 추가하므로, 조합 차수가 layer마다 1씩 증가합니다
 - 파라미터 수는 layer당 $O(d)$로, DNN의 $O(d^2)$보다 훨씬 효율적입니다
 
 ```mermaid
@@ -565,7 +565,7 @@ graph LR
 
 #### DCN-v2 (2021)
 
-DCN의 원래 Cross Layer에서 $W_l$은 벡터였습니다. 이는 **rank-1 행렬**만 만들 수 있어 표현력이 제한됩니다. DCN-v2는 이를 **full-rank weight matrix**로 확장했습니다.
+DCN의 원래 조합 층에서 $W_l$은 벡터였습니다. 이는 **rank-1 행렬**만 만들 수 있어 표현력이 제한됩니다. DCN-v2는 이를 **full-rank weight matrix**로 확장했습니다.
 
 $$x_{l+1} = x_0 \odot (W_l x_l + b_l) + x_l$$
 
@@ -577,7 +577,7 @@ $$W_l = \sum_{i=1}^{K} G_i(x) \cdot W_l^{(i)}$$
 
 | 비교 항목 | FM | DCN | DCN-v2 |
 |----------|-----|-----|--------|
-| Interaction 차수 | 2차 | $(L+1)$차 | $(L+1)$차 |
+| 조합 차수 | 2차 | $(L+1)$차 | $(L+1)$차 |
 | Cross weight | 내적 (스칼라) | 벡터 (rank-1) | **행렬 (full-rank)** |
 | 파라미터 효율 | $O(nk)$ | $O(Ld)$ | $O(Ld^2 / K)$ (MoE) |
 | 표현력 | 제한적 | 중간 | **높음** |
@@ -586,9 +586,9 @@ $$W_l = \sum_{i=1}^{K} G_i(x) \cdot W_l^{(i)}$$
 
 ## 4. 유저 행동 시퀀스의 도입: DIN & DIEN
 
-3절의 모델들은 feature interaction을 더 풍부하게 포착하는 데 집중했습니다. 하지만 이 모델들에는 공통된 **구조적 한계**가 있습니다. 유저의 과거 행동(behavior sequence)을 고정 길이 벡터 하나로 눌러 담는다는 점입니다.
+3절의 모델들은 피처 조합을 더 풍부하게 포착하는 데 집중했습니다. 하지만 이 모델들에는 공통된 **구조적 한계**가 있습니다. 유저의 과거 행동(behavior sequence)을 고정 길이 벡터 하나로 눌러 담는다는 점입니다.
 
-유저가 지난 30일간 100개의 상품을 클릭했다고 합시다. 기존 모델은 이 100개 행동의 embedding을 하나의 벡터로 평균합니다.
+유저가 지난 30일간 100개의 상품을 클릭했다고 합시다. 기존 모델은 이 100개 행동의 임베딩을 하나의 벡터로 평균합니다.
 
 $$v_U = \frac{1}{H} \sum_{j=1}^{H} e_j \quad \text{(mean pooling)}$$
 
@@ -596,15 +596,15 @@ $$v_U = \frac{1}{H} \sum_{j=1}^{H} e_j \quad \text{(mean pooling)}$$
 
 ### ① DIN (Alibaba, 2018)
 
-DIN(Deep Interest Network)은 이 문제를 **Attention 메커니즘**으로 해결합니다. 핵심 아이디어: **현재 후보 광고(candidate ad)와 관련된 유저 행동에만 주목**합니다.
+DIN(Deep Interest Network)은 이 문제를 **어텐션 메커니즘**으로 해결합니다. 핵심 아이디어: **현재 후보 광고(candidate ad)와 관련된 유저 행동에만 주목**합니다.
 
-#### Attention 메커니즘
+#### 어텐션 메커니즘
 
-유저의 행동 히스토리 $\{e_1, e_2, ..., e_H\}$가 있습니다. 후보 광고 embedding $v_A$가 주어지면 유저 표현을 이렇게 만듭니다.
+유저의 행동 히스토리 $\{e_1, e_2, ..., e_H\}$가 있습니다. 후보 광고 임베딩 $v_A$가 주어지면 유저 표현을 이렇게 만듭니다.
 
 $$v_U(A) = f(v_A, e_1, e_2, ..., e_H) = \sum_{j=1}^{H} a(e_j, v_A) \cdot e_j$$
 
-여기서 attention weight $a(e_j, v_A)$는 softmax로 정규화한 관련성 점수입니다.
+여기서 어텐션 weight $a(e_j, v_A)$는 softmax로 정규화한 관련성 점수입니다.
 
 $$a(e_j, v_A) = \frac{\exp(\text{MLP}(e_j, v_A, e_j - v_A, e_j \odot v_A))}{\sum_{k=1}^{H} \exp(\text{MLP}(e_k, v_A, e_k - v_A, e_k \odot v_A))}$$
 
@@ -734,14 +734,14 @@ mean pooling은 어느 광고를 채점하든 60.0%로 고정입니다. 광고�
 
 #### DIN vs 기존 방식 비교
 
-| 비교 항목 | 기존 (Sum/Mean Pooling) | DIN (Attention) |
+| 비교 항목 | 기존 (Sum/Mean Pooling) | DIN (어텐션) |
 |----------|----------------------|-----------------|
 | 유저 표현 | 고정 (후보 광고와 무관) | **후보 광고에 따라 동적 변화** |
 | 정보 손실 | 다양한 관심사가 평균화 | **관련 행동만 선택적 증폭** |
-| 계산 비용 | $O(H)$ | $O(H \cdot d)$ (attention 계산) |
+| 계산 비용 | $O(H)$ | $O(H \cdot d)$ (어텐션 계산) |
 | 후보 광고 수 $N$일 때 | 유저 표현 1번 계산 | **$N$번 계산 (서빙 비용 증가)** |
 
-> 서빙 관점의 주의점: DIN에서 유저 표현은 후보 광고마다 달라집니다. 후보가 50개면 attention을 50번 계산해야 합니다. Multi-Stage Ranking(후보를 단계마다 줄이며 고르는 구조)이 필수인 이유가 여기 있습니다. DIN 같은 무거운 모델은 Ranking 단계(50개 이하)에서만 씁니다. 단계별 배치는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
+> 서빙 관점의 주의점: DIN에서 유저 표현은 후보 광고마다 달라집니다. 후보가 50개면 어텐션을 50번 계산해야 합니다. 단계별 랭킹(Multi-Stage Ranking)이 필수인 이유가 여기 있습니다. DIN 같은 무거운 모델은 Ranking 단계(50개 이하)에서만 씁니다. 단계별 배치는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.
 
 ### ② DIEN (Alibaba, 2019)
 
@@ -811,7 +811,7 @@ $$L_{aux} = -\frac{1}{T-1} \sum_{t=1}^{T-1} \left[ \log \sigma(h_t^T e_{t+1}^+) 
 
 #### Interest Evolution Layer
 
-AUGRU(Attention-based GRU)로 **후보 광고와 관련된 관심사의 시간적 변화**를 추적합니다. 일반 GRU의 update gate를 attention score로 조절합니다.
+AUGRU(Attention-based GRU)로 **후보 광고와 관련된 관심사의 시간적 변화**를 추적합니다. 일반 GRU의 update gate를 어텐션 score로 조절합니다.
 
 $$a_t = \text{Attention}(h_t, v_A)$$
 
@@ -835,7 +835,7 @@ $a_t$가 낮으면 후보 광고와 무관한 관심사라는 뜻입니다. 이�
 
 | 비교 항목 | DIN | DIEN |
 |----------|-----|------|
-| 유저 행동 모델링 | Attention (순서 무시) | **GRU + Attention (순서 반영)** |
+| 유저 행동 모델링 | 어텐션 (순서 무시) | **GRU + 어텐션 (순서 반영)** |
 | 관심사 변화 | 반영 불가 | **시간적 evolution 추적** |
 | Auxiliary Loss | 없음 | **다음 행동 예측으로 hidden state 강화** |
 | 모델 복잡도 | 중간 | 높음 (GRU + AUGRU) |
@@ -849,15 +849,15 @@ $a_t$가 낮으면 후보 광고와 무관한 관심사라는 뜻입니다. 이�
 
 모델을 고르는 기준은 논문이 나온 순서가 아닙니다. 실제로 물어야 할 것은 세 가지입니다.
 
-**유저 행동 로그가 쌓여 있는가.** DIN과 DIEN은 유저 한 명당 수십 개의 행동 시퀀스를 전제로 합니다. 시퀀스 평균 길이가 3~4개면 attention이 볼 게 없습니다. 그러면 mean pooling과 결과가 거의 같아집니다. 이 조건은 서비스 형태가 결정합니다. 7절과 8절에서 자세히 봅니다.
+**유저 행동 로그가 쌓여 있는가.** DIN과 DIEN은 유저 한 명당 수십 개의 행동 시퀀스를 전제로 합니다. 시퀀스 평균 길이가 3~4개면 어텐션이 볼 게 없습니다. 그러면 mean pooling과 결과가 거의 같아집니다. 이 조건은 서비스 형태가 결정합니다. 7절과 8절에서 자세히 봅니다.
 
-**피처 조합을 관리할 사람이 있는가.** LR과 Wide & Deep의 성능은 cross feature 목록의 품질이 좌우합니다. 그 목록을 계속 손볼 사람이 없으면 DeepFM 쪽이 낫습니다. 조합을 모델이 알아서 배우기 때문입니다.
+**피처 조합을 관리할 사람이 있는가.** LR과 Wide & Deep의 성능은 cross 피처 목록의 품질이 좌우합니다. 그 목록을 계속 손볼 사람이 없으면 DeepFM 쪽이 낫습니다. 조합을 모델이 알아서 배우기 때문입니다.
 
 **지연 예산이 몇 ms인가.** 6절에서 보듯 DIEN은 DeepFM의 3배 이상 걸립니다. 예산이 3ms인데 5ms 모델을 올리면 응답이 타임아웃으로 버려집니다. 정확도가 아니라 응답률이 깎이므로 손해가 훨씬 큽니다.
 
-| 상황 | 트래픽 규모 | 유저 행동 데이터 | 서빙 레이턴시 제약 | Feature Engineering 리소스 | 추천 모델 |
+| 상황 | 트래픽 규모 | 유저 행동 데이터 | 서빙 레이턴시 제약 | 피처 엔지니어링 리소스 | 추천 모델 |
 |------|-----------|-------------|---------------|----------------------|---------|
-| **MVP / 초기** | 소규모 (일 수십만) | 없거나 적음 | 느슨 (50ms+) | 적음 | **LR + 수동 Cross Feature** |
+| **MVP / 초기** | 소규모 (일 수십만) | 없거나 적음 | 느슨 (50ms+) | 적음 | **LR + 수동 교차 피처** |
 | **성장기** | 중규모 (일 수백만) | 기본 클릭 로그 | 보통 (20ms) | 중간 | **DeepFM** |
 | **대규모, 행동 데이터 부족** | 대규모 (일 수억) | 적음 | 엄격 (10ms) | 많음 | **DCN-v2** |
 | **대규모, 행동 데이터 풍부** | 대규모 (일 수억) | 풍부한 클릭/구매 시퀀스 | Ranking 단계 5ms | 많음 | **DIN** |
@@ -890,9 +890,9 @@ $a_t$가 낮으면 후보 광고와 무관한 관심사라는 뜻입니다. 이�
 
 모델이 복잡해질수록 CTR 예측 정확도는 올라가지만, 서빙 레이턴시도 증가합니다. 100ms RTB 타임아웃 안에서 모든 것이 완료되어야 하므로, 모델에 할당할 수 있는 시간은 기껏해야 3-5ms입니다.
 
-아래는 **가상 데이터**입니다. 실제 벤치마크가 아니라, 한 서비스에서 같은 로그로 같은 피처를 써서 순서대로 올려 봤을 때의 전형적인 모양을 숫자로 옮긴 것입니다. base CTR 2.5%, 해시 버킷 400만, embedding 16차원을 가정했습니다.
+아래는 **가상 데이터**입니다. 실제 벤치마크가 아니라, 한 서비스에서 같은 로그로 같은 피처를 써서 순서대로 올려 봤을 때의 전형적인 모양을 숫자로 옮긴 것입니다. base CTR 2.5%, 해시 버킷 400만, 임베딩 16차원을 가정했습니다.
 
-| 모델 | AUC | LogLoss | 파라미터 수 | embedding 비중 | 추론(50개 배치) | FP32 크기 |
+| 모델 | AUC | LogLoss | 파라미터 수 | 임베딩 비중 | 추론(50개 배치) | FP32 크기 |
 |------|-----|---------|----------|-------------|-------------|--------|
 | 상수 예측(2.5%) | 0.500 | 0.1169 | 1 | 0% | — | — |
 | LR (원 피처) | 0.698 | 0.1152 | 400만 | 0% | 0.1ms | 15 MB |
@@ -907,11 +907,11 @@ $a_t$가 낮으면 후보 광고와 무관한 관심사라는 뜻입니다. 이�
 
 이 표에서 세 가지를 읽어야 합니다.
 
-첫째, **AUC 증가폭이 계단마다 줄어듭니다.** LR에 cross feature를 붙인 첫 계단이 +0.026으로 가장 큽니다. DeepFM에서 DIEN까지 세 계단을 다 올라가도 +0.011입니다. 반면 레이턴시는 1.5ms에서 5.2ms로 3.5배가 됩니다.
+첫째, **AUC 증가폭이 계단마다 줄어듭니다.** LR에 cross 피처를 붙인 첫 계단이 +0.026으로 가장 큽니다. DeepFM에서 DIEN까지 세 계단을 다 올라가도 +0.011입니다. 반면 레이턴시는 1.5ms에서 5.2ms로 3.5배가 됩니다.
 
 둘째, **LogLoss는 0.1118~0.1169 사이에 갇혀 있습니다.** 클릭률이 2.5%인 데이터에서는 이 범위를 벗어날 수 없습니다. 아무것도 안 배운 상수 예측이 이미 0.1169이기 때문입니다. CTR 예측에서 지표 개선폭이 소수 넷째 자리 단위인 이유입니다.
 
-셋째, **파라미터 수는 구조와 거의 무관합니다.** DCN-v2와 DIN의 차이는 0.4%뿐입니다. DeepFM까지 넓혀도 6% 남짓입니다. 전부 embedding table이 잡아먹기 때문입니다. 직접 세어 봅니다.
+셋째, **파라미터 수는 구조와 거의 무관합니다.** DCN-v2와 DIN의 차이는 0.4%뿐입니다. DeepFM까지 넓혀도 6% 남짓입니다. 전부 임베딩 table이 잡아먹기 때문입니다. 직접 세어 봅니다.
 
 ```python
 # 구조를 바꿔도 모델 크기는 거의 안 변한다 — embedding table이 전부 잡아먹기 때문이다.
@@ -983,7 +983,7 @@ print(f"  → embedding table의 {att_mlp/emb_table*100:.4f}%")
 #   → embedding table의 0.0133%
 ```
 
-마지막 줄이 이 절의 핵심입니다. DIN의 attention MLP는 8,481개 파라미터입니다. embedding table의 **0.0133%**입니다. 구조를 바꿔서 얻는 정확도는 파라미터를 늘려서 얻은 것이 아닙니다. 같은 크기의 embedding을 더 잘 쓰는 방법을 바꾼 것입니다.
+마지막 줄이 이 절의 핵심입니다. DIN의 어텐션 MLP는 8,481개 파라미터입니다. 임베딩 table의 **0.0133%**입니다. 구조를 바꿔서 얻는 정확도는 파라미터를 늘려서 얻은 것이 아닙니다. 같은 크기의 임베딩을 더 잘 쓰는 방법을 바꾼 것입니다.
 
 그래서 실무의 병목은 모델 크기가 아니라 **연산 순서**입니다. DIEN이 느린 이유도 파라미터가 많아서가 아닙니다. GRU가 시점을 하나씩 순서대로 밟아야 해서, 병렬로 계산할 수 없기 때문입니다.
 
@@ -997,9 +997,9 @@ $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L
 
 **Quantization**: FP32 → FP16 → INT8로 모델 정밀도를 낮춥니다. 모델 크기가 2-4배 줄고, 추론 속도가 1.5-3배 빨라지며, 정확도 손실은 보통 0.1% 미만입니다.
 
-**Embedding Compression**: 전체 모델 크기의 90% 이상을 차지하는 Embedding Table을 압축합니다. Hash Embedding, Mixed-Dimension Embedding, Pruning 등의 기법이 있습니다.
+**임베딩 Compression**: 전체 모델 크기의 90% 이상을 차지하는 임베딩 테이블을 압축합니다. Hash 임베딩, Mixed-Dimension 임베딩, Pruning 등의 기법이 있습니다.
 
-> 경량화 기법의 상세는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다뤘습니다. 피처 공급 파이프라인은 [Feature Store](post.html?id=feature-store-serving)에 있습니다.
+> 경량화 기법의 상세는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다뤘습니다. 피처 공급 파이프라인은 [피처 저장소(Feature Store)](post.html?id=feature-store-serving)에 있습니다.
 
 ---
 
@@ -1009,16 +1009,16 @@ $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L
 
 네이버·카카오·쿠팡 같은 담장 안 플랫폼에는 로그인이 있습니다. 유저가 검색하고, 클릭하고, 장바구니에 넣고, 결제한 기록이 하나의 계정에 모입니다. 앱을 지웠다 다시 깔아도 같은 계정으로 이어집니다.
 
-이 조건이 DIN류 모델의 전제입니다. 유저 한 명당 최근 행동 50개, 100개를 꺼내 올 수 있습니다. attention이 그중에서 후보 광고와 관련된 것을 골라낼 수 있습니다. 6절 가상 표에서 DIN이 DeepFM보다 +0.008 앞선 것도 이 시퀀스를 전제로 한 숫자입니다.
+이 조건이 DIN류 모델의 전제입니다. 유저 한 명당 최근 행동 50개, 100개를 꺼내 올 수 있습니다. 어텐션이 그중에서 후보 광고와 관련된 것을 골라낼 수 있습니다. 6절 가상 표에서 DIN이 DeepFM보다 +0.008 앞선 것도 이 시퀀스를 전제로 한 숫자입니다.
 
 담장 안에서 실제로 챙기는 것들을 적어 봅니다.
 
-- **유저 ID를 그대로 embedding할 수 있습니다.** 계정이 안정적이라 hashing 없이 실제 ID를 쓸 수 있습니다. Cold-start가 신규 가입자에만 발생합니다.
+- **유저 ID를 그대로 임베딩할 수 있습니다.** 계정이 안정적이라 hashing 없이 실제 ID를 쓸 수 있습니다. Cold-start가 신규 가입자에만 발생합니다.
 - **행동에 종류가 붙습니다.** 검색·클릭·장바구니·구매를 구분해서 시퀀스에 넣습니다. "장바구니에 넣었지만 안 산 상품"은 클릭보다 훨씬 강한 신호입니다.
 - **비광고 로그가 학습 데이터가 됩니다.** 커머스 검색·상품 조회 기록은 광고 노출과 무관하게 쌓입니다. 광고 로그만으로는 절대 못 얻는 양입니다.
 - **시퀀스 길이가 길어 DIEN의 순서 정보가 살아납니다.** 관심사가 옮겨 가는 궤적을 실제로 볼 수 있습니다.
 
-대신 비용을 냅니다. 유저당 100개 행동을 매 요청마다 꺼내 오면 Feature Store의 부하가 커집니다. 그래서 실무에서는 시퀀스를 잘라 씁니다. 최근 N개만 쓰거나, 미리 계산한 관심사 벡터를 캐시에 올려 둡니다. 이 절충의 상세는 [Feature Store](post.html?id=feature-store-serving)에서 다룹니다.
+대신 비용을 냅니다. 유저당 100개 행동을 매 요청마다 꺼내 오면 피처 저장소의 부하가 커집니다. 그래서 실무에서는 시퀀스를 잘라 씁니다. 최근 N개만 쓰거나, 미리 계산한 관심사 벡터를 캐시에 올려 둡니다. 이 절충의 상세는 [피처 저장소](post.html?id=feature-store-serving)에서 다룹니다.
 
 ---
 
@@ -1030,7 +1030,7 @@ Bid Request로 들어오는 정보를 보면 이렇습니다. 도메인 또는 �
 
 문제는 그 ID가 오래 살지 못한다는 점입니다. 브라우저의 3rd-party 쿠키 제한과 모바일의 앱 추적 동의 절차 이후, 매칭되는 유저 비율 자체가 떨어졌습니다. 매칭이 되어도 그 ID로 쌓인 행동은 몇 개뿐입니다. 담장 안의 100개짜리 시퀀스와는 다른 세계입니다.
 
-시퀀스가 3~4개면 attention은 할 일이 없습니다. 3개 중에서 관련된 것을 고르는 일과 3개를 평균하는 일은 결과가 거의 같습니다. DIN의 이득은 여기서 사라집니다.
+시퀀스가 3~4개면 어텐션은 할 일이 없습니다. 3개 중에서 관련된 것을 고르는 일과 3개를 평균하는 일은 결과가 거의 같습니다. DIN의 이득은 여기서 사라집니다.
 
 그래서 열린 RTB의 모델은 다른 곳에 힘을 씁니다.
 
@@ -1039,7 +1039,7 @@ Bid Request로 들어오는 정보를 보면 이렇습니다. 도메인 또는 �
 - **도메인·앱 단위 집계 피처가 유저 피처를 대신합니다.** "이 도메인의 최근 7일 CTR" 같은 값이 무거운 유저 시퀀스보다 실전에서 강합니다.
 - **입찰 자체의 왜곡을 함께 다뤄야 합니다.** 이긴 입찰만 결과를 볼 수 있는 구조라 학습 데이터가 편향됩니다 → [Bid Shading](post.html?id=bid-shading-censored)
 
-정리하면 이렇습니다. 담장 안에서는 **유저를 아는 것**이 강점이라서 모델의 진화가 시퀀스 방향으로 갔습니다. 열린 RTB에서는 **자리를 아는 것**이 강점이라서 교차 방향으로 갔습니다. 두 세계의 지형 차이는 [Walled Garden](post.html?id=walled-garden)에서 다룹니다.
+정리하면 이렇습니다. 담장 안에서는 **유저를 아는 것**이 강점이라서 모델의 진화가 시퀀스 방향으로 갔습니다. 열린 RTB에서는 **자리를 아는 것**이 강점이라서 교차 방향으로 갔습니다. 두 세계의 지형 차이는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에서 다룹니다.
 
 ---
 
@@ -1047,15 +1047,15 @@ Bid Request로 들어오는 정보를 보면 이렇습니다. 도메인 또는 �
 
 CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 
-1. **Sparse Feature에서 Feature Interaction이 핵심이다** -- 개별 feature보다 feature 간의 조합이 CTR을 결정합니다. LR의 수동 cross feature에서 FM의 자동 2차 interaction, DCN의 명시적 고차 interaction으로 진화했습니다.
+1. **희소 피처에서 피처 조합이 핵심이다** -- 개별 피처보다 피처 간의 조합이 CTR을 결정합니다. LR의 수동 cross 피처에서 FM의 자동 2차 조합, DCN의 명시적 고차 조합으로 진화했습니다.
 
-2. **Embedding 공유가 End-to-End 학습을 가능하게 했다** -- DeepFM이 FM과 DNN의 embedding을 공유함으로써 수동 feature engineering 없이도 low-order와 high-order interaction을 동시에 포착합니다.
+2. **임베딩 공유가 End-to-End 학습을 가능하게 했다** -- DeepFM이 FM과 DNN의 임베딩을 공유함으로써 수동 피처 engineering 없이도 low-order와 high-order 조합을 동시에 포착합니다.
 
-3. **유저 행동 시퀀스는 고정 벡터로 압축할 수 없다** -- DIN의 Attention은 후보 광고에 따라 유저 표현을 동적으로 변화시키고, DIEN의 AUGRU는 관심사의 시간적 변화까지 추적합니다.
+3. **유저 행동 시퀀스는 고정 벡터로 압축할 수 없다** -- DIN의 어텐션은 후보 광고에 따라 유저 표현을 동적으로 변화시키고, DIEN의 AUGRU는 관심사의 시간적 변화까지 추적합니다.
 
-4. **프로덕션에서는 모델 복잡도와 서빙 레이턴시의 균형이 전부다** -- 아무리 정확한 모델도 10ms 안에 돌지 못하면 쓸모없습니다. Multi-Stage Ranking에서 각 단계에 적합한 모델을 배치하고, Distillation과 Quantization으로 경량화해야 합니다.
+4. **프로덕션에서는 모델 복잡도와 서빙 레이턴시의 균형이 전부다** -- 아무리 정확한 모델도 10ms 안에 돌지 못하면 쓸모없습니다. 단계별 랭킹에서 각 단계에 적합한 모델을 배치하고, Distillation과 Quantization으로 경량화해야 합니다.
 
-5. **모델 아키텍처는 수단이고, 최종 목표는 정확한 pCTR이다** -- 정확한 pCTR → 정확한 True Value ($V = pCTR \times \text{ConvValue}$) → 효율적 [Bid Shading](post.html?id=bid-shading-censored) → 최적 [Auto-Bidding](post.html?id=auto-bidding-pacing). 모델은 이 파이프라인의 한 조각입니다.
+5. **모델 아키텍처는 수단이고, 최종 목표는 정확한 pCTR이다** -- 정확한 pCTR → 정확한 참 가치 ($V = pCTR \times \text{ConvValue}$) → 효율적 [Bid Shading](post.html?id=bid-shading-censored) → 최적 [Auto-Bidding](post.html?id=auto-bidding-pacing). 모델은 이 파이프라인의 한 조각입니다.
 
 ---
 
@@ -1075,10 +1075,10 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 
 - **최신 모델이 항상 좋은 게 아니다.** DIN의 이득은 유저 시퀀스에서 나옵니다. 시퀀스가 짧으면 DeepFM과 결과가 같습니다. 8절에서 봤듯 열린 RTB에서는 이 조건이 안 갖춰집니다.
 - **AUC가 올라도 돈은 잃을 수 있다.** AUC는 순위만 봅니다. 예측 확률의 절대값이 틀리면 입찰가가 통째로 틀어집니다. 1절에서 못 박은 대로, 이건 보정의 몫입니다 → [Calibration](post.html?id=calibration)
-- **파라미터가 많아서 느린 게 아니다.** 6절에서 DIN의 attention은 전체의 0.0133%였습니다. DIEN이 느린 진짜 이유는 GRU를 순서대로 밟아야 해서입니다.
+- **파라미터가 많아서 느린 게 아니다.** 6절에서 DIN의 어텐션은 전체의 0.0133%였습니다. DIEN이 느린 진짜 이유는 GRU를 순서대로 밟아야 해서입니다.
 - **LogLoss 0.04 같은 숫자는 나올 수 없다.** 클릭률 2~3%대 데이터에서 LogLoss는 대략 0.09~0.13입니다. 그보다 훨씬 낮으면 라벨이 새어 들어갔거나 계산이 틀린 것입니다.
-- **"교차 피처를 자동으로 배운다"는 말이 전처리를 없애 주지는 않는다.** FM·DeepFM이 배우는 건 embedding 간의 조합입니다. 어떤 필드를 모델에 넣을지, 연속형 값을 어떻게 나눌지는 여전히 사람이 정합니다.
-- **DIN의 attention은 후보마다 다시 계산된다.** 유저 표현을 미리 캐시할 수 없습니다. 후보 50개면 50번 계산합니다. 이게 Pre-Ranking과 Ranking을 나누는 이유입니다.
+- **"교차 피처를 자동으로 배운다"는 말이 전처리를 없애 주지는 않는다.** FM·DeepFM이 배우는 건 임베딩 간의 조합입니다. 어떤 필드를 모델에 넣을지, 연속형 값을 어떻게 나눌지는 여전히 사람이 정합니다.
+- **DIN의 어텐션은 후보마다 다시 계산된다.** 유저 표현을 미리 캐시할 수 없습니다. 후보 50개면 50번 계산합니다. 이게 Pre-Ranking과 Ranking을 나누는 이유입니다.
 
 ---
 

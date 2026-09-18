@@ -45,7 +45,7 @@ flowchart LR
 
 - **광고주(Advertiser)**: "이런 사람에게, 이 예산으로, 이 소재를 보여 주세요."
 - **DSP(Demand-Side Platform, 수요 측 플랫폼)**: 광고주를 대신해 **경매에 참가하고 입찰가를 결정**하는 프로그램입니다. 네이버 GFA, 카카오모먼트, Google DV360, The Trade Desk 가 DSP 입니다.
-- **Ad Exchange(광고 거래소)**: 수많은 DSP의 입찰을 받아 **1등을 고르는 경매장**.
+- **광고 거래소(Ad Exchange)**: 수많은 DSP의 입찰을 받아 **1등을 고르는 경매장**.
 - **SSP(Supply-Side Platform, 공급 측 플랫폼)**: 매체사를 대신해 **경매를 운영**하고 매체 수익을 최적화. Google Ad Manager, Magnite, PubMatic 등.
 - **매체(Publisher)**: 광고 지면을 가진 앱/웹사이트.
 - **사용자(User)**: 결국 광고를 보는 사람.
@@ -53,7 +53,7 @@ flowchart LR
 - **DMP(Data Management Platform)**: **3rd-party 데이터**(외부 데이터 브로커)를 모으는 곳입니다. 쿠키리스 전환으로 영향력이 줄고 있습니다.
 - **MMP(Mobile Measurement Partner)**: 광고가 실제로 설치/전환으로 이어졌는지 추적. AppsFlyer, Adjust 등.
 
-한 번의 광고 요청이 발생하면 어떤 일이 벌어질까요? SSP가 경매를 열고, Ad Exchange가 수백 개 DSP에게 "얼마 내실래요?"라고 100ms 안에 물어봅니다. 가장 높게 쓴 DSP의 소재가 사용자 화면에 뜹니다. 이 모든 일이 **사용자가 앱을 여는 바로 그 순간**에 일어납니다.
+한 번의 광고 요청이 발생하면 어떤 일이 벌어질까요? SSP가 경매를 열고, 광고 거래소가 수백 개 DSP에게 "얼마 내실래요?"라고 100ms 안에 물어봅니다. 가장 높게 쓴 DSP의 소재가 사용자 화면에 뜹니다. 이 모든 일이 **사용자가 앱을 여는 바로 그 순간**에 일어납니다.
 
 ### 이 사슬, 사실은 두 가지 버전이 있다 [무대: 열린 RTB]
 
@@ -91,7 +91,7 @@ flowchart LR
 
 1. 사용자가 앱을 연다.
 2. 매체의 SDK가 SSP에 "광고 하나 필요"라고 요청.
-3. SSP가 Ad Exchange에 "Bid Request"를 던진다.
+3. SSP가 광고 거래소에 "입찰 요청(Bid Request)"를 던진다.
 4. Exchange가 연결된 수백 개의 DSP에게 "이 유저에게 얼마 낼래?"를 물어본다.
 5. DSP가 내부 ML 모델로 값을 계산해 답을 돌려준다 — **100ms 안에**.
 6. 가장 높은 값을 쓴 DSP가 승자. 승자의 소재가 사용자 화면에 뜬다.
@@ -123,7 +123,7 @@ flowchart LR
 
 1st Price 경매에서 DSP는 "이길 최소 금액"을 알고 싶어합니다. 시장 분포를 보고 `내가 $3으로도 이길 수 있는데 굳이 $5 쓸 필요 없다`고 판단해 **입찰가를 깎는 기술**이 Bid Shading입니다. 경쟁 DSP의 입찰가는 볼 수 없습니다(Censored Data). 내가 진 경우엔 "상대가 얼마였는지"조차 모릅니다. 그래서 통계적 추정이 까다롭습니다.
 
-말로만 들으면 감이 잘 안 옵니다. 아래 데모에서 직접 경매를 돌려 보세요. First Price·Second Price를 바꿔 보세요. Floor Price 는 이보다 낮으면 안 판다는 최저가입니다. 그 값을 움직이면 낙찰가가 어떻게 변하는지 보입니다.
+말로만 들으면 감이 잘 안 옵니다. 아래 데모에서 직접 경매를 돌려 보세요. First Price·Second Price를 바꿔 보세요. 최저가(Floor Price)는 이보다 낮으면 안 판다는 값입니다. 그 값을 움직이면 낙찰가가 어떻게 변하는지 보입니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-rtb.html?embed=1" height="560" loading="lazy" title="RTB 경매 미니 데모"></iframe>
@@ -144,7 +144,7 @@ flowchart LR
 
 광고 후보는 많으면 수백만 개입니다. 100ms 안에 하나를 고르려면 **다단 랭킹(Multi-Stage Ranking)**을 씁니다.
 
-1. **Retrieval(후보 생성)**: 수백만 개에서 **수백 개**로 대충 줄이기. Two-Tower 임베딩, Rule-based(사람이 조건을 손으로 적는 방식) 필터 등이 쓰인다.
+1. **후보 추리기(Retrieval)**: 수백만 개에서 **수백 개**로 대충 줄이기. Two-Tower 임베딩, 규칙 기반(Rule-based) 필터 등이 쓰인다.
 2. **Ranking(정밀 평가)**: 수백 개를 정교한 모델로 스코어링해 1등을 고른다.
 
 ### 3.2 pCTR / pCVR — 스코어의 핵심
@@ -333,7 +333,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 광고 ML 시스템을 현실에서 돌리려면 **데이터·모델·서빙**이 유기적으로 맞물려야 합니다.
 
 - **Feature Store(피처 저장소)**: 오프라인 배치 피처(어제의 CTR 등)와 스트리밍 피처(방금 클릭)가 한 곳에서 조회되도록 정리.
-- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않습니다. Multi-Stage Ranking, Embedding Lookup 최적화, GPU/CPU 혼합 추론.
+- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않습니다. 단계별 랭킹(Multi-Stage Ranking), Embedding Lookup 최적화, GPU/CPU 혼합 추론.
 - **Online Learning**: 유저 행동은 매일 바뀌므로 모델도 주기적으로(혹은 스트리밍으로) 업데이트해야 합니다. Delayed Feedback(전환까지 며칠 걸림) 처리는 이 블로그의 단골 주제입니다.
 
 ### 더 깊이 보기
@@ -356,11 +356,11 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 | 나는 이런 사람 | 추천 순서 |
 |---|---|
 | **광고 기술 자체가 처음** | ① [생태계 지도](post.html?id=adtech-ecosystem-map) → ② [Ad Serving Flow](post.html?id=ad-serving-flow) → ③ [eCPM과 랭킹](post.html?id=ecpm-ranking) |
-| **입찰/경매가 궁금** | ① [Ad Network vs Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
+| **입찰/경매가 궁금** | ① [광고 네트워크(Ad Network) vs Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
 | **ML 모델링이 궁금** | ① [Deep CTR 모델 진화](post.html?id=deep-ctr-models) → ② [Calibration](post.html?id=calibration) → ③ [Multi-Task Learning](post.html?id=multi-task-learning) → ④ [Position Bias](post.html?id=position-bias-ultr) |
 | **밴딧/탐색이 궁금** | ① [Exploration vs Exploitation](post.html?id=exploration-exploitation) → ② [MAB 치트시트](post.html?id=mab-summary) → ③ [UCB vs TS](post.html?id=ucb-vs-ts) → ④ [LinUCB](post.html?id=disjoint-linucb) |
-| **인프라/서빙이 궁금** | ① [Feature Store](post.html?id=feature-store-serving) → ② [모델 서빙 아키텍처](post.html?id=model-serving-architecture) → ③ [Two-Tower Retrieval](post.html?id=two-tower-retrieval) → ④ [로그 파이프라인](post.html?id=ad-log-pipeline) |
-| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [Walled Garden](post.html?id=walled-garden) |
+| **인프라/서빙이 궁금** | ① [Feature Store](post.html?id=feature-store-serving) → ② [모델 서빙 아키텍처](post.html?id=model-serving-architecture) → ③ [Two-Tower 후보 추리기](post.html?id=two-tower-retrieval) → ④ [로그 파이프라인](post.html?id=ad-log-pipeline) |
+| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [닫힌 생태계(Walled Garden)](post.html?id=walled-garden) |
 
 경로 중간에 낯선 용어가 나와도 당황하지 마세요. 대부분 그 글 안에서 다시 설명됩니다.
 
@@ -369,10 +369,10 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 ## 8. 30분 요약 — 한 장 정리
 
 1. 광고 시스템은 **광고주·매체·사용자**의 이해관계를 100ms 안에 맞추는 실시간 경매.
-2. 경로는 **광고주 → DSP → Ad Exchange → SSP → 매체 → 사용자**. 측정은 MMP·Attribution이 담당.
+2. 경로는 **광고주 → DSP → 광고 거래소 → SSP → 매체 → 사용자**. 측정은 MMP·Attribution이 담당.
 3. 경매는 대부분 **1st Price** 입니다. 그래서 DSP 는 **Bid Shading** 으로 입찰가를 깎습니다.
 4. 서로 다른 가격체계는 **eCPM**으로 환산해 비교하고, 여기에 **pCTR · pCVR**이 들어간다.
-5. 랭킹은 **Retrieval(후보 생성) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN(유저 행동의 변해 가는 관심을 읽는 구조) 까지 진화했습니다.
+5. 랭킹은 **후보 추리기(후보 생성) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN(유저 행동의 변해 가는 관심을 읽는 구조) 까지 진화했습니다.
 6. 모델이 아무리 AUC 가 높아도 **Calibration** 이 안 되면 돈을 잃습니다.
 7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
 8. 측정은 **CTR·CVR·ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어졌습니다.

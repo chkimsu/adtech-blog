@@ -9,8 +9,8 @@
 // 네 칸이었는데, 색을 정본 17색 한 벌로 줄이면서 라이트·다크 두 칸이 됐다.
 // chips 는 미리보기 타일의 [바탕, 판, 액센트, 글자] 네 색 — css 토큰과 같은 값이다.
 const THEMES = [
-  { mode: 'light', name: '라이트', chips: ['#FFFFFF', '#FAFAF9', '#9B3A21', '#17181A'] },
-  { mode: 'dark',  name: '다크',   chips: ['#17181A', '#1F2023', '#E59275', '#F4F4F5'] },
+  { mode: 'light', name: '라이트', chips: ['#FFFFFF', '#F5F7FA', '#1F4FA3', '#14171C'] },
+  { mode: 'dark',  name: '다크',   chips: ['#0E1A2F', '#142240', '#8FB4F0', '#EEF3FB'] },
 ];
 
 function getSavedTheme() {
@@ -392,7 +392,7 @@ function renderPostCard(post) {
   const worldBadges = renderWorldBadge(post, 'card');
   card.innerHTML = `
     <div class="post-card-top">
-      <div class="post-card-category" data-category="${primaryCategory}">${primaryCategory}</div>
+      <div class="post-card-category" data-category="${primaryCategory}"><span class="post-code">${postCode(post)}</span>${primaryCategory}</div>
       ${worldBadges ? `<span class="world-badge-group">${worldBadges}</span>` : ''}
     </div>
     <h3>${post.title}</h3>
@@ -497,8 +497,73 @@ function renderHome() {
 }
 
 function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('en-US', options);
+  // 신문 위의 청사진 — 발행일은 모노 라벨이라 2026.09.18 꼴로 짧게 적는다.
+  const s = String(dateString || '');
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10).replace(/-/g, '.') : s;
+}
+
+// ========================================
+// 신문 위의 청사진 — 글 번호, 발행선, 표제란
+// ========================================
+
+// 글 번호 — 주제 글자 + 게재 순번(날짜 오름차순). 청사진의 도면 번호 자리다. 예: M-027
+const CATEGORY_CODE = {
+  'Bidding & Auction': 'B', 'Measurement & Modeling': 'M', 'Bandits & Personalization': 'P',
+  'Targeting & Audience': 'T', 'ML Infrastructure': 'I', 'Software Engineering': 'S', 'Interview & Algorithms': 'A',
+};
+let _postNo = null;
+function postCode(post) {
+  if (typeof posts === 'undefined' || !post) return '';
+  if (!_postNo) {
+    _postNo = new Map();
+    [...posts].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : String(a.id).localeCompare(String(b.id))))
+      .forEach((p, i) => _postNo.set(p.id, i + 1));
+  }
+  const letter = CATEGORY_CODE[(post.categories || [])[0]] || 'X';
+  return `${letter}-${String(_postNo.get(post.id) || 0).padStart(3, '0')}`;
+}
+
+function escText(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+// 발행선 — 모든 페이지 헤더 위에 얇게(날짜, 부수, 구호). 표지에는 제호까지 크게.
+function renderMasthead() {
+  const header = document.querySelector('body > header');
+  if (!header || typeof posts === 'undefined' || document.querySelector('.masthead')) return;
+  const d = new Date();
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const date = `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${days[d.getDay()]}요일`;
+  const cats = new Set();
+  posts.forEach(p => (p.categories || []).forEach(c => cats.add(c)));
+  const trackCount = (typeof series !== 'undefined') ? Object.keys(series).length : 0;
+  const isCover = !!document.getElementById('cover-root');
+  const el = document.createElement('div');
+  el.className = 'masthead' + (isCover ? ' masthead-cover' : '');
+  el.innerHTML = `<div class="masthead-line"><span>${date}</span>` +
+    `<span class="mast-mid">글 ${posts.length}편 / 주제 ${cats.size} / 트랙 ${trackCount}</span>` +
+    `<span>한국어로 읽는 애드테크</span></div>` +
+    (isCover ? `<div class="masthead-title"><a href="index.html">AdTech Blog</a><p>0.1초 안에 벌어지는 광고 한 편의 여정을 글로 씁니다</p></div>` : '');
+  header.parentNode.insertBefore(el, header);
+  // 표지: 큰 제호가 보이는 동안은 머리띠의 작은 로고를 감춘다. 제호가 화면 밖으로 나가면 다시 보인다.
+  const title = el.querySelector('.masthead-title');
+  if (title && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting), { threshold: 0 }).observe(title);
+  } else if (title) {
+    header.classList.add('is-scrolled');
+  }
+}
+
+// 표제란 — 꼬리의 네 칸(프로젝트, 면, 최근 갱신, 글과 트랙 수). 청사진 오른쪽 아래 칸 자리다.
+function renderFooterBlock() {
+  const fc = document.querySelector('footer .footer-content');
+  if (!fc || typeof posts === 'undefined' || fc.querySelector('.footer-block')) return;
+  const latest = posts.map(p => String(p.date || '').slice(0, 10)).sort().pop() || '';
+  const sheet = (document.title.split(' — ')[0] || 'AdTech Blog').trim();
+  const trackCount = (typeof series !== 'undefined') ? Object.keys(series).length : 0;
+  const el = document.createElement('div');
+  el.className = 'footer-block';
+  el.innerHTML = `<div><small>PROJECT</small>AdTech Blog</div><div><small>SHEET</small>${escText(sheet)}</div>` +
+    `<div><small>REV</small>${latest}</div><div><small>POSTS / TRACKS</small>${posts.length} / ${trackCount}</div>`;
+  fc.insertBefore(el, fc.firstChild);
 }
 
 function navigateToPost(postId) {
@@ -1045,6 +1110,7 @@ async function renderPostDetail() {
   if (headerContainer) {
     headerContainer.innerHTML = `
       <div class="post-meta">
+        <span class="post-code">${postCode(post)}</span>
         <span class="post-date">${formatDate(post.date)}</span>
         <button id="bookmark-btn" class="bookmark-btn" type="button" aria-pressed="false">♢ 저장</button>
       </div>
@@ -1194,11 +1260,11 @@ async function renderPostDetail() {
       function mermaidPalette(isDark) {
         const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
         const fallback = isDark ? {
-          bgPrimary: '#17181A', bgSecondary: '#1F2023', bgTertiary: '#232327',
-          text: '#F4F4F5', border: 'rgba(244,244,245,0.24)', accentSecondary: '#8AB0E0'
+          bgPrimary: '#0E1A2F', bgSecondary: '#142240', bgTertiary: '#1B2A44',
+          text: '#EEF3FB', border: 'rgba(238,243,251,0.24)', accentSecondary: '#F0A18F'
         } : {
-          bgPrimary: '#FFFFFF', bgSecondary: '#FAFAF9', bgTertiary: '#F4F4F5',
-          text: '#17181A', border: 'rgba(23,24,26,0.22)', accentSecondary: '#20406B'
+          bgPrimary: '#FFFFFF', bgSecondary: '#F5F7FA', bgTertiary: '#F0F2F5',
+          text: '#14171C', border: 'rgba(20,23,28,0.22)', accentSecondary: '#8B1E1E'
         };
 
         const background = cssVar('--bg-primary') || fallback.bgPrimary;
@@ -1850,6 +1916,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme
   initializeTheme();
 
+  // 발행선(신문 위의 청사진) — 헤더 위, 표지에는 제호까지
+  renderMasthead();
+
   // Setup theme toggle button
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
@@ -1900,6 +1969,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Add animation to elements on scroll
   observeElements();
+
+  // 표제란(꼬리 네 칸)
+  renderFooterBlock();
 });
 
 // ========================================
@@ -1965,7 +2037,7 @@ function renderChartJsCharts(container) {
 
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const textColor = isDark ? '#D4D4D8' : '#3F3F46';
+  const textColor = isDark ? '#C9D5EA' : '#3D434D';
 
   // Chart: Feature Freshness
   const freshnessCanvas = container.querySelector('#freshnessChart');

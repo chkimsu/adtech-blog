@@ -28,8 +28,8 @@
     return {
       text: cssVar('--text-secondary') || '#3F3F46',
       muted: cssVar('--text-muted') || '#71717A',
-      accent: cssVar('--accent-primary') || '#9B3A21',
-      accent2: cssVar('--accent-secondary') || '#20406B',
+      accent: cssVar('--accent-primary') || '#1F4FA3',
+      accent2: cssVar('--accent-secondary') || '#8B1E1E',
       grid: 'rgba(128,128,128,0.18)',
       faint: 'rgba(155,58,33,0.18)',
     };

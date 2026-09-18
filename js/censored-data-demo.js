@@ -1,9 +1,9 @@
 // 캔버스·Chart.js는 CSS의 var()를 해석하지 못한다. 실제 값으로 바꿔서 넘긴다.
 // stylesheet가 아직 안 붙은 순간에 불리면 빈 문자열이 오고, 그러면 선이 안 그려진다.
 // 그래서 폴백을 둔다(라이트 테마 값 기준).
-const CSS_VAR_FALLBACK = { '--state-bad': '#9B3A21', '--state-good': '#20406B', '--state-warn': '#67696C' };
+const CSS_VAR_FALLBACK = { '--state-bad': '#1F4FA3', '--state-good': '#8B1E1E', '--state-warn': '#5C6470' };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim()
-                    || CSS_VAR_FALLBACK[n] || '#20406B';
+                    || CSS_VAR_FALLBACK[n] || '#8B1E1E';
 /**
  * Censored Data in RTB — Interactive Demo
  * ML 엔지니어 관점에서 Right-Censoring 문제를 단계별로 이해하기 위한 시뮬레이션.

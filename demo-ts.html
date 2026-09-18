@@ -91,7 +91,7 @@
             padding: 1rem;
             height: 200px;
             overflow-y: auto;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
             border: 1px solid var(--border-color);
         }
@@ -187,7 +187,7 @@
                     <div style="margin-bottom: 0.55rem;">
                         <label style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
                             <span>α₀ (성공 가중치)</span>
-                            <span id="pa-val" style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;">1</span>
+                            <span id="pa-val" style="color: var(--accent-primary); font-family: var(--font-mono); font-weight: 700;">1</span>
                         </label>
                         <input type="range" id="slider-prior-a" min="1" max="20" step="1" value="1"
                             style="width: 100%;" oninput="onPriorChange()">
@@ -195,7 +195,7 @@
                     <div style="margin-bottom: 0.5rem;">
                         <label style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
                             <span>β₀ (실패 가중치)</span>
-                            <span id="pb-val" style="color: var(--accent-primary); font-family: 'Fira Code', monospace; font-weight: 700;">1</span>
+                            <span id="pb-val" style="color: var(--accent-primary); font-family: var(--font-mono); font-weight: 700;">1</span>
                         </label>
                         <input type="range" id="slider-prior-b" min="1" max="20" step="1" value="1"
                             style="width: 100%;" oninput="onPriorChange()">

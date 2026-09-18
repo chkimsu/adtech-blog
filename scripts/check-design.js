@@ -11,16 +11,16 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 
 const PALETTE = [
-  // 라이트 17색
-  '#ffffff', '#fafaf9', '#17181a', '#3f3f46', '#71717a', '#e4e4e7', '#f0f0f1',
-  '#20406b', '#eef2f8', '#c7d4e6', '#9b3a21', '#fbede9', '#ebc9be',
-  '#67696c', '#f4f4f5', '#d9d9de', '#9a9aa2',
+  // 라이트 17색 — 신문 위의 청사진 (2026-09-18)
+  '#ffffff', '#f5f7fa', '#14171c', '#3d434d', '#697180', '#d9dee7', '#eceff4',
+  '#1f4fa3', '#eaf0fa', '#b9cbea', '#8b1e1e', '#f9ecec', '#e6c3c3',
+  '#5c6470', '#f0f2f5', '#d3d8e0', '#98a0ac',
   // 다크 17색
-  '#1f2023', '#d4d4d8', '#a1a1aa', '#34343a', '#26262a',
-  '#8ab0e0', '#1b2733', '#2e4664', '#e59275', '#301f19', '#5a3427',
-  '#232327', '#3a3a40',
+  '#0e1a2f', '#142240', '#eef3fb', '#c9d5ea', '#97a8c6', '#27395c', '#1c2c48',
+  '#8fb4f0', '#1a2c4c', '#2f4a78', '#f0a18f', '#3a2424', '#6b3a34',
+  '#a9b4c8', '#1b2a44', '#34486b', '#7a8dae',
   // 데이터 계열 6색 × 2테마 (차트 전용 · 토큰 정의부에만 나온다)
-  '#4e7bb5', '#c2653f', '#2b5f58', '#5b87be', '#b96a4c', '#6fb3a6',
+  '#4a72b5', '#a54a4a', '#2f6b63', '#5f86c7', '#c97c6c', '#6fb3a6',
   // 무채색 축약형
   '#fff', '#000',
 ];
@@ -55,9 +55,10 @@ function check(file) {
     .filter(v => v !== 'none' && !v.startsWith('inset') && !v.startsWith('var(--shadow'));
   const hex = [...new Set((css.match(/#[0-9A-Fa-f]{3,6}\b/g) || []).map(h => h.toLowerCase()))]
     .filter(h => !ALLOWED.has(h));
-  // serif 는 sans-serif 의 꼬리와 --font-serif 토큰 이름을 빼고 센다.
-  // 토큰 이름은 옛 규칙 20여 곳이 아직 참조해서 남겨 뒀고, 값은 sans 로 접혀 있다.
-  const serif = (css.replace(/sans-serif/g, '').replace(/--font-serif/g, '').replace(/font-serif/g, '')
+  // 세리프는 --font-serif 토큰 하나로만 쓴다(제목 = Noto Serif KR). 토큰 정의 한 줄과
+  // @import 주소는 빼고, 규칙 안에 서체 이름을 직접 적은 곳만 잡는다.
+  const serif = (css.replace(/--font-serif\s*:[^;]+;/g, '').replace(/@import[^;]+;/g, '')
+    .replace(/sans-serif/g, '').replace(/--font-serif/g, '').replace(/font-serif/g, '')
     .match(/\bserif\b|Noto Serif|Newsreader/g) || []).length;
   const glyph = [...new Set(body.match(BAD_GLYPH) || [])];
   const emoji = [...new Set(body.match(EMOJI) || [])];

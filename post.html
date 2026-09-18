@@ -62,8 +62,8 @@
     const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const fb = isDark
-      ? { bgPrimary: '#17181A', bgSecondary: '#1F2023', bgTertiary: '#232327', text: '#F4F4F5', border: 'rgba(244,244,245,0.24)', accentSecondary: '#8AB0E0' }
-      : { bgPrimary: '#FFFFFF', bgSecondary: '#FAFAF9', bgTertiary: '#F4F4F5', text: '#17181A', border: 'rgba(23,24,26,0.22)', accentSecondary: '#20406B' };
+      ? { bgPrimary: '#0E1A2F', bgSecondary: '#142240', bgTertiary: '#1B2A44', text: '#EEF3FB', border: 'rgba(238,243,251,0.24)', accentSecondary: '#F0A18F' }
+      : { bgPrimary: '#FFFFFF', bgSecondary: '#F5F7FA', bgTertiary: '#F0F2F5', text: '#14171C', border: 'rgba(20,23,28,0.22)', accentSecondary: '#8B1E1E' };
     const background = cssVar('--bg-primary') || fb.bgPrimary;
     const surface = cssVar('--bg-secondary') || fb.bgSecondary;
     const tertiary = cssVar('--bg-tertiary') || fb.bgTertiary;

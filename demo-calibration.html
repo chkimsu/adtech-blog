@@ -40,7 +40,7 @@
     .cal-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
     .cal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
     .cal-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
-    .cal-slider-value { text-align: right; font-family: 'Fira Code', monospace; font-weight: 700; color: var(--accent-primary); }
+    .cal-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
 
     .cal-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
     .cal-preset-btn {
@@ -55,7 +55,7 @@
     @media (max-width: 700px) { .cal-metrics { grid-template-columns: 1fr; } }
     .cal-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
     .cal-metric-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .cal-metric-value { font-size: 1.35rem; font-weight: 700; font-family: 'Fira Code', monospace; color: var(--text-primary); }
+    .cal-metric-value { font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
     .cal-metric-value.good { color: var(--state-good); }
     .cal-metric-value.warn { color: var(--series-5); }
     .cal-metric-value.bad  { color: var(--state-bad); }

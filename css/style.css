@@ -1663,14 +1663,6 @@ footer {
   padding: 0 2rem;
 }
 
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
 .footer-text {
   color: var(--text-muted);
   font-size: 0.875rem;
@@ -6221,25 +6213,10 @@ pre { border-color: var(--rule); }
 .search-modal-dialog { background: var(--paper); border-color: var(--ink); }
 .search-modal-hint { font-family: var(--font-mono); font-size: 0.7rem; }
 
-/* ---- 꼬리: 표제란 (청사진의 title block). main.js 의 renderFooterBlock 이 칸을 채운다 ---- */
-footer { background: var(--paper); border-top: 2px solid var(--ink); padding: 0 0 1.4rem; margin-top: 4rem; text-align: left; }
+/* ---- 꼬리: 한 줄만 남긴다 ---- */
+footer { background: var(--paper); border-top: 2px solid var(--ink); padding: 1.3rem 0 1.5rem; margin-top: 4rem; text-align: left; }
 .footer-content { max-width: 1600px; padding: 0 2rem; }
-.footer-block { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-left: 1px solid var(--rule); }
-.footer-block div {
-  padding: 0.65rem 1rem 0.7rem; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-  font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.footer-block small { display: block; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--ink3); margin-bottom: 0.25rem; }
-.footer-links { justify-content: flex-start; gap: 0; margin: 0 0 0.9rem; border-left: 1px solid var(--rule); flex-wrap: wrap; }
-.footer-links a {
-  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2);
-  padding: 0.6rem 1.1rem; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); text-decoration: none;
-}
-.footer-links a:hover { color: var(--navy); }
-.footer-text { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em; color: var(--ink3); }
-@media (max-width: 720px) {
-  .footer-block { grid-template-columns: 1fr 1fr; }
-}
+.footer-text { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em; color: var(--ink3); margin: 0; }
 
 /* ---- 손본 것: 빵부스러기는 nav 공용 규칙(space-between)을 물려받아 흩어졌다. 왼쪽부터 잇는다 ---- */
 .breadcrumb { justify-content: flex-start; }

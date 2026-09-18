@@ -561,19 +561,6 @@ function renderMasthead() {
   }
 }
 
-// 표제란 — 꼬리의 네 칸(프로젝트, 면, 최근 갱신, 글과 트랙 수). 청사진 오른쪽 아래 칸 자리다.
-function renderFooterBlock() {
-  const fc = document.querySelector('footer .footer-content');
-  if (!fc || typeof posts === 'undefined' || fc.querySelector('.footer-block')) return;
-  const latest = posts.map(p => String(p.date || '').slice(0, 10)).sort().pop() || '';
-  const sheet = (document.title.split(' — ')[0] || 'AdTech Blog').trim();
-  const trackCount = (typeof series !== 'undefined') ? Object.keys(series).length : 0;
-  const el = document.createElement('div');
-  el.className = 'footer-block';
-  el.innerHTML = `<div><small>PROJECT</small>AdTech Blog</div><div><small>SHEET</small>${escText(sheet)}</div>` +
-    `<div><small>REV</small>${latest}</div><div><small>POSTS / TRACKS</small>${posts.length} / ${trackCount}</div>`;
-  fc.insertBefore(el, fc.firstChild);
-}
 
 function navigateToPost(postId) {
   window.location.href = `post.html?id=${postId}`;
@@ -1979,8 +1966,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add animation to elements on scroll
   observeElements();
 
-  // 표제란(꼬리 네 칸)
-  renderFooterBlock();
 });
 
 // ========================================

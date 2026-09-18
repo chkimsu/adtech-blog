@@ -187,34 +187,59 @@
       flex-wrap: wrap;
     }
 
-    .demo-card-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      background: var(--accent-gradient);
-      border-radius: 0;
-      font-size: 0.72rem;
+
+    /* 주제로 바로 가기 — 여덟 칸을 한 줄에 잇는다 */
+    .demos-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-left: 1px solid var(--border-color);
+      margin-bottom: 2.5rem;
+    }
+    .demos-jump-item {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      padding: 0.6rem 0.95rem;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    .demos-jump-item:hover { color: var(--accent-primary); }
+    .demos-jump-item b {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
       font-weight: 600;
-      color: var(--paper);
-      letter-spacing: 0.03em;
+      color: var(--text-muted);
     }
 
-    .demo-card-badge[data-badge="Auction"]      { background: var(--series-1); }
-    .demo-card-badge[data-badge="Bidding"]      { background: var(--state-good); }
-    .demo-card-badge[data-badge="Bandits"]      { background: var(--series-4); }
-    .demo-card-badge[data-badge="ML · Stats"]   { background: var(--series-5); }
-    .demo-card-badge[data-badge="Optimization"] { background: var(--state-bad); }
-    .demo-card-badge[data-badge="Measurement"]  { background: var(--series-6); }
-    /* 인프라 배관 데모(요청 경로·Kafka). 3색조 중 회색 — 나머지 배지와 안 겹친다. */
-    .demo-card-badge[data-badge="Infra"]        { background: var(--grey); }
-    /* 타겟팅 카드 데모. 채움색이 다 찼으니 테두리형으로, 알고리즘 배지(네이비)와 달리 산화철로 둔다. */
-    .demo-card-badge[data-badge="Targeting"]    {
-      background: transparent; color: var(--oxide); border: 1px solid var(--oxide-bd);
+    /* 한 주제 — 머리에 이름과 개수, 그 밑에 한 줄 설명, 그 밑에 카드 */
+    .demo-topic { margin-bottom: 3rem; scroll-margin-top: 5rem; }
+    .demo-topic-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--text-primary);
     }
-    /* 알고리즘 데모. series 여섯 색이 이미 다 찼으니 채우기 대신 테두리로 가른다.
-       글 카테고리 Interview & Algorithms 를 style.css 에서 처리한 방식과 같다. */
-    .demo-card-badge[data-badge="Algorithms"]   {
-      background: transparent; color: var(--navy); border: 1px solid var(--navy-bd);
+    .demo-topic-head h3 { font-size: 1.25rem; margin: 0; }
+    .demo-topic-count {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: auto;
     }
+    .demo-topic-desc {
+      margin: 0.7rem 0 1.4rem;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      max-width: 62ch;
+    }
+    .demo-topic .demos-grid { margin-bottom: 0; }
 
     .demo-card-level {
       display: inline-block;
@@ -452,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 38개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 45개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -608,694 +633,705 @@
       </div>
     </section>
 
-    <!-- All Demos Grid -->
+    <!-- 주제별 데모 45개 -->
     <section class="section">
       <div class="container">
         <div class="demos-section-title">
-          <h2>전체 데모</h2>
-          <span class="count">29개 · 카테고리별</span>
+          <h2>주제별 데모</h2>
+          <span class="count">45개, 주제 8개</span>
         </div>
 
-        <div class="demos-grid">
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>신호 소실 계단</h3>
-            <p>3자 쿠키·IDFA·유저 단위 전환 라벨·크로스 앱 빈도 제어를 하나씩 끄면서, 타겟 가능 유저·관측 가능한 전환·유효 표본·지표 신뢰구간 네 계기가 어떻게 떨어지는지 봅니다. 타겟팅보다 라벨이 먼저 부서집니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-signal-loss.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>오프라인 지표 실험실</h3>
-            <p>분별력·보정 기울기·요청당 광고 수·요청 간 난이도 편차를 움직이면 AUC·GAUC·LogLoss·NE·COPC 다섯 숫자가 동시에 바뀝니다. 요청 간 편차를 키우면 AUC만 오르고 GAUC는 그대로인 자리를 직접 만듭니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item">확률·AUC 기초</span>
-            </div>
-            <a href="demo-metrics-lab.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>증분 4분면과 Qini 곡선</h3>
-            <p>유저 2,000명을 설득 가능·확실 구매·무관심·청개구리 넷으로 섞어 놓고, pCVR 순으로 고른 경우와 uplift 순으로 고른 경우의 Qini 곡선을 겹쳐 봅니다. 리포트 전환수가 큰 쪽이 증분은 작습니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item">pCVR·실험 기초</span>
-            </div>
-            <a href="demo-uplift-quadrant.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>피드백 루프 시뮬레이터</h3>
-            <p>어제의 모델이 고른 광고만 노출되고, 노출된 것만 라벨이 붙습니다. 세대를 돌리면 진짜 1등이 초기 운 때문에 하위권에 갇히는 과정이 보입니다. 탐색 예산을 조금만 줘도 굳음이 풀립니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">밴딧 기초</span>
-            </div>
-            <a href="demo-feedback-loop.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-advanced">고급</span>
-            </div>
-            <h3>성향점수 가중 실험실</h3>
-            <p>옛 정책이 남긴 로그로 새 정책을 채점합니다. Replay·IPS·SNIPS·DR 네 추정치를 진짜 값과 나란히 놓고, 정책 거리를 키우면 신뢰구간이 폭발하고 절단을 걸면 점 추정이 밀리는 거래를 봅니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 15분</span>
-              <span class="demo-card-meta-item">확률·기댓값</span>
-            </div>
-            <a href="demo-ips-weights.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>API 계약 실험실</h3>
-            <p>재시도·멱등키·타임아웃·인증 방식을 켜고 끄면서 요청 1,000건이 어떻게 되는지 봅니다. 멱등키를 끄고 재시도를 3으로 올리면 전환이 1,180건으로 18% 부풀고, 부르는 쪽을 사용자 기기로 두면 시크릿 노출 계기가 빨간불이 됩니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-api-contract.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>파이프라인 조립기</h3>
-            <p>수집·버퍼·처리·유통·저장 다섯 층에 부품을 놓아 보면 대시보드 지연·학습 준비 시각·버티는 시간·관리할 연결 수가 같이 바뀝니다. 유통 층을 끄면 연결이 11개에서 30개로, 버퍼를 빼면 버티는 시간이 168시간에서 10.4분으로 떨어집니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">Kafka 기초</span>
-            </div>
-            <a href="demo-pipeline-builder.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 요청 경로 시뮬레이터 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>요청 경로 시뮬레이터</h3>
-            <p>LB·Ingress·API Gateway·서비스 메시를 하나씩 끄고 요청을 던져 봅니다. 없는 부품 때문에 요청이 어디서 멈추는지, 관리할 주소·설정·정책 벌수가 얼마나 늘어나는지 바로 보입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-request-path.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- Kafka Partition 놀이터 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>Kafka Partition 놀이터</h3>
-            <p>노출 로그 12줄이 partition에 나뉘고 consumer가 그 칸을 나눠 맡습니다. 칸 수·읽는 사람 수·key를 바꾸면 쏠림·노는 consumer·순서 깨짐이 각각 어떻게 나타나는지 바로 보입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-kafka-partition.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 이분 탐색 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Algorithms">Algorithms</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>이분 탐색 회차 보기</h3>
-            <p>정렬된 배열에서 후보가 회차마다 절반씩 지워지는 과정을 한 걸음씩 봅니다. 같은 배열 위에서 정확히 찾기·왼쪽 경계·오른쪽 경계를 바꿔 보면, 코딩 테스트에서 틀리는 자리가 알고리즘이 아니라 부등호 하나라는 게 보입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-binary-search.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- DFS vs BFS (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Algorithms">Algorithms</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>DFS vs BFS 한 회차씩</h3>
-            <p>같은 그래프를 스택으로 훑을 때와 큐로 훑을 때를 나란히 봅니다. 코드에서 다른 건 꺼내는 자리 하나뿐인데, 그 하나 때문에 큐 쪽에서만 최단 거리가 나옵니다. 방문 표시를 꺼낼 때 하면 큐가 얼마나 부푸는지도 직접 셀 수 있습니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 6분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-bfs-dfs.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 클릭 한 줄의 여섯 자리 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>클릭 한 줄의 여섯 자리</h3>
-            <p>광고 클릭 한 번이 앱에서 읽는 쪽 넷까지 여섯 자리를 지납니다. 자리를 누르면 무엇이 들어와서 무엇이 나갔는지가 나란히 나오고, 어떤 필드가 붙었고 어떤 값이 바뀌었는지가 줄 앞 표시로 갈립니다. 보존 기간을 줄여 보면 멈춘 소비자가 무엇을 잃는지도 보입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-cart-pipeline.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 로그 여섯 층 흐름 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>로그 여섯 층 흐름</h3>
-            <p>클릭 한 건이 앱 SDK에서 Kafka까지 여섯 층을 순서대로 내려갑니다. 수집 에이전트나 Kafka를 멈추면 그 앞 어디에 쌓이는지 보이고, 점을 클릭하면 그 건의 모양과 바이트가 그대로 나옵니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-log-hops.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 로그 → ML 학습 루프 (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>로그 → ML 학습 루프</h3>
-            <p>어떤 로그(노출·클릭·전환)가 어떻게 쌓여 조인·라벨링되고, ML 모델 학습→보정→배포로 이어지는지, 그리고 그 입찰이 다시 새 로그를 만드는 순환을 한 단계씩 따라가는 다이어그램입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-log-to-model.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- Calibration Explorer (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>Calibration Explorer</h3>
-            <p>AUC가 높아도 확률이 어긋나면(miscalibration) 입찰가가 왜곡됩니다. 보정 기울기·편향을 슬라이더로 바꿔 신뢰도 곡선·입찰 왜곡·ECE를 실시간으로 봅니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item">확률·로짓 기초</span>
-            </div>
-            <a href="demo-calibration.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- Frequency Capping (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Optimization">Optimization</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>Frequency Capping 시뮬레이터</h3>
-            <p>같은 광고를 몇 번까지 보여줘야 할까? 광고 피로(체감 반응)와 노출 비용의 트레이드오프를 슬라이더로 바꿔 순가치를 최대화하는 최적 빈도 상한을 찾습니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-frequency-capping.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- Attribution Window (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>Attribution Window 놀이터</h3>
-            <p>어트리뷰션 윈도우(7/14/30일)와 모델(마지막·첫·선형·위치 기반)에 따라 같은 전환의 공로가 채널마다 어떻게 갈리는지 — 여정 타임라인으로 직접 비교합니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-attribution-window.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- A/B vs Bandit (신규) -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>A/B vs Bandit 트래픽 시뮬레이터</h3>
-            <p>고정 트래픽(A/B 테스트)과 적응형 트래픽(멀티암드 밴딧)이 같은 광고 3개를 두고 어떻게 갈라지는지 — 누적 클릭과 트래픽 배분을 슬라이더로 직접 비교합니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-ab-vs-bandit.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 1. RTB Auction Simulator -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Auction">Auction</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>RTB Auction Simulator</h3>
-            <p>First Price / Second Price 경매에서 4개 DSP가 실시간 입찰하는 과정을 시뮬레이션합니다.
-              같은 상황에서 경매 유형이 어떻게 다른 결과를 만드는지 눈으로 확인하세요.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-rtb.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 2. Bid Landscape Explorer -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bidding">Bidding</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>Bid Landscape Explorer</h3>
-            <p>입찰가별 낙찰률(Win Rate), 비용, 기대 수익(Profit) 곡선을 탐색해 최적 입찰가를 찾습니다.
-              "왜 가장 높게 입찰하는 게 최선이 아닌가"를 직관적으로.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">선수지식 없음</span>
-            </div>
-            <a href="demo-bid-landscape.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 3. UCB1 Algorithm -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>UCB1 Algorithm</h3>
-            <p>탐색(Exploration)과 활용(Exploitation)의 균형. 평균 CTR + 불확실성 보너스로
-              어떤 광고에 예산을 할당할지 결정하는 방법을 라운드별로 시각화합니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">평균 계산</span>
-            </div>
-            <a href="demo-ucb1.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 베타 분포 샘플링 -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>베타 분포 샘플링</h3>
-            <p>"분포에서 한 번 뽑는다"가 정확히 무슨 뜻일까? 베타 분포에서 샘플을 반복해 뽑으며
-              히스토그램이 곡선을 재현하는 과정을 봅니다. Thompson Sampling의 핵심 행위를 분리해 체험.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-beta-sampling.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 4. Thompson Sampling -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>Thompson Sampling</h3>
-            <p>Beta 분포로 각 광고의 "진짜 CTR"에 대한 불확실성을 표현하고, 매 라운드
-              분포에서 샘플링해 선택합니다. 클릭/비클릭에 따라 분포가 어떻게 좁아지는지 관찰.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item">확률/Beta 분포</span>
-            </div>
-            <a href="demo-ts.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 5. Bid Shading Visualizer -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bidding">Bidding</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>Bid Shading Visualizer</h3>
-            <p>1st Price 경매에서 "True Value 그대로 입찰하면 왜 이익이 0이 되는가"와
-              최적 Shading Factor를 몬테카를로 시뮬레이션으로 탐색. Censored Data 관점까지.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 15분</span>
-              <span class="demo-card-meta-item"> RTB 경매 기초</span>
-            </div>
-            <a href="demo-bid-shading.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 6. LinUCB -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>LinUCB (Contextual Bandit)</h3>
-            <p>유저·광고의 Feature Vector(성별, 관심사 등)를 활용해 "이 유저에게는 이 광고"를
-              학습하는 개인화 밴딧. Exploitation + Exploration이 맥락에 맞게 동작.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 15분</span>
-              <span class="demo-card-meta-item"> UCB1·벡터</span>
-            </div>
-            <a href="demo-linucb.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 7. Censored Data in RTB -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-advanced">고급</span>
-            </div>
-            <h3>Censored Data in RTB</h3>
-            <p>입찰에서 졌을 때 경쟁자 가격을 못 보는 "Censored" 문제가 시장 분포 추정을
-              어떻게 왜곡하는지 5단계로 체험. Survival Analysis와 같은 수학적 구조.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 20분</span>
-              <span class="demo-card-meta-item">통계·CDF</span>
-            </div>
-            <a href="demo-censored-data.html" class="btn-try">체험하기</a>
-          </div>
-
-          <!-- 8. Golden Section Search -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Optimization">Optimization</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>Golden Section Search</h3>
-            <p>Surplus = (이익 per win) × (낙찰 확률) 곡선의 최대점을 황금 비율(φ ≈ 1.618)로
-              탐색. Grid Search 대비 25배 빠른 수렴을 단계별 애니메이션으로 확인.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 10분</span>
-              <span class="demo-card-meta-item">단봉 함수</span>
-            </div>
-            <a href="demo-golden-section.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>API 한 건을 직접 만들어 보기</h3>
-            <p>메서드, 주소, 헤더, 본문을 골라 요청을 조립해 보내면 응답과 로그가 같이 나옵니다. 액세스 로그와 이벤트 로그를 각각 누가 남기는지, 400 일 때 어느 줄이 안 남는지가 보입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-api-course.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>메서드별 요청과 응답 보기</h3>
-            <p>같은 주소 /v1/posts 에 GET, POST, PUT, PATCH, DELETE 를 바꿔 보내면 응답 원문과 서버 데이터가 어떻게 달라지는지 눌러 봅니다. PUT 과 PATCH 의 차이가 likes 칸 하나로 드러나고, 지운 것을 다시 지우면 404 가 옵니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-http-methods.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>하둡 상자 그림 여섯 장</h3>
-            <p>서버 한 대를 3차원 상자 하나로 그렸습니다. 클러스터, HDFS, YARN, Hive, ZooKeeper 를 그림 한 장씩으로 보고, 마지막에 JDBC 접속 주소 한 줄이 어느 상자를 가리키는지 화살표로 잇습니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-hadoop-boxes.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>하둡 카드 여섯 장</h3>
-            <p>같은 여섯 개념을 카드 한 장씩으로. 서버 아이콘과 화살표 위로 점이 흘러가며 파일 조각이 흩어지는 것, 계산 조각이 내려가는 것, 쿼리 한 건이 다섯 자리를 도는 것을 보여 줍니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 6분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-hadoop-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>데이터 건네기 카드 여덟 장</h3>
-            <p>팀에서 팀으로 데이터를 옮기는 방법 여덟 가지를 카드 한 장씩으로. 테이블 권한, DB 배치, CDC, 파일, 토픽, API, 로그 파이프라인, reverse ETL. 점이 몰려 지나가면 배치이고 이어지면 실시간입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 8분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-data-handoff.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>Hadoop, Hive, Spark 자리 카드 여섯 장</h3>
-            <p>노드 넷(엣지, 마스터, 서비스, 워커)과 워커 한 대의 단면(저장, 자리 배분, 실행)으로 세 이름이 어디에 앉는지 봅니다. Hive 쿼리와 Spark 작업이 지나는 길을 번호 순서로 점이 따라갑니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 7분</span>
-              <span class="demo-card-meta-item">하둡 카드 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-cluster-roles.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>데이터 엔지니어 첫 6개월 카드 여섯 장</h3>
-            <p>어느 데이터 플랫폼 팀에 새로 온 사람의 여섯 달 커밋을 여섯 장으로. 저장소 네 층, 첫 달의 수급 DAG, SQL 모델, 오퍼레이터, 실시간 잡, PR 과 배포. 점이 원천에서 표로, 코드에서 서버로 흐릅니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 7분</span>
-              <span class="demo-card-meta-item">데이터 건네기 카드 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-de-first-months.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Targeting">Targeting</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>타겟팅 카드 아홉 장</h3>
-            <p>누구에게 광고를 보여 줄지가 정해지는 자리를 카드 한 장씩으로. 조건과 유저 정보가 만나는 자리, 후보가 줄어드는 순서, 타겟 방식 여덟 가지, 세그먼트, 맞춤타겟, Lookalike, 리타겟팅, 빈도 상한, 유저 정보가 오는 길. 점이 흐르는 방향이 데이터가 가는 방향입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 9분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-targeting-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>학습 데이터 카드 여섯 장</h3>
-            <p>로그가 모델에 들어가기 전에 뒤틀리는 자리를 카드 한 장씩으로. 지연 피드백, 배우는 칸과 쓰이는 칸, 자리 효과, 줄이고 되돌리기, 전환 정의, 요청 하나가 남기는 로그 열 개. 점이 흐르는 방향이 데이터가 가는 방향입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 6분</span>
-              <span class="demo-card-meta-item">pCTR 글 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-training-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>서빙 카드 다섯 장</h3>
-            <p>학습이 끝난 모델이 요청 하나에 답하기까지, 시간과 메모리가 정해지는 자리를 카드 한 장씩으로. 후보 추리기, 학습과 서빙의 피처 어긋남, 배치로 묶기, ID 를 칸에 넣기, 임베딩 테이블 쪼개기.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">학습 데이터 카드 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-serving-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>실험 카드 두 장</h3>
-            <p>무엇과 무엇을 견주는지가 정해지는 자리. 두 모델을 나눠 태우면 예산이 먼저 마르는 팔이 지고, 로그를 그대로 비교하면 숨은 원인이 광고 효과처럼 보입니다. 둘 다 숫자는 맞는데 결론이 뒤집힙니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 3분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-experiment-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Measurement">Measurement</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>인과추론 카드 네 장</h3>
-            <p>광고가 진짜 만든 차이를 재는 네 방법을 카드 한 장씩으로. 랜덤 실험, 이중차분, 회귀 불연속, 도구변수. 저절로 같아지는 두 무리, 나란히 가던 선이 꺾이는 높이, 컷에서의 점프, 배정 효과를 순응률로 나눈 값입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">인과추론 입문 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-causal-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>탐색과 채점 카드 네 장</h3>
-            <p>노출을 어떻게 나누고 그 결과를 어떻게 채점하나. A/B 와 밴딧이 남기는 성적표, 맥락을 뭉치면 놓치는 것, 밀려난 소재를 되살리는 처방 넷, 재료 하나가 틀려도 버티는 채점법입니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 5분</span>
-              <span class="demo-card-meta-item">밴딧 트랙 먼저 보면 좋음</span>
-            </div>
-            <a href="demo-explore-cards.html" class="btn-try">체험하기</a>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Infra">Infra</span>
-              <span class="demo-card-level level-beginner">입문</span>
-            </div>
-            <h3>로그 한 줄이 학습 데이터가 되기까지</h3>
-            <p>자리 일곱을 눌러 무엇이 들어오고 무엇이 나가는지 봅니다. topic 에 놓인 뒤 읽는 쪽 넷이 각자 다른 주기로 읽어 가는 이유까지 이어집니다.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 14분</span>
-              <span class="demo-card-meta-item">선수지식 거의 없음</span>
-            </div>
-            <a href="demo-pipeline-course.html" class="btn-try">체험하기</a>
-          </div>
-
+        <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
+          <a class="demos-jump-item" href="#demo-topic-auction">경매와 입찰<b>6</b></a>
+          <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>10</b></a>
+          <a class="demos-jump-item" href="#demo-topic-bandit">탐색과 밴딧<b>8</b></a>
+          <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>2</b></a>
+          <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>4</b></a>
+          <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>9</b></a>
+          <a class="demos-jump-item" href="#demo-topic-api">요청이 오는 길과 API<b>4</b></a>
+          <a class="demos-jump-item" href="#demo-topic-algo">알고리즘 기초<b>2</b></a>
         </div>
 
-        <!-- Advanced Demos -->
-        <div class="demos-section-title" style="margin-top: 2.5rem;">
-          <h2>심화 데모</h2>
-          <span class="count">4개 · 개념 비교·종합</span>
-        </div>
-
-        <div class="demos-grid">
-          <!-- 9. UCB1 vs TS 비교 -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Bandits">Bandits</span>
-              <span class="demo-card-level level-intermediate">중급</span>
-            </div>
-            <h3>UCB1 vs Thompson Sampling 비교</h3>
-            <p>결정적(UCB) vs 확률적(TS) 밴딧을 같은 4개 광고 시나리오에서 병렬 실행.
-              누적 Regret 곡선으로 두 알고리즘의 수렴 차이를 한눈에.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 15분</span>
-              <span class="demo-card-meta-item"> UCB1·TS 기초</span>
-            </div>
-            <a href="demo-compare-bandits.html" class="btn-try">체험하기</a>
+        <section class="demo-topic" id="demo-topic-auction">
+          <div class="demo-topic-head">
+            <h3>경매와 입찰</h3>
+            <span class="demo-topic-count">6개</span>
           </div>
+          <p class="demo-topic-desc">광고 자리 하나가 팔리는 순간입니다. 경매가 굴러가는 방식, 입찰가를 정하는 법, 여러 경매에 예산을 나누는 법을 봅니다.</p>
 
-          <!-- 10. Header Bidding -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Auction">Auction</span>
-              <span class="demo-card-level level-intermediate">중급</span>
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>RTB Auction Simulator</h3>
+              <p>First Price / Second Price 경매에서 4개 DSP가 실시간 입찰하는 과정을 시뮬레이션합니다.
+                같은 상황에서 경매 유형이 어떻게 다른 결과를 만드는지 눈으로 확인하세요.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-rtb.html" class="btn-try">체험하기</a>
             </div>
-            <h3>Header Bidding vs Waterfall</h3>
-            <p>순차(Waterfall)와 병렬(Header Bidding)이 매체 수익·지연을 어떻게 바꾸는지
-              타임라인 + 1000회 반복 시뮬레이션으로 비교. "HB 도입 시 CPM +10~30%"의 근거.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 15분</span>
-              <span class="demo-card-meta-item"> RTB 경매 기초</span>
-            </div>
-            <a href="demo-header-bidding.html" class="btn-try">체험하기</a>
-          </div>
 
-          <!-- 11. pCTR Impact -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="ML · Stats">ML · Stats</span>
-              <span class="demo-card-level level-intermediate">중급</span>
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Bid Landscape Explorer</h3>
+              <p>입찰가별 낙찰률(Win Rate), 비용, 기대 수익(Profit) 곡선을 탐색해 최적 입찰가를 찾습니다.
+                "왜 가장 높게 입찰하는 게 최선이 아닌가"를 직관적으로.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-bid-landscape.html" class="btn-try">체험하기</a>
             </div>
-            <h3>pCTR Model Quality Impact</h3>
-            <p>pCTR 모델 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지
-              슬라이더 하나로 실시간 계산. "모델 1% 개선이 ROAS 3~5%"인 이유를 곡선으로.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 12분</span>
-              <span class="demo-card-meta-item"> pCTR·입찰 기초</span>
-            </div>
-            <a href="demo-pctr-impact.html" class="btn-try">체험하기</a>
-          </div>
 
-          <!-- 12. Portfolio -->
-          <div class="demo-card">
-            <div class="demo-card-badges">
-              <span class="demo-card-badge" data-badge="Optimization">Optimization</span>
-              <span class="demo-card-level level-advanced">고급</span>
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Bid Shading Visualizer</h3>
+              <p>1st Price 경매에서 "True Value 그대로 입찰하면 왜 이익이 0이 되는가"와
+                최적 Shading Factor를 몬테카를로 시뮬레이션으로 탐색. Censored Data 관점까지.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 15분</span>
+                <span class="demo-card-meta-item"> RTB 경매 기초</span>
+              </div>
+              <a href="demo-bid-shading.html" class="btn-try">체험하기</a>
             </div>
-            <h3>Multi-Auction Portfolio Optimization</h3>
-            <p>5개 광고 지면에 총 예산을 어떻게 나눠야 전체 수익이 최대가 될까?
-              Diminishing Returns 기반 포트폴리오 최적화. 등한계효용 원리를 슬라이더로 체득.</p>
-            <div class="demo-card-meta">
-              <span class="demo-card-meta-item">⏱ 18분</span>
-              <span class="demo-card-meta-item"> Bid Landscape · Pacing</span>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Header Bidding vs Waterfall</h3>
+              <p>순차(Waterfall)와 병렬(Header Bidding)이 매체 수익·지연을 어떻게 바꾸는지
+                타임라인 + 1000회 반복 시뮬레이션으로 비교. "HB 도입 시 CPM +10~30%"의 근거.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 15분</span>
+                <span class="demo-card-meta-item"> RTB 경매 기초</span>
+              </div>
+              <a href="demo-header-bidding.html" class="btn-try">체험하기</a>
             </div>
-            <a href="demo-portfolio.html" class="btn-try">체험하기</a>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Golden Section Search</h3>
+              <p>Surplus = (이익 per win) × (낙찰 확률) 곡선의 최대점을 황금 비율(φ ≈ 1.618)로
+                탐색. Grid Search 대비 25배 빠른 수렴을 단계별 애니메이션으로 확인.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">단봉 함수</span>
+              </div>
+              <a href="demo-golden-section.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-advanced">고급</span>
+              </div>
+              <h3>Multi-Auction Portfolio Optimization</h3>
+              <p>5개 광고 지면에 총 예산을 어떻게 나눠야 전체 수익이 최대가 될까?
+                Diminishing Returns 기반 포트폴리오 최적화. 등한계효용 원리를 슬라이더로 체득.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 18분</span>
+                <span class="demo-card-meta-item"> Bid Landscape · Pacing</span>
+              </div>
+              <a href="demo-portfolio.html" class="btn-try">체험하기</a>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-measure">
+          <div class="demo-topic-head">
+            <h3>측정과 모델링</h3>
+            <span class="demo-topic-count">10개</span>
+          </div>
+          <p class="demo-topic-desc">예측이 맞았는지, 광고가 정말 효과가 있었는지를 재는 자리입니다. 지표, 확률 보정, 어트리뷰션, 인과추론과 실험.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>신호 소실 계단</h3>
+              <p>3자 쿠키·IDFA·유저 단위 전환 라벨·크로스 앱 빈도 제어를 하나씩 끄면서, 타겟 가능 유저·관측 가능한 전환·유효 표본·지표 신뢰구간 네 계기가 어떻게 떨어지는지 봅니다. 타겟팅보다 라벨이 먼저 부서집니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-signal-loss.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>오프라인 지표 실험실</h3>
+              <p>분별력·보정 기울기·요청당 광고 수·요청 간 난이도 편차를 움직이면 AUC·GAUC·LogLoss·NE·COPC 다섯 숫자가 동시에 바뀝니다. 요청 간 편차를 키우면 AUC만 오르고 GAUC는 그대로인 자리를 직접 만듭니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item">확률·AUC 기초</span>
+              </div>
+              <a href="demo-metrics-lab.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Calibration Explorer</h3>
+              <p>AUC가 높아도 확률이 어긋나면(miscalibration) 입찰가가 왜곡됩니다. 보정 기울기·편향을 슬라이더로 바꿔 신뢰도 곡선·입찰 왜곡·ECE를 실시간으로 봅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item">확률·로짓 기초</span>
+              </div>
+              <a href="demo-calibration.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>pCTR Model Quality Impact</h3>
+              <p>pCTR 모델 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지
+                슬라이더 하나로 실시간 계산. "모델 1% 개선이 ROAS 3~5%"인 이유를 곡선으로.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item"> pCTR·입찰 기초</span>
+              </div>
+              <a href="demo-pctr-impact.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-advanced">고급</span>
+              </div>
+              <h3>Censored Data in RTB</h3>
+              <p>입찰에서 졌을 때 경쟁자 가격을 못 보는 "Censored" 문제가 시장 분포 추정을
+                어떻게 왜곡하는지 5단계로 체험. Survival Analysis와 같은 수학적 구조.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 20분</span>
+                <span class="demo-card-meta-item">통계·CDF</span>
+              </div>
+              <a href="demo-censored-data.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Attribution Window 놀이터</h3>
+              <p>어트리뷰션 윈도우(7/14/30일)와 모델(마지막·첫·선형·위치 기반)에 따라 같은 전환의 공로가 채널마다 어떻게 갈리는지 — 여정 타임라인으로 직접 비교합니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-attribution-window.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>증분 4분면과 Qini 곡선</h3>
+              <p>유저 2,000명을 설득 가능·확실 구매·무관심·청개구리 넷으로 섞어 놓고, pCVR 순으로 고른 경우와 uplift 순으로 고른 경우의 Qini 곡선을 겹쳐 봅니다. 리포트 전환수가 큰 쪽이 증분은 작습니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item">pCVR·실험 기초</span>
+              </div>
+              <a href="demo-uplift-quadrant.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>인과추론 카드 네 장</h3>
+              <p>광고가 진짜 만든 차이를 재는 네 방법을 카드 한 장씩으로. 랜덤 실험, 이중차분, 회귀 불연속, 도구변수. 저절로 같아지는 두 무리, 나란히 가던 선이 꺾이는 높이, 컷에서의 점프, 배정 효과를 순응률로 나눈 값입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">인과추론 입문 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-causal-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-advanced">고급</span>
+              </div>
+              <h3>성향점수 가중 실험실</h3>
+              <p>옛 정책이 남긴 로그로 새 정책을 채점합니다. Replay·IPS·SNIPS·DR 네 추정치를 진짜 값과 나란히 놓고, 정책 거리를 키우면 신뢰구간이 폭발하고 절단을 걸면 점 추정이 밀리는 거래를 봅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 15분</span>
+                <span class="demo-card-meta-item">확률·기댓값</span>
+              </div>
+              <a href="demo-ips-weights.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>실험 카드 두 장</h3>
+              <p>무엇과 무엇을 견주는지가 정해지는 자리. 두 모델을 나눠 태우면 예산이 먼저 마르는 팔이 지고, 로그를 그대로 비교하면 숨은 원인이 광고 효과처럼 보입니다. 둘 다 숫자는 맞는데 결론이 뒤집힙니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 3분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-experiment-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-bandit">
+          <div class="demo-topic-head">
+            <h3>탐색과 밴딧</h3>
+            <span class="demo-topic-count">8개</span>
+          </div>
+          <p class="demo-topic-desc">아직 모르는 후보를 얼마나 더 보여 볼 것인가. A/B 와 밴딧의 차이부터 UCB, 톰슨 샘플링, 상황을 보는 밴딧까지.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>A/B vs Bandit 트래픽 시뮬레이터</h3>
+              <p>고정 트래픽(A/B 테스트)과 적응형 트래픽(멀티암드 밴딧)이 같은 광고 3개를 두고 어떻게 갈라지는지 — 누적 클릭과 트래픽 배분을 슬라이더로 직접 비교합니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-ab-vs-bandit.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>UCB1 Algorithm</h3>
+              <p>탐색(Exploration)과 활용(Exploitation)의 균형. 평균 CTR + 불확실성 보너스로
+                어떤 광고에 예산을 할당할지 결정하는 방법을 라운드별로 시각화합니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">평균 계산</span>
+              </div>
+              <a href="demo-ucb1.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>베타 분포 샘플링</h3>
+              <p>"분포에서 한 번 뽑는다"가 정확히 무슨 뜻일까? 베타 분포에서 샘플을 반복해 뽑으며
+                히스토그램이 곡선을 재현하는 과정을 봅니다. Thompson Sampling의 핵심 행위를 분리해 체험.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-beta-sampling.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Thompson Sampling</h3>
+              <p>Beta 분포로 각 광고의 "진짜 CTR"에 대한 불확실성을 표현하고, 매 라운드
+                분포에서 샘플링해 선택합니다. 클릭/비클릭에 따라 분포가 어떻게 좁아지는지 관찰.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item">확률/Beta 분포</span>
+              </div>
+              <a href="demo-ts.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>UCB1 vs Thompson Sampling 비교</h3>
+              <p>결정적(UCB) vs 확률적(TS) 밴딧을 같은 4개 광고 시나리오에서 병렬 실행.
+                누적 Regret 곡선으로 두 알고리즘의 수렴 차이를 한눈에.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 15분</span>
+                <span class="demo-card-meta-item"> UCB1·TS 기초</span>
+              </div>
+              <a href="demo-compare-bandits.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>LinUCB (Contextual Bandit)</h3>
+              <p>유저·광고의 Feature Vector(성별, 관심사 등)를 활용해 "이 유저에게는 이 광고"를
+                학습하는 개인화 밴딧. Exploitation + Exploration이 맥락에 맞게 동작.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 15분</span>
+                <span class="demo-card-meta-item"> UCB1·벡터</span>
+              </div>
+              <a href="demo-linucb.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>탐색과 채점 카드 네 장</h3>
+              <p>노출을 어떻게 나누고 그 결과를 어떻게 채점하나. A/B 와 밴딧이 남기는 성적표, 맥락을 뭉치면 놓치는 것, 밀려난 소재를 되살리는 처방 넷, 재료 하나가 틀려도 버티는 채점법입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">밴딧 트랙 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-explore-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>피드백 루프 시뮬레이터</h3>
+              <p>어제의 모델이 고른 광고만 노출되고, 노출된 것만 라벨이 붙습니다. 세대를 돌리면 진짜 1등이 초기 운 때문에 하위권에 갇히는 과정이 보입니다. 탐색 예산을 조금만 줘도 굳음이 풀립니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">밴딧 기초</span>
+              </div>
+              <a href="demo-feedback-loop.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-targeting">
+          <div class="demo-topic-head">
+            <h3>타겟팅과 오디언스</h3>
+            <span class="demo-topic-count">2개</span>
+          </div>
+          <p class="demo-topic-desc">누구에게 보여 줄지가 정해지는 자리입니다. 세그먼트와 맞춤타겟, Lookalike, 한 사람에게 몇 번까지 보여 줄지.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>타겟팅 카드 아홉 장</h3>
+              <p>누구에게 광고를 보여 줄지가 정해지는 자리를 카드 한 장씩으로. 조건과 유저 정보가 만나는 자리, 후보가 줄어드는 순서, 타겟 방식 여덟 가지, 세그먼트, 맞춤타겟, Lookalike, 리타겟팅, 빈도 상한, 유저 정보가 오는 길. 점이 흐르는 방향이 데이터가 가는 방향입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 9분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-targeting-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Frequency Capping 시뮬레이터</h3>
+              <p>같은 광고를 몇 번까지 보여줘야 할까? 광고 피로(체감 반응)와 노출 비용의 트레이드오프를 슬라이더로 바꿔 순가치를 최대화하는 최적 빈도 상한을 찾습니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-frequency-capping.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-model">
+          <div class="demo-topic-head">
+            <h3>학습 데이터와 서빙</h3>
+            <span class="demo-topic-count">4개</span>
+          </div>
+          <p class="demo-topic-desc">로그가 학습 데이터가 되고, 학습한 모델이 요청에 답하기까지. 두 쪽이 어떻게 이어지는지 봅니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>로그 → ML 학습 루프</h3>
+              <p>어떤 로그(노출·클릭·전환)가 어떻게 쌓여 조인·라벨링되고, ML 모델 학습→보정→배포로 이어지는지, 그리고 그 입찰이 다시 새 로그를 만드는 순환을 한 단계씩 따라가는 다이어그램입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-log-to-model.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>로그 한 줄이 학습 데이터가 되기까지</h3>
+              <p>자리 일곱을 눌러 무엇이 들어오고 무엇이 나가는지 봅니다. topic 에 놓인 뒤 읽는 쪽 넷이 각자 다른 주기로 읽어 가는 이유까지 이어집니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 14분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-pipeline-course.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>학습 데이터 카드 여섯 장</h3>
+              <p>로그가 모델에 들어가기 전에 뒤틀리는 자리를 카드 한 장씩으로. 지연 피드백, 배우는 칸과 쓰이는 칸, 자리 효과, 줄이고 되돌리기, 전환 정의, 요청 하나가 남기는 로그 열 개. 점이 흐르는 방향이 데이터가 가는 방향입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">pCTR 글 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-training-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>서빙 카드 다섯 장</h3>
+              <p>학습이 끝난 모델이 요청 하나에 답하기까지, 시간과 메모리가 정해지는 자리를 카드 한 장씩으로. 후보 추리기, 학습과 서빙의 피처 어긋남, 배치로 묶기, ID 를 칸에 넣기, 임베딩 테이블 쪼개기.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">학습 데이터 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-serving-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-pipeline">
+          <div class="demo-topic-head">
+            <h3>데이터 파이프라인과 하둡</h3>
+            <span class="demo-topic-count">9개</span>
+          </div>
+          <p class="demo-topic-desc">클릭 한 줄이 어디를 거쳐 어디에 쌓이는지. Kafka 로 흘리고 하둡에 모으고 Spark 로 읽는 자리들입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>클릭 한 줄의 여섯 자리</h3>
+              <p>광고 클릭 한 번이 앱에서 읽는 쪽 넷까지 여섯 자리를 지납니다. 자리를 누르면 무엇이 들어와서 무엇이 나갔는지가 나란히 나오고, 어떤 필드가 붙었고 어떤 값이 바뀌었는지가 줄 앞 표시로 갈립니다. 보존 기간을 줄여 보면 멈춘 소비자가 무엇을 잃는지도 보입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-cart-pipeline.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>로그 여섯 층 흐름</h3>
+              <p>클릭 한 건이 앱 SDK에서 Kafka까지 여섯 층을 순서대로 내려갑니다. 수집 에이전트나 Kafka를 멈추면 그 앞 어디에 쌓이는지 보이고, 점을 클릭하면 그 건의 모양과 바이트가 그대로 나옵니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-log-hops.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>파이프라인 조립기</h3>
+              <p>수집·버퍼·처리·유통·저장 다섯 층에 부품을 놓아 보면 대시보드 지연·학습 준비 시각·버티는 시간·관리할 연결 수가 같이 바뀝니다. 유통 층을 끄면 연결이 11개에서 30개로, 버퍼를 빼면 버티는 시간이 168시간에서 10.4분으로 떨어집니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">Kafka 기초</span>
+              </div>
+              <a href="demo-pipeline-builder.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Kafka Partition 놀이터</h3>
+              <p>노출 로그 12줄이 partition에 나뉘고 consumer가 그 칸을 나눠 맡습니다. 칸 수·읽는 사람 수·key를 바꾸면 쏠림·노는 consumer·순서 깨짐이 각각 어떻게 나타나는지 바로 보입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-kafka-partition.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>하둡 상자 그림 여섯 장</h3>
+              <p>서버 한 대를 3차원 상자 하나로 그렸습니다. 클러스터, HDFS, YARN, Hive, ZooKeeper 를 그림 한 장씩으로 보고, 마지막에 JDBC 접속 주소 한 줄이 어느 상자를 가리키는지 화살표로 잇습니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-hadoop-boxes.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>하둡 카드 여섯 장</h3>
+              <p>같은 여섯 개념을 카드 한 장씩으로. 서버 아이콘과 화살표 위로 점이 흘러가며 파일 조각이 흩어지는 것, 계산 조각이 내려가는 것, 쿼리 한 건이 다섯 자리를 도는 것을 보여 줍니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-hadoop-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Hadoop, Hive, Spark 자리 카드 여섯 장</h3>
+              <p>노드 넷(엣지, 마스터, 서비스, 워커)과 워커 한 대의 단면(저장, 자리 배분, 실행)으로 세 이름이 어디에 앉는지 봅니다. Hive 쿼리와 Spark 작업이 지나는 길을 번호 순서로 점이 따라갑니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 7분</span>
+                <span class="demo-card-meta-item">하둡 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-cluster-roles.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>데이터 건네기 카드 여덟 장</h3>
+              <p>팀에서 팀으로 데이터를 옮기는 방법 여덟 가지를 카드 한 장씩으로. 테이블 권한, DB 배치, CDC, 파일, 토픽, API, 로그 파이프라인, reverse ETL. 점이 몰려 지나가면 배치이고 이어지면 실시간입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-data-handoff.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>데이터 엔지니어 첫 6개월 카드 여섯 장</h3>
+              <p>어느 데이터 플랫폼 팀에 새로 온 사람의 여섯 달 커밋을 여섯 장으로. 저장소 네 층, 첫 달의 수급 DAG, SQL 모델, 오퍼레이터, 실시간 잡, PR 과 배포. 점이 원천에서 표로, 코드에서 서버로 흐릅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 7분</span>
+                <span class="demo-card-meta-item">데이터 건네기 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-de-first-months.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-api">
+          <div class="demo-topic-head">
+            <h3>요청이 오는 길과 API</h3>
+            <span class="demo-topic-count">4개</span>
+          </div>
+          <p class="demo-topic-desc">브라우저가 누른 것이 서버까지 가는 길입니다. 요청 경로, 주고받기로 정한 약속, 메서드별 차이.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>요청 경로 시뮬레이터</h3>
+              <p>LB·Ingress·API Gateway·서비스 메시를 하나씩 끄고 요청을 던져 봅니다. 없는 부품 때문에 요청이 어디서 멈추는지, 관리할 주소·설정·정책 벌수가 얼마나 늘어나는지 바로 보입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-request-path.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>API 계약 실험실</h3>
+              <p>재시도·멱등키·타임아웃·인증 방식을 켜고 끄면서 요청 1,000건이 어떻게 되는지 봅니다. 멱등키를 끄고 재시도를 3으로 올리면 전환이 1,180건으로 18% 부풀고, 부르는 쪽을 사용자 기기로 두면 시크릿 노출 계기가 빨간불이 됩니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-api-contract.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>API 한 건을 직접 만들어 보기</h3>
+              <p>메서드, 주소, 헤더, 본문을 골라 요청을 조립해 보내면 응답과 로그가 같이 나옵니다. 액세스 로그와 이벤트 로그를 각각 누가 남기는지, 400 일 때 어느 줄이 안 남는지가 보입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 12분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-api-course.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>메서드별 요청과 응답 보기</h3>
+              <p>같은 주소 /v1/posts 에 GET, POST, PUT, PATCH, DELETE 를 바꿔 보내면 응답 원문과 서버 데이터가 어떻게 달라지는지 눌러 봅니다. PUT 과 PATCH 의 차이가 likes 칸 하나로 드러나고, 지운 것을 다시 지우면 404 가 옵니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-http-methods.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-algo">
+          <div class="demo-topic-head">
+            <h3>알고리즘 기초</h3>
+            <span class="demo-topic-count">2개</span>
+          </div>
+          <p class="demo-topic-desc">코딩 테스트에 나오는 탐색 두 갈래를 한 회차씩 눌러 봅니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>이분 탐색 회차 보기</h3>
+              <p>정렬된 배열에서 후보가 회차마다 절반씩 지워지는 과정을 한 걸음씩 봅니다. 같은 배열 위에서 정확히 찾기·왼쪽 경계·오른쪽 경계를 바꿔 보면, 코딩 테스트에서 틀리는 자리가 알고리즘이 아니라 부등호 하나라는 게 보입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-binary-search.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>DFS vs BFS 한 회차씩</h3>
+              <p>같은 그래프를 스택으로 훑을 때와 큐로 훑을 때를 나란히 봅니다. 코드에서 다른 건 꺼내는 자리 하나뿐인데, 그 하나 때문에 큐 쪽에서만 최단 거리가 나옵니다. 방문 표시를 꺼낼 때 하면 큐가 얼마나 부푸는지도 직접 셀 수 있습니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-bfs-dfs.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
+
 
     <!-- Glossary Section (populated by JS) -->
     <section class="glossary-section">
@@ -1314,16 +1350,7 @@
   <!-- Footer -->
   <footer>
     <div class="footer-content">
-      <div class="footer-links">
-        <a href="index.html">홈</a>
-        <a href="posts-browse.html">Posts</a>
-        <a href="ml-track.html">ML 트랙</a>
-        <a href="ecosystem.html">Ecosystem</a>
-        <a href="https://github.com/chkimsu/adtech-blog" target="_blank" rel="noopener">GitHub</a>
-      </div>
-      <p class="footer-text">
-        &copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.
-      </p>
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
     </div>
   </footer>
 

@@ -43,6 +43,13 @@
 
 먼저 클릭이 없는 6번을 걸러낸다. 남는 건 9건이다. 여기에 실무에서 흔히 쓰는 세 규칙을 각각 적용해 보자.
 
+전환 정의가 광고주마다 다를 때 모델 하나가 어떻게 되는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=convdef" height="480" loading="lazy" title="광고주마다 전환이 다르다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 | 규칙 | 정의 | 전환 건수(9건 중) | 어디서 틀리나 |
 |---|---|---|---|
 | 주문키 기준 | 주문번호가 같으면 하나로 합친다 | 5건 | 기준으로 삼음(주문번호는 결제 시스템이 발급) |
@@ -72,6 +79,13 @@
 **클릭은 그 순간 바로 보이지만 전환은 그렇지 않다. 오늘 학습 데이터를 만드는 시점엔, 어제 클릭한 사람 중 나중에 살 사람의 상당수가 아직 "안 산 사람"으로 보인다.**
 
 전환이 클릭 후 며칠에 걸쳐 들어오는 분포를 보자. 아래는 클릭 코호트 하나를 충분히 오래(가령 한 달) 추적한 결과다. 경과일별로, 전체 전환 중 몇 %가 그 시점까지 관측됐는지 누적으로 나타냈다.
+
+기다리는 시간과 잡히는 전환의 맞바꿈을 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=delay" height="480" loading="lazy" title="전환은 며칠 뒤에 도착한다"></iframe>
+<a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
 
 | 경과일 | 누적 전환 관측 비율 | 그날 새로 확인된 몫 |
 |---|---|---|

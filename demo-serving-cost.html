@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="요청량과 부하율 상한을 놓고 모델 서버가 몇 대 필요한지, 한 달에 얼마인지 CPU 와 GPU 로 나란히 셉니다. 대수는 평시 조건과 고장 조건 중 큰 쪽이고, 두 곡선이 어디에서 뒤집히는지 차트로 봅니다.">
+  <title>서빙 비용 계산기 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .sc-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .sc-hero { text-align: center; padding: 2rem 0 1rem; }
+    .sc-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .sc-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .sc-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .sc-intro strong { color: var(--accent-primary); }
+    .sc-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
+
+    .sc-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .sc-group-label {
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-muted); margin: 0.2rem 0 0.55rem;
+    }
+    .sc-group-label + .sc-slider-row { margin-top: 0; }
+    .sc-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 250px 1fr 96px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .sc-slider-row { grid-template-columns: 1fr; } }
+    .sc-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .sc-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .sc-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .sc-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .sc-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
+    .sc-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
+
+    .sc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+    .sc-row-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.2rem; }
+    .sc-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .sc-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    .sc-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+    @media (max-width: 700px) { .sc-metrics { grid-template-columns: 1fr; } }
+    .sc-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
+    .sc-metric-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .sc-metric-value { font-size: 1.3rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+    .sc-metric-value.good { color: var(--state-good); }
+    .sc-metric-value.warn { color: var(--series-5); }
+    .sc-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .sc-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* 1fr 의 자동 최솟값은 min-content 라, 안에 든 캔버스가 안 줄면 트랙째 늘어난다.
+       minmax(0, …) 와 카드의 min-width:0 이 있어야 좁은 화면에서 컨테이너 안에 들어온다. */
+    .sc-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .sc-charts { grid-template-columns: minmax(0, 1fr); } }
+    .sc-chart-card { min-width: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
+    .sc-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .sc-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .sc-chart-wrap { position: relative; height: 300px; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sc-hero">
+      <div class="sc-container">
+        <h1>서빙 비용 계산기</h1>
+        <p>요청량을 받아 내려면 모델 서버가 몇 대 필요하고 한 달에 얼마인가를 CPU 와 GPU 로 나란히 셉니다.
+          대수는 평시 조건과 고장 조건 중 큰 쪽이고, 두 값이 어디에서 뒤집히는지 차트로 봅니다.</p>
+      </div>
+    </section>
+
+    <div class="sc-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
+        <a href="demo-batch-infer-cards.html">배치 추론 카드 세 장</a>
+        <a href="post.html?id=serving-latency-throughput">서빙 지연과 처리량</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>요청 2,639 QPS 를 받아 내는 데 CPU 서버는 12대, GPU 서버는 3대가 듭니다.
+          한 달로 환산하면 4,147,200원과 8,208,000원입니다. 요청량과 한 대 처리량과 시간당 값을 움직여
+          그 대수와 값이 어떻게 바뀌는지, 두 곡선이 어느 요청량에서 뒤집히는지 봅니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>서버를 늘려 달라는 요청서에 적는 것은 대수 한 줄이지만, 그 한 줄이
+          <strong>한 달 수백만 원</strong>입니다. 대수가 어떤 조건에서 나오는지 알면 요청량이 두 배가 될 때 값이 몇 배가 되는지를
+          미리 답할 수 있습니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <li><span class="step-text">기본값에서 <strong>CPU 12대와 GPU 3대</strong>의 한 달 값을 봅니다. 차이가 400만 원 넘습니다.</span></li>
+        <li><span class="step-text"><strong>예비 없이</strong> 프리셋 → GPU 가 2대로 줄며 값이 얼마나 내려가는지 봅니다.</span></li>
+        <li><span class="step-text">요청량 슬라이더를 오른쪽으로 끌어 <strong>두 곡선이 만나는 자리</strong>를 찾습니다.</span></li>
+      </ol>
+
+      <div class="sc-intro">
+        <strong>대수 정하는 법</strong> — 두 조건 중 <strong>큰 쪽</strong>입니다.
+        평시 조건은 <code>요청량 ÷ (한 대 처리량 × 부하율 상한)</code> 을 올림한 값이고,
+        고장 조건은 <code>요청량 ÷ 한 대 처리량</code> 을 올림한 값에 예비 대수를 더한 값입니다.
+        앞은 평소에 줄이 길어지지 않게 하고, 뒤는 몇 대가 빠져도 요청을 받아 내게 합니다.
+        한 달 값은 <code>대수 × 720시간 × 시간당 값</code> 입니다. 720시간은 30일입니다.
+        기본값은 요청 2,639 QPS, 부하율 상한 0.77, CPU 한 대 287 QPS 에 시간당 480원,
+        GPU 한 대 2,300 QPS 에 시간당 3,800원입니다. 전부 설명을 위한 가상 값입니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="sc-controls">
+        <div class="sc-group-label">받아 낼 요청</div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">요청량 QPS<small>초당 광고 요청 건수</small></div>
+          <input type="range" class="sc-slider" id="sc-qps" min="500" max="20000" step="1" value="2639">
+          <div class="sc-slider-value" id="sc-qps-val">2,639</div>
+        </div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">부하율 상한<small>평시에 한 대가 채우는 한계</small></div>
+          <input type="range" class="sc-slider" id="sc-load" min="0.5" max="0.9" step="0.01" value="0.77">
+          <div class="sc-slider-value" id="sc-load-val">0.77</div>
+        </div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">예비 대수<small>몇 대가 빠져도 받아 낼 것인가</small></div>
+          <input type="range" class="sc-slider" id="sc-spare" min="0" max="2" step="1" value="1">
+          <div class="sc-slider-value" id="sc-spare-val">1대</div>
+        </div>
+        <div class="sc-group-label">CPU 서버 한 대</div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">처리량<small>한 대가 초당 받아 내는 요청</small></div>
+          <input type="range" class="sc-slider" id="sc-cpu-cap" min="100" max="1000" step="1" value="287">
+          <div class="sc-slider-value" id="sc-cpu-cap-val">287</div>
+        </div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">시간당 값<small>한 대를 한 시간 쓰는 값</small></div>
+          <input type="range" class="sc-slider" id="sc-cpu-won" min="100" max="2000" step="10" value="480">
+          <div class="sc-slider-value" id="sc-cpu-won-val">480원</div>
+        </div>
+        <div class="sc-group-label">GPU 서버 한 대</div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">처리량<small>한 대가 초당 받아 내는 요청</small></div>
+          <input type="range" class="sc-slider" id="sc-gpu-cap" min="500" max="6000" step="50" value="2300">
+          <div class="sc-slider-value" id="sc-gpu-cap-val">2,300</div>
+        </div>
+        <div class="sc-slider-row">
+          <div class="sc-slider-label">시간당 값<small>한 대를 한 시간 쓰는 값</small></div>
+          <input type="range" class="sc-slider" id="sc-gpu-won" min="1000" max="10000" step="100" value="3800">
+          <div class="sc-slider-value" id="sc-gpu-won-val">3,800원</div>
+        </div>
+        <div class="sc-row">
+          <span class="sc-row-label">프리셋</span>
+          <button class="sc-preset-btn" data-preset="2639,0.77,1,287,480,2300,3800">기본</button>
+          <button class="sc-preset-btn" data-preset="5278,0.77,1,287,480,2300,3800">요청 두 배</button>
+          <button class="sc-preset-btn" data-preset="2639,0.77,0,287,480,2300,3800">예비 없이</button>
+          <button class="sc-preset-btn" data-preset="2639,0.77,1,287,480,3000,3800">GPU 가 빨라지면</button>
+          <button class="sc-preset-btn" data-preset="2639,0.77,1,287,480,2300,1800">GPU 값이 내리면</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="sc-metrics">
+        <div class="sc-metric">
+          <div class="sc-metric-label">CPU 한 달</div>
+          <div class="sc-metric-value" id="sc-cpu-cost">—</div>
+          <div class="sc-metric-sub" id="sc-cpu-sub">평시 조건과 고장 조건 중 큰 쪽</div>
+        </div>
+        <div class="sc-metric">
+          <div class="sc-metric-label">GPU 한 달</div>
+          <div class="sc-metric-value" id="sc-gpu-cost">—</div>
+          <div class="sc-metric-sub" id="sc-gpu-sub">평시 조건과 고장 조건 중 큰 쪽</div>
+        </div>
+        <div class="sc-metric">
+          <div class="sc-metric-label">뒤집히는 요청량</div>
+          <div class="sc-metric-value" id="sc-flip">—</div>
+          <div class="sc-metric-sub" id="sc-flip-sub">GPU 가 처음 싸지는 QPS</div>
+        </div>
+      </div>
+
+      <div class="sc-verdict" id="sc-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="sc-charts">
+        <div class="sc-chart-card">
+          <h3>요청량에 따른 한 달 값</h3>
+          <p class="note">가로가 요청량, 세로가 한 달 값입니다. 두 선이 계단인 것은 대수를 올림하기 때문입니다. 표시점이 지금 고른 요청량입니다.</p>
+          <div class="sc-chart-wrap"><canvas id="sc-cost-chart"></canvas></div>
+        </div>
+        <div class="sc-chart-card">
+          <h3>요청량에 따른 필요 대수</h3>
+          <p class="note">같은 요청량을 CPU 는 여러 대로, GPU 는 몇 대로 받습니다. GPU 선이 낮은 자리에서 오래 평평한 것은 예비 대수가 대수를 정하고 있어서입니다.</p>
+          <div class="sc-chart-wrap"><canvas id="sc-count-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>대수는 평시가 아니라 고장이 정할 때가 있습니다</strong> — GPU 는 평시 2대면 되는데 한 대가 빠지면 못 버텨 3대입니다. 값의 3분의 1이 예비 한 대입니다.</li>
+            <li><strong>빠른 서버가 싼 서버는 아닙니다</strong> — 요청 하나를 한 시간 받아 내는 값이 CPU 1.67원, GPU 1.65원으로 거의 같습니다. 대수가 적을수록 올림과 예비가 값을 정합니다.</li>
+            <li><strong>뒤집히는 자리는 요청량이 정합니다</strong> — 요청량이 커지면 GPU 쪽 예비 한 대가 묻히고 대수가 적은 쪽이 유리해집니다. 그 자리를 이 차트에서 읽습니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          서버 증설 요청서에 적는 것은 대수 한 줄입니다. 그 한 줄을 만들 때 실제로 세는 것이 이 계산입니다.
+          평시 요청량과 부하율 상한으로 한 번, 한 대가 빠진 상황으로 한 번 세고 큰 쪽을 적습니다.
+        </p>
+        <ul>
+          <li><strong>부하율 상한을 먼저 정합니다:</strong> 이 값이 0.9 면 대수가 줄어 값이 내려가지만, 요청이 조금만 몰려도 줄이 길어져 응답 시간이 나빠집니다. 지연 예산을 먼저 정하고 그 뒤에 대수를 셉니다.</li>
+          <li><strong>예비 대수는 배포 방식과 같이 봅니다:</strong> 새 모델을 올릴 때 서버가 순서대로 내려갔다 올라오면 그동안 한두 대가 빠진 상태입니다. 예비 없이 잡은 대수는 배포할 때마다 부하율이 올라갑니다.</li>
+          <li><strong>미리 계산해 둔 것이 대수를 줄입니다:</strong> 요청 안에서 만들던 값을 새벽 배치로 옮기면 한 대가 받아 내는 요청이 늘어납니다. 이 계산기의 처리량 슬라이더를 올리는 것이 그 일입니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=batch-vs-realtime-inference" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">배치 추론과 실시간 추론: 무엇을 미리 계산해 두나</span>
+              <span class="demo-next-excerpt">이 계산기의 숫자가 글의 다섯째 절에 카드 한 장으로 들어 있습니다</span>
+            </a>
+            <a href="post.html?id=serving-latency-throughput" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">서빙 지연과 처리량: 12ms 예산은 어디서 새나</span>
+              <span class="demo-next-excerpt">부하율 0.77 과 처리 한계 3,439 QPS 가 어디에서 나온 값인지</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/serving-cost-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

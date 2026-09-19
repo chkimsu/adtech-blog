@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 45개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 59개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -512,6 +512,15 @@
               <a href="demo-cluster-roles.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Hadoop, Hive, Spark 자리 카드</a>
               <a href="demo-de-first-months.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터 엔지니어 첫 6개월 카드</a>
               <a href="demo-targeting-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 타겟팅 카드 아홉 장</a>
+              <a href="demo-pipeline-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 학습 파이프라인 카드 다섯 장</a>
+              <a href="demo-version-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 모델 버전 카드 네 장</a>
+              <a href="demo-ci-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Docker 와 CI 카드 네 장</a>
+              <a href="demo-inference-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 추론 서버 카드 네 장</a>
+              <a href="demo-deploy-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 배포 카드 다섯 장</a>
+              <a href="demo-window-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 스트림 집계 카드 네 장</a>
+              <a href="demo-batch-infer-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 배치 추론 카드 세 장</a>
+              <a href="demo-distributed-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 분산 학습 카드 네 장</a>
+              <a href="demo-stats-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 통계 카드 여섯 장</a>
               <a href="demo-pipeline-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 학습 데이터까지</a>
             </div>
           </div>
@@ -537,6 +546,11 @@
               <a href="demo-experiment-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 실험 카드 두 장</a>
               <a href="demo-causal-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 인과추론 카드 네 장</a>
               <a href="demo-explore-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 탐색과 채점 카드 네 장</a>
+              <a href="demo-ops-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 서빙과 감시 카드 여섯 장</a>
+              <a href="demo-data-model-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터와 모델 카드 여덟 장</a>
+              <a href="demo-canary.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 카나리 배포 놀이터</a>
+              <a href="demo-window.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 창 집계 놀이터</a>
+              <a href="demo-serving-cost.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 서빙 비용 계산기</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -638,15 +652,16 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">45개, 주제 8개</span>
+          <span class="count">59개, 주제 9개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
           <a class="demos-jump-item" href="#demo-topic-auction">경매와 입찰<b>6</b></a>
-          <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>10</b></a>
+          <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>11</b></a>
           <a class="demos-jump-item" href="#demo-topic-bandit">탐색과 밴딧<b>8</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>2</b></a>
-          <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>4</b></a>
+          <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>6</b></a>
+          <a class="demos-jump-item" href="#demo-topic-ops">모델 운영<b>11</b></a>
           <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>9</b></a>
           <a class="demos-jump-item" href="#demo-topic-api">요청이 오는 길과 API<b>4</b></a>
           <a class="demos-jump-item" href="#demo-topic-algo">알고리즘 기초<b>2</b></a>
@@ -749,7 +764,7 @@
         <section class="demo-topic" id="demo-topic-measure">
           <div class="demo-topic-head">
             <h3>측정과 모델링</h3>
-            <span class="demo-topic-count">10개</span>
+            <span class="demo-topic-count">11개</span>
           </div>
           <p class="demo-topic-desc">예측이 맞았는지, 광고가 정말 효과가 있었는지를 재는 자리입니다. 지표, 확률 보정, 어트리뷰션, 인과추론과 실험.</p>
 
@@ -778,6 +793,19 @@
                 <span class="demo-card-meta-item">확률·AUC 기초</span>
               </div>
               <a href="demo-metrics-lab.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>통계 카드 여섯 장</h3>
+              <p>두 소재의 클릭률 차이를 언제 믿나. 표본이 만드는 흔들림, 표준오차, 95% 신뢰구간, 검정통계량, t 검정, 분산 검정.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-stats-cards.html" class="btn-try">체험하기</a>
             </div>
 
             <div class="demo-card">
@@ -1046,7 +1074,7 @@
         <section class="demo-topic" id="demo-topic-model">
           <div class="demo-topic-head">
             <h3>학습 데이터와 서빙</h3>
-            <span class="demo-topic-count">4개</span>
+            <span class="demo-topic-count">6개</span>
           </div>
           <p class="demo-topic-desc">로그가 학습 데이터가 되고, 학습한 모델이 요청에 답하기까지. 두 쪽이 어떻게 이어지는지 봅니다.</p>
 
@@ -1102,6 +1130,186 @@
               </div>
               <a href="demo-serving-cards.html" class="btn-try">체험하기</a>
             </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>서빙과 감시 카드 여섯 장</h3>
+              <p>모델이 서버에 오른 뒤 매일 보는 자리 여섯. 같은 요청을 네 자리에서 재면, 재시도의 절벽, 감시 네 층, 세 갈래 피처, 온라인 학습 한 바퀴, 요청이 Pod 까지 가는 길.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">서빙 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-ops-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>데이터와 모델 카드 여덟 장</h3>
+              <p>로그가 학습 데이터가 되고 모델이 후보를 고르는 자리 여덟. 로그 조인, 자리를 모른 채 채점, 목적지 여섯, 피처 창, 후보별 어텐션, 근사 검색, 씨앗 중심점, 실시간 세그먼트.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 7분</span>
+                <span class="demo-card-meta-item">학습 데이터 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-data-model-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-ops">
+          <div class="demo-topic-head">
+            <h3>모델 운영</h3>
+            <span class="demo-topic-count">11개</span>
+          </div>
+          <p class="demo-topic-desc">만든 모델을 매일 굴리는 자리입니다. 새벽 학습 파이프라인, 버전과 재현, 컨테이너와 CI, 추론 서버, 카나리 배포와 롤백, 스트림 창, 배치 추론, 분산 학습. 카드 여덟 데크와 놀이터 셋입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>학습 파이프라인 카드 다섯 장</h3>
+              <p>매일 새벽 모델이 다시 만들어지는 길을 카드 한 장씩으로. 일곱 칸의 DAG, 파티션 센서, 실패한 칸만 다시 돌리기, 백필, 두 번 돌려도 같은 결과.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-pipeline-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>모델 버전 카드 네 장</h3>
+              <p>지난주 모델을 오늘 똑같이 다시 만들 수 있나. 재료 넷, 모델 레지스트리, 데이터에서 배포까지 사슬, 재현본이 다른 자리 셋.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">학습 파이프라인 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-version-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Docker 와 CI 카드 네 장</h3>
+              <p>고친 코드가 서버에 오르기까지 지나는 자리를 카드 한 장씩으로. 이미지 층, 검문 셋, 커밋에서 이미지 저장소까지, 라이브러리 판이 다를 때.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-ci-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>추론 서버 카드 네 장</h3>
+              <p>학습이 남긴 모델 파일이 요청에 답하기까지. 서빙 포맷으로 바꾸기, 서버가 뜨는 41초, 후보 800건을 한 텐서로, 두 버전 동시 적재.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Docker 와 CI 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-inference-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>배포 카드 다섯 장</h3>
+              <p>새 모델이 실제 요청을 받기까지 사람이 정하는 자리. 섀도, 카나리 1과 10과 50과 100, 게이트 넷, 되돌리기 14분, 웜업 20초.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">추론 서버 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-deploy-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>카나리 배포 놀이터</h3>
+              <p>단계를 고르고 초과율, 오류율, COPC, 클릭률 차이를 움직이면 게이트 넷의 통과와 탈락, 되돌림 판정이 바로 바뀝니다. 같은 값도 단계에 따라 판정이 달라집니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">배포 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-canary.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>스트림 집계 카드 네 장</h3>
+              <p>최근 1시간 클릭 수를 누가 어떻게 세나. 텀블링과 슬라이딩 창, 워터마크, 늦게 온 클릭, 배치 값과 어긋나는 자리.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Kafka 기초 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-window-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>창 집계 놀이터</h3>
+              <p>워터마크와 창 종류, 늦게 오는 비율을 움직이면 창마다 센 값과 진짜 값의 차이, 버려진 클릭 수가 바뀝니다. 기다림과 정확도의 맞바꿈을 눈으로 봅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 10분</span>
+                <span class="demo-card-meta-item">스트림 집계 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-window.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>배치 추론 카드 세 장</h3>
+              <p>요청이 오기 전에 미리 계산해 두는 자리. 새벽 배치가 만드는 표, 캐시 적중이 정하는 것, CPU 와 GPU 의 한 달 비용.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 4분</span>
+                <span class="demo-card-meta-item">선수지식 거의 없음</span>
+              </div>
+              <a href="demo-batch-infer-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>서빙 비용 계산기</h3>
+              <p>초당 요청 수와 서버 한 대가 감당하는 양을 움직이면 필요한 대수와 한 달 비용이 나옵니다. CPU 와 GPU 가 뒤집히는 자리를 찾아봅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">배치 추론 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-serving-cost.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>분산 학습 카드 네 장</h3>
+              <p>학습 한 바퀴를 GPU 여러 장으로 나누는 자리. 데이터 병렬, 임베딩만 따로 쪼개기, 동기와 비동기, 장수와 시간.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">임베딩 테이블 글 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-distributed-cards.html" class="btn-try">체험하기</a>
+            </div>
+          
           </div>
         </section>
 

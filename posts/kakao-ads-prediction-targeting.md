@@ -66,6 +66,13 @@ graph LR
 
 카카오모먼트에서 광고주가 고르는 오디언스는 크게 네 갈래다. 데모그래픽은 나이·성별·지역 같은 규칙 기반 세그먼트다. 관심사는 카테고리 관심 신호로 묶은 세그먼트다. 맞춤타겟은 광고주가 직접 올리는 자기 고객 리스트다. 유사타겟은 맞춤타겟과 닮은 사람으로 확장한 것이다. 넷 다 [세그멘테이션](post.html?id=audience-segmentation)에서 다룬 세그먼트 유형의 응용이다. 유사타겟은 [Lookalike Modeling](post.html?id=lookalike-modeling)의 실물이다.
 
+광고주가 올린 명단이 맞춤타겟이 되는 자리를 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=custom" height="480" loading="lazy" title="광고주가 올린 목록을 회원과 맞춘다"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
+
 이 넷을 나란히 놓으면 뚜렷한 패턴이 보인다. 아래 **표②**는 같은 캠페인을 여섯 가지 방식으로 돌렸을 때를 비교한다. 도달 규모와 전환율이 어떻게 바뀌는지 보여준다. **역시 가상의 수치다.** 실제 도달·전환율이 아니다.
 
 | 타겟 방식 | 도달 규모 | 전환율(CVR) |
@@ -210,6 +217,13 @@ print(f"  -> 총 소진 {spent:,.0f}원 / 예산 {BUDGET:,}원, 총 전환 {tota
 **유사타겟은 마법이 아니다. 광고주가 아는 사람(씨앗)에서 출발해, 닮은 사람을 자사 사용자 풀에서 찾는 확장 작업이다.**
 
 과정은 이렇다. 광고주가 자기 고객 명단을 카카오에 올린다. 구매자 이메일·전화번호 해시나 픽셀 방문자 목록이다. 이게 **씨앗(seed)**이다. 카카오는 이 씨앗과 실제로 대응하는 자사 로그인 유저를 찾는다. 이걸로 **맞춤타겟**을 만든다. 그다음, 맞춤타겟과 "닮은" 사람을 전체 사용자 풀에서 찾아 넓히면 **유사타겟**이 된다. 정확히 어떤 기법으로 "닮음"을 재는지는 카카오가 공개하지 않았다. 다만 업계가 일반적으로 쓰는 방식은 있다. 사용자를 벡터(임베딩)로 표현한다. 씨앗의 평균 벡터와 가까운 순서로 후보를 뽑는 식이다. 자세한 계산법은 [Lookalike Modeling](post.html?id=lookalike-modeling)에 있다.
+
+씨앗에서 확장 비율까지를 카드로 보면 이렇다. 카드의 도달 숫자는 타겟팅 기초 트랙의 값이라 이 글의 표②와 조금 다르다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=lookalike" height="480" loading="lazy" title="씨앗에서 닮은 사람으로 넓힌다"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
 
 ```mermaid
 graph LR

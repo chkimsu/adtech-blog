@@ -212,6 +212,13 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   </div>
 </div>
 
+타임라인의 맨 앞, 피처가 세 갈래에서 모이는 자리를 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=threefeeds" height="480" loading="lazy" title="세 갈래 피처가 한 벡터로 모이는 자리"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 ### 시간 예산 분배
 
 | 단계 | 소요 시간 (p50) | 비고 |

@@ -2805,5 +2805,439 @@ window.DEMO_EDU = {
             { el: '[data-card="abmab"]', title: '가장 먼저 볼 것', body: '밴딧은 클릭을 더 법니다. 대신 진 소재에 대한 성적표가 흐려집니다.', waitFor: 'click' },
             { el: '[data-card="remedies"]', title: '떼어 주는 몫과 되살리는 속도', body: '한 세대에 주는 몫이 클수록 빨리 되살아납니다. 그 몫이 그날 포기하는 매출입니다.' }
         ]
+    },
+
+    // ==========================================
+    // 학습 파이프라인 카드 다섯 장 (입문)
+    // ==========================================
+    'pipeline-cards': {
+        analogy: '모델은 사람이 만드는 것이 아니라 매일 04:00 에 도는 일곱 칸이 만든다. 알람은 어느 칸이 멈췄나부터 본다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'dag': return '헷갈리는 것은 <strong>알람에 적힌 이름</strong>입니다. pctr_daily 는 일곱 칸 전체의 이름이지 실패한 칸의 이름이 아닙니다. 알람 뒤에 붙은 build_features 같은 칸 이름이 진짜 자리입니다.';
+                    case 'sensor': return '헷갈리는 것은 <strong>센서가 계산을 하지 않는다는 점</strong>입니다. 파티션이 있나 없나만 1분마다 봅니다. 그런데 이 칸이 없으면 23개만 온 채로 다음 칸이 시작되고, 모델은 오류 없이 반쪽 데이터로 학습됩니다.';
+                    case 'rerun': return '헷갈리는 것은 <strong>왜 처음부터 다시 돌리지 않나</strong>입니다. 1, 2 의 결과가 이미 파티션에 놓여 있고 그 사이 입력이 안 바뀌었기 때문입니다. 멈춘 칸부터 돌리면 129분이 100분으로 줍니다.';
+                    case 'backfill': return '헷갈리는 것은 <strong>학습을 30번 하지 않는다는 점</strong>입니다. 백필은 라벨과 피처 파티션 30개를 다시 만드는 일이고, 모델은 그 30개가 다 준비된 뒤 한 번 학습합니다. 그래서 한 날이 63분입니다.';
+                    case 'idempotent': return '헷갈리는 것은 <strong>덧붙이기가 왜 위험한가</strong>입니다. 결과가 틀리는 것이 아니라 두 번 들어간 줄이 두 배로 학습됩니다. 절반에서 죽었다 다시 돌리면 그 절반 시간대의 로그만 2배 가중이 됩니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 데이터와 끝난 칸, 벽돌색은 알람과 실패와 지금 도는 칸, 먹색은 모델과 서버, 회색은 만드는 작업입니다.' },
+            { el: '[data-card="dag"]', title: '가장 먼저 볼 것', body: '일곱 칸이 04:00 부터 06:09 까지 순서로 돕니다. 알람은 이 중 어느 칸이 멈췄나를 말합니다.', waitFor: 'click' },
+            { el: '[data-card="idempotent"]', title: '다시 돌려도 되는 조건', body: '덮어쓰기면 몇 번 돌려도 같은 행 수입니다. 이 조건이 있어야 재실행과 백필을 안심하고 합니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 모델 버전 카드 네 장 (입문)
+    // ==========================================
+    'version-cards': {
+        analogy: '모델 이름은 재료 넷을 가리키는 이름이다. 재료를 적어 두지 않으면 지난주 모델을 다시 만들 수 없다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'recipe': return '헷갈리는 것은 <strong>모델 파일이 곧 모델이 아니라는 점</strong>입니다. 파일은 결과이고 코드, 데이터, 설정, 환경 넷이 원인입니다. 파일만 남기면 「왜 이 값이 나왔나」와 「다시 만들기」 둘 다 못 합니다.';
+                    case 'registry': return '헷갈리는 것은 <strong>레지스트리가 파일 창고가 아니라는 점</strong>입니다. 파일은 저장소에 있고 표는 그 파일이 무엇으로 만들어졌고 지금 어떤 상태인지를 적습니다. 서버가 읽는 것은 표의 「운영」 줄입니다.';
+                    case 'lineage': return '헷갈리는 것은 <strong>질문이 거꾸로 간다는 점</strong>입니다. 만들 때는 데이터에서 배포로 가지만 물을 때는 배포에서 데이터로 갑니다. 그래서 학습 실행 번호가 데이터 파티션 목록을 들고 있어야 합니다.';
+                    case 'diff': return '헷갈리는 것은 <strong>코드가 같은데 왜 다른가</strong>입니다. 코드는 재료 넷 중 하나입니다. 8월 20일 파티션이 백필로 바뀌었고 라이브러리가 올라갔고 시드가 없었으니, 남은 셋이 다 달랐습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '[data-card="recipe"]', title: '가장 먼저 볼 것', body: '모델 하나는 재료 넷이 학습을 한 번 지나 나온 결과입니다. 넷이 다 같아야 같은 모델입니다.', waitFor: 'click' },
+            { el: '[data-card="registry"]', title: '표 한 장', body: '버전마다 재료와 지표와 상태를 적습니다. 서버는 「운영」인 줄을 싣습니다.' },
+            { el: '[data-card="diff"]', title: '다시 만들면 왜 다른가', body: '데이터 판, 라이브러리, 시드. 이 셋을 적어 두고 맞추면 같은 값이 나옵니다.' }
+        ]
+    },
+
+    // ==========================================
+    // Docker 와 CI 카드 네 장 (입문)
+    // ==========================================
+    'ci-cards': {
+        analogy: '이미지는 코드 아래 층까지 굳힌 한 장이고, CI 는 커밋마다 그 장을 만들어 검문 셋을 통과시킨다. 걸린 커밋은 저장소에 오르지 않는다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'envdrift': return '헷갈리는 것은 <strong>코드가 같은데 왜 값이 다른가</strong>입니다. 코드는 맨 위 한 층이고 그 아래 라이브러리 판이 하나 달랐습니다. 이미지는 그 아래 층까지 한 장으로 굳혀 노트북과 서버를 같게 만듭니다.';
+                    case 'image': return '헷갈리는 것은 <strong>모델 파일이 왜 이미지에 없나</strong>입니다. 이미지는 코드가 바뀔 때 만들고 모델은 매일 새벽 바뀝니다. 바뀌는 주기가 다르니 따로 두고, 서버가 뜰 때 내려받습니다.';
+                    case 'pipeline': return '헷갈리는 것은 <strong>CI 가 통과하면 서버에 올라간 것인가</strong>입니다. 아닙니다. 이미지가 저장소에 오른 것까지입니다. 서버 12대에 올리는 것은 배포이고 다른 절차입니다.';
+                    case 'gates': return '헷갈리는 것은 <strong>유닛 테스트를 다 통과했는데 왜 또 검사하나</strong>입니다. 유닛은 함수 하나씩만 봅니다. 서버를 켜서 요청과 응답의 모양과 속도를 보는 것이 계약 테스트이고, 이미지 층의 위험과 크기를 보는 것이 이미지 검사입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 것(파일, 이미지, 저장소), 벽돌색은 지금 오는 것(커밋), 먹색은 서버, 회색은 만드는 작업(빌드, 테스트, 검사)입니다.' },
+            { el: '[data-card="envdrift"]', title: '가장 먼저 볼 것', body: '같은 코드와 같은 모델 파일인데 노트북과 서버의 값이 다릅니다. 다른 것은 그 아래 층입니다.', waitFor: 'click' },
+            { el: '[data-card="gates"]', title: '검문 셋', body: '싼 검문부터 돕니다. 유닛 48초, 계약 2분 30초, 이미지 검사 52초. 하나라도 걸리면 거기서 멈춥니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 추론 서버 카드 네 장 (입문)
+    // ==========================================
+    'inference-cards': {
+        analogy: '학습 파일은 ONNX 로 바꿔 싣고, 서버는 웜업까지 끝낸 41초에 준비 신호를 켠다. 후보 800건은 한 텐서로 한 번에, 두 버전은 같이 실어 두고 설정 한 줄로 바꾼다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'format': return '헷갈리는 것은 <strong>바꾸면 파일이 작아지나</strong>입니다. 가중치 38MB 는 그대로입니다. 줄어드는 것은 서버가 같이 실어야 하는 프레임워크 1.2GB 와 파이썬 코드이고, 그 자리에 런타임 0.8GB 만 남습니다.';
+                    case 'load': return '헷갈리는 것은 <strong>적재가 끝났는데 왜 20초를 더 기다리나</strong>입니다. 첫 계산 몇 번이 느리기 때문입니다. 가짜 요청 200건으로 그 몫을 먼저 치르고 나서 준비 신호를 켭니다. 안 그러면 실제 요청이 그 몫을 치릅니다.';
+                    case 'batch': return '헷갈리는 것은 <strong>800번 부르면 왜 800배가 아니라 32배인가</strong>입니다. 건당 계산 0.0036ms 는 양쪽이 같습니다. 다른 것은 호출마다 붙는 고정 비용 0.116ms 이고, 그것이 800번 쌓여 93ms 가 됩니다.';
+                    case 'twoversions': return '헷갈리는 것은 <strong>두 버전을 같이 두는 값이 어디서 드나</strong>입니다. 신경망 38MB 는 둘을 실어도 76MB 라 값이 없습니다. 값은 임베딩 표입니다. 버전마다 27.7GB 라 55.4GB 가 됩니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 것(모델 파일, 임베딩 표, 설정), 벽돌색은 지금 오는 것(요청), 먹색은 서버, 회색은 만드는 작업(변환, 웜업, 추론)입니다.' },
+            { el: '[data-card="load"]', title: '가장 먼저 볼 것', body: '서버는 켜지자마자 답하지 않습니다. 41초 중 20초가 웜업이고, 그 뒤에 준비 신호가 켜집니다.', waitFor: 'click' },
+            { el: '[data-card="batch"]', title: '예산 8ms 안에 드는 쪽', body: '후보 800건을 한 텐서로 넣으면 3.0ms, 하나씩 부르면 96ms 입니다. 호출마다 붙는 고정 비용이 차이를 만듭니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 서빙과 감시 카드 여섯 장 (중급)
+    // ==========================================
+    'ops-cards': {
+        analogy: '모델이 서버에 오른 뒤 매일 보는 자리 여섯. 어디서 재느냐, 무엇이 되돌아오느냐, 어느 층이 먼저 흔들리느냐가 여기서 정해진다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'fourplaces': return '헷갈리는 것은 <strong>분위수는 더할 수 없다</strong>는 점입니다. 기다린 시간의 p99 2.97ms 와 추론의 p99 10.77ms 를 더하면 13.74ms 인데 체류 시간의 p99 는 11.19ms 입니다. 가장 오래 기다린 요청과 가장 오래 걸린 추론이 같은 요청일 이유가 없기 때문입니다.';
+                    case 'retry': return '헷갈리는 것은 <strong>왜 요청량 1.8% 차이로 결과가 뒤집히나</strong>입니다. 재시도가 만든 추가 부하가 초과율을 올리고, 올라간 초과율이 재시도를 더 만드는 되먹임이 멈추지 않는 지점이 그 사이에 있기 때문입니다. 부르는 쪽과 받는 쪽의 타임아웃이 다르면 재시도는 조용히 두 배가 됩니다.';
+                    case 'fourlayers': return '헷갈리는 것은 <strong>왜 매출부터 보면 안 되나</strong>입니다. 4층은 모든 사고가 섞여 도착하는 자리라, 매출이 5% 빠졌다는 사실만으로는 아무것도 알 수 없습니다. 라벨이 필요 없는 1층과 2층이 즉시 굳으니 거기부터 봅니다.';
+                    case 'threefeeds': return '헷갈리는 것은 <strong>같은 이름의 피처가 학습과 서빙에서 다른 곳에서 온다</strong>는 점입니다. 서빙은 카운터에서 지금 값을 읽고, 학습은 아카이브 로그로 그 시점의 값을 다시 만듭니다. 이 둘이 어긋나는 것이 학습과 서빙의 피처 어긋남입니다.';
+                    case 'onlineloop': return '헷갈리는 것은 <strong>보정과 재학습이 고치는 것이 다르다</strong>는 점입니다. 보정은 출력 확률의 눈금만 바꾸고 재학습은 가중치 전체를 바꿉니다. 그래서 갱신 주기가 수 분과 하루로 다르고, 둘을 고르는 것이 아니라 쌓습니다.';
+                    case 'k8spath': return '헷갈리는 것은 <strong>Service 는 서버가 아니다</strong>는 점입니다. 고정 주소와 살아 있는 Pod 목록을 적어 둔 것이라 점선 상자로 그렸습니다. 요청을 실제로 처리하는 것은 Pod 이고, Service 는 어느 Pod 로 보낼지만 정합니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지와 점선', body: '파랑은 놓여 있는 데이터, 벽돌색은 지금 오는 것, 먹색은 모델과 서버, 회색은 만드는 작업입니다. 점선 상자는 적어 둔 규칙과 주소입니다.' },
+            { el: '[data-card="fourplaces"]', title: '가장 먼저 볼 것', body: '지연은 「얼마」가 아니라 「어디서 잰 얼마」입니다. 같은 요청에 시계 넷이 걸려 있습니다.', waitFor: 'click' },
+            { el: '[data-card="fourlayers"]', title: '사고가 나면 어디부터', body: '라벨 없이 즉시 굳는 위 두 층부터 봅니다. 매출은 모든 사고가 섞여 도착하는 자리입니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 데이터와 모델 카드 여덟 장 (중급)
+    // ==========================================
+    'data-model-cards': {
+        analogy: '로그가 학습 데이터가 되고 모델이 후보를 고르는 자리 여덟. 언제 붙이나, 어느 창으로 만드나, 무엇을 미리 계산해 두나가 여기서 정해진다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'logjoin': return '헷갈리는 것은 <strong>기다리기가 왜 공짜가 아닌가</strong>입니다. 7일 창이 닫힌 뒤 조인하면 라벨은 정확하지만 모델은 일주일 늦은 세상을 배웁니다. 먼저 쓰고 고치기는 신선하지만 라벨을 두 번 만드는 파이프라인이 필요합니다.';
+                    case 'rank1': return '헷갈리는 것은 <strong>순서가 맞는데 왜 고치나</strong>입니다. 순서만 쓰는 랭킹에는 문제가 없지만, 확률 크기를 쓰는 입찰가(eCPM)에는 3번 자리 광고가 1번 기준으로 부풀어 들어갑니다. 그래서 계수 0.40 을 곱해 내려 잡습니다.';
+                    case 'fanout': return '헷갈리는 것은 <strong>30 과 11 의 차이 19 가 비용이 아니다</strong>는 점입니다. 비용은 목적지를 하나 더 붙일 때 나옵니다. 층이 없으면 잡 5개를 고치고 배포 승인 5번이고, 층이 있으면 0개입니다.';
+                    case 'aggwindow': return '헷갈리는 것은 <strong>왜 에러가 안 나나</strong>입니다. 누출된 피처도 서빙에서 값을 내놓으니 파이프라인은 멀쩡히 돕니다. 오프라인 AUC 0.894 가 실서빙 0.779 로 떨어진 뒤에야 보입니다.';
+                    case 'din': return '헷갈리는 것은 <strong>유저 표현이 왜 하나가 아닌가</strong>입니다. 어텐션은 후보 광고를 보고 이력에 무게를 주니, 같은 유저라도 후보 광고마다 표현이 새로 계산됩니다. 후보가 50개면 50번 계산합니다.';
+                    case 'ann': return '헷갈리는 것은 <strong>2% 만 보는데 왜 괜찮은가</strong>입니다. 인덱스가 벡터를 비슷한 것끼리 묶어 두어, 유저 벡터와 가까운 묶음만 열어 봅니다. 진짜 1위를 가끔 놓치는 대신 128.8ms 가 3.4ms 가 됩니다.';
+                    case 'centroid': return '헷갈리는 것은 <strong>임계값과 확장 비율이 같은 것</strong>이라는 점입니다. 유사도 순으로 세운 줄을 어디서 자르느냐가 1%, 5%, 10% 슬라이더입니다. 씨앗이 이질적이면 평균 하나가 어느 쪽도 아닌 빈 자리에 놓여 중심점을 여럿 둡니다.';
+                    case 'rtsegment': return '헷갈리는 것은 <strong>TTL 이 왜 꼭 필요한가</strong>입니다. 활성 검색자에 1시간을 걸지 않으면 세그먼트가 한 방향으로만 커져 타겟팅이 무뎌집니다. 배치 세그먼트와 부딪히면 스트리밍이 이깁니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지와 점선', body: '파랑은 놓여 있는 데이터, 벽돌색은 지금 오는 것, 먹색은 모델과 서버, 회색은 만드는 작업입니다. 점선 상자는 적어 둔 규칙과 계수입니다.' },
+            { el: '[data-card="logjoin"]', title: '가장 먼저 볼 것', body: '로그 셋을 요청 번호로 붙여야 정답이 생깁니다. 전환은 며칠 뒤에 오니 언제 붙이느냐가 정답의 정확도입니다.', waitFor: 'click' },
+            { el: '[data-card="aggwindow"]', title: '오프라인 점수를 못 믿을 때', body: '피처 창과 라벨 시각이 겹치면 정답이 피처에 새어 듭니다. 창은 D-1 자정에서 자릅니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 배포 카드 다섯 장 (입문)
+    // ==========================================
+    'deploy-cards': {
+        analogy: '새 모델은 한 번에 다 바뀌지 않는다. 1퍼센트부터 넓히고, 게이트 하나가 닫히면 가중치 한 줄로 되돌린다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'shadow': return '헷갈리는 것은 <strong>섀도로는 무엇을 못 보나</strong>입니다. 지연과 예측 분포는 보이지만 클릭은 안 보입니다. 나간 광고가 옛 모델 것이라 새 모델의 점수에는 결과가 붙지 않습니다.';
+                    case 'canary': return '헷갈리는 것은 <strong>1퍼센트 단계가 무엇을 보는 자리인가</strong>입니다. 5분에 모이는 클릭이 79건뿐이라 모델 품질은 못 봅니다. 서버가 죽지 않나만 보는 자리입니다.';
+                    case 'gates': return '헷갈리는 것은 <strong>게이트가 왜 넷인가</strong>입니다. 앞의 둘은 서버가 멀쩡한가이고 뒤의 둘은 모델이 돈을 버는가입니다. 서버가 멀쩡해도 COPC 가 어긋나면 넓히지 않습니다.';
+                    case 'rollback': return '헷갈리는 것은 <strong>14분 중 기계가 쓴 시간이 1분뿐</strong>이라는 점입니다. 나머지는 사람이 보고 정하고 확인한 시간입니다. 게이트를 미리 적어 두면 판단 5분이 없어집니다.';
+                    case 'warmup': return '헷갈리는 것은 <strong>느린 30초가 모델 탓이 아니라는 점</strong>입니다. 준비 신호를 언제 켜느냐의 문제입니다. 웜업 20초를 넣고 신호를 미루면 그 구간이 사라집니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 것, 벽돌색은 지금 오는 것, 먹색은 모델과 서버, 회색은 만드는 작업입니다. 점선은 미리 적어 둔 게이트 조건입니다.' },
+            { el: '[data-card="canary"]', title: '가장 먼저 볼 것', body: '가중치 한 줄이 1, 10, 50, 100 을 정합니다. 단계마다 머무는 시간과 보는 것이 다릅니다.', waitFor: 'click' },
+            { el: '[data-card="rollback"]', title: '되돌리기가 빠른 이유', body: '파드를 끄는 것이 아니라 요청이 가는 길을 바꾸는 일입니다. 옛 파드가 떠 있어 초 단위입니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 배치 추론 카드 세 장 (입문)
+    // ==========================================
+    'batch-infer-cards': {
+        analogy: '요청마다 계산할 것과 새벽에 미리 만들어 둘 것을 나눈다. 그 선이 서버 대수와 한 달 비용을 정한다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'precompute': return '헷갈리는 것은 <strong>38배가 어디서 나오나</strong>입니다. 사람 수가 아니라 요청 수의 차이입니다. 같은 사람이 하루 16.3번 요청하므로, 사람마다 한 번만 계산하면 그만큼 덜 듭니다.';
+                    case 'cache': return '헷갈리는 것은 <strong>적중률과 평균 시간의 관계</strong>입니다. 못 찾은 요청만 2ms 를 쓰므로 평균은 적중률로 섞입니다. 적중 80% 면 0.56ms 이고 100% 면 0.20ms 입니다.';
+                    case 'cost': return '헷갈리는 것은 <strong>GPU 가 왜 세 대인가</strong>입니다. 2,639 QPS 면 두 대로 되는데, 한 대가 빠지면 부하율이 1.15 로 넘어갑니다. 예비 한 대가 비용의 3분의 1 입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '[data-card="precompute"]', title: '가장 먼저 볼 것', body: '새벽에 한 번 전원 몫을 만들어 두면 요청 때는 꺼내 쓰기만 합니다.', waitFor: 'click' },
+            { el: '[data-card="cost"]', title: '대수가 비용을 정합니다', body: '초당 요청 수와 한 대가 감당하는 양으로 대수가 나오고, 대수에 시간당 값을 곱하면 한 달 비용입니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 분산 학습 카드 네 장 (중급)
+    // ==========================================
+    'distributed-cards': {
+        analogy: '데이터는 나누면 빨라지고 임베딩은 나누면 들어간다. 장을 늘릴수록 합치는 시간이 붙어 효율이 내려간다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'dataparallel': return '헷갈리는 것은 <strong>넷이면 왜 네 배가 아닌가</strong>입니다. 계산은 넷으로 나뉘는데 기울기를 합치는 시간은 안 나뉩니다. 그래서 3.5배이고 효율이 86% 입니다.';
+                    case 'embshard': return '헷갈리는 것은 <strong>표가 큰데 왜 느리지 않나</strong>입니다. 배치 하나가 건드리는 줄이 유저 2억 줄 중 1,024줄뿐이기 때문입니다. 표 전체가 아니라 그 줄만 오갑니다.';
+                    case 'sync': return '헷갈리는 것은 <strong>무엇을 맞바꾸나</strong>입니다. 동기는 시간을 잃고 비동기는 최신 값을 잃습니다. 실무는 신경망을 동기로, 임베딩을 비동기로 섞습니다.';
+                    case 'speedup': return '헷갈리는 것은 <strong>효율이 왜 내려가나</strong>입니다. 장이 하나 늘 때마다 합치기와 기다림이 5.3% 씩 붙습니다. 16장이면 절반 가까이가 그 몫입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '[data-card="dataparallel"]', title: '가장 먼저 볼 것', body: '같은 모델을 GPU 마다 두고 데이터만 나눕니다. 기울기를 평균 내어 넷이 같은 모델을 유지합니다.', waitFor: 'click' },
+            { el: '[data-card="embshard"]', title: '한 장에 안 들어가는 것', body: '신경망은 들어가고 임베딩 표는 안 들어갑니다. 표만 따로 서버에 나눠 둡니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 카나리 배포 놀이터 (중급)
+    // ==========================================
+    'canary': {
+        analogy: '같은 새 모델이라도 어느 단계에서 재느냐에 따라 판정이 달라진다. 1퍼센트에서는 클릭이 적어 모델 품질을 아예 못 읽는다',
+        anchor: '.cn-controls',
+        embedKeep: ['.cn-controls', '.cn-metrics', '.cn-verdict', '.cn-gates', '.cn-charts'],
+        embedHide: ['.demo-prereq', '.demo-intro', '.demo-steps', '.cn-intro', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            '.cn-stage-btn': ({ el }) =>
+                `단계를 <strong>${el.textContent.trim()}</strong> 로 바꿨어요. ` +
+                '이 단계의 5분 창에 모이는 요청과 클릭이 달라지고, 클릭이 1,600건을 넘어야 COPC 를 읽습니다. ' +
+                '값은 그대로인데 <strong>판정이 바뀌는 것</strong>이 이 놀이터의 핵심입니다.',
+            '#cn-over': ({ value, prev }) =>
+                `8ms 초과율을 <strong>${prev.toFixed(2)}% → ${value.toFixed(2)}%</strong> 로 ${value > prev ? '올렸' : '내렸'}어요. ` +
+                `${value > 6 ? '게이트 6% 를 넘어 <strong>서버 쪽 게이트가 닫힙니다.</strong> 모델 품질과 무관하게 되돌립니다' : '게이트 6% 안이라 서버 쪽은 통과입니다'}.`,
+            '#cn-err': ({ value, prev }) =>
+                `오류율을 <strong>${prev.toFixed(2)}% → ${value.toFixed(2)}%</strong> 로 바꿨어요. ` +
+                `${value > 0.1 ? '0.1% 를 넘으면 응답을 못 준 요청이 생긴 것이라 바로 되돌립니다' : '0.1% 안이면 응답은 다 나가고 있습니다'}.`,
+            '#cn-copc': ({ value, prev }) =>
+                `COPC 를 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}</strong> 로 바꿨어요. ` +
+                `1 에서 ${Math.abs(value - 1).toFixed(2)} 떨어져 있습니다. ` +
+                `${Math.abs(value - 1) > 0.05 ? '게이트 폭 0.05 밖이라 <strong>읽을 수 있는 단계라면 탈락</strong>입니다' : '게이트 폭 0.05 안입니다'}. ` +
+                '다만 1퍼센트 단계에서는 클릭이 모자라 이 값을 아예 안 봅니다.',
+            '#cn-ctr': ({ value, prev }) =>
+                `클릭률 차이를 <strong>${prev.toFixed(1)}% → ${value.toFixed(1)}%</strong> 로 바꿨어요. ` +
+                `${value < -2 ? '옛 모델보다 2% 넘게 떨어졌습니다. 서버는 멀쩡한데 <strong>돈이 새는 조용한 고장</strong>이 이 모양입니다' : '옛 모델 대비 허용 범위 안입니다'}.`,
+            '.cn-preset-btn': ({ el }) =>
+                `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했어요. ` +
+                '게이트 표와 오른쪽 막대가 같이 바뀝니다. 단계를 1퍼센트와 10퍼센트로 번갈아 눌러 같은 값의 판정이 어떻게 달라지는지 보세요.'
+        },
+        tour: [
+            { el: '.cn-stage-row', title: '단계부터 고릅니다', body: '1퍼센트는 5분, 10퍼센트와 50퍼센트는 30분입니다. 단계마다 모이는 클릭 수가 달라 <strong>읽을 수 있는 게이트</strong>가 달라집니다.' },
+            { el: '.cn-metrics', title: '클릭이 모여야 읽습니다', body: 'COPC 는 클릭이 적으면 우연으로 흔들립니다. 흔들림 폭이 게이트 폭 0.05 보다 넓으면 <strong>판정하지 않습니다.</strong>', waitFor: 'click' },
+            { el: '#cn-copc', title: '그날 아침을 재현해 보기', body: 'COPC 를 <strong>1.09</strong> 로 올리고 단계를 10퍼센트로 바꾸면 되돌림 판정이 나옵니다.', waitFor: 'input' },
+            { el: '.cn-gates', title: '넷 다 열려야 넓힙니다', body: '앞의 둘은 서버가 멀쩡한가, 뒤의 둘은 모델이 돈을 버는가입니다. 하나라도 닫히면 가중치를 0 으로 되돌립니다.' }
+        ]
+    },
+
+// ==========================================
+    // 스트림 집계 카드 네 장 (입문)
+    // ==========================================
+    'window-cards': {
+        analogy: '「최근 1시간 클릭 수」 하나에 정할 것이 셋이다 — 창을 어떻게 자르나, 언제 닫나, 닫힌 뒤 온 클릭은 어디로 보내나',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'windows': return '헷갈리는 것은 <strong>텀블링 창이 왜 최근 1시간이 아닌가</strong>입니다. 창이 정각에만 나오니 15:59 요청도 14:00~15:00 값을 받습니다. 요청 시각이 정각에서 멀수록 묵는데 그 폭이 0분에서 59분입니다.';
+                    case 'watermark': return '헷갈리는 것은 <strong>워터마크가 벽시계 시간이 아니라는 것</strong>입니다. 잡은 시계를 보고 닫지 않고, 지금까지 읽은 클릭의 일어난 시각 중 가장 늦은 것에서 2분을 뺀 값으로 닫습니다. 그래서 잡이 5분 밀려도 창에 들어가는 클릭은 그대로입니다.';
+                    case 'late': return '헷갈리는 것은 <strong>버린 클릭이 학습에서도 빠지나</strong>입니다. 아닙니다. 아카이브에는 그대로 쌓여서 하루 뒤 배치가 다 셉니다. 빠지는 것은 그 시각에 서빙이 본 값뿐입니다.';
+                    case 'batchvs': return '헷갈리는 것은 <strong>한 건 차이가 왜 문제인가</strong>입니다. 크기가 아니라 방향입니다. 배치 값은 스트림 값보다 늘 크거나 같고 절대 작지 않아서, 한쪽으로만 틀리는 어긋남을 모델이 그대로 배웁니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 데이터, 벽돌색은 지금 오는 클릭, 먹색은 서버, 회색은 만드는 작업입니다. 점선은 적어 둔 것입니다.' },
+            { el: '[data-card="watermark"]', title: '가장 먼저 볼 것', body: '클릭에는 일어난 시각과 도착한 시각이 따로 있습니다. 창을 언제 닫을지가 이 둘 사이에서 정해집니다.', waitFor: 'click' },
+            { el: '[data-card="batchvs"]', title: '학습과 서빙이 다른 값을 보는 자리', body: '같은 한 시간을 스트림은 1,203, 배치는 1,204 로 셉니다. 서빙이 본 값을 로그로 남기면 어긋남이 0 이 됩니다.' }
+        ]
+    },
+
+    // ==========================================
+    // 창 집계 놀이터 (중급)
+    // ==========================================
+    'window': {
+        analogy: '워터마크 한 줄이 곧 하루에 몇 건을 잃고 값이 몇 분 묵는가다 — 그 둘을 맞바꾸는 자리를 직접 움직여 본다',
+        anchor: '.wn-controls',
+        embedKeep: ['.wn-controls'],
+        embedHide: ['.demo-prereq', '.demo-intro', '.demo-steps', '.wn-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '#wn-wm': ({ value, prev }) =>
+                `워터마크를 <strong>${prev}분 → ${value}분</strong>으로 ${value > prev ? '늘렸' : '줄였'}습니다. ` +
+                `${value > prev ? '창이 그만큼 더 기다렸다 닫히니 빠지는 클릭이 줄고, 대신 값이 <strong>그만큼 묵습니다</strong>' : '값은 빨리 나오지만 창이 일찍 닫혀 <strong>빠지는 클릭이 늘어납니다</strong>'}. 아래 막대에서 지금 고른 값이 진한 막대입니다.`,
+            '#wn-late': ({ value, prev }) =>
+                `2분 넘게 늦는 비율을 <strong>${prev.toFixed(2)}% → ${value.toFixed(2)}%</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                `${value > prev ? '수집 쪽이 느려지거나 신호가 나쁜 지면이 늘면 이렇게 됩니다. 같은 워터마크에서 <strong>빠지는 클릭이 그대로 따라 올라갑니다</strong>' : '도착이 빨라지면 같은 워터마크로도 <strong>덜 빠집니다</strong>'}.`,
+            '#wn-req': ({ value, prev }) =>
+                `광고 서버가 값을 읽는 시각을 <strong>15:${String(prev).padStart(2, '0')} → 15:${String(value).padStart(2, '0')}</strong>으로 옮겼습니다. ` +
+                '슬라이딩 창은 1분마다 나와 묵는 시간이 거의 그대로이고, 텀블링 창은 정각에서 멀어질수록 <strong>값이 계속 묵습니다</strong>.',
+            '.wn-win-btn': ({ el }) =>
+                `창 종류를 <strong>${el.textContent.trim()}</strong>로 바꿨습니다. ` +
+                '위의 「읽는 창」 칸이 어떻게 달라지는지 보십시오. 텀블링은 정각 구간 하나를 계속 주고, 슬라이딩은 1분마다 새 구간을 줍니다.',
+            '.wn-preset-btn': ({ el }) =>
+                `<strong>${el.textContent.trim()}</strong> 프리셋을 걸었습니다. ` +
+                '지표 셋과 그림 둘이 함께 바뀝니다. 「하루에 빠지는 클릭」과 「값이 묵는 시간」이 서로 반대로 움직이는 것을 기본값과 비교해 보십시오.'
+        },
+        tour: [
+            {
+                el: '.wn-metrics',
+                title: '숫자 셋을 먼저',
+                body: '읽는 창이 <strong>어느 구간</strong>인지, 그 창에서 <strong>몇 건을 세었는지</strong>, 하루로 치면 <strong>몇 건이 빠지는지</strong>입니다. 셋이 함께 움직입니다.'
+            },
+            {
+                el: '#wn-timeline',
+                title: '점 하나가 클릭 하나',
+                body: '가로는 클릭이 일어난 시각, 세로는 도착까지 걸린 시간입니다. 점선 위로 올라간 벽돌색 점이 <strong>창이 닫힌 뒤에 도착한 클릭</strong>입니다. 점선이 기울어 있는 것은 창 앞쪽 클릭은 더 늦어도 들어가기 때문입니다.'
+            },
+            {
+                el: '#wn-wm',
+                title: '직접 움직여 보기',
+                body: '<strong>워터마크</strong> 슬라이더를 0분으로 내려 보십시오. 하루에 빠지는 클릭이 몇 건으로 뛰는지 보입니다.',
+                waitFor: 'input'
+            }
+        ]
+    },
+
+// ==========================================
+    'serving-cost': {
+        analogy: '대수는 두 조건 중 큰 쪽이다 — 평시에 부하율 상한을 지키는 대수, 예비가 빠져도 받아 내는 대수',
+        anchor: '.sc-controls',
+        embedKeep: ['.sc-controls'],
+        embedHide: ['.demo-prereq', '.demo-intro', '.demo-steps', '.sc-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '#sc-qps': ({ value, prev }) =>
+                `요청량을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')} QPS</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                `대수는 요청량에 비례해 ${value > prev ? '늘지만 올림 때문에 계단으로 오릅니다' : '줄지만 예비 대수 아래로는 안 내려갑니다'}. ` +
+                '두 차트의 표시점이 어디로 갔는지 보세요.',
+            '#sc-load': ({ value, prev }) =>
+                `부하율 상한을 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}</strong>로 바꿨습니다. ` +
+                `${value > prev ? '한 대를 더 채워 쓰니 대수가 줄고 값이 내려갑니다. 대신 요청이 조금만 몰려도 줄이 길어집니다' : '한 대를 덜 채워 쓰니 대수가 늘고 값이 올라갑니다. 대신 요청이 몰려도 여유가 남습니다'}.`,
+            '#sc-spare': ({ value, prev }) =>
+                `예비 대수를 <strong>${prev}대 → ${value}대</strong>로 바꿨습니다. ` +
+                '대수가 적은 GPU 쪽이 먼저 움직입니다. 열두 대 중 한 대는 빠져도 남은 열한 대가 받아 내지만, 두 대 중 한 대가 빠지면 못 받아 냅니다.',
+            '#sc-cpu-cap': ({ value, prev }) =>
+                `CPU 한 대 처리량을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')} QPS</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                `요청 안에서 만들던 값을 미리 만들어 두면 이쪽이 ${value > prev ? '올라갑니다' : '내려갑니다'}. 대수가 그만큼 ${value > prev ? '줄어듭니다' : '늘어납니다'}.`,
+            '#sc-cpu-won': ({ value, prev }) =>
+                `CPU 한 대의 시간당 값을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}원</strong>으로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                '대수는 그대로이고 값만 바뀝니다. 대수를 정하는 것은 처리량과 부하율 상한이지 값이 아닙니다.',
+            '#sc-gpu-cap': ({ value, prev }) =>
+                `GPU 한 대 처리량을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')} QPS</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                `${value > prev ? '한 대가 더 받아 내도 예비 한 대는 그대로라, 요청량이 작을 때는 값이 안 내려갑니다' : '한 대가 덜 받아 내니 대수가 늘고 값이 올라갑니다'}.`,
+            '#sc-gpu-won': ({ value, prev }) =>
+                `GPU 한 대의 시간당 값을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}원</strong>으로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
+                '이 값이 1,920원 아래로 내려가면 기본 요청량에서도 GPU 세 대가 CPU 열두 대보다 쌉니다.',
+            '.sc-preset-btn': ({ el }) =>
+                `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했습니다. ` +
+                '지표 셋과 두 차트가 함께 바뀝니다. 대수가 어느 조건에서 나왔는지는 지표 칸 아래 줄에 있습니다.'
+        },
+        tour: [
+            {
+                el: '.sc-metrics',
+                title: '지표 셋',
+                body: 'CPU 와 GPU 의 한 달 값, 그리고 두 값이 뒤집히는 요청량입니다. ' +
+                    '각 칸 아래 줄에 <strong>평시 조건과 고장 조건</strong>의 대수가 같이 적힙니다.'
+            },
+            {
+                el: '.sc-chart-card',
+                title: '계단인 이유',
+                body: '대수는 올림이라 요청량이 조금 늘어도 값은 한동안 그대로이다가 한 칸씩 뜁니다. ' +
+                    '대수가 적은 GPU 쪽 계단이 더 큽니다.'
+            },
+            {
+                el: '#sc-spare',
+                title: '직접 움직여보기',
+                body: '<strong>예비 대수</strong>를 0으로 내려 보세요. GPU 가 세 대에서 두 대로 줄며 값이 3분의 1 내려갑니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더와 프리셋을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
+            }
+        ]
+    },
+
+'stats-cards': {
+        analogy: '잰 값은 참값이 아니다. 노출 40,000 에서 나온 1.21% 는 한 번 뽑아 본 값이고, 그 흔들림보다 차이가 커야 다르다고 말할 수 있다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'sample': return '헷갈리는 것은 <strong>무엇이 흔들리나</strong>입니다. 참 클릭률 1.21% 는 내내 한 값입니다. 흔들리는 것은 노출 40,000 을 뽑아 잰 값이고, 화면의 숫자가 바로 그 잰 값입니다.';
+                    case 'se': return '헷갈리는 것은 <strong>왜 4배를 모아야 절반이 되나</strong>입니다. 노출 수가 루트 안의 분모에 있어서, 4배면 루트 4 인 2 로 나뉩니다. 폭을 10분의 1 로 줄이려면 100배가 필요합니다.';
+                    case 'interval': return '헷갈리는 것은 <strong>95% 가 무엇의 95% 인가</strong>입니다. 참값은 움직이지 않고 구간이 매번 움직입니다. 그래서 「참값이 이 안에 있을 확률」이 아니라 「구간이 참값을 품는 횟수」입니다.';
+                    case 'tstat': return '헷갈리는 것은 <strong>p 값이 무엇의 확률인가</strong>입니다. 차이가 없을 때 이만한 차이가 우연히 나올 확률이지, 차이가 없을 확률이 아닙니다. 그래서 0.084 는 「차이가 없다」가 아닙니다.';
+                    case 'ttest': return '헷갈리는 것은 <strong>왜 문턱이 1.96 이 아닌가</strong>입니다. 흔들림의 참값을 모르고 30건으로 어림했기 때문입니다. 자유도 58 이면 2.00, 자유도 10 이면 2.23, 자유도 100 이면 1.98 로 1.96 에 다가갑니다.';
+                    case 'variance': return '헷갈리는 것은 <strong>F 라는 이름이 둘인 것</strong>입니다. 두 무리의 분산이 같은지 보는 F 검정은 분산 둘을 나눈 값이고, 소재 셋을 한 번에 보는 분산분석은 무리 사이를 무리 안으로 나눈 값입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 잰 값, 벽돌색은 참값과 문턱, 먹색은 결론, 회색은 흔들림을 재는 계산입니다.' },
+            { el: '[data-card="interval"]', title: '가장 먼저 볼 것', body: '95% 는 참값이 구간에 있을 확률이 아닙니다. 100번 뽑으면 구간이 참값을 품는 횟수가 95번쯤이라는 뜻입니다.', waitFor: 'click' },
+            { el: '[data-card="tstat"]', title: '언제 믿나', body: '차이를 흔들림으로 나눈 값이 문턱 1.96 을 넘는지만 봅니다. 노출을 4배로 모으면 같은 차이에서 값이 2배가 됩니다.' }
+        ]
     }
 };

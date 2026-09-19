@@ -22,6 +22,13 @@
 
 **입력 → 예측 → 라벨 → 비즈니스. 사고는 이 순서로 번지고, 신호는 이 순서로 늦어진다.** 층으로 나누면 원인이 어느 층인지 좁혀지고, 어느 신호를 먼저 믿을지도 정해진다. 아래 표에서 가장 중요한 칸은 세 번째와 네 번째다. **라벨이 필요한 지표는 늦고, 필요 없는 지표는 즉시 나온다.**
 
+네 층이 어떤 순서로 흔들리고 어느 층이 먼저 굳는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=fourlayers" height="480" loading="lazy" title="네 층으로 재고 빠른 층부터 본다"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 | 층 | 무엇을 보나 | 라벨 필요 | 값이 굳는 시간 | 여기서 잡히는 사고 |
 |---|---|---|---|---|
 | 1층 입력 | 피처별 PSI, 결측률, 갱신 시각 | 아니오 | 즉시 | 피처 파이프라인 정지, 스키마 변경 |

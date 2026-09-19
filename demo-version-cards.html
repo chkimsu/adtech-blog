@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모델 버전 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="지난주 모델을 오늘 똑같이 다시 만들 수 있나에 답하는 자리를 카드 한 장씩으로. 재료 넷, 레지스트리 표, 데이터에서 배포까지 사슬, 재현본이 다른 자리 셋. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>모델 버전 카드 네 장</h1>
+      <p>「지난주 모델을 오늘 똑같이 다시 만들 수 있나」에 답하는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 버전 번호, 해시, 날짜, 지표는 전부 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 것 (데이터 판, 레지스트리 표)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 달라진 자리, 배포</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (학습 실행)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 재료 (코드, 데이터, 설정, 환경)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="recipe"><h2>FOUR INGREDIENTS</h2><p class="tg-k">모델 하나를 만드는 재료 넷</p><p class="tg-easy"><b>쉽게 말하면</b> 모델 v412 는 파일 하나가 아니라 코드, 데이터, 설정, 환경 넷이 학습을 한 번 지나 나온 결과입니다. 넷이 다 같아야 같은 모델이고, 하나라도 다르면 다른 모델이 나옵니다.</p><div class="tg-fig" id="vr-recipe"></div>
+        <p class="tg-cap">v412 는 <b>재료 넷을 가리키는 이름</b>입니다. 이름만 남기고 재료를 안 적어 두면 지난주 모델을 다시 만들 수 없습니다.</p></section>
+
+      <section class="tg-card" data-card="registry"><h2>MODEL REGISTRY</h2><p class="tg-k">레지스트리 표 한 장이 답하는 질문</p><p class="tg-easy"><b>쉽게 말하면</b> 버전마다 언제 무엇으로 만들었고 지표가 얼마이고 지금 운영 중인지를 적은 표입니다. 서버는 이 표에서 「운영」인 버전을 싣고, 폐기된 버전도 파일과 재료는 남겨 둡니다.</p><div class="tg-fig" id="vr-registry"></div>
+        <p class="tg-cap">v417 이 운영 중이고 v418 은 후보입니다. v418 의 COPC 1.06 은 <b>게이트 0.95~1.05 밖</b>이라 표만 보고도 배포가 안 될 것을 압니다.</p></section>
+
+      <section class="tg-card" data-card="lineage"><h2>LINEAGE</h2><p class="tg-k">데이터에서 배포까지 사슬</p><p class="tg-easy"><b>쉽게 말하면</b> 데이터 파티션 30개가 학습 실행 하나를 지나 모델이 되고, 그 모델이 배포됩니다. 팀장의 질문은 이 사슬을 거꾸로 따라갑니다. 배포된 것에서 모델, 학습 실행, 데이터 순서입니다.</p><div class="tg-fig" id="vr-lineage"></div>
+        <p class="tg-cap">학습 실행 번호 #4127 이 데이터 파티션 목록을 들고 있어야 <b>30초 안에</b> 답합니다. 고리 하나가 끊기면 그 뒤로는 못 갑니다.</p></section>
+
+      <section class="tg-card" data-card="diff"><h2>WHY IT DIFFERS</h2><p class="tg-k">재현본이 다른 자리 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 코드로 오늘 다시 만들어도 9월 3일 모델과 다른 값이 나옵니다. 8월 20일 파티션이 그 사이 백필로 다시 써졌고, 라이브러리가 올라갔고, 시드를 안 적어 뒀기 때문입니다.</p><div class="tg-fig" id="vr-diff"></div>
+        <p class="tg-cap">글의 파이썬 실험에서 시드만 달라도 COPC 가 0.949 와 0.953 사이에서 흔들리고, 한 날 데이터 판이 바뀌면 <b>0.9647 이 1.0206 이 됩니다.</b> 세 자리를 적어 두고 맞추면 그대로 나옵니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>「그 모델 다시 만들어 주세요」를 들으면</b> 레지스트리에서 그 버전 줄을 열어 재료 넷이 다 적혀 있는지부터 봅니다. 하나라도 비어 있으면 다시 만들 수 없다고 먼저 말합니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=model-versioning-reproducibility">모델 버전과 재현</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 앞 카드는 <a href="demo-pipeline-cards.html">학습 파이프라인 카드 다섯 장</a>입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/version-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

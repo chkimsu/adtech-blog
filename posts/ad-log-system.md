@@ -220,6 +220,13 @@ graph TD
 
 로그는 그 자체로는 학습 데이터가 아닙니다. 여러 로그를 **조인하고 라벨링**하는 파이프라인을 거쳐야 합니다.
 
+세 로그가 어디서 만나고 언제 붙는지 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=logjoin" height="480" loading="lazy" title="로그 셋이 학습 데이터가 되는 자리"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 ```mermaid
 graph LR
     A["Impression Log"] --> D["조인<br/><small>request_id 기준</small>"]
@@ -303,6 +310,13 @@ feature_vector = {
 ## 6. 멀티슬롯 환경의 rank=1 추론 문제
 
 광고 지면에 슬롯이 여러 개인 경우(예: 뉴스 피드에 광고 3개), **자리(Position)**이 CTR에 큰 영향을 미칩니다. 이때 학습과 추론 사이에 근본적인 괴리가 발생합니다.
+
+학습과 추론이 어긋나는 자리를 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=rank1" height="480" loading="lazy" title="자리를 모른 채 채점하는 문제"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
 
 ### 문제 상황
 

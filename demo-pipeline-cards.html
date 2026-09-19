@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학습 파이프라인 카드 다섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="매일 새벽 모델이 다시 만들어지는 길에서 사람이 손을 대는 자리를 카드 한 장씩으로. DAG 한 바퀴, 로그 도착 확인, 실패한 칸만 재실행, 지난 30일 백필, 두 번 돌아도 같은 결과. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>학습 파이프라인 카드 다섯 장</h1>
+      <p>매일 새벽 모델이 다시 만들어지는 길에서 사람이 손을 대는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향이고, 점이 몰려서 지나가면 하루 한 번 배치입니다. 시각과 행 수는 전부 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (파티션, 레지스트리, 끝난 칸)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (알람, 실패, 지금 도는 칸)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (조인, 피처, 학습)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것 (대기 목록, 설정)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="dag"><h2>DAG RUN</h2><p class="tg-k">매일 04:00 에 도는 일곱 칸</p><p class="tg-easy"><b>쉽게 말하면</b> 모델은 사람이 만드는 것이 아니라 매일 새벽 정해진 순서로 도는 일곱 칸이 만듭니다. 알람에 적힌 이름은 그 일곱 칸 전체의 이름이고, 어느 칸이 멈췄나부터 봅니다.</p><div class="tg-fig" id="pl-dag"></div>
+        <p class="tg-cap">04:00 에 시작해 <b>06:09 에 새 모델이 레지스트리에 놓입니다.</b> 한 바퀴 2시간 9분 중 학습이 55분으로 가장 깁니다.</p></section>
+
+      <section class="tg-card" data-card="sensor"><h2>PARTITION SENSOR</h2><p class="tg-k">로그가 다 왔는지 먼저 본다</p><p class="tg-easy"><b>쉽게 말하면</b> 어제 로그는 시간별로 스물네 조각이 따로 도착합니다. 첫 칸은 계산이 아니라 그 스물네 조각이 다 왔는지 1분마다 보는 일이고, 하나라도 없으면 다음 칸을 열지 않습니다.</p><div class="tg-fig" id="pl-sensor"></div>
+        <p class="tg-cap">보통 04:03 에 24개가 다 옵니다. 센서가 없으면 <b>반쪽 데이터로 학습이 시작되고</b> 모델은 오류 없이 조용히 나빠집니다.</p></section>
+
+      <section class="tg-card" data-card="rerun"><h2>RERUN FROM FAILURE</h2><p class="tg-k">실패한 칸만 다시 돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 세 번째 칸이 멈췄으면 첫 칸부터 다시 돌리지 않습니다. 앞 두 칸의 결과는 이미 파티션에 놓여 있으니, 멈춘 칸부터 다시 돌려 1시간 40분에 끝냅니다.</p><div class="tg-fig" id="pl-rerun"></div>
+        <p class="tg-cap">05:12 에 피처 만들기가 실패했고 05:40 에 그 칸부터 다시 돌려 <b>07:20 에 끝났습니다.</b> 원인은 다른 팀 DAG 가 늦어 광고 메타 표 스냅샷이 아직 없던 것입니다.</p></section>
+
+      <section class="tg-card" data-card="backfill"><h2>BACKFILL</h2><p class="tg-k">지난 30일을 다시 돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 조인 조건이 잘못됐던 것을 고치면 어제 하루가 아니라 지난 30일치 학습 데이터를 다시 만들어야 합니다. 한 날 63분씩 30번인데, 여섯 날을 동시에 돌리면 5시간 15분입니다.</p><div class="tg-fig" id="pl-backfill"></div>
+        <p class="tg-cap">직렬이면 31시간 30분, <b>6개 동시면 5시간 15분</b>입니다. 백필은 라벨과 피처만 다시 만들고 모델은 마지막에 한 번 학습합니다.</p></section>
+
+      <section class="tg-card" data-card="idempotent"><h2>IDEMPOTENT WRITE</h2><p class="tg-k">두 번 돌아도 같은 결과</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 날 칸을 두 번 돌렸을 때 결과가 같아야 재실행과 백필을 안심하고 할 수 있습니다. 파티션을 통째로 덮어쓰면 같고, 있는 것 뒤에 덧붙이면 돌릴 때마다 두 배가 됩니다.</p><div class="tg-fig" id="pl-idempotent"></div>
+        <p class="tg-cap">덮어쓰기는 몇 번을 돌려도 2,485만 행이고 덧붙이기는 두 번째에 <b>4,970만 행</b>이 됩니다. 절반에서 죽은 뒤 덧붙이면 3,728만 행 중 1,243만 행이 중복입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>새벽 알람을 받으면 세 가지만 봅니다.</b> 어느 칸이 멈췄나, 그 칸의 입력이 다 와 있었나, 멈춘 칸부터 다시 돌리면 몇 시에 끝나나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=training-pipeline-dag">학습 파이프라인</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 다음 카드는 <a href="demo-version-cards.html">모델 버전 카드 네 장</a>입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/pipeline-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

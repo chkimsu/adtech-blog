@@ -66,6 +66,13 @@ graph LR
 
 이 네 필터를 2절의 12만 건에 순서대로 적용하면 이렇게 줄어든다. 아래는 이 글의 가데이터다.
 
+같은 숫자를 카드 한 장으로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=funnel" height="480" loading="lazy" title="후보 12만 건이 800건으로 줄어드는 순서"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
+
 | 단계 | 남은 후보 수 | 이 단계 통과율 | 최초 대비 누적 생존율 |
 |---|---|---|---|
 | 시작(색인 조회 직후) | 120,000건 | — | 100% |

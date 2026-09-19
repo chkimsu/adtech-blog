@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="「광고별 최근 1시간 클릭 수」를 워터마크와 창 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서 창이 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.">
+  <title>창 집계 놀이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .wn-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .wn-hero { text-align: center; padding: 2rem 0 1rem; }
+    .wn-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .wn-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .wn-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .wn-intro strong { color: var(--accent-primary); }
+    .wn-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
+
+    .wn-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .wn-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 230px 1fr 90px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .wn-slider-row { grid-template-columns: 1fr; } }
+    .wn-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .wn-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .wn-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .wn-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .wn-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
+    .wn-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
+
+    .wn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+    .wn-row-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.2rem; }
+    .wn-win-btn, .wn-preset-btn, .wn-reseed {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .wn-win-btn:hover, .wn-preset-btn:hover, .wn-reseed:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .wn-win-btn.active { background: var(--accent-primary); color: var(--paper); border-color: var(--accent-primary); }
+
+    .wn-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+    @media (max-width: 700px) { .wn-metrics { grid-template-columns: 1fr; } }
+    .wn-metric { padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
+    .wn-metric-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .wn-metric-value { font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+    .wn-metric-value.good { color: var(--state-good); }
+    .wn-metric-value.warn { color: var(--series-5); }
+    .wn-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .wn-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* 그림 둘은 세로로 쌓는다. 나란히 두면 그림 안 글자가 반으로 줄어 안 읽힌다. minmax(0, …) 는 좁은 화면에서 트랙이 안 늘어나게 한다 */
+    .wn-charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .wn-chart-card { min-width: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
+    .wn-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .wn-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .wn-chart-wrap svg { display: block; width: 100%; height: auto; font-family: var(--font-sans); }
+
+    /* 그림 부품 — 색은 전부 토큰 */
+    .wn-grid { stroke: var(--border-color); stroke-width: 1; }
+    .wn-ax { font-size: 12px; fill: var(--text-muted); }
+    .wn-lb { font-size: 12.5px; font-weight: 700; fill: var(--text-primary); paint-order: stroke; stroke: var(--bg-primary); stroke-width: 3px; stroke-linejoin: round; }
+    .wn-lb.b { fill: var(--oxide); }
+    .wn-win { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.2; }
+    .wn-cut { fill: none; stroke: var(--oxide); stroke-width: 1.6; stroke-dasharray: 5 4; }
+    .wn-req { stroke: var(--text-primary); stroke-width: 1.6; }
+    .wn-pt { stroke: none; }
+    .wn-pt.out { fill: var(--grey); opacity: 0.55; }
+    .wn-pt.in { fill: var(--navy); }
+    .wn-pt.late { fill: var(--oxide); }
+    .wn-bar { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 1.2; }
+    .wn-bar.cur { fill: var(--navy); }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wn-hero">
+      <div class="wn-container">
+        <h1>창 집계 놀이터</h1>
+        <p>「광고별 최근 1시간 클릭 수」를 워터마크와 창 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서,
+          창이 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.</p>
+      </div>
+    </section>
+
+    <div class="wn-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
+        <a href="demo-window-cards.html">스트림 집계 카드 네 장</a>
+        <a href="post.html?id=kafka-log-pipeline">Kafka 기초</a>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 9931 의 클릭 1,204건이 14:00~15:00 에 일어났는데, 스트림 잡은 그중 몇 건을 셀 수 있는지 봅니다. 창은 끝나고 워터마크만큼 더 기다렸다가 닫히고, 그 뒤에 도착한 클릭은 그 창에서 빠집니다. 워터마크를 길게 두면 덜 빠지지만 값이 그만큼 늦게 나옵니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>실시간 피처 요청서에 적는 「워터마크 2분」 한 줄이 곧 <strong>하루에 몇 건이 빠지고 값이 몇 분 묵는가</strong>입니다. 그 둘을 맞바꾸는 자리를 직접 움직여 보면 요청서의 숫자를 근거를 갖고 정할 수 있습니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <li><span class="step-text">기본값(워터마크 2분, 슬라이딩)에서 <strong>센 값과 진짜 값</strong>이 얼마나 다른지 봅니다.</span></li>
+        <li><span class="step-text"><strong>워터마크 0분</strong> 프리셋 → 하루에 빠지는 클릭이 몇 건으로 뛰는지 봅니다.</span></li>
+        <li><span class="step-text"><strong>텀블링 15:59</strong> 프리셋 → 요청 15:59 에 읽는 창이 14:00~15:00 인 것을 확인합니다.</span></li>
+      </ol>
+
+      <div class="wn-intro">
+        <strong>규칙</strong> — 창은 <code>창 끝 + 워터마크</code> 에 닫힙니다. 클릭은 일어난 시각(이벤트 시각)이 창 안이어도, 도착한 시각이 그 뒤면 그 창에 들어가지 못합니다.
+        슬라이딩 60분 창은 1분마다 하나씩 나오고, 텀블링 1시간 창은 정각마다 하나씩 나옵니다. 요청 시각에 읽을 수 있는 것은 <strong>이미 닫힌 창 중 가장 최근 것</strong>입니다.
+        숫자는 전부 가상 값입니다. 광고 9931 의 14:00~15:00 클릭 1,204건, 하루 클릭 228만 건, 도착 지연은 5초 안 95%, 2분 안 99.9% 입니다.
+      </div>
+
+      <!-- Controls -->
+      <div class="wn-controls">
+        <div class="wn-slider-row">
+          <div class="wn-slider-label">워터마크<small>창이 끝나고 더 기다리는 시간</small></div>
+          <input type="range" class="wn-slider" id="wn-wm" min="0" max="10" step="0.5" value="2">
+          <div class="wn-slider-value" id="wn-wm-val">2분</div>
+        </div>
+        <div class="wn-slider-row">
+          <div class="wn-slider-label">2분 넘게 늦는 비율<small>기본 0.10% = 하루 2,280건</small></div>
+          <input type="range" class="wn-slider" id="wn-late" min="0" max="2" step="0.01" value="0.10">
+          <div class="wn-slider-value" id="wn-late-val">0.10%</div>
+        </div>
+        <div class="wn-slider-row">
+          <div class="wn-slider-label">요청 시각<small>광고 서버가 값을 읽는 시각, 15:00 부터 15:59 까지</small></div>
+          <input type="range" class="wn-slider" id="wn-req" min="0" max="59" step="1" value="7">
+          <div class="wn-slider-value" id="wn-req-val">15:07</div>
+        </div>
+        <div class="wn-row">
+          <span class="wn-row-label">창 종류</span>
+          <button class="wn-win-btn active" data-win="sliding">슬라이딩 60분, 1분마다</button>
+          <button class="wn-win-btn" data-win="tumbling">텀블링 1시간, 정각마다</button>
+        </div>
+        <div class="wn-row">
+          <span class="wn-row-label">프리셋</span>
+          <button class="wn-preset-btn" data-preset="2,0.10,7,sliding">기본</button>
+          <button class="wn-preset-btn" data-preset="0,0.10,7,sliding">워터마크 0분</button>
+          <button class="wn-preset-btn" data-preset="10,0.10,7,sliding">워터마크 10분</button>
+          <button class="wn-preset-btn" data-preset="2,0.10,59,tumbling">텀블링 15:59</button>
+          <button class="wn-preset-btn" data-preset="2,1.00,7,sliding">늦는 비율 1%</button>
+          <button class="wn-reseed" id="wn-reseed">클릭 다시 뽑기</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="wn-metrics">
+        <div class="wn-metric">
+          <div class="wn-metric-label">읽는 창</div>
+          <div class="wn-metric-value" id="wn-window">—</div>
+          <div class="wn-metric-sub" id="wn-window-sub">요청 시각에 읽을 수 있는 가장 최근 창</div>
+        </div>
+        <div class="wn-metric">
+          <div class="wn-metric-label">센 값 / 진짜 값</div>
+          <div class="wn-metric-value" id="wn-count">—</div>
+          <div class="wn-metric-sub" id="wn-count-sub">창이 닫히기 전에 도착한 클릭 / 그 시간에 일어난 클릭</div>
+        </div>
+        <div class="wn-metric">
+          <div class="wn-metric-label">하루에 빠지는 클릭</div>
+          <div class="wn-metric-value" id="wn-daily">—</div>
+          <div class="wn-metric-sub" id="wn-daily-sub">워터마크보다 늦게 도착하는 클릭</div>
+        </div>
+      </div>
+
+      <div class="wn-verdict" id="wn-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="wn-charts">
+        <div class="wn-chart-card">
+          <h3>시간선 위의 클릭</h3>
+          <p class="note">점 하나가 클릭 하나입니다. 가로는 일어난 시각, 세로는 도착까지 걸린 시간입니다. 색칠한 곳이 읽는 창이고, 벽돌색 점은 창이 닫힌 뒤에 도착해 빠진 클릭입니다.</p>
+          <div class="wn-chart-wrap" id="wn-timeline"></div>
+        </div>
+        <div class="wn-chart-card">
+          <h3>워터마크마다 하루에 빠지는 클릭</h3>
+          <p class="note">워터마크를 길게 둘수록 막대가 낮아지고, 값이 확정되는 시각은 그만큼 늦어집니다. 지금 고른 값이 진한 막대입니다.</p>
+          <div class="wn-chart-wrap" id="wn-bars"></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>창은 끝나자마자 닫히지 않습니다</strong> — 워터마크만큼 더 기다립니다. 그 뒤에 도착한 클릭은 그 창에서 빠집니다.</li>
+            <li><strong>워터마크는 빠지는 수와 묵는 시간을 맞바꿉니다</strong> — 2분이면 하루 2,280건이 빠지고 값은 2분 묵습니다. 10분이면 912건이 빠지고 10분 묵습니다.</li>
+            <li><strong>텀블링 창은 「최근 1시간」이 아닙니다</strong> — 15:59 요청에도 14:00~15:00 값을 줍니다. 슬라이딩 창은 1분마다 나와 늘 1분 안의 값입니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          실시간 피처 요청서에는 창 길이만 적혀 오는 일이 많습니다. 그러면 창을 어떻게 자르나, 언제 닫나, 닫힌 뒤 온 것은 어디로 보내나 셋을 되물어야 합니다.
+          이 셋이 정해져야 같은 광고의 같은 시간 값이 하나가 됩니다.
+        </p>
+        <ul>
+          <li><strong>워터마크는 도착 지연 분포에서 정합니다:</strong> 로그의 이벤트 시각과 도착 시각 차이를 하루치 세어 99.9% 가 들어오는 값을 고릅니다. 이 데모의 2분이 그 값입니다.</li>
+          <li><strong>빠진 클릭은 따로 셉니다:</strong> 창이 닫힌 뒤 도착한 클릭을 별도 topic 에 적어 두면, 하루에 몇 건이 빠졌는지와 워터마크를 더 늘려야 하는지를 숫자로 압니다.</li>
+          <li><strong>서빙이 본 값을 로그로 남깁니다:</strong> 스트림 값과 배치 값은 늦게 온 클릭만큼 다릅니다. 학습 데이터에 배치 값을 다시 만들어 넣으면 서빙 때 모델이 본 값과 어긋납니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=stream-window-aggregation" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">스트림 집계: 최근 1시간 클릭 수는 누가 어떻게 세나</span>
+              <span class="demo-next-excerpt">이 놀이터의 숫자가 글의 절마다 카드 한 장으로 들어 있습니다</span>
+            </a>
+            <a href="demo-window-cards.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">스트림 집계 카드 네 장</span>
+              <span class="demo-next-excerpt">텀블링과 슬라이딩, 워터마크, 늦게 온 클릭, 배치와 스트림</span>
+              <span class="demo-next-meta">⏱ 4분, 입문</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/window-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

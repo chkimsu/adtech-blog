@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>통계 카드 여섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="두 소재의 클릭률을 견줄 때 쓰는 말을 카드 한 장씩으로. 잰 값의 흔들림, 표준오차, 95% 신뢰구간, 검정통계량, t 검정, 분산 검정. 파랑이 잰 값이고 벽돌색이 참값과 문턱입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>통계 카드 여섯 장</h1>
+      <p>두 소재의 클릭률을 견줄 때 나오는 말 하나가 카드 한 장입니다. 왼쪽이 잰 값, 가운데가 흔들림을 재는 계산, 오른쪽이 판정입니다. 숫자는 소재 A 클릭률 1.08%, 소재 B 클릭률 1.21% 한 벌로 끝까지 갑니다. 전부 설명을 위한 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 잰 값 (표본에서 나온 클릭률, 평균, 구간)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 참값과 문턱, 그리고 빗나간 것</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 결론 (p 값과 판정)</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 흔들림을 재는 계산</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="sample"><h2>SAMPLE NOISE</h2><p class="tg-k">40,000 에서 잰 1.21% 는 흔들린다</p><p class="tg-easy"><b>쉽게 말하면</b> 참 클릭률이 1.21% 로 하나라도, 노출 40,000 을 뽑을 때마다 잰 값은 매번 다르게 나옵니다. 화면에 뜬 숫자는 참값이 아니라 그 한 번의 값입니다.</p><div class="tg-fig" id="st-sample"></div>
+        <p class="tg-cap">같은 소재를 다섯 번 재면 <b>1.15% 에서 1.30%</b> 까지 흩어집니다. 참 클릭률은 내내 1.21% 한 값이었습니다. 시드를 고정한 시뮬레이션에서 나온 다섯 번입니다.</p></section>
+
+      <section class="tg-card" data-card="se"><h2>STANDARD ERROR</h2><p class="tg-k">표본이 4배면 폭이 절반</p><p class="tg-easy"><b>쉽게 말하면</b> 흔들림의 크기에는 이름이 있습니다. 표준오차라고 부르고, 노출 수가 분모에 루트로 들어가 있어 노출을 4배로 모으면 절반이 됩니다.</p><div class="tg-fig" id="st-se"></div>
+        <p class="tg-cap">노출 40,000 이면 한쪽으로 <b>0.107</b> 씩, 160,000 이면 <b>0.054</b> 씩입니다. 4배를 모아야 폭이 절반이니, 반의 반으로 줄이려면 16배가 필요합니다.</p></section>
+
+      <section class="tg-card" data-card="interval"><h2>95% INTERVAL</h2><p class="tg-k">100번 뽑으면 95번쯤 품는다</p><p class="tg-easy"><b>쉽게 말하면</b> 95% 는 「참값이 이 구간 안에 있을 확률」이 아닙니다. 같은 실험을 100번 하면 그때 그린 구간이 참값을 품는 횟수가 95번쯤이라는 뜻입니다.</p><div class="tg-fig" id="st-interval"></div>
+        <p class="tg-cap">100번 중 <b>95번</b>이 참값 1.21% 를 품었고 다섯 번은 놓쳤습니다. 놓친 다섯 번은 모두 클릭이 423건에서 442건으로 낮게 나온 때였습니다.</p></section>
+
+      <section class="tg-card" data-card="tstat"><h2>TEST STATISTIC</h2><p class="tg-k">차이를 흔들림으로 나눈다</p><p class="tg-easy"><b>쉽게 말하면</b> 검정통계량은 어려운 값이 아닙니다. 두 소재의 차이를 그 차이의 흔들림으로 나눈 값 하나이고, 이 값이 문턱을 넘는지만 봅니다.</p><div class="tg-fig" id="st-tstat"></div>
+        <p class="tg-cap">노출 40,000 씩이면 <b>1.73</b> 이라 문턱 1.96 을 못 넘고, 160,000 씩이면 <b>3.46</b> 이라 넘습니다. 차이 0.13 은 그대로이고 흔들림만 절반이 된 결과입니다.</p></section>
+
+      <section class="tg-card" data-card="ttest"><h2>T-TEST</h2><p class="tg-k">평균의 차이와 자유도</p><p class="tg-easy"><b>쉽게 말하면</b> 비율이 아니라 금액의 평균을 견줄 때 쓰는 것이 t 검정입니다. 표본이 작으면 흔들림을 표본으로 어림하는 만큼 문턱이 1.96 보다 조금 높아집니다.</p><div class="tg-fig" id="st-ttest"></div>
+        <p class="tg-cap">평균은 5,600원 벌어졌지만 그 차이의 표준오차가 4,648원이라 t 는 <b>1.20</b> 입니다. 자유도 58 의 문턱 2.00 을 못 넘어 확인하지 못합니다.</p></section>
+
+      <section class="tg-card" data-card="variance"><h2>VARIANCE TEST</h2><p class="tg-k">무리 안 흔들림과 무리 사이 차이</p><p class="tg-easy"><b>쉽게 말하면</b> 소재가 셋 이상이면 둘씩 짝지어 비교하지 않습니다. 무리 사이가 얼마나 벌어졌나를 무리 안이 얼마나 흔들리나로 나눈 값 하나를 봅니다.</p><div class="tg-fig" id="st-variance"></div>
+        <p class="tg-cap">세 소재의 F 는 <b>1.49</b> 이고 문턱 3.00 을 못 넘습니다. 두 무리의 분산이 같은지를 보는 F 검정은 이것과 이름만 같고, 나누는 대상이 분산 둘입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>소재 A 와 B 중 무엇을 고르나</b>를 물으면 이 여섯 장을 순서대로 지납니다. 잰 값이 얼마나 흔들리나, 그 흔들림이 얼마인가, 구간이 0 을 품나, 차이를 흔들림으로 나누면 얼마인가, 금액이면 문턱이 어떻게 달라지나, 소재가 셋이면 어떻게 하나입니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>이어서 볼 것은</b> <a href="post.html?id=stats-confidence-interval-ttest">신뢰구간과 t 검정</a> 편입니다. 이 카드 여섯 장이 절마다 한 장씩 들어 있고, 파이썬 두 개로 값을 직접 냅니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/stats-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

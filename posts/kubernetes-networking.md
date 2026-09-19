@@ -314,6 +314,13 @@ print("→ Ingress는 입구 하나에서 경로(/api, /admin)로 나누니, 서
 
 이제 셋을 이어 봅시다. 사용자가 `example.com`을 누른 순간부터 응답이 돌아오기까지, 딱 다섯 걸음입니다.
 
+다섯 걸음이 어디를 지나는지 카드로 먼저 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=k8spath" height="480" loading="lazy" title="바깥 요청이 Pod 까지 가는 다섯 걸음"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 720 200" role="img" aria-label="요청 흐름: 사용자에서 Ingress, Service, 그리고 건강한 Pod로 전달된 뒤 응답이 사용자에게 돌아온다." style="width:100%; max-width:700px; height:auto; font-family:var(--font-sans)">
 <defs>

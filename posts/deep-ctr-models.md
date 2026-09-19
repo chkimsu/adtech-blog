@@ -598,6 +598,13 @@ $$v_U = \frac{1}{H} \sum_{j=1}^{H} e_j \quad \text{(mean pooling)}$$
 
 DIN(Deep Interest Network)은 이 문제를 **어텐션 메커니즘**으로 해결합니다. 핵심 아이디어: **현재 후보 광고(candidate ad)와 관련된 유저 행동에만 주목**합니다.
 
+같은 유저의 같은 이력이 후보 광고에 따라 어떻게 다르게 쓰이는지 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=din" height="480" loading="lazy" title="후보 광고에 따라 이력의 무게가 달라진다"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 #### 어텐션 메커니즘
 
 유저의 행동 히스토리 $\{e_1, e_2, ..., e_H\}$가 있습니다. 후보 광고 임베딩 $v_A$가 주어지면 유저 표현을 이렇게 만듭니다.

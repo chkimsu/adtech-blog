@@ -163,6 +163,13 @@ RFM의 강점은 **해석 가능성**입니다. "Cluster 3"이라고 하면 아�
 
 대부분의 프로덕션 세그먼트 시스템은 SQL 쿼리로 시작합니다. 입력은 이벤트 로그, 거래 DB, 유저 프로필입니다. Spark SQL이나 Hive에서 세그먼트 멤버십을 계산합니다. 결과는 DMP/CDP와 피처 저장소로 전달합니다.
 
+조건 한 벌이 사람 목록이 되는 순서를 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=segment" height="480" loading="lazy" title="조건 한 벌이 사람 목록이 된다"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
+
 ```mermaid
 graph LR
   subgraph Sources["데이터 소스"]
@@ -431,6 +438,13 @@ Cluster 3 프로파일:
 ## 5. 실시간 세그먼트 할당
 
 배치 파이프라인은 "어제의 데이터"로 세그먼트를 계산합니다. 하지만 유저가 **지금 이 순간** 장바구니에 담고, 검색하고, 페이지를 넘기는 행동은 가장 강력한 의도 신호입니다. 이 신호는 즉시 세그먼트에 반영해야 합니다.
+
+이벤트 하나가 몇 초 만에 세그먼트가 되는 길을 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=rtsegment" height="480" loading="lazy" title="이벤트가 초 안에 세그먼트가 되는 길"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
 
 ```mermaid
 graph LR

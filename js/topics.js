@@ -12,13 +12,13 @@
     { id: 'Measurement & Modeling',    label: '측정과 모델링',      desc: 'pCTR 과 pCVR 예측, 확률 보정, 어트리뷰션, 인과추론과 실험, 편향 보정. 가장 두꺼운 주제입니다.' },
     { id: 'Bandits & Personalization', label: '밴딧과 개인화',      desc: '탐색과 활용, MAB, UCB 와 톰슨 샘플링, 컨텍스추얼 밴딧.' },
     { id: 'Targeting & Audience',      label: '타겟팅과 오디언스',  desc: '세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한.' },
-    { id: 'ML Infrastructure',         label: 'ML 인프라',          desc: '로그 파이프라인, 피처 스토어, 후보 검색, 모델 서빙, 온라인 학습, 모니터링.' },
+    { id: 'ML Infrastructure',         label: 'ML 인프라',          desc: '로그 파이프라인, 피처 스토어, 후보 검색, 모델 서빙, 온라인 학습, 모니터링. 그리고 만든 모델을 매일 굴리는 학습 파이프라인, 배포와 롤백, 스트림 집계, 분산 학습.' },
     { id: 'Software Engineering',      label: '소프트웨어 엔지니어링', desc: 'Git, 아키텍처 패턴, API, 요청이 오는 길, Kafka, 데이터 파이프라인, Hadoop 과 Spark.' },
     { id: 'Interview & Algorithms',    label: '면접과 알고리즘',    desc: 'ML 엔지니어 면접 질문 셋과 코딩 테스트 알고리즘 여섯 편.' },
   ];
 
   // 한 주제 안에서 트랙이 놓이는 순서 — 입문, 기초, 심화, 응용(카카오) 순. 여기 없는 트랙은 정의 순서대로 뒤에 붙는다.
-  const TRACK_ORDER = ['getting-started', 'advanced-bidding-track', 'modeling-track', 'ml-infra-track', 'bandits-track',
+  const TRACK_ORDER = ['getting-started', 'advanced-bidding-track', 'modeling-track', 'ml-infra-track', 'mlops-track', 'bandits-track',
     'targeting-track', 'causal-inference-track', 'judgment-track', 'engineering-foundations', 'interview-track', 'algorithm-track', 'kakao-adtech'];
 
   // 순수 함수 — 브라우저와 node(시험) 둘 다에서 쓴다.

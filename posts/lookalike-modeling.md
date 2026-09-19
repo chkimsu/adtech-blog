@@ -173,6 +173,13 @@ $$c = \frac{1}{|S|} \sum_{i \in S} u_i$$
 
 모든 Seed 유저의 임베딩을 단순 평균합니다. 직관적이지만, Seed가 동질적(Homogeneous)일 때만 효과적입니다.
 
+중심점 하나에서 닮은 사람을 자르는 순서를 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=centroid" height="480" loading="lazy" title="씨앗 평균 하나에서 닮은 사람을 찾는다"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 **Cosine Similarity** (유사도 계산):
 
 $$\text{sim}(u, c) = \frac{u^T c}{\|u\| \cdot \|c\|}$$
@@ -586,6 +593,13 @@ $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 ### 6-1. 1% / 5% / 10% 확장 비교
 
 확장 비율은 전체 모집단 중 Lookalike에 포함할 비율입니다. Facebook의 "1~10% 슬라이더"가 대표적입니다. 모집단 10M(천만 명) 기준으로 구체적인 수치를 비교합니다.
+
+비율을 올릴 때 도달과 닮음이 어떻게 맞바뀌는지 카드로 보면 이렇습니다. 카드의 숫자는 타겟팅 기초 트랙의 값이라 이 글의 표와 모집단이 다릅니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=lookalike" height="480" loading="lazy" title="씨앗에서 닮은 사람으로 넓힌다"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
 
 | 확장 | 오디언스 크기 (10M 기준) | 증분 리프트(Incremental Lift) | CPA 변화 | 씨앗 대비 CVR | 권장 사용처 |
 |-----------|------------------------|-----------------|----------|--------------|-----------|

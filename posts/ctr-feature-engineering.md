@@ -315,6 +315,13 @@ for gap, name, ev in [("", "담장 안 로그인 유저", login), ("\n", "열린
 
 **라벨 누출**은 피처 안에 정답이 섞여 들어간 상태다. 오늘 로그로 오늘의 CTR을 계산하면 그 값 안에 오늘의 클릭 결과가 들어 있다. 모델은 그 피처를 보고 정답을 맞히지만, 실서빙에는 그 값이 없다. 예측하는 순간에는 오늘의 결과가 아직 일어나지 않았다.
 
+창을 어디서 자르느냐가 무엇을 바꾸는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=aggwindow" height="480" loading="lazy" title="피처 창이 라벨 날과 겹치면"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 광고 ID 단위로만 집계하면 노출이 많아서 티가 잘 안 난다. 문제는 실무에서 조합 키로 집계한다는 점이다. "이 광고 × 이 지면"의 CTR이 훨씬 강한 신호이기 때문이다. 그런데 조합 대부분은 하루에 몇 건뿐이라, 그 칸의 CTR이 자기 라벨과 거의 같아진다.
 
 ```python

@@ -88,6 +88,13 @@
 
 **숫자를 실제로 적어서 나눈다.** 말로 "빠르게 하겠다"고 하면 답이 안 된다.
 
+모델 추론 구간에서 배치 크기를 바꾸면 서버 수와 p99 가 어떻게 움직이는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=batch" height="480" loading="lazy" title="배치로 묶는 자리"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
+
 ```python
 예산 = 100                                    # 광고 응답 전체에 주어진 시간(ms)
 
@@ -222,6 +229,13 @@ p99.9         81.4
 **Q. 오프라인 AUC는 0.78인데 배포하면 0.74가 나옵니다. 왜일까요?**
 
 앞 편에서 다룬 데이터 누수가 아니라면, **같은 이름의 피처가 학습과 서빙에서 다른 값일 가능성이 높다.**
+
+학습 때와 서빙 때 값이 어긋나는 자리를 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-serving-cards.html?embed=1&card=skew" height="480" loading="lazy" title="학습과 서빙이 다른 피처를 쓰는 자리"></iframe>
+<a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
+</div>
 
 ```python
 import random, math, bisect

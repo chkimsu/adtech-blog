@@ -106,6 +106,13 @@ graph TB
 | Cross-device | 확률적 매칭 (부정확) | **로그인 기반 확정 매칭** |
 | 전환 추적 | Pixel/Postback (지연, 누락) | **자사 결제 데이터 직접 연동 가능** |
 
+첫 줄의 유저 식별이 두 무대에서 어떻게 다른지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=signal" height="480" loading="lazy" title="유저 정보가 오는 길 두 가지"></iframe>
+<a class="demo-embed-open" href="demo-targeting-cards.html" target="_blank" rel="noopener">↗ 카드 아홉 장 전체로 열기</a>
+</div>
+
 열린 RTB에서 DSP는 입찰 요청(Bid Request)에 담긴 제한된 정보(유저 ID, 지면, 디바이스)만 볼 수 있습니다. 하지만 네이버 광고 플랫폼은 **같은 유저의 검색 쿼리, 쇼핑 행동, 콘텐츠 소비 패턴, 결제 내역**까지 하나의 파이프라인에서 접근할 수 있습니다.
 
 이것이 pCTR 모델에 주는 의미:

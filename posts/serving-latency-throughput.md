@@ -97,6 +97,13 @@ latency 는 여기서 한 번 더 나뉜다. 위 표에는 값이 열 개 있고
 
 요청 하나가 API 서버를 거쳐 모델 서버에 닿았다 돌아온다. 그 사이에 타이머를 걸 수 있는 자리가 넷이고, 자리마다 포함되는 구간이 다르다.
 
+같은 요청이 네 자리를 지나며 숫자가 어떻게 달라지는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=fourplaces" height="480" loading="lazy" title="같은 요청을 네 자리에서 재면 숫자가 넷 나온다"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 | 재는 자리 | 여기서 새로 더해지는 것 | 평균 | p50 | p95 | p99 | 8ms 초과 |
 |---|---|---|---|---|---|---|
 | 추론 함수 안 | 추론 계산만 | 3.49 | 3.00 | 7.40 | 10.77 | 3.72% |
@@ -223,6 +230,13 @@ for qps in (1200, 1800, 2639, 3000, 3300):
 **같은 재시도 설정이 부하율 0.77 에서는 무해하고 0.81 에서는 서비스를 죽인다. 그 사이에 절벽이 있다.**
 
 타임아웃에 걸린 요청을 한 번 다시 보내는 것은 흔한 설정이다. 문제는 그 재시도가 원래 부하 위에 더해진다는 점이다. 예산 초과가 4.62% 라면 요청량이 4.62% 늘고, 늘어난 요청량은 초과율을 다시 올린다. 이 되먹임이 어디서 멈추는지를 시뮬레이션으로 돌려 본다.
+
+재시도가 원래 부하 위에 더해져 절벽을 만드는 모양을 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=retry" height="480" loading="lazy" title="재시도는 여유가 있을 때만 안전하다"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
 
 | 기준 요청량 | 재시도 없을 때 초과 | 재시도를 켜면 도달하는 곳 |
 |---|---|---|

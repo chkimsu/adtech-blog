@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker 와 CI 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="고친 코드 한 줄이 서버에 오르기까지 지나는 자리를 카드 한 장씩으로. 노트북과 서버가 다른 값을 내는 자리, 이미지 한 장에 든 층, 커밋에서 이미지 저장소까지, 검문 셋. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>Docker 와 CI 카드 네 장</h1>
+      <p>고친 코드 한 줄이 서버에 오르기까지 지나는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 이름과 숫자는 모델 운영 트랙의 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 것 (파일, 이미지, 저장소)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (커밋, 요청)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (빌드, 테스트, 검사)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것 (설정, 통과 조건)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="envdrift"><h2>ENV DRIFT</h2><p class="tg-k">내 노트북에서는 되는데</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 코드와 같은 모델 파일인데 노트북과 서버가 다른 예측값을 냅니다. 다른 것은 코드 아래에 깔린 라이브러리 판 하나입니다. 그 아래 층까지 같게 만드는 것이 이미지입니다.</p><div class="tg-fig" id="ci-envdrift"></div>
+        <p class="tg-cap">노트북은 pCTR 0.0412, 서버는 0.0397 입니다. <b>3.6% 차이</b>이고 입찰가도 그만큼 달라집니다. 라이브러리 2.3 과 2.4 의 차이입니다.</p></section>
+
+      <section class="tg-card" data-card="image"><h2>IMAGE LAYERS</h2><p class="tg-k">이미지 한 장에 든 것</p><p class="tg-easy"><b>쉽게 말하면</b> 이미지는 기본 리눅스, 파이썬, 라이브러리, 코드를 아래부터 차례로 쌓은 한 장입니다. 코드는 맨 위 한 층이고, 모델 파일은 매일 바뀌어서 이미지에 넣지 않습니다.</p><div class="tg-fig" id="ci-image"></div>
+        <p class="tg-cap">학습 이미지는 4.6GB, 추론 이미지는 1.1GB 입니다. <b>차이 3.5GB 는 전부 라이브러리 층</b>이고 코드는 12MB 입니다.</p></section>
+
+      <section class="tg-card" data-card="pipeline"><h2>COMMIT TO REGISTRY</h2><p class="tg-k">커밋에서 이미지 저장소까지</p><p class="tg-easy"><b>쉽게 말하면</b> 커밋을 올리면 CI 가 이미지를 만들고 검문 셋을 통과시킨 뒤 저장소에 올립니다. 이미지 이름에 날짜와 커밋 해시가 붙어서, 서버에 오른 것이 어느 코드인지 이름만 보고 압니다.</p><div class="tg-fig" id="ci-pipeline"></div>
+        <p class="tg-cap">CI 빌드는 <b>6분 20초</b>입니다. 이미지 만들기 2분 10초, 검문 셋 4분 10초입니다. 태그는 <b>pctr-serve:2026.09.17-a3f9c21</b> 입니다.</p></section>
+
+      <section class="tg-card" data-card="gates"><h2>THREE GATES</h2><p class="tg-k">검문 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 유닛 테스트는 함수 하나하나가 맞나, 계약 테스트는 요청과 응답의 모양과 속도가 약속대로인가, 이미지 검사는 이미지에 위험한 것이 없고 크기가 적당한가를 봅니다. 하나라도 걸리면 이미지는 저장소에 오르지 않습니다.</p><div class="tg-fig" id="ci-gates"></div>
+        <p class="tg-cap">유닛 테스트 214개 48초, 계약 테스트는 스키마 12개와 1,000건 부하에서 <b>8ms 초과율 6% 이하</b>, 이미지 검사는 심각 취약점 0 과 1.5GB 이하입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>「내 노트북에서는 되는데」라는 말이 나오면</b> 코드보다 그 아래 층을 먼저 봅니다. 라이브러리 판, 파이썬 판, 기본 리눅스가 서버와 같은지입니다. 이미지가 그 셋을 한 장으로 고정합니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=container-ci-pipeline">Docker 와 CI</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 이미지가 서버에서 모델을 어떻게 싣는지는 <a href="demo-inference-cards.html">추론 서버 카드 네 장</a>입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/ci-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

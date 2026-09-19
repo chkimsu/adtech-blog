@@ -469,6 +469,13 @@ $$\mathcal{L} = -\sum_{i=1}^{B} \log \frac{\exp(u_i^T v_i^+ / \tau - \log p_{i}^
 
 Two-Tower의 진짜 강점은 서빙 효율성에 있습니다. 두 타워가 독립적이므로, 광고 임베딩을 사전 계산하여 인덱스에 저장해 둘 수 있습니다.
 
+전수로 비교할 때와 근사 검색으로 훑을 때의 시간을 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=ann" height="480" loading="lazy" title="전수 비교 대 근사 검색"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 ```mermaid
 graph LR
     subgraph Offline["Offline: 인덱싱 (주기적)"]

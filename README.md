@@ -195,10 +195,10 @@ The design is mobile-first with breakpoints:
 
 ##  Content
 
-The blog contains 75+ posts across 7 categories (`data/taxonomy.json` is the single source):
+The blog contains 95 posts across 7 categories (`data/taxonomy.json` is the single source):
 - **Measurement & Modeling** — pCTR/pCVR, calibration, attribution, offline metrics, debiasing
 - **Bidding & Auction** — RTB, eCPM, bid shading, auto-bidding, walled gardens
-- **ML Infrastructure** — log pipelines, feature stores, model serving, online learning
+- **ML Infrastructure** — log pipelines, feature stores, model serving, online learning, and model operations (training DAGs, versioning, CI, deployment/rollback, stream windows, distributed training)
 - **Bandits & Personalization** — MAB, UCB, Thompson Sampling, contextual bandits
 - **Software Engineering** — Git, architecture, Kubernetes, API contracts, Kafka, data pipelines
 - **Targeting & Audience** — segmentation, lookalike modeling

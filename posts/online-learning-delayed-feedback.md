@@ -779,6 +779,13 @@ $$\log L = \sum_{i \in \text{도착}} \log \left( \lambda e^{-\lambda d_i} \righ
 
 아래 그림에서 위로 갈수록 빠르고 가볍고, 아래로 갈수록 느리고 무겁습니다.
 
+먼저 카드로 한 바퀴를 보고, 그 아래 그림에서 부품 이름을 확인합니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-ops-cards.html?embed=1&card=onlineloop" height="480" loading="lazy" title="온라인 학습은 층층이 쌓인 한 바퀴다"></iframe>
+<a class="demo-embed-open" href="demo-ops-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 <div class="chart-layer">
   <div class="chart-layer-title">EVENT STREAM (실시간 이벤트 수집)</div>
   <div class="chart-layer-row">

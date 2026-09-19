@@ -41,6 +41,13 @@
 
 층이 없으면 잡마다 목적지마다 쓰기 코드를 듭니다. 층을 두면 잡은 topic 한 곳에만 씁니다.
 
+연결이 어떻게 줄어드는지 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=fanout" height="480" loading="lazy" title="처리 잡 다섯이 목적지 여섯으로"></iframe>
+<a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
+</div>
+
 | | 층 없음 | 층 있음 |
 |---|---|---|
 | 연결 수 | 5 × 6 = **30개** | 5 + 6 = **11개** |

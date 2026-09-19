@@ -4,8 +4,8 @@
 <head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BentoML 카드 네 장 — Ad Tech Blog</title>
-  <meta name="description" content="모델 파일 하나를 요청에 답하는 서비스로 만드는 길을 카드 한 장씩으로. 직접 짜면 만들어야 하는 것 일곱, 서비스 파일 한 장, 굳혀서 이미지로, 모아 보내기가 값을 하는 자리.">
+  <title>BentoML 카드 다섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="모델 파일 하나를 요청에 답하는 서비스로 만드는 길을 카드 한 장씩으로. 직접 짜면 만들어야 하는 것 일곱, 서비스 파일 한 장, 굳혀서 이미지로, 모아 보내기가 값을 하는 자리, 워커를 늘리면 무엇이 바뀌나.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -29,7 +29,7 @@
 
   <main>
     <section class="tg-hero">
-      <h1>BentoML 카드 네 장</h1>
+      <h1>BentoML 카드 다섯 장</h1>
       <p>모델 파일 하나가 요청에 답하는 서비스가 되기까지, 사람이 정하는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 설명용 가상 값입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 것 (모델 파일, 저장소, 이미지)</span>
@@ -55,6 +55,9 @@
 
       <section class="tg-card" data-card="batching"><h2>WHEN BATCHING PAYS</h2><p class="tg-k">모아 보내기가 값을 하는 자리</p><p class="tg-easy"><b>쉽게 말하면</b> 요청 여럿을 한 묶음으로 모아 모델에 한 번만 넣습니다. 얻는 것은 건당 계산이 줄어드는 몫이고, 치르는 것은 모이기를 기다리는 시간입니다.</p><div class="tg-fig" id="bt-batching"></div>
         <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 <b>3%</b> 밖에 안 줍니다. 요청 하나가 작고 자주 올 때만 <b>78%</b> 가 줍니다.</p></section>
+
+      <section class="tg-card" data-card="workers"><h2>MORE WORKERS</h2><p class="tg-k">늘리면 무엇이 바뀌고 무엇이 그대로인가</p><p class="tg-easy"><b>쉽게 말하면</b> 파이썬은 한 프로세스에서 코드가 한 번에 한 줄만 돕니다. 그래서 프로세스를 여러 개 띄웁니다. 창구가 늘면 줄이 짧아지지만 한 사람을 처리하는 시간은 그대로입니다.</p><div class="tg-fig" id="bt-workers"></div>
+        <p class="tg-cap">워커 하나면 부하율 1.04 라 넘치고, 넷이면 대기가 <b>0.04ms</b> 로 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 계산 <b>4.75ms</b> 는 내내 같습니다.</p></section>
     </div>
 
     <section class="tg-real">

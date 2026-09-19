@@ -5,8 +5,16 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-10-03T00:00:00Z</updated>
+  <updated>2026-10-04T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>BentoML: 모델 파일을 서비스로 만드는 도구와 안 쓰는 자리</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=bentoml-model-serving"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=bentoml-model-serving</id>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>분석 팀이 새 pCVR 예비 모델을 가져왔고 운영자 내부 화면에서 먼저 값을 보자고 합니다. 요청은 초당 마흔 건입니다. 직접 짠 추론 서버에는 HTTP 창구부터 두 버전 나눠 태우기까지 일곱 덩어리 1,800줄이 들어 있는데, 그중 여섯은 모델이 바뀌어도 그대로입니다. BentoML 은 그 여섯을 갖고 있어 내가 쓰는 것이 마흔 줄이 됩니다. 대신 요청을 받는 층이 파이썬이라 고정 비용 1.68ms 가 붙고, 8ms 예산에서 초과율이 3.53% 에서 10.69% 로 세 배가 됩니다. 200ms 예산인 내부 도구에서는 둘 다 0.00% 라 그 차이가 안 보입니다. 모아 보내기도 요청 하나가 후보 800건을 들고 있으면 건당 3% 밖에 안 줍니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
   <entry>
     <title>신뢰구간과 t 검정: 95% 는 무엇의 95% 이고 두 클릭률의 차이는 언제 믿나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=stats-confidence-interval-ttest"/>
@@ -165,13 +173,5 @@
     <summary>지훈 씨가 만든 API 가 받은 클릭 한 건이 네 곳에 가 닿습니다 — 대시보드는 2초, 예산 소진 확인은 5초, 광고주 리포트는 5분, 모델 학습은 다음 날 새벽입니다. 그 사이에 자리가 여섯인데, 넘김 다섯 중 셋은 앞에서 밀고 둘은 뒤에서 가지러 갑니다. 앱이 만든 85바이트에는 과금액이 없고(앱이 보낸 값은 고칠 수 있기 때문입니다), 웹서버가 98바이트를 앞에 붙이며, 수집 에이전트는 내용을 한 글자도 안 건드린 채 봉투에만 셋을 적습니다. Kafka 가 며칠 들고 있는 건 마지막 넘김이 &quot;가지러 가는&quot; 방식이기 때문이고, 3시간 멈춘 소비자는 2.4분에 따라잡지만 10일 멈추면 앞 72시간치는 이미 없습니다.</summary>
     <category term="Software Engineering"/>
     <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>ML 모델링 면접: 광고 모델 질문 스물여덟 개와 답하는 순서</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=interview-ml-modeling"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=interview-ml-modeling</id>
-    <updated>2026-08-15T00:00:00Z</updated>
-    <summary>면접에서 반복되는 광고 ML 모델링 질문 스물여덟 개를 모범답안과 함께 정리했다. CTR 0.2%에서 아무것도 안 하는 모델이 정확도 99.8%를 받고, AUC가 소수점까지 같은 두 모델의 COPC가 0.95와 0.32로 갈린다. 다운샘플링 되돌리기 공식, 시간으로 안 나눈 검증이 AUC를 0.058 부풀리는 실측, 피처 다섯 묶음, 랭킹에 eCPM 뒤로 무엇을 붙이나, 그리고 모르는 걸 물었을 때 답하는 법까지.</summary>
-    <category term="Interview &amp; Algorithms"/>
   </entry>
 </feed>

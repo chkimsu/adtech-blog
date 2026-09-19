@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'bentoml-model-serving',
+    world: 'both',
+    worldNote: '도구가 무엇을 대신하고 파이썬 층에 값이 얼마나 붙는지는 두 무대가 같습니다. 다른 것은 예산을 누가 정하느냐입니다. 담장 안은 우리가 구간에 나눠 주니 도구를 쓸 자리를 만들 수 있고, 열린 RTB 는 거래소가 정한 시간 안에 답해야 해 그 자리가 좁습니다.',
+    worldPractical: '담장 안에서는 광고를 고르는 길에 안 걸리는 모델이 많습니다. 운영자 화면의 예비 모델, 광고주 리포트의 예상 전환, 하루 한 번 도는 배치 채점은 요청이 경매를 지나지 않아 예산이 초 단위이고, 자사 데이터로 만드는 내부 도구가 많아 이런 자리가 계속 생깁니다. 열린 RTB 에서는 입찰 요청에 답하는 시간을 거래소가 정하고 그 안에 네트워크 왕복이 들어 있어, 우리 서버가 쓸 수 있는 시간이 더 짧고 거래소마다 달라 가장 빠듯한 곳에 맞춰야 합니다. 그래서 입찰 경로에 있는 모델은 도구로 띄우기 어렵고, 리포트와 소재 사전 채점처럼 경로 밖에서 도는 것만 도구를 씁니다.',
+    title: 'BentoML: 모델 파일을 서비스로 만드는 도구와 안 쓰는 자리',
+    excerpt: '분석 팀이 새 pCVR 예비 모델을 가져왔고 운영자 내부 화면에서 먼저 값을 보자고 합니다. 요청은 초당 마흔 건입니다. 직접 짠 추론 서버에는 HTTP 창구부터 두 버전 나눠 태우기까지 일곱 덩어리 1,800줄이 들어 있는데, 그중 여섯은 모델이 바뀌어도 그대로입니다. BentoML 은 그 여섯을 갖고 있어 내가 쓰는 것이 마흔 줄이 됩니다. 대신 요청을 받는 층이 파이썬이라 고정 비용 1.68ms 가 붙고, 8ms 예산에서 초과율이 3.53% 에서 10.69% 로 세 배가 됩니다. 200ms 예산인 내부 도구에서는 둘 다 0.00% 라 그 차이가 안 보입니다. 모아 보내기도 요청 하나가 후보 800건을 들고 있으면 건당 3% 밖에 안 줍니다.',
+    date: '2026-10-04',
+    categories: ['ML Infrastructure'],
+    tags: ['MLOps', 'ML Infra', 'Model Serving', '입문'],
+    contentUrl: 'posts/bentoml-model-serving.md',
+    series: 'mlops-track'
+  },
+  {
     id: 'stats-confidence-interval-ttest',
     world: 'na',
     title: '신뢰구간과 t 검정: 95% 는 무엇의 95% 이고 두 클릭률의 차이는 언제 믿나',
@@ -1234,8 +1247,8 @@ const posts = [
 const series = {
   'mlops-track': {
     title: '모델 운영 트랙',
-    desc: '만든 모델을 매일 굴리는 자리 — 새벽 학습 파이프라인과 백필, 지난주 모델 재현, 컨테이너와 CI 검문, 추론 서버가 뜨는 41초, 카나리 배포와 14분 롤백, 스트림 창과 워터마크, 미리 계산해 둘 것과 서빙 비용, 분산 학습까지 신입 지훈 씨의 여덟 주를 따라갑니다',
-    posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training'],
+    desc: '만든 모델을 매일 굴리는 자리 — 새벽 학습 파이프라인과 백필, 지난주 모델 재현, 컨테이너와 CI 검문, 추론 서버가 뜨는 41초, 카나리 배포와 14분 롤백, 스트림 창과 워터마크, 미리 계산해 둘 것과 서빙 비용, 분산 학습과 서빙 도구까지 신입 지훈 씨의 아홉 주를 따라갑니다',
+    posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving'],
   },
   'judgment-track': {
     title: '판단·측정 트랙',
@@ -1346,8 +1359,8 @@ const mlTrack = {
     {
       id: 'stage-5',
       title: '5단계 · 운영 — 만든 모델을 매일 굴린다',
-      goal: '이 단계를 마치면: 새벽에 도는 학습 파이프라인을 읽고, 지난주 모델을 다시 만들고, 검문을 지나 이미지를 올리고, 1% 로 배포해 게이트가 닫히면 되돌리고, 실시간 피처의 창을 정하고, 무엇을 미리 계산해 둘지와 GPU 를 몇 장 쓸지를 정할 수 있습니다. 앞 네 단계가 “무엇을 만들고 무엇을 믿나”였다면 여기는 “그것을 매일 어떻게 굴리나”입니다.',
-      posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training'],
+      goal: '이 단계를 마치면: 새벽에 도는 학습 파이프라인을 읽고, 지난주 모델을 다시 만들고, 검문을 지나 이미지를 올리고, 1% 로 배포해 게이트가 닫히면 되돌리고, 실시간 피처의 창을 정하고, 무엇을 미리 계산해 둘지와 GPU 를 몇 장 쓸지를 정하고, 새 모델을 도구로 띄울지 직접 짤지를 예산 숫자로 고를 수 있습니다. 앞 네 단계가 “무엇을 만들고 무엇을 믿나”였다면 여기는 “그것을 매일 어떻게 굴리나”입니다.',
+      posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving'],
     },
 
   ],

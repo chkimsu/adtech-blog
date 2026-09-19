@@ -350,6 +350,23 @@ const GLOSSARY = [
     term: '파라미터 서버',
     abbr: 'Parameter Server',
     body: '<strong>큰 임베딩 표를 여러 대에 나눠 들고</strong> 학습 워커가 필요한 줄만 읽고 쓰게 하는 서버. Adam 이면 값 하나가 숫자 셋이라 27.7GB 표가 83.2GB 가 된다.'
+  },
+  {
+    term: 'DMP',
+    abbr: 'Data Management Platform',
+    match: ['DMP'],
+    body: '여러 사이트에서 모은 <strong>남의 데이터(3자 데이터)</strong>를 쿠키 단위로 쌓아 「자동차에 관심 있는 사람」 같은 세그먼트로 묶어 파는 곳. 광고주는 자기가 모르는 사람까지 타겟팅할 수 있었다. 브라우저가 3자 쿠키를 막으면서 쓰임이 크게 줄었고, 자사 데이터를 다루는 <strong>CDP</strong> 로 무게가 옮겨 갔다.'
+  },
+  {
+    term: 'CDP',
+    abbr: 'Customer Data Platform',
+    match: ['CDP'],
+    body: '광고주가 <strong>자기 고객 데이터(1자 데이터)</strong>를 한곳에 모아 두는 곳. 구매 기록, 앱 로그, 회원 정보를 한 사람으로 이어 붙여 세그먼트를 만든다. 남의 쿠키에 기대지 않아 3자 쿠키가 막혀도 그대로 돌아간다. 대신 자기 고객 밖으로는 넓히지 못해 <strong>Lookalike</strong> 가 필요해진다.'
+  },
+  {
+    term: 'GAM',
+    abbr: 'Google Ad Manager',
+    body: '구글이 만든 <strong>매체 쪽 광고 서버이자 SSP</strong>. 매체가 자기 지면의 광고 자리를 등록해 두고, 직접 판 광고와 경매로 파는 광고를 한 화면에서 굴린다. 안에 광고 거래소 AdX 가 붙어 있다. 개념 이름이 아니라 제품 이름이라 SSP 를 하는 회사의 예로 든다. 옛 이름은 DFP 다.'
   }
 ];
 

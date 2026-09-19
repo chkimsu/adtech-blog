@@ -304,6 +304,13 @@ feature_vector = {
 
 여기서 맞바꿈이 하나 생깁니다. **신선하게 만들려면 비싸집니다.** 하루 한 번 배치로 돌리면 큰 계산도 저렴하게 할 수 있습니다. 초 단위로 갱신하려면 스트리밍 인프라를 세우고 계속 돌려야 합니다. 그래서 실무는 **피처를 신선도별로 나눠 각각 다른 파이프라인에 태웁니다.**
 
+세 갈래가 각각 무엇을 맡고 값이 얼마나 묵는지 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=threepipes" height="480" loading="lazy" title="피처는 신선도별로 다른 길에 탄다"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 세 가지 파이프라인은 각각 다른 시간 해상도의 피처를 담당합니다.
 
 <div class="chart-cards">
@@ -480,6 +487,13 @@ flowchart LR
 ```
 
 **배치 피처의 핵심:** 학습과 추론이 **같은 피처 정의**를 쓰지만 읽는 저장소는 다릅니다. 학습은 오프라인 저장소(과거 시점 복원), 추론은 온라인 저장소(최신 값)입니다.
+
+같은 피처 하나가 두 곳에서 읽히는 모양을 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=twostores" height="480" loading="lazy" title="같은 피처인데 읽는 곳이 둘"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
 
 ### 4-2. 스트리밍 피처의 생애주기
 
@@ -1022,6 +1036,13 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 "피처를 더 자주 갱신하면 모델 성능이 올라간다"는 직관적이지만, 비용과 복잡도가 함께 올라갑니다:
 
+피처마다 갱신 주기가 어디에 놓이는지 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=freshness" height="480" loading="lazy" title="갱신 주기는 피처마다 정한다"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 <div class="chart-js-container">
   <canvas id="freshnessChart" height="280"></canvas>
 </div>
@@ -1075,6 +1096,13 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 피처 저장소는 광고 입찰의 **크리티컬 패스**에 있습니다. 장애가 곧 매출 손실입니다.
 
 여기서 갈리는 것은 장애가 났느냐가 아니라, 장애가 났을 때 무엇으로 대신하느냐입니다. 온라인 저장소가 통째로 죽으면 대신할 것이 없어 입찰이 멈춥니다. 반면 실시간 피처만 끊기면 배치 피처로 내려앉아 계속 입찰할 수 있습니다. 정확도는 떨어지지만 매출은 이어집니다. 그래서 아래 표에서 볼 것은 증상이 아니라 마지막 칸입니다.
+
+무엇으로 대신하는지를 순서대로 카드로 보면 이렇습니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=fallback" height="480" loading="lazy" title="피처가 안 올 때 무엇을 넣나"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
 
 ### 장애 유형별 영향과 대응
 

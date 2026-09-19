@@ -207,6 +207,13 @@ p99.9         81.4
 
 먼저 **피처를 성격별로 나눠야** 답이 나온다.
 
+성격별로 나눈 셋이 각각 어디서 오는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=threepipes" height="480" loading="lazy" title="피처는 신선도별로 다른 길에 탄다"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 | 종류 | 예 | 어디에 두나 | 갱신 |
 |---|---|---|---|
 | 요청에 들어 있는 것 | 지면, 기기, 시간 | 조회 없음 | 즉시 |

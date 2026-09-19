@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피처 카드 여섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="로그 한 줄이 모델에 들어갈 숫자 묶음이 되고 그 값이 학습과 서빙 양쪽에 닿기까지를 카드 한 장씩으로. 세 갈래 파이프라인, 읽는 곳이 둘, 갱신 주기, 피처가 안 올 때, 로그 한 줄의 네 갈래, 길이 맞추기.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>피처 카드 여섯 장</h1>
+      <p>로그 한 줄이 모델에 들어갈 숫자 묶음이 되고, 그 값이 학습과 서빙 양쪽에 닿기까지의 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 각 글의 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (저장소, 만들어 둔 값)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것과 문제가 되는 자리</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (배치, 스트림, 변환)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것 (정의, 규칙)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="threepipes"><h2>THREE PIPELINES</h2><p class="tg-k">피처는 신선도별로 다른 길에 탄다</p><p class="tg-easy"><b>쉽게 말하면</b> 피처마다 얼마나 신선해야 하는지가 다릅니다. 하루 한 번 만들어도 되는 것, 몇 분마다 만들어야 하는 것, 요청이 올 때 그 자리에서 만드는 것으로 나눠 각각 다른 길에 태웁니다.</p><div class="tg-fig" id="ft-threepipes"></div>
+        <p class="tg-cap">유저 7일 클릭률은 하루 한 번이라 값이 <b>최대 24시간</b> 묵고, 최근 5분 클릭 수는 <b>최대 5분</b>, 기기와 시간대는 안 묵습니다. 셋을 나란히 가져오면 조회가 1ms 이고 차례로 가져오면 4ms 입니다.</p></section>
+
+      <section class="tg-card" data-card="twostores"><h2>TWO STORES</h2><p class="tg-k">같은 피처인데 읽는 곳이 둘</p><p class="tg-easy"><b>쉽게 말하면</b> 「유저 7일 클릭률」이라는 정의는 하나인데, 학습할 때는 과거를 되돌려 읽는 저장소에서 가져오고 서빙할 때는 지금 값 하나만 있는 저장소에서 가져옵니다. 두 곳이 어긋나면 모델이 조용히 틀립니다.</p><div class="tg-fig" id="ft-twostores"></div>
+        <p class="tg-cap">학습은 <b>그날 자정까지의 값</b>만 써야 하고, 서빙은 지금 값을 1ms 안에 읽습니다. 정의를 한 곳에 적고 양쪽이 불러 쓰면 고칠 때 한 번만 고칩니다.</p></section>
+
+      <section class="tg-card" data-card="freshness"><h2>FRESHNESS BUDGET</h2><p class="tg-k">갱신 주기는 피처마다 정한다</p><p class="tg-easy"><b>쉽게 말하면</b> 모든 피처를 실시간으로 만들 필요가 없습니다. 값이 빨리 변하는 것만 자주 만들고, 천천히 변하는 것은 하루 한 번으로 둡니다.</p><div class="tg-fig" id="ft-freshness"></div>
+        <p class="tg-cap">캠페인 남은 예산은 <b>1분</b>, 유저 최근 클릭 수는 <b>5분</b>, 유저 7일 클릭률은 <b>하루 한 번</b>입니다. 기기는 요청에 실려 와 계산이 거의 공짜입니다.</p></section>
+
+      <section class="tg-card" data-card="fallback"><h2>FEATURE FALLBACK</h2><p class="tg-k">피처가 안 올 때 무엇을 넣나</p><p class="tg-easy"><b>쉽게 말하면</b> 저장소가 늦거나 답을 못 줘도 광고는 나가야 합니다. 그래서 무엇으로 채울지를 미리 순서대로 적어 둡니다. 아래로 갈수록 답은 나가지만 맞는 정도가 떨어집니다.</p><div class="tg-fig" id="ft-fallback"></div>
+        <p class="tg-cap">순서는 <b>조금 전 값, 무리 평균, 전체 평균</b> 셋입니다. 무엇으로 채웠는지 로그에 남겨야 그 요청이 왜 나빴는지 나중에 찾을 수 있습니다.</p></section>
+
+      <section class="tg-card" data-card="rowtovector"><h2>ROW TO VECTOR</h2><p class="tg-k">로그 한 줄이 숫자 묶음이 되기까지</p><p class="tg-easy"><b>쉽게 말하면</b> 로그에 적힌 것은 대부분 숫자가 아니라 번호입니다. 광고 번호, 시각, 최근 본 목록, 집계값은 각각 다른 방법으로 바꿔야 모델에 들어갑니다.</p><div class="tg-fig" id="ft-rowtovector"></div>
+        <p class="tg-cap">같은 한 줄인데 넣는 방법이 <b>넷</b>입니다. 어느 가족인지가 정해지면 넣는 방법도 따라 정해집니다.</p></section>
+
+      <section class="tg-card" data-card="sequence"><h2>FIXED LENGTH</h2><p class="tg-k">사람마다 다른 이력을 길이 20 으로</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 받는 칸 수는 고정인데 사람마다 이력 개수는 다릅니다. 많으면 오래된 것을 잘라내고 적으면 빈 칸을 채웁니다. 어디가 진짜인지 알려 주는 칸을 하나 더 만듭니다.</p><div class="tg-fig" id="ft-sequence"></div>
+        <p class="tg-cap">이력 37개면 최근 20개만 남기고, 5개면 <b>빈 칸 15개</b>를 채웁니다. 채운 0 도 번호라 모델이 계산에 넣으므로 마스크가 따로 필요합니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>새 피처를 넣자는 말이 나오면</b> 세 가지를 먼저 정합니다. 얼마나 신선해야 하나, 학습 때 그 시점 값을 되돌릴 수 있나, 서빙에서 안 왔을 때 무엇을 넣나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=feature-store-serving">Feature Store</a> 편과 <a href="post.html?id=ctr-feature-engineering">CTR 피처 엔지니어링</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 실시간 값이 배치 값과 어긋나는 자리는 <a href="post.html?id=stream-window-aggregation">스트림 집계</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/feature-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

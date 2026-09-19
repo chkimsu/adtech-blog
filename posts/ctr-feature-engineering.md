@@ -16,6 +16,13 @@
 
 실무의 피처는 네 가족으로 나뉜다. 범주형 ID는 광고나 유저처럼 이름표다. 수치형은 시각처럼 크기가 있는 값이다. 시퀀스는 "최근 본 광고 20개"처럼 순서가 있는 목록이다. 집계는 "이 광고의 지난 7일 CTR"처럼 과거 로그를 세어 만든 값이다. 가족마다 터지는 지점이 다르다. 범주형은 개수에서, 시퀀스는 길이에서, 집계는 시간에서 터진다.
 
+네 가족이 각각 어떤 방법으로 숫자가 되는지 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=rowtovector" height="480" loading="lazy" title="로그 한 줄이 숫자 묶음이 되기까지"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
+
 아래는 **가상 데이터**다. 광고 요청 하나에서 흔히 뽑는 필드의 모양만 옮긴 것이다.
 
 | 로그 필드 | 예시 값 | 고유값 개수 | 피처 가족 | 넣는 방법 |
@@ -217,6 +224,13 @@ OOV를 하나만 두면 새로 만들어진 화장품 광고와 대출 광고가
 **모델 입력은 길이가 항상 같아야 한다.** 그런데 유저의 행동 개수는 사람마다 다르다. 3개인 사람도, 3,000개인 사람도 있다.
 
 규칙은 네 개다. 최근 순으로 정렬한다. 정한 길이 L보다 많으면 오래된 것을 잘라낸다. 적으면 빈 자리를 PAD라는 특별한 번호로 채운다. 그리고 어디가 진짜 값인지 알려 주는 **마스크** 배열을 함께 만든다. 마스크가 따로 필요한 이유는 PAD도 번호라서 모델이 계산에 넣기 때문이다.
+
+이력이 많은 사람과 적은 사람이 같은 길이가 되는 모양을 카드로 보면 이렇다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-feature-cards.html?embed=1&card=sequence" height="480" loading="lazy" title="사람마다 다른 이력을 길이 20 으로"></iframe>
+<a class="demo-embed-open" href="demo-feature-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
+</div>
 
 여기에 최근성 가중을 얹는다. 3분 전에 본 상품과 3주 전에 본 상품은 무게가 달라야 한다. 흔한 방법은 반감기다. 24시간마다 무게가 절반이 되게 한다.
 

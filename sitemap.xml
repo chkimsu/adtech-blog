@@ -763,6 +763,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-feature-cards.html</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/demo-feedback-loop.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>

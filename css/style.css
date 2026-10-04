@@ -887,6 +887,9 @@ nav {
 }
 
 .post-content {
+  /* 띄어쓰기 없이 긴 낱말(가운뎃점이나 화살표로 이은 영문, 긴 숫자 줄)이 휴대폰 폭에서 문서를 옆으로 밀지 않게.
+     break-word 는 넘칠 때만 낱말 안에서 줄을 바꾸고 표의 최소 폭 계산에는 끼지 않는다. */
+  overflow-wrap: break-word;
   max-width: 1100px;
   margin: 0 auto;
   padding: 3rem 2.5rem;

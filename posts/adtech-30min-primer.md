@@ -376,7 +376,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 6. 모델이 아무리 AUC 가 높아도 **Calibration** 이 안 되면 돈을 잃습니다.
 7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
 8. 측정은 **CTR·CVR·ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어졌습니다.
-9. 타겟팅은 **Demographic·Behavioral·Contextual·Retargeting** 네 갈래입니다. 1st-party 데이터와 Lookalike 의 중요성이 커지고 있습니다.
+9. 타겟팅은 **Demographic, Behavioral, Contextual, Retargeting** 네 갈래입니다. 1st-party 데이터와 Lookalike 의 중요성이 커지고 있습니다.
 10. 모든 것은 **Feature Store + Real-Time Serving + Online Learning** 인프라 위에서 돌아갑니다.
 
 여기까지 왔다면 이 블로그의 다른 글들이 어느 자리의 이야기인지 보일 겁니다. 위의 관심사별 추천 경로에서 한 편을 골라 들어가 보세요.

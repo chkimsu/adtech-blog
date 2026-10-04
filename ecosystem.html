@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="광고 생태계 한 장 지도 — 거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 22개 모듈을 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
+    content="광고 생태계 한 장 지도 — 거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 23개 모듈을 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
   <meta name="keywords"
     content="광고 생태계, AdTech Ecosystem, DSP, SSP, Ad Exchange, DMP, CDP, pCTR, RTB, Attribution, Header Bidding, 광고 생태도">
   <meta name="author" content="Ad Tech Blog">
@@ -14,7 +14,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ad Tech Ecosystem Map — 광고 생태계 한 장 지도">
   <meta property="og:description"
-    content="거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 22개 모듈을 한 화면 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
+    content="거래 층(SSP·Exchange·DSP)과 두뇌 층(Feature Store·학습·서빙·pCTR/pCVR·보정·감시) 23개 모듈을 한 화면 인터랙티브 그래프로. '모델러의 눈으로 보는 0.1초' 흐름 애니메이션 포함.">
   <meta property="og:url" content="https://chkimsu.github.io/adtech-blog/ecosystem.html">
 
   <title>Ecosystem Map — Ad Tech Blog</title>
@@ -48,8 +48,8 @@
       <div class="container">
         <span class="eco-hero-kicker">AD TECH · 한 장으로 읽는 지도</span>
         <h1 class="eco-hero-title">광고 생태계 한 장 지도<br>흐름을 직접 재생하며 따라가기</h1>
-        <p class="eco-hero-dek">22개 모듈을 <strong>두 층</strong>으로 놓았습니다 —
-          위는 모델이 사는 <strong>두뇌 층</strong>(피처→학습→서빙→예측→보정→감시),
+        <p class="eco-hero-dek">23개 모듈을 <strong>두 층</strong>으로 놓았습니다 —
+          위는 모델이 사는 <strong>두뇌 층</strong>(피처→학습→후보 추출→서빙→예측→보정→입찰가→감시),
           아래는 돈과 소재가 흐르는 <strong>거래 층</strong>(사용자→매체→거래소→DSP→광고주).
           두 층은 <strong>DSP와 pCTR/pCVR을 잇는 세로선</strong> 하나로 연결됩니다.</p>
         <p class="eco-hero-guide">아래에서 <strong>① 흐름을 고르고</strong> ▸ 재생하면, 지도 위 라벨 패킷이 움직이며
@@ -160,12 +160,12 @@
     <!-- Main layout: Graph + Side panel -->
     <div class="eco-main-layout">
       <div class="eco-graph-wrap" id="eco-graph-wrap">
-        <!-- role="group"이어야 안쪽 22개 노드(role="button", tabindex=0)가 스크린리더에 노출된다.
+        <!-- role="group"이어야 안쪽 23개 노드(role="button", tabindex=0)가 스크린리더에 노출된다.
              role="img"는 하위 트리를 하나의 그림으로 뭉개서, 키보드로는 탭이 되는데
              읽어 주는 내용은 없는 상태가 된다. -->
         <svg id="eco-graph" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid meet" role="group"
              aria-roledescription="다이어그램"
-             aria-label="광고 생태계 지도 — 위쪽 두뇌 층(ML 파이프라인)과 아래쪽 거래 층으로 나눈 22개 모듈과 그 연결"></svg>
+             aria-label="광고 생태계 지도 — 위쪽 두뇌 층(ML 파이프라인)과 아래쪽 거래 층으로 나눈 23개 모듈과 그 연결"></svg>
         <div id="eco-tooltip" class="eco-tooltip"></div>
         <div class="eco-flow-bar" id="eco-flow-bar" hidden>
           <div id="eco-flow-caption" class="eco-flow-caption" aria-live="polite"></div>
@@ -201,14 +201,15 @@
 
     <!-- Category cards -->
     <section class="eco-categories">
-      <h2>6 카테고리 · 22개 모듈</h2>
+      <h2>6 카테고리 · 23개 모듈</h2>
       <p class="eco-categories-sub">각 카테고리는 광고 거래의 한 축을 담당합니다. 위 그래프의 색과 동일 —
-        ML / Models가 지도의 <strong>두뇌 층</strong>, 나머지가 <strong>거래 층</strong>입니다.</p>
+        ML / Models와 입찰가를 정하는 Bid Optimizer가 지도의 <strong>두뇌 층</strong>, 나머지가 <strong>거래 층</strong>입니다.</p>
       <div class="eco-categories-grid">
         <div class="eco-cat-card" data-category="buy">
-          <h3>Buy Side · 5개 모듈</h3>
+          <h3>Buy Side · 6개 모듈</h3>
           <p>광고주가 광고를 사는 쪽. Advertiser → Brand/Agency → DSP가 캠페인을 실행하고,
-            DMP/CDP가 타겟팅 데이터를, DCO가 크리에이티브를 자동 생성한다.</p>
+            DMP/CDP가 타겟팅 데이터를, DCO가 크리에이티브를 자동 생성한다.
+            입찰가는 Bid Optimizer가 정해 DSP에 넘긴다. 0.1초 안에 모델 출력으로 계산하는 단계라 두뇌 층의 서빙 줄에 있다.</p>
         </div>
         <div class="eco-cat-card" data-category="exchange">
           <h3>Exchange · 2개 모듈</h3>

@@ -1,4 +1,4 @@
-/* 쉬운 용어 사전 — 22개 모듈 + 개념·기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
+/* 쉬운 용어 사전 — 23개 모듈 + 개념·기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
 (function () {
   'use strict';
 
@@ -29,6 +29,7 @@
 
     // ── 사는 쪽 (buy) ──
     { id: 'dsp', cat: 'buy', name: 'DSP', full: 'Demand-Side Platform', easy: '광고주(사는 쪽)의 구매 대리인. 예측·입찰을 대신 한다.', example: '예: The Trade Desk · 카카오모먼트', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
+    { id: 'bid-optimizer', cat: 'buy', name: 'Bid Optimizer', full: '입찰가 결정', easy: '보정된 확률로 노출 한 번의 값을 계산하고, 목표 단가와 하루 예산 속도에 맞춰 실제로 부를 입찰가를 정하는 단계.', link: { text: '데모: Bid Shading', href: 'demo-bid-shading.html' } },
     { id: 'advertiser', cat: 'buy', name: 'Advertiser', full: '광고주', easy: '광고를 내는 주체. 예산과 목표(ROAS 등)를 정한다.', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
     { id: 'brand', cat: 'buy', name: 'Brand / Agency', full: '브랜드·대행사', easy: '광고주를 대신해 캠페인을 기획·운영하기도 하는 주체.' },
     { id: 'dco', cat: 'buy', name: 'DCO', full: 'Dynamic Creative Optimization', easy: '여러 이미지·문구를 자동으로 바꿔 끼우며 잘 되는 소재를 찾는 기술.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },

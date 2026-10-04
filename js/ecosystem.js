@@ -7,7 +7,7 @@
   const MOVE_MS = 900;   // 패킷이 한 엣지를 이동하는 시간
   const READ_MS = 1700;  // 자동재생 시 각 스텝 후 읽기 시간
 
-  // 22 nodes (6 카테고리). 좌표는 viewBox 1280x700 기준.
+  // 23 nodes (6 카테고리). 좌표는 viewBox 1280x700 기준.
   const NODES = {
     // ── Row 1 (y=120): ML / Models top ──
     'feature-store': {
@@ -57,12 +57,31 @@
       def: 'Candidate Retrieval이 넘긴 후보 수백 개를 Pre-Ranking→Ranking→Re-Ranking으로 매겨 순서를 정하는 추론 파이프라인. 10ms 안에 끝나야 함.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }]
     },
+    // 학습 줄 오른쪽 끝. 보정 계수(COPC)는 지난 로그로 미리 맞추는 값이라 이 줄에 둔다.
+    // 서빙 줄의 옛 자리는 바로 아래 Bid Optimizer 가 쓴다.
     'calibration': {
-      x: 1055, y: 84, w: 150, h: 46, cat: 'ml',
+      x: 1055, y: 22, w: 150, h: 44, cat: 'ml',
       name: 'Calibration', sub: '예측값 보정',
-      def: '모델이 예측한 CTR을 실제 분포에 맞게 보정. 예측 평균을 실제 평균과 일치시켜 입찰가 왜곡 방지.',
+      def: '모델이 예측한 CTR을 실제 분포에 맞게 보정. 보정 계수(COPC)는 지난 로그로 미리 맞춰 두고, 요청마다 예측값에 곱해 입찰가가 한쪽으로 쏠리지 않게 한다.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
       posts: [{ id: 'calibration', title: 'pCTR Calibration' }]
+    },
+    // 서빙 줄 오른쪽 끝, Calibration 바로 아래. 사는 쪽(DSP)의 일이라 색은 Buy Side 지만,
+    // 0.1초 안에 모델 출력으로 계산하는 단계라 서빙 줄에 둔다.
+    'bid-optimizer': {
+      x: 1055, y: 84, w: 150, h: 46, cat: 'buy',
+      name: 'Bid Optimizer', sub: '입찰가 결정',
+      def: '보정된 확률을 받아 실제로 부를 입찰가를 정하는 단계. 노출 한 번의 값(전환 가치 × pCTR × pCVR)에서 출발해 자동 입찰이 목표 단가에 맞추고, 예산 페이싱이 하루 속도에 맞춰 λ를 곱하고, Bid Shading이 이길 만큼만 남기고 깎는다. 정한 값은 DSP에 넘긴다.',
+      demos: [
+        { name: 'Bid Landscape', url: 'demo-bid-landscape.html' },
+        { name: 'Bid Shading', url: 'demo-bid-shading.html' },
+        { name: 'Portfolio', url: 'demo-portfolio.html' }
+      ],
+      posts: [
+        { id: 'auto-bidding-pacing', title: 'Auto-Bidding & Pacing' },
+        { id: 'bid-shading-censored', title: 'Bid Shading' },
+        { id: 'kakao-ads-bidding-measurement', title: '자동입찰과 예산 페이싱 (닫힌 생태계)' }
+      ]
     },
 
     // ── Row 2 (y=220) ──
@@ -118,17 +137,14 @@
     'dsp': {
       x: 865, y: 210, w: 150, h: 64, cat: 'buy',
       name: 'DSP', sub: '수요 측 플랫폼',
-      def: '광고주 대신 여러 Exchange에 입찰하는 두뇌. pCTR 예측·Bid Shading·Budget Pacing의 모든 결정이 여기서.',
+      def: '광고주 대신 거래소의 입찰 요청을 받아 응답하는 시스템. 요청이 오면 후보 추출, 예측, 입찰가 결정(Bid Optimizer)을 차례로 부르고, 정해진 입찰가를 제한시간 안에 거래소로 돌려보낸다.',
       demos: [
         { name: 'UCB1', url: 'demo-ucb1.html' },
         { name: 'Thompson Sampling', url: 'demo-ts.html' },
         { name: 'LinUCB', url: 'demo-linucb.html' },
-        { name: 'Bid Landscape', url: 'demo-bid-landscape.html' },
-        { name: 'Bid Shading', url: 'demo-bid-shading.html' },
-        { name: 'pCTR Impact', url: 'demo-pctr-impact.html' },
-        { name: 'Portfolio', url: 'demo-portfolio.html' }
+        { name: 'pCTR Impact', url: 'demo-pctr-impact.html' }
       ],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }, { id: 'auto-bidding-pacing', title: 'Auto-Bidding & Pacing' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }]
     },
     'advertiser': {
       x: 1060, y: 210, w: 160, h: 64, cat: 'buy',
@@ -215,22 +231,32 @@
     // y 107 로 곧게 가면 그 자리의 Candidate Retrieval 상자를 관통한다.
     { from: 'feature-store', to: 'model-serving', detour: [[410, 44], [410, 75], [580, 75], [580, 107]] },
     { from: 'model-serving', to: 'pctr-cvr' },
-    { from: 'pctr-cvr', to: 'calibration' },
+    // Calibration 이 학습 줄로 올라가 pCTR/pCVR 윗변 가운데에서 곧장 올라간다.
+    // 오른변으로 나가면 Bid Optimizer → DSP 의 첫 마디(y 107)와 겹친다.
+    { from: 'pctr-cvr', to: 'calibration', detour: [[940, 44]] },
     { from: 'dsp', to: 'pctr-cvr', layer: true },     // ★ 2층 연결선 — 중심 x가 같아 직선 수직으로 그려진다
     { from: 'dsp', to: 'model-serving' },     // 점수 요청
     // DSP 안의 순서: DSP → 후보 추출 → 서빙.
-    // 거래소와 DSP 사이 통로(x 807.5)로 올라가 레인 위 버스(y 182)를 타고 왼쪽으로 간 뒤,
+    // DSP 윗변 왼쪽(x 880)에서 나가 레인 바로 위(y 192)를 타고 왼쪽으로 간 뒤,
     // SELL SIDE 라벨 오른쪽(x 490)으로 올라가 후보 추출 상자 아래변에 닿는다.
-    { from: 'dsp', to: 'candidate-retrieval', detour: [[807.5, 242], [807.5, 182], [490, 182]] },
+    // y 182 로 가면 DSP → 거래소 버스와 겹쳐 후보 추출이 거래소로 이어진 것처럼 보이고,
+    // DSP 왼변으로 나가면 들어오는 거래소 → DSP 화살표와 겹친다.
+    { from: 'dsp', to: 'candidate-retrieval', detour: [[880, 192], [490, 192]] },
     { from: 'candidate-retrieval', to: 'model-serving' },
     // 경매 → 예측. 닫힌 생태계에서만 맞는 관계라(열린 RTB 거래소는 입찰가만 비교한다)
     // 무대 토글에 따라 모양이 바뀐다. 위 두 선보다 뒤에 두어 통로에서 겹칠 때 위에 그려지게 한다.
     { from: 'auction', to: 'pctr-cvr', world: true },
     { from: 'exchange', to: 'auction' },       // 거래소 → 경매 엔진
-    { from: 'calibration', to: 'dsp' },        // 새 모델 배포
+    { from: 'calibration', to: 'bid-optimizer' },   // 보정된 확률 → 입찰가 계산(바로 아래로)
+    // 정한 입찰가 → DSP. 아랫변(x 1093, BUY SIDE 라벨 오른쪽)으로 내려와 DSP 윗변 오른쪽(x 990)으로 들어간다.
+    // DSP 오른변(y 242)은 DMP → DSP 와 DSP → Advertiser 가 이미 쓰고 있어 피한다.
+    { from: 'bid-optimizer', to: 'dsp', detour: [[1093, 196], [990, 196]] },
 
     // ── Buy/Sell 부속 ──
     { from: 'dmp', to: 'dsp' },
+    // 세그먼트 → 후보 추출. 오른쪽 여백(x 1262)으로 올라가 레인 라벨 아래(y 157)를 지나
+    // 후보 추출 아랫변 오른쪽(x 540)으로 들어간다. DSP → 후보 추출(x 490)을 건너지 않는다.
+    { from: 'dmp', to: 'candidate-retrieval', detour: [[1262, 347], [1262, 157], [540, 157]] },
     { from: 'dco', to: 'dsp' },
     // 사이에 DMP가 있어 오른쪽으로 비켜 올라간다(DMP 오른변 1220 밖).
     { from: 'brand', to: 'advertiser', detour: [[1245, 452], [1245, 242]] },
@@ -315,9 +341,19 @@
           }
         },
         {
-          from: 'calibration', to: 'dsp',
-          caption: '보정된 확률이 돌아온다 → 입찰가 계산',
-          detail: '이제 계산할 수 있습니다. 전환 하나의 가치 × 누를 확률 × 살 확률 = 이 노출 한 번의 기대 가치. 광고판은 1,000회 기준(CPM)으로 부르니 여기에 1,000을 곱하고, 예산 페이싱과 Bid Shading으로 깎아 최종 입찰가를 냅니다.',
+          from: 'calibration', to: 'bid-optimizer',
+          caption: '보정된 확률이 입찰가 계산으로',
+          detail: '보정된 확률을 입찰가를 정하는 Bid Optimizer로 넘깁니다. 여기서부터 확률이 돈으로 바뀝니다.',
+          packet: { label: '보정 pCTR 2.4%', kind: 'data' },
+          example: {
+            story: '보정된 pCTR 2.4%와 pCVR 0.35%가 함께 넘어간다.',
+            data: [['pCTR', '2.4%'], ['pCVR', '0.35%']]
+          }
+        },
+        {
+          from: 'bid-optimizer', to: 'dsp',
+          caption: '입찰가 계산 — 노출 한 번의 값에서 입찰 CPM으로',
+          detail: '이제 계산할 수 있습니다. 전환 하나의 가치 × 누를 확률 × 살 확률 = 이 노출 한 번의 기대 가치. 광고판은 1,000회 기준(CPM)으로 부르니 여기에 1,000을 곱하고, 예산 페이싱과 Bid Shading으로 깎아 최종 입찰가를 DSP에 넘깁니다.',
           packet: { label: '입찰 CPM ₩1,200', kind: 'money' },
           example: {
             story: '₩30,000 × 2.4% × 0.35% = ₩2.52 (노출 1회) → CPM ₩2,520이 상한. 페이싱·셰이딩 후 ₩1,200을 부른다.',
@@ -420,12 +456,12 @@
     // (후보 800개, 원 pCTR 2.1%, 보정 후 2.4%, pCVR 0.35%, 입찰 ₩1,200, 응답 42ms).
     dspinside: {
       label: 'DSP 안의 순서',
-      summary: 'DSP 안의 순서는 후보 추출 → 예측 → 보정 → 입찰가 정하기입니다. 예산은 두 번 끼어듭니다. 앞에서는 예산이 바닥났거나 속도를 줄일 캠페인을 후보에서 빼고, 뒤에서는 입찰가에 곱하는 수(λ)로 하루 속도를 맞춥니다. 마지막 경매와 과금은 열린 RTB에서는 거래소가, 닫힌 생태계에서는 플랫폼이 맡습니다.',
+      summary: 'DSP 안의 순서는 후보 추출 → 피처 조회 → 예측 → 보정 → 입찰가 결정입니다. 모듈은 안에서 무슨 계산을 하든 화살표 하나에 정해진 결과 하나를 실어 넘깁니다. 화살표 위로 움직이는 라벨이 그 결과입니다. 한 모듈로 화살표가 여럿 모이기도 합니다. 후보 추출은 요청과 세그먼트를, Model Serving 은 후보와 피처를 받습니다. 예산은 두 번 끼어듭니다. 앞에서는 예산이 바닥났거나 속도를 줄일 캠페인을 후보에서 빼고, 뒤에서는 입찰가에 곱하는 수(λ)로 하루 속도를 맞춥니다. 마지막 경매와 과금은 열린 RTB에서는 거래소가, 닫힌 생태계에서는 플랫폼이 맡습니다.',
       steps: [
         {
           from: 'exchange', to: 'dsp',
           caption: '입찰 요청 도착 — 지금부터 100ms',
-          detail: '거래소에서 입찰 요청 한 건이 들어옵니다. 지면, 사용자, 바닥값이 함께 옵니다. 이제부터 DSP 안에서 일어나는 일을 순서대로 따라갑니다.',
+          detail: '거래소에서 입찰 요청 한 건이 들어옵니다. 지면, 사용자, 바닥값이 함께 옵니다. 이제부터 DSP 안에서 어느 모듈이 무엇을 넘기는지 순서대로 따라갑니다.',
           packet: { label: 'Bid Request', kind: 'request' },
           example: {
             story: '오후 9시 14분, 뉴스앱 320×100 한 칸에 대한 요청이 들어온다.',
@@ -434,28 +470,58 @@
         },
         {
           from: 'dsp', to: 'candidate-retrieval',
-          caption: '후보 추출 — 낼 수 있는 광고만 남긴다',
-          detail: '먼저 거릅니다. 타겟 조건이 이 사람과 맞는지, 남은 예산이 있는지, 이 사람에게 오늘 몇 번 보였는지(빈도 제한)를 봅니다. 예산이 바닥났거나 속도를 줄여야 하는 캠페인은 여기서 빠집니다. 남은 광고는 Retrieval로 수천 개에서 800개로 줄입니다.',
-          packet: { label: '후보 추출 요청', kind: 'request' },
+          caption: '후보 추출에 넘긴다 — 이 사람과 이 지면',
+          detail: 'DSP는 요청에서 사용자 ID와 지면 정보를 꺼내 후보 추출에 넘깁니다. 어떤 광고를 낼 수 있는지는 후보 추출이 정합니다.',
+          packet: { label: '사용자 ID, 지면', kind: 'request' },
+          example: {
+            story: '사용자 ID 하나와 지면 정보(뉴스앱, 320×100, 기사 사이)가 넘어간다.',
+            data: [['사용자', 'ID 1개'], ['지면', '320×100']]
+          }
+        },
+        {
+          from: 'dmp', to: 'candidate-retrieval',
+          caption: '세그먼트 조회 — 이 사람이 속한 세그먼트 목록',
+          detail: '세그먼트와 Lookalike 결과는 미리 계산해 둔 것입니다. 요청마다 다시 계산하지 않고, 사용자 ID로 목록만 꺼냅니다. 남은 예산과 빈도 기록은 DSP가 따로 가진 저장소에서 읽습니다.',
+          packet: { label: '세그먼트 3개', kind: 'data' },
+          example: {
+            story: '이 사람은 2030 스포츠 관심, 러닝화 검색, 구매자와 닮은 사람(Lookalike) 세 묶음에 들어 있다.',
+            data: [['세그먼트', '3개'], ['계산', '미리 해 둔다'], ['요청 때', '조회만']]
+          }
+        },
+        {
+          from: 'candidate-retrieval', to: 'model-serving',
+          caption: '후보 추출 — 낼 수 있는 광고 800개를 넘긴다',
+          detail: '세그먼트로 타겟 조건을 맞춰 보고, 남은 예산과 오늘 이 사람에게 보인 횟수(빈도 제한)를 봅니다. 예산이 바닥났거나 속도를 줄여야 하는 캠페인은 여기서 빠집니다. 남은 광고는 Retrieval로 수천 개에서 800개로 줄여 Model Serving에 넘깁니다.',
+          packet: { label: '후보 800개', kind: 'data' },
           example: {
             story: '광고 12,000개 중 조건, 예산, 빈도를 통과한 것이 2,400개. Retrieval이 그중 800개를 남긴다.',
             data: [['전체 광고', '12,000개'], ['거른 뒤', '2,400개'], ['Retrieval 뒤', '800개']]
           }
         },
         {
-          from: 'candidate-retrieval', to: 'model-serving',
-          caption: 'Pre-Ranking → Ranking — 후보 800개의 순서를 매긴다',
-          detail: '후보가 많으면 무거운 모델을 바로 다 돌리기 어렵습니다. 가벼운 모델(Pre-Ranking)이 먼저 순서를 거칠게 잡고, 무거운 모델(Ranking)이 정밀하게 매깁니다. 피처는 Feature Store에서 붙입니다.',
-          packet: { label: '후보 800개', kind: 'data' },
+          from: 'feature-store', to: 'model-serving',
+          caption: '피처 조회 — 후보마다 피처를 붙인다',
+          detail: '모델에 넣을 값(피처)을 Feature Store에서 꺼내 후보마다 붙입니다. 사용자의 최근 행동, 지면 성격, 시간대, 광고별 과거 클릭률 같은 값입니다. 이 조회가 느리면 전체가 늦어지니 수 ms 안에 끝냅니다.',
+          packet: { label: '피처 213개', kind: 'data' },
           example: {
-            story: '800개에 피처 213개씩을 붙여 채점을 시작한다.',
-            data: [['후보', '800개'], ['피처', '213개'], ['제한', '10ms']]
+            story: '"최근 7일 클릭 3회", "이 지면 평균 CTR 1.8%", "금요일 밤" 같은 값이 후보마다 붙는다.',
+            data: [['피처', '213개'], ['조회', '3.1ms'], ['캐시 적중', '92%']]
           }
         },
         {
           from: 'model-serving', to: 'pctr-cvr',
+          caption: 'Pre-Ranking → Ranking — 후보 800개를 채점에 넘긴다',
+          detail: '후보가 많으면 무거운 모델을 바로 다 돌리기 어렵습니다. 가벼운 모델(Pre-Ranking)이 먼저 순서를 거칠게 잡고, 무거운 모델(Ranking)이 정밀하게 매깁니다. 무거운 모델이 pCTR과 pCVR을 내는 모델입니다.',
+          packet: { label: '후보 800개 + 피처', kind: 'data' },
+          example: {
+            story: '피처를 붙인 후보 800개가 채점에 들어간다. 제한은 10ms.',
+            data: [['후보', '800개'], ['피처', '213개'], ['제한', '10ms']]
+          }
+        },
+        {
+          from: 'pctr-cvr', to: 'calibration',
           caption: '예측 — 후보마다 누를 확률과 살 확률',
-          detail: '모델이 후보마다 pCTR(누를 확률)과 pCVR(살 확률)을 계산합니다. 여기서 나온 값은 아직 원값입니다. 순위는 맞아도 크기가 살짝 틀어져 있을 수 있습니다.',
+          detail: '모델이 후보마다 pCTR(누를 확률)과 pCVR(살 확률)을 내서 보정으로 넘깁니다. 이 값은 아직 원값입니다. 순위는 맞아도 크기가 살짝 틀어져 있을 수 있습니다.',
           packet: { label: 'pCTR 2.1%', kind: 'data' },
           example: {
             story: '최고 후보의 원 예측은 pCTR 2.1%, pCVR 0.35%. 800개를 채점하는 데 6.2ms 걸렸다.',
@@ -463,20 +529,20 @@
           }
         },
         {
-          from: 'pctr-cvr', to: 'calibration',
-          caption: '보정 — 확률의 크기를 실제에 맞춘다',
-          detail: '확률은 돈에 곱해지므로 순서만 맞아서는 안 되고 크기가 맞아야 합니다. 실제 클릭 합을 예측 합으로 나눈 COPC만큼 예측값을 올리거나 내립니다.',
-          packet: { label: '2.1% → 2.4%', kind: 'data' },
+          from: 'calibration', to: 'bid-optimizer',
+          caption: '보정 — 확률의 크기를 실제에 맞춰 넘긴다',
+          detail: '확률은 돈에 곱해지므로 순서만 맞아서는 안 되고 크기가 맞아야 합니다. 실제 클릭 합을 예측 합으로 나눈 COPC만큼 예측값을 올리거나 내려, 입찰가를 정하는 Bid Optimizer로 넘깁니다.',
+          packet: { label: '보정 pCTR 2.4%', kind: 'data' },
           example: {
             story: '모델이 12% 낮게 보고 있었다. 2.1%를 2.4%로 올린다.',
             data: [['COPC', '1.14'], ['보정 후', '2.4%']]
           }
         },
         {
-          from: 'calibration', to: 'dsp',
-          caption: '입찰가 정하기 — 노출당 값 → 자동 입찰, 예산 페이싱, Bid Shading',
-          detail: '보정된 확률로 노출 한 번의 값을 냅니다. 전환 가치 × pCTR × pCVR입니다. 자동 입찰이 광고주의 목표 단가에 맞춰 이 값을 입찰가로 바꾸고, 예산 페이싱이 하루 속도에 맞춰 곱하는 수(λ)를 조절하고, Bid Shading이 이길 만큼만 남기고 깎습니다.',
-          packet: { label: '입찰 CPM ₩1,200', kind: 'money' },
+          from: 'bid-optimizer', to: 'dsp',
+          caption: '입찰가 결정 — 노출당 값 → 자동 입찰, 예산 페이싱, Bid Shading',
+          detail: 'Bid Optimizer가 보정된 확률로 노출 한 번의 값을 냅니다. 전환 가치 × pCTR × pCVR입니다. 자동 입찰이 광고주의 목표 단가에 맞춰 이 값을 입찰가로 바꾸고, 예산 페이싱이 하루 속도에 맞춰 곱하는 수(λ)를 조절하고, Bid Shading이 이길 만큼만 남기고 깎습니다. 정한 입찰가를 DSP에 넘깁니다.',
+          packet: { label: '입찰가 ₩1,200', kind: 'money' },
           example: {
             story: '₩30,000 × 2.4% × 0.35% = ₩2.52(노출 1회) → CPM ₩2,520이 상한. λ 0.8을 곱해 ₩2,016, Bid Shading으로 ₩1,200을 부른다.',
             data: [['노출 1회 값', '₩2.52'], ['페이싱 λ', '0.8'], ['최종 입찰 CPM', '₩1,200']]
@@ -485,7 +551,7 @@
         {
           from: 'dsp', to: 'exchange',
           caption: '입찰 응답 — 42ms에 도착',
-          detail: '정한 입찰가를 제한시간 안에 거래소로 보냅니다. 늦으면 아무리 잘 계산한 값도 경매에 못 들어갑니다.',
+          detail: 'DSP가 받은 입찰가를 응답에 실어 제한시간 안에 거래소로 보냅니다. 늦으면 아무리 잘 계산한 값도 경매에 못 들어갑니다.',
           packet: { label: 'Bid ₩1,200', kind: 'money' },
           example: {
             story: '요청 도착부터 응답까지 42ms. 지연 상위 1%(p99)는 88ms까지 튄다.',
@@ -496,7 +562,7 @@
           from: 'exchange', to: 'auction',
           caption: '경매와 과금 — 누가 이기고 얼마를 내나',
           detail: '여기부터는 DSP 밖의 일입니다. 열린 RTB에서는 거래소가 DSP들이 보낸 입찰가만 비교해 1등과 지불가를 정합니다. DSP의 pCTR은 보지 않습니다. 닫힌 생태계에서는 경매도 플랫폼 안에 있어, 플랫폼이 pCTR × 입찰가로 순위를 매기고 과금액도 정합니다.',
-          packet: { label: '경매', kind: 'money' },
+          packet: { label: '모은 입찰가', kind: 'money' },
           example: {
             story: '열린 RTB: ₩1,200이 1등, 2위는 ₩1,150. 닫힌 생태계: 같은 입찰가라도 pCTR이 곱해져 순위가 바뀔 수 있다.',
             data: [['열린 RTB', '입찰가만 비교'], ['닫힌 생태계', 'pCTR × 입찰가']]
@@ -665,9 +731,9 @@
           }
         },
         {
-          from: 'calibration', to: 'dsp',
-          caption: '보정된 모델이 DSP 서빙 파이프라인에 배포',
-          detail: '검증을 통과한 새 모델이 실제 트래픽을 받는 서버에 올라갑니다.',
+          from: 'calibration', to: 'bid-optimizer',
+          caption: '보정된 모델이 입찰가 계산에 쓰이기 시작',
+          detail: '검증을 통과한 새 모델과 보정 계수가 실제 트래픽을 받는 서빙에 올라갑니다. Bid Optimizer가 이 확률로 입찰가를 계산합니다.',
           packet: { label: '새 모델 배포', kind: 'data' },
           example: {
             story: '검증 통과한 v240 모델을 트래픽 5%부터 카나리로 올린다.',
@@ -843,12 +909,12 @@
           }
         },
         {
-          from: 'dmp', to: 'dsp',
-          caption: '오디언스 세그먼트가 DSP의 타겟팅 입력으로',
-          detail: '"20대 · 전자제품 관심"처럼 묶음(세그먼트)으로 가공돼 DSP에 전달됩니다. 개인이 아니라 묶음 단위라는 게 포인트.',
+          from: 'dmp', to: 'candidate-retrieval',
+          caption: '오디언스 세그먼트가 후보 추출의 타겟 조건으로',
+          detail: '동의받은 데이터는 묶음(세그먼트)으로 미리 가공해 둡니다. 요청이 오면 후보 추출이 이 사람의 세그먼트 목록을 꺼내 타겟 조건이 맞는 광고만 남깁니다. 개인이 아니라 묶음 단위라는 게 포인트.',
           packet: { label: '오디언스 세그먼트', kind: 'data' },
           example: {
-            story: "김씨는 '2030·스포츠 관심' 42만 명짜리 묶음의 한 명으로 DSP에 전달된다.",
+            story: "김씨는 '2030·스포츠 관심' 42만 명짜리 묶음의 한 명으로 후보 추출에 전달된다.",
             data: [['segment', '2030 스포츠'], ['크기', '42만명']]
           }
         },
@@ -1002,7 +1068,7 @@
   // ── SVG build ──
   // 지도의 텍스트 대안. 눈으로는 안 보이고 스크린리더만 읽는다.
   //
-  // 왜 필요한가: SVG에 role="group"을 주어 노드 22개가 버튼으로 노출되긴 하지만,
+  // 왜 필요한가: SVG에 role="group"을 주어 노드 23개가 버튼으로 노출되긴 하지만,
   // 탭으로 하나씩 지나가는 것만으로는 "이게 2층 구조다", "무엇이 무엇과 이어진다"를
   // 알 수 없다. 그림을 보는 사람은 한눈에 아는 것을 못 얻는 셈이다.
   //
@@ -1289,15 +1355,19 @@
     // 라벨 위로 줄이 지나간다. 빈 통로를 아는 건 사람이므로 여기서 지정한다.
     // 고친 뒤에는 반드시 `node scripts/check-map.js` 로 새 교차가 없는지 확인한다.
     //
-    // 출발·도착 변은 경유점이 알려 준다. 첫 경유점의 x가 출발 노드 중심과 같으면
-    // 위/아래 변에서 나가고, 다르면 좌/우 변에서 나간다(도착도 같은 규칙).
+    // 출발 변과 도착 변은 경유점이 알려 준다. 첫 경유점이 출발 노드의 가로 범위 안(노드 위나 아래)이면
+    // 그 x 에서 위/아래 변으로 나가고, 아니면 좌/우 변에서 나간다(도착도 같은 규칙).
     if (Array.isArray(e.detour) && e.detour.length) {
       const first = e.detour[0], last = e.detour[e.detour.length - 1];
-      const start = Math.abs(first[0] - ac.x) < 1
-        ? [ac.x, first[1] > ac.y ? a.y + a.h : a.y]
+      // 경유점이 노드의 가로 범위 안이고 노드 위나 아래에 있으면 그 x 그대로 위/아래 변에서 출입한다.
+      // 중심 x 가 아니어도 된다. 한 변으로 두 선이 들어올 때 자리를 나누려는 것이다.
+      const vert = (n, c, p) => Math.abs(p[0] - c.x) < 1 ||
+        (p[0] > n.x + 1 && p[0] < n.x + n.w - 1 && (p[1] < n.y || p[1] > n.y + n.h));
+      const start = vert(a, ac, first)
+        ? [first[0], first[1] > ac.y ? a.y + a.h : a.y]
         : [first[0] > ac.x ? a.x + a.w : a.x, ac.y];
-      const end = Math.abs(last[0] - bc.x) < 1
-        ? [bc.x, last[1] > bc.y ? b.y + b.h : b.y]
+      const end = vert(b, bc, last)
+        ? [last[0], last[1] > bc.y ? b.y + b.h : b.y]
         : [last[0] > bc.x ? b.x + b.w : b.x, bc.y];
       return { points: [start, ...e.detour, end], r: 11 };
     }

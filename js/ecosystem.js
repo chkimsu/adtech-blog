@@ -7,7 +7,7 @@
   const MOVE_MS = 900;   // 패킷이 한 엣지를 이동하는 시간
   const READ_MS = 1700;  // 자동재생 시 각 스텝 후 읽기 시간
 
-  // 18 nodes (6 카테고리). 좌표는 viewBox 1240x720 기준.
+  // 22 nodes (6 카테고리). 좌표는 viewBox 1280x700 기준.
   const NODES = {
     // ── Row 1 (y=120): ML / Models top ──
     'feature-store': {
@@ -37,10 +37,26 @@
         { id: 'online-learning-delayed-feedback', title: 'Online Learning & 지연 피드백' }
       ]
     },
+    // 서빙 행 맨 앞. Training 바로 아래에 두고, 오른쪽 Model Serving 으로 넘긴다.
+    // 오른변(570)과 Model Serving(590) 사이 틈으로 Training 의 세로선(x 580)이 내려온다.
+    'candidate-retrieval': {
+      x: 410, y: 84, w: 160, h: 46, cat: 'ml',
+      name: 'Candidate Retrieval', sub: '후보 추출',
+      // 쉬운 용어집에 이 항목이 따로 없어, 후보를 좁히는 일을 풀어 쓴 Model Serving 항목으로 잇는다.
+      term: 'model-serving',
+      def: '요청 하나에 낼 수 있는 광고만 남기는 첫 단계. 타겟 조건, 남은 예산, 빈도 제한으로 거른 뒤 Retrieval로 수천 개를 수백 개로 줄여 Model Serving에 넘긴다.',
+      demos: [{ name: 'Frequency Capping', url: 'demo-frequency-capping.html' }],
+      posts: [
+        { id: 'two-tower-retrieval', title: 'Two-Tower Retrieval' },
+        { id: 'targeting-basics', title: '타겟팅 기초' },
+        { id: 'retargeting-frequency-cap', title: '리타겟팅과 빈도 상한' },
+        { id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }
+      ]
+    },
     'model-serving': {
       x: 590, y: 84, w: 160, h: 46, cat: 'ml',
-      name: 'Model Serving', sub: 'Retrieval → Ranking',
-      def: '수천 후보 광고를 Retrieval→Pre-Ranking→Ranking→Re-Ranking으로 좁히는 추론 파이프라인. 10ms 안에 끝나야 함.',
+      name: 'Model Serving', sub: 'Pre-Ranking → Ranking',
+      def: 'Candidate Retrieval이 넘긴 후보 수백 개를 Pre-Ranking→Ranking→Re-Ranking으로 매겨 순서를 정하는 추론 파이프라인. 10ms 안에 끝나야 함.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'model-serving-architecture', title: 'Model Serving 아키텍처' }]
     },
     'calibration': {
@@ -192,17 +208,26 @@
 
     // ── 두뇌 층: 학습(행A) · 서빙(행B) 파이프라인 ──
     { from: 'feature-store', to: 'training' },        // 피처 → 학습셋
-    { from: 'training', to: 'model-serving' },        // 학습된 모델 배포
+    // channel 7.5: 세로선을 x 580 으로 옮겨 아래 Candidate Retrieval(…570)과 Model Serving(590…) 사이 가운데로 지나게 한다.
+    { from: 'training', to: 'model-serving', channel: 7.5 },        // 학습된 모델 배포
     { from: 'model-serving', to: 'monitoring' },      // 서빙 결과 감시(직선 수직)
     { from: 'monitoring', to: 'training' },           // 드리프트 → 재학습 트리거(루프 닫힘)
-    // channel -85: 자동 라우팅의 세로 버스가 기본값(x=495)이면 training 박스를 관통한다.
-    // feature-store(…400)와 training(425…) 사이 틈(x≈410)으로 내려보낸다.
-    { from: 'feature-store', to: 'model-serving', channel: -85 },
+    // feature-store(…400)와 training(425…) 사이 틈(x 410)으로 내려와,
+    // 행 사이(y 75)를 지나 Training 의 세로선(x 580)에 합류한다.
+    // y 107 로 곧게 가면 그 자리의 Candidate Retrieval 상자를 관통한다.
+    { from: 'feature-store', to: 'model-serving', detour: [[410, 44], [410, 75], [580, 75], [580, 107]] },
     { from: 'model-serving', to: 'pctr-cvr' },
     { from: 'pctr-cvr', to: 'calibration' },
     { from: 'dsp', to: 'pctr-cvr', layer: true },     // ★ 2층 연결선 — 중심 x가 같아 직선 수직으로 그려진다
     { from: 'dsp', to: 'model-serving' },     // 점수 요청
-    { from: 'auction', to: 'pctr-cvr' },       // 경매 → 예측
+    // DSP 안의 순서: DSP → 후보 추출 → 서빙.
+    // 거래소와 DSP 사이 통로(x 807.5)로 올라가 레인 위 버스(y 182)를 타고 왼쪽으로 간 뒤,
+    // SELL SIDE 라벨 오른쪽(x 490)으로 올라가 후보 추출 상자 아래변에 닿는다.
+    { from: 'dsp', to: 'candidate-retrieval', detour: [[807.5, 242], [807.5, 182], [490, 182]] },
+    { from: 'candidate-retrieval', to: 'model-serving' },
+    // 경매 → 예측. 닫힌 생태계에서만 맞는 관계라(열린 RTB 거래소는 입찰가만 비교한다)
+    // 무대 토글에 따라 모양이 바뀐다. 위 두 선보다 뒤에 두어 통로에서 겹칠 때 위에 그려지게 한다.
+    { from: 'auction', to: 'pctr-cvr', world: true },
     { from: 'exchange', to: 'auction' },       // 거래소 → 경매 엔진
     { from: 'calibration', to: 'dsp' },        // 새 모델 배포
 
@@ -389,6 +414,94 @@
           example: {
             story: 'PSI 경보로 야간 재학습을 앞당긴다. 내일의 입찰가가 또 조금 달라진다.',
             data: [['조치', '재학습 앞당김'], ['주기', '일 1회 → 6시간']]
+          }
+        },
+      ]
+    },
+    // 요청 한 건이 DSP 안에서 거치는 순서. 숫자는 위 modeler 흐름과 같은 한 건을 따라간다
+    // (후보 800개, 원 pCTR 2.1%, 보정 후 2.4%, pCVR 0.35%, 입찰 ₩1,200, 응답 42ms).
+    dspinside: {
+      label: 'DSP 안의 순서',
+      summary: 'DSP 안의 순서는 후보 추출 → 예측 → 보정 → 입찰가 정하기입니다. 예산은 두 번 끼어듭니다. 앞에서는 예산이 바닥났거나 속도를 줄일 캠페인을 후보에서 빼고, 뒤에서는 입찰가에 곱하는 수(λ)로 하루 속도를 맞춥니다. 마지막 경매와 과금은 열린 RTB에서는 거래소가, 닫힌 생태계에서는 플랫폼이 맡습니다.',
+      steps: [
+        {
+          from: 'exchange', to: 'dsp',
+          caption: '입찰 요청 도착 — 지금부터 100ms',
+          detail: '거래소에서 입찰 요청 한 건이 들어옵니다. 지면, 사용자, 바닥값이 함께 옵니다. 이제부터 DSP 안에서 일어나는 일을 순서대로 따라갑니다.',
+          packet: { label: 'Bid Request', kind: 'request' },
+          example: {
+            story: '오후 9시 14분, 뉴스앱 320×100 한 칸에 대한 요청이 들어온다.',
+            data: [['제한시간', '100ms'], ['지면', '뉴스앱 320×100']]
+          }
+        },
+        {
+          from: 'dsp', to: 'candidate-retrieval',
+          caption: '후보 추출 — 낼 수 있는 광고만 남긴다',
+          detail: '먼저 거릅니다. 타겟 조건이 이 사람과 맞는지, 남은 예산이 있는지, 이 사람에게 오늘 몇 번 보였는지(빈도 제한)를 봅니다. 예산이 바닥났거나 속도를 줄여야 하는 캠페인은 여기서 빠집니다. 남은 광고는 Retrieval로 수천 개에서 800개로 줄입니다.',
+          packet: { label: '후보 추출 요청', kind: 'request' },
+          example: {
+            story: '광고 12,000개 중 조건, 예산, 빈도를 통과한 것이 2,400개. Retrieval이 그중 800개를 남긴다.',
+            data: [['전체 광고', '12,000개'], ['거른 뒤', '2,400개'], ['Retrieval 뒤', '800개']]
+          }
+        },
+        {
+          from: 'candidate-retrieval', to: 'model-serving',
+          caption: 'Pre-Ranking → Ranking — 후보 800개의 순서를 매긴다',
+          detail: '후보가 많으면 무거운 모델을 바로 다 돌리기 어렵습니다. 가벼운 모델(Pre-Ranking)이 먼저 순서를 거칠게 잡고, 무거운 모델(Ranking)이 정밀하게 매깁니다. 피처는 Feature Store에서 붙입니다.',
+          packet: { label: '후보 800개', kind: 'data' },
+          example: {
+            story: '800개에 피처 213개씩을 붙여 채점을 시작한다.',
+            data: [['후보', '800개'], ['피처', '213개'], ['제한', '10ms']]
+          }
+        },
+        {
+          from: 'model-serving', to: 'pctr-cvr',
+          caption: '예측 — 후보마다 누를 확률과 살 확률',
+          detail: '모델이 후보마다 pCTR(누를 확률)과 pCVR(살 확률)을 계산합니다. 여기서 나온 값은 아직 원값입니다. 순위는 맞아도 크기가 살짝 틀어져 있을 수 있습니다.',
+          packet: { label: 'pCTR 2.1%', kind: 'data' },
+          example: {
+            story: '최고 후보의 원 예측은 pCTR 2.1%, pCVR 0.35%. 800개를 채점하는 데 6.2ms 걸렸다.',
+            data: [['원 pCTR', '2.1%'], ['pCVR', '0.35%'], ['추론', '6.2ms']]
+          }
+        },
+        {
+          from: 'pctr-cvr', to: 'calibration',
+          caption: '보정 — 확률의 크기를 실제에 맞춘다',
+          detail: '확률은 돈에 곱해지므로 순서만 맞아서는 안 되고 크기가 맞아야 합니다. 실제 클릭 합을 예측 합으로 나눈 COPC만큼 예측값을 올리거나 내립니다.',
+          packet: { label: '2.1% → 2.4%', kind: 'data' },
+          example: {
+            story: '모델이 12% 낮게 보고 있었다. 2.1%를 2.4%로 올린다.',
+            data: [['COPC', '1.14'], ['보정 후', '2.4%']]
+          }
+        },
+        {
+          from: 'calibration', to: 'dsp',
+          caption: '입찰가 정하기 — 노출당 값 → 자동 입찰, 예산 페이싱, Bid Shading',
+          detail: '보정된 확률로 노출 한 번의 값을 냅니다. 전환 가치 × pCTR × pCVR입니다. 자동 입찰이 광고주의 목표 단가에 맞춰 이 값을 입찰가로 바꾸고, 예산 페이싱이 하루 속도에 맞춰 곱하는 수(λ)를 조절하고, Bid Shading이 이길 만큼만 남기고 깎습니다.',
+          packet: { label: '입찰 CPM ₩1,200', kind: 'money' },
+          example: {
+            story: '₩30,000 × 2.4% × 0.35% = ₩2.52(노출 1회) → CPM ₩2,520이 상한. λ 0.8을 곱해 ₩2,016, Bid Shading으로 ₩1,200을 부른다.',
+            data: [['노출 1회 값', '₩2.52'], ['페이싱 λ', '0.8'], ['최종 입찰 CPM', '₩1,200']]
+          }
+        },
+        {
+          from: 'dsp', to: 'exchange',
+          caption: '입찰 응답 — 42ms에 도착',
+          detail: '정한 입찰가를 제한시간 안에 거래소로 보냅니다. 늦으면 아무리 잘 계산한 값도 경매에 못 들어갑니다.',
+          packet: { label: 'Bid ₩1,200', kind: 'money' },
+          example: {
+            story: '요청 도착부터 응답까지 42ms. 지연 상위 1%(p99)는 88ms까지 튄다.',
+            data: [['총 소요', '42ms'], ['p99', '88ms'], ['타임아웃', '100ms']]
+          }
+        },
+        {
+          from: 'exchange', to: 'auction',
+          caption: '경매와 과금 — 누가 이기고 얼마를 내나',
+          detail: '여기부터는 DSP 밖의 일입니다. 열린 RTB에서는 거래소가 DSP들이 보낸 입찰가만 비교해 1등과 지불가를 정합니다. DSP의 pCTR은 보지 않습니다. 닫힌 생태계에서는 경매도 플랫폼 안에 있어, 플랫폼이 pCTR × 입찰가로 순위를 매기고 과금액도 정합니다.',
+          packet: { label: '경매', kind: 'money' },
+          example: {
+            story: '열린 RTB: ₩1,200이 1등, 2위는 ₩1,150. 닫힌 생태계: 같은 입찰가라도 pCTR이 곱해져 순위가 바뀔 수 있다.',
+            data: [['열린 RTB', '입찰가만 비교'], ['닫힌 생태계', 'pCTR × 입찰가']]
           }
         },
       ]
@@ -789,13 +902,41 @@
   // 두뇌 층 배경 밴드 (거래 층의 레인 컬럼과 대비되는 가로 밴드)
   const BRAIN_BAND = { x: 30, y: 6, w: 1220, h: 140 };
 
+  // 무대 — 같은 지도를 열린 RTB 와 닫힌 생태계 중 어느 쪽으로 읽을지.
+  // 지도는 열린 RTB 기준으로 그려져 있고, 닫힌 생태계를 고르면 한 회사로 묶이는 곳을 테두리로 보인다.
+  const WORLDS = {
+    open: {
+      points: [
+        '매체에서 DSP까지 회사가 넷입니다. 경계마다 수수료가 붙습니다.',
+        '거래소는 입찰가만 비교합니다. DSP의 pCTR은 보지 않습니다.',
+        '진 경매의 가격은 모릅니다.',
+        '매체가 Header Bidding으로 여러 거래소를 동시에 부릅니다.',
+        '바깥 DMP와 MMP에 기댑니다.'
+      ]
+    },
+    walled: {
+      points: [
+        '매체에서 DSP까지 한 회사입니다. 지도에서 테두리로 묶인 곳입니다.',
+        '플랫폼이 자기 pCTR로 순위를 매기고 과금액도 정합니다.',
+        '진 경매의 가격도 다 보입니다.',
+        '자기 지면을 자기 경매로 파니 Header Bidding을 쓸 일이 없습니다.',
+        '로그인 ID와 자기 로그가 대부분을 맡습니다.'
+      ],
+      note: '다른 흐름 재생은 열린 RTB 기준으로 그려져 있습니다. DSP 안의 순서만 마지막 단계에서 두 무대를 함께 다룹니다.'
+    }
+  };
+
   // ── state ──
   let svg, tooltip, captionEl, progressEl, wrapEl;
   let nodePanel, flowPanel, flowPanelTitle, stepsOl, summaryEl, sidePanelEl;
   let flowBar, playBtn, returnStrip, returnBtn;
   let flowChips = [];
+  let worldBtns = [], worldPointsEl;
+  let world = 'open';
   let packetG, packetRect, packetText;
   let stepLis = [];
+  let edgesG;
+  const edgeOrder = [];        // EDGES 순서 그대로의 <path> — 흐름이 끝나면 이 순서로 되돌린다
   const edgeMap = new Map();   // 'from|to' → <path>
   const nodeElMap = new Map(); // id → <g>
 
@@ -823,10 +964,14 @@
     // 토글 버튼임을 처음부터 알려 준다. 이 속성이 없으면 스크린리더가 그냥 버튼으로 읽어
     // "지금 어느 흐름이 재생 중인지"를 알 방법이 없다.
     flowChips.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    worldBtns = Array.from(document.querySelectorAll('.eco-world-btn'));
+    worldPointsEl = document.getElementById('eco-world-points');
 
     buildSVG();
     bindInteractions();
     bindFlowControls();
+    bindWorldToggle();
+    setWorld('open');
     applyCompact();
 
     let resizeTimer = null;
@@ -859,7 +1004,7 @@
   // ── SVG build ──
   // 지도의 텍스트 대안. 눈으로는 안 보이고 스크린리더만 읽는다.
   //
-  // 왜 필요한가: SVG에 role="group"을 주어 노드 21개가 버튼으로 노출되긴 하지만,
+  // 왜 필요한가: SVG에 role="group"을 주어 노드 22개가 버튼으로 노출되긴 하지만,
   // 탭으로 하나씩 지나가는 것만으로는 "이게 2층 구조다", "무엇이 무엇과 이어진다"를
   // 알 수 없다. 그림을 보는 사람은 한눈에 아는 것을 못 얻는 셈이다.
   //
@@ -914,10 +1059,16 @@
     buildTextAlternative();
     svg.appendChild(createDefs());
     svg.appendChild(buildLanes());
+    // 한 회사 테두리는 선보다 아래에 깐다. 선이 테두리를 지나가도 선이 보이게.
+    svg.appendChild(buildCompanyOutline());
 
-    const edgesG = document.createElementNS(SVG_NS, 'g');
+    edgesG = document.createElementNS(SVG_NS, 'g');
     edgesG.setAttribute('class', 'eco-edges');
-    EDGES.forEach(e => edgesG.appendChild(createEdgePath(e)));
+    EDGES.forEach(e => {
+      const p = createEdgePath(e);
+      edgeOrder.push(p);
+      edgesG.appendChild(p);
+    });
     svg.appendChild(edgesG);
 
     const nodesG = document.createElementNS(SVG_NS, 'g');
@@ -938,6 +1089,7 @@
       ['eco-arrow', 'eco-arrow-head'],
       ['eco-arrow-done', 'eco-arrow-head-done'],
       ['eco-arrow-active', 'eco-arrow-head-active'],
+      ['eco-arrow-world', 'eco-arrow-head-world'],   // 닫힌 생태계의 경매 → 예측 선
     ].forEach(([id, cls]) => {
       const m = document.createElementNS(SVG_NS, 'marker');
       m.setAttribute('id', id);
@@ -995,6 +1147,55 @@
       t.textContent = b.text;
       g.appendChild(t);
     });
+    return g;
+  }
+
+  // 닫힌 생태계를 고르면 보이는 층: 한 회사로 묶이는 여섯 곳의 테두리, 이름표, 경매 설명.
+  // 테두리는 상자 넷을 붙인 모양이다(좌표는 노드에서 계산한다).
+  //   R1 위 줄 — Publisher, SSP, Ad Exchange, DSP
+  //   R2 Auction Engine — R1 아래로 내린 칸
+  //   R3 DSP 오른쪽 아래 통로 — DCO 위, Advertiser 왼변 안쪽으로 내려가 DMP 에 닿는다
+  //   R4 DMP / CDP
+  // Header Bidding, DCO, Advertiser 는 테두리 안에 들지 않는다.
+  function buildCompanyOutline() {
+    const P = 7;
+    const pub = NODES.publisher, dsp = NODES.dsp, auc = NODES.auction, dmp = NODES.dmp;
+    const top = pub.y - P, bot = pub.y + pub.h + P;
+    const left = pub.x - P, right = dsp.x + dsp.w + P;
+    const aL = auc.x - P, aR = auc.x + auc.w + P, aB = auc.y + auc.h + P;
+    const mL = dmp.x - P, mR = dmp.x + dmp.w + P, mT = dmp.y - P, mB = dmp.y + dmp.h + P;
+    // R3 왼변은 R1 오른변보다 18 안쪽에서 내린다. 오른변과 몇 px 차이로 두면
+    // 두 꼭짓점이 겹치며 둥근 모서리가 S자로 비틀린다. 바닥(mT)은 DCO 윗변보다 7 위다.
+    const cL = right - 18, cR = NODES.advertiser.x;
+    const midX = Math.round((left + right) / 2);
+    // 위 변 가운데에서 시작해 시계 방향으로 한 바퀴 — 꼭짓점이 전부 가운데에 와야 모두 둥글게 꺾인다.
+    const pts = [
+      [midX, top], [right, top], [right, bot], [cR, bot], [cR, mT], [mR, mT], [mR, mB],
+      [mL, mB], [mL, mT], [cL, mT], [cL, bot], [aR, bot], [aR, aB], [aL, aB], [aL, bot],
+      [left, bot], [left, top], [midX, top]
+    ];
+
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('class', 'eco-company');
+    g.setAttribute('aria-hidden', 'true');
+    const outline = document.createElementNS(SVG_NS, 'path');
+    outline.setAttribute('class', 'eco-company-outline');
+    outline.setAttribute('d', roundedOrthPath(pts, 10) + ' Z');
+    g.appendChild(outline);
+
+    const label = document.createElementNS(SVG_NS, 'text');
+    label.setAttribute('class', 'eco-company-label');
+    label.setAttribute('x', left + 6);
+    label.setAttribute('y', top - 5);
+    label.textContent = '한 회사';
+    g.appendChild(label);
+
+    const note = document.createElementNS(SVG_NS, 'text');
+    note.setAttribute('class', 'eco-company-note');
+    note.setAttribute('x', auc.x + auc.w / 2);
+    note.setAttribute('y', aB + 18);
+    note.textContent = '경매가 플랫폼의 pCTR을 쓴다';
+    g.appendChild(note);
     return g;
   }
 
@@ -1163,14 +1364,23 @@
   function createEdgePath(e) {
     const p = document.createElementNS(SVG_NS, 'path');
     // layer:true = 거래 층 ↔ 두뇌 층을 잇는 통로. 굵은 파선으로 따로 보이게 한다.
-    p.setAttribute('class', e.layer ? 'eco-edge is-layer-link' : 'eco-edge');
+    // world:true = 무대에 따라 모양이 바뀌는 선(경매 → 예측). 열린 RTB 는 흐린 파선, 닫힌 생태계는 굵은 실선.
+    const cls = ['eco-edge'];
+    if (e.layer) cls.push('is-layer-link');
+    if (e.world) cls.push('is-world-link');
+    p.setAttribute('class', cls.join(' '));
     p.setAttribute('data-from', e.from);
     p.setAttribute('data-to', e.to);
     const g = edgeGeometry(e);
     p.setAttribute('d', roundedOrthPath(g.points, g.r));
-    p.setAttribute('marker-end', 'url(#eco-arrow)');
+    p.setAttribute('marker-end', `url(#${restMarker(p)})`);
     edgeMap.set(e.from + '|' + e.to, p);
     return p;
+  }
+
+  // 흐름에 안 걸린 선의 화살촉. 닫힌 생태계의 경매 → 예측 선만 강조색 화살촉을 쓴다.
+  function restMarker(el) {
+    return world === 'walled' && el.classList.contains('is-world-link') ? 'eco-arrow-world' : 'eco-arrow';
   }
 
   function findEdgeAny(from, to) {
@@ -1184,7 +1394,7 @@
   function setEdgeFlowState(el, state) {
     el.classList.toggle('is-done', state === 'done');
     el.classList.toggle('is-active', state === 'active');
-    const marker = state === 'active' ? 'eco-arrow-active' : state === 'done' ? 'eco-arrow-done' : 'eco-arrow';
+    const marker = state === 'active' ? 'eco-arrow-active' : state === 'done' ? 'eco-arrow-done' : restMarker(el);
     el.setAttribute('marker-end', `url(#${marker})`);
   }
 
@@ -1264,7 +1474,7 @@
       <div class="eco-side-name">${n.name}</div>
       <div class="eco-side-sub">${n.sub}</div>
       <div class="eco-side-cat-tag" data-category="${n.cat}">${CAT_LABEL[n.cat]}</div>
-      <a class="eco-side-easy" href="ecosystem-terms.html#${id}">쉽게 보기 →</a>
+      <a class="eco-side-easy" href="ecosystem-terms.html#${n.term || id}">쉽게 보기 →</a>
       <div class="eco-side-definition">${n.def}</div>
       <div class="eco-side-section">
         <div class="eco-side-section-title">관련 데모</div>
@@ -1394,6 +1604,15 @@
     if (ce) setEdgeFlowState(ce.el, 'active');
     markNodeFlow(cur.from, 'is-step-active');
     markNodeFlow(cur.to, 'is-step-active');
+
+    // 통로를 함께 쓰는 선이 있어(예: DSP → 후보 추출과 DSP → 거래소), 나중에 그린 선이
+    // 지금 단계를 덮을 수 있다. 원래 순서로 되돌린 뒤 지나온 선, 지금 선 순서로 맨 위에 올린다.
+    restoreEdgeOrder();
+    for (let k = 0; k < i; k++) {
+      const e = findEdgeAny(steps[k].from, steps[k].to);
+      if (e) edgesG.appendChild(e.el);
+    }
+    if (ce) edgesG.appendChild(ce.el);
 
     captionEl.innerHTML =
       `<span class="eco-step-packet" data-kind="${cur.packet.kind}">${cur.packet.label}</span>` +
@@ -1553,6 +1772,42 @@
     playBtn.textContent = fs.ended ? '▸ 다시 보기' : (fs.playing ? '⏸ 일시정지' : '▸ 재생');
   }
 
+  // 선을 EDGES 순서대로 다시 쌓는다. 흐름이 끝나면 처음 그린 모습으로 돌아온다
+  // (층 연결선 같은 파선이 회색 실선 밑에 깔리지 않게).
+  function restoreEdgeOrder() {
+    edgeOrder.forEach(el => edgesG.appendChild(el));
+  }
+
+  // ── 무대 토글 (열린 RTB / 닫힌 생태계) ──
+  function bindWorldToggle() {
+    worldBtns.forEach(b => b.addEventListener('click', () => setWorld(b.dataset.world)));
+  }
+
+  function setWorld(w) {
+    if (!WORLDS[w]) return;
+    world = w;
+    svg.setAttribute('data-world', w);
+    worldBtns.forEach(b => {
+      const on = b.dataset.world === w;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    // 흐름에 안 걸린 경매 → 예측 선의 화살촉을 무대에 맞춘다.
+    edgeMap.forEach(el => {
+      if (el.classList.contains('is-world-link') && !el.classList.contains('is-active') &&
+          !el.classList.contains('is-done')) {
+        el.setAttribute('marker-end', `url(#${restMarker(el)})`);
+      }
+    });
+    if (worldPointsEl) {
+      const W = WORLDS[w];
+      worldPointsEl.innerHTML = W.points.map(t => `<li>${t}</li>`).join('') +
+        (W.note ? `<li class="is-note">${W.note}</li>` : '');
+      // 처음 채울 때는 읽어 주지 않고, 사람이 무대를 바꾼 뒤부터 바뀐 설명을 읽어 준다.
+      worldPointsEl.setAttribute('aria-live', 'polite');
+    }
+  }
+
   function exitFlow() {
     clearTimers();
     fs.name = null;
@@ -1563,6 +1818,7 @@
 
     svg.classList.remove('is-flowing');
     edgeMap.forEach(el => setEdgeFlowState(el, ''));
+    restoreEdgeOrder();
     nodeElMap.forEach(el => el.classList.remove('is-step-done', 'is-step-active'));
     packetG.style.display = 'none';
     flowBar.hidden = true;

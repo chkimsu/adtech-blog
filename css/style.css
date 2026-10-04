@@ -3608,6 +3608,20 @@ body[data-demo-mode="easy"] .is-pro-only {
   gap: 0.6rem;
 }
 
+/* 흐름 카드가 일곱 장이라 auto-fit 그대로면 넓은 화면에서 마지막 한 장이 둘째 줄에 혼자 남는다.
+   한 줄에 다 들어가는 폭은 일곱 칸, 그보다 좁은 데스크톱은 네 칸(4 + 3),
+   태블릿은 두 칸으로 두고 마지막 한 장을 줄 전체로 편다. 휴대폰은 위 규칙대로 한 칸. */
+@media (min-width: 1360px) {
+  .eco-flow-chips { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) and (max-width: 1359.98px) {
+  .eco-flow-chips { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 560px) and (max-width: 899.98px) {
+  .eco-flow-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .eco-flow-chips > .eco-flow-chip:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
 .eco-flow-chip {
   display: flex;
   flex-direction: column;
@@ -5863,6 +5877,125 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 /* 재생 중(is-selected)엔 배경이 accent-primary로 채워진다 — 위 라벨 색을 그대로 두면
    글자색==배경색이 되어 안 보인다. .is-selected 쪽 텍스트 규칙(#fff)과 동일하게 맞춘다. */
 .eco-flow-chip.is-featured.is-selected .eco-flow-chip-label { color: var(--bg-primary); }
+
+/* ========================================
+   무대 바꾸기 — 같은 지도를 열린 RTB 와 닫힌 생태계로 (지도 바로 위)
+   ======================================== */
+.eco-world-wrap {
+  max-width: min(1640px, 96vw);
+  margin: 0.9rem auto 0;
+  padding: 0 2rem;
+}
+.eco-world {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.6rem 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-secondary);
+}
+.eco-world-head { display: flex; align-items: center; gap: 0.65rem; flex: none; }
+.eco-world-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+/* 쉬운 버전 / 자세히 토글(.ecoeasy-toggle)과 같은 모양 — 이쪽은 링크가 아니라 버튼이다 */
+.eco-world-toggle {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-primary);
+}
+.eco-world-btn {
+  padding: 0.45rem 0.95rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.eco-world-btn:hover { color: var(--accent-primary); }
+/* 채운 칸 위 글자는 흐름 카드와 같은 이유로 bg-primary (흰색은 다크에서 대비 미달) */
+.eco-world-btn.is-active { background: var(--accent-primary); color: var(--bg-primary); }
+.eco-world-points {
+  flex: 1 1 380px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  word-break: keep-all;
+}
+.eco-world-points li { position: relative; padding-left: 0.95rem; }
+.eco-world-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--text-muted);
+}
+.eco-world-points li.is-note { margin-top: 0.3rem; color: var(--text-muted); }
+
+/* 지도 — 닫힌 생태계에서만 보이는 한 회사 테두리, 이름표, 경매 설명 */
+.eco-company { display: none; pointer-events: none; }
+#eco-graph[data-world="walled"] .eco-company { display: inline; }
+.eco-company-outline {
+  fill: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+  stroke: var(--accent-primary);
+  stroke-width: 1.6;
+  stroke-dasharray: 7 4;
+}
+.eco-company-label,
+.eco-company-note {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  fill: var(--accent-primary);
+}
+.eco-company-note { text-anchor: middle; }
+#eco-graph.is-flowing .eco-company { opacity: 0.35; }
+
+/* 경매 → 예측 선. 열린 RTB 에서는 거래소가 DSP 의 pCTR 을 보지 않으므로 흐린 파선 */
+.eco-edge.is-world-link { stroke-dasharray: 3 5; opacity: 0.55; }
+/* 닫힌 생태계에서는 플랫폼의 경매가 같은 pCTR 을 쓴다 — 굵은 실선 */
+#eco-graph[data-world="walled"] .eco-edge.is-world-link {
+  stroke: var(--accent-primary);
+  stroke-dasharray: none;
+  stroke-width: 2.6;
+  opacity: 1;
+}
+/* 위 규칙이 재생 중 흐리게 하기(.is-flowing)를 이기지 않게 되돌린다 — 이 선을 쓰는 흐름은 없다 */
+#eco-graph.is-flowing[data-world="walled"] .eco-edge.is-world-link { opacity: 0.15; }
+.eco-arrow-head-world { fill: var(--accent-primary); }
+
+/* 닫힌 생태계 — 자기 지면을 자기 경매로 파니 Header Bidding 은 흐리게. 흐름에 걸리면 원래대로 */
+#eco-graph[data-world="walled"] .eco-node[data-node="header-bidding"]:not(.is-step-active):not(.is-step-done) { opacity: 0.3; }
+#eco-graph[data-world="walled"] .eco-edge[data-to="header-bidding"]:not(.is-active):not(.is-done),
+#eco-graph[data-world="walled"] .eco-edge[data-from="header-bidding"]:not(.is-active):not(.is-done),
+#eco-graph[data-world="walled"] .eco-edge[data-to="header-bidding"]:not(.is-active):not(.is-done) { opacity: 0.25; }
+
+/* 다른 지도 감싸개들과 같은 너비에서 좌우 여백을 줄인다 */
+@media (max-width: 768px) {
+  .eco-world-wrap { padding: 0 1rem; }
+  .eco-world { padding: 0.7rem 0.8rem; }
+}
 
 /* ========================================
    스크린리더 전용 텍스트

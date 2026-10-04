@@ -517,7 +517,7 @@ $$\text{수익} = R \times p_{ctr} \times p_{cvr} \times V$$
 - [eCPM과 광고 랭킹](post.html?id=ecpm-ranking) — 랭킹 기준의 이해
 
 ### 광고 생태계
-- [광고 기술 생태계 지도: 요청 하나가 지나는 21개 모듈](post.html?id=adtech-ecosystem-map) — 생태계 개관
+- [광고 기술 생태계 지도: 요청 하나가 지나는 22개 모듈](post.html?id=adtech-ecosystem-map) — 생태계 개관
 - [Ad Serving Flow](post.html?id=ad-serving-flow) — 서빙 흐름
 - [닫힌 생태계(Walled Garden)](post.html?id=walled-garden) — 폐쇄형 vs 개방형 생태계
 

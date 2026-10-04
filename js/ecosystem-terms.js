@@ -1,4 +1,4 @@
-/* 쉬운 용어 사전 — 21개 모듈 + 개념·기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
+/* 쉬운 용어 사전 — 22개 모듈 + 개념·기본 지표를 한 줄 비유 카드로 (필터 + 해시 딥링크) */
 (function () {
   'use strict';
 
@@ -36,7 +36,8 @@
 
     // ── 예측·모델 (ml) ──
     { id: 'feature-store', cat: 'ml', name: 'Feature Store', full: '피처 저장소', easy: '광고 모델이 꺼내 쓰는 ‘재료 창고’. 최근 클릭률 같은 숫자(피처)를 모아 둔다.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
-    { id: 'model-serving', cat: 'ml', name: 'Model Serving', full: '모델 서빙', easy: '수천 개 후보 광고를 10ms 안에 몇 개로 좁히는 ‘추리는 기계’.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
+    { id: 'candidate-retrieval', cat: 'ml', name: 'Candidate Retrieval', full: '후보 추출', easy: '타겟 조건, 남은 예산, 노출 횟수 제한으로 낼 수 있는 광고만 남기고, 수천 개를 수백 개로 줄이는 첫 단계.', link: { text: '지도: DSP 안의 순서', href: 'ecosystem.html?flow=dspinside' } },
+    { id: 'model-serving', cat: 'ml', name: 'Model Serving', full: '모델 서빙', easy: '후보 추출이 넘긴 수백 개 광고에 점수를 매겨 몇 개로 좁히는 단계. 10ms 안에 끝나야 한다.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
     { id: 'pctr-cvr', cat: 'ml', name: 'pCTR / pCVR', full: '클릭·전환 확률 예측', easy: '이 사람이 누를 확률·살 확률을 찍어 주는 예측 모델.', example: '예: pCTR 2.3%', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
     { id: 'calibration', cat: 'ml', name: 'Calibration', full: '예측값 보정', easy: '모델 예측이 전반적으로 높거나 낮으면 실제에 맞춰 눈금을 바로잡는 일.', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
     { id: 'training', cat: 'ml', name: 'Training', full: '모델 학습(오프라인)', easy: '어제까지 쌓인 기록으로 모델을 다시 가르치는 단계. 매일 밤 도는 ‘야간 자율학습’.', link: { text: '데모: 로그→학습 루프', href: 'demo-log-to-model.html' } },

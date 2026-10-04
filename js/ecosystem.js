@@ -42,8 +42,6 @@
     'candidate-retrieval': {
       x: 410, y: 84, w: 160, h: 46, cat: 'ml',
       name: 'Candidate Retrieval', sub: '후보 추출',
-      // 쉬운 용어집에 이 항목이 따로 없어, 후보를 좁히는 일을 풀어 쓴 Model Serving 항목으로 잇는다.
-      term: 'model-serving',
       def: '요청 하나에 낼 수 있는 광고만 남기는 첫 단계. 타겟 조건, 남은 예산, 빈도 제한으로 거른 뒤 Retrieval로 수천 개를 수백 개로 줄여 Model Serving에 넘긴다.',
       demos: [{ name: 'Frequency Capping', url: 'demo-frequency-capping.html' }],
       posts: [

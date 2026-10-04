@@ -137,12 +137,12 @@ graph TB
 
 ### 이 그림의 살아 있는 버전 — 지도 페이지
 
-눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 21개 모듈을 **두 층**으로 놓았습니다.
+눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 22개 모듈을 **두 층**으로 놓았습니다.
 
-- **위층 = 두뇌 층.** 피처 저장소(Feature Store) 에서 Training, 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 Monitoring 입니다.
+- **위층 = 두뇌 층.** 피처 저장소(Feature Store) 에서 Training 을 거쳐, 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 Monitoring 입니다.
 - **아래층 = 거래 층.** 사용자 → 매체·SSP → 광고 거래소(Ad Exchange) → DSP → 광고주.
 
-두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다.
+두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다. DSP 안에서 일이 일어나는 순서는 [DSP 안의 순서](ecosystem.html?flow=dspinside) 칩으로 봅니다. 지도 위의 무대 바꾸기로 열린 RTB 와 닫힌 생태계를 바꿔 볼 수도 있습니다.
 
 ---
 
@@ -299,10 +299,10 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
 from collections import deque
 
 # 지도의 화살표를 짧은 이름으로 옮겨 적었다(방향은 빼고 이웃 관계만 본다).
-TRADE = ("user-pub pub-ssp ssp-ex ex-dsp dsp-adv ex-auc pub-hb hb-ssp user-log "
+TRADE = ("user-pub pub-ssp ssp-ex ex-dsp dsp-adv ex-auc ex-pub pub-hb hb-ssp user-log "
          "pub-log log-mmp mmp-adv dmp-dsp dco-dsp brand-adv cmp-dmp journey-log journey-cmp")
-BRAIN = "fs-train train-serve serve-mon mon-train fs-serve serve-pctr pctr-calib"
-CROSS = "dsp-pctr dsp-serve auc-pctr calib-dsp log-fs"  # 두 층을 잇는 화살표
+BRAIN = "fs-train train-serve serve-mon mon-train fs-serve cand-serve serve-pctr pctr-calib"
+CROSS = "dsp-pctr dsp-serve dsp-cand auc-pctr calib-dsp log-fs"  # 두 층을 잇는 화살표
 
 g = {}
 for pair in f"{TRADE} {BRAIN} {CROSS}".split():
@@ -318,21 +318,21 @@ while q:
             dist[m] = dist[n] + 1
             q.append(m)
 
-print(f"모듈 {len(g)}개 · 두 층을 잇는 화살표 {len(CROSS.split())}개")
+print(f"모듈 {len(g)}개, 두 층을 잇는 화살표 {len(CROSS.split())}개")
 for k in range(max(dist.values()) + 1):
     same = sorted(n for n, v in dist.items() if v == k)
     print(f"{k}다리 {len(same):2d}개  {' '.join(same)}")
 
 # 출력:
-# 모듈 21개 · 두 층을 잇는 화살표 5개
+# 모듈 22개, 두 층을 잇는 화살표 6개
 # 0다리  1개  pctr
 # 1다리  4개  auc calib dsp serve
-# 2다리  7개  adv dco dmp ex fs mon train
-# 3다리  5개  brand cmp log mmp ssp
-# 4다리  4개  hb journey pub user
+# 2다리  8개  adv cand dco dmp ex fs mon train
+# 3다리  6개  brand cmp log mmp pub ssp
+# 4다리  3개  hb journey user
 ```
 
-21개 모듈 전부가 심장에서 **4다리 안**에 있습니다. 가장 먼 곳이 사용자와 매체(4다리)입니다. 두 층을 잇는 화살표는 5개뿐인데도 이만큼 가깝습니다. pCTR 오차가 왜 전체로 번지는지, 지도의 모양이 설명합니다.
+22개 모듈 전부가 심장에서 **4다리 안**에 있습니다. 가장 먼 곳이 사용자, User Journey, Header Bidding(4다리)입니다. 두 층을 잇는 화살표는 6개뿐인데도 이만큼 가깝습니다. pCTR 오차가 왜 전체로 번지는지, 지도의 모양이 설명합니다.
 
 ---
 

@@ -175,45 +175,77 @@ function setupDemoTermPopover() {
   });
 }
 
-// 용어 말풍선을 화면 안으로 붙잡는다.
+// 용어 말풍선의 자리를 잡는다.
 //
-// 말풍선은 용어 위에 가운데 정렬(left:50% + translateX(-50%))로 뜬다. 오른쪽 여백에
-// 걸린 용어에서는 320px 상자가 화면 밖으로 삐져나가는데, visibility:hidden 상태에서도
-// 레이아웃 폭은 그대로 차지한다. 그래서 용어 하나가 문서 전체에 가로 스크롤을 만든다.
-// (600px 화면에서 문서 폭이 585 → 643으로 늘어나는 걸 확인했다.)
-// 보이기 전에 미리 밀어 둬야 하므로 렌더 직후와 리사이즈 때 계산한다.
-function clampTermPopovers() {
-  const pops = document.querySelectorAll('.demo-term-pop');
-  if (!pops.length) return;
-  const MARGIN = 12;
+// 말풍선은 용어 안에 있지만 position:fixed 로 화면 기준 자리에 뜬다. 예전처럼 용어 기준
+// absolute 로 띄우면 표(overflow:hidden)나 표 감싸개(.table-wrapper, overflow-x:auto) 같은
+// 상자 밖으로 나간 부분이 잘렸다. 입문 글 표 안의 CPA 말풍선은 위쪽 80px 가 가려졌다.
+// fixed 는 그런 상자에 잘리지 않고, 숨은 말풍선이 문서 폭을 늘려 가로 스크롤을 만들지도 않는다.
+// 자리는 보이기 직전(마우스 올림, 초점, 탭)과 스크롤, 리사이즈 때 다시 계산한다.
+const TERM_POP_GAP = 10;     // 용어와 말풍선 사이
+const TERM_POP_MARGIN = 12;  // 화면 가장자리, 상단 헤더와의 여백
+
+function placeTermPopover(term) {
+  const pop = term.querySelector('.demo-term-pop');
+  if (!pop) return;
+  // 용어가 두 줄로 접히면 첫 줄 조각을 기준으로 삼는다
+  const t = term.getClientRects()[0] || term.getBoundingClientRect();
+  const w = pop.offsetWidth;
+  const h = pop.offsetHeight;
   const vw = document.documentElement.clientWidth;
+  const header = document.querySelector('header');
+  const topLimit = (header ? Math.max(0, header.getBoundingClientRect().bottom) : 0) + TERM_POP_MARGIN;
 
-  // 두 번에 나눠 돈다: 먼저 전부 원위치로(측정 기준을 같게), 그 다음 한꺼번에 측정.
-  // 하나씩 쓰고-읽으면 요소마다 레이아웃을 다시 계산하게 된다.
-  pops.forEach(pop => pop.style.setProperty('--pop-shift', '0px'));
-  const shifts = [...pops].map(pop => {
-    const r = pop.getBoundingClientRect();
-    if (r.width === 0) return 0;                       // 아직 렌더 안 됨
-    if (r.right > vw - MARGIN) return Math.round(vw - MARGIN - r.right);
-    if (r.left < MARGIN) return Math.round(MARGIN - r.left);
-    return 0;
-  });
-  pops.forEach((pop, i) => {
-    if (shifts[i]) pop.style.setProperty('--pop-shift', `${shifts[i]}px`);
-  });
+  const cx = t.left + t.width / 2;
+  const left = Math.min(Math.max(cx - w / 2, TERM_POP_MARGIN), vw - TERM_POP_MARGIN - w);
+  const below = t.top - TERM_POP_GAP - h < topLimit;   // 위가 모자라면 용어 아래로
+  const top = below ? t.bottom + TERM_POP_GAP : t.top - TERM_POP_GAP - h;
+
+  pop.classList.toggle('is-below', below);
+  pop.style.setProperty('--pop-left', `${Math.round(left)}px`);
+  pop.style.setProperty('--pop-top', `${Math.round(top)}px`);
+  pop.style.setProperty('--pop-arrow', `${Math.round(cx - left)}px`);
+
+  // 조상에 transform 이 걸리면 fixed 의 기준이 화면이 아니게 된다. 어긋난 만큼 되민다.
+  const r = pop.getBoundingClientRect();
+  const dx = Math.round(left - r.left);
+  const dy = Math.round(top - r.top);
+  if (dx || dy) {
+    pop.style.setProperty('--pop-left', `${Math.round(left + dx)}px`);
+    pop.style.setProperty('--pop-top', `${Math.round(top + dy)}px`);
+  }
 }
 
-// 리사이즈는 연속으로 쏟아지므로 다음 프레임에 한 번만 계산한다.
-let clampQueued = false;
-function queueClampTermPopovers() {
-  if (clampQueued) return;
-  clampQueued = true;
+// 보이는 말풍선만 다시 놓는다. 스크롤과 리사이즈는 연속으로 쏟아지므로 다음 프레임에 한 번만.
+let termPopQueued = false;
+function queuePlaceOpenTermPopovers() {
+  if (termPopQueued) return;
+  termPopQueued = true;
   requestAnimationFrame(() => {
-    clampQueued = false;
-    clampTermPopovers();
+    termPopQueued = false;
+    document.querySelectorAll('.demo-term').forEach(term => {
+      if (term.matches(':hover, :focus-within, .is-open')) placeTermPopover(term);
+    });
   });
 }
-window.addEventListener('resize', queueClampTermPopovers);
+window.addEventListener('resize', queuePlaceOpenTermPopovers);
+// 표 감싸개처럼 안쪽 상자가 스크롤돼도 잡히도록 capture 로 듣는다(scroll 은 거품이 오르지 않는다)
+document.addEventListener('scroll', queuePlaceOpenTermPopovers, { capture: true, passive: true });
+
+// 보이기 직전에 놓는다. 용어는 글을 그린 뒤에 생기므로 문서 한 곳에서 받는다.
+document.addEventListener('mouseover', (e) => {
+  const term = e.target.closest && e.target.closest('.demo-term');
+  if (term && !term.contains(e.relatedTarget)) placeTermPopover(term);
+});
+document.addEventListener('focusin', (e) => {
+  const term = e.target.closest && e.target.closest('.demo-term');
+  if (term) placeTermPopover(term);
+});
+// 용어의 click 처리기가 stopPropagation 을 하므로 capture 단계에서 먼저 놓는다(모바일 탭)
+document.addEventListener('click', (e) => {
+  const term = e.target.closest && e.target.closest('.demo-term');
+  if (term) placeTermPopover(term);
+}, true);
 
 // 본문 adtech 용어를 GLOSSARY 정의와 연결 → .demo-term 툴팁(용어당 글 1회).
 // 코드/링크/헤딩/KaTeX/수식($) 텍스트는 건드리지 않는다.
@@ -256,7 +288,6 @@ function autoLinkGlossary(container) {
   }
   walk(container);
   setupDemoTermPopover();                                         // 새 .demo-term에 모바일 탭/접근성
-  queueClampTermPopovers();                                       // 말풍선을 화면 안으로 (가로 스크롤 방지)
 }
 
 // Add aria-current to active nav links based on current page

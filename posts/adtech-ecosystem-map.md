@@ -383,7 +383,7 @@ for k in range(max(dist.values()) + 1):
 </div>
 </div>
 <div class="chart-arch-connector">&#8595;</div>
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+<div class="chart-arch-row">
 <div class="chart-arch-section">
 <div class="chart-arch-section-header">
 <span class="chart-arch-section-icon">3</span>

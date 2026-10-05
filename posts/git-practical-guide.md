@@ -304,7 +304,7 @@ sequenceDiagram
 
 이 둘의 차이를 모르면, 의도치 않은 merge가 발생하거나 작업이 꼬일 수 있습니다.
 
-<div class="chart-cards" style="grid-template-columns: repeat(2, 1fr);">
+<div class="chart-cards two-col">
   <div class="chart-card">
     <div class="chart-card-header">
       <div class="chart-card-icon blue">F</div>
@@ -568,7 +568,7 @@ gitGraph
 
 `git rebase main`은 feature 브랜치의 커밋 C, D를 main의 끝(E) 뒤에 **복사**합니다. 원본 C, D는 사라지고 새로운 C', D'이 생깁니다.
 
-<div class="chart-cards" style="grid-template-columns: repeat(2, 1fr);">
+<div class="chart-cards two-col">
   <div class="chart-card">
     <div class="chart-card-header">
       <div class="chart-card-icon green">M</div>

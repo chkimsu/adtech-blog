@@ -402,7 +402,7 @@ IPS에는 전제가 하나 있습니다. **노출 확률(자리별로 볼 확률
 공짜로 얻는 건 아닙니다. 시작점이 나쁘면 엉뚱한 답 한 쌍에서 서로 만족한 채 멈출 수 있습니다(로컬 최적해). "이 광고는 원래 별로다"와 "이 자리는 원래 안 보인다"가 서로를 정당화하는 상태입니다. 그래서 실무에서는 작은 실험으로 자리 효과의 대략적인 모양을 한 번 잡아 초기값으로 넣고, 이후의 변화만 DLA가 따라잡게 합니다.
 
 <div class="chart-arch">
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+  <div class="chart-arch-row">
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
         <span class="chart-arch-section-title pink">Relevance Model</span>

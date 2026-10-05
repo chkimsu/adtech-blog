@@ -2187,6 +2187,12 @@ footer {
   margin: 2rem 0;
 }
 
+/* 두 칸으로 놓는 카드 묶음. 글에서 인라인 style 로 두 칸을 박으면 아래 좁은 화면 규칙이 그걸 못 이겨
+   휴대폰에서도 두 칸으로 남았고, 카드 글자가 칸 밖으로 나가 페이지가 옆으로 밀렸다 */
+.chart-cards.two-col {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .chart-card {
   background: var(--bg-secondary);
   border-radius: 0;
@@ -2456,6 +2462,13 @@ footer {
   padding: 2px 0;
 }
 
+/* 구조 그림 안에서 두 묶음을 나란히 둘 때. 글마다 인라인 격자로 쓰던 것을 대신한다 */
+.chart-arch-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 /* --- Chart.js Container --- */
 .chart-js-container {
   background: var(--bg-secondary);
@@ -2471,7 +2484,8 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-  .chart-cards {
+  .chart-cards,
+  .chart-cards.two-col {
     grid-template-columns: 1fr;
   }
 
@@ -2479,12 +2493,33 @@ footer {
     flex-direction: column;
   }
 
-  .chart-timeline {
+  /* 시간 막대는 500px 보다 좁으면 칸 이름이 안 읽힌다. 그 폭은 막대와 눈금 줄에만 건다.
+     상자(.chart-timeline)에 걸면 상자째 넓어져 페이지가 옆으로 밀렸다(390px 에서 178px).
+     상자는 overflow-x:auto 라서 막대만 상자 안에서 옆으로 넘긴다. */
+  .chart-timeline-bar,
+  .chart-timeline-labels {
     min-width: 500px;
   }
 
+  /* 1fr 은 칸이 내용의 최소 폭 밑으로 줄지 못한다. minmax(0, 1fr) 로 줄 수 있게 한다 */
   .chart-arch-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 구조 그림 안에서 나란히 놓은 두 묶음은 좁은 화면에서 위아래로 쌓는다.
+   두 묶음 안이 다시 두 칸이라 390px 에서는 묶음째 화면 밖으로 나갔다. */
+@media (max-width: 640px) {
+  .chart-arch-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 휴대폰 폭에서 구조 그림 칸을 두 줄로 두면 칸 하나가 글자 60px 남짓이라
+   "Relevance" 같은 낱말이 중간에서 끊긴다. 한 줄에 하나씩 놓는다. */
+@media (max-width: 480px) {
+  .chart-arch-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -6043,6 +6078,10 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
    인라인은 스크롤 상자로 만들면 글 흐름이 깨지므로, 줄바꿈을 허용한다. */
 .post-content .katex {
   max-width: 100%;
+  /* KaTeX 는 화면 읽기용 MathML 사본(.katex-mathml)을 position:absolute 로 숨겨 둔다.
+     기준 상자가 없으면 문서 맨 바깥이 기준이 되어, 옆으로 스크롤되는 표나 수식 상자 안에서도
+     그 상자에 잘리지 않고 페이지 폭을 늘렸다(390px 에서 52px 부터 117px 까지). 수식을 기준 상자로 둔다. */
+  position: relative;
 }
 
 /* 수식을 감싼 문단이 넘침을 만들지 않게 한다 — 마지막 방어선 */

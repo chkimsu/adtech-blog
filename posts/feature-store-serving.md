@@ -621,7 +621,7 @@ flowchart LR
 
 ### 4-4. 통합 비교: 학습 vs 추론에서 피처를 어디서 가져오는가
 
-<div class="chart-cards" style="grid-template-columns: repeat(2, 1fr);">
+<div class="chart-cards two-col">
   <div class="chart-card">
     <div class="chart-card-header">
       <div class="chart-card-icon blue">T</div>
@@ -737,7 +737,7 @@ flowchart LR
     </div>
   </div>
   <div class="chart-arch-connector">&#8595;</div>
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+  <div class="chart-arch-row">
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
         <span class="chart-arch-section-icon">2</span>

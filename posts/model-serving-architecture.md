@@ -525,7 +525,7 @@ for B in (1, 8, 32, 128):
 ### 최적 조합
 
 <div class="chart-arch">
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+  <div class="chart-arch-row">
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
         <span class="chart-arch-section-title yellow">앞단 랭킹: CPU</span>

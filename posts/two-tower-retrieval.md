@@ -725,6 +725,7 @@ $$\text{Recall@K} = \frac{|\{\text{클릭 광고}\} \cap \{\text{Top-K 후보}\}
 
 - 파이프라인 전체(Multi-Stage Ranking)와 서빙 인프라 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 - 뒤따르는 랭킹 모델의 구조(DeepFM·DCN·DIN) → [Deep CTR Models](post.html?id=deep-ctr-models)
+- 뒤따르는 랭킹 모델이 행동 시퀀스를 광고마다 다른 벡터로 줄이는 계산 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - 임베딩을 어디에 저장하고 어떻게 꺼내오나 → [Feature Store](post.html?id=feature-store-serving)
 - in-batch negative가 만드는 편향의 전체 그림 → [Negative Sampling & Bias](post.html?id=negative-sampling-bias)
 - 같은 임베딩 유사도로 '유저'를 찾는 쪽 → [Lookalike 모델링](post.html?id=lookalike-modeling)

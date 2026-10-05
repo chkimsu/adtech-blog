@@ -611,11 +611,13 @@ DIN(Deep Interest Network)은 이 문제를 **어텐션 메커니즘**으로 해
 
 $$v_U(A) = f(v_A, e_1, e_2, ..., e_H) = \sum_{j=1}^{H} a(e_j, v_A) \cdot e_j$$
 
-여기서 어텐션 weight $a(e_j, v_A)$는 softmax로 정규화한 관련성 점수입니다.
+여기서 어텐션 weight $a(e_j, v_A)$는 작은 신경망(activation unit)이 행동마다 내는 점수입니다.
 
-$$a(e_j, v_A) = \frac{\exp(\text{MLP}(e_j, v_A, e_j - v_A, e_j \odot v_A))}{\sum_{k=1}^{H} \exp(\text{MLP}(e_k, v_A, e_k - v_A, e_k \odot v_A))}$$
+$$a(e_j, v_A) = \text{MLP}(e_j,\ v_A,\ e_j - v_A,\ e_j \odot v_A)$$
 
-MLP에는 네 가지를 함께 넣습니다. 행동 $e_j$, 후보 $v_A$, 둘의 차이 $e_j - v_A$입니다. 그리고 element-wise 곱 $e_j \odot v_A$까지 넣습니다. 차이와 곱을 같이 주면 관련성 신호가 훨씬 풍부해집니다.
+**논문은 이 점수를 softmax로 나누지 않습니다.** 무게의 합이 1이어야 한다는 제약을 일부러 풀었습니다. 합이 1이 되게 누르면 관련 행동이 셋인 광고와 하나인 광고가 똑같이 1을 나눠 갖습니다. 나누지 않으면 관련 행동이 많을수록 $v_U$가 커지고, 관심이 얼마나 센지가 그대로 남습니다. 논문은 티셔츠 광고가 휴대폰 광고보다 옷 관련 이력을 더 많이 활성화한다는 예를 듭니다.
+
+MLP에는 네 가지를 함께 넣습니다. 행동 $e_j$, 후보 $v_A$, 둘의 차이 $e_j - v_A$입니다. 그리고 element-wise 곱 $e_j \odot v_A$까지 넣습니다. 차이와 곱을 같이 주면 관련성 신호가 훨씬 풍부해집니다. 논문 그림은 두 임베딩과 외적(outer product)을 넣는다고 그렸습니다. 널리 쓰이는 공개 구현인 DeepCTR 은 위처럼 차이와 곱을 붙입니다. DeepCTR 은 softmax 정규화를 옵션으로 두지만 기본값은 끈 쪽입니다.
 
 ```mermaid
 graph TD
@@ -631,16 +633,16 @@ graph TD
         AD["v_A: 러닝화 광고"]
     end
 
-    subgraph AttentionLayer["Attention (관련성 가중치)"]
-        A1["a1 = 0.25<br/>(운동화 - 관련)"]
-        A2["a2 = 0.02<br/>(노트북 - 무관)"]
-        A3["a3 = 0.45<br/>(러닝화 - 매우 관련)"]
-        A4["a4 = 0.03<br/>(여행 - 무관)"]
-        A5["a5 = 0.25<br/>(운동복 - 관련)"]
+    subgraph AttentionLayer["Attention (관련성 점수, 합이 1이 아님)"]
+        A1["a1 = 1.2<br/>(운동화 - 관련)"]
+        A2["a2 = 0.05<br/>(노트북 - 무관)"]
+        A3["a3 = 2.1<br/>(러닝화 - 매우 관련)"]
+        A4["a4 = 0.08<br/>(여행 - 무관)"]
+        A5["a5 = 1.1<br/>(운동복 - 관련)"]
     end
 
     subgraph WeightedSum["가중 합산"]
-        VU["v_U = 0.25*e1 + 0.02*e2 + 0.45*e3 + 0.03*e4 + 0.25*e5"]
+        VU["v_U = 1.2*e1 + 0.05*e2 + 2.1*e3 + 0.08*e4 + 1.1*e5"]
     end
 
     B1 --> A1
@@ -675,7 +677,7 @@ import random, math
 
 random.seed(42)
 D = 8      # embedding 차원
-T = 3.0    # softmax 온도. 낮추면 가중치가 더 날카로워진다.
+T = 3.0    # 점수를 누그러뜨리는 온도. 낮추면 무게 차이가 더 벌어진다.
 
 def emb(axis):
     """가상 embedding. axis 자리에 +2.0을 얹어 '카테고리 방향'을 만든다.
@@ -694,26 +696,26 @@ behaviors = {                                     # 이 유저가 최근에 본 
 }
 
 def attention(behavior_vecs, candidate):
-    """DIN의 attention. 실제로는 학습된 MLP지만, 여기서는
-       '방향이 맞고 거리가 가까우면 관련 있다'는 손 계산으로 대신한다."""
-    scores = []
+    """DIN의 attention. 실제로는 학습된 MLP가 행동마다 무게를 내지만, 여기서는
+       '방향이 맞고 거리가 가까우면 관련 있다'는 손 계산으로 대신한다.
+       논문처럼 무게를 합이 1이 되게 나누지 않는다. 비중은 읽기 쉽게 따로 계산한다."""
+    raw = []
     for v in behavior_vecs:
         dot  = sum(a*b for a, b in zip(v, candidate))            # 방향이 얼마나 맞나
         dist = sum((a-b)**2 for a, b in zip(v, candidate))       # 얼마나 떨어져 있나
-        scores.append((dot - 0.5*dist) / T)
-    m = max(scores)                                   # overflow 방지용으로 최대값을 뺀다
-    e = [math.exp(s - m) for s in scores]
-    total = sum(e)
-    return [x/total for x in e]                       # softmax → 합이 1인 가중치
+        raw.append(math.exp((dot - 0.5*dist) / T))               # 양수 무게, 나누지 않은 값
+    total = sum(raw)
+    return [x/total for x in raw], total              # (읽기용 비중, 나누지 않은 무게의 합)
 
 SPORTS = ["운동화", "러닝화", "운동복"]
 for ad_name, axis in [("러닝화 광고", "운동"), ("노트북 광고", "전자기기")]:
-    ws = attention(list(behaviors.values()), emb(AXIS[axis]))
+    ws, total = attention(list(behaviors.values()), emb(AXIS[axis]))
     print(f"[{ad_name}] 채점 — 같은 유저, 같은 행동 5개")
     for name, w in zip(behaviors, ws):
         print(f"   {name}: {w:.3f} {'█' * round(w*40)}")
     share = sum(w for n, w in zip(behaviors, ws) if n in SPORTS)
     print(f"   운동 관련 3개가 가져간 비중: {share*100:.1f}%")
+    print(f"   나누지 않은 무게의 합: {total:.2f}")
 
 print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관련 비중은 60.0% 고정")
 
@@ -725,6 +727,7 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 #    여행팩: 0.061 ██
 #    운동복: 0.167 ███████
 #    운동 관련 3개가 가져간 비중: 91.3%
+#    나누지 않은 무게의 합: 8.41
 # [노트북 광고] 채점 — 같은 유저, 같은 행동 5개
 #    운동화: 0.029 █
 #    노트북: 0.846 ██████████████████████████████████
@@ -732,12 +735,15 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 #    여행팩: 0.063 ███
 #    운동복: 0.040 ██
 #    운동 관련 3개가 가져간 비중: 9.1%
+#    나누지 않은 무게의 합: 3.89
 # mean pooling이라면 5개 모두 0.200 — 운동 관련 비중은 60.0% 고정
 ```
 
 같은 유저, 같은 행동 5개인데 결과가 완전히 다릅니다. 러닝화 광고를 채점할 때는 운동 관련 행동이 가중치의 **91.3%**를 가져갑니다. 노트북 광고로 바꾸면 그 비중이 **9.1%**로 떨어집니다.
 
 mean pooling은 어느 광고를 채점하든 60.0%로 고정입니다. 광고가 바뀌어도 유저 표현이 그대로라는 뜻입니다. 이 차이가 DIN의 전부입니다.
+
+비중은 읽기 쉽게 나눈 값이고, 모델 안에서는 나누지 않은 무게가 그대로 곱해집니다. 그 합이 러닝화 광고에서 **8.41**, 노트북 광고에서 **3.89**입니다. 이 유저의 이력에는 운동 관련 행동이 셋이고 전자기기는 하나라서, 러닝화 광고가 이력을 두 배 넘게 활성화합니다. softmax로 나눴다면 두 광고 모두 합이 1이라 이 차이가 사라집니다. 행동 하나가 벡터가 되는 단계부터 수만 개 이력까지 숫자로 따라가려면 [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention) 글을 보세요.
 
 #### DIN vs 기존 방식 비교
 
@@ -1094,6 +1100,7 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 - pCTR의 정의와 eCPM으로 이어지는 길 → [pCTR 예측](post.html?id=pctr-prediction)
 - 예측 확률의 절대값을 실제에 맞추기 → [Calibration](post.html?id=calibration)
 - 이 구조가 들어가는 Tower를 여러 개 두는 법 → [Multi-Task Learning](post.html?id=multi-task-learning)
+- 행동 시퀀스가 attention으로 벡터 하나가 되는 계산, 수만 개 이력까지 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - 수백만 후보에서 수백 개를 건지는 앞 단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 단계별 모델 배치와 경량화 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 - 피처를 10ms 안에 공급하는 파이프라인 → [Feature Store](post.html?id=feature-store-serving)

@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'behavior-sequence-attention',
+    world: 'both',
+    worldNote: '행동 하나를 벡터로 만들고 attention 으로 무게를 매겨 더하는 계산은 두 무대가 같습니다. 다른 것은 시퀀스의 길이입니다. 담장 안은 로그인 계정에 몇 해 치 이력이 쌓여 수만 개를 쓰고, 열린 RTB 는 입찰 요청에 붙는 사용자 정보가 적어 몇 개에 그칩니다.',
+    worldPractical: '담장 안에서는 검색, 클릭, 구매가 한 계정에 쌓여 사용자당 이력이 수천에서 수만 개가 됩니다. 그래서 먼저 고르고 attention 을 하는 SIM, TWIN 방식이 실제로 값을 하고, 이력 저장소의 크기와 고르는 단계의 지연이 운영 과제가 됩니다. 열린 RTB 의 DSP 는 쿠키가 자주 바뀌고 입찰 요청에 지면과 기기 정보 정도만 와서 붙일 수 있는 이력이 몇 개입니다. 이때 target attention 은 평균과 거의 같아지고, 고르는 단계는 쓸 일이 없습니다.',
+    title: '행동 시퀀스 Attention: 클릭 이력을 벡터 하나로 만드는 계산, 평균에서 TWIN 까지',
+    excerpt: '민지의 하루 행동 네 개를 상품, 카테고리, 시간 간격의 숫자로 바꾸면 4칸 벡터 네 개가 됩니다. 평균을 내면 어느 광고 앞에서나 같은 벡터가 되어, 커피머신 광고에는 맞는 신호의 30% 만 남습니다. DIN 의 target attention 은 광고마다 무게를 따로 매겨 사용자 벡터를 두 개 내고, 논문대로 softmax 로 나누지 않아 무게 합이 6.20 대 2.48 로 관심의 세기가 남습니다. BST 의 self-attention 은 행동들이 서로를 보고 자기 벡터를 다시 씁니다. 이력이 2만 개면 전부에 attention 하는 데 곱셈이 5,434억 번 들어서 SIM 은 200개를 먼저 고릅니다. 고르는 점수가 attention 과 다르면 남는 무게가 69.6% 에서 47.9% 까지 떨어지고, TWIN 은 같은 점수로 골라 이 어긋남을 없앱니다.',
+    date: '2026-10-04',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Ad Ranking', 'Model Serving'],
+    contentUrl: 'posts/behavior-sequence-attention.md'
+  },
+  {
     id: 'bentoml-model-serving',
     world: 'both',
     worldNote: '도구가 무엇을 대신하고 파이썬 층에 값이 얼마나 붙는지는 두 무대가 같습니다. 다른 것은 예산을 누가 정하느냐입니다. 담장 안은 우리가 구간에 나눠 주니 도구를 쓸 자리를 만들 수 있고, 열린 RTB 는 거래소가 정한 시간 안에 답해야 해 그 자리가 좁습니다.',
@@ -1278,7 +1290,7 @@ const series = {
   'modeling-track': {
     title: '예측 모델링 트랙',
     desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
-    posts: ['deep-ctr-models', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
+    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
   },
   'ml-infra-track': {
     title: 'ML 인프라 트랙',

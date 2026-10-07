@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'candidate-pool-basics',
+    world: 'both',
+    worldNote: '풀이 색인으로 놓이고 요청의 키로 꺼내는 구조는 두 무대가 같습니다. 다른 것은 풀의 개수입니다. 담장 안은 플랫폼이 매체이자 거래소이자 DSP 라 풀이 하나이고, 열린 RTB 는 DSP 마다 자기 풀이 있어 거래소 위에서 1건씩이 다시 겨룹니다.',
+    worldPractical: '담장 안에서는 켜져 있는 캠페인 12만 건이 광고 서버 수백 대의 메모리에 같은 색인으로 놓이고, 요청에 실린 회원 ID 로 프로필에서 세그먼트 번호를 읽어 그 키로 색인을 조회합니다. Lookalike 세그먼트도 같은 프로필 저장소에 번호로 적혀 확정으로 붙습니다. 열린 RTB 에서는 DSP 30곳이 저마다 자기 광고주의 캠페인만 색인해 두고, 요청의 쿠키로 자기 목록을 뒤져 키를 만든 뒤 1건을 골라 거래소에 입찰합니다. 후보가 DSP 안과 거래소 위 두 층이 되고, 쿠키라서 Lookalike 씨앗이 셋 중 하나쯤 못 붙어 비율을 보수적으로 잡습니다.',
+    title: '후보풀: 어느 풀에서 후보를 꺼내고 Lookalike 은 어디에 들어가나',
+    excerpt: '유사타겟 10% 캠페인이 돈 지 2주째, 서연 씨는 「후보풀에서 잘 걸린다」는 말을 듣고 멈춥니다. 풀이 무엇이고 매일 새로 만드는지, 어디에 두는지, 수천만 명이 같은 풀을 쓰는지, 유사타겟은 어디 들어가는지 모르겠습니다. 풀은 지금 켜져 있는 캠페인 전부 하나이고, 광고 서버 수백 대가 메모리에 같은 색인을 듭니다. 바뀌는 때는 매일 새벽이 아니라 광고주가 켜고 끄는 그 순간이고, 수억 요청이 같은 색인을 보되 요청에 실린 키가 달라 꺼내는 조각이 다릅니다. 열린 RTB 는 DSP 마다 풀이 있어 후보가 두 층이 되고, Lookalike 은 풀이 아니라 세그먼트 번호 6001 하나를 만들어 프로필과 캠페인 조건 양쪽에 적습니다. 그림 다섯 장으로 봅니다.',
+    date: '2026-10-07',
+    categories: ['Targeting & Audience'],
+    tags: ['Targeting', 'Lookalike', 'Segmentation', '입문'],
+    contentUrl: 'posts/candidate-pool-basics.md',
+    series: 'targeting-track'
+  },
+  {
     id: 'behavior-sequence-attention',
     world: 'both',
     worldNote: '행동 하나를 벡터로 만들고 attention 으로 무게를 매겨 더하는 계산은 두 무대가 같습니다. 다른 것은 시퀀스의 길이입니다. 담장 안은 로그인 계정에 몇 해 치 이력이 쌓여 수만 개를 쓰고, 열린 RTB 는 입찰 요청에 붙는 사용자 정보가 적어 몇 개에 그칩니다.',
@@ -1299,8 +1312,8 @@ const series = {
   },
   'targeting-track': {
     title: '타겟팅 & 오디언스 트랙',
-    desc: '마케터 서연 씨의 첫 캠페인을 따라 타겟팅이 일어나는 자리, 세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한까지 기초 네 편을 카드 그림으로 읽고, 그 뒤에 심화 두 편으로 넘어갑니다',
-    posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap',
+    desc: '마케터 서연 씨의 첫 캠페인을 따라 타겟팅이 일어나는 자리, 세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한, 후보풀까지 기초 다섯 편을 카드 그림으로 읽고, 그 뒤에 심화 두 편으로 넘어갑니다',
+    posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap', 'candidate-pool-basics',
       'audience-segmentation', 'lookalike-modeling'],
   },
   'advanced-bidding-track': {

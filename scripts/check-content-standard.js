@@ -25,8 +25,9 @@ const NO_PYTHON_BY_DESIGN = new Set([
   'data-handoff-methods',
   'hadoop-hive-spark-roles',
   'data-engineer-first-six-months',
-  // 타겟팅 기초 4편 — 같은 형식(존댓말, 카드, 파이썬 없음)
-  'targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap'
+  // 타겟팅 기초 5편 — 같은 형식(존댓말, 카드, 파이썬 없음)
+  'targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap',
+  'candidate-pool-basics'
 ]);
 
 // 코드블록·표·임베드 HTML을 걷어낸 '산문'만 남긴다 — 길이 계산의 분모.

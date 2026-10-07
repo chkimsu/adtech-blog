@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>후보풀 그림 다섯 장 — Ad Tech Blog</title>
+  <meta name="description" content="광고 서버가 후보를 꺼내는 풀이 무엇이고 어디에 놓여 있나를 그림 다섯 장으로. 켜져 있는 캠페인 전부가 풀, 바뀌는 순간 고치는 색인, 수억 요청이 같은 색인을 보는 이유, 열린 RTB 의 DSP 수만큼의 풀, Lookalike 이 만드는 것은 풀이 아니라 사람 목록.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cp-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .cp-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .cp-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .cp-page { max-width: 1240px; margin: 0 auto; padding: 0 1rem; }
+    .cp-sec { margin: 0 0 3rem; }
+    .cp-sec > h2 { font-size: 1.35rem; margin: 2.2rem 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .cp-sec > h2 .no { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; color: var(--text-muted); margin-right: 0.6rem; }
+    .cp-one { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.8rem; line-height: 1.6; }
+    .cp-fig { overflow-x: auto; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.6rem 0.4rem; }
+    .cp-fig svg { display: block; width: 100%; min-width: 720px; height: auto; }
+    .cp-cap { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin: 0.8rem 0 0; max-width: 90ch; }
+    .cp-cap b { color: var(--text-primary); }
+    html.is-embed .cp-sec { margin: 0 0 1rem; }
+    html.is-embed .cp-page { padding: 0 0.5rem; }
+
+    /* 그림 부품은 css/style.css 의 카드 공용 블록(.lbl .f-a .srv-body .tbl-body .list .ar .dot …)을 그대로 쓴다.
+       여기 있는 것은 이 그림에만 나오는 넷 — 묶음 바탕, 묶음 라벨, 옅은 연결선, 글줄 안의 번호 하나 */
+    .cp-fig svg text { font-family: var(--font-sans); }
+    .zone { fill: var(--plate); stroke: none; }
+    .lbl.zone { font-size: 10px; font-weight: 800; fill: var(--text-muted); letter-spacing: .06em; stroke: var(--plate); }
+    .lbl.a { fill: var(--navy); font-weight: 750; }
+    .conn { fill: none; stroke: var(--border-color); stroke-width: 1.2; stroke-dasharray: 3 3; }
+    .cp-fig svg tspan.b { font-weight: 800; fill: var(--oxide); }
+
+    .cp-real { max-width: 1240px; margin: 0 auto 3rem; padding: 0 1rem; }
+    .cp-real h2 { font-size: 1.35rem; margin: 2.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .cp-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
+    .cp-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+    .cp-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .cp-host:empty { display: none; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="cp-hero">
+      <h1>후보풀 그림 다섯 장</h1>
+      <p>광고 서버가 후보를 꺼내는 풀이 무엇이고 어디에 놓여 있나를 그림 한 장씩으로 봅니다. 풀은 하나이고, 요청마다 꺼내는 조각이 다를 뿐입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 목록 (캠페인, 색인, 세그먼트, 프로필)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (광고 요청, 변경 알림)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 정하는 서버 (광고 서버, DSP, 거래소)</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (배치, 닮음 계산)</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 광고주가 적어 둔 조건</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 데이터</span>
+      </div>
+    </section>
+
+    <div class="cp-host"></div>
+
+    <div class="cp-page">
+      <section class="cp-sec" data-fig="1">
+        <h2><span class="no">1</span>풀은 지금 켜져 있는 캠페인 전부입니다</h2>
+        <p class="cp-one">광고주가 캠페인 화면에서 저장을 누르면 저장소에 한 줄이 생깁니다. 켜져 있는 줄만 광고 서버로 가서 색인이 되고, 그 색인이 풀입니다.</p>
+        <div class="cp-fig" id="cp-fig1"></div>
+        <p class="cp-cap">캠페인 한 줄에는 <b>조건, 예산, 입찰가, 소재, 상태</b>가 있습니다. 상태가 ON 이고 기간 안이고 예산이 남은 줄만 광고 서버로 보냅니다. 12만 건은 그렇게 걸러진 뒤 이 지면 상품에 걸 수 있는 캠페인 수입니다. 담장 안 플랫폼 하나에 이 풀이 하나 있습니다.</p>
+      </section>
+
+      <section class="cp-sec" data-fig="2">
+        <h2><span class="no">2</span>풀은 바뀌는 그 순간 바뀝니다. 색인은 광고 서버 메모리 안에 있습니다</h2>
+        <p class="cp-one">광고주가 켜고 끄는 일, 예산이 떨어지는 일, 기간이 끝나는 일은 하루 중 아무 때나 일어납니다. 그때마다 바뀐 한 줄만 모든 서버에 전해집니다.</p>
+        <div class="cp-fig" id="cp-fig2"></div>
+        <p class="cp-cap">풀을 통째로 다시 만드는 일은 드뭅니다. 바뀐 줄 하나를 몇 초 안에 모든 광고 서버가 받아 자기 색인을 고칩니다. 그래서 서버 수백 대가 늘 <b>같은 색인</b>을 듭니다. 「매일 새벽」은 풀이 아니라 사람 목록(세그먼트)의 갱신 주기입니다.</p>
+      </section>
+
+      <section class="cp-sec" data-fig="3">
+        <h2><span class="no">3</span>수억 명이 와도 풀은 하나입니다. 꺼내는 조각이 다를 뿐입니다</h2>
+        <p class="cp-one">부하 분산기가 요청을 서버 수백 대에 나누고, 어느 서버가 받든 색인은 같습니다. 다른 것은 요청에 실린 키입니다.</p>
+        <div class="cp-fig" id="cp-fig3"></div>
+        <p class="cp-cap">회원 A 와 회원 B 는 같은 색인을 보고 <b>다른 목록</b>을 꺼냅니다. 키가 다르기 때문입니다. 비로그인 C 는 쿠키뿐이라 세그먼트 키가 없고, 조건을 안 건 캠페인과 지면만 맞춘 캠페인만 꺼냅니다. 미리 나뉘어 있는 풀은 광고 상품(검색, 배너, 동영상)과 나라 정도이고, 유저별 풀이나 사이트별 풀은 없습니다.</p>
+      </section>
+
+      <section class="cp-sec" data-fig="4">
+        <h2><span class="no">4</span>열린 RTB 에서는 풀이 DSP 수만큼 있습니다</h2>
+        <p class="cp-one">매체는 풀이 없습니다. 거래소가 DSP 30곳에 동시에 묻고, DSP 하나하나가 자기 풀에서 1건씩 골라 입찰합니다.</p>
+        <div class="cp-fig" id="cp-fig4"></div>
+        <p class="cp-cap">DSP 한 곳 안에서 벌어지는 일은 담장 안 광고 서버와 같습니다. 자기 광고주의 캠페인을 색인해 두고, 요청의 키로 꺼내고, 필터와 랭킹으로 1건을 고릅니다. 다른 점은 그 1건이 거래소로 가서 다른 DSP 의 1건들과 <b>다시 겨룬다</b>는 것입니다. 담장 안 플랫폼은 매체이자 거래소이자 DSP 라서 이 두 층이 하나로 접힙니다.</p>
+      </section>
+
+      <section class="cp-sec" data-fig="5">
+        <h2><span class="no">5</span>Lookalike 은 풀이 아니라 사람 목록을 만듭니다</h2>
+        <p class="cp-one">결과물은 세그먼트 번호 하나입니다. 그 번호가 사람 쪽 프로필과 캠페인 쪽 조건, 두 군데 적힙니다. 풀 12만 건은 그대로입니다.</p>
+        <div class="cp-fig" id="cp-fig5"></div>
+        <p class="cp-cap">위 줄은 어제 새벽, 아래 줄은 지금입니다. 새벽 배치가 씨앗 8만 명과 닮은 순서로 회원 1,400만 명을 세우고 앞 10% 를 잘라 세그먼트 6001 에 140만 명을 넣습니다. 서연 씨는 캠페인 조건에 6001 을 적었고, 색인에 「6001 → 서연 캠페인」 한 줄이 생깁니다. 요청이 오면 광고 서버는 프로필에서 6001 을 읽고 그 키로 색인을 조회합니다. 서연 캠페인은 원래부터 풀에 있었고, 바뀐 것은 <b>어떤 사람에게 후보로 오르나</b>입니다.</p>
+      </section>
+    </div>
+
+    <section class="cp-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>「풀」이라는 말이 나오면 둘 중 무엇인지 먼저 묻습니다.</b> 캠페인 풀(켜져 있는 캠페인)인지 사람 목록(세그먼트)인지. 만드는 사람, 놓이는 자리, 바뀌는 때가 전부 다릅니다.</li>
+        <li><b>후보가 안 나온다는 문의는 색인의 키부터 봅니다.</b> 요청에 어떤 키가 실렸나, 캠페인 조건이 그 키와 맞나, 켜져 있나. 풀 자체가 없는 경우는 거의 없습니다.</li>
+        <li><b>그림을 누르면</b> 위 해설 칸에 그 그림이 말로 안 한 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=candidate-pool-basics">후보풀 기초</a>에 이 그림들이 절마다 한 장씩 들어 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/candidate-pool-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

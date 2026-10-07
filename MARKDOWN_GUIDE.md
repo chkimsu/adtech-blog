@@ -227,11 +227,11 @@ git push origin main
 
 **7. 분량은 KB 가 아니라 산문으로 잽니다.** `check-content-standard.js` 의 KB 는 SVG 마크업을 같이 세서, 그림이 있는 글은 부풀어 보입니다. 8편의 산문은 21.0~25.9KB 로 기준자 3편(21.8~25.7KB)과 같은 폭입니다.
 
-### 타겟팅 기초 5편도 같은 형식입니다
+### 타겟팅 기초 6편도 같은 형식입니다
 
-위 일곱 항목은 처음에 API, Kafka 8편에만 적용했는데, **타겟팅 트랙의 기초 5편**(`targeting-basics`, `audience-and-segments`, `lookalike-basics`, `retargeting-frequency-cap`, `candidate-pool-basics`)도 같은 형식입니다. 존댓말, 파이썬 없음, 절마다 그림 한 장(앞 네 편은 카드 `demo-targeting-cards.html?embed=1&card=키`, 다섯째는 넓은 그림 `demo-candidate-pool.html?embed=1&fig=N`), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 카드마다 「쉽게 말하면」 띠가 있고 글 본문이 같은 문장을 갖습니다. `check-content-standard.js` 의 `NO_PYTHON_BY_DESIGN` 에 다섯 편이 등록돼 있습니다. 가운뎃점은 쓰지 않고 쉼표로 나열합니다.
+위 일곱 항목은 처음에 API, Kafka 8편에만 적용했는데, **타겟팅 트랙의 기초 6편**(`targeting-basics`, `audience-and-segments`, `lookalike-basics`, `retargeting-frequency-cap`, `candidate-pool-questions`, `candidate-pool-basics`)도 같은 형식입니다. 존댓말, 파이썬 없음, 절마다 그림 한 장(앞 네 편은 카드 `demo-targeting-cards.html?embed=1&card=키`, 다섯째와 여섯째는 넓은 그림 `demo-candidate-pool.html?embed=1&fig=N` 을 나눠 씁니다), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 다섯째 글만은 절마다 예시 표가 주인공이라 그림을 둘만 씁니다. 카드마다 「쉽게 말하면」 띠가 있고 글 본문이 같은 문장을 갖습니다. `check-content-standard.js` 의 `NO_PYTHON_BY_DESIGN` 에 여섯 편이 등록돼 있습니다. 가운뎃점은 쓰지 않고 쉼표로 나열합니다.
 
-**한 사람이 순서대로 겪습니다.** 운동화 브랜드의 마케터 서연 씨가 첫 캠페인을 걸고 6주까지 겪는 순서입니다. 트랙의 심화 두 편(`audience-segmentation`, `lookalike-modeling`)은 그 뒤에 옵니다.
+**한 사람이 순서대로 겪습니다.** 운동화 브랜드의 마케터 서연 씨가 첫 캠페인을 걸고 8주까지 겪는 순서입니다. 다섯째 글만은 묻는 사람이 모델 팀의 지훈 씨(모델 운영 트랙 다음, 열째 주)이고, 예시 캠페인 셋 중 하나가 서연 씨 러닝화입니다. 트랙의 심화 두 편(`audience-segmentation`, `lookalike-modeling`)은 그 뒤에 옵니다.
 
 | 순서 | 글 | 서연 씨가 있는 자리 |
 |---|---|---|
@@ -239,9 +239,10 @@ git push origin main
 | 2 | `audience-and-segments` | 이틀째. 담당자는 세그먼트 317 이라 하고 화면은 오디언스 160만 명이라 합니다 |
 | 3 | `lookalike-basics` | 4주째. 구매자 8만 명으로 맞춤타겟을 만들자 유사타겟 슬라이더가 생깁니다 |
 | 4 | `retargeting-frequency-cap` | 6주째. 친구는 다섯 번 봤다 하고 대표는 장바구니 사람에게 다시 보이자고 합니다 |
-| 5 | `candidate-pool-basics` | 8주째. 담당자가 「후보풀에서 잘 걸린다」고 하는데, 풀이 무엇이고 어디 있는지, 유사타겟은 어디 들어가는지 모릅니다 |
+| 5 | `candidate-pool-questions` | 지훈 씨가 「후보풀에서 꺼내 온다」는 말에 질문 여섯을 적습니다. 캠페인 셋(서연 씨 러닝화, 여행사, 카페)과 회원 A, B, 비로그인 C 로 하나씩 답합니다 |
+| 6 | `candidate-pool-basics` | 8주째. 담당자가 「후보풀에서 잘 걸린다」고 하는데, 풀이 무엇이고 어디 있는지, 유사타겟은 어디 들어가는지 모릅니다 |
 
-**표준 데이터 한 벌.** 네 편이 같은 값을 씁니다. 새 글이 이 트랙에 붙으면 여기서 가져옵니다. 후보 줄어드는 순서는 `ad-serving-flow`, 타겟 방식별 도달과 전환율은 `kakao-ads-prediction-targeting`, 하루 3회는 `model-ab-testing` 과 같은 값입니다.
+**표준 데이터 한 벌.** 여섯 편이 같은 값을 씁니다. 새 글이 이 트랙에 붙으면 여기서 가져옵니다. 후보 줄어드는 순서는 `ad-serving-flow`, 타겟 방식별 도달과 전환율은 `kakao-ads-prediction-targeting`, 하루 3회는 `model-ab-testing` 과 같은 값입니다.
 
 | 값 | 얼마 |
 |---|---|
@@ -255,13 +256,17 @@ git push origin main
 | Lookalike 세그먼트 번호 | 6001 (유사타겟 10%, 140만 명). 회원 프로필과 캠페인 조건 양쪽에 적히는 색인 키. 후보풀은 켜져 있는 캠페인 12만 건, 광고 서버 메모리의 색인 |
 | 리타겟팅 목록 | 방문 30일 52만 / 장바구니 7일 3만 1천 / 구매 90일 8만(제외용). 10분마다 갱신. 픽셀 `add_to_cart` |
 | 빈도 상한 | 하루 3회, 리타겟팅은 2회. 회원 A 는 광고 9931 이 2회, 7720 이 3회 |
-| 회원 A | 32세 여성 서울, 관심사 러닝과 여행. 세그먼트 317 러닝, 402 여행, 905 카페 |
+| 회원 A | 32세 여성 서울, 관심사 러닝과 여행. 세그먼트 317 러닝, 402 여행, 905 카페. 유사타겟 배치 뒤에는 6001 까지 넷 |
+| 회원 B | 부산, 세그먼트 77 캠핑 하나. 후보풀 두 편의 B 입니다. `audience-and-segments` 의 B(317, 77)와 번호가 다르니 그 글과 섞지 않습니다 |
+| 비로그인 C | 쿠키만 있고 번호가 없습니다. 앞 글들의 회원 C(로그인, 402)와 다른 사람이라 반드시 「비로그인 C」로 부릅니다 |
+| 후보풀 예시 캠페인 셋 | 서연 씨 러닝화(조건 6001, 하루 300만 원), 여행사(조건 402, 500만 원), 카페(조건 없음, 50만 원). 12만 건을 셋으로 줄인 것. A 는 셋, B 와 C 는 카페 하나를 꺼냅니다 |
+| 후보풀 예시 점수 | 서연 pCTR 1.2% pCVR 3.0% 전환 단가 20,000원 → 클릭당 600원 → 7,200 / 여행사 0.8% 2.0% 50,000원 → 1,000원 → 8,000 / 카페 2.0% 수동 300원 → 6,000. 1등 여행사 |
 
 **유사타겟 1% 는 14만 명입니다.** 카카오 타겟팅 글은 15만 명인데, 분모를 전체 회원 1,400만 명으로 두면 1% 가 14만이라 이 트랙에서는 14만으로 맞췄습니다. 두 글의 캠페인이 달라 값이 달라도 되지만, 이 트랙 안에서는 14만 하나만 씁니다.
 
 ### 모델 운영 트랙 8편도 같은 형식입니다 — 다만 파이썬을 짧게 씁니다
 
-`training-pipeline-dag`, `model-versioning-reproducibility`, `container-ci-pipeline`, `inference-server`, `model-deployment-rollback`, `stream-window-aggregation`, `batch-vs-realtime-inference`, `distributed-training` 여덟 편입니다. 존댓말, 절마다 카드 한 장(`demo-<데크>-cards.html?embed=1&card=키`), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 여기까지는 타겟팅 기초 5편과 같습니다. 다른 것은 하나입니다. **실행 검증한 짧은 파이썬을 한두 개 넣습니다**(본체 45줄 이하, 표준 라이브러리, `# 출력:` 붙임). 그래서 `NO_PYTHON_BY_DESIGN` 에 넣지 않습니다.
+`training-pipeline-dag`, `model-versioning-reproducibility`, `container-ci-pipeline`, `inference-server`, `model-deployment-rollback`, `stream-window-aggregation`, `batch-vs-realtime-inference`, `distributed-training` 여덟 편입니다. 존댓말, 절마다 카드 한 장(`demo-<데크>-cards.html?embed=1&card=키`), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 여기까지는 타겟팅 기초 6편과 같습니다. 다른 것은 하나입니다. **실행 검증한 짧은 파이썬을 한두 개 넣습니다**(본체 45줄 이하, 표준 라이브러리, `# 출력:` 붙임). 그래서 `NO_PYTHON_BY_DESIGN` 에 넣지 않습니다.
 
 **엔지니어링 기초 트랙의 지훈 씨가 입사 석 달째에 모델 팀으로 옮겨 여덟 주를 겪습니다.** 첫 주 학습 파이프라인 알람, 둘째 주 지난주 모델 재현, 셋째 주 Docker 와 CI, 넷째 주 추론 서버, 다섯째 주 첫 배포와 롤백, 여섯째 주 스트림 집계, 일곱째 주 배치 추론, 여덟째 주 분산 학습입니다. 글마다 끝에서 두 번째 절이 「담장 안 / 열린 RTB」 두 갈래이고 `world` 는 `both` 입니다.
 

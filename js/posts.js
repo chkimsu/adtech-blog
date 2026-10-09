@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'campaign-setup-flow',
+    world: 'both',
+    worldNote: '광고주가 적는 칸이 요청 한 건의 단계에서 차례로 쓰이는 구조는 두 무대가 같습니다. 다른 것은 사람 쪽 번호를 읽는 길과 마지막으로 겨루는 자리입니다. 담장 안은 회원 ID 로 프로필의 번호를 확정으로 읽고, 광고 서버의 1등이 곧 화면에 나갑니다.',
+    worldPractical: '담장 안에서는 캠페인 칸 다섯 묶음이 한 플랫폼의 후보풀과 광고 서버에서 차례로 쓰이고, 회원 ID 로 프로필의 번호(317, 402, 905)를 읽어 맞춰 봅니다. 열린 RTB 에서는 같은 일이 DSP 한 곳 안에서 일어납니다. DSP 가 자기 광고주의 캠페인 칸으로 1건을 고르고, 그 1건이 거래소에서 다른 DSP 의 1건과 한 번 더 겨룹니다. 사람 쪽 번호도 쿠키로 찾아서 못 찾는 사람이 생깁니다.',
+    title: '캠페인 설정: 광고주가 적은 칸이 요청 한 건의 어느 단계에서 쓰이나',
+    excerpt: '서연 씨가 처음 건 러닝화 캠페인을 열어 본 지훈 씨는 「보여 줄 사람」 칸에 숫자 317 하나만 적힌 것을 보고 멈춥니다. 160만 명에게 보인다는데 회원 명단은 어디 있는지, 나머지 칸은 언제 읽히는지, 후보는 매일 밤 미리 뽑아 두는지 모르겠습니다. 캠페인에는 명단이 아니라 세그먼트 번호가 적히고, 같은 번호가 회원마다 프로필에 붙습니다. 광고주가 적는 칸은 켜 두기, 누구에게, 어디에와 얼마나, 얼마에, 무엇을 다섯 묶음이고 요청의 다른 단계에서 쓰입니다. 매일 밤 바뀌는 것은 사람 쪽 번호이고, 후보는 앱을 열 때마다 후보풀 12만 건에서 꺼내 800건에 점수를 매깁니다. 맞춤타겟과 Lookalike 은 같은 칸에 넣을 번호를 만드는 갈래로 마지막에 따로 봅니다. 그림 여섯 장과 예시 표로 봅니다.',
+    date: '2026-10-09',
+    categories: ['Targeting & Audience'],
+    tags: ['Targeting', 'Segmentation', 'Ad Ranking', '입문'],
+    contentUrl: 'posts/campaign-setup-flow.md',
+    series: 'targeting-track'
+  },
+  {
     id: 'candidate-pool-questions',
     world: 'both',
     worldNote: '풀 전부를 사람의 번호에 맞춰 보고 꺼내는 방법은 두 무대가 같습니다. 다른 것은 풀의 개수와 사람을 알아보는 길입니다. 담장 안은 풀이 하나이고 회원 ID 로 번호를 확정으로 읽습니다. 열린 RTB 는 DSP 마다 풀이 있고, 쿠키로 번호를 찾아 못 찾는 사람이 생깁니다.',
@@ -1325,8 +1338,8 @@ const series = {
   },
   'targeting-track': {
     title: '타겟팅 & 오디언스 트랙',
-    desc: '마케터 서연 씨의 첫 캠페인을 따라 타겟팅이 일어나는 자리, 세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한, 후보풀 질문 여덟과 그 그림까지 기초 여섯 편을 카드 그림과 예시 표로 읽고, 그 뒤에 심화 두 편으로 넘어갑니다',
-    posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap', 'candidate-pool-questions', 'candidate-pool-basics',
+    desc: '마케터 서연 씨의 첫 캠페인을 따라 타겟팅이 일어나는 자리, 세그먼트와 오디언스, 맞춤타겟, Lookalike, 리타겟팅과 빈도 상한, 후보풀 질문 여덟과 그 그림, 캠페인 칸이 쓰이는 단계까지 기초 일곱 편을 카드 그림과 예시 표로 읽고, 그 뒤에 심화 두 편으로 넘어갑니다',
+    posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap', 'candidate-pool-questions', 'candidate-pool-basics', 'campaign-setup-flow',
       'audience-segmentation', 'lookalike-modeling'],
   },
   'advanced-bidding-track': {

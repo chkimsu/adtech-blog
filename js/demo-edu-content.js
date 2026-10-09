@@ -2714,7 +2714,7 @@ window.DEMO_EDU = {
         analogy: '광고주가 적는 칸은 다섯 묶음이고 요청의 다른 단계에서 쓰인다. 캠페인에는 회원 명단이 아니라 세그먼트 번호가 적히고, 후보는 요청마다 꺼낸다. 맞춤타겟과 Lookalike 은 같은 칸에 넣을 번호를 만드는 갈래다',
         anchor: '.pm-host',
         embedKeep: ['.pm-page'],
-        embedHide: ['.pm-hero', '.pm-sec > h2', '.pm-one', '.pm-read', '.pm-real'],
+        embedHide: ['.pm-hero', '.pm-key', '.pm-sec > h2', '.pm-one', '.pm-read', '.pm-real'],
         explain: {
             // 그림을 누르면 그 그림이 말로 안 한 것 하나
             '.pm-sec': ({ el }) => {

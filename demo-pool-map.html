@@ -41,6 +41,19 @@
     .pm-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
     .pm-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
     .pm-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+
+    /* 먼저 볼 것: 이 페이지의 번호 */
+    .pm-key { max-width: 1240px; margin: 1.6rem auto 0; padding: 0 1rem; }
+    .pm-key h2 { font-size: 1.35rem; margin: 0 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .pm-key > p { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); margin: 0 0 0.8rem; max-width: 90ch; }
+    .pm-key-wrap { overflow-x: auto; }
+    .pm-key table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.92rem; line-height: 1.6; }
+    .pm-key th { text-align: left; font-size: 0.82rem; color: var(--text-secondary); padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--text-primary); }
+    .pm-key td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+    .pm-key td:first-child { white-space: nowrap; }
+    .pm-num { display: inline-block; font: 600 0.82rem var(--font-mono); padding: 0 0.45rem; border: 1px solid var(--rule); background: var(--paper); margin: 0 0.25rem 0.15rem 0; }
+    .pm-num.em { border-color: var(--oxide); background: var(--oxide-bg); color: var(--oxide); }
+    .pm-key .pm-fine { margin-top: 0.7rem; }
     .pm-host:empty { display: none; }
 
     /* 그림 부품 — 사이트 공용 클래스와 겹치지 않게 pm- 를 붙였다. 색은 전부 토큰이고 뜻은 범례와 같다.
@@ -117,6 +130,24 @@
         <span class="tg-chip"><i class="n"></i>점선 = 광고주가 적어 둔 조건</span>
         <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 요청 (마지막 그림)</span>
       </div>
+    </section>
+
+    <section class="pm-key">
+      <h2>먼저 볼 것: 이 페이지에 나오는 번호</h2>
+      <p>번호는 두 가지입니다. 사람 묶음에 붙인 세그먼트 번호와, 사람 한 명을 가리키는 회원입니다. 번호의 크기에는 뜻이 없고, 값은 모두 설명을 위해 정한 것입니다.</p>
+      <div class="pm-key-wrap">
+        <table>
+          <thead><tr><th>번호</th><th>무엇인가</th><th>들어 있는 사람</th><th>어디에 나오나</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pm-num em">317</span></td><td>세그먼트 번호 (관심사)</td><td>러닝에 관심 있는 회원 160만 명. 플랫폼이 글, 앱, 검색 기록으로 묶습니다</td><td>기본 흐름의 예시. 러닝화 캠페인이 고른 번호</td></tr>
+            <tr><td><span class="pm-num">402</span><span class="pm-num">905</span><span class="pm-num">77</span></td><td>세그먼트 번호 (관심사)</td><td>402 는 여행, 905 는 카페, 77 은 캠핑에 관심 있는 회원</td><td>회원 A 와 B 에게 붙어 있는 다른 번호</td></tr>
+            <tr><td><span class="pm-num">5051</span></td><td>세그먼트 번호 (맞춤타겟)</td><td>운동화 브랜드에서 산 회원 8만 명. 광고주가 올린 고객 명단으로 만듭니다</td><td>마지막 그림에서만</td></tr>
+            <tr><td><span class="pm-num">6001</span></td><td>세그먼트 번호 (Lookalike)</td><td>5051 과 닮은 회원 140만 명. 플랫폼이 닮은 순서로 고릅니다</td><td>마지막 그림에서만</td></tr>
+            <tr><td>회원 A, 회원 B</td><td>회원 한 명씩</td><td>A 는 32세 여성, 서울이고 317, 402, 905 가 붙어 있습니다. B 는 부산이고 77 하나가 붙어 있습니다</td><td>앱을 열어 요청을 보내는 사람. 회원 ID 는 세그먼트 번호와 따로입니다</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pm-fine">수는 이렇게 읽습니다. 12만 건은 지금 켜져 있는 캠페인 수이고, 1,400만 명은 전체 회원 수입니다. 4,200 과 800 은 회원 A 의 요청 한 건에서 남는 캠페인 수입니다.</p>
     </section>
 
     <div class="pm-host"></div>
@@ -316,7 +347,7 @@
 
           <rect x="40" y="141" width="44" height="18" class="pm-chip"/>
           <text x="62" y="154" class="pm-chip-t" text-anchor="middle">5051</text>
-          <text x="124" y="154" class="pm-t-body">운동화 브랜드의 고객</text>
+          <text x="124" y="154" class="pm-t-body">운동화 브랜드에서 산 회원</text>
           <text x="310" y="154" class="pm-t-body">광고주가 올린 고객 명단으로</text>
           <text x="600" y="154" class="pm-t-body" text-anchor="end">8만 명</text>
           <text x="640" y="154" class="pm-t-body">운동화 브랜드만</text>
@@ -918,6 +949,7 @@
               <li><b>맞춤타겟은 광고주가 올린 고객 명단에서 시작합니다.</b> 쇼핑몰 구매자 이메일 8만 8천 개를 해시로 바꿔 파일 하나로 올리면, 플랫폼이 회원과 맞춰 8만 명에게 5051 을 붙입니다. 광고주에게는 맞은 수만 보입니다.</li>
               <li><b>Lookalike 은 그 목록에서 시작합니다.</b> 회원 1,400만 명을 한 명씩 5051 과 비교해 가장 닮은 140만 명을 고르고, 그 사람들에게 새 번호 6001 을 붙입니다. 기존 세그먼트를 여러 개 고르는 일이 아닙니다.</li>
               <li><b>「켰다」는 목록을 골랐다는 뜻입니다.</b> 화면의 「우리 고객과 닮은 사람」이 6001 입니다. 캠페인의 「보여 줄 사람」 칸에 그 목록을 고르면 Lookalike 을 쓰는 캠페인이 됩니다.</li>
+              <li><b>씨앗이 꼭 올린 파일일 필요는 없습니다.</b> 픽셀로 모은 사이트 구매자 목록이나, 광고를 누르거나 전환한 사람 목록을 씨앗으로 받는 플랫폼도 많습니다. 이 페이지는 설명하기 쉬운 고객 명단을 씨앗으로 썼습니다.</li>
             </ul>
           </div>
           <div>

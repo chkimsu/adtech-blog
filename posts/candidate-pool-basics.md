@@ -175,7 +175,7 @@
 
 ## 더 깊이 보기
 
-- 같은 질문을 캠페인 셋과 회원 A, B 로 하나씩 푼 것이 앞 편 [후보풀 여섯 질문](post.html?id=candidate-pool-questions)입니다.
+- 같은 질문을 캠페인 셋과 회원 A, B 로 하나씩 푼 것이 앞 편 [후보풀 여덟 질문](post.html?id=candidate-pool-questions)입니다.
 - 그림 다섯 장을 한 페이지에서 보려면 [후보풀 그림 다섯 장](demo-candidate-pool.html)이 있습니다.
 - 색인 조회 12만 건이 800건으로 줄어 1건이 나가기까지는 [Ad Serving Flow](post.html?id=ad-serving-flow) 편의 2절과 3절입니다.
 - 조건은 캠페인에, 정보는 요청에 있다는 것은 앞 편 [타겟팅 기초](post.html?id=targeting-basics)의 2절입니다.

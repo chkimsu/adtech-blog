@@ -239,7 +239,7 @@ git push origin main
 | 2 | `audience-and-segments` | 이틀째. 담당자는 세그먼트 317 이라 하고 화면은 오디언스 160만 명이라 합니다 |
 | 3 | `lookalike-basics` | 4주째. 구매자 8만 명으로 맞춤타겟을 만들자 유사타겟 슬라이더가 생깁니다 |
 | 4 | `retargeting-frequency-cap` | 6주째. 친구는 다섯 번 봤다 하고 대표는 장바구니 사람에게 다시 보이자고 합니다 |
-| 5 | `candidate-pool-questions` | 지훈 씨가 「후보풀에서 꺼내 온다」는 말에 질문 여섯을 적습니다. 캠페인 셋(서연 씨 러닝화, 여행사, 카페)과 회원 A, B, 비로그인 C 로 하나씩 답합니다 |
+| 5 | `candidate-pool-questions` | 지훈 씨가 「후보풀에서 꺼내 온다」는 말에 질문 여덟을 적습니다. 캠페인 셋(서연 씨 러닝화, 여행사, 카페)과 회원 A, B, 비로그인 C 로 하나씩 답합니다 |
 | 6 | `candidate-pool-basics` | 8주째. 담당자가 「후보풀에서 잘 걸린다」고 하는데, 풀이 무엇이고 어디 있는지, 유사타겟은 어디 들어가는지 모릅니다 |
 
 **표준 데이터 한 벌.** 여섯 편이 같은 값을 씁니다. 새 글이 이 트랙에 붙으면 여기서 가져옵니다. 후보 줄어드는 순서는 `ad-serving-flow`, 타겟 방식별 도달과 전환율은 `kakao-ads-prediction-targeting`, 하루 3회는 `model-ab-testing` 과 같은 값입니다.

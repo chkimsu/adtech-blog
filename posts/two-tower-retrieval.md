@@ -335,6 +335,8 @@ for name in sorted(set_dot ^ set_cos):
 
 ### 4-2. 학습
 
+> 이 절의 학습을 배치 네 줄로 손으로 따라가는 글이 따로 있습니다. 점수표와 손실, 온도, 꼭 넣는 보정 둘, 평가와 배포를 그림 여덟 장으로 봅니다 → [Two-Tower 학습](post.html?id=two-tower-training)
+
 #### Positive Pair
 
 학습 데이터의 양성(positive) pair는 (유저, 클릭한 광고)입니다. 유저가 광고를 클릭했다면, 해당 유저 임베딩과 광고 임베딩의 내적이 높아야 합니다.
@@ -347,7 +349,11 @@ Two-Tower 학습에서 **음성(negative) sampling 전략이 모델 성능의 �
 |------|------|------|------|
 | **Random 음성** | 전체 광고 풀에서 랜덤 샘플링 | 구현 단순, 계산 효율적 | 대부분 too easy, 학습 신호 약함 |
 | **같은 배치 안 음성(In-batch Negative)** | 같은 배치 내 다른 유저의 양성을 음성으로 사용 | 추가 계산 없이 효율적, 적절한 난이도 | 인기 광고에 대한 sampling bias |
-| **헷갈리는 음성(Hard Negative)** | 노출되었으나 클릭하지 않은 광고 | 가장 informative한 학습 신호 | false 음성 위험, 학습 불안정 가능 |
+| **헷갈리는 음성(Hard Negative)** | 지금 모델이 높은 순위(예: 101~500위)로 올린 비정답 광고 | 쉬운 음성이 못 주는 세밀한 구분을 배운다 | 이것만 쓰면 무작위 음성을 못 이긴다. 노출 후 안 누른 광고만 쓰면 재현율이 크게 떨어진다 |
+
+헷갈리는 음성을 「노출됐는데 클릭하지 않은 광고」로 잡으면 후보 추리기에서는 오히려 나빠집니다. Facebook 검색 팀은 노출 후 안 누른 것만 음성으로 써 보았습니다(Huang 외, 2020). 사람 검색 모델의 재현율이 절대값 55% 떨어졌다고 보고했습니다. 같은 논문에서 헷갈리는 음성만으로는 무작위 음성을 이기지 못했습니다.
+
+가장 좋았던 것은 지금 모델이 101~500위로 올린 비정답을 뽑아 쉬운 음성에 섞는 방법이었습니다. 쉬운 음성을 늘려 갈수록 재현율이 올랐고, 쉬운 음성 100개에 헷갈리는 음성 1개꼴에서 더 오르지 않았습니다. 노출된 광고는 이미 앞 단계를 통과한 그럴듯한 광고라, 그것만 보면 전혀 상관없는 광고를 밀어내는 법을 배우지 못합니다. 후보 추리기는 수백만 개 전부에서 고르므로 그 구분부터 배워야 합니다.
 
 **같은 배치 안 음성**가 실무에서 가장 널리 쓰입니다. 배치 크기가 $B$일 때, 각 유저의 양성 1개에 대해 나머지 $B-1$개가 자동으로 음성이 됩니다. 추가 샘플링 비용 없이 풍부한 음성을 확보할 수 있습니다.
 
@@ -727,6 +733,7 @@ $$\text{Recall@K} = \frac{|\{\text{클릭 광고}\} \cap \{\text{Top-K 후보}\}
 - 뒤따르는 랭킹 모델의 구조(DeepFM·DCN·DIN) → [Deep CTR Models](post.html?id=deep-ctr-models)
 - 뒤따르는 랭킹 모델이 행동 시퀀스를 광고마다 다른 벡터로 줄이는 계산 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - 임베딩을 어디에 저장하고 어떻게 꺼내오나 → [Feature Store](post.html?id=feature-store-serving)
+- 이 글의 학습을 배치 네 줄로 따라가는 그림 글 → [Two-Tower 학습](post.html?id=two-tower-training)
 - in-batch negative가 만드는 편향의 전체 그림 → [Negative Sampling & Bias](post.html?id=negative-sampling-bias)
 - 같은 임베딩 유사도로 '유저'를 찾는 쪽 → [Lookalike 모델링](post.html?id=lookalike-modeling)
 - 요청이 들어와 응답이 나가기까지 → [광고 서빙 흐름](post.html?id=ad-serving-flow)
@@ -739,5 +746,6 @@ $$\text{Recall@K} = \frac{|\{\text{클릭 광고}\} \cap \{\text{Top-K 후보}\}
 
 - Huang, P.-S., He, X., Gao, J., Deng, L., Acero, A., & Heck, L. (2013). Learning Deep Structured Semantic Models for Web Search using Clickthrough Data. *CIKM*.
 - Yi, X., Yang, J., Hong, L., Cheng, D. Z., Heldt, L., Kumthekar, A., ... & Chi, E. (2019). Sampling-Bias-Corrected Neural Modeling for Large Corpus Item Recommendations. *RecSys*.
+- Huang, J.-T., Sharma, A., Sun, S., Xia, L., Zhang, D., Pronin, P., ... & Yang, L. (2020). Embedding-based Retrieval in Facebook Search. *KDD*.
 - Li, C., Liu, Z., Wu, M., Xu, Y., Zhao, H., Huang, P., ... & Lee, D. (2019). Multi-Interest Network with Dynamic Routing for Recommendation at Tmall. *CIKM*.
 - Guo, R., Sun, P., Lindgren, E., Geng, Q., Simcha, D., Chern, F., & Kumar, S. (2020). Accelerating Large-Scale Inference with Anisotropic Vector Quantization. *ICML*.

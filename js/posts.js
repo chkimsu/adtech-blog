@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'two-tower-training',
+    world: 'both',
+    worldNote: '배치 안에서 클릭한 광고를 고르게 하는 학습과 두 보정은 두 무대가 같습니다. 다른 것은 정답 짝을 얼마나 고르게 모으느냐와 회원 벡터를 언제 만드느냐입니다.',
+    worldPractical: '담장 안에서는 노출과 클릭이 한 회사 로그에 남고, 회원 ID 로 요청 때의 회원 정보를 붙일 수 있어 정답 짝을 30일 치로 넉넉히 모읍니다. 회원 정보가 하루 단위로 바뀌는 지면이면 회원 벡터도 밤에 미리 만들어 둘 수 있습니다. 열린 RTB 의 DSP 는 자기가 낙찰한 노출의 클릭만 보므로 정답 짝이 적고, 이긴 경매 쪽으로 쏠립니다. 쿠키가 바뀌어 회원 정보를 붙이기 어렵고, 회원 타워는 요청마다 돌립니다.',
+    title: 'Two-Tower 학습: 배치 안에서 클릭한 광고를 고르게 하는 손실과 보정',
+    excerpt: '후보 추리기 모델을 처음 맡은 지훈 씨가 클릭 로그 네 줄로 학습 한 바퀴를 따라갑니다. 정답은 클릭 한 건이고, 음성은 따로 모으지 않고 같은 배치에 든 다른 회원의 광고를 씁니다. 4×4 점수표의 줄마다 대각선을 고르게 하면 처음 1.390 이던 손실이 0.009 로 내려가고, 온도를 1로 두면 순서를 맞혀도 0.915 에서 멈춥니다. 4,096줄 배치에 러닝화가 81.9번, 요가 매트가 4.1번 들어와 인기 광고가 깎이는 것은 logQ 보정으로 되돌리고, 같은 광고가 두 번 든 칸은 지웁니다. 평가는 AUC 대신 다음 날 클릭이 상위 500 안에 드는 비율이고, 배포는 광고 벡터 256MB 를 미리 색인에 넣고 회원 타워를 요청마다 돌립니다. 노출 후 안 누른 광고만 음성으로 쓰면 재현율이 크게 떨어진다는 보고도 함께 봅니다.',
+    date: '2026-10-10',
+    categories: ['ML Infrastructure'],
+    tags: ['Two-Tower', 'ML Infra', 'Ad Ranking'],
+    contentUrl: 'posts/two-tower-training.md'
+  },
+  {
     id: 'campaign-setup-flow',
     world: 'both',
     worldNote: '광고주가 적는 칸이 요청 한 건의 단계에서 차례로 쓰이는 구조는 두 무대가 같습니다. 다른 것은 사람 쪽 번호를 읽는 길과 마지막으로 겨루는 자리입니다. 담장 안은 회원 ID 로 프로필의 번호를 확정으로 읽고, 광고 서버의 1등이 곧 화면에 나갑니다.',
@@ -1334,7 +1346,7 @@ const series = {
   'ml-infra-track': {
     title: 'ML 인프라 트랙',
     desc: '로그 수집 → 피처스토어 → 검색 → 서빙 → 온라인 학습, 데이터에서 모델까지',
-    posts: ['ad-log-pipeline', 'ad-log-system', 'feature-store-serving', 'two-tower-retrieval', 'model-serving-architecture', 'online-learning-delayed-feedback'],
+    posts: ['ad-log-pipeline', 'ad-log-system', 'feature-store-serving', 'two-tower-retrieval', 'two-tower-training', 'model-serving-architecture', 'online-learning-delayed-feedback'],
   },
   'targeting-track': {
     title: '타겟팅 & 오디언스 트랙',
@@ -1390,7 +1402,7 @@ const mlTrack = {
       goal: '이 단계를 마치면: 로그가 모델이 되기까지의 파이프라인과, 실서비스의 편향·지연 문제를 다룰 수 있습니다.',
       posts: ['ad-log-pipeline', 'feature-store-serving', 'model-serving-architecture',
         'serving-latency-throughput', 'negative-sampling-bias',
-        'online-learning-delayed-feedback', 'position-bias-ultr', 'multi-task-learning', 'two-tower-retrieval'],
+        'online-learning-delayed-feedback', 'position-bias-ultr', 'multi-task-learning', 'two-tower-retrieval', 'two-tower-training'],
     },
     {
       id: 'stage-3',

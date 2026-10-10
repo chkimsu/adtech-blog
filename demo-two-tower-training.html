@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two-Tower 학습 그림 여덟 장 — Ad Tech Blog</title>
+  <meta name="description" content="후보 추리기 모델이 배우는 순서를 클릭 로그 네 줄로 따라가는 그림 여덟 장. 두 타워의 모양, 요청 때 값으로 만드는 정답 짝, 배치 한 번의 4×4 점수표, 인기 광고 보정과 같은 광고 칸 지우기, 무작위 광고 섞기, 다음 날 클릭으로 재는 Recall@500, 광고 벡터를 미리 색인에 넣는 배포.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .tt-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .tt-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .tt-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .tt-page { max-width: 1240px; margin: 0 auto; padding: 0 1rem; }
+    .tt-sec { margin: 0 0 3rem; }
+    .tt-sec > h2 { font-size: 1.35rem; margin: 2.2rem 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .tt-sec > h2 .no { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; color: var(--text-muted); margin-right: 0.6rem; }
+    .tt-one { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.8rem; line-height: 1.6; }
+    .tt-fig { overflow-x: auto; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.8rem 0.9rem; }
+    .tt-fig svg { display: block; width: 100%; max-width: 980px; min-width: 620px; height: auto; margin: 0 auto; }
+    .tt-cap { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin: 0.8rem 0 0; max-width: 90ch; }
+    .tt-cap b { color: var(--text-primary); }
+    .tt-note { font-size: 0.86rem; line-height: 1.6; color: var(--text-secondary); margin: 0.7rem 0 0; }
+    html.is-embed .tt-sec { margin: 0 0 1rem; }
+    html.is-embed .tt-page { padding: 0 0.5rem; }
+    html.is-embed .tt-fig { padding: 0.6rem 0.5rem; }
+
+    .tt-real { max-width: 1240px; margin: 0 auto 3rem; padding: 0 1rem; }
+    .tt-real h2 { font-size: 1.35rem; margin: 2.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .tt-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
+    .tt-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+    .tt-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .tt-host:empty { display: none; }
+
+    /* 먼저 볼 것: 이 페이지의 예시 */
+    .tt-key { max-width: 1240px; margin: 1.6rem auto 0; padding: 0 1rem; }
+    .tt-key h2 { font-size: 1.35rem; margin: 0 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .tt-key > p { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); margin: 0 0 0.8rem; max-width: 90ch; }
+    .tt-duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+    .tt-duo > div { min-width: 0; overflow-x: auto; }
+    @media (max-width: 980px) { .tt-duo { grid-template-columns: minmax(0, 1fr); gap: 1.2rem; } }
+
+    /* 표 — 이 페이지의 표는 전부 tt-tbl 이다. 머리글만 굵은 선으로 누른다 */
+    .tt-tbl { width: 100%; border-collapse: collapse; font-size: 0.92rem; line-height: 1.6; }
+    .tt-tbl th { text-align: left; font-size: 0.82rem; color: var(--text-secondary); padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--text-primary); white-space: nowrap; background: transparent; }
+    .tt-tbl td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+    .tt-tbl tbody tr:last-child td { border-bottom: none; }
+    .tt-tbl td.num { font-family: var(--font-mono); white-space: nowrap; color: var(--ink2); }
+    .tt-tbl td.who { font-weight: 700; white-space: nowrap; }
+    .tt-tbl td.who.a { color: var(--navy); }
+    .tt-tbl td.who.b { color: var(--oxide); }
+    .tt-qb { display: inline-block; width: 110px; height: 10px; background: var(--plate); border: 1px solid var(--rule); vertical-align: middle; margin-right: 10px; position: relative; }
+    .tt-qb i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--oxide); }
+
+    /* 그림 부품 — 사이트 공용 클래스와 겹치지 않게 tt- 를 붙였다. 색은 전부 토큰이고 뜻은 범례와 같다.
+       파랑 회원 쪽, 벽돌색 광고 쪽, 먹색 점수와 손실, 회색 무작위로 더한 광고, 점선 목록 */
+    .tt-fig svg text { font-family: var(--font-sans); }
+    .tt-t { font-size: 13px; fill: var(--ink2); }
+    .tt-t.k { fill: var(--ink); font-weight: 750; }
+    .tt-t.sm { font-size: 11.5px; fill: var(--ink3); }
+    .tt-t.a { fill: var(--navy); font-weight: 750; }
+    .tt-t.b { fill: var(--oxide); font-weight: 750; }
+    .tt-t.c { fill: var(--grey); font-weight: 750; }
+    .tt-t.mono { font-family: var(--font-mono); }
+    .tt-t.on { fill: var(--paper); font-weight: 750; }
+    .tt-t.on2 { fill: var(--paper); font-size: 11.5px; font-weight: 600; }
+    .tt-t.big { font-size: 22px; font-family: var(--font-mono); font-weight: 700; fill: var(--ink); }
+    .tt-t.lane { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; fill: var(--ink3); }
+    .tt-t.halo { paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+    .tt-bx { stroke-width: 1.4; }
+    .tt-bx.a { fill: var(--navy-bg); stroke: var(--navy); }
+    .tt-bx.b { fill: var(--oxide-bg); stroke: var(--oxide); }
+    .tt-bx.k { fill: var(--ink); stroke: var(--ink); }
+    .tt-bx.list { fill: var(--paper); stroke: var(--grey2); stroke-dasharray: 5 4; }
+    .tt-f.a { fill: var(--navy); } .tt-f.b { fill: var(--oxide); } .tt-f.k { fill: var(--ink); } .tt-f.c { fill: var(--grey); }
+    .tt-ar { fill: none; stroke-width: 1.6; }
+    .tt-ar.a { stroke: var(--navy); } .tt-ar.b { stroke: var(--oxide); } .tt-ar.k { stroke: var(--ink2); } .tt-ar.c { stroke: var(--grey); }
+    .tt-mk.a { fill: var(--navy); } .tt-mk.b { fill: var(--oxide); } .tt-mk.k { fill: var(--ink2); } .tt-mk.c { fill: var(--grey); }
+    .tt-dot { stroke: var(--paper); stroke-width: 1.6; }
+    .tt-dot.a { fill: var(--navy); } .tt-dot.b { fill: var(--oxide); } .tt-dot.k { fill: var(--ink); }
+    .tt-track { fill: var(--plate); stroke: var(--rule); stroke-width: 1; }
+    .tt-tick { stroke-width: 2; }
+    .tt-tick.a { stroke: var(--navy); } .tt-tick.k { stroke: var(--ink); } .tt-tick.c { stroke: var(--grey); }
+    .tt-tick.dash { stroke-dasharray: 4 3; }
+    @media (prefers-reduced-motion: reduce) { .tt-dot { display: none; } }
+
+    /* 3번 — 점수표 */
+    .tt-ctl { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin: 0 0 14px; }
+    .tt-seg-w { display: flex; align-items: center; gap: 10px; }
+    .tt-seg-l { font-size: 0.8rem; font-weight: 800; letter-spacing: .05em; color: var(--ink3); }
+    .tt-seg { display: inline-flex; border: 1px solid var(--rule); }
+    .tt-seg button { font: inherit; font-size: 0.88rem; font-weight: 700; padding: 7px 14px; border: 0; border-left: 1px solid var(--rule); background: var(--paper); color: var(--ink2); cursor: pointer; }
+    .tt-seg button:first-child { border-left: 0; }
+    .tt-seg button:hover { color: var(--navy); }
+    .tt-seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .tt-seg button:focus-visible { outline: 2.5px solid var(--navy); outline-offset: 2px; }
+    .tt-mx { border-collapse: separate; border-spacing: 5px; min-width: 600px; width: 100%; margin: 0 -5px; }
+    .tt-mx th { border: 0; padding: 2px 6px 4px; font-size: 0.82rem; text-align: center; color: var(--ink3); vertical-align: bottom; background: transparent; }
+    .tt-mx th.ch { color: var(--oxide); }
+    .tt-mx th.rh { color: var(--navy); text-align: left; padding-left: 0; vertical-align: middle; white-space: nowrap; }
+    .tt-mx td { border: 0; }
+    .tt-mx td.cell { background: var(--plate); padding: 9px 10px 8px; text-align: center; vertical-align: middle; }
+    .tt-mx td.cell.ok { background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); }
+    .tt-mx .v { display: block; font-family: var(--font-mono); font-size: 16px; font-weight: 650; color: var(--ink); }
+    .tt-mx .pb { display: block; height: 5px; background: var(--rule); margin: 7px 0 5px; }
+    .tt-mx .pb i { display: block; height: 100%; background: var(--grey); }
+    .tt-mx .ok .pb i { background: var(--ink); }
+    .tt-mx .pv { display: block; font-family: var(--font-mono); font-size: 0.84rem; color: var(--ink2); }
+    .tt-mx td.res { font-family: var(--font-mono); font-size: 0.94rem; text-align: right; vertical-align: middle; padding: 0 6px; color: var(--ink); white-space: nowrap; }
+    .tt-mx tfoot td { border-top: 2px solid var(--ink); padding-top: 10px; }
+    .tt-mx td.avg-l { font-size: 0.9rem; font-weight: 700; color: var(--ink2); text-align: right; }
+    .tt-mx td.avg { font-weight: 800; }
+    .tt-work { background: var(--plate); padding: 14px 16px 12px; margin: 16px 0 0; overflow-x: auto; }
+    .tt-work-t { font-size: 0.9rem; font-weight: 750; margin: 0 0 6px; }
+    .tt-work-t span { font-family: var(--font-mono); font-weight: 600; color: var(--ink2); margin-left: 6px; }
+    .tt-wt { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 0.9rem; }
+    .tt-wt th { text-align: left; font-size: 0.8rem; color: var(--ink3); padding: 0 12px 8px; border-bottom: 2px solid var(--ink); background: transparent; white-space: nowrap; }
+    .tt-wt th:first-child, .tt-wt td:first-child { padding-left: 0; }
+    .tt-wt th[scope="row"] { border-bottom: 1px solid var(--rule); font-size: 0.82rem; color: var(--ink2); padding: 8px 12px 8px 0; vertical-align: middle; }
+    .tt-wt td { border-bottom: 1px solid var(--rule); padding: 8px 12px; font-family: var(--font-mono); color: var(--ink2); white-space: nowrap; }
+    .tt-wt tbody tr:last-child td, .tt-wt tbody tr:last-child th { border-bottom: none; }
+    .tt-wt td.ok { font-weight: 800; color: var(--ink); }
+    .tt-work-f { font-family: var(--font-mono); font-size: 0.94rem; margin: 10px 0 0; color: var(--ink); }
+
+    /* 5, 6번 — 작은 점수표 */
+    .tt-mm { border-collapse: separate; border-spacing: 4px; min-width: 520px; width: 100%; margin: 0 -4px; }
+    .tt-mm th { border: 0; padding: 2px 6px 4px; font-size: 0.82rem; text-align: center; color: var(--ink3); vertical-align: bottom; background: transparent; }
+    .tt-mm th.ch { color: var(--oxide); }
+    .tt-mm th.cg { color: var(--grey); }
+    .tt-mm th.rh { color: var(--navy); text-align: left; padding-left: 0; white-space: nowrap; vertical-align: middle; }
+    .tt-mm th small { display: block; font-size: 0.75rem; font-weight: 600; color: var(--ink3); }
+    .tt-mm td { border: 0; background: var(--plate); text-align: center; padding: 8px 6px; font-size: 0.9rem; color: var(--ink2); }
+    .tt-mm td.ok { background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font-weight: 750; }
+    .tt-mm td.x { background: transparent; box-shadow: inset 0 0 0 1.5px var(--grey2); color: var(--ink3); font-weight: 700; }
+    .tt-mm td.g { background: var(--grey-bg); color: var(--grey); }
+
+    /* 7번 — 평가 */
+    .tt-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+    .tt-fl-i { flex: 1 1 160px; min-width: 0; border: 1px solid var(--rule); border-top: 3px solid var(--ink); padding: 12px 14px; background: var(--paper); }
+    .tt-fl-n { display: block; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--ink3); }
+    .tt-fl-t { display: block; font-size: 0.94rem; font-weight: 750; line-height: 1.4; margin-top: 2px; }
+    .tt-fl-d { display: block; font-size: 0.86rem; color: var(--ink2); line-height: 1.5; margin-top: 4px; }
+    .tt-fl-ar { align-self: center; color: var(--ink3); font-size: 1.1rem; font-weight: 700; }
+    @media (max-width: 760px) { .tt-fl-ar { display: none; } }
+    .tt-bars { display: flex; flex-direction: column; gap: 12px; margin: 22px 0 4px; }
+    .tt-br { display: grid; grid-template-columns: 170px minmax(0, 1fr) 54px; gap: 14px; align-items: center; }
+    .tt-br-l { font-size: 0.94rem; font-weight: 700; }
+    .tt-br-t { height: 16px; background: var(--plate); border: 1px solid var(--rule); position: relative; }
+    .tt-br-t i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); }
+    .tt-br-t i.c { background: var(--grey); }
+    .tt-br-v { font-family: var(--font-mono); font-size: 1rem; font-weight: 700; text-align: right; }
+    @media (max-width: 640px) { .tt-br { grid-template-columns: minmax(0, 1fr) 54px; } .tt-br-t { grid-column: 1 / -1; order: 3; } }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tt-hero">
+      <h1>Two-Tower 학습 그림 여덟 장</h1>
+      <p>후보 추리기 모델이 배우는 순서를 클릭 로그 네 줄로 따라갑니다. 두 타워의 모양, 정답 짝, 배치 한 번의 점수표, 꼭 넣는 보정 둘과 무작위 섞기, 평가, 배포를 그림 한 장씩으로 봅니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 회원 쪽 (회원 정보, 회원 타워, 회원 벡터)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 광고 쪽 (광고 정보, 광고 타워, 광고 벡터)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 점수, 손실, 정답 칸</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 무작위로 더한 광고와 기준선</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 목록 (광고 벡터를 넣은 색인)</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 옮겨 가는 정보 (1, 8번 그림)</span>
+      </div>
+    </section>
+
+    <div class="tt-host"></div>
+
+    <section class="tt-key">
+      <h2>먼저 볼 것: 이 페이지에 나오는 예시</h2>
+      <p>배치 하나를 클릭 네 줄로 줄였습니다. 회원 넷이 광고 넷을 하나씩 눌렀다고 놓고 끝까지 따라갑니다. 회원 A~D 는 이 페이지의 예시이고 다른 글의 같은 이름과는 따로입니다. 수의 크기는 모두 설명을 위해 정한 값입니다.</p>
+      <div class="tt-duo">
+        <div>
+          <table class="tt-tbl">
+            <thead><tr><th>줄</th><th>회원</th><th>요청 때 회원 정보</th><th>클릭한 광고</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1</td><td class="who a">회원 A</td><td>30대, 최근 검색 러닝화 3번</td><td class="who b">러닝화</td></tr>
+              <tr><td class="num">2</td><td class="who a">회원 B</td><td>캠핑 카페 글 5건 읽음</td><td class="who b">캠핑 의자</td></tr>
+              <tr><td class="num">3</td><td class="who a">회원 C</td><td>원두 2번 구매</td><td class="who b">커피 머신</td></tr>
+              <tr><td class="num">4</td><td class="who a">회원 D</td><td>요가 영상 시청</td><td class="who b">요가 매트</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <table class="tt-tbl">
+            <thead><tr><th>수</th><th>무엇</th></tr></thead>
+            <tbody>
+              <tr><td class="num">4</td><td>그림 속 배치 줄 수. 실제 배치는 4,096줄처럼 수천 줄입니다</td></tr>
+              <tr><td class="num">64</td><td>벡터 하나에 든 숫자 수</td></tr>
+              <tr><td class="num">1,000,000</td><td>전체 광고 수</td></tr>
+              <tr><td class="num">500</td><td>two-tower 가 뽑아 다음 단계로 넘기는 후보 수</td></tr>
+              <tr><td class="num">τ = 0.1</td><td>온도. 점수를 이 값으로 나눈 뒤 소프트맥스에 넣습니다</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="tt-page">
+      <section class="tt-sec" data-fig="1">
+        <h2><span class="no">1</span>모델 모양: 타워 둘이 내적 하나로 만납니다</h2>
+        <p class="tt-one">회원 정보와 광고 정보를 각자 다른 신경망에 넣어 숫자 64개짜리 벡터로 바꿉니다. 점수는 두 벡터의 내적 하나입니다.</p>
+        <div class="tt-fig" id="tt-fig1"></div>
+        <p class="tt-cap">두 타워는 내적 전까지 서로의 정보를 보지 않습니다. 그래서 광고 벡터 100만 개를 미리 계산해 둘 수 있습니다. 「이 회원이 이 광고주 광고를 몇 번 눌렀나」처럼 <b>회원과 광고를 섞은 정보</b>는 넣을 자리가 없습니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="2">
+        <h2><span class="no">2</span>학습 데이터: 클릭 한 건이 정답 짝 한 줄입니다</h2>
+        <p class="tt-one">클릭 로그 한 줄에서 (요청 때 회원 정보, 클릭한 광고) 짝 하나를 만듭니다. 음성은 저장하지 않습니다.</p>
+        <div class="tt-fig" id="tt-fig2"></div>
+        <p class="tt-cap">회원 정보는 광고를 요청한 20:14:02 의 값을 씁니다. 20:14:10 에 갱신된 「최근 클릭 수」에는 이 클릭이 이미 들어 있어, 그 값을 쓰면 모델이 <b>정답을 보고</b> 배웁니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="3">
+        <h2><span class="no">3</span>배치 한 번: 줄마다 자기 광고 칸을 고릅니다</h2>
+        <p class="tt-one">배치 4줄이면 4×4 점수표가 나옵니다. 대각선 넷이 정답이고 나머지 열두 칸이 음성입니다.</p>
+        <div class="tt-fig" id="tt-fig3">
+          <div class="tt-ctl">
+            <div class="tt-seg-w"><span class="tt-seg-l">학습</span>
+              <div class="tt-seg" role="group" aria-label="학습 단계">
+                <button type="button" id="tt-b-start" data-tt-m="start" aria-pressed="false">처음</button><button type="button" id="tt-b-after" data-tt-m="after" aria-pressed="true">학습 뒤</button>
+              </div>
+            </div>
+            <div class="tt-seg-w"><span class="tt-seg-l">온도 τ</span>
+              <div class="tt-seg" role="group" aria-label="온도">
+                <button type="button" id="tt-b-t1" data-tt-t="1" aria-pressed="false">1</button><button type="button" id="tt-b-t01" data-tt-t="0.1" aria-pressed="true">0.1</button><button type="button" id="tt-b-t005" data-tt-t="0.05" aria-pressed="false">0.05</button>
+              </div>
+            </div>
+          </div>
+          <table class="tt-mx" aria-label="회원 넷과 광고 넷의 점수표">
+            <thead><tr><th></th><th class="ch">러닝화</th><th class="ch">캠핑 의자</th><th class="ch">커피 머신</th><th class="ch">요가 매트</th><th>정답 확률</th><th>손실</th></tr></thead>
+            <tbody id="tt-mx-body"></tbody>
+            <tfoot><tr><td colspan="6" class="avg-l">네 줄 평균 손실</td><td class="res avg" id="tt-mx-avg"></td></tr></tfoot>
+          </table>
+          <p class="tt-note">칸의 큰 숫자는 내적 점수, 막대와 작은 숫자는 그 줄의 소프트맥스 확률입니다. 굵은 테두리가 정답 칸입니다.</p>
+          <div class="tt-work">
+            <p class="tt-work-t">회원 A 줄을 손으로 계산하면<span id="tt-w-state"></span></p>
+            <table class="tt-wt">
+              <thead><tr><th></th><th>러닝화</th><th>캠핑 의자</th><th>커피 머신</th><th>요가 매트</th></tr></thead>
+              <tbody id="tt-w-body"></tbody>
+            </table>
+            <p class="tt-work-f" id="tt-w-loss"></p>
+          </div>
+        </div>
+        <p class="tt-cap">τ = 0.1 에서 처음 손실 1.390 은 네 칸을 똑같이 찍을 때(log 4 = 1.386)와 거의 같습니다. 학습 뒤에는 0.009 입니다. τ = 1 을 누르면 순서는 맞혀도 손실이 <b>0.915</b> 로 남습니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="4">
+        <h2><span class="no">4</span>인기 광고 보정 (logQ): 자주 오는 광고는 작게 셉니다</h2>
+        <p class="tt-one">4,096줄 배치에 러닝화는 평균 81.9번, 요가 매트는 4.1번 들어옵니다. 학습 때 각 열 점수에서 그 광고의 log q 를 뺍니다.</p>
+        <div class="tt-fig">
+          <table class="tt-tbl" style="min-width:560px">
+            <thead><tr><th>광고</th><th>클릭 점유율 q</th><th>4,096줄 배치에 평균</th><th>학습 때 빼는 log q</th></tr></thead>
+            <tbody>
+              <tr><td class="who b">러닝화</td><td class="num">2%</td><td class="num"><span class="tt-qb"><i style="width:100%"></i></span>81.9번</td><td class="num">−3.9</td></tr>
+              <tr><td class="who b">커피 머신</td><td class="num">0.8%</td><td class="num"><span class="tt-qb"><i style="width:40%"></i></span>32.8번</td><td class="num">−4.8</td></tr>
+              <tr><td class="who b">캠핑 의자</td><td class="num">0.5%</td><td class="num"><span class="tt-qb"><i style="width:25%"></i></span>20.5번</td><td class="num">−5.3</td></tr>
+              <tr><td class="who b">요가 매트</td><td class="num">0.1%</td><td class="num"><span class="tt-qb"><i style="width:5%"></i></span>4.1번</td><td class="num">−6.9</td></tr>
+            </tbody>
+          </table>
+          <p class="tt-note">−log q 를 빼면 러닝화 열은 3.9, 요가 매트 열은 6.9 를 더하는 셈입니다. 배치에 가끔 오는 광고일수록 한 번 왔을 때 크게 셉니다.</p>
+        </div>
+        <p class="tt-cap">보정 없이 끝까지 배우면 점수가 광고마다 −log q 만큼 밀려, 드문 요가 매트가 러닝화보다 <b>3.0</b> 더 올라갑니다. 인기 광고가 상대적으로 깎이는 것입니다. 서빙 때는 빼지 않습니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="5">
+        <h2><span class="no">5</span>같은 광고 칸 지우기</h2>
+        <p class="tt-one">회원 D 도 러닝화를 눌렀다고 해 봅니다. 회원 A 줄의 D 열은 정답인 광고를 음성으로 세는 칸이 되므로 소프트맥스에서 뺍니다.</p>
+        <div class="tt-fig">
+          <table class="tt-mm" aria-label="같은 광고가 두 번 든 배치의 점수표">
+            <thead><tr><th></th><th class="ch">러닝화<small>A 가 누름</small></th><th class="ch">캠핑 의자<small>B 가 누름</small></th><th class="ch">커피 머신<small>C 가 누름</small></th><th class="ch">러닝화<small>D 가 누름</small></th></tr></thead>
+            <tbody>
+              <tr><th class="rh">회원 A</th><td class="ok">정답</td><td>음성</td><td>음성</td><td class="x">지움</td></tr>
+              <tr><th class="rh">회원 B</th><td>음성</td><td class="ok">정답</td><td>음성</td><td>음성</td></tr>
+              <tr><th class="rh">회원 C</th><td>음성</td><td>음성</td><td class="ok">정답</td><td>음성</td></tr>
+              <tr><th class="rh">회원 D</th><td class="x">지움</td><td>음성</td><td>음성</td><td class="ok">정답</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tt-cap">점수를 −∞ 로 두면 확률이 0 이 되어 그 칸이 빠집니다. 인기 광고일수록 자주 일어납니다. 4,096줄 배치에 러닝화가 82번 들어오면 러닝화 줄마다 이런 칸이 <b>81개</b>씩 생깁니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="6">
+        <h2><span class="no">6</span>무작위 광고 섞기</h2>
+        <p class="tt-one">배치 안 음성은 최근에 클릭된 광고뿐입니다. 전체 100만 개에서 무작위로 뽑은 광고를 열로 더 붙여, 모든 줄이 같이 음성으로 씁니다.</p>
+        <div class="tt-fig">
+          <table class="tt-mm" aria-label="무작위 광고 두 열을 더한 점수표">
+            <thead><tr><th></th><th class="ch">러닝화</th><th class="ch">캠핑 의자</th><th class="ch">커피 머신</th><th class="ch">요가 매트</th><th class="cg">무작위 1</th><th class="cg">무작위 2</th></tr></thead>
+            <tbody>
+              <tr><th class="rh">회원 A</th><td class="ok">정답</td><td>음성</td><td>음성</td><td>음성</td><td class="g">음성</td><td class="g">음성</td></tr>
+              <tr><th class="rh">회원 B</th><td>음성</td><td class="ok">정답</td><td>음성</td><td>음성</td><td class="g">음성</td><td class="g">음성</td></tr>
+              <tr><th class="rh">회원 C</th><td>음성</td><td>음성</td><td class="ok">정답</td><td>음성</td><td class="g">음성</td><td class="g">음성</td></tr>
+              <tr><th class="rh">회원 D</th><td>음성</td><td>음성</td><td>음성</td><td class="ok">정답</td><td class="g">음성</td><td class="g">음성</td></tr>
+            </tbody>
+          </table>
+          <p class="tt-note">무작위 두 열은 전체 100만 개에서 뽑습니다. 막 등록되어 클릭이 없던 광고도 들어옵니다.</p>
+        </div>
+        <p class="tt-cap">클릭이 없던 새 광고는 배치 안 음성에 거의 안 나와서, 서빙 때 상관없는 회원에게 높은 점수를 받을 수 있습니다. 4,096줄 배치에 무작위 1,024개를 붙이면 점수표가 <b>4,096 × 5,120</b> 이 됩니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="7">
+        <h2><span class="no">7</span>평가: 다음 날 클릭이 상위 500 안에 드나</h2>
+        <p class="tt-one">학습에 안 쓴 다음 날 클릭으로, 클릭한 광고가 전체 100만 개 중 상위 500개 안에 드는 비율을 잽니다. 이 비율이 Recall@500 입니다.</p>
+        <div class="tt-fig">
+          <div class="tt-flow">
+            <div class="tt-fl-i"><span class="tt-fl-n">1</span><span class="tt-fl-t">다음 날 클릭 한 건</span><span class="tt-fl-d">회원 A → 러닝화</span></div>
+            <span class="tt-fl-ar" aria-hidden="true">→</span>
+            <div class="tt-fl-i"><span class="tt-fl-n">2</span><span class="tt-fl-t">회원 A 벡터로 찾기</span><span class="tt-fl-d">광고 100만 개 중 상위 500개</span></div>
+            <span class="tt-fl-ar" aria-hidden="true">→</span>
+            <div class="tt-fl-i"><span class="tt-fl-n">3</span><span class="tt-fl-t">러닝화가 들었나</span><span class="tt-fl-d">들었으면 1, 아니면 0</span></div>
+            <span class="tt-fl-ar" aria-hidden="true">→</span>
+            <div class="tt-fl-i"><span class="tt-fl-n">4</span><span class="tt-fl-t">10,000건 평균</span><span class="tt-fl-d">Recall@500</span></div>
+          </div>
+          <div class="tt-bars">
+            <div class="tt-br"><span class="tt-br-l">Two-tower</span><span class="tt-br-t"><i style="width:62%"></i></span><span class="tt-br-v">0.62</span></div>
+            <div class="tt-br"><span class="tt-br-l">클릭 많은 순 500개</span><span class="tt-br-t"><i class="c" style="width:31%"></i></span><span class="tt-br-v">0.31</span></div>
+          </div>
+          <p class="tt-note">0.62 와 0.31 은 설명용 예시 값입니다.</p>
+        </div>
+        <p class="tt-cap">기준선은 클릭 많은 순 500개를 모든 회원에게 똑같이 주는 것입니다. 랭킹 모델처럼 AUC 를 보면 무작위 광고는 너무 쉽게 구분되어 <b>모델 사이 차이</b>가 잘 안 보입니다.</p>
+      </section>
+
+      <section class="tt-sec" data-fig="8">
+        <h2><span class="no">8</span>배포: 광고 쪽은 미리, 회원 쪽은 요청 때</h2>
+        <p class="tt-one">학습이 끝나면 두 타워를 떼어 씁니다. 광고 타워로 광고 100만 개의 벡터를 밤에 만들어 색인에 넣고, 회원 타워는 요청마다 한 번 돌립니다.</p>
+        <div class="tt-fig" id="tt-fig8"></div>
+        <p class="tt-cap">광고 벡터 100만 개는 숫자 6,400만 개라 4바이트씩 256MB 입니다. 두 타워는 <b>같은 판</b>이어야 합니다. 12판 색인을 13판 회원 벡터로 찾으면 두 벡터가 서로 다른 학습에서 나와 점수에 뜻이 없습니다.</p>
+      </section>
+    </div>
+
+    <section class="tt-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>재현율이 갑자기 떨어지면 판 번호부터 봅니다.</b> 색인을 만든 광고 타워와 지금 도는 회원 타워가 같은 학습에서 나왔는지 확인합니다.</li>
+        <li><b>음성 칸이 이상하면 배치를 섞는 방법과 같은 광고 칸 지우기를 봅니다.</b> 같은 회원의 클릭이 한 배치에 몰리면 그 회원이 실제로 누른 광고가 음성 칸에 들어갑니다.</li>
+        <li><b>그림을 누르면</b> 위 해설 칸에 그 그림이 말로 안 한 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=two-tower-training">Two-Tower 학습</a>에 이 그림들이 절마다 한 장씩 들어 있습니다. 후보 추리기 전체와 근사 검색 색인은 <a href="post.html?id=two-tower-retrieval">Two-Tower Retrieval</a> 에 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/two-tower-training-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

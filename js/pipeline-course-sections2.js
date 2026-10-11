@@ -95,7 +95,7 @@
   function buildCatchupNote() {
     const c0 = M.CATCHUP[0], c1 = M.CATCHUP[1];
     $('plc-catchup-note').textContent =
-      '보존 창 안이라고 저절로 복구되지는 않습니다. 밀린 것을 읽는 동안에도 새 줄은 초당 ' +
+      '보존 윈도우 안이라고 저절로 복구되지는 않습니다. 밀린 것을 읽는 동안에도 새 줄은 초당 ' +
       CD.val.perSecImp.toLocaleString('en-US') + '건씩 들어옵니다. 모델 학습을 ' + c0.consumers +
       '명이 맡으면 ' + c0.backlogDays + '일치를 따라잡는 데 ' + c0.days + '일이 걸리고, ' +
       c1.consumers + '명까지 늘리면 ' + c1.days + '일로 줄어듭니다. 사람을 늘리는 데도 한계는 있습니다.';
@@ -218,7 +218,7 @@
   // 7절 — 내 학습 데이터는 여기서 나옵니다 (req_id 조인)
   // ==========================================
 
-  // 창 2택 상태 — 기본은 실제 답(3시간, CD.val.joinHours). 표본 조인 표와
+  // 윈도우 2택 상태 — 기본은 실제 답(3시간, CD.val.joinHours). 표본 조인 표와
   // 아래 트레이드오프 노트가 둘 다 이 상태를 본다.
   let joinWindowHours = CD.val.joinHours;
 
@@ -245,7 +245,7 @@
     table.appendChild(tbody);
   }
 
-  // 창 2택 버튼 — 3시간(실제 답, CD.val.joinHours)과 24시간(비교,
+  // 윈도우 2택 버튼 — 3시간(실제 답, CD.val.joinHours)과 24시간(비교,
   // CD.val.joinWindowAlt). 라벨의 숫자도 손으로 안 적고 CourseData 에서 가져온다.
   function buildWindowBtns() {
     const host = $('plc-window');
@@ -260,7 +260,7 @@
 
   // 24시간을 고르면 표본이 아니라 실제 하루 규모의 트레이드오프(11,400건 ·
   // 228만의 0.5% · 학습 데이터 확정 지연 21시간)를 보여 준다. 표본 조인
-  // 표는 두 창 다 그대로 1건일 수 있다(표본이 작아서) — 그래서 이 노트가
+  // 표는 두 윈도우 다 그대로 1건일 수 있다(표본이 작아서) — 그래서 이 노트가
   // 표본과 별도로, 실제 값만 갖고 설명한다.
   function drawWindowNote() {
     Array.prototype.forEach.call($('plc-window').querySelectorAll('.plc-window-btn'), function (b) {
@@ -269,11 +269,11 @@
     const note = $('plc-window-note');
     if (joinWindowHours === CD.val.joinWindowAlt) {
       note.textContent =
-        '창을 ' + CD.val.joinWindowAlt + '시간으로 늘리면 ' + CD.val.joinAltCatch.toLocaleString('en-US') +
+        '윈도우를 ' + CD.val.joinWindowAlt + '시간으로 늘리면 ' + CD.val.joinAltCatch.toLocaleString('en-US') +
         '건을 더 건지는데 ' + CD.val.ctrClicks + '의 ' + CD.val.joinAltPct + ' 이고, 그 ' + CD.val.joinAltPct +
         '를 사려고 학습 데이터 확정이 ' + CD.val.joinAltDelayHours + '시간 늦어집니다.';
     } else {
-      note.textContent = '지금 창은 ' + CD.val.joinHours + '시간입니다. 우리 답이 이 창입니다.';
+      note.textContent = '지금 윈도우는 ' + CD.val.joinHours + '시간입니다. 우리 답이 이 윈도우입니다.';
     }
   }
 

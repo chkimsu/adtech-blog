@@ -110,8 +110,8 @@
     {
       key: 'dash', label: '실시간 대시보드', poll: '1초마다', due: '2초',
       out: [
-        L('+', 'minute', '16:48', '1분 창으로 묶습니다'),
-        L('+', 'clicks', '1841', '그 창에서 센 건수'),
+        L('+', 'minute', '16:48', '1분 윈도우로 묶습니다'),
+        L('+', 'clicks', '1841', '그 윈도우에서 센 건수'),
         L('+', 'cost_sum', '335,798', '과금액을 더한 값'),
         L('-', '나머지 12개 필드', '', '세는 데 필요 없으니 안 들고 갑니다')
       ],
@@ -233,7 +233,7 @@
   // ---- 순수 계산 ----
 
   // 멈췄다 살아났을 때 무엇을 잃고 얼마나 걸려 따라잡나.
-  // 보존 창 밖은 이미 지워졌으니 읽을 수 있는 만큼만 센다 — 글 8절의 그 계산이다.
+  // 보존 윈도우 밖은 이미 지워졌으니 읽을 수 있는 만큼만 센다 — 글 8절의 그 계산이다.
   function recovery(stallH, keepD) {
     var keepH = keepD * 24;
     var readable = Math.min(stallH, keepH);
@@ -397,7 +397,7 @@
     verdict.classList.toggle('is-lost', r.lostH > 0);
     if (r.lostH > 0) {
       verdict.textContent = '앞 ' + r.lostH + '시간치 ' + num(r.lostRows) +
-        '건이 이미 지워졌습니다. 보존 창 밖이라 되감을 수가 없습니다';
+        '건이 이미 지워졌습니다. 보존 윈도우 밖이라 되감을 수가 없습니다';
     } else {
       verdict.textContent = '전부 되감을 수 있습니다. 밀린 ' + num(r.backlog) +
         '건을 ' + r.catchMin.toFixed(1) + '분에 따라잡습니다';

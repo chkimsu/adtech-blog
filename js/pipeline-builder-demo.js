@@ -16,14 +16,14 @@
   // 0) 상수 — 전부 글 본문의 값이다
   // ==========================================
   var TO_BUFFER = { agent: 1112, sdk: 426 };   // 탭 → 버퍼 도달 (ms). 직행은 파일 640 + 에이전트 46 을 뺀 값
-  var STREAM_MS = 800;                          // 스트림 집계 창 + 처리
+  var STREAM_MS = 800;                          // 스트림 집계 윈도우 + 처리
   var HOUR_BATCH = 4200000;                     // 1시간 배치
   var DIST_HOP = 200;                           // 유통 층을 거칠 때 붙는 topic 왕복
   var DASH_DUE = 2000;                          // 대시보드 마감 2초
   var TRAIN_DUE = 108000000;                    // 학습 마감 30시간 (가장 오래된 이벤트 기준)
   var DAY_BATCH = 88200000;                     // 하루 배치 24.5시간
   var CLICKS = 2280000;                         // 하루 클릭 (기저 CTR 1.0%)
-  var STREAM_CLICKS = 2202480;                  // 스트림 5분 창이 세는 건수 (96.6%)
+  var STREAM_CLICKS = 2202480;                  // 스트림 5분 윈도우가 세는 건수 (96.6%)
   var BATCH_CLICKS = 2273160;                   // 배치 D+1 이 세는 건수 (99.7%)
   var RULES = 4;                                // 연결 하나당 정해야 하는 것 — 포맷·스키마·권한·재시도
   var DETECT_MIN = 30;                          // 멈춘 것을 사람이 알아채고 붙는 데 걸리는 시간(분)
@@ -151,7 +151,7 @@
       train = {
         value: '5분 뒤', state: 'warn', chip: '라벨 96.6%',
         sub: '클릭 ' + nf(STREAM_CLICKS) + ' / ' + nf(CLICKS) + '건',
-        note: '배치가 없어 스트림 5분 창이 곧 확정이 된다. 늦게 온 클릭 ' + nf(CLICKS - STREAM_CLICKS) +
+        note: '배치가 없어 스트림 5분 윈도우가 곧 확정이 된다. 늦게 온 클릭 ' + nf(CLICKS - STREAM_CLICKS) +
           '건이 라벨에 안 붙는다. 정산의 0건 조건도 못 맞춘다.'
       };
     }
@@ -188,7 +188,7 @@
     if (!cfg.has.lake) {
       problems.push({
         t: '학습·정산 원천이 없다',
-        d: '되돌릴 수 없는 변환을 거친 값만 남는다. 조인 창을 3시간에서 6시간으로 바꾸는 재처리도, 30일 백필도 불가능하다.'
+        d: '되돌릴 수 없는 변환을 거친 값만 남는다. 조인 윈도우를 3시간에서 6시간으로 바꾸는 재처리도, 30일 백필도 불가능하다.'
       });
     }
     if (!cfg.has.rt) {
@@ -209,7 +209,7 @@
     if (hasStream && !hasBatch) {
       problems.push({
         t: '라벨이 ' + nf(CLICKS - STREAM_CLICKS) + '건 모자란다',
-        d: '스트림 5분 창은 클릭 ' + nf(CLICKS) + '건 중 ' + nf(STREAM_CLICKS) + '건(96.6%)만 센다. ' +
+        d: '스트림 5분 윈도우는 클릭 ' + nf(CLICKS) + '건 중 ' + nf(STREAM_CLICKS) + '건(96.6%)만 센다. ' +
           '다시 세어 덮어쓸 배치가 없으면 그 값이 확정이 된다.'
       });
     }
@@ -259,7 +259,7 @@
     var agent = cfg.collector === 'agent';
     var procLines;
     if (cfg.proc === 'stream') {
-      procLines = [{ t: '스트림 집계', c: 'k' }, { t: '800 ms', c: 'v' }, { t: '잡 4개 · 5분 창', c: 's' }];
+      procLines = [{ t: '스트림 집계', c: 'k' }, { t: '800 ms', c: 'v' }, { t: '잡 4개 · 5분 윈도우', c: 's' }];
     } else if (cfg.proc === 'batch') {
       procLines = [{ t: '1시간 배치', c: 'k' }, { t: '4,200,000 ms', c: 'v' }, { t: '잡 3개 · D+1', c: 's' }];
     } else {

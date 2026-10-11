@@ -266,7 +266,7 @@ flowchart TD
 "그냥 30일 남기면 되잖아"에 대한 답이 마지막 줄입니다. 디스크가 4.3배가 되고 브로커 한 대가 690.8GB 를 들어야 하는데 대당 500GB 입니다. 14일은 들어가긴 하는데, **그러면 그 이레를 더 사서 막을 사고가 무엇인지 답할 수 있어야 합니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 520 214" role="img" aria-label="시간축 위에 보존 창 7일을 놓은 그림. 첫 줄은 브로커에 남아 있는 구간, 둘째 줄은 학습이 3일 멈춘 구간, 셋째 줄은 10일 멈춘 구간이다. 셋째 줄의 앞 3일치만 보존 창 왼쪽으로 넘어가 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 520 214" role="img" aria-label="시간축 위에 보존 윈도우 7일을 놓은 그림. 첫 줄은 브로커에 남아 있는 구간, 둘째 줄은 학습이 3일 멈춘 구간, 셋째 줄은 10일 멈춘 구간이다. 셋째 줄의 앞 3일치만 보존 윈도우 왼쪽으로 넘어가 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="kf6-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--text-muted)"/></marker>
 </defs>
@@ -276,7 +276,7 @@ flowchart TD
 <rect x="177" y="32" width="311" height="26" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
 <text x="332" y="50" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">보존 7일 — 그대로 있습니다</text>
 <text x="8" y="84" style="font-size:13px; fill:var(--text-primary)">② 학습이 3일 멈췄습니다</text>
-<text x="345" y="106" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">전부 보존 창 안</text>
+<text x="345" y="106" text-anchor="end" style="font-size:12.5px; fill:var(--text-muted)">전부 보존 윈도우 안</text>
 <rect x="355" y="90" width="133" height="22" rx="9" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:2"/>
 <text x="421" y="106" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">3일치</text>
 <text x="8" y="138" style="font-size:13px; fill:var(--text-primary)">③ 학습이 10일 멈췄습니다</text>
@@ -291,7 +291,7 @@ flowchart TD
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">세 줄 다 오른쪽 끝이 지금이고 왼쪽으로 갈수록 오래된 줄입니다. 점선 상자는 브로커에 이미 없는 구간입니다.</figcaption>
 </figure>
 
-**보존 창 안이라고 저절로 복구되지는 않습니다.** 밀린 것을 읽는 동안에도 새 줄은 초당 2,639건씩 들어옵니다. 모델 학습이 4명으로 3일치를 따라잡으면 **14.1일**이 걸리고, 12명까지 늘려야 **1.1일**입니다. **되감는 속도의 상한도 partition 수입니다.**
+**보존 윈도우 안이라고 저절로 복구되지는 않습니다.** 밀린 것을 읽는 동안에도 새 줄은 초당 2,639건씩 들어옵니다. 모델 학습이 4명으로 3일치를 따라잡으면 **14.1일**이 걸리고, 12명까지 늘려야 **1.1일**입니다. **되감는 속도의 상한도 partition 수입니다.**
 
 오래 두는 것이 필요한 자리는 따로 있습니다. 리포트가 이 줄을 1년 들고 있어야 하는 것은 Kafka 가 아니라 뒤쪽 데이터 창고의 몫입니다. **Kafka 의 보존 기간은 장기 보관 기간이 아니라 읽는 쪽이 늦어도 되는 기한입니다.**
 
@@ -331,9 +331,9 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 
 ### 얼마나 기다렸다 이어 붙이나
 
-이 클릭은 노출 40분 뒤에 눌렸습니다. 그러면 노출을 40분 넘게 들고 있어야 짝이 맞습니다. **얼마나 들고 있을지가 창의 크기입니다.**
+이 클릭은 노출 40분 뒤에 눌렸습니다. 그러면 노출을 40분 넘게 들고 있어야 짝이 맞습니다. **얼마나 들고 있을지가 윈도우의 크기입니다.**
 
-| 창 | 놓치는 클릭 | 학습이 보는 클릭률 |
+| 윈도우 | 놓치는 클릭 | 학습이 보는 클릭률 |
 |---|---|---|
 | 5분 | 205,200건 | 0.910% |
 | 1시간 | 41,040건 | 0.982% |
@@ -343,11 +343,11 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 **우리 답은 3시간입니다.** 24시간으로 늘리면 11,400건을 더 건지는데 228만의 0.5% 이고, 그 0.5% 를 사려고 학습 데이터 확정이 21시간 늦어집니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 520 206" role="img" aria-label="노출 한 줄에서 화살표 둘이 아래 클릭 줄 두 개로 내려가는 그림. 왼쪽 클릭은 창 세로선 안쪽에 있고, 오른쪽 클릭은 세로선 바깥에 점선 상자로 놓여 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 520 206" role="img" aria-label="노출 한 줄에서 화살표 둘이 아래 클릭 줄 두 개로 내려가는 그림. 왼쪽 클릭은 윈도우 세로선 안쪽에 있고, 오른쪽 클릭은 세로선 바깥에 점선 상자로 놓여 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="kf7-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
-<text x="270" y="20" text-anchor="middle" style="font-size:13px; fill:var(--accent-primary)">창 3시간</text>
+<text x="270" y="20" text-anchor="middle" style="font-size:13px; fill:var(--accent-primary)">윈도우 3시간</text>
 <line x1="270" y1="26" x2="270" y2="166" style="stroke:var(--accent-primary); stroke-width:2; stroke-dasharray:6 4"/>
 <text x="8" y="44" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">ad.impression</text>
 <rect x="22" y="50" width="76" height="26" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
@@ -359,8 +359,8 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 <text x="107" y="126" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">클릭</text>
 <rect x="325" y="108" width="76" height="26" rx="9" style="fill:none; stroke:var(--state-bad); stroke-width:1.8; stroke-dasharray:6 4"/>
 <text x="363" y="126" text-anchor="middle" style="font-size:13px; fill:var(--state-bad)">클릭</text>
-<text x="107" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">창 안 · y = 1</text>
-<text x="363" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">창 밖 · y = 0</text>
+<text x="107" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">윈도우 안 · y = 1</text>
+<text x="363" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">윈도우 밖 · y = 0</text>
 <line x1="30" y1="178" x2="500" y2="178" style="stroke:var(--text-muted); stroke-width:1.2"/>
 <g style="stroke:var(--text-muted); stroke-width:1.2"><line x1="60" y1="174" x2="60" y2="182"/><line x1="270" y1="174" x2="270" y2="182"/><line x1="480" y1="174" x2="480" y2="182"/></g>
 <g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle"><text x="60" y="198">노출 시각</text><text x="270" y="198">3시간 뒤</text><text x="480" y="198">6시간 뒤</text></g>
@@ -368,11 +368,11 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">가로축은 노출 시각부터 잰 시간입니다. 화살표 둘은 같은 노출에 딸린 클릭이고 도착 시각만 다릅니다.</figcaption>
 </figure>
 
-**창을 넘겨 온 클릭도 버려지지는 않습니다.** 과금도 리포트도 그대로 세고, 다만 학습 데이터에서는 그 노출이 이미 `y=0` 으로 확정된 뒤입니다.
+**윈도우를 넘겨 온 클릭도 버려지지는 않습니다.** 과금도 리포트도 그대로 세고, 다만 학습 데이터에서는 그 노출이 이미 `y=0` 으로 확정된 뒤입니다.
 
-반대로 5분으로 줄이면 클릭률이 0.910% 로 보입니다. 9% 가 깎인 값이고, **모델은 그 깎인 값을 맞히도록 학습합니다.** 그래서 이 창은 파이프라인 설정이 아니라 **라벨 정의**입니다.
+반대로 5분으로 줄이면 클릭률이 0.910% 로 보입니다. 9% 가 깎인 값이고, **모델은 그 깎인 값을 맞히도록 학습합니다.** 그래서 이 윈도우는 파이프라인 설정이 아니라 **라벨 정의**입니다.
 
-그리고 재는 시각은 앞 글에서 정한 `event_time` 입니다. 도착 시각으로 재면 지하철에서 사흘 늦게 온 클릭이 창 밖으로 밀려나, **눌린 광고가 안 눌린 것으로 학습됩니다.**
+그리고 재는 시각은 앞 글에서 정한 `event_time` 입니다. 도착 시각으로 재면 지하철에서 사흘 늦게 온 클릭이 윈도우 밖으로 밀려나, **눌린 광고가 안 눌린 것으로 학습됩니다.**
 
 ## 7. 자주 밟는 것 넷
 
@@ -382,7 +382,7 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 
 **key 없이 보내면 순서가 안 지켜집니다.** 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 다른 자리로 갑니다. 그러면 6절의 이어 붙이기가 partition 12개를 다 뒤지는 일이 됩니다.
 
-**밀린 양을 봐야 합니다.** 브로커에 쌓인 마지막 번호와 그 group 이 적어 둔 번호의 차이가 밀린 양입니다. 이 값이 계속 늘면 그 group 은 유입을 못 따라가는 중이고, 5절 창 안에서 못 따라잡으면 그만큼은 영영 못 읽습니다. **평균 지연 그래프에는 안 보이고 이 차이에만 보입니다.**
+**밀린 양을 봐야 합니다.** 브로커에 쌓인 마지막 번호와 그 group 이 적어 둔 번호의 차이가 밀린 양입니다. 이 값이 계속 늘면 그 group 은 유입을 못 따라가는 중이고, 5절 윈도우 안에서 못 따라잡으면 그만큼은 영영 못 읽습니다. **평균 지연 그래프에는 안 보이고 이 차이에만 보입니다.**
 
 ## 한눈 정리
 
@@ -395,7 +395,7 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 | consumer group 이 뭔가 | 읽는 팀 하나. group 이 다르면 같은 줄을 각자 통째로 읽습니다 |
 | 어디까지 읽었다를 언제 적나 | 처리 전이면 유실, 후면 중복. 고르는 것은 사고의 종류입니다 |
 | 며칠 들고 있나 | 7일. 장기 보관이 아니라 읽는 쪽이 늦어도 되는 기한입니다 |
-| 노출과 클릭을 어떻게 붙이나 | `req_id` 로. 창 3시간이고 재는 시각은 `event_time` 입니다 |
+| 노출과 클릭을 어떻게 붙이나 | `req_id` 로. 윈도우 3시간이고 재는 시각은 `event_time` 입니다 |
 
 ## 더 깊이 보기
 
@@ -403,6 +403,6 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 - 이 다음은 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편입니다. Kafka 앞뒤에 무엇을 세울지를 읽는 쪽의 마감에서 거꾸로 짭니다.
 - 읽는 쪽이 여섯·일곱으로 늘 때는 [데이터 유통 층](post.html?id=data-distribution-layer) 편을 봅니다.
 - 6절이 만든 학습 한 줄의 X 쪽 — 학습 피처와 서빙 피처가 어긋나는 자리는 [Feature Store](post.html?id=feature-store-serving) 편에 있습니다.
-- 창의 확대판 — 클릭은 3시간이지만 전환은 며칠이 걸리는 이야기는 [지연 피드백과 온라인 학습](post.html?id=online-learning-delayed-feedback) 편입니다.
+- 윈도우의 확대판 — 클릭은 3시간이지만 전환은 며칠이 걸리는 이야기는 [지연 피드백과 온라인 학습](post.html?id=online-learning-delayed-feedback) 편입니다.
 - 입찰 한 건이 남기는 로그 열 종은 [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리했습니다.
 - [로그가 모델이 되기까지 데모](demo-log-to-model.html) — 이 글 뒤의 아홉 단계를 넘겨 보는 화면입니다.

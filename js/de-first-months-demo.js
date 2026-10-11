@@ -200,7 +200,7 @@
         s += frame(270, 24, 170, 190, 'Flink 잡', 'c', { ty: 15 });
         s += frame(282, 50, 146, 26, '워터마크: 10초 뒤에 선', 'k', { center: true, ty: 17 });
         s += frame(282, 90, 146, 26, '키: 재생 건 | 미디어 | 종류', 'k', { center: true, ty: 17 });
-        s += frame(282, 130, 146, 26, '시간 창에 모아 하나로', 'k', { center: true, ty: 17 });
+        s += frame(282, 130, 146, 26, '시간 윈도우에 모아 하나로', 'k', { center: true, ty: 17 });
         s += frame(282, 170, 146, 26, '늦은 것은 10분까지', 'k', { center: true, ty: 17 });
         s += srv(462, 30, { cls: 'a', scale: 0.7, label: '토픽' });
         s += srv(462, 150, { cls: 'a', scale: 0.7, label: 'HDFS' });

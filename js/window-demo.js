@@ -1,8 +1,8 @@
 // ===================================================================
-// 스트림 창 집계 놀이터 — js/window-demo.js
-// 「광고별 최근 1시간 클릭 수」를 워터마크와 창 종류를 바꿔 가며 세어 본다.
-// 클릭은 일어난 시각(이벤트 시각)과 도착한 시각이 다르다. 창은 끝나고 워터마크만큼 뒤에 닫히고,
-// 그 뒤에 도착한 클릭은 그 창에서 빠진다. 워터마크를 늘리면 덜 빠지지만 값이 그만큼 묵는다.
+// 스트림 윈도우 집계 놀이터 — js/window-demo.js
+// 「광고별 최근 1시간 클릭 수」를 워터마크와 윈도우 종류를 바꿔 가며 세어 본다.
+// 클릭은 일어난 시각(이벤트 시각)과 도착한 시각이 다르다. 윈도우는 끝나고 워터마크만큼 뒤에 닫히고,
+// 그 뒤에 도착한 클릭은 그 윈도우에서 빠진다. 워터마크를 늘리면 덜 빠지지만 값이 그만큼 묵는다.
 // 숫자는 전부 가상 값이다 — 광고 9931 의 14:00~15:00 클릭 1,204건, 하루 클릭 228만 건.
 // 난수는 시드 고정이라 같은 설정이면 같은 그림이 나온다. 「다시 뽑기」가 시드를 하나씩 올린다.
 // ===================================================================
@@ -71,7 +71,7 @@
   function compute() {
     const { wm, req, win, events } = state;
     const tReq = 900 + req;                       // 요청 시각 (분)
-    let e;                                        // 읽을 수 있는 가장 최근 창의 끝
+    let e;                                        // 읽을 수 있는 가장 최근 윈도우의 끝
     if (win === 'tumbling') e = tReq - wm >= 900 ? 900 : 840;
     else e = Math.floor(tReq - wm);
     const s = e - 60;
@@ -103,10 +103,10 @@
     }
     g += `<text class="wn-ax" x="${L}" y="${TOP - 18}">도착 지연 (초, 눈금은 10배씩)</text>`;
     g += `<text class="wn-ax" x="${R}" y="${BOT + 34}" text-anchor="end">클릭이 일어난 시각</text>`;
-    // 읽는 창
+    // 읽는 윈도우
     g += `<rect class="wn-win" x="${X(s)}" y="${TOP}" width="${X(e) - X(s)}" height="${BOT - TOP}"/>`;
-    g += `<text class="wn-lb" x="${(X(s) + X(e)) / 2}" y="${TOP + 14}" text-anchor="middle">읽는 창 ${hm(s)}~${hm(e)}</text>`;
-    // 창이 닫히는 경계 — 창 끝 + 워터마크보다 늦게 도착하면 빠진다. 창 앞쪽 클릭은 그만큼 더 늦어도 된다
+    g += `<text class="wn-lb" x="${(X(s) + X(e)) / 2}" y="${TOP + 14}" text-anchor="middle">읽는 윈도우 ${hm(s)}~${hm(e)}</text>`;
+    // 윈도우가 닫히는 경계 — 윈도우 끝 + 워터마크보다 늦게 도착하면 빠진다. 윈도우 앞쪽 클릭은 그만큼 더 늦어도 된다
     let path = '';
     for (let i = 0; i <= 40; i++) {
       const t = s + (e - s) * i / 40;
@@ -114,14 +114,14 @@
       path += (i ? 'L' : 'M') + X(t).toFixed(1) + ',' + Y(lim).toFixed(1);
     }
     g += `<path class="wn-cut" d="${path}"/>`;
-    // 라벨은 창 끝 선의 왼쪽을 먼저 쓴다 — 오른쪽에는 요청 세로선이 바로 붙어 글자가 스친다
-    const cutRight = X(e) - 6 - 190 >= L;
-    g += `<text class="wn-lb b" x="${cutRight ? X(e) - 6 : X(e) + 6}" y="${Y(wmSec) - 7}"${cutRight ? ' text-anchor="end"' : ''}>이 선 위는 창 닫힌 뒤 도착</text>`;
+    // 라벨은 윈도우 끝 선의 왼쪽을 먼저 쓴다 — 오른쪽에는 요청 세로선이 바로 붙어 글자가 스친다
+    const cutRight = X(e) - 6 - 214 >= L;
+    g += `<text class="wn-lb b" x="${cutRight ? X(e) - 6 : X(e) + 6}" y="${Y(wmSec) - 7}"${cutRight ? ' text-anchor="end"' : ''}>이 선 위는 윈도우 닫힌 뒤 도착</text>`;
     // 요청 시각
     g += `<line class="wn-req" x1="${X(tReq)}" y1="${TOP}" x2="${X(tReq)}" y2="${BOT}"/>`;
     const reqRight = X(tReq) + 5 + 80 > R;
     g += `<text class="wn-lb b" x="${reqRight ? X(tReq) - 5 : X(tReq) + 5}" y="${BOT - 6}"${reqRight ? ' text-anchor="end"' : ''}>요청 ${hm(tReq)}</text>`;
-    // 점 — 창 밖, 창 안, 빠진 것 순서로 그린다
+    // 점 — 윈도우 밖, 윈도우 안, 빠진 것 순서로 그린다
     const out = [], inn = [], late = [];
     state.events.forEach(x => {
       const c = `<circle cx="${X(x.t).toFixed(1)}" cy="${Y(x.d).toFixed(1)}" r="2.3"`;
@@ -130,7 +130,7 @@
       else late.push(c + ' class="wn-pt late"/>');
     });
     g += out.join('') + inn.join('') + late.join('');
-    $('wn-timeline').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="클릭이 일어난 시각을 가로로, 도착 지연을 세로로 놓은 산점도. 읽는 창이 색칠돼 있고 창이 닫힌 뒤 도착한 클릭이 벽돌색으로 표시된다">${g}</svg>`;
+    $('wn-timeline').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="클릭이 일어난 시각을 가로로, 도착 지연을 세로로 놓은 산점도. 읽는 윈도우가 색칠돼 있고 윈도우가 닫힌 뒤 도착한 클릭이 벽돌색으로 표시된다">${g}</svg>`;
   }
 
   // ---------- 그림 2: 워터마크마다 하루에 빠지는 클릭 ----------
@@ -153,7 +153,7 @@
       g += `<text class="wn-ax" x="${x + w / 2}" y="${BOT + 18}" text-anchor="middle">${fmtMin(wm)}분</text>`;
       g += `<text class="wn-ax" x="${x + w / 2}" y="${BOT + 34}" text-anchor="middle">${fmtMin(wm)}분 뒤 확정</text>`;
     });
-    $('wn-bars').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="워터마크 값마다 하루에 창에서 빠지는 클릭 수 막대. 워터마크가 길수록 막대가 낮아지고 값이 늦게 확정된다">${g}</svg>`;
+    $('wn-bars').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="워터마크 값마다 하루에 윈도우에서 빠지는 클릭 수 막대. 워터마크가 길수록 막대가 낮아지고 값이 늦게 확정된다">${g}</svg>`;
   }
 
   function render() {
@@ -171,17 +171,17 @@
     $('wn-window').textContent = `${hm(res.s)}~${hm(res.e)}`;
     $('wn-window-sub').textContent = `요청 ${hm(res.tReq)} 보다 ${fmtMin(res.stale)}분 전 값입니다`;
     $('wn-count').textContent = `${fmt(res.counted)} / ${fmt(res.truth)}`;
-    $('wn-count-sub').textContent = res.truth === res.counted ? '이 창에서는 놓친 클릭이 없습니다' : `늦게 와서 놓친 클릭 ${fmt(res.truth - res.counted)}건`;
+    $('wn-count-sub').textContent = res.truth === res.counted ? '이 윈도우에서는 놓친 클릭이 없습니다' : `늦게 와서 놓친 클릭 ${fmt(res.truth - res.counted)}건`;
     $('wn-daily').textContent = fmt(res.daily) + '건';
-    $('wn-daily-sub').textContent = `하루 228만 건의 ${(res.pl * 100).toFixed(2)}% 가 창이 닫힌 뒤에 도착합니다`;
+    $('wn-daily-sub').textContent = `하루 228만 건의 ${(res.pl * 100).toFixed(2)}% 가 윈도우가 닫힌 뒤에 도착합니다`;
     $('wn-count').className = 'wn-metric-value ' + (res.truth === res.counted ? 'good' : 'warn');
 
     let v;
-    if (state.wm === 0) v = `워터마크 0분이면 창이 끝나자마자 닫힙니다. 값은 가장 빠르지만 하루 ${fmt(res.daily)}건이 빠집니다.`;
-    else v = `워터마크 ${fmtMin(state.wm)}분이면 하루 ${fmt(res.daily)}건(${(res.pl * 100).toFixed(2)}%)이 창에서 빠지고, 값은 ${fmtMin(res.stale)}분 묵습니다.`;
+    if (state.wm === 0) v = `워터마크 0분이면 윈도우가 끝나자마자 닫힙니다. 값은 가장 빠르지만 하루 ${fmt(res.daily)}건이 빠집니다.`;
+    else v = `워터마크 ${fmtMin(state.wm)}분이면 하루 ${fmt(res.daily)}건(${(res.pl * 100).toFixed(2)}%)이 윈도우에서 빠지고, 값은 ${fmtMin(res.stale)}분 묵습니다.`;
     v += state.win === 'tumbling'
-      ? ' 텀블링 창은 요청 시각에 따라 최대 60분까지 더 묵습니다. 요청 시각 슬라이더를 15:59 로 밀어 보십시오.'
-      : ' 슬라이딩 창은 1분마다 나오므로 묵는 시간이 워터마크와 1분 안입니다.';
+      ? ' 텀블링 윈도우는 요청 시각에 따라 최대 60분까지 더 묵습니다. 요청 시각 슬라이더를 15:59 로 밀어 보십시오.'
+      : ' 슬라이딩 윈도우는 1분마다 나오므로 묵는 시간이 워터마크와 1분 안입니다.';
     $('wn-verdict').textContent = v;
 
     document.querySelectorAll('.wn-win-btn').forEach(b => b.classList.toggle('active', b.dataset.win === state.win));

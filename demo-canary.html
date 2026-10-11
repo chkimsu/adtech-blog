@@ -139,7 +139,7 @@
       </ol>
 
       <div class="cn-intro">
-        <strong>계산</strong> — 이 단계의 5분 창에 오는 요청은 <code>2,639 QPS × 비율 × 300초</code> 이고, 클릭은 그 1퍼센트입니다.
+        <strong>계산</strong> — 이 단계의 5분 윈도우에 오는 요청은 <code>2,639 QPS × 비율 × 300초</code> 이고, 클릭은 그 1퍼센트입니다.
         COPC 는 실제 클릭 ÷ 예측 클릭이라 클릭 수가 적으면 우연으로 흔들립니다. 흔들림 폭을 <code>2 ÷ √클릭</code> 로 잡고,
         그 폭이 게이트 폭 0.05 보다 크면 <strong>읽지 않습니다</strong>. 폭이 0.05 아래로 내려오려면 클릭 1,600건이 필요합니다.
         모든 숫자는 설명을 위한 가상 값입니다.
@@ -183,7 +183,7 @@
 
       <div class="cn-metrics">
         <div class="cn-metric">
-          <div class="cn-metric-label">이 단계 5분 창의 요청</div>
+          <div class="cn-metric-label">이 단계 5분 윈도우의 요청</div>
           <div class="cn-metric-value" id="cn-req">—</div>
           <div class="cn-metric-sub" id="cn-req-sub">2,639 QPS 중 이 단계 몫</div>
         </div>

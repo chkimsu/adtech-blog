@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="「광고별 최근 1시간 클릭 수」를 워터마크와 창 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서 창이 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.">
-  <title>창 집계 놀이터 — Ad Tech Blog</title>
+    content="「광고별 최근 1시간 클릭 수」를 워터마크와 윈도우 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서 윈도우가 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.">
+  <title>윈도우 집계 놀이터 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
@@ -108,9 +108,9 @@
   <main>
     <section class="wn-hero">
       <div class="wn-container">
-        <h1>창 집계 놀이터</h1>
-        <p>「광고별 최근 1시간 클릭 수」를 워터마크와 창 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서,
-          창이 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.</p>
+        <h1>윈도우 집계 놀이터</h1>
+        <p>「광고별 최근 1시간 클릭 수」를 워터마크와 윈도우 종류를 바꿔 가며 세어 봅니다. 클릭은 일어난 시각과 도착한 시각이 달라서,
+          윈도우가 닫힌 뒤에 오는 클릭이 생깁니다. 워터마크를 늘리면 덜 빠지고 값은 그만큼 늦게 나옵니다.</p>
       </div>
     </section>
 
@@ -122,7 +122,7 @@
       </div>
 
       <div class="demo-intro">
-        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 9931 의 클릭 1,204건이 14:00~15:00 에 일어났는데, 스트림 잡은 그중 몇 건을 셀 수 있는지 봅니다. 창은 끝나고 워터마크만큼 더 기다렸다가 닫히고, 그 뒤에 도착한 클릭은 그 창에서 빠집니다. 워터마크를 길게 두면 덜 빠지지만 값이 그만큼 늦게 나옵니다.</div>
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 9931 의 클릭 1,204건이 14:00~15:00 에 일어났는데, 스트림 잡은 그중 몇 건을 셀 수 있는지 봅니다. 윈도우는 끝나고 워터마크만큼 더 기다렸다가 닫히고, 그 뒤에 도착한 클릭은 그 윈도우에서 빠집니다. 워터마크를 길게 두면 덜 빠지지만 값이 그만큼 늦게 나옵니다.</div>
         <div><span class="demo-intro-label">왜 알아야 하나</span>실시간 피처 요청서에 적는 「워터마크 2분」 한 줄이 곧 <strong>하루에 몇 건이 빠지고 값이 몇 분 묵는가</strong>입니다. 그 둘을 맞바꾸는 자리를 직접 움직여 보면 요청서의 숫자를 근거를 갖고 정할 수 있습니다.</div>
       </div>
 
@@ -130,19 +130,19 @@
         <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
         <li><span class="step-text">기본값(워터마크 2분, 슬라이딩)에서 <strong>센 값과 진짜 값</strong>이 얼마나 다른지 봅니다.</span></li>
         <li><span class="step-text"><strong>워터마크 0분</strong> 프리셋 → 하루에 빠지는 클릭이 몇 건으로 뛰는지 봅니다.</span></li>
-        <li><span class="step-text"><strong>텀블링 15:59</strong> 프리셋 → 요청 15:59 에 읽는 창이 14:00~15:00 인 것을 확인합니다.</span></li>
+        <li><span class="step-text"><strong>텀블링 15:59</strong> 프리셋 → 요청 15:59 에 읽는 윈도우가 14:00~15:00 인 것을 확인합니다.</span></li>
       </ol>
 
       <div class="wn-intro">
-        <strong>규칙</strong> — 창은 <code>창 끝 + 워터마크</code> 에 닫힙니다. 클릭은 일어난 시각(이벤트 시각)이 창 안이어도, 도착한 시각이 그 뒤면 그 창에 들어가지 못합니다.
-        슬라이딩 60분 창은 1분마다 하나씩 나오고, 텀블링 1시간 창은 정각마다 하나씩 나옵니다. 요청 시각에 읽을 수 있는 것은 <strong>이미 닫힌 창 중 가장 최근 것</strong>입니다.
+        <strong>규칙</strong> — 윈도우는 <code>윈도우 끝 + 워터마크</code> 에 닫힙니다. 클릭은 일어난 시각(이벤트 시각)이 윈도우 안이어도, 도착한 시각이 그 뒤면 그 윈도우에 들어가지 못합니다.
+        슬라이딩 60분 윈도우는 1분마다 하나씩 나오고, 텀블링 1시간 윈도우는 정각마다 하나씩 나옵니다. 요청 시각에 읽을 수 있는 것은 <strong>이미 닫힌 윈도우 중 가장 최근 것</strong>입니다.
         숫자는 전부 가상 값입니다. 광고 9931 의 14:00~15:00 클릭 1,204건, 하루 클릭 228만 건, 도착 지연은 5초 안 95%, 2분 안 99.9% 입니다.
       </div>
 
       <!-- Controls -->
       <div class="wn-controls">
         <div class="wn-slider-row">
-          <div class="wn-slider-label">워터마크<small>창이 끝나고 더 기다리는 시간</small></div>
+          <div class="wn-slider-label">워터마크<small>윈도우가 끝나고 더 기다리는 시간</small></div>
           <input type="range" class="wn-slider" id="wn-wm" min="0" max="10" step="0.5" value="2">
           <div class="wn-slider-value" id="wn-wm-val">2분</div>
         </div>
@@ -157,7 +157,7 @@
           <div class="wn-slider-value" id="wn-req-val">15:07</div>
         </div>
         <div class="wn-row">
-          <span class="wn-row-label">창 종류</span>
+          <span class="wn-row-label">윈도우 종류</span>
           <button class="wn-win-btn active" data-win="sliding">슬라이딩 60분, 1분마다</button>
           <button class="wn-win-btn" data-win="tumbling">텀블링 1시간, 정각마다</button>
         </div>
@@ -175,14 +175,14 @@
       <!-- Metrics -->
       <div class="wn-metrics">
         <div class="wn-metric">
-          <div class="wn-metric-label">읽는 창</div>
+          <div class="wn-metric-label">읽는 윈도우</div>
           <div class="wn-metric-value" id="wn-window">—</div>
-          <div class="wn-metric-sub" id="wn-window-sub">요청 시각에 읽을 수 있는 가장 최근 창</div>
+          <div class="wn-metric-sub" id="wn-window-sub">요청 시각에 읽을 수 있는 가장 최근 윈도우</div>
         </div>
         <div class="wn-metric">
           <div class="wn-metric-label">센 값 / 진짜 값</div>
           <div class="wn-metric-value" id="wn-count">—</div>
-          <div class="wn-metric-sub" id="wn-count-sub">창이 닫히기 전에 도착한 클릭 / 그 시간에 일어난 클릭</div>
+          <div class="wn-metric-sub" id="wn-count-sub">윈도우가 닫히기 전에 도착한 클릭 / 그 시간에 일어난 클릭</div>
         </div>
         <div class="wn-metric">
           <div class="wn-metric-label">하루에 빠지는 클릭</div>
@@ -197,7 +197,7 @@
       <div class="wn-charts">
         <div class="wn-chart-card">
           <h3>시간선 위의 클릭</h3>
-          <p class="note">점 하나가 클릭 하나입니다. 가로는 일어난 시각, 세로는 도착까지 걸린 시간입니다. 색칠한 곳이 읽는 창이고, 벽돌색 점은 창이 닫힌 뒤에 도착해 빠진 클릭입니다.</p>
+          <p class="note">점 하나가 클릭 하나입니다. 가로는 일어난 시각, 세로는 도착까지 걸린 시간입니다. 색칠한 곳이 읽는 윈도우이고, 벽돌색 점은 윈도우가 닫힌 뒤에 도착해 빠진 클릭입니다.</p>
           <div class="wn-chart-wrap" id="wn-timeline"></div>
         </div>
         <div class="wn-chart-card">
@@ -212,9 +212,9 @@
         <div class="demo-tldr-inner">
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
-            <li><strong>창은 끝나자마자 닫히지 않습니다</strong> — 워터마크만큼 더 기다립니다. 그 뒤에 도착한 클릭은 그 창에서 빠집니다.</li>
+            <li><strong>윈도우는 끝나자마자 닫히지 않습니다</strong> — 워터마크만큼 더 기다립니다. 그 뒤에 도착한 클릭은 그 윈도우에서 빠집니다.</li>
             <li><strong>워터마크는 빠지는 수와 묵는 시간을 맞바꿉니다</strong> — 2분이면 하루 2,280건이 빠지고 값은 2분 묵습니다. 10분이면 912건이 빠지고 10분 묵습니다.</li>
-            <li><strong>텀블링 창은 「최근 1시간」이 아닙니다</strong> — 15:59 요청에도 14:00~15:00 값을 줍니다. 슬라이딩 창은 1분마다 나와 늘 1분 안의 값입니다.</li>
+            <li><strong>텀블링 윈도우는 「최근 1시간」이 아닙니다</strong> — 15:59 요청에도 14:00~15:00 값을 줍니다. 슬라이딩 윈도우는 1분마다 나와 늘 1분 안의 값입니다.</li>
           </ol>
         </div>
       </section>
@@ -222,12 +222,12 @@
       <section class="demo-practice">
         <h2>현업에서는 이렇게 씁니다</h2>
         <p>
-          실시간 피처 요청서에는 창 길이만 적혀 오는 일이 많습니다. 그러면 창을 어떻게 자르나, 언제 닫나, 닫힌 뒤 온 것은 어디로 보내나 셋을 되물어야 합니다.
+          실시간 피처 요청서에는 윈도우 길이만 적혀 오는 일이 많습니다. 그러면 윈도우를 어떻게 자르나, 언제 닫나, 닫힌 뒤 온 것은 어디로 보내나 셋을 되물어야 합니다.
           이 셋이 정해져야 같은 광고의 같은 시간 값이 하나가 됩니다.
         </p>
         <ul>
           <li><strong>워터마크는 도착 지연 분포에서 정합니다:</strong> 로그의 이벤트 시각과 도착 시각 차이를 하루치 세어 99.9% 가 들어오는 값을 고릅니다. 이 데모의 2분이 그 값입니다.</li>
-          <li><strong>빠진 클릭은 따로 셉니다:</strong> 창이 닫힌 뒤 도착한 클릭을 별도 topic 에 적어 두면, 하루에 몇 건이 빠졌는지와 워터마크를 더 늘려야 하는지를 숫자로 압니다.</li>
+          <li><strong>빠진 클릭은 따로 셉니다:</strong> 윈도우가 닫힌 뒤 도착한 클릭을 별도 topic 에 적어 두면, 하루에 몇 건이 빠졌는지와 워터마크를 더 늘려야 하는지를 숫자로 압니다.</li>
           <li><strong>서빙이 본 값을 로그로 남깁니다:</strong> 스트림 값과 배치 값은 늦게 온 클릭만큼 다릅니다. 학습 데이터에 배치 값을 다시 만들어 넣으면 서빙 때 모델이 본 값과 어긋납니다.</li>
         </ul>
       </section>

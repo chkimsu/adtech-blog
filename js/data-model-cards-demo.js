@@ -81,7 +81,7 @@
         s += T(258, 82, '나눠 보내는 층 (topic)', 'lbl sm', 'middle');
         s += box(206, 90, 104, 34, 'ad.*.clean', 'k', 10.5);
         s += T(400, 26, '목적지 여섯', 'lbl sm');
-        const dests = ['창고', '실시간 DB', '검색', '리포트 DB', '타 팀 Kafka', '피처 스토어'];
+        const dests = ['웨어하우스', '실시간 DB', '검색', '리포트 DB', '타 팀 Kafka', '피처 스토어'];
         dests.forEach((d, i) => { s += box(400, 36 + i * 26, 96, 20, d, 'a', 10); });
         jobs.forEach((j, i) => {
             const y = 46 + i * 30;

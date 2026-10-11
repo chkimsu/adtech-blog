@@ -75,7 +75,7 @@
 <text x="51" y="45">정제</text><text x="51" y="77">조인</text><text x="51" y="109">5분 집계</text><text x="51" y="141">시간 집계</text><text x="51" y="173">이상 탐지</text>
 </g>
 <g style="font-size:12.5px; fill:var(--text-primary); text-anchor:middle">
-<text x="439" y="40">창고</text><text x="439" y="68">실시간 DB</text><text x="439" y="96">검색</text><text x="439" y="124">리포트 DB</text><text x="439" y="152">타 팀 Kafka</text><text x="439" y="180">피처 스토어</text>
+<text x="439" y="40">웨어하우스</text><text x="439" y="68">실시간 DB</text><text x="439" y="96">검색</text><text x="439" y="124">리포트 DB</text><text x="439" y="152">타 팀 Kafka</text><text x="439" y="180">피처 스토어</text>
 </g>
 <line x1="6" y1="200" x2="494" y2="200" style="stroke:var(--border-color); stroke-width:1"/>
 <text x="6" y="224" style="font-size:12.5px; fill:var(--state-good)">층 있음 — 잡 5 + 목적지 6 = 연결 11개</text>

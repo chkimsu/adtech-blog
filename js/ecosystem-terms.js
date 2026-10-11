@@ -33,10 +33,10 @@
     { id: 'advertiser', cat: 'buy', name: 'Advertiser', full: '광고주', easy: '광고를 내는 주체. 예산과 목표(ROAS 등)를 정한다.', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
     { id: 'brand', cat: 'buy', name: 'Brand / Agency', full: '브랜드·대행사', easy: '광고주를 대신해 캠페인을 기획·운영하기도 하는 주체.' },
     { id: 'dco', cat: 'buy', name: 'DCO', full: 'Dynamic Creative Optimization', easy: '여러 이미지·문구를 자동으로 바꿔 끼우며 잘 되는 소재를 찾는 기술.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
-    { id: 'dmp', cat: 'buy', name: 'DMP / CDP', full: '오디언스 데이터 창고', easy: '동의받은 데이터를 모아 ‘묶음(세그먼트)’으로 만드는 창고.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
+    { id: 'dmp', cat: 'buy', name: 'DMP / CDP', full: '오디언스 데이터 플랫폼', easy: '동의받은 데이터를 모아 ‘묶음(세그먼트)’으로 만드는 플랫폼.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
 
     // ── 예측·모델 (ml) ──
-    { id: 'feature-store', cat: 'ml', name: 'Feature Store', full: '피처 스토어', easy: '광고 모델이 꺼내 쓰는 ‘재료 창고’. 최근 클릭률 같은 숫자(피처)를 모아 둔다.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
+    { id: 'feature-store', cat: 'ml', name: 'Feature Store', full: '피처 스토어', easy: '광고 모델이 꺼내 쓰는 피처(최근 클릭률 같은 숫자)를 모아 두는 저장소.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
     { id: 'candidate-retrieval', cat: 'ml', name: 'Candidate Retrieval', full: '후보 추출', easy: '타겟 조건, 남은 예산, 노출 횟수 제한으로 낼 수 있는 광고만 남기고, 수천 개를 수백 개로 줄이는 첫 단계.', link: { text: '지도: DSP 안의 순서', href: 'ecosystem.html?flow=dspinside' } },
     { id: 'model-serving', cat: 'ml', name: 'Model Serving', full: '모델 서빙', easy: '후보 추출이 넘긴 수백 개 광고에 점수를 매겨 몇 개로 좁히는 단계. 10ms 안에 끝나야 한다.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
     { id: 'pctr-cvr', cat: 'ml', name: 'pCTR / pCVR', full: '클릭·전환 확률 예측', easy: '이 사람이 누를 확률·살 확률을 찍어 주는 예측 모델.', example: '예: pCTR 2.3%', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },

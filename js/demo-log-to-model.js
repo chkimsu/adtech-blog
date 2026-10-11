@@ -12,7 +12,7 @@
     { id: 'user',    y: 24,  h: 58,  t: '사용자 행동',        s: '광고를 보고 · 누르고 · 산다' },
     { id: 'logs',    y: 112, h: 134, t: '로그가 쌓인다',       s: '', logs: true },
     { id: 'join',    y: 286, h: 70,  t: '조인 · 라벨링',       s: '노출⨝클릭 = pCTR 정답 · 클릭⨝전환 = pCVR 정답' },
-    { id: 'feature', y: 396, h: 58,  t: 'Feature Store (피처 창고)', s: '원시 로그를 숫자 피처로 — 312개' },
+    { id: 'feature', y: 396, h: 58,  t: 'Feature Store (피처 스토어)', s: '원시 로그를 숫자 피처로 — 312개' },
     { id: 'dataset', y: 494, h: 58,  t: '학습 데이터셋',       s: '피처 + 정답(라벨) — 8.5억 행' },
     { id: 'train',   y: 592, h: 58,  t: '모델 학습',           s: 'DeepFM 재학습 · AUC 0.781 → 0.792' },
     { id: 'calib',   y: 690, h: 58,  t: 'Calibration (보정)',  s: '예측 평균 2.1% → 실제 2.4%' },

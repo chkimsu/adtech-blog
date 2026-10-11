@@ -19,7 +19,7 @@
   // 도입부 — 캠페인 c-4417 의 2026-08-12 하루
   const IMP = { total: 12000000, web: 7800000, ios: 4200000 };
 
-  // 9절 전환 분해(웹 3,120) + 도입부 iOS 창1 포스트백 940
+  // 9절 전환 분해(웹 3,120) + 도입부 iOS 윈도우 1 포스트백 940
   const POOL = { own: 1950, pixel: 780, mmp: 270, offline: 120, ios: 940 };
   const CONV_TOTAL = POOL.own + POOL.pixel + POOL.mmp + POOL.offline + POOL.ios; // 4,060
 
@@ -175,7 +175,7 @@
     out += '<rect x="' + X0 + '" y="' + Y + '" width="' + BW + '" height="' + H +
       '" style="fill:none; stroke:var(--rule); stroke-width:1"/>';
     return '<svg viewBox="0 0 ' + W + ' 76" role="img" aria-label="전환 ' + num(CONV_TOTAL) +
-      '건이 개인 라벨·집계·억제·못 봄으로 갈리는 가로 막대" ' +
+      '건이 개인 라벨·집계·억제·못 봄으로 나뉘는 가로 막대" ' +
       'style="width:100%; height:auto; font-family:var(--font-sans)">' + out + '</svg>';
   }
 

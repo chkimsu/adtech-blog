@@ -601,7 +601,7 @@ DIN(Deep Interest Network)은 이 문제를 **어텐션 메커니즘**으로 해
 같은 유저의 같은 이력이 후보 광고에 따라 어떻게 다르게 쓰이는지 카드로 보면 이렇습니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=din" height="480" loading="lazy" title="후보 광고에 따라 이력의 무게가 달라진다"></iframe>
+<iframe class="demo-embed" src="demo-data-model-cards.html?embed=1&card=din" height="480" loading="lazy" title="후보 광고에 따라 이력의 가중치가 달라진다"></iframe>
 <a class="demo-embed-open" href="demo-data-model-cards.html" target="_blank" rel="noopener">↗ 카드 여덟 장 전체로 열기</a>
 </div>
 
@@ -615,7 +615,7 @@ $$v_U(A) = f(v_A, e_1, e_2, ..., e_H) = \sum_{j=1}^{H} a(e_j, v_A) \cdot e_j$$
 
 $$a(e_j, v_A) = \text{MLP}(e_j,\ v_A,\ e_j - v_A,\ e_j \odot v_A)$$
 
-**논문은 이 점수를 softmax로 나누지 않습니다.** 무게의 합이 1이어야 한다는 제약을 일부러 풀었습니다. 합이 1이 되게 누르면 관련 행동이 셋인 광고와 하나인 광고가 똑같이 1을 나눠 갖습니다. 나누지 않으면 관련 행동이 많을수록 $v_U$가 커지고, 관심이 얼마나 센지가 그대로 남습니다. 논문은 티셔츠 광고가 휴대폰 광고보다 옷 관련 이력을 더 많이 활성화한다는 예를 듭니다.
+**논문은 이 점수를 softmax로 나누지 않습니다.** 가중치의 합이 1이어야 한다는 제약을 일부러 풀었습니다. 합이 1이 되게 누르면 관련 행동이 셋인 광고와 하나인 광고가 똑같이 1을 나눠 갖습니다. 나누지 않으면 관련 행동이 많을수록 $v_U$가 커지고, 관심이 얼마나 센지가 그대로 남습니다. 논문은 티셔츠 광고가 휴대폰 광고보다 옷 관련 이력을 더 많이 활성화한다는 예를 듭니다.
 
 MLP에는 네 가지를 함께 넣습니다. 행동 $e_j$, 후보 $v_A$, 둘의 차이 $e_j - v_A$입니다. 그리고 element-wise 곱 $e_j \odot v_A$까지 넣습니다. 차이와 곱을 같이 주면 관련성 신호가 훨씬 풍부해집니다. 논문 그림은 두 임베딩과 외적(outer product)을 넣는다고 그렸습니다. 널리 쓰이는 공개 구현인 DeepCTR 은 위처럼 차이와 곱을 붙입니다. DeepCTR 은 softmax 정규화를 옵션으로 두지만 기본값은 끈 쪽입니다.
 
@@ -677,7 +677,7 @@ import random, math
 
 random.seed(42)
 D = 8      # embedding 차원
-T = 3.0    # 점수를 누그러뜨리는 온도. 낮추면 무게 차이가 더 벌어진다.
+T = 3.0    # 점수를 누그러뜨리는 온도. 낮추면 가중치 차이가 더 벌어진다.
 
 def emb(axis):
     """가상 embedding. axis 자리에 +2.0을 얹어 '카테고리 방향'을 만든다.
@@ -696,16 +696,16 @@ behaviors = {                                     # 이 유저가 최근에 본 
 }
 
 def attention(behavior_vecs, candidate):
-    """DIN의 attention. 실제로는 학습된 MLP가 행동마다 무게를 내지만, 여기서는
+    """DIN의 attention. 실제로는 학습된 MLP가 행동마다 가중치를 내지만, 여기서는
        '방향이 맞고 거리가 가까우면 관련 있다'는 손 계산으로 대신한다.
-       논문처럼 무게를 합이 1이 되게 나누지 않는다. 비중은 읽기 쉽게 따로 계산한다."""
+       논문처럼 가중치를 합이 1이 되게 나누지 않는다. 비중은 읽기 쉽게 따로 계산한다."""
     raw = []
     for v in behavior_vecs:
         dot  = sum(a*b for a, b in zip(v, candidate))            # 방향이 얼마나 맞나
         dist = sum((a-b)**2 for a, b in zip(v, candidate))       # 얼마나 떨어져 있나
-        raw.append(math.exp((dot - 0.5*dist) / T))               # 양수 무게, 나누지 않은 값
+        raw.append(math.exp((dot - 0.5*dist) / T))               # 양수 가중치, 나누지 않은 값
     total = sum(raw)
-    return [x/total for x in raw], total              # (읽기용 비중, 나누지 않은 무게의 합)
+    return [x/total for x in raw], total              # (읽기용 비중, 나누지 않은 가중치의 합)
 
 SPORTS = ["운동화", "러닝화", "운동복"]
 for ad_name, axis in [("러닝화 광고", "운동"), ("노트북 광고", "전자기기")]:
@@ -715,7 +715,7 @@ for ad_name, axis in [("러닝화 광고", "운동"), ("노트북 광고", "전�
         print(f"   {name}: {w:.3f} {'█' * round(w*40)}")
     share = sum(w for n, w in zip(behaviors, ws) if n in SPORTS)
     print(f"   운동 관련 3개가 가져간 비중: {share*100:.1f}%")
-    print(f"   나누지 않은 무게의 합: {total:.2f}")
+    print(f"   나누지 않은 가중치의 합: {total:.2f}")
 
 print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관련 비중은 60.0% 고정")
 
@@ -727,7 +727,7 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 #    여행팩: 0.061 ██
 #    운동복: 0.167 ███████
 #    운동 관련 3개가 가져간 비중: 91.3%
-#    나누지 않은 무게의 합: 8.41
+#    나누지 않은 가중치의 합: 8.41
 # [노트북 광고] 채점 — 같은 유저, 같은 행동 5개
 #    운동화: 0.029 █
 #    노트북: 0.846 ██████████████████████████████████
@@ -735,7 +735,7 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 #    여행팩: 0.063 ███
 #    운동복: 0.040 ██
 #    운동 관련 3개가 가져간 비중: 9.1%
-#    나누지 않은 무게의 합: 3.89
+#    나누지 않은 가중치의 합: 3.89
 # mean pooling이라면 5개 모두 0.200 — 운동 관련 비중은 60.0% 고정
 ```
 
@@ -743,7 +743,7 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 
 mean pooling은 어느 광고를 채점하든 60.0%로 고정입니다. 광고가 바뀌어도 유저 표현이 그대로라는 뜻입니다. 이 차이가 DIN의 전부입니다.
 
-비중은 읽기 쉽게 나눈 값이고, 모델 안에서는 나누지 않은 무게가 그대로 곱해집니다. 그 합이 러닝화 광고에서 **8.41**, 노트북 광고에서 **3.89**입니다. 이 유저의 이력에는 운동 관련 행동이 셋이고 전자기기는 하나라서, 러닝화 광고가 이력을 두 배 넘게 활성화합니다. softmax로 나눴다면 두 광고 모두 합이 1이라 이 차이가 사라집니다. 행동 하나가 벡터가 되는 단계부터 수만 개 이력까지 숫자로 따라가려면 [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention) 글을 보세요.
+비중은 읽기 쉽게 나눈 값이고, 모델 안에서는 나누지 않은 가중치가 그대로 곱해집니다. 그 합이 러닝화 광고에서 **8.41**, 노트북 광고에서 **3.89**입니다. 이 유저의 이력에는 운동 관련 행동이 셋이고 전자기기는 하나라서, 러닝화 광고가 이력을 두 배 넘게 활성화합니다. softmax로 나눴다면 두 광고 모두 합이 1이라 이 차이가 사라집니다. 행동 하나가 벡터가 되는 단계부터 수만 개 이력까지 숫자로 따라가려면 [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention) 글을 보세요.
 
 #### DIN vs 기존 방식 비교
 
@@ -1012,7 +1012,7 @@ $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L
 
 **임베딩 Compression**: 전체 모델 크기의 90% 이상을 차지하는 임베딩 테이블을 압축합니다. Hash 임베딩, Mixed-Dimension 임베딩, Pruning 등의 기법이 있습니다.
 
-> 경량화 기법의 상세는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다뤘습니다. 피처 공급 파이프라인은 [피처 저장소(Feature Store)](post.html?id=feature-store-serving)에 있습니다.
+> 경량화 기법의 상세는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다뤘습니다. 피처 공급 파이프라인은 [피처 스토어(Feature Store)](post.html?id=feature-store-serving)에 있습니다.
 
 ---
 
@@ -1031,7 +1031,7 @@ $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L
 - **비광고 로그가 학습 데이터가 됩니다.** 커머스 검색·상품 조회 기록은 광고 노출과 무관하게 쌓입니다. 광고 로그만으로는 절대 못 얻는 양입니다.
 - **시퀀스 길이가 길어 DIEN의 순서 정보가 살아납니다.** 관심사가 옮겨 가는 궤적을 실제로 볼 수 있습니다.
 
-대신 비용을 냅니다. 유저당 100개 행동을 매 요청마다 꺼내 오면 피처 저장소의 부하가 커집니다. 그래서 실무에서는 시퀀스를 잘라 씁니다. 최근 N개만 쓰거나, 미리 계산한 관심사 벡터를 캐시에 올려 둡니다. 이 절충의 상세는 [피처 저장소](post.html?id=feature-store-serving)에서 다룹니다.
+대신 비용을 냅니다. 유저당 100개 행동을 매 요청마다 꺼내 오면 피처 스토어의 부하가 커집니다. 그래서 실무에서는 시퀀스를 잘라 씁니다. 최근 N개만 쓰거나, 미리 계산한 관심사 벡터를 캐시에 올려 둡니다. 이 절충의 상세는 [피처 스토어](post.html?id=feature-store-serving)에서 다룹니다.
 
 ---
 
@@ -1100,7 +1100,7 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 - pCTR의 정의와 eCPM으로 이어지는 길 → [pCTR 예측](post.html?id=pctr-prediction)
 - 예측 확률의 절대값을 실제에 맞추기 → [Calibration](post.html?id=calibration)
 - 이 구조가 들어가는 Tower를 여러 개 두는 법 → [Multi-Task Learning](post.html?id=multi-task-learning)
-- DCN 앞에 DIN 칸을 더하면 학습과 서빙이 어떻게 달라지나 → [DCN 앞에 DIN 칸 하나](post.html?id=dcn-vs-din-slot)
+- DCN 앞에 DIN 모듈을 더하면 학습과 서빙이 어떻게 달라지나 → [DCN 앞에 DIN 모듈 하나](post.html?id=dcn-vs-din-slot)
 - 행동 시퀀스가 attention으로 벡터 하나가 되는 계산, 수만 개 이력까지 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - 수백만 후보에서 수백 개를 건지는 앞 단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 단계별 모델 배치와 경량화 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)

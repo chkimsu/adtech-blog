@@ -2768,6 +2768,32 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // DCN 과 DIN 칸 그림 네 장
+    // ==========================================
+    'dcn-vs-din-slot': {
+        analogy: 'pCTR 모델 한 개 안에는 자리가 셋 있다. DIN 은 행동 기록을 줄이는 자리, DCN 은 피처를 섞는 자리라서 DIN 칸을 더하는 일은 DCN 앞에 칸 하나를 끼우는 일이다',
+        anchor: '.dvd-host',
+        embedKeep: ['.dvd-page'],
+        embedHide: ['.dvd-hero', '.dvd-key', '.dvd-sec > h2', '.dvd-one', '.dvd-cap', '.dvd-real'],
+        explain: {
+            '.dvd-sec': ({ el }) => {
+                switch (el.dataset.fig) {
+                    case '1': return '헷갈리는 것은 <strong>무엇끼리 비교하나</strong>입니다. 같은 자리에 들어가는 모델끼리만 비교합니다. DIN 과 DCN 은 자리가 달라 한 모델에 둘 다 넣습니다.';
+                    case '2': return '헷갈리는 것은 <strong>DCN 만 쓸 때 행동 정보가 없나</strong>입니다. 있습니다. 사람이 미리 센 숫자로 들어가서 광고에 따라 바뀌지 않을 뿐입니다.';
+                    case '3': return '헷갈리는 것은 <strong>DIN 칸을 따로 학습해 넣나</strong>입니다. 아닙니다. 관심 벡터가 광고마다 달라 미리 뽑아 둘 수 없고, 같은 모델 안에서 함께 배웁니다.';
+                    case '4': return '헷갈리는 것은 <strong>계보 화살표</strong>입니다. 같은 자리 안에서만 이어집니다. DeepFM 다음이 DCN 인 것도, ESMM 다음이 MMoE 인 것도 아닙니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷', body: '파랑은 ① 행동 기록 정리, 회색은 ② 피처 섞기, 벽돌색은 ③ 답 내기, 먹색은 관심 벡터와 pCTR 입니다.' },
+            { el: '#dvd-fig1', title: '세 자리', body: '①과 ③을 바꿔 보면 ②는 그대로입니다.', waitFor: 'click' },
+            { el: '#dvd-fig2', title: 'DCN 만과 DIN 칸', body: '다른 칸은 파란 칸 하나뿐입니다.' }
+        ]
+    },
+
+    // ==========================================
     // DIN 모델 구조 그림 다섯 장
     // ==========================================
     'din-architecture': {

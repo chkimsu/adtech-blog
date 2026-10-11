@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCN 과 DIN 칸 그림 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="pCTR 모델 한 개 안의 세 자리, DCN 만 쓰는 구조와 앞에 DIN 칸을 더한 구조, 행동 기록 칸을 붙이는 두 방법, 자리별 모델 연표를 그림 네 장으로 봅니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .dvd-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .dvd-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .dvd-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .dvd-page { max-width: 1240px; margin: 0 auto; padding: 0 1rem; }
+    .dvd-sec { margin: 0 0 3rem; }
+    .dvd-sec > h2 { font-size: 1.35rem; margin: 2.2rem 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .dvd-sec > h2 .no { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; color: var(--text-muted); margin-right: 0.6rem; }
+    .dvd-one { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.8rem; line-height: 1.6; }
+    .dvd-fig { overflow-x: auto; border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.8rem 0.9rem; }
+    .dvd-fig svg { display: block; width: 100%; max-width: 1000px; min-width: 640px; height: auto; margin: 0 auto; }
+    .dvd-cap { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin: 0.8rem 0 0; max-width: 90ch; }
+    .dvd-cap b { color: var(--text-primary); }
+    .dvd-note { font-size: 0.86rem; line-height: 1.6; color: var(--text-secondary); margin: 0.7rem 0 0; }
+    html.is-embed .dvd-sec { margin: 0 0 1rem; }
+    html.is-embed .dvd-page { padding: 0 0.5rem; }
+    html.is-embed .dvd-fig { padding: 0.6rem 0.5rem; }
+
+    .dvd-real { max-width: 1240px; margin: 0 auto 3rem; padding: 0 1rem; }
+    .dvd-real h2 { font-size: 1.35rem; margin: 2.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .dvd-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
+    .dvd-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+    .dvd-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .dvd-host:empty { display: none; }
+
+    .dvd-key { max-width: 1240px; margin: 1.6rem auto 0; padding: 0 1rem; }
+    .dvd-key h2 { font-size: 1.35rem; margin: 0 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .dvd-key > p { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); margin: 0 0 0.8rem; max-width: 90ch; }
+    .dvd-key > div { overflow-x: auto; }
+    .dvd-tbl { width: 100%; border-collapse: collapse; font-size: 0.92rem; line-height: 1.6; }
+    .dvd-tbl th { text-align: left; font-size: 0.82rem; color: var(--text-secondary); padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--text-primary); white-space: nowrap; background: transparent; }
+    .dvd-tbl td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+    .dvd-tbl tbody tr:last-child td { border-bottom: none; }
+    .dvd-tbl td.who { font-weight: 700; white-space: nowrap; }
+
+    .dvd-ctl { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin: 0 0 14px; }
+    .dvd-seg-l { font-size: 0.8rem; font-weight: 800; letter-spacing: .05em; color: var(--ink3); margin-right: 10px; }
+    .dvd-seg { display: inline-flex; border: 1px solid var(--rule); }
+    .dvd-seg button { font: inherit; font-size: 0.88rem; font-weight: 700; padding: 7px 14px; border: 0; border-left: 1px solid var(--rule); background: var(--paper); color: var(--ink2); cursor: pointer; }
+    .dvd-seg button:first-child { border-left: 0; }
+    .dvd-seg button:hover { color: var(--navy); }
+    .dvd-seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .dvd-seg button:focus-visible { outline: 2.5px solid var(--navy); outline-offset: 2px; }
+
+    /* 그림 부품 — 파랑 ① 행동 기록 정리, 회색 ② 피처 섞기, 벽돌색 ③ 답 내기, 먹색 결과, 테두리만 있는 상자는 그 밖의 칸 */
+    .dvd-fig svg text { font-family: var(--font-sans); }
+    .dvd-t { font-size: 13px; fill: var(--ink2); }
+    .dvd-t.k { fill: var(--ink); font-weight: 750; }
+    .dvd-t.sm { font-size: 11.5px; fill: var(--ink3); }
+    .dvd-t.mono { font-family: var(--font-mono); }
+    .dvd-t.on { fill: var(--paper); font-weight: 750; }
+    .dvd-t.lane { font-size: 12px; font-weight: 800; letter-spacing: .06em; }
+    .dvd-t.la { fill: var(--navy); } .dvd-t.lb { fill: var(--oxide); } .dvd-t.lc { fill: var(--grey); }
+    .dvd-t.halo { paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+    .dvd-bx { stroke-width: 1.4; }
+    .dvd-bx.a { fill: var(--navy-bg); stroke: var(--navy); }
+    .dvd-bx.a2 { fill: var(--navy-bg); stroke: var(--navy); stroke-width: 3; }
+    .dvd-bx.b { fill: var(--oxide-bg); stroke: var(--oxide); }
+    .dvd-bx.c { fill: var(--grey-bg); stroke: var(--grey); }
+    .dvd-bx.k { fill: var(--ink); stroke: var(--ink); }
+    .dvd-bx.o { fill: var(--paper); stroke: var(--ink3); }
+    .dvd-bx.none { fill: var(--paper); stroke: var(--grey2); stroke-dasharray: 5 4; }
+    .dvd-bx.list { fill: var(--paper); stroke: var(--grey2); stroke-dasharray: 5 4; }
+    .dvd-band { fill: none; stroke-width: 1.4; stroke-dasharray: 7 5; }
+    .dvd-band.a { stroke: var(--navy); } .dvd-band.b { stroke: var(--oxide); } .dvd-band.c { stroke: var(--grey); }
+    .dvd-ar { fill: none; stroke-width: 1.6; }
+    .dvd-ar.a { stroke: var(--navy); } .dvd-ar.b { stroke: var(--oxide); } .dvd-ar.k { stroke: var(--ink2); } .dvd-ar.c { stroke: var(--grey); }
+    .dvd-mk.a { fill: var(--navy); } .dvd-mk.b { fill: var(--oxide); } .dvd-mk.k { fill: var(--ink2); } .dvd-mk.c { fill: var(--grey); }
+    .dvd-dot { stroke: var(--paper); stroke-width: 1.6; }
+    .dvd-dot.a { fill: var(--navy); } .dvd-dot.b { fill: var(--oxide); } .dvd-dot.k { fill: var(--ink); }
+    .dvd-yr { stroke: var(--rule); stroke-width: 1; }
+    .dvd-pm { stroke: var(--paper); stroke-width: 2; }
+    .dvd-pm.a { fill: var(--navy); } .dvd-pm.b { fill: var(--oxide); } .dvd-pm.c { fill: var(--grey); }
+    @media (prefers-reduced-motion: reduce) { .dvd-dot { display: none; } }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="dvd-hero">
+      <h1>DCN 과 DIN 칸 그림 네 장</h1>
+      <p>DIN, DCN, MMoE 는 서로 겨루는 모델이 아니라 pCTR 모델 한 개 안의 세 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 칸을 더하면 무엇이 달라지는지 봅니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = ① 행동 기록 정리</span>
+        <span class="tg-chip"><i class="c"></i>회색 = ② 피처 섞기</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = ③ 답 내기</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 관심 벡터, pCTR</span>
+      </div>
+    </section>
+
+    <div class="dvd-host"></div>
+
+    <section class="dvd-key">
+      <h2>먼저 볼 것: 이 페이지에 나오는 예시</h2>
+      <p>민지 씨에게 러닝화 광고를 보여 줄지 정하는 요청 한 건으로 따라갑니다. 행동과 숫자는 DIN 모델 구조 글과 같은 설명용 값입니다.</p>
+      <div>
+        <table class="dvd-tbl">
+          <thead><tr><th>무엇</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td class="who">행동 기록</td><td>오늘 행동 넷: 러닝화 A 클릭, 러닝화 B 클릭, 커피 원두 구매, 러닝 양말 클릭</td></tr>
+            <tr><td class="who">그 밖의 피처</td><td>30대, 아이폰, 주말 저녁</td></tr>
+            <tr><td class="who">후보 광고</td><td>러닝화 광고. 실제로는 후보 800개 각각에 같은 계산을 합니다</td></tr>
+            <tr><td class="who">800, 50</td><td>후보 수와 잘라 쓰는 행동 수. 둘 다 설명용 값입니다</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="dvd-page">
+      <section class="dvd-sec" data-fig="1">
+        <h2><span class="no">1</span>요청 한 건이 지나가는 세 자리</h2>
+        <p class="dvd-one">① 행동 기록을 벡터 하나로 줄이고, ② 다른 피처와 섞고, ③ 확률을 냅니다. ①과 ③을 바꿔도 ②는 그대로입니다.</p>
+        <div class="dvd-ctl">
+          <span><span class="dvd-seg-l">① 자리</span><span class="dvd-seg" role="group" aria-label="1번 자리"><button type="button" id="dvd-s1-mean" data-dvd-s1="mean" aria-pressed="false">평균</button><button type="button" id="dvd-s1-din" data-dvd-s1="din" aria-pressed="true">DIN</button></span></span>
+          <span><span class="dvd-seg-l">③ 자리</span><span class="dvd-seg" role="group" aria-label="3번 자리"><button type="button" id="dvd-s3-one" data-dvd-s3="one" aria-pressed="true">출력 하나</button><button type="button" id="dvd-s3-mtl" data-dvd-s3="mtl" aria-pressed="false">멀티태스크</button></span></span>
+        </div>
+        <div class="dvd-fig" id="dvd-fig1"></div>
+        <p class="dvd-note" id="dvd-fig1-cap"></p>
+        <p class="dvd-cap">세 자리는 신경망 하나의 층입니다. <b>클릭 정답 하나로 세 자리를 한꺼번에</b> 학습합니다. ②가 내는 것은 확률이 아니라 섞인 숫자 묶음이고, 확률은 ③이 냅니다.</p>
+      </section>
+
+      <section class="dvd-sec" data-fig="2">
+        <h2><span class="no">2</span>DCN 만 쓸 때와 DIN 칸을 더할 때</h2>
+        <p class="dvd-one">다른 칸은 하나뿐입니다. DCN 과 출력 칸은 그대로 두고, 앞에 행동 기록을 광고에 맞춰 줄이는 칸을 더합니다.</p>
+        <div class="dvd-fig" id="dvd-fig2"></div>
+        <p class="dvd-cap">DCN 만 쓸 때도 행동 정보는 들어갑니다. 다만 <b>사람이 미리 센 숫자</b>로 들어가서 광고에 따라 바뀌지 않습니다. DIN 칸은 행동을 하나씩 받아 광고마다 무게를 다시 매깁니다.</p>
+      </section>
+
+      <section class="dvd-sec" data-fig="3">
+        <h2><span class="no">3</span>①을 붙이는 두 방법</h2>
+        <p class="dvd-one">①은 모델 안의 층으로 둘 수도 있고, 따로 미리 계산해 피처로 넣을 수도 있습니다. 벡터가 광고에 따라 바뀌느냐가 고르는 기준입니다.</p>
+        <div class="dvd-fig" id="dvd-fig3"></div>
+        <p class="dvd-cap">DIN 의 관심 벡터는 광고마다 값이 달라서 <b>미리 뽑아 둘 수 없습니다</b>. 광고와 상관없는 사용자 임베딩은 미리 계산해 저장소에 두고 요청 때 읽기만 합니다.</p>
+      </section>
+
+      <section class="dvd-sec" data-fig="4">
+        <h2><span class="no">4</span>자리별 모델 연표</h2>
+        <p class="dvd-one">자리마다 따로 발전했습니다. 같은 줄의 화살표만 「앞의 것을 고쳐 나온 것」입니다.</p>
+        <div class="dvd-fig" id="dvd-fig4"></div>
+        <p class="dvd-cap">DeepFM 과 DCN 은 같은 해에 따로 나왔습니다. ESMM 과 MMoE 도 같은 해에 나왔지만 <b>푸는 문제가 다릅니다</b>. 연도는 학회에 발표된 해입니다.</p>
+      </section>
+    </div>
+
+    <section class="dvd-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>DCN 만 쓰던 모델에 DIN 칸을 더할 때 고치는 곳은 앞 칸 하나입니다.</b> DCN, 출력, 손실은 그대로 둡니다.</li>
+        <li><b>비교 실험은 그 칸만 바꿔 봅니다.</b> 그래야 차이가 그 칸에서 왔다고 말할 수 있습니다.</li>
+        <li><b>그림을 누르면</b> 위 해설 칸에 그 그림이 말로 안 한 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=dcn-vs-din-slot">DCN 앞에 DIN 칸 하나</a>에 이 그림들이 절마다 한 장씩 들어 있습니다. DIN 의 일곱 층은 <a href="post.html?id=din-architecture">DIN 모델 구조</a>에 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/dcn-vs-din-slot-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

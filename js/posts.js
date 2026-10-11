@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'dcn-vs-din-slot',
+    world: 'both',
+    worldNote: '세 자리 구조와 DIN 칸을 더할 때 바뀌는 곳은 두 무대가 같습니다. 다른 것은 행동 목록을 얼마나 길게 만들 수 있느냐입니다.',
+    worldPractical: '담장 안에서는 검색, 클릭, 구매가 한 계정에 쌓여 행동 목록을 길게 만들 수 있고, 무게 계산을 후보 수 × 행동 수만큼 돌리는 비용이 운영 과제가 됩니다. 열린 RTB 의 DSP 는 입찰 요청에 붙는 이력이 몇 개뿐이라 목록이 짧고, 미리 센 숫자와 DIN 칸의 차이가 작아집니다.',
+    title: 'DCN 앞에 DIN 칸 하나: 랭킹 모델의 세 자리와 무엇이 달라지나',
+    excerpt: 'DCN-V2 로만 pCTR 모델을 학습해 본 지훈 씨가 모델 계보 세 줄이 서로 대신하는 것인지, 같이 쓰는 것인지 헷갈립니다. pCTR 모델 한 개 안에는 ① 행동 기록 정리, ② 피처 섞기, ③ 답 내기의 세 자리가 있고 계보 세 줄은 이 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 칸을 더하면 DCN 과 출력, 손실은 그대로이고, 미리 센 숫자 {행동 4, 러닝 3, 커피 1} 대신 광고마다 다른 관심 벡터가 들어갑니다. 학습은 클릭 정답 하나로 함께 하고, 대가는 행동 목록 데이터 준비와 요청 한 건에 무게 계산 40,000번입니다. 자리별 연표도 함께 봅니다.',
+    date: '2026-10-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Ad Ranking'],
+    contentUrl: 'posts/dcn-vs-din-slot.md'
+  },
+  {
     id: 'din-architecture',
     world: 'both',
     worldNote: '모델의 일곱 층과 광고마다 무게를 매기는 두 층은 두 무대가 같습니다. 다른 것은 행동 기록의 길이입니다.',
@@ -1353,7 +1365,7 @@ const series = {
   'modeling-track': {
     title: '예측 모델링 트랙',
     desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
-    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'din-architecture', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
+    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'din-architecture', 'dcn-vs-din-slot', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
   },
   'ml-infra-track': {
     title: 'ML 인프라 트랙',

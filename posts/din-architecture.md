@@ -205,6 +205,7 @@ softmax 로 나누면 두 합이 모두 1 이 되어 이 차이가 사라집니�
 
 - 행동을 벡터로 만드는 법, self-attention, 긴 이력에서 먼저 고르기 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - DIN 의 자리와 피처 조합 모델의 계보 → [Deep CTR 모델](post.html?id=deep-ctr-models)
+- DCN 만 쓰던 모델에 이 칸을 더하면 무엇이 달라지나 → [DCN 앞에 DIN 칸 하나](post.html?id=dcn-vs-din-slot)
 - 이 모델에 넘어오는 후보 800개를 만드는 앞 단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 그림 다섯 장을 한 페이지에서 → [DIN 모델 구조 그림 다섯 장](demo-din-architecture.html)
 

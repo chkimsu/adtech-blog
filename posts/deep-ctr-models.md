@@ -1100,6 +1100,7 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 - pCTR의 정의와 eCPM으로 이어지는 길 → [pCTR 예측](post.html?id=pctr-prediction)
 - 예측 확률의 절대값을 실제에 맞추기 → [Calibration](post.html?id=calibration)
 - 이 구조가 들어가는 Tower를 여러 개 두는 법 → [Multi-Task Learning](post.html?id=multi-task-learning)
+- DCN 앞에 DIN 칸을 더하면 학습과 서빙이 어떻게 달라지나 → [DCN 앞에 DIN 칸 하나](post.html?id=dcn-vs-din-slot)
 - 행동 시퀀스가 attention으로 벡터 하나가 되는 계산, 수만 개 이력까지 → [행동 시퀀스 Attention](post.html?id=behavior-sequence-attention)
 - 수백만 후보에서 수백 개를 건지는 앞 단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 단계별 모델 배치와 경량화 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)

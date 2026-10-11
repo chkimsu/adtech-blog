@@ -5,8 +5,16 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-10-10T00:00:00Z</updated>
+  <updated>2026-10-11T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>DIN 모델 구조: 일곱 층 가운데 attention 은 두 층, 가변 길이는 행동의 개수</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture</id>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 평균도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 무게 2.4 를 손으로 내고, 무게 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.</summary>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
   <entry>
     <title>Two-Tower 학습: 배치 안에서 클릭한 광고를 고르게 하는 손실과 보정</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-training"/>
@@ -159,14 +167,5 @@
     <updated>2026-09-21T00:00:00Z</updated>
     <summary>운동화 브랜드의 마케터 서연 씨가 첫 캠페인 화면에서 나이, 성별, 지역, 관심사 네 줄을 고르고 멈춥니다. 이 조건은 어디에 저장되고 누구와 언제 비교될까요. 조건은 캠페인에 놓여 있고, 유저 정보는 누군가 화면을 열어 광고 자리가 생긴 순간 요청과 함께 옵니다. 광고 서버가 둘을 대 보는 자리에서 후보 12만 건이 4,200건으로 줄어듭니다. 타겟 방식 여덟 가지를 셋으로 묶어 보고, 조건을 좁힐수록 전환율은 오르고 도달은 주는 것을 표로 곱해 봅니다.</summary>
     <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>데이터 엔지니어 첫 6개월: 커밋 기록으로 읽은 신입이 하는 일</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=data-engineer-first-six-months</id>
-    <updated>2026-09-20T00:00:00Z</updated>
-    <summary>지훈 씨가 여덟째 주에 옆 데이터 플랫폼 팀 저장소를 열어 봅니다. 파일이 수백 개라 어디부터 읽을지 몰라서, 가장 최근에 온 사람 한 명의 커밋을 달별로 늘어놓았습니다. 첫 달은 수급 DAG 한 장, 둘째 달은 SQL 모델, 셋째 달은 실시간 잡 하나, 여섯 달이 지나서는 배포 자동화입니다. 폴더가 곧 일감의 종류이고 순서가 곧 배우는 순서입니다. 그 사이사이에 「리뷰 반영」 커밋이 끼어 있고, 저장소에 pandas 와 PyTorch 는 없습니다.</summary>
-    <category term="Software Engineering"/>
-    <category term="ML Infrastructure"/>
   </entry>
 </feed>

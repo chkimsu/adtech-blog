@@ -64,11 +64,11 @@
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
-    <title>BentoML: 모델 파일을 서비스로 만드는 도구와 안 쓰는 자리</title>
+    <title>BentoML: 모델 파일을 API 서버로 만드는 도구, 쓸 때와 안 쓸 때</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=bentoml-model-serving"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=bentoml-model-serving</id>
     <updated>2026-10-04T00:00:00Z</updated>
-    <summary>분석 팀이 새 pCVR 예비 모델을 가져왔고 운영자 내부 화면에서 먼저 값을 보자고 합니다. 요청은 초당 마흔 건입니다. 직접 짠 추론 서버에는 HTTP 창구부터 두 버전 나눠 태우기까지 일곱 덩어리 1,800줄이 들어 있는데, 그중 여섯은 모델이 바뀌어도 그대로입니다. BentoML 은 그 여섯을 갖고 있어 내가 쓰는 것이 마흔 줄이 됩니다. 대신 요청을 받는 층이 파이썬이라 고정 비용 1.68ms 가 붙고, 8ms 예산에서 초과율이 3.53% 에서 10.69% 로 세 배가 됩니다. 200ms 예산인 내부 도구에서는 둘 다 0.00% 라 그 차이가 안 보입니다. 모아 보내기도 요청 하나가 후보 800건을 들고 있으면 건당 3% 밖에 안 줍니다.</summary>
+    <summary>분석 팀이 새 pCVR 실험용 모델을 가져왔고, 운영자 내부 화면에서 예측값을 먼저 확인하려고 합니다. 요청은 초당 40건입니다. 직접 짠 추론 서버에는 HTTP 엔드포인트부터 버전 전환까지 기능 일곱 가지, 약 1,800줄이 들어 있습니다. BentoML 을 쓰면 그 가운데 HTTP 엔드포인트, 모델 로딩, readiness probe, 메트릭 넷은 짜지 않아도 됩니다. 대신 HTTP 요청을 파이썬이 처리해서 요청마다 1.68ms 의 오버헤드가 붙고, 지연 예산 8ms 에서 초과율이 3.53% 에서 10.69% 로 세 배가 됩니다. 지연 예산이 200ms 인 내부 화면에서는 둘 다 0.00% 라 차이가 보이지 않습니다. 동적 배칭도 요청 하나에 후보 800건이 실려 있으면 건당 계산이 3% 만 줄어듭니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
   <entry>
@@ -116,15 +116,15 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=inference-server"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=inference-server</id>
     <updated>2026-09-28T00:00:00Z</updated>
-    <summary>학습이 끝나면 파일이 둘 남습니다. 신경망 38MB 와 임베딩 표 27.7GB 입니다. 작은 쪽은 ONNX 로 바꿔 서버 12대가 뜰 때 내려받고, 큰 쪽은 임베딩 서비스 한 곳에 둡니다. 새 서버는 이미지 시작 12초, 내려받기 6초, 적재 3초, 웜업 20초를 지나 41초에 준비 신호를 켭니다. 요청 하나에 실린 후보 800건은 한 텐서로 한 번에 넣어 3.0ms 이고, 하나씩 부르면 고정 비용이 800번 쌓여 96ms 입니다. 두 버전을 같이 실으면 전환이 설정 한 줄이고, 그 값은 임베딩 27.7GB 입니다. 웜업을 빼면 배포 한 번에 폴백이 5,637건 더 나갑니다.</summary>
+    <summary>학습이 끝나면 파일이 둘 남습니다. 신경망 38MB 와 임베딩 표 27.7GB 입니다. 작은 쪽은 ONNX 로 바꿔 서버 12대가 뜰 때 내려받고, 큰 쪽은 임베딩 서비스 한 곳에 둡니다. 새 서버는 이미지 시작 12초, 내려받기 6초, 적재 3초, 웜업 20초를 지나 41초에 readiness probe 를 통과합니다. 요청 하나에 실린 후보 800건은 한 텐서로 한 번에 넣어 3.0ms 이고, 하나씩 부르면 호출 오버헤드가 800번 쌓여 96ms 입니다. 두 버전을 같이 올려 두면 전환이 설정 한 줄이고, 그 비용은 임베딩 27.7GB 입니다. 웜업을 빼면 배포 한 번에 폴백이 5,637건 더 나갑니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
   <entry>
-    <title>Docker 와 CI: 고친 코드가 서버에 오르기까지의 검문 세 곳</title>
+    <title>Docker 와 CI: 고친 코드가 서버에 오르기까지 거치는 검사 세 가지</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=container-ci-pipeline"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=container-ci-pipeline</id>
     <updated>2026-09-27T00:00:00Z</updated>
-    <summary>노트북에서 잘 돌던 코드가 서버에서는 다른 예측값을 냅니다. 0.0412 와 0.0397, 3.6% 차이입니다. 코드는 같은데 그 아래 깔린 라이브러리 판이 2.3 과 2.4 로 달랐습니다. 이미지는 기본 리눅스부터 코드까지 층을 쌓아 굳힌 한 장이고, 서버 12대가 같은 장을 씁니다. 커밋 하나는 CI 에서 6분 20초 동안 이미지가 되고 검문 셋을 지납니다. 유닛 테스트 214개 48초, 계약 테스트는 스키마 12개와 부하 1,000건에서 8ms 초과율 6% 이하, 이미지 검사는 심각 취약점 0 과 1.5GB 이하입니다. 하나라도 걸리면 이미지는 저장소에 오르지 않습니다.</summary>
+    <summary>노트북에서 잘 돌던 코드가 서버에서는 다른 예측값을 냅니다. 0.0412 와 0.0397, 3.6% 차이입니다. 코드는 같은데 그 아래 깔린 라이브러리 버전이 2.3 과 2.4 로 달랐습니다. 이미지는 기본 리눅스부터 코드까지 층을 쌓아 빌드한 파일 하나이고, 서버 12대가 같은 이미지를 씁니다. 커밋 하나는 CI 에서 6분 20초 동안 이미지로 빌드되고 검사 세 가지를 지납니다. 유닛 테스트 214개 48초, 계약 테스트는 스키마 12개와 부하 1,000건에서 8ms 초과율 6% 이하, 이미지 검사는 심각 취약점 0 과 1.5GB 이하입니다. 하나라도 걸리면 이미지는 저장소에 오르지 않습니다.</summary>
     <category term="ML Infrastructure"/>
     <category term="Software Engineering"/>
   </entry>

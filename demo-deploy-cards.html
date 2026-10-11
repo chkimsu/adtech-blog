@@ -56,7 +56,7 @@
       <section class="tg-card" data-card="rollback"><h2>ROLLBACK TIMELINE</h2><p class="tg-k">알람부터 확인까지 14분</p><p class="tg-easy"><b>쉽게 말하면</b> 게이트가 걸리면 새 모델로 가던 요청을 옛 모델로 돌립니다. 파드를 끄는 것이 아니라 가중치를 0 으로 바꾸는 일이라 1분이면 끝납니다.</p><div class="tg-fig" id="dp-rollback"></div>
         <p class="tg-cap">14분 중 기계가 쓴 시간은 <b>1분</b> 이고 사람 판단이 5분, 확인이 7분입니다. 그 40분 동안 새 모델이 답한 요청은 <b>633,360건</b> 이고, 100% 였다면 633만 건입니다.</p></section>
 
-      <section class="tg-card" data-card="warmup"><h2>WARM-UP</h2><p class="tg-k">새 파드의 첫 30초</p><p class="tg-easy"><b>쉽게 말하면</b> 새로 뜬 서버는 처음 얼마 동안 느립니다. 요청을 받기 전에 가짜 요청 200건을 먼저 먹이면 그 느린 구간이 사라집니다.</p><div class="tg-fig" id="dp-warmup"></div>
+      <section class="tg-card" data-card="warmup"><h2>WARM-UP</h2><p class="tg-k">새 파드의 첫 30초</p><p class="tg-easy"><b>쉽게 말하면</b> 새로 뜬 서버는 처음 얼마 동안 느립니다. 요청을 받기 전에 더미 요청 200건을 먼저 보내 두면 그 느린 구간이 사라집니다.</p><div class="tg-fig" id="dp-warmup"></div>
         <p class="tg-cap">웜업 없이 21초에 열면 첫 30초 동안 8ms 초과율이 4.62% 에서 <b>11.74%</b> 로 오릅니다. 웜업 20초를 넣어 41초에 열면 <b>처음부터 4.62%</b> 입니다.</p></section>
     </div>
 

@@ -115,10 +115,10 @@
 
     <section class="din-key">
       <h2>먼저 볼 것: 이 페이지에 나오는 예시</h2>
-      <p>행동 시퀀스 Attention 글과 같은 민지 씨의 하루입니다. 벡터 네 칸은 [러닝 쪽, 커피 쪽, 카테고리, 얼마나 최근인가] 로 읽으면 됩니다. 숫자는 학습이 끝났다고 치고 정한 값이고, 실제 모델은 칸이 32개나 64개입니다.</p>
+      <p>행동 시퀀스 Attention 글과 같은 민지 씨의 하루입니다. 벡터의 네 값은 [러닝 쪽, 커피 쪽, 카테고리, 얼마나 최근인가] 로 읽으면 됩니다. 숫자는 학습이 끝났다고 치고 정한 값이고, 실제 모델은 32차원이나 64차원입니다.</p>
       <div>
         <table class="din-tbl">
-          <thead><tr><th>무엇</th><th>이름</th><th>벡터 (숫자 4칸)</th></tr></thead>
+          <thead><tr><th>무엇</th><th>이름</th><th>벡터 (4차원)</th></tr></thead>
           <tbody>
             <tr><td class="who">행동 1</td><td>러닝화 A 클릭, 12시간 전</td><td class="num">0.9, 0.1, 0.8, 0.2</td></tr>
             <tr><td class="who">행동 2</td><td>러닝화 B 클릭, 12시간 전</td><td class="num">0.8, 0.2, 0.8, 0.2</td></tr>
@@ -138,14 +138,14 @@
         <div class="din-ctl"><span><span class="din-seg-l">채점하는 광고</span>
           <span class="din-seg" role="group" aria-label="후보 광고"><button type="button" id="din-a-run" data-din-a="run" aria-pressed="true">러닝화 광고</button><button type="button" id="din-a-cof" data-din-a="cof" aria-pressed="false">커피머신 광고</button></span></span></div>
         <div class="din-fig" id="din-fig1"></div>
-        <p class="din-cap">합이나 평균으로 묶던 이전 구조(Embedding 과 MLP)와 다른 곳은 <b>점선 칸 하나</b>뿐입니다. MLP 칸 수 200, 80 은 논문 그림의 값입니다.</p>
+        <p class="din-cap">합이나 평균으로 묶던 이전 구조(Embedding 과 MLP)와 다른 곳은 <b>점선 칸 하나</b>뿐입니다. MLP 유닛 수 200, 80 은 논문 그림의 값입니다.</p>
       </section>
 
       <section class="din-sec" data-fig="2">
         <h2><span class="no">2</span>activation unit 안쪽</h2>
         <p class="din-one">행동 하나와 광고 하나를 함께 넣어 가중치 하나를 내는 작은 신경망입니다. 행동마다 한 번씩 돕니다.</p>
         <div class="din-fig" id="din-fig2"></div>
-        <p class="din-cap">논문 그림은 행동, 광고, 둘의 외적(outer product)을 넣고 칸 36개짜리 층을 거칩니다. 널리 쓰이는 공개 구현은 외적 자리에 <b>차이와 칸끼리의 곱</b>을 넣습니다.</p>
+        <p class="din-cap">논문 그림은 행동, 광고, 둘의 외적(outer product)을 넣고 유닛 36개짜리 층을 거칩니다. 널리 쓰이는 공개 구현은 외적 자리에 <b>차이와 원소별 곱</b>을 넣습니다.</p>
       </section>
 
       <section class="din-sec" data-fig="3">
@@ -155,14 +155,14 @@
           <span class="din-seg" role="group" aria-label="묶는 방법"><button type="button" id="din-m-mean" data-din-m="mean" aria-pressed="false">평균</button><button type="button" id="din-m-run" data-din-m="run" aria-pressed="true">DIN, 러닝화 광고</button><button type="button" id="din-m-cof" data-din-m="cof" aria-pressed="false">DIN, 커피머신 광고</button></span></span></div>
         <div class="din-fig" id="din-fig3"></div>
         <p class="din-note" id="din-fig3-cap"></p>
-        <p class="din-cap">선의 굵기가 가중치이고, 점은 가중치만큼 사용자 벡터로 흘러 들어갑니다. 같은 기록에서 러닝화 광고용은 첫 칸이 4.911, 커피머신 광고용은 둘째 칸이 1.897 로 <b>서로 다른 벡터</b>가 나옵니다.</p>
+        <p class="din-cap">선의 굵기가 가중치이고, 점은 가중치만큼 사용자 벡터로 흘러 들어갑니다. 같은 기록에서 러닝화 광고용은 첫 번째 값이 4.911, 커피머신 광고용은 둘째 값이 1.897 로 <b>서로 다른 벡터</b>가 나옵니다.</p>
       </section>
 
       <section class="din-sec" data-fig="4">
         <h2><span class="no">4</span>가중치 하나를 손으로</h2>
-        <p class="din-one">러닝 양말 행동과 러닝화 광고를 16칸으로 이어 붙이면 곱 칸의 합이 1.9 이고, 가중치는 2.4 가 됩니다.</p>
+        <p class="din-one">러닝 양말 행동과 러닝화 광고를 16차원으로 이어 붙이면 원소별 곱의 합이 1.9 이고, 가중치는 2.4 가 됩니다.</p>
         <div class="din-fig" id="din-fig4"></div>
-        <p class="din-cap">이 신경망은 「곱 네 칸의 합이 0.3 을 넘는 만큼 1.5배」를 내도록 배웠다고 놓았습니다. 실제 신경망은 16칸 전부에 학습된 가중치가 붙고 숨은 칸이 수십 개입니다.</p>
+        <p class="din-cap">이 신경망은 「원소별 곱 네 값의 합이 0.3 을 넘는 만큼 1.5배」를 내도록 배웠다고 놓았습니다. 실제 신경망은 16차원 전부에 학습된 가중치가 붙고 은닉 유닛이 수십 개입니다.</p>
       </section>
 
       <section class="din-sec" data-fig="5">

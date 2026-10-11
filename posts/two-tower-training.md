@@ -237,7 +237,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 torch.manual_seed(0)
-N_ADS, D_IN, D = 200, 16, 32                     # 광고 수, 정보 칸 수, 벡터 길이 (가상 값)
+N_ADS, D_IN, D = 200, 16, 32                     # 광고 수, 입력 차원, 벡터 길이 (가상 값)
 ad_x = torch.randn(N_ADS, D_IN)                  # 광고 정보
 pop = 1 / torch.arange(1, N_ADS + 1).float()     # 인기를 순위의 역수로 쏠리게 둔다
 pop = pop / pop.sum()                            # 광고별 클릭 점유율 q

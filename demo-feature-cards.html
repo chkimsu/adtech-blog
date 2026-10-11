@@ -59,7 +59,7 @@
       <section class="tg-card" data-card="rowtovector"><h2>ROW TO VECTOR</h2><p class="tg-k">로그 한 줄이 피처 벡터가 되기까지</p><p class="tg-easy"><b>쉽게 말하면</b> 로그에 적힌 것은 대부분 숫자가 아니라 번호입니다. 광고 번호, 시각, 최근 본 목록, 집계값은 각각 다른 방법으로 바꿔야 모델에 들어갑니다.</p><div class="tg-fig" id="ft-rowtovector"></div>
         <p class="tg-cap">같은 한 줄인데 넣는 방법이 <b>넷</b>입니다. 어느 가족인지가 정해지면 넣는 방법도 따라 정해집니다.</p></section>
 
-      <section class="tg-card" data-card="sequence"><h2>FIXED LENGTH</h2><p class="tg-k">사람마다 다른 이력을 길이 20 으로</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 받는 칸 수는 고정인데 사람마다 이력 개수는 다릅니다. 많으면 오래된 것을 잘라내고 적으면 빈 칸을 채웁니다. 어디가 진짜인지 알려 주는 칸을 하나 더 만듭니다.</p><div class="tg-fig" id="ft-sequence"></div>
+      <section class="tg-card" data-card="sequence"><h2>FIXED LENGTH</h2><p class="tg-k">사람마다 다른 이력을 길이 20 으로</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 받는 시퀀스 길이는 고정인데 사람마다 이력 개수는 다릅니다. 많으면 오래된 것을 잘라내고 적으면 빈 칸을 채웁니다. 어디가 진짜인지 알려 주는 마스크를 하나 더 만듭니다.</p><div class="tg-fig" id="ft-sequence"></div>
         <p class="tg-cap">이력 37개면 최근 20개만 남기고, 5개면 <b>빈 칸 15개</b>를 채웁니다. 채운 0 도 번호라 모델이 계산에 넣으므로 마스크가 따로 필요합니다.</p></section>
     </div>
 

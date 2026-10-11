@@ -268,8 +268,8 @@ const GLOSSARY = [
   },
   {
     term: 'HiveServer2',
-    abbr: 'SQL 을 받아 주는 문',
-    body: '지훈 씨가 붙는 <strong>접속 창구</strong>. SQL 을 받아 계획을 세우고 실행 엔진에 넘긴다. 세는 일은 Tez 나 Spark 가 한다.'
+    abbr: 'SQL 을 받는 서버',
+    body: '지훈 씨가 <strong>접속하는 서버</strong>. SQL 을 받아 계획을 세우고 실행 엔진에 넘긴다. 실제 계산은 Tez 나 Spark 가 한다.'
   },
   {
     term: 'ZooKeeper',

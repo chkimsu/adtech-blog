@@ -2,7 +2,7 @@ pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 �
 
 > [생태계 전체 지도](post.html?id=adtech-ecosystem-map)는 이걸 "피드백 루프" 한 줄로 요약합니다.
 > [광고 서빙 흐름(Ad Serving Flow)](post.html?id=ad-serving-flow)는 입찰 요청(Bid Request)부터 노출까지만 봅니다.
-> [피처 저장소(Feature Store)](post.html?id=feature-store-serving)는 이걸 "이벤트 로그"로 뭉뚱그립니다.
+> [피처 스토어(Feature Store)](post.html?id=feature-store-serving)는 이걸 "이벤트 로그"로 뭉뚱그립니다.
 > 이 글은 그 세 곳에서 모두 생략된 **로그 자체**를 파고듭니다.
 >
 > 형제 글과는 역할이 다릅니다. [로그 시스템 설계](post.html?id=ad-log-system)는 로그를 잃지 않고 옮기는 인프라를 다룹니다.
@@ -75,7 +75,7 @@ sequenceDiagram
 | # | 로그(Log) | 트리거 시점 | 기록 주체 | 요청 대비 지연 | 주요 소비자 |
 |---|-----|-----------|----------|-------------|-----------|
 | ① | **요청 로그(Request Log)** | 입찰 요청 수신 즉시 | DSP 입찰 서버(DSP Bidder) | 0ms | QPS 모니터링, 잇는 키(JOIN key) |
-| ② | **후보 로그(Candidate Log)** | 후보 생성·필터 완료 | 랭킹 파이프라인(Ranking Pipeline) | ~1-2ms | 후보 추리기(Retrieval) recall 분석 |
+| ② | **후보 로그(Candidate Log)** | 후보 생성·필터 완료 | 랭킹 파이프라인(Ranking Pipeline) | ~1-2ms | 후보 생성(Retrieval) recall 분석 |
 | ③ | **피처 로그(Feature Log)** | 피처 벡터(Feature Vector) 조합 완료 | 피처 게이트웨이(Feature Gateway) | ~2-3ms | 학습과 서빙의 피처 어긋남(Training-Serving Skew) 감지 |
 | ④ | **모델 점수 로그(Model Score Log)** | 모델 추론 완료 | 모델 서버(Model Server) | ~5-8ms | Calibration 모니터링 |
 | ⑤ | **입찰 로그(Bid Log)** | 입찰 응답(Bid Response) 전송 | DSP 입찰 서버 | ~10ms | 입찰 전략 분석 |
@@ -111,7 +111,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">후보 로그 — 후보 깔때기</div>
-      <div class="chart-step-desc">후보 추리기 → 앞단 랭킹(Pre-Ranking) 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
+      <div class="chart-step-desc">후보 생성 → 앞단 랭킹(Pre-Ranking) 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
       <span class="chart-step-badge green">랭킹 파이프라인, ~2ms</span>
     </div>
   </div>
@@ -192,9 +192,9 @@ sequenceDiagram
 
 ### 2.2 후보 로그 — 후보 깔때기의 기록
 
-**언제 기록되는가**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. 후보 추리기와 앞단 랭킹이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
+**언제 기록되는가**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. 후보 생성과 앞단 랭킹이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
 
-**누가 기록하는가**: DSP 랭킹 파이프라인(DSP Ranking Pipeline) (후보 추리기 + 앞단 랭킹 모듈)
+**누가 기록하는가**: DSP 랭킹 파이프라인(DSP Ranking Pipeline) (후보 생성 + 앞단 랭킹 모듈)
 
 **핵심 필드**:
 
@@ -209,7 +209,7 @@ sequenceDiagram
 | `latency_ms` | 이 단계 처리 시간 | `0.8` |
 
 **다운스트림 활용**:
-- **후보 추리기 Recall 분석**: 최종 낙찰 광고가 후보 추리기 단계에서 후보에 포함되었는가?
+- **후보 생성 Recall 분석**: 최종 낙찰 광고가 후보 생성 단계에서 후보에 포함되었는가?
 - **Funnel Dropout 분석**: 어떤 단계에서 몇 %가 탈락하는가? 필터 조건이 너무 공격적이지 않은가?
 - **앞단 랭킹 ↔ Ranking 일관성**: 앞단 랭킹에서 상위권이었던 광고가 Ranking에서도 상위권인가?
 
@@ -339,7 +339,7 @@ sequenceDiagram
 - **Budget 차감**: 낙찰 시 win_price만큼 예산에서 차감
 - **Exchange별 경쟁 분석**: Exchange마다 다른 가격 분포와 경쟁 강도 파악
 
-> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 실립니다. 그래서 가려진 값 회귀(Censored Regression)가 필요합니다. 보이지 않는 절반을 감안해 맞추는 회귀입니다.
+> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 실립니다. 그래서 censored regression(중도절단 회귀)이 필요합니다. 보이지 않는 절반을 감안해 맞추는 회귀입니다.
 
 ---
 
@@ -394,7 +394,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML P
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">기록 주체</span>
-        <span class="chart-card-row-value">피처 게이트웨이 / 피처 저장소</span>
+        <span class="chart-card-row-value">피처 게이트웨이 / 피처 스토어</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">핵심 필드</span>
@@ -406,7 +406,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML P
       </div>
     </div>
     <div class="chart-card-tags">
-      <span class="chart-card-tag">피처 저장소</span>
+      <span class="chart-card-tag">피처 스토어</span>
       <span class="chart-card-tag">어긋남(Skew) 감지</span>
     </div>
   </div>
@@ -474,7 +474,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML P
   </div>
 </div>
 
-**피처 로그**는 [피처 저장소 포스트](post.html?id=feature-store-serving)에서 다룬 학습과 서빙의 피처 어긋남의 **감지 수단**입니다. 서빙 시점에 모델이 실제로 받은 피처 값을 기록하지 않으면, 학습 환경과 서빙 환경의 피처가 다른지 확인할 방법이 없습니다.
+**피처 로그**는 [피처 스토어 포스트](post.html?id=feature-store-serving)에서 다룬 학습과 서빙의 피처 어긋남의 **감지 수단**입니다. 서빙 시점에 모델이 실제로 받은 피처 값을 기록하지 않으면, 학습 환경과 서빙 환경의 피처가 다른지 확인할 방법이 없습니다.
 
 **모델 점수 로그**는 fallback 이 발동됐는지를 추적하는 수단입니다. 그 계층은 [모델 서빙 아키텍처(Model Serving Architecture) 포스트](post.html?id=model-serving-architecture)의 Timeout Fallback 입니다. `fallback_used=true`가 급증하면 서빙 인프라에 문제가 있다는 신호입니다.
 
@@ -888,7 +888,7 @@ class BidLog:
     <div class="chart-layer-group">
       <div class="chart-layer-group-label">Bid Shading 모델</div>
       <div class="chart-layer-items">
-        <span class="chart-layer-item pink">가려진 값 회귀(X=ctx, y=price)</span>
+        <span class="chart-layer-item pink">censored regression(X=ctx, y=price)</span>
       </div>
     </div>
     <div class="chart-layer-group">
@@ -960,7 +960,7 @@ class BidLog:
     <div class="chart-card-body">
       <div class="chart-card-row">
         <span class="chart-card-row-label">원인</span>
-        <span class="chart-card-row-value">학습 데이터 생성 시점에 어트리뷰션 창 밖 전환 누락</span>
+        <span class="chart-card-row-value">학습 데이터 생성 시점에 어트리뷰션 윈도우 밖 전환 누락</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">영향</span>
@@ -999,7 +999,7 @@ class BidLog:
       </div>
     </div>
     <div class="chart-card-tags">
-      <span class="chart-card-tag">피처 저장소</span>
+      <span class="chart-card-tag">피처 스토어</span>
       <span class="chart-card-tag">어긋남</span>
     </div>
   </div>
@@ -1008,7 +1008,7 @@ class BidLog:
       <div class="chart-card-icon orange">!</div>
       <div>
         <div class="chart-card-name">낙찰과 패찰 로그 비대칭</div>
-        <div class="chart-card-subtitle">가려진 데이터(Censored Data) 문제</div>
+        <div class="chart-card-subtitle">Censored data(중도절단 데이터) 문제</div>
       </div>
     </div>
     <div class="chart-card-body">
@@ -1022,12 +1022,12 @@ class BidLog:
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">대응</span>
-        <span class="chart-card-row-value">가려진 값 회귀, Survival Analysis</span>
+        <span class="chart-card-row-value">Censored Regression, Survival Analysis</span>
       </div>
     </div>
     <div class="chart-card-tags">
       <span class="chart-card-tag">Bid Shading</span>
-      <span class="chart-card-tag">가려진 데이터</span>
+      <span class="chart-card-tag">Censored data</span>
     </div>
   </div>
   <div class="chart-card">
@@ -1107,6 +1107,6 @@ print(f"Request→Impression 전환율: {win_rate_approx:.2%}")  # 보통: 10-30
 
 > 이 글에서 다룬 로그 파이프라인은 광고 ML 시스템의 **데이터 기반(data foundation)**입니다. 그 위에 세 층이 얹힙니다.
 >
-> - [피처 저장소](post.html?id=feature-store-serving) — 피처를 공급한다
+> - [피처 스토어](post.html?id=feature-store-serving) — 피처를 공급한다
 > - [모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 추론을 실행한다
 > - [온라인 학습](post.html?id=online-learning-delayed-feedback) — 모델을 갱신한다

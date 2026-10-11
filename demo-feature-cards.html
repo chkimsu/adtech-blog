@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>피처 카드 여섯 장 — Ad Tech Blog</title>
-  <meta name="description" content="로그 한 줄이 모델에 들어갈 숫자 묶음이 되고 그 값이 학습과 서빙 양쪽에 닿기까지를 카드 한 장씩으로. 세 갈래 파이프라인, 읽는 곳이 둘, 갱신 주기, 피처가 안 올 때, 로그 한 줄의 네 갈래, 길이 맞추기.">
+  <meta name="description" content="로그 한 줄이 모델에 들어갈 피처 벡터가 되고 그 값이 학습과 서빙 양쪽에 닿기까지를 카드 한 장씩으로. 세 갈래 파이프라인, 읽는 곳이 둘, 갱신 주기, 피처가 안 올 때, 로그 한 줄의 네 갈래, 길이 맞추기.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -30,7 +30,7 @@
   <main>
     <section class="tg-hero">
       <h1>피처 카드 여섯 장</h1>
-      <p>로그 한 줄이 모델에 들어갈 숫자 묶음이 되고, 그 값이 학습과 서빙 양쪽에 닿기까지의 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 각 글의 가상 값입니다.</p>
+      <p>로그 한 줄이 모델에 들어갈 피처 벡터가 되고, 그 값이 학습과 서빙 양쪽에 닿기까지의 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 각 글의 가상 값입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (저장소, 만들어 둔 값)</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것과 문제가 되는 자리</span>
@@ -56,7 +56,7 @@
       <section class="tg-card" data-card="fallback"><h2>FEATURE FALLBACK</h2><p class="tg-k">피처가 안 올 때 무엇을 넣나</p><p class="tg-easy"><b>쉽게 말하면</b> 저장소가 늦거나 답을 못 줘도 광고는 나가야 합니다. 그래서 무엇으로 채울지를 미리 순서대로 적어 둡니다. 아래로 갈수록 답은 나가지만 맞는 정도가 떨어집니다.</p><div class="tg-fig" id="ft-fallback"></div>
         <p class="tg-cap">순서는 <b>조금 전 값, 무리 평균, 전체 평균</b> 셋입니다. 무엇으로 채웠는지 로그에 남겨야 그 요청이 왜 나빴는지 나중에 찾을 수 있습니다.</p></section>
 
-      <section class="tg-card" data-card="rowtovector"><h2>ROW TO VECTOR</h2><p class="tg-k">로그 한 줄이 숫자 묶음이 되기까지</p><p class="tg-easy"><b>쉽게 말하면</b> 로그에 적힌 것은 대부분 숫자가 아니라 번호입니다. 광고 번호, 시각, 최근 본 목록, 집계값은 각각 다른 방법으로 바꿔야 모델에 들어갑니다.</p><div class="tg-fig" id="ft-rowtovector"></div>
+      <section class="tg-card" data-card="rowtovector"><h2>ROW TO VECTOR</h2><p class="tg-k">로그 한 줄이 피처 벡터가 되기까지</p><p class="tg-easy"><b>쉽게 말하면</b> 로그에 적힌 것은 대부분 숫자가 아니라 번호입니다. 광고 번호, 시각, 최근 본 목록, 집계값은 각각 다른 방법으로 바꿔야 모델에 들어갑니다.</p><div class="tg-fig" id="ft-rowtovector"></div>
         <p class="tg-cap">같은 한 줄인데 넣는 방법이 <b>넷</b>입니다. 어느 가족인지가 정해지면 넣는 방법도 따라 정해집니다.</p></section>
 
       <section class="tg-card" data-card="sequence"><h2>FIXED LENGTH</h2><p class="tg-k">사람마다 다른 이력을 길이 20 으로</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 받는 칸 수는 고정인데 사람마다 이력 개수는 다릅니다. 많으면 오래된 것을 잘라내고 적으면 빈 칸을 채웁니다. 어디가 진짜인지 알려 주는 칸을 하나 더 만듭니다.</p><div class="tg-fig" id="ft-sequence"></div>

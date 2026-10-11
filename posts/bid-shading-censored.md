@@ -173,11 +173,11 @@ graph LR
 - **Step 1 (분포 추정)**: 과거 경매 데이터에서 시장 가격 분포 $F(b \mid x)$를 학습
 - **Step 2 (최적 입찰)**: 학습된 분포와 참 가치 $V$를 이용해 남는 몫을 극대화하는 $b^*$를 탐색
 
-이 글의 나머지는 각 단계를 깊이 파고듭니다. 특히 Step 1에서 마주치는 **가려진 데이터(Censored Data) 문제**가 핵심 난관입니다.
+이 글의 나머지는 각 단계를 깊이 파고듭니다. 특히 Step 1에서 마주치는 **censored data(중도절단 데이터) 문제**가 핵심 난관입니다.
 
 ---
 
-## 2. 가려진 데이터 문제: 시장의 절반은 보이지 않는다 [무대: 열린 RTB]
+## 2. Censored data 문제: 시장의 절반은 보이지 않는다 [무대: 열린 RTB]
 
 ### ① Right-Censoring이란?
 
@@ -192,7 +192,7 @@ DSP 입장에서 경매 결과 데이터는 **비대칭적**입니다:
 
 이것은 의학의 **생존 분석(Survival Analysis)**과 정확히 같은 구조입니다. "관찰 기간 내 사망하지 않은 환자의 실제 수명을 모른다"와 "패찰한 경매의 실제 시장 가격을 모른다"는 수학적으로 동치입니다.
 
-> [데모](demo-bid-shading.html)에서 **"가려진(Censored) View로 전환"** 버튼을 눌러보세요. 내 입찰가 이상의 히스토그램이 "???" 사선 패턴으로 바뀝니다. DSP가 보는 정보의 한계를 눈으로 확인할 수 있습니다.
+> [데모](demo-bid-shading.html)에서 **"Censored View로 전환"** 버튼을 눌러보세요. 내 입찰가 이상의 히스토그램이 "???" 사선 패턴으로 바뀝니다. DSP가 보는 정보의 한계를 눈으로 확인할 수 있습니다.
 
 ### ② Naive 추정이 실패하는 이유
 
@@ -351,9 +351,9 @@ print("→ 그래서 실무는 일부 트래픽에 일부러 높게 입찰해 �
 
 God View에서 Engineer View로 전환해 보면 위 계산이 눈으로 보입니다. 내 입찰가 위쪽이 물음표로 가려지고, 그 상태로 추정한 분포가 실제보다 왼쪽에 서는 모습입니다.
 
-### ④ 가려진 값 회귀(Censored Regression)의 핵심 아이디어
+### ④ Censored Regression(중도절단 회귀)의 핵심 아이디어
 
-가려진 데이터를 올바르게 다루는 핵심은 **Win 데이터와 Lose 데이터를 다르게 취급**하는 것입니다. 두 논문 모두 다음 형태의 손실 함수를 사용합니다:
+Censored data 를 올바르게 다루는 핵심은 **Win 데이터와 Lose 데이터를 다르게 취급**하는 것입니다. 두 논문 모두 다음 형태의 손실 함수를 사용합니다:
 
 $$\mathcal{L} = \underbrace{\sum_{i \in \mathcal{W}} \log P(w_i \mid x_i)}_{\text{낙찰: PDF 직접 사용}} + \underbrace{\sum_{i \in \mathcal{L}} \log \Pr(W_i > b_i \mid x_i)}_{\text{패찰: Survival Function 사용}}$$
 
@@ -363,15 +363,15 @@ $$\mathcal{L} = \underbrace{\sum_{i \in \mathcal{W}} \log P(w_i \mid x_i)}_{\tex
 
 **직관적 해석**: 낙찰한 경매에서는 실제 관측된 시장 가격 $w_i$의 likelihood를 최대화합니다. 패찰한 경매에서는 "시장 가격이 내 입찰가보다 높다"는 **부분 정보**의 likelihood를 최대화합니다. 이렇게 하면 Lose 데이터의 하한(lower bound)도 학습에 쓰입니다. 그래서 Naive의 과소추정이 보정됩니다.
 
-이것이 가려진 값 회귀(보이지 않는 절반을 감안해 맞추는 회귀)의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
+이것이 censored regression(보이지 않는 절반을 감안해 맞추는 회귀)의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
 
 ---
 
 ## 3. 분포 추정 모델의 진화: Standard CR에서 MCNet까지
 
-### ① 기본형 가려진 값 회귀(Standard Censored Regression) (Baseline)
+### ① Standard Censored Regression (Baseline)
 
-가장 기본적인 가려진 값 회귀는 winning price가 **정규분포**를 따른다고 가정합니다:
+가장 기본적인 censored regression 은 winning price가 **정규분포**를 따른다고 가정합니다:
 
 $$W_i \mid x_i \sim \mathcal{N}(\beta^T x_i, \; \sigma^2)$$
 
@@ -384,7 +384,7 @@ $\beta$는 feature 가중치입니다. $\sigma$는 표준편차인데, **모든 
 
 Ghosh et al.은 iPinYou 데이터의 Figure 1에서 이 두 가정이 모두 위반됨을 직접 보여줍니다.
 
-### ② Fully Parametric 가려진 값 회귀 (P-CR) — Ghosh et al.
+### ② Fully Parametric Censored Regression (P-CR) — Ghosh et al.
 
 첫 번째 개선은 **이분산(heteroscedastic) 모델**입니다. $\sigma$를 고정 상수가 아니라 feature의 함수로 만듭니다:
 
@@ -395,9 +395,9 @@ $$\sigma_i = \exp(\alpha^T x_i)$$
 
 이제 bid request 특성에 따라 분산이 달라집니다. 경쟁이 치열한 프리미엄 지면은 $\sigma$가 작고(가격이 촘촘), 롱테일 지면은 클 수 있습니다. 하지만 **단봉 가우시안** 가정은 그대로입니다.
 
-### ③ MCNet (Mixture Density 가려진 Network) — Ghosh et al.
+### ③ MCNet (Mixture Density Censored Network) — Ghosh et al.
 
-Ghosh et al.의 핵심 기여는 **Mixture Density Network를 가려진 데이터에 적용**한 MCNet입니다. $K$개의 가우시안 혼합으로 임의의 분포를 근사합니다:
+Ghosh et al.의 핵심 기여는 **Mixture Density Network를 censored data 에 적용**한 MCNet입니다. $K$개의 가우시안 혼합으로 임의의 분포를 근사합니다:
 
 $$P(w \mid x) = \sum_{k=1}^{K} \underbrace{\pi_k(x)}_{\text{혼합 가중치}} \cdot \frac{1}{\sigma_k(x)} \phi\!\left(\frac{w - \mu_k(x)}{\sigma_k(x)}\right)$$
 
@@ -410,7 +410,7 @@ $$P(w \mid x) = \sum_{k=1}^{K} \underbrace{\pi_k(x)}_{\text{혼합 가중치}} \
 
 - **이분산**: 각 성분의 $\sigma_k(x)$가 feature에 따라 다름
 - **다봉**: $K$개 성분의 혼합으로 복수의 피크 표현 가능
-- **가려진 데이터 처리**: 위의 가려진 값 우도(Censored Likelihood)와 결합하여 Win/Lose 데이터 모두 활용
+- **Censored data 처리**: Win 과 Lose 데이터를 모두 위의 censored likelihood 에 넣어 활용
 
 ### ④ Zhou et al.의 접근: 단일 분포 + 강력한 네트워크
 
@@ -550,7 +550,7 @@ sequenceDiagram
 
 공개 데이터셋 iPinYou (53M 샘플, win rate 22.87%)에서의 실험:
 
-- **MCNet**(혼합 밀도 네트워크)이 기본형 가려진 값 회귀, Kaplan-Meier 추정 대비 **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
+- **MCNet**(혼합 밀도 네트워크)이 Standard Censored Regression, Kaplan-Meier 추정 대비 **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
 - 특히 **다봉 분포 구간**에서 MCNet의 강점이 두드러짐: 단일 가우시안으로는 포착할 수 없는 복수 피크를 정확히 모델링
 - Adobe Adcloud(Adobe 자사 DSP) 데이터에서도 동일한 경향 확인
 
@@ -561,9 +561,9 @@ VerizonMedia DSP의 실제 입찰 데이터에서:
 - 12개 Feature (exchange_id, device_type, sub_domain, ad layout, hour, day_of_week 등) 사용
 - 7일 학습 → 1일 테스트
 - **Non-censored**(open auction, winning price 제공): Log-normal이 **+9.65% surplus lift**
-- **가려진**(closed auction, winning price 비제공): Log-normal이 **+5.32% surplus lift**
+- **Censored**(closed auction, winning price 비제공): Log-normal이 **+5.32% surplus lift**
 
-Non-censored와 가려진의 차이는 9.65% vs 5.32%입니다. 이 격차가 곧 **winning price 정보의 값**입니다. SSP가 winning price를 공개하는 Open Auction은 DSP에게 약 **4%p의 추가 최적화 여지**를 줍니다.
+Non-censored 와 censored 의 차이는 9.65% vs 5.32%입니다. 이 격차가 곧 **winning price 정보의 값**입니다. SSP가 winning price를 공개하는 Open Auction은 DSP에게 약 **4%p의 추가 최적화 여지**를 줍니다.
 
 ### ③ Online A/B 테스트 — Zhou et al.
 
@@ -585,7 +585,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 |------|---------------------------|-------------------------------|
 | **초점** | 분포 추정 (Step 1) | End-to-End (Step 1 + Step 2) |
 | **분포 모델** | Gaussian Mixture (MCNet, K성분) | 단일 분포 (Log-normal 최적) |
-| **Censoring 처리** | 가려진 값 우도 (PDF + Survival) | 가려진 + Non-censored 통합 |
+| **Censoring 처리** | Censored likelihood (PDF + Survival) | Censored + Non-censored 통합 |
 | **최적 입찰** | 별도 다루지 않음 | 황금 비율 탐색 + Unimodality 증명 |
 | **실시간 서빙** | 언급 없음 | 프로덕션 아키텍처 공개 |
 | **검증** | iPinYou (공개) + Adobe Adcloud (자사 DSP) | Yahoo/Verizon Online A/B (프로덕션) |
@@ -662,7 +662,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 ## 8. 보론: 품질 지수(Quality Index)가 존재할 때의 시장 가격 재정의
 
-앞선 섹션들에서는 입찰가 자체가 경매 순위를 결정하는 순수 CPM 경매를 가정했습니다. 하지만 실제 RTB 경매에서는 SSP가 입찰가에 **품질 지수(QI)**를 곱합니다. QI는 광고 품질 점수나 Viewability 예측치 같은 보정 계수입니다. 그 곱이 **순위 지수(Rank Index)(RI)**이고, 순위는 이 값으로 매깁니다. 순위 계산이 왜 이렇게 생겼는지는 [eCPM 랭킹](post.html?id=ecpm-ranking)에 정리돼 있습니다. 이때 자연스러운 의문이 생깁니다: "낙찰자의 원래 입찰가(Raw Bid)가 내 입찰가보다 **낮은데** 내가 졌다면? 섹션 2에서 정의한 가려진 데이터의 전제(시장 가격 > 내 입찰가)가 깨지는 것 아닌가?"
+앞선 섹션들에서는 입찰가 자체가 경매 순위를 결정하는 순수 CPM 경매를 가정했습니다. 하지만 실제 RTB 경매에서는 SSP가 입찰가에 **품질 지수(QI)**를 곱합니다. QI는 광고 품질 점수나 Viewability 예측치 같은 보정 계수입니다. 그 곱이 **순위 지수(Rank Index)(RI)**이고, 순위는 이 값으로 매깁니다. 순위 계산이 왜 이렇게 생겼는지는 [eCPM 랭킹](post.html?id=ecpm-ranking)에 정리돼 있습니다. 이때 자연스러운 의문이 생깁니다: "낙찰자의 원래 입찰가(Raw Bid)가 내 입찰가보다 **낮은데** 내가 졌다면? 섹션 2에서 정의한 censored data 의 전제(시장 가격 > 내 입찰가)가 깨지는 것 아닌가?"
 
 결론부터 말하면, **깨지지 않습니다.** 핵심은 "시장 가격"의 정의를 원래 입찰가가 아닌 **필요 입찰가(Required Bid)**로 변환하는 것입니다.
 
@@ -681,7 +681,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0} = \$120$$
 
-이제 관계가 역전됩니다: **필요 입찰가($120) > My Bid($80)**. 가려진 값 회귀의 전제가 성립합니다. 섹션 2의 Right-Censoring 프레임워크와 섹션 4의 남는 몫 공식을 그대로 쓸 수 있습니다. "시장 가격"만 필요 입찰가로 치환하면 됩니다.
+이제 관계가 역전됩니다: **필요 입찰가($120) > My Bid($80)**. Censored regression 의 전제가 성립합니다. 섹션 2의 Right-Censoring 프레임워크와 섹션 4의 남는 몫 공식을 그대로 쓸 수 있습니다. "시장 가격"만 필요 입찰가로 치환하면 됩니다.
 
 ### 같은 표를 필요 입찰가 로 다시 읽기
 
@@ -693,7 +693,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 ### 핵심 통찰
 
-**"품질이 부족해서 진 것"도 돈으로 환산하면 "돈을 덜 내서 진 것"과 수학적으로 동치입니다.** QI 때문이든 원래 입찰가 때문이든, 필요 입찰가 공간으로 옮기면 같은 가려진 값 회귀 문제가 됩니다.
+**"품질이 부족해서 진 것"도 돈으로 환산하면 "돈을 덜 내서 진 것"과 수학적으로 동치입니다.** QI 때문이든 원래 입찰가 때문이든, 필요 입찰가 공간으로 옮기면 같은 censored regression 문제가 됩니다.
 
 모든 참여자의 QI가 1.0인 순수 CPM 경매라면 필요 입찰가 = 낙찰자의 원래 입찰가입니다. 앞선 섹션들이 다룬 표준 경우와 정확히 일치합니다. 즉 QI가 없는 경매는 이 프레임워크의 **특수 케이스**입니다.
 
@@ -715,7 +715,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 1. **1st 가격 경매에서 Bid Shading은 선택이 아니라 필수** — 참 가치 그대로 입찰하면 이익이 0. 1절③ 표의 첫 줄과 [데모](demo-bid-shading.html)의 No Shade가 같은 얘기입니다.
 
-2. **가려진 데이터를 무시하면 시장 가격을 체계적으로 과소추정** — Naive 추정의 위험성. 반드시 가려진 값 회귀 또는 Survival Analysis 기법이 필요합니다.
+2. **Censored data 를 무시하면 시장 가격을 체계적으로 과소추정** — Naive 추정의 위험성. 반드시 censored regression 또는 Survival Analysis 기법이 필요합니다.
 
 3. **분포 선택이 성능을 좌우** — Log-normal이 RTB 시장에서 가장 강력합니다. 다봉 분포가 의심되면 MCNet을 고려하세요.
 

@@ -1,6 +1,6 @@
 "누구에게 보여줄 것인가?" — 광고가 노출되기 전, 시스템이 가장 먼저 답해야 할 질문입니다. 아무리 정교한 pCTR 모델을 만들고, 최적의 입찰 전략을 설계하더라도, **적절한 오디언스에게 도달하지 못하면** 모든 것이 무의미합니다. 오디언스 세그멘테이션은 수백만~수억 명의 유저를 **행동 가능한 그룹(Actionable Audience)**으로 묶는 일입니다. 이 그룹이 리타겟팅과 모든 타겟팅 전략의 출발점입니다. [Lookalike 모델링(Lookalike Modeling)](post.html?id=lookalike-modeling)의 시드 오디언스도 여기서 나옵니다.
 
-세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [피처 저장소(Feature Store)](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)과 열린 RTB(Open RTB)가 그렇습니다. 이 글이 다루는 범위는 넓습니다. 규칙 기반(Rule-based) SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 정리합니다.
+세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [피처 스토어(Feature Store)](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)과 열린 RTB(Open RTB)가 그렇습니다. 이 글이 다루는 범위는 넓습니다. 규칙 기반(Rule-based) SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 정리합니다.
 
 > **골라 읽는 법** — 절이 12개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
@@ -161,7 +161,7 @@ RFM의 강점은 **해석 가능성**입니다. "Cluster 3"이라고 하면 아�
 
 ### 3-1. SQL/Hive 기반 세그먼트 정의
 
-대부분의 프로덕션 세그먼트 시스템은 SQL 쿼리로 시작합니다. 입력은 이벤트 로그, 거래 DB, 유저 프로필입니다. Spark SQL이나 Hive에서 세그먼트 멤버십을 계산합니다. 결과는 DMP/CDP와 피처 저장소로 전달합니다.
+대부분의 프로덕션 세그먼트 시스템은 SQL 쿼리로 시작합니다. 입력은 이벤트 로그, 거래 DB, 유저 프로필입니다. Spark SQL이나 Hive에서 세그먼트 멤버십을 계산합니다. 결과는 DMP/CDP와 피처 스토어로 전달합니다.
 
 조건 한 벌이 사람 목록이 되는 순서를 카드로 보면 이렇습니다.
 
@@ -511,7 +511,7 @@ class SegmentAssigner(ProcessFunction):
 
 **TTL(Time-To-Live) 설계**: 실시간 세그먼트에는 반드시 TTL을 설정해야 합니다. `active_searcher` 세그먼트의 TTL이 1시간이라면, 유저가 검색을 멈추면 1시간 후 자동으로 세그먼트에서 제거됩니다. TTL 없이 세그먼트를 할당하면, 세그먼트 크기가 단조 증가하여 타겟팅 정밀도가 급격히 하락합니다.
 
-**상태 관리**: Flink의 Keyed State에 유저별 이벤트 카운터와 타이머를 관리합니다. 상태는 RocksDB 기반으로 체크포인팅되며, 장애 복구 시 exactly-once 시맨틱을 보장합니다. 세그먼트 할당 결과는 Redis에 저장되어, [피처 저장소](post.html?id=feature-store-serving)의 Online Store에서 pCTR 모델 추론 시 실시간으로 조회됩니다.
+**상태 관리**: Flink의 Keyed State에 유저별 이벤트 카운터와 타이머를 관리합니다. 상태는 RocksDB 기반으로 체크포인팅되며, 장애 복구 시 exactly-once 시맨틱을 보장합니다. 세그먼트 할당 결과는 Redis에 저장되어, [피처 스토어](post.html?id=feature-store-serving)의 Online Store에서 pCTR 모델 추론 시 실시간으로 조회됩니다.
 
 ### 5-2. 배치 vs 스트리밍 vs 하이브리드
 
@@ -547,9 +547,9 @@ graph LR
   REDIS --> FV --> MODEL --> SCORE
 ```
 
-### 6-1. 피처 저장소를 통한 세그먼트 피처 서빙
+### 6-1. 피처 스토어를 통한 세그먼트 피처 서빙
 
-세그먼트 멤버십은 [피처 저장소](post.html?id=feature-store-serving)에 저장됩니다. 정확히는 Online Store(Redis)입니다. pCTR 모델 추론 시, 유저의 세그먼트 목록을 조회하여 피처 벡터로 인코딩합니다. 이 조회는 **10ms 이내**에 완료되어야 하므로, Redis의 O(1) 조회 성능이 필수적입니다.
+세그먼트 멤버십은 [피처 스토어](post.html?id=feature-store-serving)에 저장됩니다. 정확히는 Online Store(Redis)입니다. pCTR 모델 추론 시, 유저의 세그먼트 목록을 조회하여 피처 벡터로 인코딩합니다. 이 조회는 **10ms 이내**에 완료되어야 하므로, Redis의 O(1) 조회 성능이 필수적입니다.
 
 **세그먼트 피처 인코딩 방식**:
 
@@ -597,7 +597,7 @@ $$e_{\text{segment}} = W_{\text{seg}} \cdot \text{one\_hot}(\text{segment\_id})$
 
 실무에서는 Top-K Selection이 더 일반적입니다. Weighted Sum은 이론적으로 정보 손실이 없지만, 모델 학습 시 gradient 전파가 복잡해지고 수렴이 느릴 수 있습니다.
 
-> 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그 세그먼트는 **단순 리포팅 도구**에 불과합니다. 세그먼트의 실질적 가치는 피처 저장소를 통해 모델에 서빙될 때 시작됩니다. 그 값이 모델의 예측을 바꾸고, 최종적으로 입찰 결정까지 바꿀 때 완성됩니다.
+> 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그 세그먼트는 **단순 리포팅 도구**에 불과합니다. 세그먼트의 실질적 가치는 피처 스토어를 통해 모델에 서빙될 때 시작됩니다. 그 값이 모델의 예측을 바꾸고, 최종적으로 입찰 결정까지 바꿀 때 완성됩니다.
 
 ---
 
@@ -751,7 +751,7 @@ graph TB
 **GDPR (EU General Data Protection Regulation)**:
 - **목적 제한(Purpose Limitation)**: 특정 목적(예: 광고 타겟팅)으로 수집한 데이터를 다른 목적에 사용 불가. 세그먼트 정의 시 목적을 명시해야 함.
 - **저장 제한(Storage Limitation)**: 목적 달성에 필요한 기간만 데이터 보존. "고가치 구매자" 세그먼트의 보존 기간이 영구적이면 위반 소지.
-- **삭제권(Right to Erasure)**: 유저가 삭제를 요청하면 **모든 세그먼트에서** 해당 유저를 제거해야 함. 수백 개의 세그먼트 테이블, Redis 캐시, 피처 저장소, 백업 데이터 등 모든 저장소에서 완전 삭제.
+- **삭제권(Right to Erasure)**: 유저가 삭제를 요청하면 **모든 세그먼트에서** 해당 유저를 제거해야 함. 수백 개의 세그먼트 테이블, Redis 캐시, 피처 스토어, 백업 데이터 등 모든 저장소에서 완전 삭제.
 
 **CCPA (California Consumer Privacy Act)**:
 - **Opt-out 권리**: 유저가 개인 정보 판매를 거부할 수 있음. 외부 DMP에 세그먼트 데이터를 공유하는 것이 "판매"에 해당할 수 있음.
@@ -842,7 +842,7 @@ DSP는 이 세그먼트 정보를 pCTR 모델의 피처로 사용하거나, 입�
 
 세그먼트 멤버십 데이터는 두 가지 방향의 인덱스가 필요합니다.
 
-**Inverted Index (User → Segments)**: 피처 저장소 조회 시 사용합니다. pCTR 모델 추론 시 `user_id`를 키로 해당 유저의 세그먼트 목록을 조회합니다. Redis의 Set 또는 Sorted Set 자료구조가 적합합니다.
+**Inverted Index (User → Segments)**: 피처 스토어 조회 시 사용합니다. pCTR 모델 추론 시 `user_id`를 키로 해당 유저의 세그먼트 목록을 조회합니다. Redis의 Set 또는 Sorted Set 자료구조가 적합합니다.
 
 ```
 Redis Key: user_segments:{user_id}
@@ -933,7 +933,7 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 
 2. **RFM은 간단하지만 여전히 가장 실용적인 세그멘테이션 프레임워크다.** 복잡한 ML 모델을 도입하기 전에 RFM부터 구축하세요. 해석 가능하고, 광고주가 즉시 활용할 수 있으며, 구현 비용이 낮습니다. ML 클러스터링은 RFM으로 설명되지 않는 패턴이 있을 때 추가하면 됩니다.
 
-3. **피처 저장소 연동이 세그먼트의 실질적 가치를 결정한다.** 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그것은 리포팅 도구에 불과합니다. [피처 저장소](post.html?id=feature-store-serving)를 통해 10ms 이내에 세그먼트를 서빙하고, embedding으로 모델에 통합해야 입찰 결정에 실질적 영향을 미칩니다.
+3. **피처 스토어 연동이 세그먼트의 실질적 가치를 결정한다.** 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그것은 리포팅 도구에 불과합니다. [피처 스토어](post.html?id=feature-store-serving)를 통해 10ms 이내에 세그먼트를 서빙하고, embedding으로 모델에 통합해야 입찰 결정에 실질적 영향을 미칩니다.
 
 4. **DMP → CDP 전환은 선택이 아닌 필수다.** Safari/Firefox의 외부 쿠키 차단과 GDPR/CCPA가 이를 강제합니다. 자사 자사 데이터를 중심으로 세그멘테이션 역량을 구축하지 못하면, 타겟팅 정밀도에서 구조적 열위에 놓입니다. [닫힌 생태계](post.html?id=walled-garden)의 자사 데이터 우위가 더욱 공고해지는 환경에서, 열린 RTB 참여자는 CDP 기반 세그먼트 역량이 생존의 조건입니다.
 

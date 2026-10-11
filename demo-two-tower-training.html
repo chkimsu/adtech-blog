@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Two-Tower 학습 그림 여덟 장 — Ad Tech Blog</title>
-  <meta name="description" content="후보 추리기 모델이 배우는 순서를 클릭 로그 네 줄로 따라가는 그림 여덟 장. 두 타워의 모양, 요청 때 값으로 만드는 정답 짝, 배치 한 번의 4×4 점수표, 인기 광고 보정과 같은 광고 칸 지우기, 무작위 광고 섞기, 다음 날 클릭으로 재는 Recall@500, 광고 벡터를 미리 색인에 넣는 배포.">
+  <meta name="description" content="후보 생성(retrieval) 모델이 배우는 순서를 클릭 로그 네 줄로 따라가는 그림 여덟 장. 두 타워의 모양, 요청 때 값으로 만드는 양성 쌍, 배치 한 번의 4×4 점수표, 인기 광고 보정과 accidental hit 제거, 무작위 광고 섞기, 다음 날 클릭으로 재는 Recall@500, 광고 벡터를 미리 색인에 넣는 배포.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -174,7 +174,7 @@
   <main>
     <section class="tt-hero">
       <h1>Two-Tower 학습 그림 여덟 장</h1>
-      <p>후보 추리기 모델이 배우는 순서를 클릭 로그 네 줄로 따라갑니다. 두 타워의 모양, 정답 짝, 배치 한 번의 점수표, 꼭 넣는 보정 둘과 무작위 섞기, 평가, 배포를 그림 한 장씩으로 봅니다. 이름과 숫자는 설명용 예시입니다.</p>
+      <p>후보 생성(retrieval) 모델이 배우는 순서를 클릭 로그 네 줄로 따라갑니다. 두 타워의 모양, 양성 쌍, 배치 한 번의 점수표, 꼭 넣는 보정 둘과 무작위 섞기, 평가, 배포를 그림 한 장씩으로 봅니다. 이름과 숫자는 설명용 예시입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 회원 쪽 (회원 정보, 회원 타워, 회원 벡터)</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 광고 쪽 (광고 정보, 광고 타워, 광고 벡터)</span>
@@ -226,8 +226,8 @@
       </section>
 
       <section class="tt-sec" data-fig="2">
-        <h2><span class="no">2</span>학습 데이터: 클릭 한 건이 정답 짝 한 줄입니다</h2>
-        <p class="tt-one">클릭 로그 한 줄에서 (요청 때 회원 정보, 클릭한 광고) 짝 하나를 만듭니다. 음성은 저장하지 않습니다.</p>
+        <h2><span class="no">2</span>학습 데이터: 클릭 한 건이 양성 쌍 한 줄입니다</h2>
+        <p class="tt-one">클릭 로그 한 줄에서 (요청 때 회원 정보, 클릭한 광고) 쌍 하나를 만듭니다. 음성은 저장하지 않습니다.</p>
         <div class="tt-fig" id="tt-fig2"></div>
         <p class="tt-cap">회원 정보는 광고를 요청한 20:14:02 의 값을 씁니다. 20:14:10 에 갱신된 「최근 클릭 수」에는 이 클릭이 이미 들어 있어, 그 값을 쓰면 모델이 <b>정답을 보고</b> 배웁니다.</p>
       </section>
@@ -285,7 +285,7 @@
       </section>
 
       <section class="tt-sec" data-fig="5">
-        <h2><span class="no">5</span>같은 광고 칸 지우기</h2>
+        <h2><span class="no">5</span>accidental hit 제거</h2>
         <p class="tt-one">회원 D 도 러닝화를 눌렀다고 해 봅니다. 회원 A 줄의 D 열은 정답인 광고를 음성으로 세는 칸이 되므로 소프트맥스에서 뺍니다.</p>
         <div class="tt-fig">
           <table class="tt-mm" aria-label="같은 광고가 두 번 든 배치의 점수표">
@@ -353,9 +353,9 @@
       <h2>현업에서는 이렇게 씁니다</h2>
       <ul>
         <li><b>재현율이 갑자기 떨어지면 버전 번호부터 봅니다.</b> 색인을 만든 광고 타워와 지금 도는 회원 타워가 같은 학습에서 나왔는지 확인합니다.</li>
-        <li><b>음성 칸이 이상하면 배치를 섞는 방법과 같은 광고 칸 지우기를 봅니다.</b> 같은 회원의 클릭이 한 배치에 몰리면 그 회원이 실제로 누른 광고가 음성 칸에 들어갑니다.</li>
+        <li><b>음성 칸이 이상하면 배치를 섞는 방법과 accidental hit 제거를 봅니다.</b> 같은 회원의 클릭이 한 배치에 몰리면 그 회원이 실제로 누른 광고가 음성 칸에 들어갑니다.</li>
         <li><b>그림을 누르면</b> 위 해설 칸에 그 그림이 말로 안 한 것 하나가 더 나옵니다.</li>
-        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=two-tower-training">Two-Tower 학습</a>에 이 그림들이 절마다 한 장씩 들어 있습니다. 후보 추리기 전체와 근사 검색 색인은 <a href="post.html?id=two-tower-retrieval">Two-Tower Retrieval</a> 에 있습니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=two-tower-training">Two-Tower 학습</a>에 이 그림들이 절마다 한 장씩 들어 있습니다. 후보 생성 전체와 근사 검색 색인은 <a href="post.html?id=two-tower-retrieval">Two-Tower Retrieval</a> 에 있습니다.</li>
       </ul>
     </section>
   </main>

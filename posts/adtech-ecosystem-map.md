@@ -139,7 +139,7 @@ graph TB
 
 눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 23개 모듈을 **두 층**으로 놓았습니다.
 
-- **위층 = 두뇌 층.** 피처 저장소(Feature Store) 에서 Training 을 거쳐, 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 입찰가를 정하는 Bid Optimizer, 그리고 Monitoring 입니다.
+- **위층 = 두뇌 층.** 피처 스토어(Feature Store) 에서 Training 을 거쳐, 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 입찰가를 정하는 Bid Optimizer, 그리고 Monitoring 입니다.
 - **아래층 = 거래 층.** 사용자 → 매체·SSP → 광고 거래소(Ad Exchange) → DSP → 광고주.
 
 두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다. DSP 안에서 일이 일어나는 순서는 [DSP 안의 순서](ecosystem.html?flow=dspinside) 칩으로 봅니다. 지도 위의 무대 바꾸기로 열린 RTB 와 닫힌 생태계를 바꿔 볼 수도 있습니다.
@@ -561,7 +561,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
 
-지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 저장소, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누르세요.
+지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누르세요.
 
 ```python
 # 두뇌 층은 고리다. 로그가 한 바퀴 돌아 다시 심장에 닿는 시간을 더한다.

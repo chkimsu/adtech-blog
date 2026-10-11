@@ -12,7 +12,7 @@
     // ── Row 1 (y=120): ML / Models top ──
     'feature-store': {
       x: 250, y: 22, w: 150, h: 44, cat: 'ml',
-      name: 'Feature Store', sub: '피처 저장소',
+      name: 'Feature Store', sub: '피처 스토어',
       def: '유저·지면·시간 등 광고 모델의 입력 피처를 실시간으로 공급하는 저장소. pCTR/pCVR이 매 요청마다 호출.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'feature-store-serving', title: 'Feature Store 서빙' }]
     },

@@ -98,8 +98,8 @@
   const AUTO_GENS = 30;  // "30세대 자동" 한 번에 도는 세대 수
   const AUTO_MS = 130;
 
-  // 계열 색 토큰. 광고가 일곱 번째부터는 같은 색에 빗금을 얹어 가른다
-  // (계열이 넷을 넘으면 색만으로 가르지 않는다).
+  // 계열 색 토큰. 광고가 일곱 번째부터는 같은 색에 빗금을 얹어 구분한다
+  // (계열이 넷을 넘으면 색만으로 구분하지 않는다).
   const SERIES = ['--series-1', '--series-2', '--series-3', '--series-4', '--series-5', '--series-6'];
 
   // canvas 폴백 상수와 같은 역할 — :root 토큰이 아직 안 붙은 첫 페인트나
@@ -113,7 +113,7 @@
   const pct = (x, d) => (100 * x).toFixed(d == null ? 1 : d) + '%';
 
   // -----------------------------------------------------------------
-  // 2) 판 상태
+  // 2) 시뮬레이션 상태
   // -----------------------------------------------------------------
   const S = {
     nAds: 8, seed: 37, N: 20000, epsPct: 0, mode: 'even', priorPct: 0,
@@ -236,7 +236,7 @@
   }
 
   // 이번 세대 노출 기준 순위. 상한에 걸려 같은 건수인 광고들은
-  // 배분이 실제로 쓴 순서(추정 CTR 내림차순)로 가른다.
+  // 배분이 실제로 쓴 순서(추정 CTR 내림차순)로 순위를 정한다.
   function impRanks() {
     const h = last();
     const est = estimates();
@@ -263,7 +263,7 @@
     return 0;
   }
 
-  // 창(window) 안의 로그만으로 "모두 똑같이 띄웠다면 나왔을 평균 CTR" 을 잰다
+  // 윈도우 안의 로그만으로 "모두 똑같이 띄웠다면 나왔을 평균 CTR" 을 잰다
   function measure() {
     const win = S.win ? S.hist.slice(-S.win) : S.hist;
     if (!win.length) return null;
@@ -512,7 +512,7 @@
     out += tile('오라클 대비 클릭',
       S.gen ? (loss > 0 ? '−' : '+') + Math.abs(100 * loss).toFixed(1) + '%' : '—',
       S.gen ? (loss > 0.02 ? 'is-bad' : loss > 0.005 ? 'is-warn' : 'is-good') : '',
-      S.gen ? '누적 ' + fmt(totClicks) + '건 vs 진짜 CTR 로 배분했다면 ' + fmt(S.oracleClicks) + '건' : '진짜 CTR 로 배분한 판과 비교');
+      S.gen ? '누적 ' + fmt(totClicks) + '건 vs 진짜 CTR 로 배분했다면 ' + fmt(S.oracleClicks) + '건' : '진짜 CTR 로 배분한 경우와 비교');
 
     $('fb-metrics').innerHTML = out;
   }
@@ -529,7 +529,7 @@
     if (!m) {
       out += cell('로그 그대로', '—', 'is-off', '아직 로그가 없습니다');
       out += cell('IPS 가중', S.ips ? '—' : '꺼짐', 'is-off', S.ips ? '아직 로그가 없습니다' : '컨트롤에서 켤 수 있습니다');
-      out += cell('성향점수 0인 광고', '—', 'is-off', '창 안에서 노출 0건인 광고');
+      out += cell('성향점수 0인 광고', '—', 'is-off', '윈도우 안에서 노출 0건인 광고');
     } else {
       const winLabel = S.win ? '최근 ' + Math.min(S.win, m.gens) + '세대' : '전체 ' + m.gens + '세대';
       out += cell('로그 그대로', pct(m.raw, 3), m.raw - tm > 0.002 ? 'is-bad' : '',
@@ -542,7 +542,7 @@
         out += cell('IPS 가중', '꺼짐', 'is-off', '켜면 1÷성향점수 로 다시 잽니다');
       }
       out += cell('성향점수 0인 광고', m.dead + '개', m.dead ? 'is-bad' : 'is-good',
-        m.dead ? '1÷0 을 못 해 계산에서 통째로 빠집니다' : '모든 광고가 창 안에 노출을 남겼습니다');
+        m.dead ? '1÷0 을 못 해 계산에서 통째로 빠집니다' : '모든 광고가 윈도우 안에 노출을 남겼습니다');
     }
     $('fb-measure').innerHTML = out;
   }

@@ -3031,7 +3031,7 @@ window.DEMO_EDU = {
     // 추론 서버 카드 네 장 (입문)
     // ==========================================
     'inference-cards': {
-        analogy: '학습 파일은 ONNX 로 바꿔 올리고, 서버는 웜업까지 끝낸 41초에 readiness probe 를 통과한다. 후보 800건은 한 텐서로 한 번에, 두 버전은 같이 띄워 두고 설정 한 줄로 바꾼다',
+        analogy: '학습 파일은 ONNX 로 바꿔 올리고, 서버는 웜업까지 끝낸 41초에 readiness probe 를 통과한다. 후보 800건은 한 텐서로 한 번에, 두 버전은 같이 올려 두고 설정 한 줄로 바꾼다',
         anchor: '.tg-host',
         embedKeep: ['.tg-grid'],
         embedHide: ['.tg-hero', '.tg-real'],
@@ -3151,7 +3151,7 @@ window.DEMO_EDU = {
                 switch (el.dataset.card) {
                     case 'precompute': return '헷갈리는 것은 <strong>38배가 어디서 나오나</strong>입니다. 사람 수가 아니라 요청 수의 차이입니다. 같은 사람이 하루 16.3번 요청하므로, 사람마다 한 번만 계산하면 그만큼 덜 듭니다.';
                     case 'cache': return '헷갈리는 것은 <strong>적중률과 평균 시간의 관계</strong>입니다. 못 찾은 요청만 2ms 를 쓰므로 평균은 적중률로 섞입니다. 적중 80% 면 0.56ms 이고 100% 면 0.20ms 입니다.';
-                    case 'cost': return '헷갈리는 것은 <strong>GPU 가 왜 세 대인가</strong>입니다. 2,639 QPS 면 두 대로 되는데, 한 대가 빠지면 사용률이 1.15 로 넘어갑니다. 예비 한 대가 비용의 3분의 1 입니다.';
+                    case 'cost': return '헷갈리는 것은 <strong>GPU 가 왜 세 대인가</strong>입니다. 2,639 QPS 면 두 대로 되는데, 한 대가 빠지면 부하율이 1.15 로 넘어갑니다. 예비 한 대가 비용의 3분의 1 입니다.';
                     default: return '';
                 }
             }
@@ -3299,7 +3299,7 @@ window.DEMO_EDU = {
 
 // ==========================================
     'serving-cost': {
-        analogy: '대수는 두 조건 중 큰 쪽이다 — 평시에 사용률 상한을 지키는 대수, 예비가 빠져도 받아 내는 대수',
+        analogy: '대수는 두 조건 중 큰 쪽이다 — 평시에 부하율 상한을 지키는 대수, 예비가 빠져도 받아 내는 대수',
         anchor: '.sc-controls',
         embedKeep: ['.sc-controls'],
         embedHide: ['.demo-prereq', '.demo-intro', '.demo-steps', '.sc-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
@@ -3309,7 +3309,7 @@ window.DEMO_EDU = {
                 `대수는 요청량에 비례해 ${value > prev ? '늘지만 올림 때문에 계단으로 오릅니다' : '줄지만 예비 대수 아래로는 안 내려갑니다'}. ` +
                 '두 차트의 표시점이 어디로 갔는지 보세요.',
             '#sc-load': ({ value, prev }) =>
-                `사용률 상한을 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}</strong>로 바꿨습니다. ` +
+                `부하율 상한을 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}</strong>로 바꿨습니다. ` +
                 `${value > prev ? '한 대를 더 채워 쓰니 대수가 줄고 값이 내려갑니다. 대신 요청이 조금만 몰려도 줄이 길어집니다' : '한 대를 덜 채워 쓰니 대수가 늘고 값이 올라갑니다. 대신 요청이 몰려도 여유가 남습니다'}.`,
             '#sc-spare': ({ value, prev }) =>
                 `예비 대수를 <strong>${prev}대 → ${value}대</strong>로 바꿨습니다. ` +
@@ -3319,7 +3319,7 @@ window.DEMO_EDU = {
                 `요청 안에서 만들던 값을 미리 만들어 두면 이쪽이 ${value > prev ? '올라갑니다' : '내려갑니다'}. 대수가 그만큼 ${value > prev ? '줄어듭니다' : '늘어납니다'}.`,
             '#sc-cpu-won': ({ value, prev }) =>
                 `CPU 한 대의 시간당 값을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}원</strong>으로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
-                '대수는 그대로이고 값만 바뀝니다. 대수를 정하는 것은 처리량과 사용률 상한이지 값이 아닙니다.',
+                '대수는 그대로이고 값만 바뀝니다. 대수를 정하는 것은 처리량과 부하율 상한이지 값이 아닙니다.',
             '#sc-gpu-cap': ({ value, prev }) =>
                 `GPU 한 대 처리량을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')} QPS</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
                 `${value > prev ? '한 대가 더 받아 내도 예비 한 대는 그대로라, 요청량이 작을 때는 값이 안 내려갑니다' : '한 대가 덜 받아 내니 대수가 늘고 값이 올라갑니다'}.`,

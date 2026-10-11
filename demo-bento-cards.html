@@ -57,7 +57,7 @@
         <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 계산이 <b>3%</b> 만 줄어듭니다. 요청 하나가 작고 자주 올 때는 <b>78%</b> 줄어듭니다.</p></section>
 
       <section class="tg-card" data-card="workers"><h2>MORE WORKERS</h2><p class="tg-k">워커를 늘리면 무엇이 바뀌고 무엇이 그대로인가</p><p class="tg-easy"><b>쉽게 말하면</b> 파이썬은 GIL 때문에 프로세스 하나로 코어 하나만 씁니다. 그래서 워커 프로세스를 여러 개 띄웁니다. 처리량은 늘지만 요청 한 건의 처리 시간은 그대로입니다.</p><div class="tg-fig" id="bt-workers"></div>
-        <p class="tg-cap">워커 1개면 사용률이 1.04 라 대기열이 쌓이고, 4개면 대기가 <b>0.04ms</b> 로 거의 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 처리 시간 <b>4.75ms</b> 는 내내 같습니다.</p></section>
+        <p class="tg-cap">워커 1개면 부하율이 1.04 라 대기열이 쌓이고, 4개면 대기가 <b>0.04ms</b> 로 거의 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 처리 시간 <b>4.75ms</b> 는 내내 같습니다.</p></section>
     </div>
 
     <section class="tg-real">

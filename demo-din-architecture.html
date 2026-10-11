@@ -133,12 +133,12 @@
 
     <div class="din-page">
       <section class="din-sec" data-fig="1">
-        <h2><span class="no">1</span>모델 구조: 일곱 층, attention 은 점선 칸 둘</h2>
+        <h2><span class="no">1</span>모델 구조: 일곱 층, attention 은 점선 안의 두 층</h2>
         <p class="din-one">입력, 임베딩, 행동마다 무게 매기기, 무게 곱해 더하기, 이어 붙이기, MLP, 출력입니다. 광고를 바꾸면 점선 칸 안만 바뀝니다.</p>
         <div class="din-ctl"><span><span class="din-seg-l">채점하는 광고</span>
           <span class="din-seg" role="group" aria-label="후보 광고"><button type="button" id="din-a-run" data-din-a="run" aria-pressed="true">러닝화 광고</button><button type="button" id="din-a-cof" data-din-a="cof" aria-pressed="false">커피머신 광고</button></span></span></div>
         <div class="din-fig" id="din-fig1"></div>
-        <p class="din-cap">평균을 쓰던 이전 구조(Embedding 과 MLP)와 다른 곳은 <b>점선 칸 하나</b>뿐입니다. MLP 칸 수 200, 80 은 논문 그림의 값입니다.</p>
+        <p class="din-cap">합이나 평균으로 묶던 이전 구조(Embedding 과 MLP)와 다른 곳은 <b>점선 칸 하나</b>뿐입니다. MLP 칸 수 200, 80 은 논문 그림의 값입니다.</p>
       </section>
 
       <section class="din-sec" data-fig="2">
@@ -169,14 +169,14 @@
         <h2><span class="no">5</span>광고마다 pCTR</h2>
         <p class="din-one">광고마다 만든 사용자 벡터를 광고 벡터, 그 밖의 정보와 이어 붙여 MLP 에 넣습니다.</p>
         <div class="din-fig" id="din-fig5"></div>
-        <p class="din-cap">사용자 벡터가 광고마다 다르니 미리 하나를 계산해 둘 수 없습니다. 후보가 800개면 요청 한 건에 <b>무게 계산을 800번</b> 합니다.</p>
+        <p class="din-cap">사용자 벡터가 광고마다 다르니 미리 하나를 계산해 둘 수 없습니다. 후보가 800개면 요청 한 건에 <b>무게 계산을 행동 수 × 800번</b> 합니다.</p>
       </section>
     </div>
 
     <section class="din-real">
       <h2>현업에서는 이렇게 씁니다</h2>
       <ul>
-        <li><b>평균에서 DIN 으로 바꿀 때 고치는 곳은 점선 칸 하나입니다.</b> 입력, 임베딩, MLP 는 그대로 두고 묶는 칸만 바꿉니다.</li>
+        <li><b>합이나 평균에서 DIN 으로 바꿀 때 고치는 곳은 점선 칸 하나입니다.</b> 입력, 임베딩, MLP 는 그대로 두고 묶는 칸만 바꿉니다.</li>
         <li><b>기록 길이가 사람마다 달라도 됩니다.</b> 배치 안에서는 가장 긴 길이에 맞춰 빈칸을 채우고, 빈칸의 무게를 0 으로 만드는 mask 를 같이 넘깁니다.</li>
         <li><b>그림을 누르면</b> 위 해설 칸에 그 그림이 말로 안 한 것 하나가 더 나옵니다.</li>
         <li><b>글로 이어 읽으려면</b> <a href="post.html?id=din-architecture">DIN 모델 구조</a>에 이 그림들이 절마다 한 장씩 들어 있습니다. 행동을 벡터로 만드는 법과 self-attention, 긴 이력은 <a href="post.html?id=behavior-sequence-attention">행동 시퀀스 Attention</a> 에 있습니다.</li>

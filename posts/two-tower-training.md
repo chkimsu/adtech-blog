@@ -291,7 +291,7 @@ print(f'Recall@10  two-tower {recall:.3f}  클릭 많은 순 {base:.3f}')
 # Recall@10  two-tower 0.932  클릭 많은 순 0.496
 ```
 
-라이브러리를 쓰면 같은 일을 인자로 켭니다. TensorFlow Recommenders 에서는 `tfrs.tasks.Retrieval` 이 이 일을 합니다. 같은 광고 칸은 `remove_accidental_hits=True` 로 지웁니다. 인기 보정은 호출할 때 `candidate_sampling_probability` 를 넘겨 넣습니다.
+라이브러리를 쓰면 같은 일을 인자로 켭니다. TensorFlow Recommenders 에서는 `tfrs.tasks.Retrieval` 이 이 일을 합니다. 같은 광고 칸은 만들 때 `remove_accidental_hits=True` 를 주고, 호출할 때 광고 번호 `candidate_ids` 를 넘기면 지웁니다. 번호를 넘기지 않으면 오류가 납니다. 인기 보정은 호출할 때 `candidate_sampling_probability` 를 넘겨 넣습니다.
 :::
 
 ## 8. 평가: 다음 날 클릭이 상위 500 안에 드나

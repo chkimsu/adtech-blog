@@ -2779,7 +2779,7 @@ window.DEMO_EDU = {
             '.dvd-sec': ({ el }) => {
                 switch (el.dataset.fig) {
                     case '1': return '헷갈리는 것은 <strong>무엇끼리 비교하나</strong>입니다. 같은 자리에 들어가는 모델끼리만 비교합니다. DIN 과 DCN 은 자리가 달라 한 모델에 둘 다 넣습니다.';
-                    case '2': return '헷갈리는 것은 <strong>DCN 만 쓸 때 행동 정보가 없나</strong>입니다. 있습니다. 사람이 미리 센 숫자로 들어가서 광고에 따라 바뀌지 않을 뿐입니다.';
+                    case '2': return '헷갈리는 것은 <strong>DCN 만 쓸 때 행동 정보가 없나</strong>입니다. 있습니다. 사람이 정한 단위로 미리 센 숫자가 들어갑니다. 사용자 한 사람 단위로 센 숫자는 광고에 따라 바뀌지 않습니다.';
                     case '3': return '헷갈리는 것은 <strong>DIN 칸을 따로 학습해 넣나</strong>입니다. 아닙니다. 관심 벡터가 광고마다 달라 미리 뽑아 둘 수 없고, 같은 모델 안에서 함께 배웁니다.';
                     case '4': return '헷갈리는 것은 <strong>계보 화살표</strong>입니다. 같은 자리 안에서만 이어집니다. DeepFM 다음이 DCN 인 것도, ESMM 다음이 MMoE 인 것도 아닙니다.';
                     default: return '';
@@ -2804,11 +2804,11 @@ window.DEMO_EDU = {
         explain: {
             '.din-sec': ({ el }) => {
                 switch (el.dataset.fig) {
-                    case '1': return '헷갈리는 것은 <strong>attention 이 어디에 있나</strong>입니다. 점선 칸 두 층뿐입니다. 입력, 임베딩, MLP 는 평균을 쓰던 모델과 같습니다.';
+                    case '1': return '헷갈리는 것은 <strong>attention 이 어디에 있나</strong>입니다. 점선 안의 두 층뿐입니다. 입력, 임베딩, MLP 는 합이나 평균으로 묶던 모델과 같습니다.';
                     case '2': return '헷갈리는 것은 <strong>무게를 누가 가르치나</strong>입니다. 따로 정답이 없습니다. 클릭 여부 하나로 pCTR 신경망과 함께 학습됩니다.';
                     case '3': return '헷갈리는 것은 <strong>무게의 합</strong>입니다. DIN 은 softmax 로 나누지 않아 러닝화 광고는 6.20, 커피머신 광고는 2.48 입니다. 관련 행동이 많을수록 사용자 벡터가 커집니다.';
                     case '4': return '헷갈리는 것은 <strong>곱 칸이 왜 들어가나</strong>입니다. 두 벡터가 같은 쪽을 가리킬수록 곱이 커져서, 신경망이 관련 있는 행동을 쉽게 알아봅니다.';
-                    case '5': return '헷갈리는 것은 <strong>계산 비용</strong>입니다. 사용자 벡터가 광고마다 달라 미리 만들어 둘 수 없습니다. 후보 수만큼 무게 계산을 다시 합니다.';
+                    case '5': return '헷갈리는 것은 <strong>계산 비용</strong>입니다. 사용자 벡터가 광고마다 달라 미리 만들어 둘 수 없습니다. 후보마다 행동 수만큼 무게 계산을 다시 합니다.';
                     default: return '';
                 }
             }

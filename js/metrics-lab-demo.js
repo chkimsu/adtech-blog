@@ -32,7 +32,7 @@
   const SW = 0.9;           // 요청 안 진짜 편차 — 글 5절 뉴스피드 표본의 spread 와 같다
   const PMAX = 0.99;        // 확률 상한
   const PMIN = 1e-6;        // 확률 하한 (log 가 터지지 않게)
-  const SEED = 20260814;    // 글 5절 코드와 같은 씨앗
+  const SEED = 20260814;    // 글 5절 코드와 같은 시드
 
   const DEF = { d: 0.494, sb: 0.915, m: 1, K: 5 };
 

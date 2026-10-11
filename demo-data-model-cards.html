@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>데이터와 모델 카드 여덟 장 — Ad Tech Blog</title>
-  <meta name="description" content="로그가 학습 데이터가 되고 모델이 후보를 고르는 자리 여덟을 카드 한 장씩으로. 로그 조인, 자리=1 채점, 유통 층, 피처 창과 라벨 누출, 후보별 어텐션, 전수 대 근사 검색, 씨앗 중심점, 실시간 세그먼트. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
+  <meta name="description" content="로그가 학습 데이터가 되고 모델이 후보를 고르는 자리 여덟을 카드 한 장씩으로. 로그 조인, 자리=1 채점, 유통 층, 피처 윈도우와 라벨 누출, 후보별 어텐션, 전수 대 근사 검색, 시드 중심점, 실시간 세그먼트. 점이 흐르는 방향이 데이터가 가는 방향입니다.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -53,17 +53,17 @@
       <section class="tg-card" data-card="fanout"><h2>FAN-OUT</h2><p class="tg-k">처리 잡 다섯이 목적지 여섯으로</p><p class="tg-easy"><b>쉽게 말하면</b> 처리 잡마다 목적지마다 보내는 코드를 두면 연결이 5 × 6 = 30개입니다. 가운데에 나눠 보내는 층을 하나 두면 잡은 한 곳에만 쓰고 연결이 5 + 6 = 11개가 됩니다.</p><div class="tg-fig" id="dm-fanout"></div>
         <p class="tg-cap">목적지를 하나 더 붙일 때 층이 없으면 <b>잡 5개</b>를 고치고 층이 있으면 <b>0개</b>입니다. 목적지가 늘 것 같으면 층을 먼저 세웁니다.</p></section>
 
-      <section class="tg-card" data-card="aggwindow"><h2>FEATURE WINDOW</h2><p class="tg-k">피처 창이 라벨 날과 겹치면</p><p class="tg-easy"><b>쉽게 말하면</b> 「이 광고의 클릭률」 피처를 오늘 로그로 만들면 그 안에 오늘의 클릭 결과가 들어 있습니다. 모델은 정답을 보고 맞히는 셈이라 오프라인 점수만 오르고 실서빙에서는 떨어집니다.</p><div class="tg-fig" id="dm-aggwindow"></div>
-        <p class="tg-cap">같은 날 로그로 만든 피처 A 는 오프라인 AUC 0.894 에서 실서빙 <b>0.779</b> 로 떨어집니다. 과거 7일로 만든 C 는 0.777 에서 0.798 입니다. 창은 <b>D-1 자정</b>에서 자릅니다.</p></section>
+      <section class="tg-card" data-card="aggwindow"><h2>FEATURE WINDOW</h2><p class="tg-k">피처 윈도우가 라벨 날과 겹치면</p><p class="tg-easy"><b>쉽게 말하면</b> 「이 광고의 클릭률」 피처를 오늘 로그로 만들면 그 안에 오늘의 클릭 결과가 들어 있습니다. 모델은 정답을 보고 맞히는 셈이라 오프라인 점수만 오르고 실서빙에서는 떨어집니다.</p><div class="tg-fig" id="dm-aggwindow"></div>
+        <p class="tg-cap">같은 날 로그로 만든 피처 A 는 오프라인 AUC 0.894 에서 실서빙 <b>0.779</b> 로 떨어집니다. 과거 7일로 만든 C 는 0.777 에서 0.798 입니다. 윈도우는 <b>D-1 자정</b>에서 자릅니다.</p></section>
 
-      <section class="tg-card" data-card="din"><h2>ATTENTION BY CANDIDATE</h2><p class="tg-k">후보 광고에 따라 이력의 무게가 달라진다</p><p class="tg-easy"><b>쉽게 말하면</b> 유저가 최근에 본 상품 5개가 있습니다. 러닝화 광고를 채점할 때는 운동 관련 이력에, 노트북 광고를 채점할 때는 노트북 이력에 무게가 실립니다. 같은 유저인데 광고마다 유저 표현이 달라집니다.</p><div class="tg-fig" id="dm-din"></div>
+      <section class="tg-card" data-card="din"><h2>ATTENTION BY CANDIDATE</h2><p class="tg-k">후보 광고에 따라 이력의 가중치가 달라진다</p><p class="tg-easy"><b>쉽게 말하면</b> 유저가 최근에 본 상품 5개가 있습니다. 러닝화 광고를 채점할 때는 운동 관련 이력의 가중치가 커집니다. 노트북 광고를 채점할 때는 노트북 이력의 가중치가 커집니다. 같은 유저인데 광고마다 유저 표현이 달라집니다.</p><div class="tg-fig" id="dm-din"></div>
         <p class="tg-cap">러닝화 광고에서는 운동 관련 3개가 가중치의 <b>91.3%</b> 를, 노트북 광고에서는 <b>9.1%</b> 를 가져갑니다. 평균으로 뭉개면 어느 광고든 60% 로 고정입니다.</p></section>
 
       <section class="tg-card" data-card="ann"><h2>EXACT VS ANN</h2><p class="tg-k">전수 비교 대 근사 검색</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 100만 개와 유저 벡터를 하나하나 다 비교하면 128.8ms 로 예산을 넘습니다. 근사 검색은 가까울 법한 2% 만 훑어 3.4ms 에 끝냅니다. 대신 진짜 1위를 가끔 놓칩니다.</p><div class="tg-fig" id="dm-ann"></div>
         <p class="tg-cap">광고 벡터는 미리 계산해 인덱스에 두고, 서빙 때는 유저 타워만 돌려 검색합니다. 100만 개 전수 내적 128.8ms 대 근사 검색 <b>3.4ms</b>, 재현율 90~99% 입니다.</p></section>
 
-      <section class="tg-card" data-card="centroid"><h2>SEED CENTROID</h2><p class="tg-k">씨앗 평균 하나에서 닮은 사람을 찾는다</p><p class="tg-easy"><b>쉽게 말하면</b> 씨앗 유저의 벡터를 평균 내 중심점 하나를 만들고, 전체 유저 중 그 점에 가까운 순서로 줄을 세워 앞에서 자릅니다. 어디서 자르느냐가 확장 비율입니다.</p><div class="tg-fig" id="dm-centroid"></div>
-        <p class="tg-cap">유사도 0.87, 0.82, 0.78 순으로 세우고 임계값 아래는 뺍니다. 임계값을 높이면 소수만 남고 낮추면 넓어집니다. 씨앗이 이질적이면 평균이 <b>빈 자리</b>에 놓여 중심점을 여럿 둡니다.</p></section>
+      <section class="tg-card" data-card="centroid"><h2>SEED CENTROID</h2><p class="tg-k">시드 평균 하나에서 닮은 사람을 찾는다</p><p class="tg-easy"><b>쉽게 말하면</b> 시드 유저의 벡터를 평균 내 중심점 하나를 만들고, 전체 유저 중 그 점에 가까운 순서로 줄을 세워 앞에서 자릅니다. 어디서 자르느냐가 확장 비율입니다.</p><div class="tg-fig" id="dm-centroid"></div>
+        <p class="tg-cap">유사도 0.87, 0.82, 0.78 순으로 세우고 임계값 아래는 뺍니다. 임계값을 높이면 소수만 남고 낮추면 넓어집니다. 시드가 이질적이면 평균이 <b>빈 자리</b>에 놓여 중심점을 여럿 둡니다.</p></section>
 
       <section class="tg-card" data-card="rtsegment"><h2>REAL-TIME SEGMENT</h2><p class="tg-k">이벤트가 초 안에 세그먼트가 되는 길</p><p class="tg-easy"><b>쉽게 말하면</b> 검색, 장바구니, 구매 이벤트가 Kafka 로 들어오면 Flink 가 규칙 셋으로 세그먼트를 붙였다 떼고, 그 결과를 Redis 에 두어 pCTR 모델이 요청마다 읽습니다. 배치보다 훨씬 빠릅니다.</p><div class="tg-fig" id="dm-rtsegment"></div>
         <p class="tg-cap">1시간에 검색 3회면 활성 검색자, 담고 10분 안 미구매면 장바구니 이탈, 구매하면 전환자입니다. 배치 세그먼트와 부딪히면 <b>스트리밍이 이깁니다.</b></p></section>
@@ -72,7 +72,7 @@
     <section class="tg-real">
       <h2>현업에서는 이렇게 씁니다</h2>
       <ul>
-        <li><b>오프라인 점수와 실서빙 점수가 다르면</b> 이 여덟 자리 중 셋부터 봅니다. 피처 창이 라벨 날과 겹쳤나, 조인을 너무 일찍 돌렸나, 자리=1 로 채점한 확률을 보정 없이 썼나.</li>
+        <li><b>오프라인 점수와 실서빙 점수가 다르면</b> 이 여덟 자리 중 셋부터 봅니다. 피처 윈도우가 라벨 날과 겹쳤나, 조인을 너무 일찍 돌렸나, 자리=1 로 채점한 확률을 보정 없이 썼나.</li>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
         <li><b>이어서 볼 것은</b> <a href="demo-training-cards.html">학습 데이터 카드 여섯 장</a>과 <a href="demo-serving-cards.html">서빙 카드 다섯 장</a>입니다. 이 여덟 장은 그 두 판 사이의 자리를 채웁니다.</li>
       </ul>

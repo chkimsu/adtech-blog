@@ -12,7 +12,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dcn-vs-din-slot"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=dcn-vs-din-slot</id>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>DCN-V2 로만 pCTR 모델을 학습해 본 지훈 씨가 모델 계보 세 줄이 서로 대신하는 것인지, 같이 쓰는 것인지 헷갈립니다. pCTR 모델 한 개 안에는 ① 행동 기록 정리, ② 피처 섞기, ③ 답 내기의 세 자리가 있고 계보 세 줄은 이 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 칸을 더하면 DCN 과 출력, 손실은 그대로이고, 미리 센 숫자 {행동 4, 러닝 3, 커피 1} 대신 광고마다 다른 관심 벡터가 들어갑니다. 학습은 클릭 정답 하나로 함께 하고, 대가는 행동 목록 데이터 준비와 요청 한 건에 무게 계산 40,000번입니다. 자리별 연표도 함께 봅니다.</summary>
+    <summary>DCN-V2 로만 pCTR 모델을 학습해 본 지훈 씨가 모델 계보 세 줄이 서로 대신하는 것인지, 같이 쓰는 것인지 헷갈립니다. pCTR 모델 한 개 안에는 ① 행동 기록 정리, ② 피처 섞기, ③ 답 내기의 세 자리가 있고 계보 세 줄은 이 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 칸을 더하면 DCN 과 출력, 손실은 그대로이고, 미리 센 숫자 {행동 4, 러닝 3, 커피 1} 만 보던 모델에 광고마다 다른 관심 벡터가 들어갑니다. 세 자리는 같은 정답으로 함께 학습하고, 대가는 행동 목록 데이터 준비와 요청 한 건에 무게 계산 40,000번입니다. 행동 정보를 통계 숫자, 행동 목록, 둘 다로 넣는 세 방법과 자리별 연표도 함께 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -20,7 +20,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture</id>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 평균도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 무게 2.4 를 손으로 내고, 무게 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.</summary>
+    <summary>attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 합이나 평균으로도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 무게 2.4 를 손으로 내고, 무게 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>

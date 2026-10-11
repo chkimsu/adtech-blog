@@ -2768,10 +2768,10 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
-    // DCN 과 DIN 칸 그림 네 장
+    // DCN 과 DIN 모듈 그림 네 장
     // ==========================================
     'dcn-vs-din-slot': {
-        analogy: 'pCTR 모델 한 개 안에는 자리가 셋 있다. DIN 은 행동 기록을 줄이는 자리, DCN 은 피처를 섞는 자리라서 DIN 칸을 더하는 일은 DCN 앞에 칸 하나를 끼우는 일이다',
+        analogy: 'pCTR 모델 한 개 안에는 자리가 셋 있다. DIN 은 행동 기록을 줄이는 자리, DCN 은 피처를 섞는 자리라서 DIN 모듈을 더하는 일은 DCN 앞에 모듈 하나를 끼우는 일이다',
         anchor: '.dvd-host',
         embedKeep: ['.dvd-page'],
         embedHide: ['.dvd-hero', '.dvd-key', '.dvd-sec > h2', '.dvd-one', '.dvd-cap', '.dvd-real'],
@@ -2780,7 +2780,7 @@ window.DEMO_EDU = {
                 switch (el.dataset.fig) {
                     case '1': return '헷갈리는 것은 <strong>무엇끼리 비교하나</strong>입니다. 같은 자리에 들어가는 모델끼리만 비교합니다. DIN 과 DCN 은 자리가 달라 한 모델에 둘 다 넣습니다.';
                     case '2': return '헷갈리는 것은 <strong>DCN 만 쓸 때 행동 정보가 없나</strong>입니다. 있습니다. 사람이 정한 단위로 미리 센 숫자가 들어갑니다. 사용자 한 사람 단위로 센 숫자는 광고에 따라 바뀌지 않습니다.';
-                    case '3': return '헷갈리는 것은 <strong>DIN 칸을 따로 학습해 넣나</strong>입니다. 아닙니다. 관심 벡터가 광고마다 달라 미리 뽑아 둘 수 없고, 같은 모델 안에서 함께 배웁니다.';
+                    case '3': return '헷갈리는 것은 <strong>DIN 모듈을 따로 학습해 넣나</strong>입니다. 아닙니다. 관심 벡터가 광고마다 달라 미리 뽑아 둘 수 없고, 같은 모델 안에서 함께 배웁니다.';
                     case '4': return '헷갈리는 것은 <strong>계보 화살표</strong>입니다. 같은 자리 안에서만 이어집니다. DeepFM 다음이 DCN 인 것도, ESMM 다음이 MMoE 인 것도 아닙니다.';
                     default: return '';
                 }
@@ -2789,7 +2789,7 @@ window.DEMO_EDU = {
         tour: [
             { el: '.tg-legend', title: '색 넷', body: '파랑은 ① 행동 기록 정리, 회색은 ② 피처 섞기, 벽돌색은 ③ 답 내기, 먹색은 관심 벡터와 pCTR 입니다.' },
             { el: '#dvd-fig1', title: '세 자리', body: '①과 ③을 바꿔 보면 ②는 그대로입니다.', waitFor: 'click' },
-            { el: '#dvd-fig2', title: 'DCN 만과 DIN 칸', body: '다른 칸은 파란 칸 하나뿐입니다.' }
+            { el: '#dvd-fig2', title: 'DCN 만과 DIN 모듈', body: '다른 모듈은 파란 칸 하나뿐입니다.' }
         ]
     },
 
@@ -2797,7 +2797,7 @@ window.DEMO_EDU = {
     // DIN 모델 구조 그림 다섯 장
     // ==========================================
     'din-architecture': {
-        analogy: 'DIN 은 층이 일곱이고 attention 은 그 가운데 두 층, 행동마다 무게를 매기는 칸과 무게를 곱해 더하는 칸에만 들어간다. 광고가 바뀌면 그 두 층만 다시 계산한다',
+        analogy: 'DIN 은 층이 일곱이고 attention 은 그 가운데 두 층, 행동마다 가중치를 매기는 층과 가중치를 곱해 더하는 층에만 들어간다. 광고가 바뀌면 그 두 층만 다시 계산한다',
         anchor: '.din-host',
         embedKeep: ['.din-page'],
         embedHide: ['.din-hero', '.din-key', '.din-sec > h2', '.din-one', '.din-cap', '.din-real'],
@@ -2805,17 +2805,17 @@ window.DEMO_EDU = {
             '.din-sec': ({ el }) => {
                 switch (el.dataset.fig) {
                     case '1': return '헷갈리는 것은 <strong>attention 이 어디에 있나</strong>입니다. 점선 안의 두 층뿐입니다. 입력, 임베딩, MLP 는 합이나 평균으로 묶던 모델과 같습니다.';
-                    case '2': return '헷갈리는 것은 <strong>무게를 누가 가르치나</strong>입니다. 따로 정답이 없습니다. 클릭 여부 하나로 pCTR 신경망과 함께 학습됩니다.';
-                    case '3': return '헷갈리는 것은 <strong>무게의 합</strong>입니다. DIN 은 softmax 로 나누지 않아 러닝화 광고는 6.20, 커피머신 광고는 2.48 입니다. 관련 행동이 많을수록 사용자 벡터가 커집니다.';
+                    case '2': return '헷갈리는 것은 <strong>가중치를 누가 가르치나</strong>입니다. 따로 정답이 없습니다. 클릭 여부 하나로 pCTR 신경망과 함께 학습됩니다.';
+                    case '3': return '헷갈리는 것은 <strong>가중치의 합</strong>입니다. DIN 은 softmax 로 나누지 않아 러닝화 광고는 6.20, 커피머신 광고는 2.48 입니다. 관련 행동이 많을수록 사용자 벡터가 커집니다.';
                     case '4': return '헷갈리는 것은 <strong>곱 칸이 왜 들어가나</strong>입니다. 두 벡터가 같은 쪽을 가리킬수록 곱이 커져서, 신경망이 관련 있는 행동을 쉽게 알아봅니다.';
-                    case '5': return '헷갈리는 것은 <strong>계산 비용</strong>입니다. 사용자 벡터가 광고마다 달라 미리 만들어 둘 수 없습니다. 후보마다 행동 수만큼 무게 계산을 다시 합니다.';
+                    case '5': return '헷갈리는 것은 <strong>계산 비용</strong>입니다. 사용자 벡터가 광고마다 달라 미리 만들어 둘 수 없습니다. 후보마다 행동 수만큼 가중치 계산을 다시 합니다.';
                     default: return '';
                 }
             }
         },
         tour: [
-            { el: '.tg-legend', title: '색 셋과 점선', body: '파랑은 민지 씨의 행동, 벽돌색은 지금 채점하는 광고, 먹색은 무게와 사용자 벡터입니다. 점선 칸이 attention 입니다.' },
-            { el: '#din-fig1', title: '모델 구조', body: '광고를 바꿔 보면 점선 칸 안의 무게와 관심 벡터만 바뀝니다.', waitFor: 'click' },
+            { el: '.tg-legend', title: '색 셋과 점선', body: '파랑은 민지 씨의 행동, 벽돌색은 지금 채점하는 광고, 먹색은 가중치와 사용자 벡터입니다. 점선 칸이 attention 입니다.' },
+            { el: '#din-fig1', title: '모델 구조', body: '광고를 바꿔 보면 점선 칸 안의 가중치와 관심 벡터만 바뀝니다.', waitFor: 'click' },
             { el: '#din-fig3', title: '평균과 DIN', body: '평균과 DIN 두 광고를 눌러 선의 굵기가 어떻게 바뀌는지 봅니다.' }
         ]
     },
@@ -3096,7 +3096,7 @@ window.DEMO_EDU = {
                     case 'rank1': return '헷갈리는 것은 <strong>순서가 맞는데 왜 고치나</strong>입니다. 순서만 쓰는 랭킹에는 문제가 없지만, 확률 크기를 쓰는 입찰가(eCPM)에는 3번 자리 광고가 1번 기준으로 부풀어 들어갑니다. 그래서 계수 0.40 을 곱해 내려 잡습니다.';
                     case 'fanout': return '헷갈리는 것은 <strong>30 과 11 의 차이 19 가 비용이 아니다</strong>는 점입니다. 비용은 목적지를 하나 더 붙일 때 나옵니다. 층이 없으면 잡 5개를 고치고 배포 승인 5번이고, 층이 있으면 0개입니다.';
                     case 'aggwindow': return '헷갈리는 것은 <strong>왜 에러가 안 나나</strong>입니다. 누출된 피처도 서빙에서 값을 내놓으니 파이프라인은 멀쩡히 돕니다. 오프라인 AUC 0.894 가 실서빙 0.779 로 떨어진 뒤에야 보입니다.';
-                    case 'din': return '헷갈리는 것은 <strong>유저 표현이 왜 하나가 아닌가</strong>입니다. 어텐션은 후보 광고를 보고 이력에 무게를 주니, 같은 유저라도 후보 광고마다 표현이 새로 계산됩니다. 후보가 50개면 50번 계산합니다.';
+                    case 'din': return '헷갈리는 것은 <strong>유저 표현이 왜 하나가 아닌가</strong>입니다. 어텐션은 후보 광고를 보고 이력에 가중치를 주니, 같은 유저라도 후보 광고마다 표현이 새로 계산됩니다. 후보가 50개면 50번 계산합니다.';
                     case 'ann': return '헷갈리는 것은 <strong>2% 만 보는데 왜 괜찮은가</strong>입니다. 인덱스가 벡터를 비슷한 것끼리 묶어 두어, 유저 벡터와 가까운 묶음만 열어 봅니다. 진짜 1위를 가끔 놓치는 대신 128.8ms 가 3.4ms 가 됩니다.';
                     case 'centroid': return '헷갈리는 것은 <strong>임계값과 확장 비율이 같은 것</strong>이라는 점입니다. 유사도 순으로 세운 줄을 어디서 자르느냐가 1%, 5%, 10% 슬라이더입니다. 시드가 이질적이면 평균 하나가 어느 쪽도 아닌 빈 자리에 놓여 중심점을 여럿 둡니다.';
                     case 'rtsegment': return '헷갈리는 것은 <strong>TTL 이 왜 꼭 필요한가</strong>입니다. 활성 검색자에 1시간을 걸지 않으면 세그먼트가 한 방향으로만 커져 타겟팅이 무뎌집니다. 배치 세그먼트와 부딪히면 스트리밍이 이깁니다.';

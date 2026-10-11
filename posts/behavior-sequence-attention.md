@@ -132,6 +132,8 @@ for ad, v in ads.items():
 
 ## 4. Target attention 은 광고마다 행동에 다른 무게를 줍니다
 
+> 이 계산이 DIN 모델의 어느 층에 들어가는지는 그림 다섯 장으로 따로 봅니다 → [DIN 모델 구조](post.html?id=din-architecture)
+
 **후보 광고와 행동 하나를 작은 신경망에 넣어 무게 하나를 내고, 무게를 곱해 더하면 그 광고만을 위한 사용자 벡터가 나옵니다.**
 
 이 방법은 Alibaba 가 2018년에 낸 DIN(Deep Interest Network)에서 시작했습니다. 행동 $e_j$ 와 후보 광고 $v_A$ 가 있을 때 사용자 벡터를 이렇게 만듭니다.
@@ -500,6 +502,7 @@ for label in (1, 0):                             # 이 노출이 클릭됐을 �
 
 ## 더 깊이 보기
 
+- DIN 의 일곱 층 가운데 이 글의 attention 이 들어가는 자리 → [DIN 모델 구조](post.html?id=din-architecture)
 - DIN 과 DIEN 의 자리, 피처 조합 모델의 계보 → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 후보 800개를 만드는 앞 단계 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
 - 행동 기록을 요청 안에서 붙이는 곳 → [Feature Store](post.html?id=feature-store-serving)

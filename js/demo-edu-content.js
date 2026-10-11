@@ -2768,6 +2768,33 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // DIN 모델 구조 그림 다섯 장
+    // ==========================================
+    'din-architecture': {
+        analogy: 'DIN 은 층이 일곱이고 attention 은 그 가운데 두 층, 행동마다 무게를 매기는 칸과 무게를 곱해 더하는 칸에만 들어간다. 광고가 바뀌면 그 두 층만 다시 계산한다',
+        anchor: '.din-host',
+        embedKeep: ['.din-page'],
+        embedHide: ['.din-hero', '.din-key', '.din-sec > h2', '.din-one', '.din-cap', '.din-real'],
+        explain: {
+            '.din-sec': ({ el }) => {
+                switch (el.dataset.fig) {
+                    case '1': return '헷갈리는 것은 <strong>attention 이 어디에 있나</strong>입니다. 점선 칸 두 층뿐입니다. 입력, 임베딩, MLP 는 평균을 쓰던 모델과 같습니다.';
+                    case '2': return '헷갈리는 것은 <strong>무게를 누가 가르치나</strong>입니다. 따로 정답이 없습니다. 클릭 여부 하나로 pCTR 신경망과 함께 학습됩니다.';
+                    case '3': return '헷갈리는 것은 <strong>무게의 합</strong>입니다. DIN 은 softmax 로 나누지 않아 러닝화 광고는 6.20, 커피머신 광고는 2.48 입니다. 관련 행동이 많을수록 사용자 벡터가 커집니다.';
+                    case '4': return '헷갈리는 것은 <strong>곱 칸이 왜 들어가나</strong>입니다. 두 벡터가 같은 쪽을 가리킬수록 곱이 커져서, 신경망이 관련 있는 행동을 쉽게 알아봅니다.';
+                    case '5': return '헷갈리는 것은 <strong>계산 비용</strong>입니다. 사용자 벡터가 광고마다 달라 미리 만들어 둘 수 없습니다. 후보 수만큼 무게 계산을 다시 합니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 셋과 점선', body: '파랑은 민지 씨의 행동, 벽돌색은 지금 채점하는 광고, 먹색은 무게와 사용자 벡터입니다. 점선 칸이 attention 입니다.' },
+            { el: '#din-fig1', title: '모델 구조', body: '광고를 바꿔 보면 점선 칸 안의 무게와 관심 벡터만 바뀝니다.', waitFor: 'click' },
+            { el: '#din-fig3', title: '평균과 DIN', body: '평균과 DIN 두 광고를 눌러 선의 굵기가 어떻게 바뀌는지 봅니다.' }
+        ]
+    },
+
+    // ==========================================
     // 학습 데이터 카드 여섯 장 (입문)
     // ==========================================
     'training-cards': {

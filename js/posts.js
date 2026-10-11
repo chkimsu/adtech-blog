@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'din-architecture',
+    world: 'both',
+    worldNote: '모델의 일곱 층과 광고마다 무게를 매기는 두 층은 두 무대가 같습니다. 다른 것은 행동 기록의 길이입니다.',
+    worldPractical: '담장 안에서는 검색, 클릭, 구매가 한 계정에 쌓여 사용자당 행동이 수천 개를 넘고, activation unit 을 행동 수 × 후보 수만큼 돌리는 비용이 운영 과제가 됩니다. 열린 RTB 의 DSP 는 입찰 요청에 붙는 이력이 몇 개뿐이라 무게를 매길 행동이 적고, DIN 의 관심 벡터가 평균과 거의 같아집니다.',
+    title: 'DIN 모델 구조: 일곱 층 가운데 attention 은 두 층, 가변 길이는 행동의 개수',
+    excerpt: 'attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 평균도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 무게 2.4 를 손으로 내고, 무게 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.',
+    date: '2026-10-11',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Ad Ranking'],
+    contentUrl: 'posts/din-architecture.md'
+  },
+  {
     id: 'two-tower-training',
     world: 'both',
     worldNote: '배치 안에서 클릭한 광고를 고르게 하는 학습과 두 보정은 두 무대가 같습니다. 다른 것은 정답 짝을 얼마나 고르게 모으느냐와 회원 벡터를 언제 만드느냐입니다.',
@@ -1341,7 +1353,7 @@ const series = {
   'modeling-track': {
     title: '예측 모델링 트랙',
     desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
-    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
+    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'din-architecture', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
   },
   'ml-infra-track': {
     title: 'ML 인프라 트랙',

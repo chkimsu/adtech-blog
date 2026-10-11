@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BentoML 카드 다섯 장 — Ad Tech Blog</title>
-  <meta name="description" content="모델 파일 하나를 요청에 답하는 서비스로 만드는 길을 카드 한 장씩으로. 직접 짜면 만들어야 하는 것 일곱, 서비스 파일 한 장, 굳혀서 이미지로, 모아 보내기가 값을 하는 자리, 워커를 늘리면 무엇이 바뀌나.">
+  <meta name="description" content="모델 파일 하나를 HTTP API 서버로 만드는 과정을 카드 다섯 장으로 봅니다. 직접 짜면 만들어야 하는 기능 일곱 가지, 서비스 파일 하나, Bento 빌드와 도커 이미지, 동적 배칭이 이득인 경우, 워커를 늘리면 바뀌는 것.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -30,12 +30,12 @@
   <main>
     <section class="tg-hero">
       <h1>BentoML 카드 다섯 장</h1>
-      <p>모델 파일 하나가 요청에 답하는 서비스가 되기까지, 사람이 정하는 자리 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 설명용 가상 값입니다.</p>
+      <p>모델 파일 하나가 HTTP API 서버가 되기까지 정해야 하는 것 하나가 카드 한 장입니다. 점이 흐르는 방향이 데이터가 가는 방향입니다. 숫자는 설명용 가상 값입니다.</p>
       <div class="tg-legend">
-        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 것 (모델 파일, 저장소, 이미지)</span>
-        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 요청과 값을 치르는 자리</span>
+        <span class="tg-chip"><i class="a"></i>파랑 = 저장된 것 (모델 파일, 모델 저장소, 이미지)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 들어오는 요청과 비용이 드는 곳</span>
         <span class="tg-chip"><i class="k"></i>먹색 = 서비스와 서버</span>
-        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (굳히기, 묶기)</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 빌드와 배칭 같은 작업</span>
         <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 것 (설정, 태그)</span>
         <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 가고 있는 것</span>
       </div>
@@ -44,20 +44,20 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="byhand"><h2>SEVEN BY HAND</h2><p class="tg-k">직접 짜면 만들어야 하는 것 일곱</p><p class="tg-easy"><b>쉽게 말하면</b> 모델에 숫자를 넣어 답을 받는 계산은 코드 몇 줄입니다. 그것을 요청으로 받고, 죽지 않게 지키고, 바꿔 달 수 있게 만드는 일이 나머지 전부입니다.</p><div class="tg-fig" id="bt-byhand"></div>
-        <p class="tg-cap">일곱을 더하면 <b>1,370줄</b> 이고 설정과 시험까지 1,800줄입니다. 그중 모델마다 다른 것은 후보를 한 텐서로 만드는 <b>한 덩어리</b>뿐입니다.</p></section>
+      <section class="tg-card" data-card="byhand"><h2>SEVEN BY HAND</h2><p class="tg-k">직접 짜면 만들어야 하는 기능 일곱 가지</p><p class="tg-easy"><b>쉽게 말하면</b> 모델을 호출하는 코드는 몇 줄입니다. 나머지는 요청을 받고, 서버 상태를 알리고, 모델 버전을 바꾸고, 지연을 재는 서빙 코드입니다.</p><div class="tg-fig" id="bt-byhand"></div>
+        <p class="tg-cap">일곱을 더하면 <b>1,370줄</b> 이고 설정 파일과 테스트까지 1,800줄입니다. 그중 모델마다 달라지는 것은 <b>입력 변환</b> 하나입니다.</p></section>
 
-      <section class="tg-card" data-card="service"><h2>ONE SERVICE FILE</h2><p class="tg-k">서비스 파일 한 장에 적는 것</p><p class="tg-easy"><b>쉽게 말하면</b> 클래스 하나에 표시 두 개를 붙입니다. 클래스에 붙은 것이 「이것이 서비스다」이고 함수에 붙은 것이 「이 함수가 주소 하나다」입니다. 나머지는 도구가 같이 붙입니다.</p><div class="tg-fig" id="bt-service"></div>
-        <p class="tg-cap">내가 쓰는 것은 <b>40줄</b> 입니다. 앞 카드의 일곱 중 여섯을 도구가 갖고 있고, 남는 하나는 요청을 숫자 묶음으로 바꾸는 코드입니다.</p></section>
+      <section class="tg-card" data-card="service"><h2>ONE SERVICE FILE</h2><p class="tg-k">서비스 파일 하나에 적는 것</p><p class="tg-easy"><b>쉽게 말하면</b> 클래스 하나에 데코레이터 두 개를 붙입니다. <code>@bentoml.service</code> 가 서비스를, <code>@bentoml.api</code> 가 API 엔드포인트 하나를 만듭니다. 상태 확인과 메트릭 엔드포인트는 BentoML 이 같이 엽니다.</p><div class="tg-fig" id="bt-service"></div>
+        <p class="tg-cap">서비스 파일은 <b>21줄</b> 입니다. 앞 카드의 일곱 가운데 넷은 BentoML 이 만들어 주고, 입력 변환과 웜업은 직접 씁니다.</p></section>
 
-      <section class="tg-card" data-card="bento"><h2>BUILD AND CONTAINERIZE</h2><p class="tg-k">굳히면 이미지 한 장이 된다</p><p class="tg-easy"><b>쉽게 말하면</b> 서비스 파일과 모델과 라이브러리 목록을 한 묶음으로 굳히고, 그것을 도커 이미지로 바꿉니다. 굳히고 나면 어느 서버에서 열어도 같은 것이 나옵니다.</p><div class="tg-fig" id="bt-bento"></div>
-        <p class="tg-cap">직접 짠 쪽은 <b>1.1GB</b> 에 모델이 이미지 밖이고, 도구 쪽은 <b>1.4GB</b> 에 모델이 이미지 안입니다. 모델만 바꿔도 이미지를 다시 만들어야 합니다.</p></section>
+      <section class="tg-card" data-card="bento"><h2>BUILD AND CONTAINERIZE</h2><p class="tg-k">Bento 로 빌드하면 도커 이미지 한 장이 된다</p><p class="tg-easy"><b>쉽게 말하면</b> 서비스 코드, 모델 파일, 의존 라이브러리 목록을 Bento 하나로 패키징하고, 그것을 도커 이미지로 바꿉니다. 이미지에는 그때의 코드와 모델이 그대로 들어 있습니다.</p><div class="tg-fig" id="bt-bento"></div>
+        <p class="tg-cap">직접 짠 쪽은 <b>1.1GB</b> 에 모델이 이미지 밖이고, BentoML 쪽은 <b>1.4GB</b> 에 모델이 이미지 안입니다. 모델만 바꿔도 이미지를 다시 빌드해야 합니다.</p></section>
 
-      <section class="tg-card" data-card="batching"><h2>WHEN BATCHING PAYS</h2><p class="tg-k">모아 보내기가 값을 하는 자리</p><p class="tg-easy"><b>쉽게 말하면</b> 요청 여럿을 한 묶음으로 모아 모델에 한 번만 넣습니다. 얻는 것은 건당 계산이 줄어드는 몫이고, 치르는 것은 모이기를 기다리는 시간입니다.</p><div class="tg-fig" id="bt-batching"></div>
-        <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 <b>3%</b> 밖에 안 줍니다. 요청 하나가 작고 자주 올 때만 <b>78%</b> 가 줍니다.</p></section>
+      <section class="tg-card" data-card="batching"><h2>WHEN BATCHING PAYS</h2><p class="tg-k">동적 배칭이 이득인 경우</p><p class="tg-easy"><b>쉽게 말하면</b> 여러 요청을 잠깐 모아 한 번에 추론합니다. 얻는 것은 건당 계산이 줄어드는 몫이고, 드는 것은 요청이 모이기를 기다리는 시간입니다.</p><div class="tg-fig" id="bt-batching"></div>
+        <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 계산이 <b>3%</b> 만 줄어듭니다. 요청 하나가 작고 자주 올 때는 <b>78%</b> 줄어듭니다.</p></section>
 
-      <section class="tg-card" data-card="workers"><h2>MORE WORKERS</h2><p class="tg-k">늘리면 무엇이 바뀌고 무엇이 그대로인가</p><p class="tg-easy"><b>쉽게 말하면</b> 파이썬은 한 프로세스에서 코드가 한 번에 한 줄만 돕니다. 그래서 프로세스를 여러 개 띄웁니다. 창구가 늘면 줄이 짧아지지만 한 사람을 처리하는 시간은 그대로입니다.</p><div class="tg-fig" id="bt-workers"></div>
-        <p class="tg-cap">워커 하나면 부하율 1.04 라 넘치고, 넷이면 대기가 <b>0.04ms</b> 로 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 계산 <b>4.75ms</b> 는 내내 같습니다.</p></section>
+      <section class="tg-card" data-card="workers"><h2>MORE WORKERS</h2><p class="tg-k">워커를 늘리면 무엇이 바뀌고 무엇이 그대로인가</p><p class="tg-easy"><b>쉽게 말하면</b> 파이썬은 GIL 때문에 프로세스 하나로 코어 하나만 씁니다. 그래서 워커 프로세스를 여러 개 띄웁니다. 처리량은 늘지만 요청 한 건의 처리 시간은 그대로입니다.</p><div class="tg-fig" id="bt-workers"></div>
+        <p class="tg-cap">워커 1개면 사용률이 1.04 라 대기열이 쌓이고, 4개면 대기가 <b>0.04ms</b> 로 거의 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 처리 시간 <b>4.75ms</b> 는 내내 같습니다.</p></section>
     </div>
 
     <section class="tg-real">

@@ -209,7 +209,7 @@ const GLOSSARY = [
   {
     term: 'Label Propagation',
     abbr: '이웃에게 표를 퍼뜨리는 방법',
-    body: '그래프에서 아는 사람의 라벨을 <strong>연결된 이웃으로 번지게</strong> 하는 방식. 씨앗과 직접 닿지 않은 사람까지 닮음이 전해진다.'
+    body: '그래프에서 아는 사람의 라벨을 <strong>연결된 이웃으로 번지게</strong> 하는 방식. 시드와 직접 닿지 않은 사람까지 닮음이 전해진다.'
   },
   {
     term: 'Censored Regression',

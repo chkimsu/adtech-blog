@@ -8,11 +8,11 @@
   <updated>2026-10-11T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
-    <title>DCN 앞에 DIN 칸 하나: 랭킹 모델의 세 자리와 무엇이 달라지나</title>
+    <title>DCN 앞에 DIN 모듈 하나: 랭킹 모델의 세 자리와 무엇이 달라지나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dcn-vs-din-slot"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=dcn-vs-din-slot</id>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>DCN-V2 로만 pCTR 모델을 학습해 본 지훈 씨가 모델 계보 세 줄이 서로 대신하는 것인지, 같이 쓰는 것인지 헷갈립니다. pCTR 모델 한 개 안에는 ① 행동 기록 정리, ② 피처 섞기, ③ 답 내기의 세 자리가 있고 계보 세 줄은 이 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 칸을 더하면 DCN 과 출력, 손실은 그대로이고, 미리 센 숫자 {행동 4, 러닝 3, 커피 1} 만 보던 모델에 광고마다 다른 관심 벡터가 들어갑니다. 세 자리는 같은 정답으로 함께 학습하고, 대가는 행동 목록 데이터 준비와 요청 한 건에 무게 계산 40,000번입니다. 행동 정보를 통계 숫자, 행동 목록, 둘 다로 넣는 세 방법과 자리별 연표도 함께 봅니다.</summary>
+    <summary>DCN-V2 로만 pCTR 모델을 학습해 본 지훈 씨가 모델 계보 세 줄이 서로 대신하는 것인지, 같이 쓰는 것인지 헷갈립니다. pCTR 모델 한 개 안에는 ① 행동 기록 정리, ② 피처 섞기, ③ 답 내기의 세 자리가 있고 계보 세 줄은 이 자리에 하나씩 들어갑니다. DCN 만 쓰던 모델에 DIN 모듈을 더하면 DCN 과 출력, 손실은 그대로이고, 미리 센 숫자 {행동 4, 러닝 3, 커피 1} 만 보던 모델에 광고마다 다른 관심 벡터가 들어갑니다. 세 자리는 같은 정답으로 함께 학습하고, 대가는 행동 목록 데이터 준비와 요청 한 건에 가중치 계산 40,000번입니다. 행동 정보를 통계 숫자, 행동 목록, 둘 다로 넣는 세 방법과 자리별 연표도 함께 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -20,7 +20,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=din-architecture</id>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 합이나 평균으로도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 무게 2.4 를 손으로 내고, 무게 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.</summary>
+    <summary>attention 이 무엇을 하는지는 알지만 DIN 그림의 어느 상자에 들어가는지 헷갈리는 지훈 씨가 민지 씨의 행동 넷과 광고 둘로 모델 구조를 따라갑니다. DIN 은 입력, 임베딩, activation unit, 가중합, 이어 붙이기, MLP, 출력의 일곱 층이고 attention 은 가운데 두 층뿐입니다. 사람마다 다른 것은 임베딩이 아니라 행동의 개수이고, 합이나 평균으로도 고정 길이로 줄일 수는 있었습니다. DIN 이 푼 것은 광고와 상관없이 만든 고정 길이 벡터 하나가 병목이 되는 문제입니다. 러닝 양말과 러닝화 광고로 가중치 2.4 를 손으로 내고, 가중치 합이 6.20 대 2.48 로 남는 까닭과 padding, mask 까지 봅니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -28,7 +28,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-training"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=two-tower-training</id>
     <updated>2026-10-10T00:00:00Z</updated>
-    <summary>후보 추리기 모델을 처음 맡은 지훈 씨가 클릭 로그 네 줄로 학습 한 바퀴를 따라갑니다. 정답은 클릭 한 건이고, 음성은 따로 모으지 않고 같은 배치에 든 다른 회원의 광고를 씁니다. 4×4 점수표의 줄마다 대각선을 고르게 하면 처음 1.390 이던 손실이 0.009 로 내려가고, 온도를 1로 두면 순서를 맞혀도 0.915 에서 멈춥니다. 4,096줄 배치에 러닝화가 81.9번, 요가 매트가 4.1번 들어와 인기 광고가 깎이는 것은 logQ 보정으로 되돌리고, 같은 광고가 두 번 든 칸은 지웁니다. 평가는 AUC 대신 다음 날 클릭이 상위 500 안에 드는 비율이고, 배포는 광고 벡터 256MB 를 미리 색인에 넣고 회원 타워를 요청마다 돌립니다. 노출 후 안 누른 광고만 음성으로 쓰면 재현율이 크게 떨어진다는 보고도 함께 봅니다.</summary>
+    <summary>후보 생성 모델을 처음 맡은 지훈 씨가 클릭 로그 네 줄로 학습 한 바퀴를 따라갑니다. 정답은 클릭 한 건이고, 음성은 따로 모으지 않고 같은 배치에 든 다른 회원의 광고를 씁니다. 4×4 점수표의 줄마다 대각선을 고르게 하면 처음 1.390 이던 손실이 0.009 로 내려가고, 온도를 1로 두면 순서를 맞혀도 0.915 에서 멈춥니다. 4,096줄 배치에 러닝화가 81.9번, 요가 매트가 4.1번 들어와 인기 광고가 깎이는 것은 logQ 보정으로 되돌리고, 같은 광고가 두 번 든 칸은 지웁니다. 평가는 AUC 대신 다음 날 클릭이 상위 500 안에 드는 비율이고, 배포는 광고 벡터 256MB 를 미리 색인에 넣고 회원 타워를 요청마다 돌립니다. 노출 후 안 누른 광고만 음성으로 쓰면 재현율이 크게 떨어진다는 보고도 함께 봅니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
   <entry>
@@ -60,7 +60,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=behavior-sequence-attention"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=behavior-sequence-attention</id>
     <updated>2026-10-04T00:00:00Z</updated>
-    <summary>민지의 하루 행동 네 개를 상품, 카테고리, 시간 간격의 숫자로 바꾸면 4칸 벡터 네 개가 됩니다. 평균을 내면 어느 광고 앞에서나 같은 벡터가 되어, 커피머신 광고에는 맞는 신호의 30% 만 남습니다. DIN 의 target attention 은 광고마다 무게를 따로 매겨 사용자 벡터를 두 개 내고, 논문대로 softmax 로 나누지 않아 무게 합이 6.20 대 2.48 로 관심의 세기가 남습니다. BST 의 self-attention 은 행동들이 서로를 보고 자기 벡터를 다시 씁니다. 이력이 2만 개면 전부에 attention 하는 데 곱셈이 5,434억 번 들어서 SIM 은 200개를 먼저 고릅니다. 고르는 점수가 attention 과 다르면 남는 무게가 69.6% 에서 47.9% 까지 떨어지고, TWIN 은 같은 점수로 골라 이 어긋남을 없앱니다.</summary>
+    <summary>민지의 하루 행동 네 개를 상품, 카테고리, 시간 간격의 숫자로 바꾸면 4칸 벡터 네 개가 됩니다. 평균을 내면 어느 광고 앞에서나 같은 벡터가 되어, 커피머신 광고에는 맞는 신호의 30% 만 남습니다. DIN 의 target attention 은 광고마다 가중치를 따로 매겨 사용자 벡터를 두 개 내고, 논문대로 softmax 로 나누지 않아 가중치 합이 6.20 대 2.48 로 관심의 세기가 남습니다. BST 의 self-attention 은 행동들이 서로를 보고 자기 벡터를 다시 씁니다. 이력이 2만 개면 전부에 attention 하는 데 곱셈이 5,434억 번 들어서 SIM 은 200개를 먼저 고릅니다. 고르는 점수가 attention 과 다르면 남는 가중치가 69.6% 에서 47.9% 까지 떨어지고, TWIN 은 같은 점수로 골라 이 어긋남을 없앱니다.</summary>
     <category term="Measurement &amp; Modeling"/>
   </entry>
   <entry>
@@ -92,7 +92,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=batch-vs-realtime-inference"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=batch-vs-realtime-inference</id>
     <updated>2026-10-01T00:00:00Z</updated>
-    <summary>지훈 씨가 일곱째 주에 후보 추리기 코드를 열어 보니 요청마다 유저 벡터를 만들고 있었습니다. 한 요청에 2.0ms 지만 하루 2억 2,800만 번이면 126.7시간입니다. 같은 사람이 하루 16.3번 요청하니, 새벽에 한 번만 만들면 3.3시간으로 38배 줄어듭니다. 회원 1,400만 명의 벡터는 64차원 4바이트로 3.58GB 이고 워커 8개로 25분입니다. 다만 새벽 값은 오늘 낮을 모르니 활성 유저 12% 168만 명만 한 시간마다 다시 만듭니다. 요청 2,639 QPS 를 받는 값은 CPU 12대 한 달 4,147,200원, GPU 3대 8,208,000원입니다.</summary>
+    <summary>지훈 씨가 일곱째 주에 후보 생성 코드를 열어 보니 요청마다 유저 벡터를 만들고 있었습니다. 한 요청에 2.0ms 지만 하루 2억 2,800만 번이면 126.7시간입니다. 같은 사람이 하루 16.3번 요청하니, 새벽에 한 번만 만들면 3.3시간으로 38배 줄어듭니다. 회원 1,400만 명의 벡터는 64차원 4바이트로 3.58GB 이고 워커 8개로 25분입니다. 다만 새벽 값은 오늘 낮을 모르니 활성 유저 12% 168만 명만 한 시간마다 다시 만듭니다. 요청 2,639 QPS 를 받는 값은 CPU 12대 한 달 4,147,200원, GPU 3대 8,208,000원입니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
   <entry>
@@ -100,7 +100,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=stream-window-aggregation"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=stream-window-aggregation</id>
     <updated>2026-09-30T00:00:00Z</updated>
-    <summary>모델 팀이 「광고별 최근 1시간 클릭 수」를 실시간 피처로 써 달라고 합니다. 한 줄이라 쉬워 보이지만 15시 1분의 최근 1시간과 15시 7분의 최근 1시간은 다른 구간이고, 그 6분에 클릭 120건이 오갑니다. 클릭은 topic ad.click 에 놓이고 Flink 잡 ad_click_1h 이 세어 Redis 키 ad:9931:clk_1h 에 TTL 2분으로 놓습니다. 창을 자르는 방법이 둘이고(텀블링, 슬라이딩) 창을 닫는 시각을 정하는 값이 워터마크입니다. 워터마크 2분이면 14:00~15:00 창은 15:02 에 닫히고 하루 클릭 228만 건 중 2,280건이 그보다 늦게 와 자기 창을 놓칩니다. 그래서 스트림은 1,203 을 세고 하루 뒤 배치는 1,204 를 셉니다.</summary>
+    <summary>모델 팀이 「광고별 최근 1시간 클릭 수」를 실시간 피처로 써 달라고 합니다. 한 줄이라 쉬워 보이지만 15시 1분의 최근 1시간과 15시 7분의 최근 1시간은 다른 구간이고, 그 6분에 클릭 120건이 오갑니다. 클릭은 topic ad.click 에 놓이고 Flink 잡 ad_click_1h 이 세어 Redis 키 ad:9931:clk_1h 에 TTL 2분으로 놓습니다. 윈도우를 자르는 방법이 둘이고(텀블링, 슬라이딩) 윈도우를 닫는 시각을 정하는 값이 워터마크입니다. 워터마크 2분이면 14:00~15:00 윈도우는 15:02 에 닫히고 하루 클릭 228만 건 중 2,280건이 그보다 늦게 와 자기 윈도우를 놓칩니다. 그래서 스트림은 1,203 을 세고 하루 뒤 배치는 1,204 를 셉니다.</summary>
     <category term="ML Infrastructure"/>
   </entry>
   <entry>
@@ -153,11 +153,11 @@
     <category term="Targeting &amp; Audience"/>
   </entry>
   <entry>
-    <title>Lookalike 기초: 씨앗 8만 명에서 닮은 사람 140만 명을 찾는 법</title>
+    <title>Lookalike 기초: 시드 8만 명에서 닮은 사람 140만 명을 찾는 법</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-basics"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-basics</id>
     <updated>2026-09-23T00:00:00Z</updated>
-    <summary>구매자 8만 명으로 맞춤타겟을 만들자 「유사타겟 만들기」 슬라이더가 생겼습니다. 1% 에서 14만 명, 10% 에서 140만 명입니다. 닮았다는 것은 무엇을 보고 정하고, 1% 는 무엇의 1% 일까요. 회원마다 붙은 숫자 묶음이 씨앗 평균과 얼마나 다른가로 닮음을 재고, 전체 회원 1,400만 명을 그 순서로 세워 앞에서 자른 것이 유사타겟입니다. 도달에 전환율을 곱하면 가장 닮은 1% 가 4,480건, 10% 가 12,600건으로 가장 많습니다. 씨앗이 300명이면 우연을 배우고 300만이면 평균이 흐려지는 이유까지 봅니다.</summary>
+    <summary>구매자 8만 명으로 맞춤타겟을 만들자 「유사타겟 만들기」 슬라이더가 생겼습니다. 1% 에서 14만 명, 10% 에서 140만 명입니다. 닮았다는 것은 무엇을 보고 정하고, 1% 는 무엇의 1% 일까요. 회원마다 붙은 벡터가 시드 평균과 얼마나 다른가로 닮음을 재고, 전체 회원 1,400만 명을 그 순서로 세워 앞에서 자른 것이 유사타겟입니다. 도달에 전환율을 곱하면 가장 닮은 1% 가 4,480건, 10% 가 12,600건으로 가장 많습니다. 시드가 300명이면 우연을 배우고 300만이면 평균이 흐려지는 이유까지 봅니다.</summary>
     <category term="Targeting &amp; Audience"/>
   </entry>
   <entry>

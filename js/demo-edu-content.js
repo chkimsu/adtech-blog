@@ -2,10 +2,10 @@
  * demo-edu-content.js — 데모별 교육 콘텐츠 (중앙 선언)
  *
  * demo-edu.js 엔진이 location.pathname에서 키(demo-<key>.html)를 뽑아 이 객체를 조회한다.
- * demos.html 카드의 비유 한 줄(analogy)도 이 파일을 단일 소스로 재사용한다.
+ * demos.html 카드의 요약 한 줄(analogy)도 이 파일을 단일 소스로 재사용한다.
  *
  * 스키마:
- *   analogy   : 카드/허브용 한 줄 비유 (데모 페이지 자체의 비유 블록은 정적 HTML)
+ *   analogy   : 카드/허브용 한 줄 요약. 비유를 쓰지 않는다 (데모 페이지 자체의 「한 줄 요약」 상자는 정적 HTML)
  *   anchor    : 해설 패널을 삽입할 컨테이너 셀렉터 (폴백: .demo-container → main)
  *   embedKeep : ?embed=1 모드에서 남길 main 직계 자식 셀렉터들
  *   explain   : { 컨트롤 셀렉터: ({value, prev, el}) => html } — 실시간 해설 룰.
@@ -20,7 +20,7 @@ window.DEMO_EDU = {
     // 베타 분포 샘플링 (입문)
     // ==========================================
     'beta-sampling': {
-        analogy: '분포 곡선은 땅의 높낮이, 샘플은 높은 곳에 더 자주 떨어지는 빗방울',
+        analogy: 'Beta 분포에서 값을 뽑으면 곡선이 높은 구간이 더 자주 나온다 — 5,000개를 모으면 히스토그램이 곡선과 거의 같아진다',
         anchor: '.control-panel',
         embedKeep: ['.demo-container'],
         embedHide: ['.axis-note'],
@@ -86,7 +86,7 @@ window.DEMO_EDU = {
     // UCB1 시뮬레이터 (입문)
     // ==========================================
     'ucb1': {
-        analogy: 'c값은 호기심 수준 — 크면 안 가본 식당도 들르는 모험가, 작으면 단골집만 가는 보수파',
+        analogy: 'c 는 노출이 적은 광고에 주는 가산점의 크기 — 크면 덜 보여 준 광고에도 기회가 가고, 작으면 지금 1등만 계속 보여 준다',
         anchor: '.control-panel',
         embedKeep: ['.demo-container'],
         embedHide: ['.chart-panel > div', '.control-panel > div:last-child'],
@@ -149,7 +149,7 @@ window.DEMO_EDU = {
     // Thompson Sampling 시뮬레이터 (입문)
     // ==========================================
     'ts': {
-        analogy: 'Beta(1,1)은 백지 상태 — 클릭이 쌓일수록 봉우리가 좁아지며 확신이 생긴다',
+        analogy: 'Beta(1,1)에서 출발해 클릭과 무시가 쌓일수록 봉우리가 좁아진다 — 7%일까 12%일까가 8.5% 근처로 좁혀진다',
         anchor: '.control-panel',
         embedKeep: ['.demo-container'],
         embedHide: ['.chart-panel > div', '.control-panel > div:last-child'],
@@ -214,7 +214,7 @@ window.DEMO_EDU = {
     // A/B vs Bandit 트래픽 시뮬레이터 (입문)
     // ==========================================
     'ab-vs-bandit': {
-        analogy: 'A/B는 모든 메뉴를 똑같이 깔아두는 시식 코너, 밴딧은 잘 팔리는 메뉴에 매대를 점점 내주는 상인',
+        analogy: 'A/B 는 10일 내내 노출을 3분의 1씩 나누고, 밴딧은 클릭률이 높아 보이는 광고에 노출을 몰아준다',
         anchor: '.ab-sim',
         embedKeep: ['.ab-sim', '.ab-summary', '.ab-charts'],
         explain: {
@@ -270,7 +270,7 @@ window.DEMO_EDU = {
     // UCB1 vs TS Head-to-Head (중급)
     // ==========================================
     'compare-bandits': {
-        analogy: '계산기(UCB)와 주사위(TS)가 같은 무대에서 1등 광고를 먼저 찾는 경주 — Regret 곡선이 낮은 쪽이 승자',
+        analogy: 'UCB(결정적)와 TS(확률적)가 같은 광고들에서 1등 광고를 얼마나 빨리 찾는지 — Regret 곡선이 낮은 쪽이 손해를 덜 봤다',
         anchor: '.cmp-sim',
         embedKeep: ['.cmp-sim'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.cmp-intro', '.linucb-note', '.demo-practice', '.demo-tldr', '.demo-next'],
@@ -389,7 +389,7 @@ window.DEMO_EDU = {
     // RTB 경매 시뮬레이터 (입문)
     // ==========================================
     'rtb': {
-        analogy: 'First Price는 부른 값을 그대로 내는 경매장, Second Price는 이겨도 2등 가격만 내는 eBay',
+        analogy: 'First Price 는 이긴 쪽이 부른 값을 그대로 내고, Second Price 는 2등 가격에 최소 단위를 더한 만큼만 낸다',
         anchor: '.control-panel',
         embedKeep: ['.demo-container'],
         embedHide: ['.chart-panel > div'],
@@ -453,7 +453,7 @@ window.DEMO_EDU = {
     // Header Bidding vs Waterfall (입문)
     // ==========================================
     'header-bidding': {
-        analogy: '여러 가게에 동시 전화(HB) vs 한 곳씩 차례로 전화(Waterfall) — 동시에 물어야 최고가를 찾는다',
+        analogy: 'Header Bidding 은 SSP 4곳에 동시에 묻고, Waterfall 은 한 곳씩 묻다가 첫 성공에서 멈춘다 — 동시에 물어야 최고가를 고른다',
         anchor: '.hb-controls',
         embedKeep: ['.hb-container'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.hb-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
@@ -703,7 +703,7 @@ window.DEMO_EDU = {
     // pCTR Model Quality Impact (중급)
     // ==========================================
     'pctr-impact': {
-        analogy: '예측이 1% 틀리면 입찰가가 1% 틀리고, 매출은 3~5% 흔들린다 — 오차가 증폭되는 회로',
+        analogy: '예측이 1% 틀리면 입찰가가 1% 틀리고, 매출은 3~5% 흔들린다 — 과대입찰이 과소입찰보다 손해가 크다',
         anchor: '.pq-controls',
         embedKeep: ['.pq-container'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.pq-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
@@ -756,7 +756,7 @@ window.DEMO_EDU = {
     // Censored Data in RTB (중급)
     // ==========================================
     'censored-data': {
-        analogy: '시험에서 떨어진 학생 점수는 "60점 미만"만 안다 — 패찰 경매의 시장가도 "내 입찰가 이상"만 안다',
+        analogy: '이긴 경매는 낙찰가를 알지만 진 경매는 「경쟁가가 내 입찰가보다 컸다」만 안다 — 진 경매를 버리면 시장가를 낮게 본다',
         anchor: '.panel',
         embedKeep: ['.step-progress', '.demo-layout'],
         explain: {
@@ -823,7 +823,7 @@ window.DEMO_EDU = {
     // Attribution Window Playground (입문)
     // ==========================================
     'attribution-window': {
-        analogy: '축구 골 하나의 공로를 누구에게? 마지막 패스만? 첫 드리블도? — 규칙에 따라 채널 평가가 뒤바뀐다',
+        analogy: '전환 1건의 공로를 마지막 터치에 줄지, 첫 터치에도 나눌지 — 모델과 윈도우에 따라 채널 평가가 달라진다',
         anchor: '.aw-controls',
         embedKeep: ['.aw-container'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.aw-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
@@ -881,7 +881,7 @@ window.DEMO_EDU = {
     // Golden Section Search (중급)
     // ==========================================
     'golden-section': {
-        analogy: '단봉 산의 정상 찾기 — 구간을 황금비 0.618배로 잘라내며 적은 평가로 빠르게 수렴',
+        analogy: '봉우리가 하나인 수익 곡선에서 구간을 0.618배씩 줄이며 최댓값을 찾는다 — Grid Search 보다 평가가 약 25배 적다',
         anchor: '.demo-grid > div:first-child',
         embedKeep: ['.demo-grid'],
         embedHide: ['.insight-box'],
@@ -952,7 +952,7 @@ window.DEMO_EDU = {
     // Frequency Capping Simulator (입문)
     // ==========================================
     'frequency-capping': {
-        analogy: '같은 광고도 다섯 번째부터는 그냥 스쳐 지나간다 — 추가 반응이 비용보다 작아지면 멈출 때',
+        analogy: '같은 사람에게 거듭 보여 줄수록 노출 1회의 추가 반응이 줄어든다 — 그 반응이 노출 비용보다 작아지면 멈출 때다',
         anchor: '.fc-controls',
         embedKeep: ['.fc-controls'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.fc-intro', '.demo-tldr', '.demo-next', '.demo-practice'],
@@ -1011,7 +1011,7 @@ window.DEMO_EDU = {
     // Multi-Auction Portfolio Optimization (고급)
     // ==========================================
     'portfolio': {
-        analogy: '여러 가게에 예산 나누기 — 마지막 1원의 이익이 모든 가게에서 같아질 때 전체 이익 최대',
+        analogy: '예산을 지면 5곳에 나눌 때, 마지막 1달러의 추가 이익이 모든 지면에서 같아지면 전체 이익이 가장 크다',
         anchor: '.po-top-controls',
         embedKeep: ['.po-top-controls'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.po-intro', '.demo-tldr', '.demo-next', '.demo-practice'],
@@ -1290,7 +1290,7 @@ window.DEMO_EDU = {
     // 클릭 여섯 자리 (입문)
     // ==========================================
     'cart-pipeline': {
-        analogy: '자리마다 데이터가 밀려 오는지 가지러 가는지가 갈리고, 그게 막혔을 때 어디에 쌓이는지를 정한다',
+        analogy: '자리마다 데이터가 밀려 오는지 가지러 가는지가 다르고, 그것이 막혔을 때 어디에 쌓이는지를 정한다',
         anchor: '.cp-rail',
         embedKeep: ['.cp-rail', '.cp-panes', '.cp-what', '.cp-consumers', '.cp-retention'],
         explain: {
@@ -1370,7 +1370,7 @@ window.DEMO_EDU = {
     // 지표 실험실 (중급)
     // ==========================================
     'metrics-lab': {
-        analogy: '전체 AUC 는 쉬운 요청과 어려운 요청을 가르는 능력까지 점수로 쳐 준다 — 경매는 그 능력을 안 쓴다',
+        analogy: '전체 AUC 는 쉬운 요청과 어려운 요청을 구분하는 능력까지 점수로 쳐 준다 — 경매는 그 능력을 안 쓴다',
         anchor: '.mx-controls',
         embedKeep: ['.mx-controls', '.mx-metrics', '.mx-panels'],
         // ROC 설명문과 프리셋 이름표만 접는다. 요청 카드 설명문은 남긴다 —
@@ -1594,7 +1594,7 @@ window.DEMO_EDU = {
     // 피드백 루프 시뮬레이터 (중급)
     // ==========================================
     'feedback-loop': {
-        analogy: '어제 모델이 오늘의 학습 데이터를 골랐다 — 한 번 밀려난 광고는 추정값이 얼고, 그 언 값이 내일 순위를 다시 정한다',
+        analogy: '어제 모델이 오늘의 학습 데이터를 골랐다 — 한 번 밀려난 광고는 노출이 끊겨 추정값이 더 바뀌지 않고, 그 값이 내일 순위를 다시 정한다',
         anchor: '.fb-controls',
         embedKeep: ['.fb-container'],
         // '.fb-hero' 를 반드시 여기 적어야 한다 — embedKeep 의 '.fb-container' 가 히어로 안에도
@@ -1825,7 +1825,7 @@ window.DEMO_EDU = {
     // 마지막 엔트리 뒤에 붙일 때는 앞 엔트리의 닫는 중괄호 뒤 쉼표를 확인할 것.
     // ==========================================
     'signal-loss': {
-        analogy: '식별자가 빠지면 피처보다 라벨이 먼저 부서진다 — 타겟팅 계기는 그대로인데 나머지 셋이 같이 내려간다',
+        analogy: '식별자가 빠지면 피처보다 라벨이 먼저 빠진다 — 타겟팅 계기는 그대로인데 나머지 셋이 같이 내려간다',
         anchor: '.sl-stage',
         embedKeep: ['.sl-stage', '.sl-panels'],
         // 임베드에서는 스위치·계기·판정과 전환 분해 판 하나만 남긴다.
@@ -2393,7 +2393,7 @@ window.DEMO_EDU = {
     // DFS · BFS (알고리즘)
     // ==========================================
     'bfs-dfs': {
-        analogy: '스택이냐 큐냐 하나만 바뀌는데, 그 하나가 최단 거리를 주느냐를 가른다',
+        analogy: '스택이냐 큐냐 하나만 바뀌는데, 그 하나에 따라 최단 거리가 나오는지가 정해진다',
         anchor: '.bd-controls',
         embedKeep: ['.bd-controls', '.bd-stage', '.bd-track', '.bd-verdict', '.bd-actions', '.bd-legend'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],

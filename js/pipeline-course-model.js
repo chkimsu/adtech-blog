@@ -64,7 +64,7 @@
     {
       key: 'beat', name: '수집 에이전트 (Filebeat)',
       inBytes: V.byteAccess, outBytes: V.byteEnvelope, dwellMs: 120,
-      does: '원문을 한 글자도 안 바꾸고 봉투에 담습니다',
+      does: '원문을 한 글자도 안 바꾸고 envelope(읽은 시각, 기계, 파일 위치를 덧붙인 JSON)에 담습니다',
       who: '데이터 팀', products: 'Filebeat, Fluent Bit, Vector',
     },
     {

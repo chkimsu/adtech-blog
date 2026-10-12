@@ -281,12 +281,12 @@
         if (d.added.length) what = '서버 데이터에 <b>' + d.added.join(', ') + '번 글이 새로 생겼습니다.</b> 새 글의 주소가 Location 헤더에 실려 왔습니다.';
         else if (changedIds.length) {
             const id = changedIds[0];
-            what = '<b>' + id + '번 글의 ' + d.changed[id].join(', ') + ' 칸이 바뀌었습니다.</b>' +
-                (req.method === 'PUT' ? ' PUT 은 통째로 바꾸므로 본문에 없던 칸은 기본값으로 돌아갑니다.' : ' PATCH 는 보낸 칸만 건드립니다.');
+            what = '<b>' + id + '번 글의 ' + d.changed[id].join(', ') + ' 필드가 바뀌었습니다.</b>' +
+                (req.method === 'PUT' ? ' PUT 은 통째로 바꾸므로 본문에 없던 필드는 기본값으로 돌아갑니다.' : ' PATCH 는 보낸 필드만 건드립니다.');
         }
         else if (d.removed.length) what = '<b>' + d.removed[0].id + '번 글이 지워졌습니다.</b> 지운 뒤에는 돌려줄 것이 없어 본문 없는 204 가 옵니다.';
         else if (res.status === 200 && req.method === 'GET') what = '<b>서버 데이터는 그대로입니다.</b> GET 은 읽기만 하므로 몇 번을 보내도 같은 답이 옵니다.';
-        else if (res.status === 200 && (req.method === 'PUT' || req.method === 'PATCH')) what = '<b>바뀐 칸이 없습니다.</b> 이미 같은 값이라 서버 데이터가 그대로입니다. ' + req.method + ' 은 같은 요청을 두 번 보내도 결과가 같습니다.';
+        else if (res.status === 200 && (req.method === 'PUT' || req.method === 'PATCH')) what = '<b>바뀐 필드가 없습니다.</b> 이미 같은 값이라 서버 데이터가 그대로입니다. ' + req.method + ' 은 같은 요청을 두 번 보내도 결과가 같습니다.';
         else if (res.status === 404) what = '<b>그런 글이 없어서 404 가 왔습니다.</b> 서버 데이터는 그대로입니다.';
         else if (res.status === 400) what = '<b>요청 모양이 틀려서 400 이 왔습니다.</b> 서버는 본문을 읽어 보고 처리 전에 돌려보냈습니다. 데이터는 그대로입니다.';
         else if (res.status === 405) what = '<b>이 주소가 받지 않는 메서드라 405 가 왔습니다.</b> 받는 메서드는 Allow 헤더에 적혀 있습니다.';

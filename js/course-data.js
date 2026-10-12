@@ -38,11 +38,11 @@
     userAgent: v('AdSDK/3.2.1 (iPhone; iOS 19.2)', L),
 
     // --- 바이트 사슬 ---
-    byteObject:   v(110, L, '110바이트로 들어와 봉투에서 346바이트로 가장 커지고, 변환기에서 309바이트로 꺼집니다'),
+    byteObject:   v(110, L, '110바이트로 들어와 envelope 에서 346바이트로 가장 커지고, 변환기에서 309바이트로 꺼집니다'),
     byteHttpBody: v(85,  L, '뒤쪽 중괄호 85바이트'),
     bytePrefix:   v(98,  L, '앞의 98바이트가 서버가 붙인 것'),
     byteAccess:   v(183, L, '183바이트입니다'),
-    byteEnvelope: v(346, L, '봉투에 담으면 346바이트가 됩니다'),
+    byteEnvelope: v(346, L, 'envelope 에 담으면 346바이트가 됩니다'),
     byteFinal:    v(309, L, '건당 309바이트'),
 
     // --- 볼륨과 시간 ---
@@ -125,7 +125,7 @@
     // 다르다 — 이쪽은 tz·sdk 가 있고 event_ts·app_ver 는 없다.
     appObjectLine: v('ClickEvent(event="click", ad_id=9931, slot="main_top", req_id="r-8f21",\n           ts=1786002501234, tz=540, sdk="3.2.1")', L),
     collectLine:   v('121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}', L),
-    // Filebeat 봉투 실물. collectLine 이 message 칸에 그대로 들어간 형태이고,
+    // Filebeat envelope 실물. collectLine 이 message 필드에 그대로 들어간 형태이고,
     // 이 줄 전체가 posts/log-hops-to-kafka.md 154행에 있다 — 346바이트로
     // FACTS.byteEnvelope 와도 맞는다. js/pipeline-course-model.js 가 조각을
     // 손으로 짜맞추지 않고 이 값을 그대로 쓴다.

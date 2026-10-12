@@ -310,7 +310,7 @@
     host.appendChild(el('li', null, '라벨이 늦게 옵니다. 전환은 며칠 뒤입니다.'));
 
     const li2 = el('li');
-    li2.appendChild(document.createTextNode('붙이는 열쇠가 '));
+    li2.appendChild(document.createTextNode('붙이는 조인 키가 '));
     li2.appendChild(el('code', null, 'req_id'));
     li2.appendChild(document.createTextNode('입니다. 1페이지에서 그 필드를 빼먹으면 여기서 라벨이 안 붙습니다 — '));
     const link = document.createElement('a');

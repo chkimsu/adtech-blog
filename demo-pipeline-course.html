@@ -472,13 +472,13 @@
         </p>
         <div class="plc-scroll"><table class="plc-tools" id="plc-tools"></table></div>
 
-        <h3>Filebeat 봉투와 Logstash 출력</h3>
+        <h3>Filebeat envelope 과 Logstash 출력</h3>
         <p class="plc-lead">
-          Filebeat 가 담아 보낸 봉투와, Logstash 가 그것을 파싱한 결과를 나란히 봅니다.
+          Filebeat 가 담아 보낸 envelope 과, Logstash 가 그것을 파싱한 결과를 나란히 봅니다. envelope 은 원문을 그대로 감싸고 읽은 시각, 기계 이름, 파일 위치를 덧붙인 JSON 입니다.
         </p>
         <div class="plc-pair">
           <div class="plc-raw plc-scroll">
-            <div class="plc-raw-head">Filebeat 봉투 <span id="plc-beat-bytes"></span></div>
+            <div class="plc-raw-head">Filebeat envelope <span id="plc-beat-bytes"></span></div>
             <pre id="plc-beat-body"></pre>
           </div>
           <div class="plc-raw plc-scroll">

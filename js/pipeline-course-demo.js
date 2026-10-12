@@ -150,12 +150,12 @@
   }
 
   // 2절 — Kafka 가 실제로 받는 값. Logstash 가 켜져 있으면 파싱된 finalLine(15
-  // 필드), 꺼지면 message 한 칸짜리 원문이다. 원문은 손으로 짜맞추지 않고
+  // 필드), 꺼지면 message 필드 하나짜리 원문이다. 원문은 손으로 짜맞추지 않고
   // JSON.stringify 로 만든다 — 안에 든 따옴표를 직접 이스케이프하지 않기 위해서다.
   function drawKafkaValue() {
     if (logstashOff) {
       $('plc-kafka-value').textContent = JSON.stringify({ message: M.textAt('file') });
-      $('plc-kafka-value-bytes').textContent = 'message 한 칸';
+      $('plc-kafka-value-bytes').textContent = 'message 필드 하나';
     } else {
       $('plc-kafka-value').textContent = M.textAt('logstash');
       $('plc-kafka-value-bytes').textContent = HOPS[4].outBytes + ' B, 필드 ' + finalFieldCount() + '개';
@@ -318,7 +318,7 @@
   function buildTools() {
     const rows = TOOL_ROWS.map(function (r) {
       if (r.axis === '원문') {
-        return [r.axis, withCode('안 건드립니다 — ', 'message', ' 칸에 통째로'),
+        return [r.axis, withCode('안 건드립니다 — ', 'message', ' 필드에 통째로'),
           '파싱해서 ' + finalFieldCount() + '개 필드로'];
       }
       return [r.axis, r.beat, r.logstash];
@@ -326,7 +326,7 @@
     buildSimpleTable('plc-tools', ['', 'Filebeat', 'Logstash'], rows);
   }
 
-  // 2절 — Filebeat 봉투 실물. Logstash 상태와 무관하게 항상 같은 값이라 한 번만 짓는다.
+  // 2절 — Filebeat envelope 실물. Logstash 상태와 무관하게 항상 같은 값이라 한 번만 짓는다.
   function buildBeatBody() {
     $('plc-beat-body').textContent = M.textAt('beat');
     $('plc-beat-bytes').textContent = HOPS[3].outBytes + ' B';

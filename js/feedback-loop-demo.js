@@ -393,9 +393,9 @@
     const X1 = 56, X1V = 232;      // 진짜 CTR
     const X2 = 244, X2V = 420;     // 추정 CTR
     const X3 = 432, X3V = 612;     // 이번 세대 노출
-    const XCUM = 686, XRANK = W;   // 누적 노출 · 노출 순위
+    const XCUM = 686, XRANK = W;   // 누적 노출, 노출 순위
 
-    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="광고별 진짜 CTR·추정 CTR·이번 세대 노출 막대">';
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="광고별 진짜 CTR, 추정 CTR, 이번 세대 노출 막대">';
     s += hatchDefs();
     s += '<text x="0" y="14" font-size="12.5" fill="var(--text-muted)">광고</text>';
     s += '<text x="' + X1 + '" y="14" font-size="12.5" fill="var(--text-muted)">진짜 CTR — 시스템은 모른다</text>';
@@ -488,7 +488,7 @@
     out += tile('진짜 1위 ' + best,
       h ? fmt(h.a[best]) + '건' : '—',
       h ? (h.a[best] > 0 ? 'is-good' : 'is-bad') : '',
-      S.gen ? '누적 ' + fmt(S.imps[best]) + '건 · ' + (h.a[best] > 0 ? '이번 세대 노출 ' + ranks[best] + '위' : '이번 세대는 자리 밖') : '아직 돌린 세대가 없습니다');
+      S.gen ? '누적 ' + fmt(S.imps[best]) + '건, ' + (h.a[best] > 0 ? '이번 세대 노출 ' + ranks[best] + '위' : '이번 세대는 자리 밖') : '아직 돌린 세대가 없습니다');
 
     out += tile('1등을 놓친 광고',
       S.gen ? missed + '개' : '—',
@@ -497,7 +497,7 @@
 
     out += tile('누적 지니계수',
       h ? h.gi.toFixed(3) : '—', '',
-      '0 = 똑같이 나눠 가짐 · 완전히 굳으면 ' + lockedGini().toFixed(3));
+      '0 = 똑같이 나눠 가짐, 완전히 굳으면 ' + lockedGini().toFixed(3));
 
     if (lg === null) {
       out += tile('굳음', '—', '', '노출 집합이 마지막으로 바뀐 세대');
@@ -533,7 +533,7 @@
     } else {
       const winLabel = S.win ? '최근 ' + Math.min(S.win, m.gens) + '세대' : '전체 ' + m.gens + '세대';
       out += cell('로그 그대로', pct(m.raw, 3), m.raw - tm > 0.002 ? 'is-bad' : '',
-        winLabel + ' · 진짜 값보다 ' + (m.raw >= tm ? '+' : '−') + Math.abs(100 * (m.raw - tm)).toFixed(3) + '%p');
+        winLabel + ', 진짜 값보다 ' + (m.raw >= tm ? '+' : '−') + Math.abs(100 * (m.raw - tm)).toFixed(3) + '%p');
       if (S.ips) {
         const gap = Math.abs(m.ips - tm);
         out += cell('IPS 가중', pct(m.ips, 3), gap < 0.0005 ? 'is-good' : gap < 0.002 ? 'is-warn' : 'is-bad',

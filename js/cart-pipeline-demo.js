@@ -129,10 +129,10 @@
     {
       key: 'report', label: '광고주 리포트', poll: '1분마다', due: '5분',
       out: [
-        L('+', 'advertiser_id', '311', '광고주별로 가릅니다'),
-        L('+', 'campaign_id', '5502', '캠페인별로 가릅니다'),
-        L('+', 'clicks · cost', '1 · 182.4', '광고주에게 청구할 값'),
-        L('-', 'client_ip · device · os', '', '리포트에 안 쓰는 것은 뺍니다')
+        L('+', 'advertiser_id', '311', '광고주별로 나눕니다'),
+        L('+', 'campaign_id', '5502', '캠페인별로 나눕니다'),
+        L('+', 'clicks / cost', '1 / 182.4', '광고주에게 청구할 값'),
+        L('-', 'client_ip / device / os', '', '리포트에 안 쓰는 것은 뺍니다')
       ],
       note: '여기 숫자가 그대로 청구서가 됩니다. 몇 건 빠지면 금액이 안 맞으니 세어 보고 넘깁니다'
     },
@@ -140,8 +140,8 @@
       key: 'train', label: '모델 학습', poll: '하루 한 번', due: '다음 날 새벽',
       out: [
         L('+', 'req_id 로 조인', '노출 + 클릭', '같은 요청의 두 줄을 이어 붙입니다'),
-        L('+', 'label', '1', '눌렸으니 1 · 안 눌린 노출은 0'),
-        L('-', 'client_ip · status · latency_ms', '', '학습에 안 쓰는 것은 뺍니다')
+        L('+', 'label', '1', '눌렸으니 1, 안 눌린 노출은 0'),
+        L('-', 'client_ip / status / latency_ms', '', '학습에 안 쓰는 것은 뺍니다')
       ],
       note: '어제 클릭이 몇 건 빠지면 라벨이 그만큼 어긋납니다. 그래서 빠진 게 없는지 세어 보고 학습합니다'
     }
@@ -151,11 +151,11 @@
     {
       key: 'app', label: '앱 SDK', sub: '광고 탭',
       recv: 'make', recvLabel: '만듭니다',
-      did: '화면에서 일어난 일에 이름을 붙입니다. 여기 없는 것이 넷입니다 — 누가·어디서·어느 캠페인·얼마.',
+      did: '화면에서 일어난 일에 이름을 붙입니다. 여기 없는 것이 넷입니다 — 누가, 어디서, 어느 캠페인, 얼마.',
       inTitle: '화면에서 일어난 일', outTitle: '서버로 보낸 것',
       before: TAP, after: APP_OUT,
       inBytes: null, outBytes: b(APP_JSON), outFields: 5,
-      ms: 0, hold: '앱 안 · 메모리',
+      ms: 0, hold: '앱 안, 메모리',
       holdNote: '여기서 막히면 그 클릭은 사라집니다. 앱을 끄면 다시 보낼 주체가 없습니다'
     },
     {
@@ -166,7 +166,7 @@
       before: APP_OUT.map(function (l) { return L(' ', l.k, l.v, ''); }),
       after: NGINX_OUT,
       inBytes: b(APP_JSON), outBytes: b(NGINX_LINE), outFields: null,
-      ms: 2, hold: '로그 파일 · 디스크',
+      ms: 2, hold: '로그 파일, 디스크',
       holdNote: '뒤가 다 막혀도 웹서버는 파일에 계속 씁니다. 디스크가 찰 때까지 며칠을 버팁니다'
     },
     {
@@ -177,7 +177,7 @@
       before: [L(' ', '텍스트 한 줄', NGINX_LINE, '3절이 만든 그 줄')],
       after: AGENT_OUT,
       inBytes: b(NGINX_LINE), outBytes: b(AGENT_JSON), outFields: 4,
-      ms: 40, hold: '로그 파일 · 디스크',
+      ms: 40, hold: '로그 파일, 디스크',
       holdNote: '에이전트가 죽어도 웹서버는 멀쩡합니다. 살아나면 offset 88,213 부터 이어 읽습니다'
     },
     {
@@ -188,18 +188,18 @@
       before: AGENT_OUT.map(function (l) { return L(' ', l.k, l.v, ''); }),
       after: XFORM_OUT,
       inBytes: b(AGENT_JSON), outBytes: b(XFORM_JSON), outFields: 15,
-      ms: 190, hold: '로그 파일까지 되밀립니다 · 디스크',
+      ms: 190, hold: '로그 파일까지 되밀립니다, 디스크',
       holdNote: '변환기가 막히면 에이전트가 못 보내고, 밀림은 파일에서 멈춥니다'
     },
     {
       key: 'kafka', label: 'Kafka', sub: 'ad.click',
-      recv: 'push', recvLabel: '밀려 옵니다 · 들고 있습니다',
+      recv: 'push', recvLabel: '밀려 옵니다, 들고 있습니다',
       did: '내용은 안 바꾸고 주소만 붙입니다. 여기서부터 한 번 쓰이고 여럿이 읽습니다.',
       inTitle: '변환기가 민 것', outTitle: '브로커에 놓인 자리',
       before: [L(' ', '필드 15개', '5절 결과', b(XFORM_JSON) + ' B')],
       after: KAFKA_OUT,
       inBytes: b(XFORM_JSON), outBytes: b(XFORM_JSON), outFields: 15,
-      ms: 34, hold: '브로커 · 디스크',
+      ms: 34, hold: '브로커, 디스크',
       holdNote: '읽는 쪽이 다 죽어도 브로커는 보존 기간만큼 들고 있습니다. 읽혔는지가 아니라 나이로 지웁니다'
     },
     {
@@ -210,7 +210,7 @@
       before: [L(' ', '필드 15개', 'ad.click / partition 1 / offset 88,214', '넷이 같은 줄을 읽습니다')],
       after: null,
       inBytes: b(XFORM_JSON), outBytes: null, outFields: null,
-      ms: null, hold: '브로커 · 디스크',
+      ms: null, hold: '브로커, 디스크',
       holdNote: '넷이 각자 어디까지 읽었는지만 따로 기억합니다. 하나가 죽어도 나머지 셋은 영향이 없습니다'
     }
   ];
@@ -322,7 +322,7 @@
   function sizeText(bytes, fields) {
     if (bytes === null) return '';
     var t = num(bytes) + ' B';
-    if (fields) t += ' · 필드 ' + fields + '개';
+    if (fields) t += ', 필드 ' + fields + '개';
     return t;
   }
 
@@ -383,7 +383,7 @@
       btn.setAttribute('aria-pressed', i === state.consumer ? 'true' : 'false');
       if (i === state.consumer) btn.classList.add('is-on');
       btn.appendChild(el('span', 'cp-chip-name', c.label));
-      btn.appendChild(el('span', 'cp-chip-meta', c.poll + ' · 마감 ' + c.due));
+      btn.appendChild(el('span', 'cp-chip-meta', c.poll + ', 마감 ' + c.due));
       host.appendChild(btn);
     });
   }

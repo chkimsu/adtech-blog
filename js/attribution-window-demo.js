@@ -116,7 +116,7 @@
     const excluded = journey.filter(t => t.day > state.window).map(t => `${t.ch}(D-${t.day})`);
     const winner = Object.entries(cr).sort((a, b) => b[1] - a[1])[0];
     const winLabel = state.window >= 9999 ? '전체 기간' : `${state.window}일`;
-    let msg = `윈도우 ${winLabel} · ${modelNames[state.model]} 모델 → `;
+    let msg = `윈도우 ${winLabel}, ${modelNames[state.model]} 모델 → `;
     msg += winner ? `공로 1위 <strong>${winner[0]}</strong> (${(winner[1] * 100).toFixed(0)}%). ` : '';
     if (excluded.length) msg += `윈도우 밖이라 제외: ${excluded.join(', ')}.`;
     else msg += '모든 터치가 윈도우 안에 있습니다.';

@@ -37,7 +37,7 @@
   // 1) 글에서 가져온 상수
   // ==========================================
 
-  var CONV = 1000;              // 광고주 한 곳의 하루 전환 (글 2절·7절)
+  var CONV = 1000;              // 광고주 한 곳의 하루 전환 (글 2절, 7절)
   var AD_SPEND = 5000000;       // 그 광고주가 하루에 쓴 광고비(원)
   var TRUE_CPA = AD_SPEND / CONV;   // 5,000원
 
@@ -270,7 +270,7 @@
     if (retries > 0) {
       out += '<path d="M40,' + BY + ' C40,30 108,30 108,' + (BY - 4) + '" style="fill:none; stroke:' +
         loopColor + '; stroke-width:1.8" marker-end="url(#' + loopMarker + ')"/>';
-      out += txt(120, 40, '응답을 못 받으면 다시 보냄 · 재시도 ' + retries + '회', 11.5,
+      out += txt(120, 40, '응답을 못 받으면 다시 보냄, 재시도 ' + retries + '회', 11.5,
         'var(--ink3)', { anchor: 'start' });
     } else {
       out += txt(14, 40, '재시도 없음 — 답을 못 받은 건은 그대로 실패로 남는다', 11.5,
@@ -302,14 +302,14 @@
       : txt(W / 2, 208, '응답 유실 0건 — 다시 보낼 것이 없다', 11.5, 'var(--navy)');
 
     // 괄호는 안 쓴다 — mono 글꼴에 한글이 없어 괄호가 전각으로 떨어진다
-    out += txt(W / 2, 228, '요청 ' + fmt(m.sim.totalSent) + '건 · 전환 테이블 ' + fmt(m.records) + '줄' +
-      (m.dup > 0 ? ' · 중복 ' + fmt(m.dup) + '줄' : ' · 실제와 같다'), 11.5, 'var(--ink2)', { mono: true });
+    out += txt(W / 2, 228, '요청 ' + fmt(m.sim.totalSent) + '건, 전환 테이블 ' + fmt(m.records) + '줄' +
+      (m.dup > 0 ? ', 중복 ' + fmt(m.dup) + '줄' : ', 실제와 같다'), 11.5, 'var(--ink2)', { mono: true });
 
     return out + '</svg>';
   }
 
   function flowLabel(m) {
-    return '왼쪽부터 부르는 쪽 · 인증 · 우리 수집 API · 멱등키 조회 · 전환 테이블 다섯 칸이 화살표로 이어진 그림이다. ' +
+    return '왼쪽부터 부르는 쪽, 인증, 우리 수집 API, 멱등키 조회, 전환 테이블 다섯 칸이 화살표로 이어진 그림이다. ' +
       '지금 설정에서 요청은 ' + fmt(m.sim.totalSent) + '건, 응답 유실은 ' + fmt(m.sim.totalLost) +
       '건, 전환 테이블에 남는 줄은 ' + fmt(m.records) + '줄이다.';
   }
@@ -332,7 +332,7 @@
       out += '<tr>' +
         '<td>' + r.round + '차</td>' +
         '<td>' + fmt(r.sent) + '</td>' +
-        '<td>' + fmt(r.lost) + ' · ' + pct1(r.rate) + '</td>' +
+        '<td>' + fmt(r.lost) + ' / ' + pct1(r.rate) + '</td>' +
         '<td' + naiveCls + '>' + fmt(r.naive) + '</td>' +
         '<td' + idemCls + '>' + fmt(CONV) + '</td>' +
         '</tr>';
@@ -428,7 +428,7 @@
 
     // (4) 시크릿 노출 위험 — 우리 서버 밖에 비밀이 놓이는 자리 수
     var g4 = {
-      label: '시크릿 노출 위험', unit: '곳 · 우리 서버 밖', value: String(m.secret.n),
+      label: '시크릿 노출 위험', unit: '곳, 우리 서버 밖', value: String(m.secret.n),
       state: m.secret.state, flag: m.secret.flag, note: m.secret.note
     };
 
@@ -506,7 +506,7 @@
       if (list.length > 1) {
         var rest = [];
         for (var i = 1; i < list.length; i++) rest.push(list[i].short);
-        html += '<span class="ac-verdict-order">그다음: ' + rest.join(' · ') + '</span>';
+        html += '<span class="ac-verdict-order">그다음: ' + rest.join(', ') + '</span>';
       }
     }
     verdictHost.innerHTML = html;

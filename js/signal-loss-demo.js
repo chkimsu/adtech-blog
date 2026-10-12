@@ -28,7 +28,7 @@
     open: 0.762, wall: 0.771,
     cookie: [0.040, 0.007],  // 관심사 세그먼트(0.021/0.004) + 크로스 사이트 리타겟(0.019/0.003)
     idfa: [0.016, 0.003],    // 크로스 앱 최근 행동
-    freq: [0.012, 0.002]     // 식별자 기반 노출빈도·최근성
+    freq: [0.012, 0.002]     // 식별자 기반 노출빈도, 최근성
     // 셋을 다 빼면 0.762 - 0.068 = 0.694 / 0.771 - 0.012 = 0.759 — 글 2절 표와 같다
   };
 
@@ -157,8 +157,8 @@
     const X0 = 8, BW = W - 16, Y = 26, H = 40;
     const segs = [
       ['개인 라벨', m.ind, 'var(--navy)', false],
-      ['집계 · 값 있음', m.aggValue, 'var(--series-4)', false],
-      ['집계 · 건수만', m.aggCount, 'var(--grey)', true],
+      ['집계 / 값 있음', m.aggValue, 'var(--series-4)', false],
+      ['집계 / 건수만', m.aggCount, 'var(--grey)', true],
       ['억제로 지워짐', m.suppressed, 'var(--oxide)', true],
       ['못 봄', m.lost, 'var(--series-5)', false]
     ];
@@ -175,15 +175,15 @@
     out += '<rect x="' + X0 + '" y="' + Y + '" width="' + BW + '" height="' + H +
       '" style="fill:none; stroke:var(--rule); stroke-width:1"/>';
     return '<svg viewBox="0 0 ' + W + ' 76" role="img" aria-label="전환 ' + num(CONV_TOTAL) +
-      '건이 개인 라벨·집계·억제·못 봄으로 나뉘는 가로 막대" ' +
+      '건이 개인 라벨, 집계, 억제, 못 봄으로 나뉘는 가로 막대" ' +
       'style="width:100%; height:auto; font-family:var(--font-sans)">' + out + '</svg>';
   }
 
   function drawConvLegend(m) {
     const rows = [
       ['개인 라벨', m.ind, 'var(--navy)', '줄마다 사람이 붙는다. 라벨 모양이 그대로다'],
-      ['집계 · 값 있음', m.aggValue, 'var(--series-4)', '버킷 합계로 온다. 같은 정밀도까지 데이터가 ' + DATA_MULT + '배 필요하다'],
-      ['집계 · 건수만', m.aggCount, 'var(--grey)', '규모가 작아 값을 못 받았다. 건수는 온다'],
+      ['집계 / 값 있음', m.aggValue, 'var(--series-4)', '버킷 합계로 온다. 같은 정밀도까지 데이터가 ' + DATA_MULT + '배 필요하다'],
+      ['집계 / 건수만', m.aggCount, 'var(--grey)', '규모가 작아 값을 못 받았다. 건수는 온다'],
       ['억제로 지워짐', m.suppressed, 'var(--oxide)', '노이즈를 더한 값이 ' + SUPPRESS_CUT + '건 미만이라 버킷째 사라졌다'],
       ['못 봄', m.lost, 'var(--series-5)', '광고주 픽셀이 안 붙어 아예 안 들어온다']
     ];
@@ -238,7 +238,7 @@
     out += txt(X0, yAx + 14, '0%', L12);
     out += txt(X0 + BW, yAx + 14, max + '%', L12, 'end');
     return '<svg viewBox="0 0 ' + W + ' ' + (yAx + 22) + '" role="img" aria-label="하루 전환 ' + m.n +
-      '건 광고의 흔들림 폭을 표본 오차·리포트 노이즈·합계 세 막대로 그린 그림" ' +
+      '건 광고의 흔들림 폭을 표본 오차, 리포트 노이즈, 합계 세 막대로 그린 그림" ' +
       'style="width:100%; height:auto; font-family:var(--font-sans)">' + out + '</svg>';
   }
 
@@ -251,10 +251,10 @@
     let y = 14, out = '';
     // 좁은 칸에서는 머리글을 두 줄로 접는다. 한 줄로 두면 오른쪽이 잘린다.
     out += txt(X0, y, 'iOS 앱 지면 노출 ' + num(FREQ.imp) + '건' +
-      (narrow ? '' : ' · 순 사용자 ' + num(FREQ.uniq) + '명 · 평균 ' + FREQ.avg.toFixed(1) + '회'), L12);
+      (narrow ? '' : ', 순 사용자 ' + num(FREQ.uniq) + '명, 평균 ' + FREQ.avg.toFixed(1) + '회'), L12);
     if (narrow) {
       y += 15;
-      out += txt(X0, y, '순 사용자 ' + num(FREQ.uniq) + '명 · 평균 ' + FREQ.avg.toFixed(1) + '회', L12);
+      out += txt(X0, y, '순 사용자 ' + num(FREQ.uniq) + '명, 평균 ' + FREQ.avg.toFixed(1) + '회', L12);
     }
     const yBar = y + 8;
     out += bar(X0, yBar, keepW, BH, 'var(--navy)', false);
@@ -275,7 +275,7 @@
     out += bar(X0, yTop + 8, topW, 16, 'var(--series-5)', false);
     out += '<rect x="' + X0 + '" y="' + (yTop + 8) + '" width="' + BW + '" height="16' +
       '" style="fill:none; stroke:var(--rule); stroke-width:1"/>';
-    out += txt(X0 + topW + 6, yTop + 21, num(FREQ.topImp) + '건 · ' + pct(FREQ.topImp / FREQ.imp * 100), L12B);
+    out += txt(X0 + topW + 6, yTop + 21, num(FREQ.topImp) + '건, ' + pct(FREQ.topImp / FREQ.imp * 100), L12B);
     return '<svg viewBox="0 0 ' + W + ' ' + (yTop + 30) + '" role="img" aria-label="iOS 노출 420만 건 중 상한 5회 안쪽과 초과분, ' +
       '그리고 상위 5% 사용자가 가져가는 몫을 그린 막대 둘" ' +
       'style="width:100%; height:auto; font-family:var(--font-sans)">' + out + '</svg>';
@@ -309,7 +309,7 @@
         ' 다. 이 상태에서는 지표로 성과를 판정할 수 없다. 남는 길은 무작위 실험뿐이다.';
     }
     if (!s.label) {
-      return '<strong>먼저 부서진 것은 라벨이다.</strong> 계기 2·3·4 가 같이 내려갔는데 계기 1(타겟팅)은 그대로다. ' +
+      return '<strong>먼저 부서진 것은 라벨이다.</strong> 계기 2, 3, 4 가 같이 내려갔는데 계기 1(타겟팅)은 그대로다. ' +
         '집계 라벨은 계수를 비틀지 않는다. 대신 흔들림이 ' + SD_MULT + '배라 같은 정밀도까지 데이터가 ' +
         DATA_MULT + '배 필요하다. 유효 표본이 ' + num(m.effective) + '줄로 주저앉은 것이 그 값이다.';
     }
@@ -363,7 +363,7 @@
       idfa: ['살아 있음', 'ATT 미동의로 못 읽음'],
       label: ['줄마다 사람이 붙음', '버킷 합계만 옴'],
       freq: ['상한 5회를 건다', '같은 사람인지 판정 불가'],
-      noise: ['원본 그대로', '라플라스 b=' + LAP_B + ' · ' + SUPPRESS_CUT + '건 미만 억제']
+      noise: ['원본 그대로', '라플라스 b=' + LAP_B + ', ' + SUPPRESS_CUT + '건 미만 억제']
     };
     SWITCHES.forEach(function (k) {
       const btn = $('sl-sw-' + k);
@@ -384,13 +384,13 @@
     $('sl-g1').textContent = pct(m.g1);
     $('sl-g1').className = cls('sl-gauge-value', tone(m.g1, 90, 50));
     $('sl-g1-sub').innerHTML = '노출 ' + num(IMP.total) + '건 중 ' + num(m.targetable) + '건<br>' +
-      '열린 RTB AUC ' + m.aucOpen.toFixed(3) + ' · 담장 안 ' + m.aucWall.toFixed(3);
+      '열린 RTB AUC ' + m.aucOpen.toFixed(3) + ', 담장 안 ' + m.aucWall.toFixed(3);
 
     // 계기 2
     $('sl-g2').textContent = pct(m.g2);
     $('sl-g2').className = cls('sl-gauge-value', tone(m.g2, 90, 60));
     $('sl-g2-sub').innerHTML = '전환 ' + num(CONV_TOTAL) + '건 중 값이 오는 ' + num(m.observed) + '건<br>' +
-      '개인 ' + num(m.ind) + ' · 집계 ' + num(m.aggValue) + ' · 못 봄 ' + num(m.lost + m.suppressed);
+      '개인 ' + num(m.ind) + ', 집계 ' + num(m.aggValue) + ', 못 봄 ' + num(m.lost + m.suppressed);
 
     // 계기 3
     $('sl-g3').textContent = num(m.effective) + '줄';
@@ -402,8 +402,8 @@
     $('sl-g4').textContent = '±' + pct(m.g4);
     $('sl-g4').className = cls('sl-gauge-value', tone(m.g4, 20, 60, true));
     $('sl-g4-sub').innerHTML = '하루 전환 ' + num(m.n) + '건짜리 광고 하나<br>' +
-      '표본 ' + pct(m.sampleRel * 100) + ' · 노이즈 ' + pct(m.noiseRel * 100) +
-      ' · 억제율 ' + pct(state.noise ? 0 : SUP_RATE[levelIdx]);
+      '표본 ' + pct(m.sampleRel * 100) + ', 노이즈 ' + pct(m.noiseRel * 100) +
+      ', 억제율 ' + pct(state.noise ? 0 : SUP_RATE[levelIdx]);
     $('sl-g4-title').textContent = '하루 전환 ' + num(m.n) + '건 광고 — 지표 흔들림 폭';
 
     // 판정

@@ -34,17 +34,17 @@ const MODES = {
     exact: {
         label: '정확히 찾기',
         desc: '값 자체를 찾는다. 없으면 -1.',
-        code: 'lo, hi = 0, n - 1   ·   while lo &lt;= hi   ·   mid = (lo + hi) // 2',
+        code: 'lo, hi = 0, n - 1   →   while lo &lt;= hi   →   mid = (lo + hi) // 2',
     },
     left: {
         label: '왼쪽 경계',
         desc: '찾는 값 이상이 처음 나오는 자리. bisect_left 와 같다.',
-        code: 'lo, hi = 0, n   ·   while lo &lt; hi   ·   a[mid] &lt; t 이면 lo = mid + 1',
+        code: 'lo, hi = 0, n   →   while lo &lt; hi   →   a[mid] &lt; t 이면 lo = mid + 1',
     },
     right: {
         label: '오른쪽 경계',
         desc: '찾는 값 초과가 처음 나오는 자리. bisect_right 와 같다.',
-        code: 'lo, hi = 0, n   ·   while lo &lt; hi   ·   a[mid] &lt;= t 이면 lo = mid + 1',
+        code: 'lo, hi = 0, n   →   while lo &lt; hi   →   a[mid] &lt;= t 이면 lo = mid + 1',
     },
 };
 

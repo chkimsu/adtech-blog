@@ -25,7 +25,7 @@
   var CLICKS = 2280000;                         // 하루 클릭 (기저 CTR 1.0%)
   var STREAM_CLICKS = 2202480;                  // 스트림 5분 윈도우가 세는 건수 (96.6%)
   var BATCH_CLICKS = 2273160;                   // 배치 D+1 이 세는 건수 (99.7%)
-  var RULES = 4;                                // 연결 하나당 정해야 하는 것 — 포맷·스키마·권한·재시도
+  var RULES = 4;                                // 연결 하나당 정해야 하는 것 — 포맷, 스키마, 권한, 재시도
   var DETECT_MIN = 30;                          // 멈춘 것을 사람이 알아채고 붙는 데 걸리는 시간(분)
 
   // 처리기가 멈췄을 때 앞 층이 들고 버티는 시간
@@ -41,9 +41,9 @@
   // 처리 방식마다 도는 잡. 정제·조인은 어느 쪽에도 있고, 5분 집계·이상 탐지는 스트림,
   // 시간 집계는 배치다. 둘 다 고르면 정제·조인을 한 번만 세어 다섯이 된다.
   var JOBS = {
-    stream: ['정제', '노출·클릭 조인', '5분 집계', '이상 탐지'],
-    batch: ['정제', '노출·클릭 조인', '시간 집계'],
-    both: ['정제', '노출·클릭 조인', '5분 집계', '시간 집계', '이상 탐지']
+    stream: ['정제', '노출과 클릭 조인', '5분 집계', '이상 탐지'],
+    batch: ['정제', '노출과 클릭 조인', '시간 집계'],
+    both: ['정제', '노출과 클릭 조인', '5분 집계', '시간 집계', '이상 탐지']
   };
 
   var STORES = [
@@ -124,7 +124,7 @@
       sub: '수집 ' + nf(ingest) + ' + ' + (hasStream ? '스트림 ' + nf(STREAM_MS) : '1시간 배치 ' + nf(HOUR_BATCH)) +
         (distMs ? ' + 유통 ' + distMs : '') + ' ms',
       note: !cfg.has.rt
-        ? '집계 결과를 최근 5분 · 지면별로 꺼낼 저장소가 없다. 실시간 DB 를 켜야 이 숫자에 뜻이 생긴다.'
+        ? '집계 결과를 최근 5분, 지면별로 꺼낼 저장소가 없다. 실시간 DB 를 켜야 이 숫자에 뜻이 생긴다.'
         : (hasStream
           ? '마감 2,000 ms 에서 도달 ' + nf(ingest) + ' ms 를 빼면 남는 예산 ' + nf(budget) + ' ms. ' +
             '지금 쓰는 것은 ' + nf(procMs + distMs) + ' ms 다.'
@@ -139,12 +139,12 @@
       train = {
         value: '없음', state: 'bad', chip: '담을 곳 없음',
         sub: '오브젝트 스토리지 + 테이블 포맷이 없다',
-        note: 'raw 하루 21.9 GB · 정제 하루 9.12 GB 를 담을 자리가 없다. 학습도 정산도 원천이 없고, 지난 30일 백필도 못 한다.'
+        note: 'raw 하루 21.9 GB, 정제 하루 9.12 GB 를 담을 자리가 없다. 학습도 정산도 원천이 없고, 지난 30일 백필도 못 한다.'
       };
     } else if (hasBatch) {
       train = {
         value: '다음 날 06:00', state: 'good', chip: '마감 안',
-        sub: '가장 오래된 이벤트 24.5시간 · 마감 30시간 · 여유 5.5시간',
+        sub: '가장 오래된 이벤트 24.5시간, 마감 30시간, 여유 5.5시간',
         note: 'D+1 배치가 클릭 ' + nf(BATCH_CLICKS) + '건(99.7%)을 세고, D+2 재집계가 ' + nf(CLICKS) + '건(100%)으로 확정한다.'
       };
     } else {
@@ -170,7 +170,7 @@
       value: nf(links),
       state: cfg.dist ? 'good' : 'warn',
       chip: cfg.dist ? '덧셈 ' + jobs.length + ' + ' + dests.length : '곱셈 ' + jobs.length + ' × ' + dests.length,
-      sub: '설정 자리 ' + nf(links * RULES) + '개 (연결마다 포맷·스키마·권한·재시도)',
+      sub: '설정 자리 ' + nf(links * RULES) + '개 (연결마다 포맷, 스키마, 권한, 재시도)',
       note: cfg.dist
         ? '유통 층이 없으면 같은 구성이 ' + nf(flat) + '개다. 목적지를 하나 더 붙일 때 손대는 처리 잡은 0개다.'
         : '유통 층을 세우면 ' + nf(hub) + '개로 준다. 지금은 목적지를 하나 더 붙일 때 처리 잡 ' + jobs.length + '개를 고친다.'
@@ -187,14 +187,14 @@
     }
     if (!cfg.has.lake) {
       problems.push({
-        t: '학습·정산 원천이 없다',
+        t: '학습, 정산 원천이 없다',
         d: '되돌릴 수 없는 변환을 거친 값만 남는다. 조인 윈도우를 3시간에서 6시간으로 바꾸는 재처리도, 30일 백필도 불가능하다.'
       });
     }
     if (!cfg.has.rt) {
       problems.push({
         t: '대시보드가 읽을 저장소가 없다',
-        d: '5분 집계 결과를 최근 5분 · 지면별로 꺼낼 자리가 없다. 지연을 아무리 줄여도 볼 화면이 없다.'
+        d: '5분 집계 결과를 최근 5분, 지면별로 꺼낼 자리가 없다. 지연을 아무리 줄여도 볼 화면이 없다.'
       });
     }
     if (dashMs > DASH_DUE) {
@@ -222,8 +222,8 @@
     if (!cfg.dist) {
       problems.push({
         t: '목적지 하나에 처리 잡 ' + jobs.length + '개를 손댄다',
-        d: '연결 ' + nf(flat) + '개 · 설정 자리 ' + nf(flat * RULES) + '개다. 유통 층을 세우면 ' +
-          nf(hub) + '개 · ' + nf(hub * RULES) + '개이고, 새 목적지는 커넥터 하나로 끝난다.'
+        d: '연결 ' + nf(flat) + '개, 설정 자리 ' + nf(flat * RULES) + '개다. 유통 층을 세우면 ' +
+          nf(hub) + '개, ' + nf(hub * RULES) + '개이고, 새 목적지는 커넥터 하나로 끝난다.'
       });
     }
     if (!cfg.has.search) {
@@ -248,7 +248,7 @@
   // ==========================================
   // 4) 그림 — 층 여섯 칸
   // ==========================================
-  var SW = 150, SGAP = 28;   // 칸 너비 · 칸 사이
+  var SW = 150, SGAP = 28;   // 칸 너비, 칸 사이
 
   function txt(x, y, s, cls, anchor) {
     return '<text x="' + x + '" y="' + y + '" class="' + cls + '"' +
@@ -259,11 +259,11 @@
     var agent = cfg.collector === 'agent';
     var procLines;
     if (cfg.proc === 'stream') {
-      procLines = [{ t: '스트림 집계', c: 'k' }, { t: '800 ms', c: 'v' }, { t: '잡 4개 · 5분 윈도우', c: 's' }];
+      procLines = [{ t: '스트림 집계', c: 'k' }, { t: '800 ms', c: 'v' }, { t: '잡 4개, 5분 윈도우', c: 's' }];
     } else if (cfg.proc === 'batch') {
-      procLines = [{ t: '1시간 배치', c: 'k' }, { t: '4,200,000 ms', c: 'v' }, { t: '잡 3개 · D+1', c: 's' }];
+      procLines = [{ t: '1시간 배치', c: 'k' }, { t: '4,200,000 ms', c: 'v' }, { t: '잡 3개, D+1', c: 's' }];
     } else {
-      procLines = [{ t: '스트림 + 배치', c: 'k' }, { t: '800 ms · D+1', c: 'v' }, { t: '잡 5개', c: 's' }];
+      procLines = [{ t: '스트림 + 배치', c: 'k' }, { t: '800 ms, D+1', c: 'v' }, { t: '잡 5개', c: 's' }];
     }
 
     var storeLines = cfg.stores.map(function (s) { return { t: s.short, c: 'v' }; });
@@ -286,14 +286,14 @@
       {
         n: '④ 유통', on: cfg.dist, key: cfg.dist,
         lines: cfg.dist
-          ? [{ t: '커넥터', c: 'k' }, { t: 'ad.*.clean', c: 'v' }, { t: '+200 ms · 목적지 ' + m.dests.length, c: 's' }]
+          ? [{ t: '커넥터', c: 'k' }, { t: 'ad.*.clean', c: 'v' }, { t: '+200 ms, 목적지 ' + m.dests.length, c: 's' }]
           : [{ t: '없음', c: 'k' }, { t: '잡이 목적지에', c: 's' }, { t: '직접 쓴다', c: 's' }]
       },
       {
         n: '⑤ 저장', on: cfg.stores.length > 0,
         lines: cfg.stores.length ? storeLines : [{ t: '없음', c: 'k' }, { t: '담을 곳이 없다', c: 's' }]
       },
-      { n: '⑥ 조회', on: true, lines: [{ t: 'Trino · SQL', c: 'k' }, { t: '소비자 4', c: 'v' }, { t: '넷이 읽는다', c: 's' }] }
+      { n: '⑥ 조회', on: true, lines: [{ t: 'Trino, SQL', c: 'k' }, { t: '소비자 4', c: 'v' }, { t: '넷이 읽는다', c: 's' }] }
     ];
   }
 
@@ -328,7 +328,7 @@
     });
 
     s += txt(0, 172, m.dash.formula, 'pb-s');
-    s += txt(1040, 172, '버티는 시간 ' + m.hold.value + ' · 연결 ' + m.link.value + '개', 'pb-s', 'end');
+    s += txt(1040, 172, '버티는 시간 ' + m.hold.value + ', 연결 ' + m.link.value + '개', 'pb-s', 'end');
     s += '</svg>';
     return s;
   }
@@ -346,8 +346,8 @@
     var hx = 440, hw = 160, hy = MID - 30, hh = 60;
 
     var head = cfg.dist
-      ? '유통 층 있음 — 잡 ' + jobs.length + ' + 목적지 ' + dests.length + ' = 연결 ' + m.hub + '개 · 설정 자리 ' + (m.hub * RULES) + '개'
-      : '유통 층 없음 — 잡 ' + jobs.length + ' × 목적지 ' + dests.length + ' = 연결 ' + m.flat + '개 · 설정 자리 ' + (m.flat * RULES) + '개';
+      ? '유통 층 있음 — 잡 ' + jobs.length + ' + 목적지 ' + dests.length + ' = 연결 ' + m.hub + '개, 설정 자리 ' + (m.hub * RULES) + '개'
+      : '유통 층 없음 — 잡 ' + jobs.length + ' × 목적지 ' + dests.length + ' = 연결 ' + m.flat + '개, 설정 자리 ' + (m.flat * RULES) + '개';
     var foot = cfg.dist
       ? '목적지를 하나 더 붙일 때 손대는 처리 잡 0개 — 커넥터 설정에 블록 하나가 는다'
       : '목적지를 하나 더 붙일 때 손대는 처리 잡 ' + jobs.length + '개 — 그만큼 코드 리뷰와 배포가 는다';

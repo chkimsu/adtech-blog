@@ -9,29 +9,29 @@
 
   // 위→아래 파이프라인. y=윗변, h=높이
   var NODES = [
-    { id: 'user',    y: 24,  h: 58,  t: '사용자 행동',        s: '광고를 보고 · 누르고 · 산다' },
+    { id: 'user',    y: 24,  h: 58,  t: '사용자 행동',        s: '광고를 보고, 누르고, 산다' },
     { id: 'logs',    y: 112, h: 134, t: '로그가 쌓인다',       s: '', logs: true },
-    { id: 'join',    y: 286, h: 70,  t: '조인 · 라벨링',       s: '노출⨝클릭 = pCTR 정답 · 클릭⨝전환 = pCVR 정답' },
+    { id: 'join',    y: 286, h: 70,  t: '조인, 라벨링',       s: '노출⨝클릭 = pCTR 정답, 클릭⨝전환 = pCVR 정답' },
     { id: 'feature', y: 396, h: 58,  t: 'Feature Store (피처 스토어)', s: '원시 로그를 숫자 피처로 — 312개' },
     { id: 'dataset', y: 494, h: 58,  t: '학습 데이터셋',       s: '피처 + 정답(라벨) — 8.5억 행' },
-    { id: 'train',   y: 592, h: 58,  t: '모델 학습',           s: 'DeepFM 재학습 · AUC 0.781 → 0.792' },
+    { id: 'train',   y: 592, h: 58,  t: '모델 학습',           s: 'DeepFM 재학습, AUC 0.781 → 0.792' },
     { id: 'calib',   y: 690, h: 58,  t: 'Calibration (보정)',  s: '예측 평균 2.1% → 실제 2.4%' },
     { id: 'deploy',  y: 788, h: 58,  t: '배포 (Canary)',       s: '트래픽 5% → 100%' },
-    { id: 'serve',   y: 886, h: 62,  t: '입찰 · 서빙',         s: '새 모델 반영 · ROAS +4%' }
+    { id: 'serve',   y: 886, h: 62,  t: '입찰, 서빙',         s: '새 모델 반영, ROAS +4%' }
   ];
   var NODE_BY = {};
   NODES.forEach(function (n) { NODE_BY[n.id] = n; });
 
   var STEPS = [
-    { id: 'user',    cap: '사용자가 광고를 보고·누르고·산다. 모든 로그의 시작점이다.' },
-    { id: 'logs',    cap: '그 행동이 노출·클릭·전환 로그로 통째로 쌓인다. (어제 노출 1.2억 · 클릭 240만)', count: true },
+    { id: 'user',    cap: '사용자가 광고를 보고, 누르고, 산다. 모든 로그의 시작점이다.' },
+    { id: 'logs',    cap: '그 행동이 노출, 클릭, 전환 로그로 통째로 쌓인다. (어제 노출 1.2억, 클릭 240만)', count: true },
     { id: 'join',    cap: '로그를 이어 붙여 ‘정답’을 만든다 — 노출⨝클릭으로 눌렀나(pCTR), 클릭⨝전환으로 샀나(pCVR). 전환은 며칠 뒤 도착해 라벨이 늦는다(지연 피드백).' },
     { id: 'feature', cap: '원시 로그를 “최근 7일 클릭률” 같은 숫자(피처)로 가공해 Feature Store에 312개.' },
     { id: 'dataset', cap: '피처에 정답을 붙여 학습 데이터셋을 만든다 — 8.5억 행.' },
     { id: 'train',   cap: '새 데이터로 모델을 다시 학습한다 — DeepFM, 검증 AUC 0.781 → 0.792.' },
     { id: 'calib',   cap: '예측을 실제 분포에 맞게 보정한다 — 평균 2.1% → 2.4%. 안 하면 입찰가가 통째로 틀어진다.' },
     { id: 'deploy',  cap: '검증 통과한 새 모델을 일부 트래픽부터 조심스레 올린다 — 카나리 5% → 100%.' },
-    { id: 'serve',   cap: '새 모델로 입찰·서빙(ROAS +4%). 그 입찰이 다시 새 로그를 만든다 → 매일 이 순환을 돈다.', loop: true }
+    { id: 'serve',   cap: '새 모델로 입찰, 서빙(ROAS +4%). 그 입찰이 다시 새 로그를 만든다 → 매일 이 순환을 돈다.', loop: true }
   ];
 
   function esc(s) {
@@ -98,7 +98,7 @@
     var sy = sv.y + sv.h / 2, uy = us.y + us.h / 2;
     var loop = '<path id="logml-loop" class="logml-loop" marker-end="url(#logml-ah)" d="M' + (BX + BW) + ' ' + sy +
       ' C 560 ' + sy + ' 560 ' + uy + ' ' + (BX + BW) + ' ' + uy + '"/>';
-    loop += '<text class="logml-loop-label" x="556" y="' + ((sy + uy) / 2) + '" text-anchor="middle" transform="rotate(90 556 ' + ((sy + uy) / 2) + ')">다시 입찰 → 새 로그 · 매일 반복</text>';
+    loop += '<text class="logml-loop-label" x="556" y="' + ((sy + uy) / 2) + '" text-anchor="middle" transform="rotate(90 556 ' + ((sy + uy) / 2) + ')">다시 입찰 → 새 로그, 매일 반복</text>';
 
     var nodes = '';
     NODES.forEach(function (n) { nodes += nodeSVG(n); });

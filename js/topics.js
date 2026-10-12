@@ -75,7 +75,7 @@
       <div class="topic-track-head">
         <span class="topic-kicker">트랙</span>
         <a href="post.html?id=${encodeURIComponent(first.id)}">${esc(track.title)}</a>
-        <span class="topic-track-count">${partial ? `${track.total}편 중 ${track.items.length}편이 이 주제` : `${track.total}편 · 첫 글부터 순서대로`}</span>
+        <span class="topic-track-count">${partial ? `${track.total}편 중 ${track.items.length}편이 이 주제` : `${track.total}편, 첫 글부터 순서대로`}</span>
       </div>
       <p class="topic-track-desc">${esc(track.desc)}</p>
       <ol class="topic-list">${track.items.map(it => rowHtml(it.post, topicId, `${it.pos}/${it.total}`)).join('')}</ol>
@@ -87,7 +87,7 @@
     return `<section class="topic-track topic-other">
       <div class="topic-track-head">
         <span class="topic-kicker">${hasTracks ? '그 밖의 글' : '글'}</span>
-        <span class="topic-track-count">${list.length}편 · 새 글부터</span>
+        <span class="topic-track-count">${list.length}편, 새 글부터</span>
       </div>
       <ol class="topic-list">${list.map((p, i) => rowHtml(p, topicId, String(i + 1))).join('')}</ol>
     </section>`;
@@ -100,7 +100,7 @@
         <summary class="topic-head">
           <span class="rail-dot" data-category="${esc(t.id)}"></span>
           <h2>${esc(t.label)} <small>${esc(t.id)}</small></h2>
-          <span class="topic-count">${t.count}편${t.tracks.length ? ` · 트랙 ${t.tracks.length}` : ''}</span>
+          <span class="topic-count">${t.count}편${t.tracks.length ? `, 트랙 ${t.tracks.length}` : ''}</span>
           <span class="topic-toggle" aria-hidden="true"></span>
         </summary>
         <p class="topic-desc">${esc(t.desc)}</p>

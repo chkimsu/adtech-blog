@@ -359,7 +359,7 @@
       (clip === Infinity ? '' : ' (상한 ' + clip + '로 자른 뒤)'), 12.5, 'var(--ink2)');
     s += txt(2, 34, '가중치 1/p', 12, 'var(--ink3)');
     s += txt(x0, 34, '가중치 합', 12, 'var(--ink3)');
-    s += txt(W - 2, 34, compact ? '건수 · 클릭' : '합 · 건수 · 클릭', 12, 'var(--ink3)', 'end');
+    s += txt(W - 2, 34, compact ? '건수 / 클릭' : '합 / 건수 / 클릭', 12, 'var(--ink3)', 'end');
     s += '<line x1="0" y1="40" x2="' + W + '" y2="40" style="stroke:var(--rule); stroke-width:1"/>';
 
     bins.forEach(function (b, i) {
@@ -374,7 +374,7 @@
         s += '<rect x="' + x0 + '" y="' + (y + 3) + '" width="' + len + '" height="14" style="fill:' +
           (b.clicks > 0 ? 'var(--navy)' : 'var(--grey)') + '"/>';
       }
-      const right = (compact ? '' : n0(b.w) + ' · ') + n0(b.n) + '건 · 클릭 ' + b.clicks;
+      const right = (compact ? '' : n0(b.w) + ' / ') + n0(b.n) + '건 / 클릭 ' + b.clicks;
       s += txt(W - 2, y + 14, right, 12, i === worstIdx ? 'var(--oxide)' : 'var(--ink2)', 'end');
     });
     s += '</svg>';
@@ -576,7 +576,7 @@
     stats = realized(state.clip, ground.dm);
 
     setMetric('ipw-m-match', n0(stats.nMatch) + '건',
-      '요청 ' + n0(NREQ) + '건의 ' + (stats.nMatch / NREQ * 100).toFixed(1) + '% · 그중 클릭 ' + stats.mClicks + '건',
+      '요청 ' + n0(NREQ) + '건의 ' + (stats.nMatch / NREQ * 100).toFixed(1) + '%, 그중 클릭 ' + stats.mClicks + '건',
       stats.nMatch / NREQ < 0.10 ? 'bad' : 'good');
 
     const drift = stats.wSum / NREQ - 1;
@@ -586,12 +586,12 @@
 
     setMetric('ipw-m-wmax', n0(stats.wMax) + '배',
       '상한 = 후보 ' + K + ' ÷ 탐색 ' + state.eps.toFixed(2) + ' = ' + n0(K / state.eps) +
-      (state.clip === Infinity ? '' : ' · ' + state.clip + '에서 자름'),
+      (state.clip === Infinity ? '' : ', ' + state.clip + '에서 자름'),
       stats.wMax >= 100 ? 'bad' : (stats.wMax >= 40 ? 'warn' : 'good'));
 
     const essRatio = stats.ess / NREQ;
     setMetric('ipw-m-ess', n0(stats.ess) + '건',
-      '로그의 ' + (essRatio * 100).toFixed(1) + '% · 클릭 ' + (stats.ess * ground.vTrue).toFixed(1) + '건 몫',
+      '로그의 ' + (essRatio * 100).toFixed(1) + '%, 클릭 ' + (stats.ess * ground.vTrue).toFixed(1) + '건 몫',
       essRatio < 0.01 ? 'bad' : (essRatio < 0.05 ? 'warn' : 'good'));
 
     updateVerdict();

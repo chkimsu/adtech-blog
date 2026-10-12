@@ -170,7 +170,7 @@
     const batch = M.READ_MODES.filter(function (m) { return m.key === 'batch'; })[0];
     const dash = reader('dash');
     const host = $('plc-cost-axis');
-    host.appendChild(el('strong', null, '비용이 갈리는 축은 「잡이 몇 시간 떠 있나」입니다.'));
+    host.appendChild(el('strong', null, '비용을 정하는 것은 「잡이 몇 시간 떠 있나」입니다.'));
     host.appendChild(document.createTextNode(
       ' ' + dash.deadline + '를 고르면 ' + stream.jobHours + '시간 도는 잡과 그것을 받칠 서버가 항상 ' +
       '필요합니다. 다음 날이면 새벽에 ' + batch.dawnMinutes + '분만 돌면 됩니다.'

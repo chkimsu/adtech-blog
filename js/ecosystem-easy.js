@@ -123,22 +123,22 @@
         {
           icon: 'megaphone',
           title: '파는 쪽엔 ‘SSP’ — 매체의 판매 대리인',
-          body: '매체(앱·뉴스 사이트)는 빈 광고 자리를 직접 팔 손이 없다. SSP가 그 자리(지면)를 모아 거래소 경매에 올려, 가장 비싸게 사는 광고에 판다. 광고주가 아니라 ‘매체’ 편이다.',
-          relation: { side: '파는 쪽 · 지면을 내놓는다', nodes: ['매체 (지면 주인)', 'SSP', '거래소 경매'], key: 1 },
-          term: 'SSP = Supply-Side Platform · 매체(파는 쪽)의 대리인',
-          example: '해외: Google Ad Manager · PubMatic · Magnite',
+          body: '매체(앱, 뉴스 사이트)는 빈 광고 자리를 직접 팔 손이 없다. SSP가 그 자리(지면)를 모아 거래소 경매에 올려, 가장 비싸게 사는 광고에 판다. 광고주가 아니라 ‘매체’ 편이다.',
+          relation: { side: '파는 쪽, 지면을 내놓는다', nodes: ['매체 (지면 주인)', 'SSP', '거래소 경매'], key: 1 },
+          term: 'SSP = Supply-Side Platform, 매체(파는 쪽)의 대리인',
+          example: '해외: Google Ad Manager, PubMatic, Magnite',
           exampleKr: '국내: 카카오 애드핏',
-          note: '네이버·카카오는 ‘울타리 친 생태계’ — 자기 지면을 자기 플랫폼에서 직접 판다.'
+          note: '네이버, 카카오는 ‘울타리 친 생태계’ — 자기 지면을 자기 플랫폼에서 직접 판다.'
         },
         {
           icon: 'bidders',
           title: '사는 쪽엔 ‘DSP’ — 광고주의 구매 대리인',
-          body: '광고주는 수많은 경매를 일일이 못 쫓는다. DSP가 광고주의 예산·타겟을 받아, 여러 거래소 경매에 동시에 입찰해 그 지면을 산다. SSP의 정반대 — ‘광고주’ 편이다.',
-          relation: { side: '사는 쪽 · 값을 부른다', nodes: ['광고주', 'DSP', '거래소 경매'], key: 1 },
-          term: 'DSP = Demand-Side Platform · 광고주(사는 쪽)의 대리인',
-          example: '해외: The Trade Desk · Google DV360 · Criteo',
-          exampleKr: '국내: 카카오모먼트 · 네이버 GFA',
-          note: '카카오모먼트·네이버 GFA는 닫힌 생태계의 ‘사는 쪽’ 도구 — 한 회사 안에서 사고팔린다.'
+          body: '광고주는 수많은 경매를 일일이 못 쫓는다. DSP가 광고주의 예산, 타겟을 받아, 여러 거래소 경매에 동시에 입찰해 그 지면을 산다. SSP의 정반대 — ‘광고주’ 편이다.',
+          relation: { side: '사는 쪽, 값을 부른다', nodes: ['광고주', 'DSP', '거래소 경매'], key: 1 },
+          term: 'DSP = Demand-Side Platform, 광고주(사는 쪽)의 대리인',
+          example: '해외: The Trade Desk, Google DV360, Criteo',
+          exampleKr: '국내: 카카오모먼트, 네이버 GFA',
+          note: '카카오모먼트, 네이버 GFA는 닫힌 생태계의 ‘사는 쪽’ 도구 — 한 회사 안에서 사고팔린다.'
         },
         {
           icon: 'brainpct',
@@ -151,8 +151,8 @@
           icon: 'gavel',
           title: '경매는 이렇게 굴러간다',
           body: '부름받은 DSP들이 ‘봉투에 가격을 적어’ 동시에 제출한다. 서로의 값은 모른다(밀봉). 경매장은 그중 가장 높은 값을 0.1초 안에 가린다.',
-          term: '동시·밀봉 입찰 → 최고가 낙찰 (Sealed-bid Auction)',
-          example: 'A ₩1,200 · B ₩1,150 · C ₩900 …',
+          term: '동시, 밀봉 입찰 → 최고가 낙찰 (Sealed-bid Auction)',
+          example: 'A ₩1,200, B ₩1,150, C ₩900 …',
           link: { text: '경매를 직접 돌려보기 →', href: 'demo-rtb.html' }
         },
         {
@@ -160,7 +160,7 @@
           title: '그런데 ‘얼마’를 낼까? — 1등 vs 2등 경매',
           body: '신기하게도, 이긴 사람이 내는 돈은 경매 방식에 따라 달라진다.',
           compare: {
-            shared: '같은 입찰 — DSP-A ₩1,200(1위) · DSP-B ₩1,150(2위) → A 낙찰',
+            shared: '같은 입찰 — DSP-A ₩1,200(1위), DSP-B ₩1,150(2위) → A 낙찰',
             left: { head: '1등 경매', sub: 'First-price', pay: '₩1,200', desc: '자기가 적어낸 값을 그대로 낸다' },
             right: { head: '2등 경매', sub: 'Second-price', pay: '₩1,150', desc: '이겨도 2등이 적은 값만 낸다' }
           },
@@ -176,7 +176,7 @@
         {
           icon: 'recycle',
           title: '그리고 내일을 위해 — 본 결과가 기록된다',
-          body: '민지가 봤는지·눌렀는지가 조용히 쌓인다. 이 기록이 내일 더 똑똑한 광고를 만드는 재료가 된다. 광고는 매일 이 과정을 반복하며 배운다.',
+          body: '민지가 봤는지, 눌렀는지가 조용히 쌓인다. 이 기록이 내일 더 똑똑한 광고를 만드는 재료가 된다. 광고는 매일 이 과정을 반복하며 배운다.',
           term: '기록 = 로그(Log) → 모델 학습',
           cta: {
             text: '‘모델이 배우는 법’ 이야기로 →',
@@ -201,22 +201,22 @@
         {
           icon: 'stack',
           title: '어제의 기록이 교재다',
-          body: '하루 동안 쌓인 노출·클릭 기록이 통째로 모인다. 모델이 배울 ‘문제와 정답’의 원재료다.',
+          body: '하루 동안 쌓인 노출, 클릭 기록이 통째로 모인다. 모델이 배울 ‘문제와 정답’의 원재료다.',
           term: '기록 = 로그 (Log Pipeline)',
-          example: '어제: 노출 1.2억 · 클릭 240만'
+          example: '어제: 노출 1.2억, 클릭 240만'
         },
         {
           icon: 'funnel',
           title: '원재료를 ‘피처’로 손질한다',
           body: '날것의 로그를 “이 사람의 최근 7일 클릭률” 같은 숫자(피처)로 가공해 피처 스토어에 채워 둔다. 모델이 바로 꺼내 쓸 수 있게.',
           term: '피처 스토어 = Feature Store',
-          example: '피처 312개 · 시간당 갱신'
+          example: '피처 312개, 시간당 갱신'
         },
         {
           icon: 'brainpct',
           title: '문제집을 풀며 모델이 학습한다',
           body: '피처(문제)에 ‘클릭했나 안 했나’(정답)를 붙여 8.5억 개짜리 문제집을 만들고, 모델이 푼다. 어제의 트렌드가 모델 안에 스며드는 순간.',
-          term: '예측 모델 = DeepFM 등 · 성적은 AUC로',
+          term: '예측 모델 = DeepFM 등, 성적은 AUC로',
           example: 'AUC 0.781 → 0.792'
         },
         {
@@ -235,8 +235,8 @@
           title: '새 모델을 올리면, 오늘 입찰이 달라진다',
           body: '검증을 통과한 새 모델을 일부 트래픽부터 조심스레 올린다(카나리). 문제없으면 전체 적용 — 오늘 입찰부터 더 똑똑해진다. 광고는 매일 이 순환을 돈다.',
           term: '조심스런 배포 = 카나리(Canary)',
-          example: '5% → 100% · ROAS +4%',
-          link: { text: 'pCTR·보정 데모 보기 →', href: 'demo-calibration.html' }
+          example: '5% → 100%, ROAS +4%',
+          link: { text: 'pCTR, 보정 데모 보기 →', href: 'demo-calibration.html' }
         },
         {
           icon: 'scale',
@@ -309,13 +309,13 @@
         {
           icon: 'medal',
           title: '이긴 것만 보인다 — 여기가 함정이다',
-          body: '낙찰되면 노출·클릭·전환이 기록된다. 그런데 패찰한 요청은 아무 기록도 남지 않는다. 그래서 모델은 ‘이겨서 보여준 광고’만 보고 배운다. 안 보여준 광고가 좋았을지는 영원히 알 수 없다.',
+          body: '낙찰되면 노출, 클릭, 전환이 기록된다. 그런데 패찰한 요청은 아무 기록도 남지 않는다. 그래서 모델은 ‘이겨서 보여준 광고’만 보고 배운다. 안 보여준 광고가 좋았을지는 영원히 알 수 없다.',
           term: '이긴 것만 보는 편향 = Selection Bias',
           example: '낙찰률이 낮을수록 이 편향은 커진다'
         },
         {
           icon: 'stack',
-          title: '채점표가 쌓인다 — 봤나·눌렀나·샀나',
+          title: '채점표가 쌓인다 — 봤나, 눌렀나, 샀나',
           body: '노출은 즉시, 클릭은 몇 초 뒤, 구매는 며칠 뒤에 기록된다. 그래서 오늘 학습을 돌릴 때 어제 클릭한 사람의 ‘구매했나’ 칸은 아직 비어 있다. 이 시차가 pCVR을 어렵게 만드는 이유다.',
           term: '늦게 오는 정답 = 지연 전환 (Delayed Feedback)',
           example: '전환의 절반 이상이 클릭 다음 날 이후 도착'
@@ -324,7 +324,7 @@
           icon: 'recycle',
           title: '고리가 닫힌다 — 그리고 다시 돈다',
           body: '쌓인 기록으로 새 모델을 학습하고, 조심스레 올리고, 예측이 현실에서 밀리는지 지켜본다. 밀리기 시작하면 다시 학습한다. 모델러의 하루는 이 고리를 한 바퀴 도는 일이다.',
-          term: '지켜보기 = 모니터링 · 밀림 = 드리프트',
+          term: '지켜보기 = 모니터링, 밀림 = 드리프트',
           cta: {
             text: '‘모델이 배우는 법’으로 →',
             href: '#modeling',
@@ -350,11 +350,11 @@
           title: '민지의 여정엔 여러 접점이 있었다',
           body: '월요일에 보고, 수요일에 누르고, 목요일에 샀다. 이 접점들이 시간 순서대로 전부 기록에 남아 있다.',
           relation: { side: '민지의 3일', nodes: ['월: 노출', '수: 클릭', '목: 구매'], key: 2 },
-          term: '접점 기록 = Impression · Click · Conversion 로그'
+          term: '접점 기록 = Impression, Click, Conversion 로그'
         },
         {
           icon: 'medal',
-          title: '누구에게 공을 줄까? — 규칙이 가른다',
+          title: '누구에게 공을 줄까? — 규칙이 정한다',
           body: '거쳐 온 광고 중 누구를 칭찬할지는 ‘규칙’이 정한다. 규칙에 따라 성적표가 완전히 달라진다.',
           compare: {
             shared: '같은 여정(노출 → 클릭 → 구매), 공을 주는 방식만 다름',
@@ -374,7 +374,7 @@
           icon: 'scale',
           title: '성적표를 보고 예산을 옮긴다',
           body: '잘 나온 캠페인엔 예산을 더 싣고, 부진한 건 줄이거나 끈다. 측정이 곧장 다음 행동을 바꾼다.',
-          example: 'A캠 예산 +50% · B캠 중단'
+          example: 'A캠 예산 +50%, B캠 중단'
         },
         {
           icon: 'recycle',
@@ -414,7 +414,7 @@
           body: '한 줄로 세우는 대신 모두에게 한꺼번에 묻는다. 경쟁이 세지니 값이 올라간다. 이 한 끗 차이가 핵심이다.',
           compare: {
             shared: '같은 지면, 부르는 ‘순서’만 다름',
-            left: { head: 'Waterfall', sub: '순차', pay: '느림·저가', desc: '한 곳씩 차례로 → 비싼 값 놓침' },
+            left: { head: 'Waterfall', sub: '순차', pay: '느림, 저가', desc: '한 곳씩 차례로 → 비싼 값 놓침' },
             right: { head: 'Header Bidding', sub: '동시', pay: '+10~30%', desc: '모두 동시에 경쟁 → 최고가' }
           },
           note: '이름 유래: 페이지 ‘머리(header)’에 심은 코드(Prebid.js 등)가 본문보다 먼저 깨어나 경매를 열어서 ‘헤더’ 비딩.'
@@ -423,14 +423,14 @@
           icon: 'gavel',
           title: '동시에 부르니 값이 올라간다',
           body: '5개 구매처를 한꺼번에 부르자, 같은 자리 하나에 여러 값이 동시에 들어온다. 그중 최고가가 이긴다.',
-          example: '동시 입찰 ₩1,100 · ₩1,250 · ₩980'
+          example: '동시 입찰 ₩1,100, ₩1,250, ₩980'
         },
         {
           icon: 'receipt',
           title: '결과: 순차로 팔 때보다 +18% 더 받았다',
           body: '최고가 ₩1,250에 낙찰. 예전 순차(Waterfall) 방식으로 팔았을 때보다 18% 더 받았다. 매체들이 헤더비딩을 쓰는 이유다.',
           term: '바닥값 = Floor Price (이 밑으론 안 팜)',
-          example: '낙찰 ₩1,250 · vs Waterfall +18%',
+          example: '낙찰 ₩1,250, vs Waterfall +18%',
           link: { text: '헤더비딩 시뮬레이터 →', href: 'demo-header-bidding.html' },
           cta: {
             text: '‘누구에게 보여줄까’ 이야기로 →',
@@ -456,7 +456,7 @@
           icon: 'shield',
           title: '출발은 ‘동의’다',
           body: '사이트 첫 방문에 뜨는 “쿠키를 허용할까요?” 팝업이 출발점. 여기서 허락한 데이터만 쓸 수 있다. 안 누르면 이 길은 막힌다.',
-          term: '동의 관리 = CMP (GDPR · CCPA)'
+          term: '동의 관리 = CMP (GDPR, CCPA)'
         },
         {
           icon: 'stack',
@@ -468,9 +468,9 @@
         {
           icon: 'bidders',
           title: '개인이 아니라 ‘묶음’으로 다룬다',
-          body: '한 명씩이 아니라 “2030 · 스포츠 관심” 같은 묶음(세그먼트)으로 가공된다. 민지는 42만 명 묶음의 한 명으로 광고주에게 전달된다.',
-          term: '묶음 = 세그먼트(Segment) · 비슷한 사람 더 찾기 = Lookalike',
-          example: '세그먼트: 2030 스포츠 · 42만 명'
+          body: '한 명씩이 아니라 “2030, 스포츠 관심” 같은 묶음(세그먼트)으로 가공된다. 민지는 42만 명 묶음의 한 명으로 광고주에게 전달된다.',
+          term: '묶음 = 세그먼트(Segment), 비슷한 사람 더 찾기 = Lookalike',
+          example: '세그먼트: 2030 스포츠, 42만 명'
         },
         {
           icon: 'scale',
@@ -707,7 +707,7 @@
         '<span class="ecoeasy-hub-icon">' + (ICONS.stack || '') + '</span>' +
         '<span class="ecoeasy-hub-num">참고</span>' +
         '<span class="ecoeasy-hub-title">한눈 용어 사전</span>' +
-        '<span class="ecoeasy-hub-dek">헷갈리는 약어·지표를 카드 한 장씩.</span>' +
+        '<span class="ecoeasy-hub-dek">헷갈리는 약어, 지표를 카드 한 장씩.</span>' +
         '<span class="ecoeasy-hub-count">29개 용어</span>' +
         '</a>';
       elHub.innerHTML = html;

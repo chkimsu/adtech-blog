@@ -57,7 +57,7 @@
       if (s) {
         const b = document.createElement('span');
         b.className = 'series-badge';
-        b.textContent = `시리즈 · ${s.title}`;
+        b.textContent = `시리즈 / ${s.title}`;
         const footer = card.querySelector('.post-card-footer');
         if (footer) footer.before(b); else card.appendChild(b);
       }

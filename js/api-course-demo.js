@@ -568,7 +568,7 @@
       return [r.how, r.sample, commonChip(r.common), r.splitBy, r.why];
     });
     buildSimpleTable('apc-naming',
-      ['가르는 방법', '예', '흔한가', '문 앞에서 갈리는 기준', '왜'], rows);
+      ['나누는 방법', '예', '흔한가', '문 앞에서 나누는 기준', '왜'], rows);
   }
 
   function bindSend() {

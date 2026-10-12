@@ -206,12 +206,12 @@
 
     // 칸 이름 — 점이 안 닿는 위·아래 띠에 둔다
     s += '<text x="' + (px1 - 6) + '" y="' + (py0 + 14) + '" text-anchor="end" class="uq-quad">' +
-      'pCVR 높고 증분도 + · 설득 가능</text>';
+      'pCVR 높고 증분도 + / 설득 가능</text>';
     s += '<text x="' + (px1 - 6) + '" y="' + (py1 - 7) + '" text-anchor="end" class="uq-quad is-bad">' +
-      'pCVR 높은데 증분 0 이하 · 확실 구매 · 여기 쓴 돈이 샌다</text>';
+      'pCVR 높은데 증분 0 이하 / 확실 구매 / 여기 쓴 돈이 샌다</text>';
     s += '<text x="' + (px0 + 6) + '" y="' + (py0 + 14) + '" class="uq-quad">' +
-      'pCVR 낮은데 증분 + · pCVR 순이 놓치는 칸</text>';
-    s += '<text x="' + (px0 + 6) + '" y="' + (py1 - 7) + '" class="uq-quad">무관심 · 청개구리</text>';
+      'pCVR 낮은데 증분 + / pCVR 순이 놓치는 칸</text>';
+    s += '<text x="' + (px0 + 6) + '" y="' + (py1 - 7) + '" class="uq-quad">무관심, 청개구리</text>';
 
     // 컷 선 — pCVR 순이면 세로, uplift 순이면 가로.
     // 글자에는 바탕색 테두리를 둘러(paint-order) 점 위에 겹쳐도 읽힌다.
@@ -225,14 +225,14 @@
           '" style="stroke:var(--accent-primary); stroke-width:2; stroke-dasharray:7 4"/>';
         s += '<text x="' + r1(x + (right ? -8 : 8)) + '" y="' + (py1 - 28) +
           '" text-anchor="' + (right ? 'end' : 'start') + '" class="uq-cut">' +
-          '이 선 오른쪽을 전부 산다 · pCVR ' + pct(cu.p1) + ' 위</text>';
+          '이 선 오른쪽을 전부 산다, pCVR ' + pct(cu.p1) + ' 위</text>';
       } else {
         const y = r1(sy(cu.tau));
         const high = y < py0 + 32;
         s += '<line x1="' + px0 + '" y1="' + y + '" x2="' + px1 + '" y2="' + y +
           '" style="stroke:var(--accent-secondary); stroke-width:2; stroke-dasharray:7 4"/>';
         s += '<text x="' + (px0 + 8) + '" y="' + r1(high ? y + 17 : y - 9) + '" class="uq-cut is-navy">' +
-          '이 선 위쪽을 전부 산다 · 증분 ' + pp(cu.tau) + ' 위</text>';
+          '이 선 위쪽을 전부 산다, 증분 ' + pp(cu.tau) + ' 위</text>';
       }
     }
 
@@ -326,7 +326,7 @@
       const dx = anchor === 'end' ? -9 : 9;
       s += '<text x="' + r1(qx(peakI) + dx) + '" y="' + r1(qy(cU[peakI]) - 9) +
         '" text-anchor="' + anchor + '" class="uq-cut is-navy">최고점 ' + comma(cU[peakI] * RATIO) +
-        '건 · 도달 ' + comma(peakI * RATIO) + '명</text>';
+        '건, 도달 ' + comma(peakI * RATIO) + '명</text>';
     }
 
     // 예산 자리
@@ -393,9 +393,9 @@
 
     const meanP0 = pop.sumP0 / N, meanP1 = pop.sumP1 / N, meanTau = pop.sumTau / N;
     $('uq-lost-val').textContent = (pop.counts.lost / N * 100).toFixed(1) + '%';
-    $('uq-mix').textContent = '설득 가능 ' + comma(pop.counts.per * RATIO) + '명 · 확실 구매 ' +
-      comma(pop.counts.sure * RATIO) + '명 · 청개구리 ' + comma(pop.counts.dog * RATIO) +
-      '명 · 무관심 ' + comma(pop.counts.lost * RATIO) + '명';
+    $('uq-mix').textContent = '설득 가능 ' + comma(pop.counts.per * RATIO) + '명, 확실 구매 ' +
+      comma(pop.counts.sure * RATIO) + '명, 청개구리 ' + comma(pop.counts.dog * RATIO) +
+      '명, 무관심 ' + comma(pop.counts.lost * RATIO) + '명';
 
     $('uq-cvr-t').textContent = pct(meanP1);
     $('uq-cvr-c').textContent = pct(meanP0);
@@ -406,7 +406,7 @@
       ? won(N * RATIO * COST / (pop.sumTau * RATIO)) : '잴 수 없음';
 
     const k = Math.max(1, Math.round(N * budget));
-    $('uq-spend').textContent = comma(k * RATIO) + '명 · 광고비 ' + won(k * RATIO * COST);
+    $('uq-spend').textContent = comma(k * RATIO) + '명, 광고비 ' + won(k * RATIO * COST);
 
     const mP = fillRow('uq-p', pop.byPcvr, k);
     const mU = fillRow('uq-u', pop.byUplift, k);
@@ -424,8 +424,8 @@
     const aP = auuc(pop.byPcvr.inc), aU = auuc(pop.byUplift.inc);
     $('uq-auuc').textContent = (aU == null ? '—' : 'uplift 순 AUUC ' + aU.toFixed(4) +
       ' (Qini ' + (aU - 0.5 >= 0 ? '+' : '') + (aU - 0.5).toFixed(4) + ')') +
-      (aP == null ? '' : ' · pCVR 순 AUUC ' + aP.toFixed(4) +
-        ' (Qini ' + (aP - 0.5 >= 0 ? '+' : '') + (aP - 0.5).toFixed(4) + ') · 랜덤 0.5000');
+      (aP == null ? '' : ', pCVR 순 AUUC ' + aP.toFixed(4) +
+        ' (Qini ' + (aP - 0.5 >= 0 ? '+' : '') + (aP - 0.5).toFixed(4) + '), 랜덤 0.5000');
 
     // 한 줄 판정
     let v;

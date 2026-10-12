@@ -340,7 +340,7 @@
           (state.selected === p ? ' is-selected' : '');
         if (node.className !== cls) node.className = cls;
         var label = (p.kind === 'click' ? '클릭 1건' : '노출 확인 ' + p.n + '건') +
-          ' · ' + HOPS[i].label + ' · 눌러서 자세히';
+          ', ' + HOPS[i].label + ', 눌러서 자세히';
         if (node.getAttribute('aria-label') !== label) node.setAttribute('aria-label', label);
         node.style.left = x.toFixed(2) + '%';
         if (node.parentNode !== track) track.appendChild(node);
@@ -452,7 +452,7 @@
             ' "event_ts":1786002501234,"collect_ts":1786002501402,\n' +
             ' "process_ts":1786002502310,"schema":"click.v3"}';
         case 'kafka':
-          return 'topic ' + topic + ' · partition 5 · offset 8412\n' +
+          return 'topic ' + topic + ', partition 5, offset 8412\n' +
             'key   b\'r-8f21\'                                   6 B\n' +
             'value 배치로 묶여 압축된 바이트 — 브로커는 안 열어 본다';
         default:
@@ -473,7 +473,7 @@
       case 'collector':
         return IMP_HEAD + '\n{"t":"imp","e":[\n  ' + IMP_ELS[0] + (n > 1 ? ',' : '') + more + ']}';
       case 'agent':
-        return (n > 1 ? n + '건으로 갈린 뒤 첫 건 —\n' : '쪼갤 것이 없어 한 건 그대로 —\n') +
+        return (n > 1 ? n + '건으로 나뉜 뒤 첫 건 —\n' : '쪼갤 것이 없어 한 건 그대로 —\n') +
           '{"remote":"10.2.31.7","ts":"2026-08-06T16:08:26+09:00",\n' +
           ' "method":"POST","uri":"/v1/e","status":"204","rt":"0.004",\n' +
           ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
@@ -487,7 +487,7 @@
           ' "collect_ts":1786000106402,"process_ts":1786000107310,"schema":"impression.confirm.v1"}' +
           (n > 1 ? '\n… 같은 모양으로 ' + n + '건 …' : '');
       case 'kafka':
-        return 'topic ' + topic + ' · partition 5 · offset 8412\n' +
+        return 'topic ' + topic + ', partition 5, offset 8412\n' +
           'key   b\'r-8f21\'                                   6 B\n' +
           'value 배치로 묶여 압축된 바이트 — 브로커는 안 열어 본다' +
           (n > 1 ? '\n' + n + '건이 각자 한 레코드로 들어가 있다' : '');
@@ -550,13 +550,13 @@
 
   function rebuildDetail(p, i) {
     $('lh-where').textContent = (i + 1) + '. ' + HOPS[i].label + (p.retired ? ' (지나갔다)' : '');
-    $('lh-id').textContent = '#' + p.id + ' · ' + (p.kind === 'click' ? '클릭 1건' : '노출 확인 ' + p.n + '건');
+    $('lh-id').textContent = '#' + p.id + ', ' + (p.kind === 'click' ? '클릭 1건' : '노출 확인 ' + p.n + '건');
     $('lh-shape').textContent = shapeAt(i, p.kind, p.n);
 
     // 크기 — 요청 전체와 건당을 같이 적는다. 클릭(1건)이면 둘이 같다
     var total = reqBytes(p.kind, i, p.n);
     $('lh-size').innerHTML = '요청 전체 <b>' + fmtBytes(total) + '</b>' +
-      (p.n > 1 ? ' · 건당 <b>' + fmtBytes(total / p.n) + '</b>' : ' (1건짜리라 건당도 같다)');
+      (p.n > 1 ? ', 건당 <b>' + fmtBytes(total / p.n) + '</b>' : ' (1건짜리라 건당도 같다)');
 
     var hint = '';
     if (p.kind === 'imp' && HOPS[i].key === 'collector' && p.n > 1) {

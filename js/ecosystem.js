@@ -13,13 +13,13 @@
     'feature-store': {
       x: 250, y: 22, w: 150, h: 44, cat: 'ml',
       name: 'Feature Store', sub: '피처 스토어',
-      def: '유저·지면·시간 등 광고 모델의 입력 피처를 실시간으로 공급하는 저장소. pCTR/pCVR이 매 요청마다 호출.',
+      def: '유저, 지면, 시간 등 광고 모델의 입력 피처를 실시간으로 공급하는 저장소. pCTR/pCVR이 매 요청마다 호출.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }], posts: [{ id: 'feature-store-serving', title: 'Feature Store 서빙' }]
     },
     'training': {
       x: 425, y: 22, w: 130, h: 44, cat: 'ml',
       name: 'Training', sub: '모델 학습(오프라인)',
-      def: '어제까지 쌓인 로그로 모델을 다시 학습시키는 오프라인 단계. 여기서 나온 새 모델은 오프라인 지표(AUC·LogLoss)를 통과해야 서빙으로 넘어간다.',
+      def: '어제까지 쌓인 로그로 모델을 다시 학습시키는 오프라인 단계. 여기서 나온 새 모델은 오프라인 지표(AUC, LogLoss)를 통과해야 서빙으로 넘어간다.',
       demos: [{ name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
       posts: [
         { id: 'negative-sampling-bias', title: 'Negative Sampling & Bias' },
@@ -90,18 +90,18 @@
       name: 'Auction Engine', sub: '1st / 2nd Price',
       def: '여러 DSP의 입찰가 중 최고가를 결정하고 지불가를 산정. 1st Price=낙찰가 그대로, 2nd Price=차순위가만.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }, { name: 'UCB vs TS 비교', url: 'demo-compare-bandits.html' }],
-      posts: [{ id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
+      posts: [{ id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'dsp-ssp-exchange', title: 'DSP, SSP, Exchange가 각각 뭐 하나' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }]
     },
     'pctr-cvr': {
       x: 845, y: 76, w: 190, h: 62, cat: 'ml', heart: true,
-      name: 'pCTR / pCVR', sub: '광고의 심장 — 누를·살 확률',
-      def: '이 유저가 이 광고를 클릭할 확률(pCTR)과 전환할 확률(pCVR)을 예측. DeepFM·DIN 등 딥러닝 모델 활용.',
+      name: 'pCTR / pCVR', sub: '광고의 심장 — 누를, 살 확률',
+      def: '이 유저가 이 광고를 클릭할 확률(pCTR)과 전환할 확률(pCVR)을 예측. DeepFM, DIN 등 딥러닝 모델 활용.',
       demos: [{ name: 'pCTR Impact', url: 'demo-pctr-impact.html' }, { name: 'LinUCB', url: 'demo-linucb.html' }],
       posts: [{ id: 'pctr-prediction', title: 'pCTR이 뭐고 왜 돈이 되나' }, { id: 'deep-ctr-models', title: 'Deep CTR Models' }, { id: 'pcvr-modeling', title: 'pCVR 모델링' }, { id: 'negative-sampling-bias', title: 'Negative Sampling Bias' }]
     },
     'brand': {
       x: 1060, y: 425, w: 160, h: 54, cat: 'buy',
-      name: 'Brand / Agency', sub: '브랜드·에이전시',
+      name: 'Brand / Agency', sub: '브랜드, 에이전시',
       def: '광고 캠페인을 의뢰하는 주체. ATD(Agency Trading Desk)를 통해 DSP에 접근하기도 함.',
       demos: [], posts: [{ id: 'adtech-30min-primer', title: '30분 입문 가이드' }]
     },
@@ -110,29 +110,29 @@
     'user': {
       x: 60, y: 210, w: 160, h: 64, cat: 'user',
       name: '사용자', sub: 'User',
-      def: '광고를 보고 클릭·전환하는 최종 소비자. 모든 광고 흐름의 시작과 끝점.',
+      def: '광고를 보고 클릭, 전환하는 최종 소비자. 모든 광고 흐름의 시작과 끝점.',
       demos: [], posts: [{ id: 'adtech-30min-primer', title: '30분 입문 가이드' }]
     },
     'publisher': {
       x: 290, y: 210, w: 130, h: 64, cat: 'sell',
-      name: 'Publisher', sub: '매체·앱',
-      def: '광고 지면을 제공하는 웹사이트·앱·뉴스 등. 사용자 방문 시 SSP에 광고 요청을 보냄.',
+      name: 'Publisher', sub: '매체, 앱',
+      def: '광고 지면을 제공하는 웹사이트, 앱, 뉴스 등. 사용자 방문 시 SSP에 광고 요청을 보냄.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
       posts: [{ id: 'walled-garden', title: 'Walled Garden' }]
     },
     'ssp': {
       x: 440, y: 210, w: 130, h: 64, cat: 'sell',
       name: 'SSP', sub: '공급 측 플랫폼',
-      def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price·Header Bidding으로 수익 최적화.',
+      def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price, Header Bidding으로 수익 최적화.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'header-bidding', title: '헤더비딩 쉽게' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP, SSP, Exchange가 각각 뭐 하나' }, { id: 'header-bidding', title: '헤더비딩 쉽게' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'exchange': {
       x: 620, y: 210, w: 150, h: 64, cat: 'exchange',
       name: 'Ad Exchange', sub: '광고 거래소',
       def: 'SSP의 광고 슬롯과 DSP들의 입찰을 100ms 안에 매칭하는 실시간 거래소. RTB 경매의 무대.',
       demos: [{ name: 'RTB 경매', url: 'demo-rtb.html' }],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP, SSP, Exchange가 각각 뭐 하나' }, { id: 'second-price-auction', title: '2등 가격 경매는 왜?' }, { id: 'ad-network-vs-exchange', title: 'Ad Network vs Exchange' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },
     'dsp': {
       x: 865, y: 210, w: 150, h: 64, cat: 'buy',
@@ -144,12 +144,12 @@
         { name: 'LinUCB', url: 'demo-linucb.html' },
         { name: 'pCTR Impact', url: 'demo-pctr-impact.html' }
       ],
-      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP·SSP·Exchange가 각각 뭐 하나' }, { id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }]
+      posts: [{ id: 'dsp-ssp-exchange', title: 'DSP, SSP, Exchange가 각각 뭐 하나' }, { id: 'adtech-dev-layers', title: '광고 개발 8 레이어' }]
     },
     'advertiser': {
       x: 1060, y: 210, w: 160, h: 64, cat: 'buy',
       name: 'Advertiser', sub: '광고주',
-      def: '광고 캠페인의 예산·KPI(CPA, ROAS)를 설정하는 주체. DSP에 위임해 실시간 입찰을 실행.',
+      def: '광고 캠페인의 예산, KPI(CPA, ROAS)를 설정하는 주체. DSP에 위임해 실시간 입찰을 실행.',
       demos: [], posts: [{ id: 'adtech-30min-primer', title: '30분 입문 가이드' }, { id: 'adtech-ecosystem-map', title: '광고 생태계 지도' }]
     },
 
@@ -157,13 +157,13 @@
     'mmp': {
       x: 45, y: 600, w: 200, h: 54, cat: 'measurement',
       name: 'MMP / Attribution', sub: '어트리뷰션',
-      def: 'Impression·Click·Conversion 로그를 매칭해 어느 광고가 전환에 기여했는지 분석. ROAS 측정의 기반.',
+      def: 'Impression, Click, Conversion 로그를 매칭해 어느 광고가 전환에 기여했는지 분석. ROAS 측정의 기반.',
       demos: [], posts: [{ id: 'attribution-basics', title: '어트리뷰션 — 누구 공인가' }, { id: 'position-bias-ultr', title: 'Position Bias' }, { id: 'walled-garden', title: 'Walled Garden' }]
     },
     'log-pipeline': {
       x: 300, y: 600, w: 170, h: 54, cat: 'measurement',
       name: 'Log Pipeline', sub: '로그 파이프라인',
-      def: 'Bid·Win/Loss·Impression·Click·Conversion 10여 종 로그를 수집·조인·집계. 모델 학습과 측정의 토대.',
+      def: 'Bid, Win/Loss, Impression, Click, Conversion 10여 종 로그를 수집, 조인, 집계. 모델 학습과 측정의 토대.',
       demos: [{ name: 'Censored Data', url: 'demo-censored-data.html' }, { name: '로그→학습 루프', url: 'demo-log-to-model.html' }],
       posts: [{ id: 'attribution-basics', title: '어트리뷰션 — 누구 공인가' }, { id: 'ad-log-system', title: '광고 로그 시스템' }, { id: 'ad-log-pipeline', title: '광고 로그 파이프라인' }, { id: 'online-learning-delayed-feedback', title: 'Online Learning & Delayed Feedback' }]
     },
@@ -177,14 +177,14 @@
     'dco': {
       x: 865, y: 320, w: 150, h: 54, cat: 'buy',
       name: 'DCO', sub: '다이내믹 크리에이티브',
-      def: '소재(이미지·텍스트)를 유저·맥락에 맞게 자동으로 조합·최적화. MAB로 베스트 조합 학습.',
+      def: '소재(이미지, 텍스트)를 유저, 맥락에 맞게 자동으로 조합, 최적화. MAB로 베스트 조합 학습.',
       demos: [{ name: 'UCB1', url: 'demo-ucb1.html' }],
       posts: []
     },
     'dmp': {
       x: 1045, y: 320, w: 175, h: 54, cat: 'buy',
       name: 'DMP / CDP', sub: '오디언스 데이터',
-      def: '쿠키·디바이스 ID·1st party 데이터를 모아 오디언스 세그먼트를 만듦. DSP의 타겟팅 입력.',
+      def: '쿠키, 디바이스 ID, 1st party 데이터를 모아 오디언스 세그먼트를 만듦. DSP의 타겟팅 입력.',
       demos: [], posts: [{ id: 'audience-segmentation', title: '오디언스 세그멘테이션' }, { id: 'lookalike-modeling', title: 'Lookalike 모델링' }]
     },
 
@@ -197,8 +197,8 @@
     },
     'cmp': {
       x: 45, y: 425, w: 200, h: 54, cat: 'user',
-      name: 'CMP / Walled Garden', sub: '동의 관리·울타리',
-      def: '사용자 데이터 동의(GDPR·CCPA)를 관리하는 CMP, 그리고 자체 ID로 닫힌 생태계인 Walled Garden(구글·메타).',
+      name: 'CMP / Walled Garden', sub: '동의 관리, 울타리',
+      def: '사용자 데이터 동의(GDPR, CCPA)를 관리하는 CMP, 그리고 자체 ID로 닫힌 생태계인 Walled Garden(구글, 메타).',
       demos: [], posts: [{ id: 'walled-garden', title: 'Walled Garden' }]
     },
   };
@@ -307,12 +307,12 @@
           packet: { label: '예측 요청', kind: 'request' },
           example: {
             story: '요청 하나에 후보 광고가 800개 — "이 중 뭐가 제일 눌릴까"를 한 번에 묻는다.',
-            data: [['후보 광고', '800개'], ['묻는 것', 'pCTR · pCVR']]
+            data: [['후보 광고', '800개'], ['묻는 것', 'pCTR, pCVR']]
           }
         },
         {
           from: 'feature-store', to: 'model-serving',
-          caption: '피처 조회 — 이 사람·이 자리에 대해 아는 것 긁어오기',
+          caption: '피처 조회 — 이 사람, 이 자리에 대해 아는 것 긁어오기',
           detail: '모델에 넣을 재료(피처)를 Feature Store에서 꺼냅니다. 유저의 최근 행동, 지면 성격, 시간대 같은 값입니다. 이 조회가 느리면 전체가 늦어지니 보통 수 ms 안에 끝냅니다.',
           packet: { label: '피처 213개', kind: 'data' },
           example: {
@@ -333,10 +333,10 @@
         {
           from: 'pctr-cvr', to: 'calibration',
           caption: '보정 — 예측 평균을 실제에 맞춘다',
-          detail: '모델이 전체적으로 낮게(또는 높게) 보는 버릇을 실측에 맞춰 교정합니다. 실제 클릭 합을 예측 합으로 나눈 값을 COPC(Click Over Predicted Click)라 부르는데, 1보다 크면 모델이 낮게 보고 있다는 뜻입니다. 이 한 단계가 없으면 입찰가가 통째로 낮게 깔려 돈을 잃습니다.',
+          detail: '모델이 전체적으로 낮게(또는 높게) 보는 버릇을 실제 값에 맞춰 교정합니다. 실제 클릭 합을 예측 합으로 나눈 값을 COPC(Click Over Predicted Click)라 부르는데, 1보다 크면 모델이 낮게 보고 있다는 뜻입니다. 이 한 단계가 없으면 입찰가가 통째로 낮게 깔려 돈을 잃습니다.',
           packet: { label: '2.1% → 2.4%', kind: 'data' },
           example: {
-            story: '최근 실측과 비교하니 모델이 12% 낮게 보고 있었다 — 2.1%를 2.4%로 올린다.',
+            story: '최근 실제 값과 비교하니 모델이 12% 낮게 보고 있었다 — 2.1%를 2.4%로 올린다.',
             data: [['COPC', '1.14'], ['보정 후', '2.4%']]
           }
         },
@@ -356,7 +356,7 @@
           detail: '이제 계산할 수 있습니다. 전환 하나의 가치 × 누를 확률 × 살 확률 = 이 노출 한 번의 기대 가치. 광고판은 1,000회 기준(CPM)으로 부르니 여기에 1,000을 곱하고, 예산 페이싱과 Bid Shading으로 깎아 최종 입찰가를 DSP에 넘깁니다.',
           packet: { label: '입찰 CPM ₩1,200', kind: 'money' },
           example: {
-            story: '₩30,000 × 2.4% × 0.35% = ₩2.52 (노출 1회) → CPM ₩2,520이 상한. 페이싱·셰이딩 후 ₩1,200을 부른다.',
+            story: '₩30,000 × 2.4% × 0.35% = ₩2.52 (노출 1회) → CPM ₩2,520이 상한. 페이싱, 셰이딩 후 ₩1,200을 부른다.',
             data: [['전환 가치', '₩30,000'], ['노출 1회 기대', '₩2.52'], ['최종 입찰 CPM', '₩1,200']]
           }
         },
@@ -392,7 +392,7 @@
         },
         {
           from: 'user', to: 'log-pipeline',
-          caption: '채점표가 쌓인다 — 봤나·눌렀나·샀나',
+          caption: '채점표가 쌓인다 — 봤나, 눌렀나, 샀나',
           detail: '예측이 맞았는지는 이 로그로만 알 수 있습니다. 한 건으로는 아무것도 판정할 수 없습니다 — 2.4%란 "100번 중 두세 번"이라는 뜻이기 때문입니다. 수억 건이 모여야 비로소 맞았는지 보입니다.',
           packet: { label: 'imp=1 click=0', kind: 'data' },
           example: {
@@ -403,17 +403,17 @@
         {
           from: 'log-pipeline', to: 'feature-store',
           caption: '로그를 학습 데이터로 가공',
-          detail: '원시 로그는 그대로 못 씁니다. 노출·클릭·전환을 이어 붙이고(조인), 그 시점에 모델이 봤던 피처를 그대로 되살려 붙입니다. 지금 값이 아니라 "그때 값"이어야 합니다 — 안 그러면 학습과 서빙이 어긋나는 학습-서빙 스큐가 생깁니다.',
+          detail: '원시 로그는 그대로 못 씁니다. 노출, 클릭, 전환을 이어 붙이고(조인), 그 시점에 모델이 봤던 피처를 그대로 되살려 붙입니다. 지금 값이 아니라 "그때 값"이어야 합니다 — 안 그러면 학습과 서빙이 어긋나는 학습-서빙 스큐가 생깁니다.',
           packet: { label: '학습셋 1.2억 행', kind: 'data' },
           example: {
-            story: '어제 노출 1.2억 건에 클릭·전환을 붙인다. 전환은 며칠 늦게 오니 일부는 라벨이 아직 비어 있다.',
+            story: '어제 노출 1.2억 건에 클릭, 전환을 붙인다. 전환은 며칠 늦게 오니 일부는 라벨이 아직 비어 있다.',
             data: [['학습셋', '120M 행'], ['라벨 미확정', '7%']]
           }
         },
         {
           from: 'feature-store', to: 'training',
           caption: '학습 — 새 모델 후보가 나온다',
-          detail: '어제까지의 데이터로 다시 학습합니다. 여기서 나온 후보는 아직 실전에 못 나갑니다. 오프라인 지표(AUC·LogLoss)로 먼저 걸러야 하는데, 이 지표가 좋아졌다고 매출이 오른다는 보장은 없습니다.',
+          detail: '어제까지의 데이터로 다시 학습합니다. 여기서 나온 후보는 아직 실전에 못 나갑니다. 오프라인 지표(AUC, LogLoss)로 먼저 걸러야 하는데, 이 지표가 좋아졌다고 매출이 오른다는 보장은 없습니다.',
           packet: { label: '새 모델 후보', kind: 'data' },
           example: {
             story: 'AUC 0.7841 → 0.7856. 좋아 보이지만 이 차이가 돈이 될지는 아직 모른다.',
@@ -434,7 +434,7 @@
           from: 'model-serving', to: 'monitoring',
           caption: '감시 — 예측이 현실에서 밀리는지 본다',
           detail: '배포 후가 진짜 시작입니다. 실제와 예측의 비(COPC), 피처 분포가 얼마나 변했는지(PSI)를 계속 봅니다. 세상이 바뀌면 어제까지 맞던 모델이 오늘 틀립니다.',
-          packet: { label: 'COPC · PSI 감시', kind: 'data' },
+          packet: { label: 'COPC, PSI 감시', kind: 'data' },
           example: {
             story: '연휴로 클릭 패턴이 바뀌자 PSI가 0.28로 튀었다 — 경보.',
             data: [['COPC', '1.09'], ['PSI', '0.28 (경보)']]
@@ -576,7 +576,7 @@
       steps: [
         {
           from: 'user', to: 'publisher',
-          caption: '사용자가 페이지·앱을 방문 — 광고 슬롯 발견',
+          caption: '사용자가 페이지, 앱을 방문 — 광고 슬롯 발견',
           detail: '사용자가 뉴스 앱을 여는 순간, 페이지 안에 광고를 채워야 할 빈 칸(슬롯)이 생깁니다. 이 빈 칸이 지금부터 일어날 모든 일의 시작점입니다.',
           packet: { label: '페이지 방문', kind: 'request' },
           example: {
@@ -626,7 +626,7 @@
         },
         {
           from: 'model-serving', to: 'pctr-cvr',
-          caption: 'pCTR / pCVR 모델이 클릭·전환 확률 예측',
+          caption: 'pCTR / pCVR 모델이 클릭, 전환 확률 예측',
           detail: '모델이 클릭 확률(예: 2.3%)을 계산합니다. 이 숫자가 곧 입찰가의 근거가 됩니다 — 확률이 높을수록 비싸게 부를 가치가 있기 때문입니다.',
           packet: { label: 'pCTR 2.3%', kind: 'data' },
           example: {
@@ -647,7 +647,7 @@
         {
           from: 'exchange', to: 'publisher',
           caption: 'Auction Engine이 Winner 결정 → Publisher에 광고 전달',
-          detail: '최고가를 부른 DSP가 낙찰됩니다. 이긴 광고의 이미지·문구(소재)가 Publisher 쪽으로 전달됩니다.',
+          detail: '최고가를 부른 DSP가 낙찰됩니다. 이긴 광고의 이미지, 문구(소재)가 Publisher 쪽으로 전달됩니다.',
           packet: { label: '낙찰 광고 소재', kind: 'creative' },
           example: {
             story: '최고가 DSP-A가 낙찰 — 2위 가격 ₩1,150만 내면 되는 2nd Price 규칙.',
@@ -667,8 +667,8 @@
         {
           from: 'user', to: 'log-pipeline',
           caption: '행동 로그가 Log Pipeline으로 수집',
-          detail: '봤는지(Impression)·눌렀는지(Click)·샀는지(Conversion)가 전부 로그로 쌓입니다. 이 로그가 내일의 모델을 학습시키는 재료입니다.',
-          packet: { label: '노출·클릭 로그', kind: 'data' },
+          detail: '봤는지(Impression), 눌렀는지(Click), 샀는지(Conversion)가 전부 로그로 쌓입니다. 이 로그가 내일의 모델을 학습시키는 재료입니다.',
+          packet: { label: '노출, 클릭 로그', kind: 'data' },
           example: {
             story: '이번엔 봤지만 안 눌렀다 — imp=1, click=0 으로 로그에 남아 내일 모델의 재료가 된다.',
             data: [['imp', '1'], ['click', '0'], ['conv', '0']]
@@ -677,13 +677,13 @@
       ]
     },
     modeling: {
-      label: '모델 학습·서빙',
+      label: '모델 학습, 서빙',
       summary: '어제의 클릭 로그가 가공 → 학습 → 보정 → 배포를 거쳐 오늘의 입찰가를 바꿉니다. 광고 ML은 이 순환을 매일 돌리는 일입니다.',
       steps: [
         {
           from: 'user-journey', to: 'log-pipeline',
-          caption: '사용자 행동(노출·클릭·전환)이 Log Pipeline에 수집',
-          detail: '어제 하루 동안 쌓인 노출·클릭·전환 기록이 전부 모입니다. 모델 학습의 원재료입니다.',
+          caption: '사용자 행동(노출, 클릭, 전환)이 Log Pipeline에 수집',
+          detail: '어제 하루 동안 쌓인 노출, 클릭, 전환 기록이 전부 모입니다. 모델 학습의 원재료입니다.',
           packet: { label: '행동 로그', kind: 'data' },
           example: {
             story: '어제 하루 노출 1.2억 건, 클릭 240만 건이 그대로 쌓였다.',
@@ -712,7 +712,7 @@
         },
         {
           from: 'model-serving', to: 'pctr-cvr',
-          caption: 'DeepFM·DIN 등 모델 학습 — pCTR·pCVR 산출',
+          caption: 'DeepFM, DIN 등 모델 학습 — pCTR, pCVR 산출',
           detail: '새 데이터로 모델을 다시 학습합니다. 어제의 트렌드가 모델 안에 반영되는 순간입니다.',
           packet: { label: '새 모델', kind: 'data' },
           example: {
@@ -768,7 +768,7 @@
         },
         {
           from: 'user-journey', to: 'log-pipeline',
-          caption: 'Impression·Click·Conversion 이벤트가 모두 기록',
+          caption: 'Impression, Click, Conversion 이벤트가 모두 기록',
           detail: '사용자가 거쳐간 모든 접점(본 광고, 누른 광고, 최종 구매)이 시간 순서대로 로그에 남아 있습니다.',
           packet: { label: '접점 기록', kind: 'data' },
           example: {
@@ -778,7 +778,7 @@
         },
         {
           from: 'log-pipeline', to: 'mmp',
-          caption: 'MMP가 Last-Click·Multi-Touch 모델로 기여도 분배',
+          caption: 'MMP가 Last-Click, Multi-Touch 모델로 기여도 분배',
           detail: 'Last-Click이면 마지막 클릭이 공을 전부 가져가고, Multi-Touch면 거쳐간 광고들이 나눠 가집니다. 규칙에 따라 성과표가 완전히 달라집니다.',
           packet: { label: '매칭된 로그', kind: 'data' },
           example: {
@@ -788,7 +788,7 @@
         },
         {
           from: 'mmp', to: 'advertiser',
-          caption: 'Advertiser가 ROAS·전환 리포트를 받음',
+          caption: 'Advertiser가 ROAS, 전환 리포트를 받음',
           detail: '"광고비 100만원 → 매출 300만원 (ROAS 300%)" 같은 성적표를 받습니다.',
           packet: { label: 'ROAS 리포트', kind: 'data' },
           example: {
@@ -798,9 +798,9 @@
         },
         {
           from: 'advertiser', to: 'dsp',
-          caption: '광고주가 KPI에 맞춰 캠페인 예산·입찰 전략 조정',
+          caption: '광고주가 KPI에 맞춰 캠페인 예산, 입찰 전략 조정',
           detail: '성과 좋은 캠페인에 예산을 더 싣고, 나쁜 캠페인은 줄이거나 끕니다.',
-          packet: { label: '예산·전략 조정', kind: 'money' },
+          packet: { label: '예산, 전략 조정', kind: 'money' },
           example: {
             story: 'ROAS 좋은 A캠페인 예산을 +50%, 부진한 B캠페인은 중단한다.',
             data: [['A캠', '예산 +50%'], ['B캠', '중단']]
@@ -812,7 +812,7 @@
           detail: '측정 결과가 다시 입찰을 바꿉니다. 광고는 한 방향 파이프가 아니라 빙글빙글 도는 피드백 루프입니다.',
           packet: { label: '조정된 입찰', kind: 'money' },
           example: {
-            story: '새 예산·타겟이 페이싱에 반영돼 다음 입찰부터 곧장 적용된다.',
+            story: '새 예산, 타겟이 페이싱에 반영돼 다음 입찰부터 곧장 적용된다.',
             data: [['pacing', '재계산'], ['target', '상위 세그']]
           }
         },
@@ -868,7 +868,7 @@
           detail: '여러 거래소의 DSP들이 같은 지면 하나를 두고 동시에 가격을 부릅니다.',
           packet: { label: '병렬 입찰', kind: 'money' },
           example: {
-            story: '같은 지면 하나를 두고 ₩1,100 · ₩1,250 · ₩980이 동시에 들어온다.',
+            story: '같은 지면 하나를 두고 ₩1,100, ₩1,250, ₩980이 동시에 들어온다.',
             data: [['bid1', '₩1,100'], ['bid2', '₩1,250'], ['bid3', '₩980']]
           }
         },
@@ -885,12 +885,12 @@
       ]
     },
     targeting: {
-      label: '데이터·타겟팅',
+      label: '데이터, 타겟팅',
       summary: '동의 → 수집 → 세그먼트 → 입찰 가중 → 개인화 노출. 동의받은 데이터가 광고 가격과 내용을 바꾸는 길입니다.',
       steps: [
         {
           from: 'user-journey', to: 'cmp',
-          caption: '사용자가 사이트 방문 → CMP가 동의(GDPR·CCPA) 처리',
+          caption: '사용자가 사이트 방문 → CMP가 동의(GDPR, CCPA) 처리',
           detail: '사이트 첫 방문 때 뜨는 "쿠키를 허용하시겠습니까?" 팝업이 CMP입니다. 여기서 허락된 데이터만 쓸 수 있습니다.',
           packet: { label: '동의 여부', kind: 'data' },
           example: {
@@ -914,7 +914,7 @@
           detail: '동의받은 데이터는 묶음(세그먼트)으로 미리 가공해 둡니다. 요청이 오면 후보 추출이 이 사람의 세그먼트 목록을 꺼내 타겟 조건이 맞는 광고만 남깁니다. 개인이 아니라 묶음 단위라는 게 포인트.',
           packet: { label: '오디언스 세그먼트', kind: 'data' },
           example: {
-            story: "김씨는 '2030·스포츠 관심' 42만 명짜리 묶음의 한 명으로 후보 추출에 전달된다.",
+            story: "김씨는 '2030, 스포츠 관심' 42만 명짜리 묶음의 한 명으로 후보 추출에 전달된다.",
             data: [['segment', '2030 스포츠'], ['크기', '42만명']]
           }
         },
@@ -959,9 +959,9 @@
   // 층·행 라벨. 두뇌 층은 2행(학습/서빙)이라 행 라벨을 왼쪽 여백(x<250)에 세로로 쌓는다.
   const BAND_LABELS = [
     { text: '두뇌 층 — 모델이 사는 곳', x: 44, y: 16, cls: 'is-layer' },
-    { text: '1단계 학습 · 오프라인', x: 44, y: 44 },
-    { text: '2단계 서빙 · 0.1초', x: 44, y: 106 },
-    { text: '측정 · 로그 데이터', x: 44, y: 590 },
+    { text: '1단계 학습, 오프라인', x: 44, y: 44 },
+    { text: '2단계 서빙, 0.1초', x: 44, y: 106 },
+    { text: '측정, 로그 데이터', x: 44, y: 590 },
   ];
   // 두뇌 층 배경 밴드 (거래 층의 레인 컬럼과 대비되는 가로 밴드)
   const BRAIN_BAND = { x: 30, y: 6, w: 1220, h: 140 };

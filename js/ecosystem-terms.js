@@ -8,9 +8,9 @@
     { key: 'sell', label: '파는 쪽' },
     { key: 'exchange', label: '거래소' },
     { key: 'buy', label: '사는 쪽' },
-    { key: 'ml', label: '예측·모델' },
+    { key: 'ml', label: '예측, 모델' },
     { key: 'measurement', label: '측정' },
-    { key: 'user', label: '사용자·동의' },
+    { key: 'user', label: '사용자, 동의' },
     { key: 'metric', label: '기본 지표' }
   ];
   var CAT_LABEL = {};
@@ -19,8 +19,8 @@
   // id는 지도 노드 id와 동일 → ecosystem.js '쉽게 보기'가 #id로 딥링크
   var TERMS = [
     // ── 파는 쪽 (sell) ──
-    { id: 'publisher', cat: 'sell', name: 'Publisher', full: '매체·앱 (Publisher)', easy: '광고 자리를 가진 앱, 웹, 뉴스. 지면을 파는 쪽이다.', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
-    { id: 'ssp', cat: 'sell', name: 'SSP', full: 'Supply-Side Platform', easy: '매체(파는 쪽)의 판매 대리인. 빈 지면을 모아 경매에 올려 비싸게 판다.', example: '예: Google Ad Manager · 카카오 애드핏', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
+    { id: 'publisher', cat: 'sell', name: 'Publisher', full: '매체, 앱 (Publisher)', easy: '광고 자리를 가진 앱, 웹, 뉴스. 지면을 파는 쪽이다.', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
+    { id: 'ssp', cat: 'sell', name: 'SSP', full: 'Supply-Side Platform', easy: '매체(파는 쪽)의 판매 대리인. 빈 지면을 모아 경매에 올려 비싸게 판다.', example: '예: Google Ad Manager, 카카오 애드핏', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
     { id: 'header-bidding', cat: 'sell', name: 'Header Bidding', full: '헤더 비딩', easy: '여러 구매처를 동시에 경쟁시켜 지면을 더 비싸게 파는 방법(+10~30%).', link: { text: '이야기: 더 비싸게 파는 법', href: 'ecosystem-easy.html#hb' } },
 
     // ── 거래소 (exchange) ──
@@ -28,21 +28,21 @@
     { id: 'auction', cat: 'exchange', name: 'Auction Engine', full: '경매 엔진 (1st / 2nd Price)', easy: '여러 입찰 중 승자와 낼 금액을 정하는 단계. 1등이 자기 입찰가를 내는 방식과 2등 가격을 내는 방식이 있다.', link: { text: '데모: RTB 경매', href: 'demo-rtb.html' } },
 
     // ── 사는 쪽 (buy) ──
-    { id: 'dsp', cat: 'buy', name: 'DSP', full: 'Demand-Side Platform', easy: '광고주(사는 쪽)의 구매 대리인. 예측·입찰을 대신 한다.', example: '예: The Trade Desk · 카카오모먼트', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
+    { id: 'dsp', cat: 'buy', name: 'DSP', full: 'Demand-Side Platform', easy: '광고주(사는 쪽)의 구매 대리인. 예측, 입찰을 대신 한다.', example: '예: The Trade Desk, 카카오모먼트', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
     { id: 'bid-optimizer', cat: 'buy', name: 'Bid Optimizer', full: '입찰가 결정', easy: '보정된 확률로 노출 한 번의 값을 계산하고, 목표 단가와 하루 예산 속도에 맞춰 실제로 부를 입찰가를 정하는 단계.', link: { text: '데모: Bid Shading', href: 'demo-bid-shading.html' } },
     { id: 'advertiser', cat: 'buy', name: 'Advertiser', full: '광고주', easy: '광고를 내는 주체. 예산과 목표(ROAS 등)를 정한다.', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
-    { id: 'brand', cat: 'buy', name: 'Brand / Agency', full: '브랜드·대행사', easy: '광고주를 대신해 캠페인을 기획·운영하기도 하는 주체.' },
-    { id: 'dco', cat: 'buy', name: 'DCO', full: 'Dynamic Creative Optimization', easy: '여러 이미지·문구를 자동으로 바꿔 끼우며 잘 되는 소재를 찾는 기술.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
+    { id: 'brand', cat: 'buy', name: 'Brand / Agency', full: '브랜드, 대행사', easy: '광고주를 대신해 캠페인을 기획, 운영하기도 하는 주체.' },
+    { id: 'dco', cat: 'buy', name: 'DCO', full: 'Dynamic Creative Optimization', easy: '여러 이미지, 문구를 자동으로 바꿔 끼우며 잘 되는 소재를 찾는 기술.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
     { id: 'dmp', cat: 'buy', name: 'DMP / CDP', full: '오디언스 데이터 플랫폼', easy: '동의받은 데이터를 모아 세그먼트로 만드는 플랫폼.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
 
     // ── 예측·모델 (ml) ──
     { id: 'feature-store', cat: 'ml', name: 'Feature Store', full: '피처 스토어', easy: '광고 모델이 꺼내 쓰는 피처(최근 클릭률 같은 숫자)를 모아 두는 저장소.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
     { id: 'candidate-retrieval', cat: 'ml', name: 'Candidate Retrieval', full: '후보 추출', easy: '타겟 조건, 남은 예산, 노출 횟수 제한으로 낼 수 있는 광고만 남기고, 수천 개를 수백 개로 줄이는 첫 단계.', link: { text: '지도: DSP 안의 순서', href: 'ecosystem.html?flow=dspinside' } },
     { id: 'model-serving', cat: 'ml', name: 'Model Serving', full: '모델 서빙', easy: '후보 추출이 넘긴 수백 개 광고에 점수를 매겨 몇 개로 좁히는 단계. 10ms 안에 끝나야 한다.', link: { text: '이야기: 모델이 배우는 법', href: 'ecosystem-easy.html#modeling' } },
-    { id: 'pctr-cvr', cat: 'ml', name: 'pCTR / pCVR', full: '클릭·전환 확률 예측', easy: '이 사람이 누를 확률과 살 확률을 내는 예측 모델.', example: '예: pCTR 2.3%', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
+    { id: 'pctr-cvr', cat: 'ml', name: 'pCTR / pCVR', full: '클릭, 전환 확률 예측', easy: '이 사람이 누를 확률과 살 확률을 내는 예측 모델.', example: '예: pCTR 2.3%', link: { text: '이야기: 광고가 뜨기까지', href: 'ecosystem-easy.html#rtb' } },
     { id: 'calibration', cat: 'ml', name: 'Calibration', full: '예측값 보정', easy: '모델 예측이 전반적으로 높거나 낮으면 실제 비율에 맞춰 예측값을 고치는 일.', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
     { id: 'training', cat: 'ml', name: 'Training', full: '모델 학습(오프라인)', easy: '어제까지 쌓인 기록으로 모델을 다시 학습시키는 단계. 보통 매일 밤 한 번 돈다.', link: { text: '데모: 로그→학습 루프', href: 'demo-log-to-model.html' } },
-    { id: 'monitoring', cat: 'ml', name: 'Monitoring', full: '모니터링 (COPC·PSI)', easy: '배포한 모델이 현실에서 밀리는지 지켜보는 일. 숫자가 튀면 다시 학습시킨다.', example: 'COPC = 실제 클릭 ÷ 예측(1보다 크면 낮게 본 것) · PSI 0.25 초과면 데이터가 변한 신호', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
+    { id: 'monitoring', cat: 'ml', name: 'Monitoring', full: '모니터링 (COPC, PSI)', easy: '배포한 모델이 현실에서 밀리는지 지켜보는 일. 숫자가 튀면 다시 학습시킨다.', example: 'COPC = 실제 클릭 ÷ 예측(1보다 크면 낮게 본 것), PSI 0.25 초과면 데이터가 변한 신호', link: { text: '데모: Calibration', href: 'demo-calibration.html' } },
     { id: 'train-serve-skew', cat: 'ml', name: '학습-서빙 스큐', full: 'Training-Serving Skew', easy: '모델을 학습시킬 때 쓴 값과 실제 서비스에서 넣는 값이 어긋나는 문제. 예를 들어 학습에는 ‘지금 시점’의 값을 넣었는데 실제로는 ‘그때 시점’의 값이 들어오면, 학습 때와 다른 입력을 받게 되어 성능이 떨어진다.' },
 
     // ── 측정 (measurement) ──
@@ -55,12 +55,12 @@
     { id: 'cmp', cat: 'user', name: 'CMP', full: '동의 관리 (Consent Management)', easy: '‘쿠키 허용할까요?’ 동의를 받고 관리하는 곳. 데이터 사용의 출발점.', link: { text: '이야기: 누구에게 보여줄까', href: 'ecosystem-easy.html#targeting' } },
 
     // ── 기본 지표 (metric) ──
-    { id: 'impclickconv', cat: 'metric', name: '노출·클릭·전환', full: 'Impression · Click · Conversion', easy: '광고의 3대 사건 — 봤다(노출) · 눌렀다(클릭) · 샀다(전환).', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
+    { id: 'impclickconv', cat: 'metric', name: '노출, 클릭, 전환', full: 'Impression, Click, Conversion', easy: '광고의 3대 사건 — 봤다(노출), 눌렀다(클릭), 샀다(전환).', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
     { id: 'ctr', cat: 'metric', name: 'CTR', full: 'Click-Through Rate', easy: '클릭 ÷ 노출. ‘얼마나 눌렀나’의 비율.', example: '노출 100 중 클릭 2 → CTR 2%' },
     { id: 'cvr', cat: 'metric', name: 'CVR', full: 'Conversion Rate', easy: '클릭 대비 전환 비율. ‘눌러서 얼마나 샀나’.' },
     { id: 'cpm', cat: 'metric', name: 'CPM', full: 'Cost Per Mille', easy: '1,000번 ‘보여주기’당 비용. 노출 기준 단가.' },
     { id: 'cpc', cat: 'metric', name: 'CPC', full: 'Cost Per Click', easy: '클릭 1번당 비용. ‘누를 때만’ 돈을 낸다.' },
-    { id: 'cpa', cat: 'metric', name: 'CPA', full: 'Cost Per Action', easy: '전환(가입·구매) 1건당 비용. ‘성과당’ 단가.', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
+    { id: 'cpa', cat: 'metric', name: 'CPA', full: 'Cost Per Action', easy: '전환(가입, 구매) 1건당 비용. ‘성과당’ 단가.', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
     { id: 'roas', cat: 'metric', name: 'ROAS', full: 'Return On Ad Spend', easy: '매출 ÷ 광고비. 300%면 1원 써서 3원 벌었다는 뜻.', example: '광고비 100만 → 매출 300만 = 300%', link: { text: '이야기: 누구 공이냐', href: 'ecosystem-easy.html#attribution' } },
     { id: 'ecpm', cat: 'metric', name: 'eCPM', full: 'effective CPM', easy: '어떤 과금이든 1,000노출당 ‘실효 수익’으로 환산한 값. 경매에서 비교하는 공통 기준.' },
     { id: 'floor', cat: 'metric', name: 'Floor Price', full: '최저 판매가', easy: '매체가 정한 바닥값. 이 밑으로는 팔지 않는다.', link: { text: '이야기: 더 비싸게 파는 법', href: 'ecosystem-easy.html#hb' } },

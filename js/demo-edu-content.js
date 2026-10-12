@@ -1105,11 +1105,11 @@ window.DEMO_EDU = {
                             : 'Ingress를 껐습니다. 서비스마다 대표 주소와 대상 그룹 설정이 하나씩 필요해집니다. 서비스가 2개 이상이면 요청이 여기서 멈춥니다.';
                     case 'rp-gateway':
                         return on
-                            ? 'API Gateway를 켰습니다. 인증·쿼터를 <strong>한 곳에서</strong> 처리합니다.'
+                            ? 'API Gateway를 켰습니다. 인증, 쿼터를 <strong>한 곳에서</strong> 처리합니다.'
                             : 'API Gateway를 껐습니다. 같은 정책을 서비스마다 따로 구현해야 하고, 정책이 바뀌면 그만큼 배포합니다.';
                     case 'rp-mesh':
                         return on
-                            ? '서비스 메시를 켰습니다. 재시도·타임아웃·추적을 코드 없이 얻는 대신, 요청마다 사이드카 지연이 붙습니다.'
+                            ? '서비스 메시를 켰습니다. 재시도, 타임아웃, 추적을 코드 없이 얻는 대신, 요청마다 사이드카 지연이 붙습니다.'
                             : '서비스 메시를 껐습니다. 사이드카 지연이 0이 됩니다.';
                     default:
                         return '';
@@ -1118,7 +1118,7 @@ window.DEMO_EDU = {
             '#rp-svc': ({ value, prev }) =>
                 `서비스를 <strong>${prev}개 → ${value}개</strong>로 바꿨습니다. ` +
                 (value > 1
-                    ? '2개가 넘는 순간부터 경로로 갈라 줄 수단이 필요합니다 — Ingress를 꺼 보면 요청이 거기서 멈춥니다.'
+                    ? '2개가 넘는 순간부터 경로로 나눠 보낼 수단이 필요합니다 — Ingress를 꺼 보면 요청이 거기서 멈춥니다.'
                     : '1개면 Ingress 없이도 요청이 지나갑니다. 나눠 보낼 곳이 없기 때문입니다.'),
             '#rp-media': ({ value, prev }) =>
                 `매체를 <strong>${prev}곳 → ${value}곳</strong>으로 바꿨습니다. ` +
@@ -1271,7 +1271,7 @@ window.DEMO_EDU = {
                 if (el.dataset.eduSaid === on) return '';
                 el.dataset.eduSaid = on;
                 return on === '1'
-                    ? '수집 에이전트를 멈췄습니다. 앞단(앱·수집 서버)은 아무 영향을 안 받고 <strong>로컬 파일만 찹니다</strong>. 100GB면 61.7시간을 버팁니다.'
+                    ? '수집 에이전트를 멈췄습니다. 앞단(앱, 수집 서버)은 아무 영향을 안 받고 <strong>로컬 파일만 찹니다</strong>. 100GB면 61.7시간을 버팁니다.'
                     : '에이전트를 다시 켰습니다. 쌓인 것을 따라잡는 동안에도 새 줄은 초당 2,665건씩 들어옵니다.';
             },
             '#lh-stop-kafka-label': ({ el }) => {
@@ -1303,11 +1303,11 @@ window.DEMO_EDU = {
                 if (host.dataset.eduSaid === i) return '';
                 host.dataset.eduSaid = i;
                 return [
-                    '<strong>1번 앱 SDK</strong>입니다. 만드는 것은 85 B 뿐이고 <strong>누가·어디서·어느 캠페인·얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
+                    '<strong>1번 앱 SDK</strong>입니다. 만드는 것은 85 B 뿐이고 <strong>누가, 어디서, 어느 캠페인, 얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
                     '<strong>2번 웹서버</strong>입니다. 98 B 가 앞에 붙어 183 B 가 됐습니다. 붙은 것은 전부 <strong>받는 쪽만 아는 값</strong>입니다 — 앱은 자기 요청이 204 를 받았는지 보내는 시점에 모릅니다.',
                     '<strong>3번 수집 에이전트</strong>입니다. 여기가 처음 <strong>가지러 가는</strong> 자리입니다. 원문은 message 필드에 한 글자도 안 바뀌고 들어가고, 붙는 것은 envelope 필드 셋뿐입니다.',
                     '<strong>4번 변환기</strong>입니다. 크기는 37 B <strong>줄었는데</strong> 필드가 5개에서 15개가 됐습니다. 바이트로는 줄어든 자리에서 가장 큰 일이 일어납니다.',
-                    '<strong>5번 Kafka</strong>입니다. 값은 한 글자도 안 바뀌고 <strong>주소만 붙습니다</strong> — topic·partition·offset. 여기서부터 한 번 쓰이고 여럿이 읽습니다.',
+                    '<strong>5번 Kafka</strong>입니다. 값은 한 글자도 안 바뀌고 <strong>주소만 붙습니다</strong> — topic, partition, offset. 여기서부터 한 번 쓰이고 여럿이 읽습니다.',
                     '<strong>6번 읽는 쪽 넷</strong>입니다. 아래 칩을 갈아 눌러 봅니다. <strong>왼쪽은 그대로인데 오른쪽만 바뀝니다</strong> — 같은 한 줄이 네 결과가 됩니다.'
                 ][+i] || '';
             },
@@ -1357,7 +1357,7 @@ window.DEMO_EDU = {
                 el: '.cp-retention',
                 title: '며칠 들고 있으면 되나',
                 body: '멈춘 시간을 <strong>240시간</strong>까지 밀어 봅니다. 보존 7일을 넘는 순간 ' +
-                    '앞부분이 지워졌다고 바뀝니다. 보존 기간이 무엇을 사고 무엇을 못 사는지가 거기서 갈립니다.',
+                    '앞부분이 지워졌다고 바뀝니다. 보존 기간이 무엇을 사고 무엇을 못 사는지가 거기서 정해집니다.',
                 waitFor: 'input'
             }
         ]
@@ -1428,8 +1428,8 @@ window.DEMO_EDU = {
                 '그 사이 NE 는 1.2535, COPC 는 0.342 가 됩니다. NE 가 1을 넘었다는 건 ' +
                 '<strong>기저 CTR 만 답하는 상수 모델보다 못하다</strong>는 뜻이라 즉시 중단 대상입니다.',
             '[data-mx-preset="0.494,0.915,1,5"]': () =>
-                '<strong>기본값</strong>으로 돌아왔습니다. AUC 0.7413 · GAUC 0.6177 · NE 0.9303 · COPC 1.002. ' +
-                '글 1절 배포 표의 기존 모델 자리(AUC 0.7412 · GAUC 0.6180) 근처에 맞춰 둔 값입니다.',
+                '<strong>기본값</strong>으로 돌아왔습니다. AUC 0.7413, GAUC 0.6177, NE 0.9303, COPC 1.002. ' +
+                '글 1절 배포 표의 기존 모델 자리(AUC 0.7412, GAUC 0.6180) 근처에 맞춰 둔 값입니다.',
             '#mx-req-next': () =>
                 '다른 요청을 뽑았습니다. 클릭이 0건인 요청이 나오면 아래 칸이 "짝을 하나도 못 만든다"고 말합니다 — ' +
                 '그런 요청이 이 표본의 89% 입니다. GAUC 는 남은 11% 로만 계산됩니다.'
@@ -1735,7 +1735,7 @@ window.DEMO_EDU = {
                 return `설득 가능을 <strong>${prev}% → ${value}%</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
                     `광고비가 값을 하는 부류는 이 하나뿐입니다. 전체 증분이 <strong>${g('uq-cvr-lift')}</strong>, ` +
                     `전원에게 광고했을 때 증분 전환이 <strong>${g('uq-inc-total')}</strong>이 됐습니다. ` +
-                    `이들은 pCVR이 낮은 편이라 왼쪽 그림에서 <strong>가로선 위·세로선 왼쪽</strong>에 많이 앉습니다 — ` +
+                    `이들은 pCVR이 낮은 편이라 왼쪽 그림에서 <strong>가로선 위, 세로선 왼쪽</strong>에 많이 앉습니다 — ` +
                     `pCVR 순으로 고르면 그 자리가 통째로 빠집니다.`;
             },
             '#uq-sure': ({ value, prev }) => {
@@ -1777,7 +1777,7 @@ window.DEMO_EDU = {
             '.uq-preset-btn': ({ el }) => {
                 const g = (id) => (document.getElementById(id) || {}).textContent || '—';
                 return `<strong>${el.textContent.trim()}</strong>로 바꿨습니다. ` +
-                    `노출군 CVR ${g('uq-cvr-t')} · 대조군 CVR ${g('uq-cvr-c')} · 증분 ${g('uq-cvr-lift')}입니다. ` +
+                    `노출군 CVR ${g('uq-cvr-t')}, 대조군 CVR ${g('uq-cvr-c')}, 증분 ${g('uq-cvr-lift')}입니다. ` +
                     `지금 예산에서 pCVR 순 증분 <strong>${g('uq-p-inc')}</strong> 대 uplift 순 증분 <strong>${g('uq-u-inc')}</strong>. ` +
                     `${g('uq-mix')}`;
             }
@@ -1801,7 +1801,7 @@ window.DEMO_EDU = {
                 el: '.uq-compare',
                 title: '두 줄을 나란히 읽기',
                 body: '같은 사람 수, 같은 광고비입니다. <strong>리포트 전환</strong>은 pCVR 순이 큽니다. ' +
-                    '<strong>증분 전환</strong>은 uplift 순이 큽니다. 어느 칸을 보느냐로 예산이 갈립니다.'
+                    '<strong>증분 전환</strong>은 uplift 순이 큽니다. 어느 칸을 보느냐에 따라 예산이 달라집니다.'
             },
             {
                 el: '#uq-budget',
@@ -1919,7 +1919,7 @@ window.DEMO_EDU = {
             {
                 el: '.sl-switches',
                 title: '스위치 다섯',
-                body: '위에서부터 3rd-party 쿠키 · IDFA · 유저 단위 전환 라벨 · 크로스 앱 빈도 제어 · 노이즈 없는 집계입니다. ' +
+                body: '위에서부터 3rd-party 쿠키, IDFA, 유저 단위 전환 라벨, 크로스 앱 빈도 제어, 노이즈 없는 집계입니다. ' +
                     '내린 스위치는 점선 테두리가 되고 상태 글자가 같이 바뀝니다.'
             },
             {
@@ -2020,7 +2020,7 @@ window.DEMO_EDU = {
                             `앱에 넣은 문자열은 앱을 받은 사람 모두가 갖고, 이미 배포된 값은 회수할 방법이 없습니다.`
                           : `앱에 둘 비밀이 없으니 시크릿 계기는 <strong>${d.acSecretFlag}</strong> 입니다. 이 방향에서 남는 답이 이것입니다.`) +
                       ` 값도 같이 못 믿게 됩니다 — 전환 금액은 앱이 보낸 것을 쓰지 않고 우리 주문 테이블에서 다시 읽습니다.`
-                    : `부르는 쪽을 <strong>우리·상대 서버</strong>로 되돌렸습니다. 비밀을 둘 자리가 생겼습니다. ` +
+                    : `부르는 쪽을 <strong>우리, 상대 서버</strong>로 되돌렸습니다. 비밀을 둘 자리가 생겼습니다. ` +
                       `지금 고른 인증은 ${name} 이고, 시크릿 계기는 <strong>${d.acSecretFlag}</strong> 입니다. ` +
                       `자격증명이 새도 한쪽에서 갈아 끼우면 끝나는 것이 이 방향의 차이입니다.`;
             },
@@ -2067,13 +2067,13 @@ window.DEMO_EDU = {
                     body = `표에는 ${d.acRounds}회차까지만 나옵니다. 4회차에 남은 건이 전부 도착한다고 뒀으니(설정 설명) ` +
                         `그 위로 올려도 달라지는 것이 없습니다. 재시도 횟수는 유실이 남아 있을 때만 값을 냅니다.`;
                 } else {
-                    body = `성공률 <strong>${d.acSuccess}%</strong> · 요청 ${d.acSent}건입니다. ` +
+                    body = `성공률 <strong>${d.acSuccess}%</strong>, 요청 ${d.acSent}건입니다. ` +
                         `재시도는 성공률을 사고 중복을 지불합니다.`;
                 }
                 if (+value >= 3) {
                     body += ` 실제로는 여기에 <strong>지터</strong>를 같이 넣습니다. 같은 순간에 끊긴 500건이 ` +
-                        `지수 백오프만으로 다시 몰리면 성공 180건 · 100ms 윈도우 최대 부하 500건입니다. ` +
-                        `full jitter 를 넣으면 성공 <strong>472건</strong> · 최대 부하 <strong>92건</strong>이 됩니다.`;
+                        `지수 백오프만으로 다시 몰리면 성공 180건, 100ms 윈도우 최대 부하 500건입니다. ` +
+                        `full jitter 를 넣으면 성공 <strong>472건</strong>, 최대 부하 <strong>92건</strong>이 됩니다.`;
                 }
                 return `재시도를 <strong>${prev}회 → ${value}회</strong>로 바꿨습니다. ${body}`;
             },
@@ -2093,15 +2093,15 @@ window.DEMO_EDU = {
                             : `400ms 예산 안입니다. 안쪽은 서명 20 + 멱등 조회 50 + 전환 테이블 200 + Kafka 100 + 여유 30 으로 쪼갭니다.`);
             },
             '#ac-reset': () =>
-                '<strong>기본값</strong>으로 돌아왔습니다 — server → server · HMAC 서명 · 멱등키 켬 · ' +
-                '유실 15% · 재시도 3회 · 타임아웃 400ms. 요청은 1,180건인데 전환 테이블은 1,000줄입니다. ' +
+                '<strong>기본값</strong>으로 돌아왔습니다 — server → server, HMAC 서명, 멱등키 켬, ' +
+                '유실 15%, 재시도 3회, 타임아웃 400ms. 요청은 1,180건인데 전환 테이블은 1,000줄입니다. ' +
                 '글 7절 표의 그 값입니다.'
         },
         tour: [
             {
                 el: '.ac-flow',
                 title: '요청 한 건이 지나는 길',
-                body: '왼쪽부터 <strong>보내는 쪽 · 인증 · 우리 수집 API · 멱등키 조회 · 전환 테이블</strong> 다섯 칸입니다. ' +
+                body: '왼쪽부터 <strong>보내는 쪽, 인증, 우리 수집 API, 멱등키 조회, 전환 테이블</strong> 다섯 칸입니다. ' +
                     '아래로 돌아오는 선이 응답이고, <span aria-hidden="true">×</span> 는 응답이 사라진 자리입니다. ' +
                     '점선 칸은 지금 문제가 되는 자리, 실선 굵은 칸은 지금 막아 주고 있는 자리입니다.'
             },
@@ -2115,7 +2115,7 @@ window.DEMO_EDU = {
                 el: '.ac-table',
                 title: '두 열을 나란히 봅니다',
                 body: '맨 오른쪽 두 열이 <strong>키 없음</strong>과 <strong>키 있음</strong>입니다. ' +
-                    '보낸 건수와 유실 건수는 같은데 누적만 갈라집니다. 지금 고른 설정의 열이 진하게 나옵니다.'
+                    '보낸 건수와 유실 건수는 같은데 누적만 달라집니다. 지금 고른 설정의 열이 진하게 나옵니다.'
             },
             {
                 el: '#ac-gauges',
@@ -2210,7 +2210,7 @@ window.DEMO_EDU = {
                         return '배치만 두었습니다. 잡이 <strong>3개</strong>입니다. 가장 빠른 후보가 1시간 배치라 ' +
                             '대시보드가 <strong>남는 예산 888 ms 를 2,100배 넘깁니다</strong>. 어떤 설정으로도 못 맞춥니다.';
                     }
-                    return '스트림과 배치를 같이 두었습니다. 정제·조인을 한 번만 세어 잡이 <strong>5개</strong>입니다. ' +
+                    return '스트림과 배치를 같이 두었습니다. 정제, 조인을 한 번만 세어 잡이 <strong>5개</strong>입니다. ' +
                         '대시보드는 스트림이 받고, 라벨은 D+1 배치가 2,273,160건(99.7%)으로 다시 세어 덮어씁니다.';
                 }
                 if (c[3] !== p[3]) {
@@ -2226,8 +2226,8 @@ window.DEMO_EDU = {
                     const gone = p[4].split('+').filter((s) => c[4].indexOf(s) < 0)[0];
                     const added = c[4].split('+').filter((s) => p[4].indexOf(s) < 0)[0];
                     const NAME = {
-                        'pb-store-lake': ['오브젝트 + Iceberg', '학습·정산 원천과 30일 백필이 걸린 자리입니다. 없으면 raw 하루 21.9 GB · 정제 하루 9.12 GB 를 담을 곳이 없습니다.'],
-                        'pb-store-rt': ['실시간 DB', '5분 집계를 최근 5분 · 지면별로 꺼내는 자리입니다. 없으면 지연을 아무리 줄여도 볼 화면이 없습니다.'],
+                        'pb-store-lake': ['오브젝트 + Iceberg', '학습, 정산 원천과 30일 백필이 걸린 자리입니다. 없으면 raw 하루 21.9 GB, 정제 하루 9.12 GB 를 담을 곳이 없습니다.'],
+                        'pb-store-rt': ['실시간 DB', '5분 집계를 최근 5분, 지면별로 꺼내는 자리입니다. 없으면 지연을 아무리 줄여도 볼 화면이 없습니다.'],
                         'pb-store-search': ['검색엔진', 'DLQ 하루 1,800건 중 "알 수 없음" 130건의 원문을 사람이 보는 자리입니다.']
                     };
                     const hit = added || gone;
@@ -2324,7 +2324,7 @@ window.DEMO_EDU = {
                 const 개수 = cells.filter(v => v === value).length;
                 if (개수 === 0) {
                     return `<strong>${value}</strong> 는 배열에 없는 값입니다. ` +
-                        '정확히 찾기는 -1 을 내지만, 왼쪽·오른쪽 경계는 <strong>넣을 자리</strong>를 알려 줍니다. ' +
+                        '정확히 찾기는 -1 을 내지만, 왼쪽, 오른쪽 경계는 <strong>넣을 자리</strong>를 알려 줍니다. ' +
                         '정렬을 유지하며 값을 끼워 넣을 때 이 자리를 씁니다.';
                 }
                 if (개수 === 1) {
@@ -2429,7 +2429,7 @@ window.DEMO_EDU = {
             {
                 el: '#bd-step',
                 title: 'Step 을 눌러 봅니다',
-                body: '스택·큐에서 <strong>굵게 표시된 것</strong>이 다음에 꺼낼 것입니다. ' +
+                body: '스택, 큐에서 <strong>굵게 표시된 것</strong>이 다음에 꺼낼 것입니다. ' +
                     '스택은 오른쪽 끝, 큐는 왼쪽 끝 — 여기가 두 탐색의 유일한 차이입니다.',
                 waitFor: 'click'
             },
@@ -2521,7 +2521,7 @@ window.DEMO_EDU = {
                     case '2': return '조각을 세 벌 두는 값은 디스크입니다. 384 MB 파일이 디스크 <strong>1,152 MB</strong> 를 씁니다. 대신 상자 두 대가 동시에 꺼져도 파일이 살아 있습니다.';
                     case '3': return '큐가 가득 차면 쿼리는 ACCEPTED 상태로 줄에 서 있습니다. 실행 중이 아니라 <strong>기다리는 중</strong>이라 아무 일도 안 일어나는 것처럼 보입니다.';
                     case '4': return 'Spark 나 Trino 는 HiveServer2 를 거치지 않고 <strong>Metastore 에 직접</strong> 붙어 목록을 읽습니다. 그래서 같은 테이블을 여러 엔진이 읽을 수 있습니다.';
-                    case '5': return 'ZooKeeper 가 다섯 대인 이유는 <strong>과반</strong>입니다. 셋만 살아 있으면 답합니다. 짝수로 두면 반반으로 갈라질 수 있어 홀수로 둡니다.';
+                    case '5': return 'ZooKeeper 가 다섯 대인 이유는 <strong>과반</strong>입니다. 셋만 살아 있으면 답합니다. 짝수로 두면 반반으로 나뉠 수 있어 홀수로 둡니다.';
                     case '6': return '내가 직접 붙는 곳은 1 과 3 두 자리뿐입니다. 4 부터 7 은 HiveServer2 가 대신 다니는 길이라 <strong>내 컴퓨터에는 그 주소가 없습니다</strong>.';
                     default: return '';
                 }
@@ -2835,7 +2835,7 @@ window.DEMO_EDU = {
                     case 'ssb': return '헷갈리는 것은 <strong>왜 클릭한 것만으로 배우면 안 되나</strong>입니다. 클릭한 사람은 이미 관심이 있는 사람이라, 그들만 보고 배운 확률을 아직 안 누른 노출 전체에 쓰면 맞지 않습니다.';
                     case 'position': return '헷갈리는 것은 <strong>보정이 무엇을 되돌리나</strong>입니다. 클릭 수를 늘리는 것이 아니라, 그 자리에서 눈길이 닿았을 확률로 나누는 것입니다. 1위는 100%로 나누니 그대로이고 5위는 15%로 나누니 커집니다.';
                     case 'negsample': return '헷갈리는 것은 <strong>보정을 왜 상수 하나로 못 하나</strong>입니다. 부풀림의 배수가 확률대마다 다릅니다. 진짜 0.5%는 약 9.4배, 진짜 5%는 약 6.8배 부풉니다. 그래서 예측값마다 공식을 통과시킵니다.';
-                    case 'convdef': return '헷갈리는 것은 <strong>전체 COPC 가 1.00 인데 왜 문제인가</strong>입니다. 과소와 과대가 서로를 지워 평균만 맞기 때문입니다. 광고주 한 곳씩 보면 2.5배와 20배로 갈려 있습니다.';
+                    case 'convdef': return '헷갈리는 것은 <strong>전체 COPC 가 1.00 인데 왜 문제인가</strong>입니다. 과소와 과대가 서로를 지워 평균만 맞기 때문입니다. 광고주 한 곳씩 보면 2.5배와 20배로 다릅니다.';
                     case 'tenlogs': return '헷갈리는 것은 <strong>왜 Bid 로그가 저장량 1위인가</strong>입니다. 보존은 30일로 가장 짧은데 하루 30억 건이라 그렇습니다. 전환 로그는 2년을 남겨도 28GB 입니다.';
                     default: return '';
                 }
@@ -3313,7 +3313,7 @@ window.DEMO_EDU = {
                 `${value > prev ? '한 대를 더 채워 쓰니 대수가 줄고 값이 내려갑니다. 대신 요청이 조금만 몰려도 줄이 길어집니다' : '한 대를 덜 채워 쓰니 대수가 늘고 값이 올라갑니다. 대신 요청이 몰려도 여유가 남습니다'}.`,
             '#sc-spare': ({ value, prev }) =>
                 `예비 대수를 <strong>${prev}대 → ${value}대</strong>로 바꿨습니다. ` +
-                '대수가 적은 GPU 쪽이 먼저 움직입니다. 열두 대 중 한 대는 빠져도 남은 열한 대가 받아 내지만, 두 대 중 한 대가 빠지면 못 받아 냅니다.',
+                '대수가 적은 GPU 쪽이 먼저 움직입니다. 12대 중 1대가 빠져도 남은 11대가 받아 내지만, 2대 중 1대가 빠지면 못 받아 냅니다.',
             '#sc-cpu-cap': ({ value, prev }) =>
                 `CPU 한 대 처리량을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')} QPS</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
                 `요청 안에서 만들던 값을 미리 만들어 두면 이쪽이 ${value > prev ? '올라갑니다' : '내려갑니다'}. 대수가 그만큼 ${value > prev ? '줄어듭니다' : '늘어납니다'}.`,
@@ -3325,7 +3325,7 @@ window.DEMO_EDU = {
                 `${value > prev ? '한 대가 더 받아 내도 예비 한 대는 그대로라, 요청량이 작을 때는 값이 안 내려갑니다' : '한 대가 덜 받아 내니 대수가 늘고 값이 올라갑니다'}.`,
             '#sc-gpu-won': ({ value, prev }) =>
                 `GPU 한 대의 시간당 값을 <strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}원</strong>으로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
-                '이 값이 1,920원 아래로 내려가면 기본 요청량에서도 GPU 세 대가 CPU 열두 대보다 쌉니다.',
+                '이 값이 1,920원 아래로 내려가면 기본 요청량에서도 GPU 3대가 CPU 12대보다 쌉니다.',
             '.sc-preset-btn': ({ el }) =>
                 `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했습니다. ` +
                 '지표 셋과 두 차트가 함께 바뀝니다. 대수가 어느 조건에서 나왔는지는 지표 칸 아래 줄에 있습니다.'
@@ -3398,7 +3398,7 @@ window.DEMO_EDU = {
                     case 'freshness': return '헷갈리는 것은 <strong>무엇을 보고 주기를 정하나</strong>입니다. 값이 얼마나 빨리 변하는가와 그 변화가 예측을 얼마나 바꾸는가 둘입니다. 빨리 변해도 예측이 안 바뀌면 자주 만들 이유가 없습니다.';
                     case 'fallback': return '헷갈리는 것은 <strong>무엇으로 채웠는지를 왜 남기나</strong>입니다. 안 남기면 그 요청의 예측이 나빴을 때 모델 탓인지 피처가 없어서인지 못 나눕니다. 폴백 비율이 올라가는 것도 그때 알아챕니다.';
                     case 'rowtovector': return '헷갈리는 것은 <strong>번호를 그냥 넣으면 안 되는 이유</strong>입니다. 광고 번호 8837201 이 4418600 의 두 배라는 뜻이 아닌데, 그대로 넣으면 모델이 없는 크기 관계를 배웁니다.';
-                    case 'sequence': return '헷갈리는 것은 <strong>마스크가 왜 따로 필요한가</strong>입니다. 빈 칸을 채운 0 도 번호라서 모델이 계산에 넣습니다. 어디가 진짜인지 알려 주지 않으면 이력 5개인 사람이 0 을 열다섯 번 본 사람이 됩니다.';
+                    case 'sequence': return '헷갈리는 것은 <strong>마스크가 왜 따로 필요한가</strong>입니다. 빈 칸을 채운 0 도 번호라서 모델이 계산에 넣습니다. 어디가 진짜인지 알려 주지 않으면 이력 5개인 사람이 0 을 15번 본 사람이 됩니다.';
                     default: return '';
                 }
             }

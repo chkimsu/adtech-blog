@@ -174,7 +174,7 @@
   // 화면 낭독기용 구분자. 눈으로는 flex 간격이 항목을 갈라 주지만,
   // 낭독기에는 "partition 0consumer A1줄" 처럼 죄다 붙어서 읽힌다.
   // 범례가 눈에 보이게 쓰는 " · " 와 같은 글자를, 여기서는 안 보이게 끼워 넣는다.
-  var SEP = '<span class="sr-only"> · </span>';
+  var SEP = '<span class="sr-only">, </span>';
 
   // "partition 수를 바꾸면 배정이 뒤집힌다" 를 보여주기 위한 기준점.
   // 사용자가 슬라이더를 밀 때마다 기준이 따라 움직이면 partition 하나 차이밖에 안 보여서,
@@ -235,7 +235,7 @@
       var idle = row.parts === 0;
       return '<span class="kp-legend-item kp-tone-' + c + (idle ? ' is-idle' : '') + '">' +
         '<span class="kp-swatch" aria-hidden="true"></span>' +
-        'consumer ' + row.name + ' · ' +
+        'consumer ' + row.name + ', ' +
         (idle ? '맡은 partition 없음' : 'partition ' + row.parts + '개, ' + row.lines + '줄') +
         '</span>';
     }).join('');

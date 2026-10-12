@@ -311,27 +311,27 @@
     const dAuc = res.auc - baseline.auc;
     setCard('auc', fmt4(res.auc),
       (sameSample ? '기준 대비 <b>' + sign4(dAuc) + '</b>' : NOCMP) +
-      ' · 전체 짝 ' + grp(res.pairsAll) + '개', 'plain');
+      ', 전체 짝 ' + grp(res.pairsAll) + '개', 'plain');
     gateBadge('auc', '기록만', 'note');
 
     const dGauc = res.gauc - baseline.gauc;
     setCard('gauc', fmt4(res.gauc),
       (sameSample ? '기준 대비 <b>' + sign4(dGauc) + '</b>' : NOCMP) +
-      ' · 요청 안 짝 ' + grp(res.pairsIn) + '개', 'plain');
+      ', 요청 안 짝 ' + grp(res.pairsIn) + '개', 'plain');
     gateBadge('gauc',
       !sameSample ? '표본이 다름' : dGauc <= -0.001 ? '중단' : '통과',
       !sameSample ? 'note' : dGauc <= -0.001 ? 'bad' : 'good');
 
     setCard('ll', res.ll.toFixed(5),
       (sameSample ? '기저엔트로피 ' + res.entropy.toFixed(5) : '기저 CTR 이 달라져 <b>비교 자체가 안 된다</b>') +
-      ' · 실제 CTR ' + fmtPct(res.ctr, 3), 'plain');
+      ', 실제 CTR ' + fmtPct(res.ctr, 3), 'plain');
     gateBadge('ll', sameSample ? '문턱 없음' : '비교 불가', 'note');
 
     const dNe = baseline.ne > 0 ? (res.ne - baseline.ne) / baseline.ne : 0;
     const neBad = res.ne >= 1.0;
     setCard('ne', fmt4(res.ne),
       (sameSample ? '기준 대비 <b>' + signPct(dNe) + '</b>' : '표본이 달라도 <b>NE 는 견줄 수 있다</b>') +
-      ' · 1.0 은 상수 모델과 같다', neBad ? 'bad' : 'plain');
+      ', 1.0 은 상수 모델과 같다', neBad ? 'bad' : 'plain');
     gateBadge('ne',
       neBad ? '즉시 중단' : !sameSample ? '절댓값만' : dNe >= 0.005 ? '중단' : '통과',
       neBad ? 'bad' : !sameSample ? 'note' : dNe >= 0.005 ? 'bad' : 'good');
@@ -346,8 +346,8 @@
 
     // --- 표본 한 줄 ---
     $('mx-shape').innerHTML =
-      '요청 <b>' + grp(R) + '</b>건 × 자리 <b>' + K + '</b>개 = 노출 <b>' + grp(res.n) + '</b>건 · ' +
-      '클릭 <b>' + grp(res.clicks) + '</b>건 · ' +
+      '요청 <b>' + grp(R) + '</b>건 × 자리 <b>' + K + '</b>개 = 노출 <b>' + grp(res.n) + '</b>건, ' +
+      '클릭 <b>' + grp(res.clicks) + '</b>건, ' +
       'GAUC 가 쓰는 요청 <b>' + grp(res.used) + '</b>건 / 버리는 요청 <b>' + grp(res.dropped) + '</b>건 (' +
       (res.dropped / R * 100).toFixed(1) + '%)';
 
@@ -379,12 +379,12 @@
         '경매가 실제로 쓰는 능력이 좋아진 경우가 이 모습입니다.';
     }
     if (d <= 0.2) {
-      return '요청 안에서는 거의 못 가릅니다. GAUC 가 <b>' + fmt4(res.gauc) + '</b> 로 0.5 에 가까운데 ' +
-        '전체 AUC 는 <b>' + fmt4(res.auc) + '</b> 입니다 — 그 차이는 전부 지면·요청 구분에서 왔습니다.';
+      return '요청 안에서는 거의 구분하지 못합니다. GAUC 가 <b>' + fmt4(res.gauc) + '</b> 로 0.5 에 가까운데 ' +
+        '전체 AUC 는 <b>' + fmt4(res.auc) + '</b> 입니다 — 그 차이는 전부 지면, 요청 구분에서 왔습니다.';
     }
     return '자리 <b>' + K + '</b>개 기준입니다. 전체 AUC <b>' + fmt4(res.auc) + '</b> 와 GAUC <b>' +
       fmt4(res.gauc) + '</b> 의 간격은 <b>' + gap.toFixed(4) + '</b> 입니다. ' +
-      '게이트는 GAUC · NE · COPC 셋만 봅니다.';
+      '게이트는 GAUC, NE, COPC 셋만 봅니다.';
   }
 
   // ---------------------------------------------------------------
@@ -484,7 +484,7 @@
       '<li>전체 AUC — 짝 <b>' + W + ' / ' + T + '</b> = <b>' + (W / T).toFixed(4) + '</b></li>' +
       '<li>GAUC(짝 가중) — 짝 <b>' + gw + ' / ' + gt + '</b> = <b>' + (gw / gt).toFixed(4) + '</b></li>' +
       '<li>GAUC(단순 평균) — 요청 ' + used + '건의 평균 = <b>' + (sum / used).toFixed(4) + '</b></li>' +
-      '<li>같은 요청 짝 <b>' + gt + '</b>개 · 요청을 가로지른 짝 <b>' + (T - gt) + '</b>개</li>';
+      '<li>같은 요청 짝 <b>' + gt + '</b>개, 요청을 가로지른 짝 <b>' + (T - gt) + '</b>개</li>';
   }
 
   // ---------------------------------------------------------------

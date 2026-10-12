@@ -261,7 +261,7 @@ function autoLinkGlossary(container) {
   function makePop(g, matchText) {
     const span = document.createElement('span');
     span.className = 'demo-term';
-    span.innerHTML = `${matchText}<span class="demo-term-pop"><strong>${g.term}${g.abbr ? ' · ' + g.abbr : ''}</strong> ${g.body}</span>`;
+    span.innerHTML = `${matchText}<span class="demo-term-pop"><strong>${g.term}${g.abbr ? ' / ' + g.abbr : ''}</strong> ${g.body}</span>`;
     return span;
   }
   function walk(node) {
@@ -358,7 +358,7 @@ function renderStageCard(post) {
     <div class="stage-card-label">이 글의 무대</div>
     <div class="stage-card-chips">${chips}</div>
     ${post.worldNote ? `<p class="stage-card-note">${post.worldNote}</p>` : ''}
-    ${post.worldPractical ? `<p class="stage-card-practical"><b>담장 안(네이버·카카오)에서 일한다면</b> — ${post.worldPractical}</p>` : ''}
+    ${post.worldPractical ? `<p class="stage-card-practical"><b>담장 안(네이버, 카카오)에서 일한다면</b> — ${post.worldPractical}</p>` : ''}
   </div>`;
 }
 
@@ -371,7 +371,7 @@ function renderWorldBadge(post, context) {
   return list.map(w => {
     const meta = getWorldMeta(w);
     if (!meta) return '';
-    const label = detail ? `${meta.label} · ${meta.short}` : meta.label;
+    const label = detail ? `${meta.label}, ${meta.short}` : meta.label;
     const tip = String(meta.tip).replace(/"/g, '&quot;');
     return `<span class="world-badge${detail ? ' world-badge-detail' : ''}" data-world="${w}" title="${tip}">${label}</span>`;
   }).join('');
@@ -401,7 +401,7 @@ function renderCategoryRail() {
   }).join('');
   const legend = (typeof WORLD_META !== 'undefined') ? Object.keys(WORLD_META).map(id => {
     const m = WORLD_META[id];
-    return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label} · ${m.short}</span>`;
+    return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label}, ${m.short}</span>`;
   }).join('') : '';
   // posts-browse에는 자체 다중선택 카테고리 필터(#browse-categories)가 있어 같은 목록을 중복 노출하지 않는다
   const hasOwnCategoryFilter = !!document.getElementById('browse-categories');
@@ -514,7 +514,7 @@ function renderHome() {
       return `<a class="home-series-card" href="post.html?id=${first ? first.id : ''}">
         <span class="home-series-name">${s.title}</span>
         <span class="home-series-desc">${s.desc}</span>
-        <span class="home-series-count">${s.posts.length}개 글 · 첫 글부터 →</span></a>`;
+        <span class="home-series-count">${s.posts.length}개 글, 첫 글부터 →</span></a>`;
     }).join('');
   }
   const cta = document.getElementById('home-all-cta');
@@ -1406,7 +1406,7 @@ function renderPostNavigation(currentPostId) {
     <div class="post-nav-inner">
       <div class="post-nav-tabs" role="tablist">
         <button type="button" class="post-nav-tab ${defaultTab === 'category' ? 'active' : ''}" data-nav-tab="category" role="tab" aria-selected="${defaultTab === 'category'}">
-          같은 카테고리${primaryCategory ? ` · ${primaryCategory}` : ''}
+          같은 카테고리${primaryCategory ? ` / ${primaryCategory}` : ''}
         </button>
         <button type="button" class="post-nav-tab ${defaultTab === 'date' ? 'active' : ''}" data-nav-tab="date" role="tab" aria-selected="${defaultTab === 'date'}">
           시간순
@@ -1452,7 +1452,7 @@ function renderSeriesBox(post) {
       <div class="series-box-head">
         <span class="series-kicker">시리즈</span>
         <span class="series-title">${s.title}</span>
-        <span class="series-progress">${s.position}/${s.total}${readCnt ? ` · ${readCnt} 읽음` : ''}</span>
+        <span class="series-progress">${s.position}/${s.total}${readCnt ? `, ${readCnt} 읽음` : ''}</span>
       </div>
       <ol class="series-list">
         ${s.posts.map((p, i) => `<li class="series-item${p.id === post.id ? ' is-current' : ''}${window.ReadingState && ReadingState.isRead(p.id) ? ' is-read' : ''}">
@@ -1521,8 +1521,8 @@ function renderContinueReadingTop(post) {
   const prevInCategory = catIdx < categoryPosts.length - 1 ? categoryPosts[catIdx + 1] : null;
   const categoryPick = nextInCategory || prevInCategory;
   const categoryLabel = nextInCategory
-    ? `다음 · ${primaryCategory}`
-    : `같은 카테고리 · ${primaryCategory}`;
+    ? `다음 / ${primaryCategory}`
+    : `같은 카테고리 / ${primaryCategory}`;
 
   const scored = posts
     .filter(p => p.id !== post.id && (!categoryPick || p.id !== categoryPick.id))
@@ -1660,7 +1660,7 @@ function setupSearchModal() {
   const snippet = (p, q) => {
     if (q && !inMeta(p, q) && bodyIndex && bodyIndex[p.id]) {
       const body = bodyIndex[p.id], idx = body.indexOf(q);
-      if (idx >= 0) return '본문 일치 · … ' + body.slice(Math.max(0, idx - 35), idx + q.length + 55).trim() + ' …';
+      if (idx >= 0) return '본문 일치 — … ' + body.slice(Math.max(0, idx - 35), idx + q.length + 55).trim() + ' …';
     }
     return (p.excerpt || '').slice(0, 110) + '…';
   };

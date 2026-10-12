@@ -42,7 +42,7 @@ const GLOSSARY = [
   {
     term: 'eCPM',
     abbr: 'effective CPM',
-    body: '"1,000회 노출 시 기대 수익"으로 환산한 지표. CPM·CPC·CPA 광고를 한 줄에 비교하는 공통 통화. <strong>eCPM<sub>CPC</sub> = CPC × 예상 CTR × 1,000</strong>. 여기서 예상 CTR이 곧 pCTR 모델의 출력.'
+    body: '"1,000회 노출 시 기대 수익"으로 환산한 지표. CPM, CPC, CPA 광고를 한 줄에 비교하는 공통 통화. <strong>eCPM<sub>CPC</sub> = CPC × 예상 CTR × 1,000</strong>. 여기서 예상 CTR이 곧 pCTR 모델의 출력.'
   },
   {
     term: 'CPM / CPC / CPA',
@@ -60,7 +60,7 @@ const GLOSSARY = [
     term: 'pCTR / pCVR',
     match: ['pCTR', 'pCVR'],
     abbr: 'predicted CTR/CVR',
-    body: '<strong>예측 클릭률·전환율</strong>. 머신러닝 모델이 출력하는 확률값으로, 입찰가 계산의 입력이 된다. 정확도와 Calibration(보정)이 직접적으로 수익과 직결된다.'
+    body: '<strong>예측 클릭률, 전환율</strong>. 머신러닝 모델이 출력하는 확률값으로, 입찰가 계산의 입력이 된다. 정확도와 Calibration(보정)이 직접적으로 수익과 직결된다.'
   },
   {
     term: 'Bid Shading',
@@ -106,7 +106,7 @@ const GLOSSARY = [
   {
     term: 'LinUCB',
     abbr: 'Contextual Bandit',
-    body: 'UCB1을 <strong>Context Vector(유저 특성·시간대 등)</strong>로 확장. 개별 광고 ID가 아닌 피처 가중치를 학습해, 처음 보는 유저·광고에도 일반화 가능. Disjoint LinUCB가 가장 단순한 형태.'
+    body: 'UCB1을 <strong>Context Vector(유저 특성, 시간대 등)</strong>로 확장. 개별 광고 ID가 아닌 피처 가중치를 학습해, 처음 보는 유저, 광고에도 일반화 가능. Disjoint LinUCB가 가장 단순한 형태.'
   },
   {
     term: 'Regret',
@@ -116,17 +116,17 @@ const GLOSSARY = [
   {
     term: 'Calibration',
     abbr: '확률 보정',
-    body: 'pCTR 모델이 "1%"라고 출력한 광고들의 실제 CTR도 1%가 되어야 한다. AUC는 순서만 보지만 입찰가는 절대값을 쓰므로 <strong>Platt Scaling·Isotonic Regression</strong> 같은 보정이 필수.'
+    body: 'pCTR 모델이 "1%"라고 출력한 광고들의 실제 CTR도 1%가 되어야 한다. AUC는 순서만 보지만 입찰가는 절대값을 쓰므로 <strong>Platt Scaling, Isotonic Regression</strong> 같은 보정이 필수.'
   },
   {
     term: 'Attribution',
     abbr: '어트리뷰션',
-    body: '전환(구매·설치)이 어느 광고 접점 덕분인지 공로를 배분. <strong>Last-click</strong>(단순·편향), <strong>MTA</strong>(Multi-Touch), <strong>MMM</strong>(시계열 회귀), iOS ATT 시대의 <strong>SKAdNetwork</strong>가 공존.'
+    body: '전환(구매, 설치)이 어느 광고 접점 덕분인지 공로를 배분. <strong>Last-click</strong>(단순, 편향), <strong>MTA</strong>(Multi-Touch), <strong>MMM</strong>(시계열 회귀), iOS ATT 시대의 <strong>SKAdNetwork</strong>가 공존.'
   },
   {
     term: 'Walled Garden',
     abbr: '폐쇄형 생태계',
-    body: '네이버·카카오·Meta·Google처럼 <strong>DSP부터 매체까지 한 회사가 다 소유</strong>한 구조. Open RTB의 외부 DSP는 들어올 수 없고, 내부에서만 경매·측정이 완결된다. 데이터 독점 vs 효율의 트레이드오프.'
+    body: '네이버, 카카오, Meta, Google처럼 <strong>DSP부터 매체까지 한 회사가 다 소유</strong>한 구조. Open RTB의 외부 DSP는 들어올 수 없고, 내부에서만 경매, 측정이 완결된다. 데이터 독점 vs 효율의 트레이드오프.'
   },
 
   // 2026-09-18 추가 — 글에서 세 번 이상 나오면서 한 번도 안 풀리던 용어들
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <details class="glossary-item">
       <summary>
         <span>
-          ${g.term}${g.abbr ? `<span class="glossary-term-abbrev">· ${g.abbr}</span>` : ''}
+          ${g.term}${g.abbr ? `<span class="glossary-term-abbrev">/ ${g.abbr}</span>` : ''}
         </span>
       </summary>
       <div class="glossary-body">${g.body}</div>

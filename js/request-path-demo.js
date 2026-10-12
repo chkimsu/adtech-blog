@@ -31,7 +31,7 @@
     }
 
     if (cfg.ingress) {
-      steps.push({ name: 'Ingress', ok: true, note: '호스트·경로로 서비스를 고름' });
+      steps.push({ name: 'Ingress', ok: true, note: '호스트, 경로로 서비스를 고름' });
     } else if (cfg.services > 1) {
       steps.push({
         name: 'Ingress 없음', ok: false,
@@ -43,11 +43,11 @@
     }
 
     if (cfg.gateway) {
-      steps.push({ name: 'API Gateway', ok: true, note: '매체 키 확인 · 쿼터 차감 · 버전 분기' });
+      steps.push({ name: 'API Gateway', ok: true, note: '매체 키 확인, 쿼터 차감, 버전 분기' });
     } else if (cfg.media > 1) {
       steps.push({
         name: 'API Gateway 없음', ok: false,
-        note: '매체가 ' + cfg.media + '곳인데 인증·쿼터를 서비스 ' + cfg.services + '곳이 각자 구현해야 한다'
+        note: '매체가 ' + cfg.media + '곳인데 인증, 쿼터를 서비스 ' + cfg.services + '곳이 각자 구현해야 한다'
       });
       return steps;
     } else {
@@ -86,18 +86,18 @@
 
     var addrNote;
     if (!cfg.lb) addrNote = '묶어 줄 LB가 없다. 매체가 서버 주소를 하나씩 직접 들고 있어야 하고, 서버가 바뀔 때마다 매체 설정을 고쳐야 한다';
-    else if (cfg.ingress) addrNote = '이름 하나로 끝난다. 뒤에서 규칙표가 갈라 준다';
+    else if (cfg.ingress) addrNote = '이름 하나로 끝난다. 뒤에서 규칙표가 나눠 보낸다';
     else if (cfg.services === 1) addrNote = '서비스가 1개라 대표 주소도 하나로 끝난다';
     else addrNote = '서비스마다 대표 주소를 하나씩 세워야 한다. 그중 매체가 직접 부르는 것은 일부다';
 
     var targetNote;
     if (!cfg.lb) targetNote = '설정할 것이 없는 대신, 죽은 서버를 빼 주는 것도 없다';
-    else if (cfg.ingress) targetNote = 'LB 하나에 대상 그룹·헬스체크 한 벌';
+    else if (cfg.ingress) targetNote = 'LB 하나에 대상 그룹, 헬스체크 한 벌';
     else if (cfg.services === 1) targetNote = '서비스가 1개라 LB도 하나, 대상 그룹도 한 벌이다';
-    else targetNote = 'LB를 서비스 수만큼 세우면 대상 그룹·헬스체크도 그만큼 늘어난다';
+    else targetNote = 'LB를 서비스 수만큼 세우면 대상 그룹, 헬스체크도 그만큼 늘어난다';
 
     var quotaNote;
-    if (cfg.gateway) quotaNote = '게이트웨이 한 곳에서 매체 ' + cfg.media + '곳의 인증키·초당 허용량을 건다';
+    if (cfg.gateway) quotaNote = '게이트웨이 한 곳에서 매체 ' + cfg.media + '곳의 인증키, 초당 허용량을 건다';
     else if (quotaLost) quotaNote = '걸 자리가 없다. 규칙표에는 누가 보냈는지 적을 칸이 없어, 한 매체가 몰아쳐도 막지 못한다';
     else quotaNote = '매체가 1곳이라 나눠 걸 일이 없다';
 
@@ -114,7 +114,7 @@
       {
         label: '정책 구현 벌수', value: policy, unit: '벌',
         note: cfg.gateway
-          ? '인증·쿼터·버전 분기를 게이트웨이 한 곳에서 고친다'
+          ? '인증, 쿼터, 버전 분기를 게이트웨이 한 곳에서 고친다'
           : '서비스마다 각자 구현하고, 정책이 바뀌면 그 수만큼 따로 고친다'
       },
       { label: '매체별 쿼터', value: quota, unit: '벌', lost: quotaLost, note: quotaNote },
@@ -148,7 +148,7 @@
     return /없음$/.test(step.name) ? 'skip' : 'pass';
   }
 
-  var MARK = { pass: '✓', skip: '–', stop: '×', ghost: '·' };
+  var MARK = { pass: '✓', skip: '–', stop: '×', ghost: '…' };
 
   function stepHTML(name, note, state, extra) {
     return '<div class="rp-step is-' + state + '">' +

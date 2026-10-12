@@ -309,7 +309,7 @@
         ' 다. 이 상태에서는 지표로 성과를 판정할 수 없다. 남는 길은 무작위 실험뿐이다.';
     }
     if (!s.label) {
-      return '<strong>먼저 부서진 것은 라벨이다.</strong> 계기 2, 3, 4 가 같이 내려갔는데 계기 1(타겟팅)은 그대로다. ' +
+      return '<strong>먼저 빠진 것은 라벨이다.</strong> 계기 2, 3, 4 가 같이 내려갔는데 계기 1(타겟팅)은 그대로다. ' +
         '집계 라벨은 계수를 비틀지 않는다. 대신 흔들림이 ' + SD_MULT + '배라 같은 정밀도까지 데이터가 ' +
         DATA_MULT + '배 필요하다. 유효 표본이 ' + num(m.effective) + '줄로 주저앉은 것이 그 값이다.';
     }
@@ -319,7 +319,7 @@
         ' 만 내려갔고, 열린 RTB 는 ' + m.aucOpen.toFixed(3) + ' 다. 담장 안이 덜 다치는 이유가 이 조합이다.';
     }
     if (!s.idfa) {
-      return '<strong>라벨이 절반 부서졌다.</strong> iOS 앱 ' + num(POOL.ios) + '건과 MMP 앱 ' +
+      return '<strong>라벨이 절반 빠졌다.</strong> iOS 앱 ' + num(POOL.ios) + '건과 MMP 앱 ' +
         num(POOL.mmp) + '건이 집계로 바뀌었다. 그중 ' + pct(NOVALUE_RATE * 100) +
         ' 는 값 없이 건수만 온다. 나머지 ' + num(m.ind) + '건은 아직 사람에 붙는다.';
     }
@@ -339,7 +339,7 @@
         AUC.cookie[0].toFixed(3) + ' 내려갔고 광고주 픽셀 ' + num(POOL.pixel) + '건이 끊겼다. ' +
         '학습 코드는 그대로 돈다. 성능이 내려가는 문제지 학습이 성립하느냐의 문제가 아니다.';
     }
-    return '<strong>아직 아무것도 안 부서졌다.</strong> 전환 ' + num(CONV_TOTAL) +
+    return '<strong>아직 아무것도 빠지지 않았다.</strong> 전환 ' + num(CONV_TOTAL) +
       '건이 전부 줄 단위로 사람에 붙는다. 왼쪽 스위치를 위에서부터 하나씩 내려 보라. ' +
       '세 번째(유저 단위 전환 라벨)에서 계기 셋이 한꺼번에 내려간다.';
   }

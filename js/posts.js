@@ -1339,7 +1339,7 @@ const series = {
   },
   'judgment-track': {
     title: '판단, 측정 트랙',
-    desc: '모델을 만든 다음의 문제 — 어떤 지표를 믿을지, 배포 전에 로그로 어떻게 채점할지, 내 데이터가 어떻게 오염되는지, 광고가 진짜 만든 몫은 얼마인지, 신호가 줄어드는 세계에서 무엇이 먼저 부서지는지',
+    desc: '모델을 만든 다음의 문제 — 어떤 지표를 믿을지, 배포 전에 로그로 어떻게 채점할지, 내 데이터가 어떻게 오염되는지, 광고가 진짜 만든 몫은 얼마인지, 신호가 줄어드는 세계에서 무엇이 먼저 빠지는지',
     posts: ['offline-metrics-gauc', 'offpolicy-evaluation', 'doubly-robust', 'feedback-loop-bias', 'feedback-loop-remedies', 'uplift-incrementality', 'privacy-signal-loss'],
   },
   'kakao-adtech': {

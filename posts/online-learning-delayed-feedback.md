@@ -888,7 +888,7 @@ $$\log L = \sum_{i \in \text{도착}} \log \left( \lambda e^{-\lambda d_i} \righ
 
 구분하는 방법은 4절의 $F_d$를 그대로 쓰는 것입니다. 어제 12시 클릭이라면 지금까지 도착할 확률이 얼마인지 계산해서, 관측값을 그 확률로 나눠 봅니다. 나눈 값이 평소 수준이면 지연 때문입니다. 나눈 값도 낮으면 진짜 하락입니다. 지연을 감안하지 않은 대시보드는 매일 아침 가짜 경보를 울립니다.
 
-그래서 모니터링 지표는 **확정 속도**로 줄을 세우는 게 좋습니다. 가장 먼저 무너지는 신호가 가장 쓸모 있습니다. CTR과 Calibration Gap은 수 분 안에 확정됩니다. 피처 분포(PSI)는 지연이 아예 없습니다. 입력이 들어오는 순간 잴 수 있기 때문입니다. 반대로 CVR 계열은 며칠이 걸립니다. 그래서 실무 순서는 이렇습니다. 먼저 PSI로 입력이 변했는지 보고, 다음으로 Calibration Gap으로 출력이 틀어졌는지 보고, 마지막에 CVR로 확인합니다. 원본 로그가 어디서 어떤 지연으로 흘러오는지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에서 다룹니다.
+그래서 모니터링 지표는 **확정 속도**로 줄을 세우는 게 좋습니다. 가장 먼저 나빠지는 신호가 가장 쓸모 있습니다. CTR과 Calibration Gap은 수 분 안에 확정됩니다. 피처 분포(PSI)는 지연이 아예 없습니다. 입력이 들어오는 순간 잴 수 있기 때문입니다. 반대로 CVR 계열은 며칠이 걸립니다. 그래서 실무 순서는 이렇습니다. 먼저 PSI로 입력이 변했는지 보고, 다음으로 Calibration Gap으로 출력이 틀어졌는지 보고, 마지막에 CVR로 확인합니다. 원본 로그가 어디서 어떤 지연으로 흘러오는지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에서 다룹니다.
 
 ### 핵심 모니터링 지표
 
@@ -975,7 +975,7 @@ $$\log L = \sum_{i \in \text{도착}} \log \left( \lambda e^{-\lambda d_i} \righ
 
 6. **무대에 따라 처방이 다르다** — 담장 안은 전환이 자사 결제 로그로 들어와 유실이 없습니다. 짧은 윈도우와 역수 가중이 잘 먹습니다. 열린 RTB는 포스트백이 외부에서 오고 일부는 영원히 안 옵니다. 유실을 지연으로 착각하면 보정이 반대로 틀어집니다.
 
-7. **pCTR 정확도의 체인은 여기서도 이어진다** — 모델이 낡아지면 pCTR이 부정확해지고, True Value가 틀어지고, 입찰가가 비효율적이 되고, 결국 광고주 ROI가 하락합니다. [Feature Store](post.html?id=feature-store-serving) → Online Learning → [Auto-Bidding](post.html?id=auto-bidding-pacing)의 체인이 하나라도 끊어지면 전체가 무너집니다.
+7. **pCTR 정확도의 체인은 여기서도 이어진다** — 모델이 낡아지면 pCTR이 부정확해지고, True Value가 틀어지고, 입찰가가 비효율적이 되고, 결국 광고주 ROI가 하락합니다. [Feature Store](post.html?id=feature-store-serving) → Online Learning → [Auto-Bidding](post.html?id=auto-bidding-pacing)의 체인이 하나라도 끊어지면 전체가 제대로 동작하지 않습니다.
 
 ---
 

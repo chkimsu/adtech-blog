@@ -316,7 +316,7 @@ print(f"\n2분에서 10분으로 늘리면 {gain:,}건을 더 건지고 값은 8
 
 - [Kafka 기초](post.html?id=kafka-log-pipeline) — topic `ad.click` 의 partition 12 개와 key `req_id` 가 어떻게 정해졌나. 노출과 클릭을 이어 붙이는 3시간 윈도우도 여기 있습니다.
 - [피처 스토어](post.html?id=feature-store-serving) — 스트리밍 피처가 Redis 를 거쳐 서빙에 닿는 경로 전체와, 학습과 서빙이 다른 값을 보는 문제의 다른 사례들.
-- [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering) — 피처를 만드는 윈도우와 라벨이 나온 시각이 겹치면 무엇이 무너지나.
+- [CTR 피처 엔지니어링](post.html?id=ctr-feature-engineering) — 피처를 만드는 윈도우와 라벨이 나온 시각이 겹치면 무엇이 잘못되나.
 - [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback) — 라벨이 며칠에 걸쳐 올 때 기다리는 쪽과 고쳐 쓰는 쪽의 계산.
 - [서빙 지연과 처리량](post.html?id=serving-latency-throughput) — 광고 점수를 매기는 8밀리초 예산이 어디서 나왔나.
 - [스트림 집계 카드 네 장](demo-window-cards.html) — 이 글의 카드 전체. 카드를 누르면 헷갈리는 것 하나가 더 나옵니다.

@@ -32,12 +32,12 @@
     // 셋을 다 빼면 0.762 - 0.068 = 0.694 / 0.771 - 0.012 = 0.759 — 글 3절 표와 같다
   };
 
-  // 4절 — 집계로 오면 규모가 작은 칸은 값을 못 받는다(940건 중 415건이 값 없음)
+  // 4절 — 집계로 오면 규모가 작은 조합은 값을 못 받는다(940건 중 415건이 값 없음)
   const VALUE_RATE = 525 / 940;    // 0.5585 — 값이 오는 비율
   const NOVALUE_RATE = 415 / 940;  // 0.4415 — 건수만 오는 비율
 
   // 4절 조합표(값이 오는 23개 조합: 270 / 155 / 100건) × 7절 억제율(93.6 / 69.5 / 1.6%)
-  // → 집계로 온 전환 중 임계 억제로 칸째 지워지는 비율
+  // → 집계로 온 전환 중 임계 억제로 버킷째 지워지는 비율
   const SUPPRESS = (270 * 0.936 + 155 * 0.695 + 100 * 0.016) / 525; // 0.6896
 
   // 6절 — 집계 라벨의 계수 표준편차가 3.3배, 같은 정밀도까지 데이터 11배
@@ -46,7 +46,7 @@
 
   // 7절 — 라플라스 노이즈 b=20, 표준편차 28.3건, 50건 미만 억제
   const LAP_B = 20, LAP_SD = 28.3, SUPPRESS_CUT = 50;
-  const DIFF_SD = 40.0;            // 두 칸의 차이에 실리는 노이즈 표준편차
+  const DIFF_SD = 40.0;            // 두 버킷의 차이에 실리는 노이즈 표준편차
   const LEVELS = [10, 40, 120, 400, 1200, 4000];
   const REL_SD = [282.8, 70.7, 23.6, 7.1, 2.4, 0.7];   // 상대SD%
   const SUP_RATE = [93.6, 69.5, 1.6, 0.0, 0.0, 0.0];   // 억제율%
@@ -88,7 +88,7 @@
     const agg = s.label ? aggByIdfa : rest;
     const ind = rest - agg;                                  // 개인 라벨로 남는 건수
 
-    const suppressed = s.noise ? 0 : agg * SUPPRESS;         // 임계 억제로 칸째 지워짐
+    const suppressed = s.noise ? 0 : agg * SUPPRESS;         // 임계 억제로 버킷째 지워짐
     const survive = agg - suppressed;
     const aggValue = survive * VALUE_RATE;                   // 집계지만 값이 오는 건수
     const aggCount = survive * NOVALUE_RATE;                 // 건수만 오는 건수
@@ -181,10 +181,10 @@
 
   function drawConvLegend(m) {
     const rows = [
-      ['개인 라벨', m.ind, 'var(--navy)', '줄마다 사람이 붙는다. 손실 함수의 정답 칸이 그대로다'],
-      ['집계 · 값 있음', m.aggValue, 'var(--series-4)', '칸 합계로 온다. 같은 정밀도까지 데이터가 ' + DATA_MULT + '배 필요하다'],
+      ['개인 라벨', m.ind, 'var(--navy)', '줄마다 사람이 붙는다. 라벨 모양이 그대로다'],
+      ['집계 · 값 있음', m.aggValue, 'var(--series-4)', '버킷 합계로 온다. 같은 정밀도까지 데이터가 ' + DATA_MULT + '배 필요하다'],
       ['집계 · 건수만', m.aggCount, 'var(--grey)', '규모가 작아 값을 못 받았다. 건수는 온다'],
-      ['억제로 지워짐', m.suppressed, 'var(--oxide)', '노이즈를 더한 값이 ' + SUPPRESS_CUT + '건 미만이라 칸째 사라졌다'],
+      ['억제로 지워짐', m.suppressed, 'var(--oxide)', '노이즈를 더한 값이 ' + SUPPRESS_CUT + '건 미만이라 버킷째 사라졌다'],
       ['못 봄', m.lost, 'var(--series-5)', '광고주 픽셀이 안 붙어 아예 안 들어온다']
     ];
     let h = '';
@@ -324,10 +324,10 @@
         ' 는 값 없이 건수만 온다. 나머지 ' + num(m.ind) + '건은 아직 사람에 붙는다.';
     }
     if (!s.noise) {
-      return '<strong>리포트에 노이즈가 붙었다.</strong> 하루 전환 ' + num(m.n) + '건짜리 칸의 흔들림이 ' +
+      return '<strong>리포트에 노이즈가 붙었다.</strong> 하루 전환 ' + num(m.n) + '건짜리 버킷의 흔들림이 ' +
         pct(m.sampleRel * 100) + ' 에서 ' + pct(m.g4) + ' 로 커졌다. ' +
-        (m.agg > 0 ? '억제로 ' + num(m.suppressed) + '건이 칸째 지워졌다.'
-          : '아직 집계로 오는 전환이 없어 지워진 칸은 없다. 흔들림만 커졌다.');
+        (m.agg > 0 ? '억제로 ' + num(m.suppressed) + '건이 버킷째 지워졌다.'
+          : '아직 집계로 오는 전환이 없어 지워진 버킷은 없다. 흔들림만 커졌다.');
     }
     if (!s.freq) {
       return '<strong>모델 밖 규칙이 먼저 멈췄다.</strong> 상한 5회를 못 걸어 iOS 노출 ' + num(FREQ.imp) +
@@ -361,7 +361,7 @@
     const STATE_TEXT = {
       cookie: ['살아 있음', '끊김'],
       idfa: ['살아 있음', 'ATT 미동의로 못 읽음'],
-      label: ['줄마다 사람이 붙음', '칸 합계만 옴'],
+      label: ['줄마다 사람이 붙음', '버킷 합계만 옴'],
       freq: ['상한 5회를 건다', '같은 사람인지 판정 불가'],
       noise: ['원본 그대로', '라플라스 b=' + LAP_B + ' · ' + SUPPRESS_CUT + '건 미만 억제']
     };

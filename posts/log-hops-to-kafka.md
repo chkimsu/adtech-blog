@@ -10,7 +10,7 @@
 
 > **골라 읽는 법** — 절이 여덟 개입니다.
 >
-> - 앱 안에서 무슨 일이 생기나 → 1·2절
+> - 앱 안에서 무슨 일이 생기나 → 1, 2절
 > - 수집 서버 안의 데이터가 왜 타입이 없나 → 3절
 > - 파일을 거치나 바로 보내나 → 4절
 > - 한 줄이 네 건이 되는 자리 → 5절
@@ -87,7 +87,7 @@ log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
 121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}
 ```
 
-183바이트입니다. 뒤쪽 중괄호 85바이트는 2절의 요청 본문 그대로입니다. 앞의 98바이트가 서버가 붙인 것인데, 보낸 IP·받은 시각·메서드·경로·상태 코드·처리 시간·앱 이름표 일곱입니다. `$time_iso8601` 이 서버 시계로 잰 시각인데 값이 초까지만 있습니다. 밀리초가 필요하면 `$msec` 를 형식에 더해야 합니다.
+183바이트입니다. 뒤쪽 중괄호 85바이트는 2절의 요청 본문 그대로입니다. 앞의 98바이트가 서버가 붙인 것인데, 보낸 IP, 받은 시각, 메서드, 경로, 상태 코드, 처리 시간, 앱 이름표 일곱입니다. `$time_iso8601` 이 서버 시계로 잰 시각인데 값이 초까지만 있습니다. 밀리초가 필요하면 `$msec` 를 형식에 더해야 합니다.
 
 **이 줄에는 타입이 없습니다.** `9931` 도 `204` 도 `0.002` 도 전부 글자입니다. 파일 안에서 보면 `9`, `9`, `3`, `1` 네 글자가 이어져 있을 뿐입니다. `ad_id` 를 숫자로 쓰려면 누군가 정수로 바꿔야 하고, 그 자리가 6절입니다.
 
@@ -200,7 +200,7 @@ flowchart LR
 |---|---|---|
 | 쪼개기 | `message` 문자열을 필드로 엽니다 | envelope 필드 4개 → 원문이 열립니다 |
 | 타입 붙이기 | 문자열을 숫자로 | `"9931"` → `9931` |
-| 보강 | 밖에서 값을 가져와 붙입니다 | 앱 이름표 → `device`·`os` / IP → 그대로 / `ad_id` → `campaign_id`·`advertiser_id`·`cost`·`media` |
+| 보강 | 밖에서 값을 가져와 붙입니다 | 앱 이름표 → `device`, `os` / IP → 그대로 / `ad_id` → `campaign_id`, `advertiser_id`, `cost`, `media` |
 | 지우기 | 이벤트와 무관한 것 | `ts`(폰 시계), envelope 필드 |
 | 검증 | 스키마에 안 맞으면 뺍니다 | 기기 시계가 서버보다 앞서면 따로 뺍니다 |
 
@@ -243,7 +243,7 @@ flowchart LR
 
 | # | 어디 | 무슨 모양 | 크기 | 머뭅니다 | 여기서 죽으면 사라지는 것 |
 |---|---|---|---|---|---|
-| ① | 앱 SDK 큐 | 객체 | 110 B | 클릭 0초 · 노출 최대 5초 | 앱이 죽으면 메모리 큐에 있던 것 |
+| ① | 앱 SDK 큐 | 객체 | 110 B | 클릭 0초, 노출 최대 5초 | 앱이 죽으면 메모리 큐에 있던 것 |
 | ② | 네트워크 | HTTP 요청 본문 | 85 B | 168 ms | 응답을 못 받으면 재전송 → 중복 |
 | ③ | 수집 서버 | 텍스트 한 줄 | 183 B | 2 ms | 로그 버퍼 32KB(최대 179줄) |
 | ④ | 로컬 파일 | 텍스트 한 줄 | 183 B | 640 ms | 인스턴스가 사라지면 안 읽은 끝부분 |
@@ -273,7 +273,7 @@ flowchart LR
 <text x="30" y="39">앱 SDK 큐</text><text x="30" y="75">네트워크</text><text x="30" y="111">수집 서버</text><text x="30" y="147">로컬 파일</text><text x="30" y="183">수집 에이전트</text><text x="30" y="219">변환기</text>
 </g>
 <g style="font-size:12.5px; fill:var(--text-muted)">
-<text x="30" y="54">클릭 0초 · 노출 최대 5초</text><text x="30" y="90">168 ms</text><text x="30" y="126">2 ms</text><text x="30" y="162">640 ms</text><text x="30" y="198">46 ms</text><text x="30" y="234">220 ms</text>
+<text x="30" y="54">클릭 0초, 노출 최대 5초</text><text x="30" y="90">168 ms</text><text x="30" y="126">2 ms</text><text x="30" y="162">640 ms</text><text x="30" y="198">46 ms</text><text x="30" y="234">220 ms</text>
 </g>
 <g style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5">
 <rect x="290" y="29" width="53" height="12" rx="2"/><rect x="290" y="65" width="41" height="12" rx="2"/><rect x="290" y="101" width="88" height="12" rx="2"/><rect x="290" y="137" width="88" height="12" rx="2"/>
@@ -341,7 +341,7 @@ flowchart LR
 
 ## 더 깊이 보기
 
-- 이 다음은 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다. 이 글이 브로커 문 앞에서 끝난 자리에서 시작해 topic·partition·consumer group·offset 을 봅니다.
+- 이 다음은 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다. 이 글이 브로커 문 앞에서 끝난 자리에서 시작해 topic, partition, consumer group, offset 을 봅니다.
 - 앞 글인 [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) 편은 같은 클릭 한 건을 모양이 아니라 **방향**으로 봅니다. 누가 밀고 누가 가지러 가는지입니다.
 - 2절의 재전송과 중복은 [API 연동 실무](post.html?id=api-kinds-and-contracts) 편 5절이 전환 1,000건으로 값을 냅니다.
 - 수집 계층의 나머지 — 스키마가 바뀌는 동안 읽는 쪽을 안 깨는 방법은 [광고 로그 시스템 설계](post.html?id=ad-log-system) 편에 있습니다.

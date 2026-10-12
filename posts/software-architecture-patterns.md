@@ -49,7 +49,7 @@
 
 생산자와 소비자가 서로를 몰라도 되니, 한쪽을 바꾸거나 새 소비자를 추가해도 다른 쪽이 영향을 받지 않습니다. 이걸 **느슨한 결합(loose coupling)**이라고 합니다.
 
-**좋을 때** — 알림·결제·로그처럼 "한 사건 → 여러 처리"가 많을 때, 트래픽이 갑자기 몰려도 브로커의 큐가 완충해 줍니다. **조심할 점** — 흐름이 눈에 안 보여서, "이 사건이 누구를 거쳐 어디로 갔지?" 추적이 어렵습니다.
+**좋을 때** — 알림, 결제, 로그처럼 "한 사건 → 여러 처리"가 많을 때, 트래픽이 갑자기 몰려도 브로커의 큐가 완충해 줍니다. **조심할 점** — 흐름이 눈에 안 보여서, "이 사건이 누구를 거쳐 어디로 갔지?" 추적이 어렵습니다.
 
 ---
 
@@ -60,7 +60,7 @@
 ```python
 # "직접 부르기"와 "이벤트로 알리기"는 무엇이 다른가 — 가용성으로 본다.
 #
-# 상황: 주문 서비스가 결제·재고·알림 세 서비스를 써야 한다.
+# 상황: 주문 서비스가 결제, 재고, 알림 세 서비스를 써야 한다.
 #   방식 A(직접 호출): 주문 → 결제 → 재고 → 알림 을 차례로 부르고 답을 기다린다.
 #                     하나라도 죽으면 주문이 실패한다.
 #   방식 B(이벤트):    주문은 "주문됨" 한 줄만 남기고 끝낸다.
@@ -138,7 +138,7 @@ print("→ 그래서 고를 기준은 이것이다: 이 일은 '지금 당장' �
 
 그런데 공짜가 아닙니다. **"주문은 됐는데 알림이 아직 안 갔다"는 상태가 새로 생깁니다.** 알림 서비스가 30분 죽으면 주문 6천 건의 알림이 밀립니다. 주문 자체는 다 성공했지만, 사용자는 "결제됐다는 문자가 안 오네?"라고 느낍니다.
 
-그래서 고를 기준은 하나입니다. **이 일은 "지금 당장" 끝나야 하나, "언젠가" 끝나면 되나.** 결제 승인은 지금 당장이어야 합니다. 알림·집계·추천 갱신은 언젠가여도 됩니다.
+그래서 고를 기준은 하나입니다. **이 일은 "지금 당장" 끝나야 하나, "언젠가" 끝나면 되나.** 결제 승인은 지금 당장이어야 합니다. 알림, 집계, 추천 갱신은 언젠가여도 됩니다.
 
 ---
 
@@ -178,7 +178,7 @@ print("→ 그래서 고를 기준은 이것이다: 이 일은 '지금 당장' �
 <line x1="410" y1="176" x2="440" y2="176" style="stroke:var(--text-muted); stroke-width:1.4; stroke-dasharray:5 4"/>
 <line x1="410" y1="244" x2="440" y2="244" style="stroke:var(--text-muted); stroke-width:1.4; stroke-dasharray:5 4"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">요청은 위에서 아래로 한 층씩 내려간다. 각 층은 바로 아래 층만 알면 돼서 역할 구분이 깔끔하다. 인프라(로깅·보안 등)는 모든 층을 받친다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">요청은 위에서 아래로 한 층씩 내려간다. 각 층은 바로 아래 층만 알면 돼서 역할 구분이 깔끔하다. 인프라(로깅, 보안 등)는 모든 층을 받친다.</figcaption>
 </figure>
 
 층이 나뉘어 있으니 **"어디를 고쳐야 하는지"가 분명**합니다. 화면을 바꾸고 싶으면 맨 위 층만, 저장 방식을 바꾸고 싶으면 아래 두 층만 건드리면 됩니다. 가장 전통적이고 이해하기 쉬운 구조라 많은 앱의 기본 골격이 됩니다.
@@ -194,7 +194,7 @@ print("→ 그래서 고를 기준은 이것이다: 이 일은 '지금 당장' �
 모놀리식은 **모든 기능을 하나의 덩어리로 만들어 통째로 배포**하는 방식입니다. 게시글, 댓글, 그룹, 미디어… 전부 한 프로그램 안에 들어 있습니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 600 220" role="img" aria-label="사용자가 하나의 큰 애플리케이션에 접속하고, 그 안에 게시글·댓글·그룹·미디어 기능이 모두 들어 있으며, 하나의 데이터베이스를 함께 쓴다." style="width:100%; max-width:580px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 600 220" role="img" aria-label="사용자가 하나의 큰 애플리케이션에 접속하고, 그 안에 게시글, 댓글, 그룹, 미디어 기능이 모두 들어 있으며, 하나의 데이터베이스를 함께 쓴다." style="width:100%; max-width:580px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="mo-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -234,7 +234,7 @@ print("→ 그래서 고를 기준은 이것이다: 이 일은 '지금 당장' �
 사용자 요청은 먼저 **API 게이트웨이**를 거칩니다. 게이트웨이가 "이 요청은 장바구니 담당" 하고 알맞은 서비스로 보내줍니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 600 290" role="img" aria-label="사용자 요청이 API 게이트웨이를 거쳐 상품·장바구니·할인·주문 네 개의 독립 서비스로 분배되고, 각 서비스는 자기만의 데이터베이스를 가진다." style="width:100%; max-width:600px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 600 290" role="img" aria-label="사용자 요청이 API 게이트웨이를 거쳐 상품, 장바구니, 할인, 주문 네 개의 독립 서비스로 분배되고, 각 서비스는 자기만의 데이터베이스를 가진다." style="width:100%; max-width:600px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="ms-arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -271,12 +271,12 @@ print("→ 그래서 고를 기준은 이것이다: 이 일은 '지금 당장' �
 <text x="470" y="71">DB</text><text x="470" y="129">DB</text><text x="470" y="187">DB</text><text x="470" y="245">DB</text>
 </g>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">기능마다 독립 서비스 + 독립 DB. 한 서비스만 따로 배포·확장할 수 있고, 하나가 죽어도 나머지는 산다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">기능마다 독립 서비스 + 독립 DB. 한 서비스만 따로 배포, 확장할 수 있고, 하나가 죽어도 나머지는 산다.</figcaption>
 </figure>
 
 각 서비스가 독립적이라 **따로따로 배포하고, 필요한 것만 골라 확장**할 수 있습니다. 주문이 몰리면 주문 서비스만 늘리면 됩니다. 한 서비스가 죽어도 나머지는 계속 돌아갑니다(모놀리식과 정반대).
 
-**좋을 때** — 서비스가 크고, 팀이 여럿이고, 부분별로 다르게 확장하고 싶을 때. **조심할 점** — 쪼갠 만큼 **사이의 통신·관리가 복잡**해집니다. 네트워크로 대화하니 느려질 수 있고, 운영 난이도가 확 올라갑니다. "처음부터 마이크로서비스"는 대개 과합니다.
+**좋을 때** — 서비스가 크고, 팀이 여럿이고, 부분별로 다르게 확장하고 싶을 때. **조심할 점** — 쪼갠 만큼 **사이의 통신, 관리가 복잡**해집니다. 네트워크로 대화하니 느려질 수 있고, 운영 난이도가 확 올라갑니다. "처음부터 마이크로서비스"는 대개 과합니다.
 
 ---
 
@@ -309,7 +309,7 @@ MICRO_FAIL_RATE = 0.025
 micro_incidents = micro_deploys * MICRO_FAIL_RATE
 micro_affected = micro_incidents * micro_blast
 
-print(f"기능 {FEATURES}개 · 기능당 월 {DEPLOYS_PER_FEATURE}회 배포 · 사용자 {USERS:,}명\n")
+print(f"기능 {FEATURES}개, 기능당 월 {DEPLOYS_PER_FEATURE}회 배포, 사용자 {USERS:,}명\n")
 print(f"{'':16}{'월 배포':>8}{'사고 건수':>11}{'1건당 영향':>13}{'월 영향 사용자':>16}")
 print(f"{'모놀리식':16}{mono_deploys:>8}{mono_incidents:>10.1f}건{mono_blast:>12,.0f}{mono_affected:>15,.0f}")
 print(f"{'마이크로서비스':14}{micro_deploys:>8}{micro_incidents:>10.1f}건{micro_blast:>12,.0f}{micro_affected:>15,.0f}")
@@ -329,13 +329,13 @@ for n in (1, 4, 8, 20):
     pairs = n * (n - 1) // 2
     print(f"{n:>9}개{pairs:>16}개")
 print("  → 서비스 20개면 서로 얽힐 수 있는 짝이 190개다.")
-print("  → 코드가 아니라 '사이'를 관리하는 일이 새로 생긴다(추적·재시도·타임아웃).")
+print("  → 코드가 아니라 '사이'를 관리하는 일이 새로 생긴다(추적, 재시도, 타임아웃).")
 print()
 print("→ 마이크로서비스는 '더 안전한 구조'가 아니다. 장애가 미치는 범위를 좁히는 구조다.")
 print("→ 기능이 적고 팀이 작다면 모놀리식이 오히려 사고가 적다. 관리할 '사이'가 없으니까.")
 
 # 출력:
-# 기능 8개 · 기능당 월 4회 배포 · 사용자 1,000,000명
+# 기능 8개, 기능당 월 4회 배포, 사용자 1,000,000명
 #
 #                     월 배포      사고 건수       1건당 영향        월 영향 사용자
 # 모놀리식                  32       0.6건   1,000,000        640,000
@@ -355,7 +355,7 @@ print("→ 기능이 적고 팀이 작다면 모놀리식이 오히려 사고가
 #         8개              28개
 #        20개             190개
 #   → 서비스 20개면 서로 얽힐 수 있는 짝이 190개다.
-#   → 코드가 아니라 '사이'를 관리하는 일이 새로 생긴다(추적·재시도·타임아웃).
+#   → 코드가 아니라 '사이'를 관리하는 일이 새로 생긴다(추적, 재시도, 타임아웃).
 #
 # → 마이크로서비스는 '더 안전한 구조'가 아니다. 장애가 미치는 범위를 좁히는 구조다.
 # → 기능이 적고 팀이 작다면 모놀리식이 오히려 사고가 적다. 관리할 '사이'가 없으니까.
@@ -377,14 +377,14 @@ print("→ 기능이 적고 팀이 작다면 모놀리식이 오히려 사고가
 
 > 한 줄로: 사용자 입력을 Controller가 받아 Model에 넘기고, Model이 만든 결과를 View가 화면으로 보여준다.
 
-MVC는 한 화면을 **Model·View·Controller 세 역할로 나누는** 방식입니다. 주로 화면이 있는 앱(웹, 모바일)에서 씁니다.
+MVC는 한 화면을 **Model, View, Controller 세 역할로 나누는** 방식입니다. 주로 화면이 있는 앱(웹, 모바일)에서 씁니다.
 
 - **Model** — 데이터와 규칙. 실제 일을 한다.
 - **View** — 사용자에게 보이는 화면.
 - **Controller** — 사용자 입력을 받아 Model과 View를 잇는 중재자.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 600 280" role="img" aria-label="사용자의 액션을 컨트롤러가 받아 모델을 갱신·조회하고 모델은 DB와 데이터를 주고받는다. 컨트롤러가 뷰를 만들고 뷰가 사용자에게 화면을 보여주는 순환 구조." style="width:100%; max-width:580px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 600 280" role="img" aria-label="사용자의 액션을 컨트롤러가 받아 모델을 갱신, 조회하고 모델은 DB와 데이터를 주고받는다. 컨트롤러가 뷰를 만들고 뷰가 사용자에게 화면을 보여주는 순환 구조." style="width:100%; max-width:580px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="mv-arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 <marker id="mv-arr2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" style="fill:var(--accent-secondary)"/></marker>
@@ -399,7 +399,7 @@ MVC는 한 화면을 **Model·View·Controller 세 역할로 나누는** 방식�
 <text x="510" y="81" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">화면</text>
 <rect x="232" y="196" width="146" height="52" rx="9" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.6"/>
 <text x="305" y="220" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">Model</text>
-<text x="305" y="237" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">데이터·규칙</text>
+<text x="305" y="237" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">데이터, 규칙</text>
 <path d="M470,210 v18 a28,7 0 0,0 56,0 v-18" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <ellipse cx="498" cy="210" rx="28" ry="7" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <text x="498" y="226" text-anchor="middle" style="font-size:11px; font-weight:700; fill:var(--accent-secondary)">DB</text>
@@ -408,13 +408,13 @@ MVC는 한 화면을 **Model·View·Controller 세 역할로 나누는** 방식�
 <line x1="378" y1="66" x2="438" y2="66" style="stroke:var(--accent-primary); stroke-width:1.8" marker-end="url(#mv-arr)"/>
 <text x="408" y="56" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">② 화면 생성</text>
 <line x1="305" y1="92" x2="305" y2="194" style="stroke:var(--accent-primary); stroke-width:1.8" marker-end="url(#mv-arr)"/>
-<text x="356" y="148" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">③ 갱신·조회</text>
+<text x="356" y="148" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">③ 갱신, 조회</text>
 <line x1="378" y1="222" x2="466" y2="222" style="stroke:var(--accent-secondary); stroke-width:1.6" marker-end="url(#mv-arr2)" marker-start="url(#mv-arr2)"/>
 <text x="420" y="212" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">④ 데이터</text>
 <line x1="440" y1="86" x2="84" y2="150" style="stroke:var(--accent-primary); stroke-width:1.8" marker-end="url(#mv-arr)"/>
 <text x="250" y="116" text-anchor="middle" style="font-size:10.5px; fill:var(--text-muted)">⑤ 화면 표시</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">사용자 액션 → 컨트롤러 → (모델 갱신·DB) → 뷰 생성 → 사용자에게 표시. 역할이 셋으로 나뉘어, 화면만 바꾸거나 로직만 바꾸기 쉽다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">사용자 액션 → 컨트롤러 → (모델 갱신, DB) → 뷰 생성 → 사용자에게 표시. 역할이 셋으로 나뉘어, 화면만 바꾸거나 로직만 바꾸기 쉽다.</figcaption>
 </figure>
 
 화면(View)과 로직(Model)이 분리돼 있어, **디자인을 갈아엎어도 로직은 그대로** 둘 수 있습니다. 반대도 마찬가지. 그래서 거의 모든 웹/앱 프레임워크의 기본 사고방식이 됐습니다.
@@ -445,15 +445,15 @@ MVC는 한 화면을 **Model·View·Controller 세 역할로 나누는** 방식�
 <path d="M282,44 v52 a48,11 0 0,0 96,0 v-52" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
 <ellipse cx="330" cy="44" rx="48" ry="11" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
 <text x="330" y="70" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">마스터</text>
-<text x="330" y="86" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">Primary · 쓰기</text>
+<text x="330" y="86" text-anchor="middle" style="font-size:10px; fill:var(--text-muted)">Primary, 쓰기</text>
 <path d="M282,190 v46 a48,10 0 0,0 96,0 v-46" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <ellipse cx="330" cy="190" rx="48" ry="10" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <text x="330" y="214" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--accent-secondary)">복제본 1</text>
-<text x="330" y="229" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">Replica · 읽기</text>
+<text x="330" y="229" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">Replica, 읽기</text>
 <path d="M472,190 v46 a48,10 0 0,0 96,0 v-46" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <ellipse cx="520" cy="190" rx="48" ry="10" style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.5"/>
 <text x="520" y="214" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--accent-secondary)">복제본 2</text>
-<text x="520" y="229" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">Replica · 읽기</text>
+<text x="520" y="229" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">Replica, 읽기</text>
 <line x1="110" y1="122" x2="280" y2="74" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#md-arr)"/>
 <text x="188" y="86" text-anchor="middle" style="font-size:11px; fill:var(--accent-primary); font-weight:700">쓰기 write</text>
 <line x1="110" y1="150" x2="280" y2="206" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#md-arr)"/>
@@ -490,7 +490,7 @@ CAPACITY_PER_NODE = 2_000   # 서버 한 대가 감당하는 초당 요청 (가�
 reads = TOTAL_QPS * READ_SHARE
 writes = TOTAL_QPS - reads
 
-print(f"총 {TOTAL_QPS:,} QPS · 읽기 {reads:,.0f} ({READ_SHARE:.0%}) · 쓰기 {writes:,.0f}")
+print(f"총 {TOTAL_QPS:,} QPS, 읽기 {reads:,.0f} ({READ_SHARE:.0%}), 쓰기 {writes:,.0f}")
 print(f"서버 1대 처리량 {CAPACITY_PER_NODE:,} QPS (가상 수치)\n")
 
 # ── 원본 1대로만 버티려면 ──
@@ -530,7 +530,7 @@ print(f"  글을 쓴 직후 새로고침하면 {LAG_MS}ms 안에는 '방금 쓴 
 print("  그래서 '내가 쓴 것'은 원본에서 읽고, '남이 쓴 것'만 복사본에서 읽는 규칙을 둔다.")
 
 # 출력:
-# 총 12,000 QPS · 읽기 11,400 (95%) · 쓰기 600
+# 총 12,000 QPS, 읽기 11,400 (95%), 쓰기 600
 # 서버 1대 처리량 2,000 QPS (가상 수치)
 #
 # ① 원본 1대만 쓸 때
@@ -573,11 +573,11 @@ print("  그래서 '내가 쓴 것'은 원본에서 읽고, '남이 쓴 것'만 
 
 | 패턴 | 한 줄 핵심 | 이럴 때 |
 |---|---|---|
-| 이벤트 기반 | 사건으로 느슨하게 대화 | 알림·결제 등 "한 사건 → 여러 처리" |
+| 이벤트 기반 | 사건으로 느슨하게 대화 | 알림, 결제 등 "한 사건 → 여러 처리" |
 | 계층형 | 책임을 위아래 층으로 | 역할 구분이 중요한 일반 앱 |
-| 모놀리식 | 한 덩어리로 통째 배포 | 초기·소규모·단순한 서비스 |
+| 모놀리식 | 한 덩어리로 통째 배포 | 초기, 소규모, 단순한 서비스 |
 | 마이크로서비스 | 작은 서비스로 쪼갬 | 크고, 팀 여럿, 부분별 확장 |
-| MVC | 화면·로직·중재 분리 | 화면이 있는 거의 모든 앱 |
+| MVC | 화면, 로직, 중재 분리 | 화면이 있는 거의 모든 앱 |
 | 마스터-슬레이브 | 읽기/쓰기 분산 | 읽기가 압도적으로 많을 때 |
 
 ### 고를 때 실제로 던지는 질문
@@ -611,4 +611,4 @@ print("  그래서 '내가 쓴 것'은 원본에서 읽고, '남이 쓴 것'만 
 
 ---
 
-시스템을 이렇게 설계했다면, 다음은 **실제로 돌리고 바깥에 노출하는** 일이 남습니다. 그 이야기는 [쿠버네티스 네트워킹 글](post.html?id=kubernetes-networking)에서 — Pod·Service·Ingress가 트래픽을 어떻게 흘려보내는지 같은 방식으로 풀어봅니다.
+시스템을 이렇게 설계했다면, 다음은 **실제로 돌리고 바깥에 노출하는** 일이 남습니다. 그 이야기는 [쿠버네티스 네트워킹 글](post.html?id=kubernetes-networking)에서 — Pod, Service, Ingress가 트래픽을 어떻게 흘려보내는지 같은 방식으로 풀어봅니다.

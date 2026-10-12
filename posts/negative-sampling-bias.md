@@ -349,7 +349,7 @@ for _ in range(N):
     log.append((seg, y))
 
 n_click = sum(y for _, y in log)
-print(f"원본 로그 {len(log):,}행 · 클릭 {n_click:,}건 · CTR {n_click / len(log):.2%}")
+print(f"원본 로그 {len(log):,}행, 클릭 {n_click:,}건, CTR {n_click / len(log):.2%}")
 
 # 세그먼트별 실제 노출 수. 서빙에서 만나는 트래픽 분포다 — 평균 예측의 가중치로 쓴다.
 real_imp = {s: 0 for s in names}
@@ -394,29 +394,29 @@ for r in (1.0, 0.1, 0.01):
     train = downsample(log, r)
     model = fit(train)
     train_ctr = sum(y for _, y in train) / len(train)
-    print(f"r={r:<5} 행 {len(train):>7,} · 학습셋 CTR {train_ctr:6.2%}"
-          f" · 보정 전 {avg_pred(model):6.2%} · 보정 후 {avg_pred(model, r):6.2%}")
+    print(f"r={r:<5} 행 {len(train):>7,}, 학습셋 CTR {train_ctr:6.2%}"
+          f", 보정 전 {avg_pred(model):6.2%}, 보정 후 {avg_pred(model, r):6.2%}")
 
 # ── 6. r=0.1에서 세그먼트별로 뜯어보기 ────────────────────────────────
 model = fit(downsample(log, 0.1))
-print("\n[r=0.1] 세그먼트별 · 진짜 CTR · 모델 출력 · 보정 후")
+print("\n[r=0.1] 세그먼트별, 진짜 CTR, 모델 출력, 보정 후")
 for s in names:
     q = model[s]
-    print(f"  {s:<15} 진짜 {SEG_CTR[s]:6.2%} · 모델 {q:6.2%} · 보정 {correct(q, 0.1):6.2%}")
+    print(f"  {s:<15} 진짜 {SEG_CTR[s]:6.2%}, 모델 {q:6.2%}, 보정 {correct(q, 0.1):6.2%}")
 
 ratio = avg_pred(model) / avg_pred(model, 0.1)
 print(f"\n보정을 빼먹으면 평균 예측이 진짜의 {ratio:.1f}배 → 입찰가도 그만큼 부푼다")
 
 # 출력:
-# 원본 로그 500,000행 · 클릭 9,937건 · CTR 1.99%
-# r=1.0   행 500,000 · 학습셋 CTR  1.99% · 보정 전  1.99% · 보정 후  1.99%
-# r=0.1   행  58,931 · 학습셋 CTR 16.86% · 보정 전 15.14% · 보정 후  1.98%
-# r=0.01  행  14,821 · 학습셋 CTR 67.05% · 보정 전 54.43% · 보정 후  1.96%
+# 원본 로그 500,000행, 클릭 9,937건, CTR 1.99%
+# r=1.0   행 500,000, 학습셋 CTR  1.99%, 보정 전  1.99%, 보정 후  1.99%
+# r=0.1   행  58,931, 학습셋 CTR 16.86%, 보정 전 15.14%, 보정 후  1.98%
+# r=0.01  행  14,821, 학습셋 CTR 67.05%, 보정 전 54.43%, 보정 후  1.96%
 #
-# [r=0.1] 세그먼트별 · 진짜 CTR · 모델 출력 · 보정 후
-#   morning_mobile  진짜  0.50% · 모델  4.69% · 보정  0.49%
-#   evening_mobile  진짜  2.00% · 모델 17.33% · 보정  2.05%
-#   search_intent   진짜  5.00% · 모델 33.90% · 보정  4.88%
+# [r=0.1] 세그먼트별, 진짜 CTR, 모델 출력, 보정 후
+#   morning_mobile  진짜  0.50%, 모델  4.69%, 보정  0.49%
+#   evening_mobile  진짜  2.00%, 모델 17.33%, 보정  2.05%
+#   search_intent   진짜  5.00%, 모델 33.90%, 보정  4.88%
 #
 # 보정을 빼먹으면 평균 예측이 진짜의 7.7배 → 입찰가도 그만큼 부푼다
 ```
@@ -747,7 +747,7 @@ def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
 
 **담장 안에서는 $r$을 내가 정하고, 떨어진 광고의 점수까지 내 로그에 남습니다. 보정이 산수로 끝납니다.**
 
-네이버·카카오·메타처럼 자기 지면에 자기 광고를 붙이는 플랫폼을 담장 안이라고 부릅니다. 여기서는 노출 로그 전체가 내 것입니다. 그래서 3절의 다운샘플링 보정은 거의 공짜입니다. $r$을 내가 정했으니 값이 애초에 정확합니다. 추정할 것이 없으니 보정에 오차가 끼지 않습니다.
+네이버, 카카오, 메타처럼 자기 지면에 자기 광고를 붙이는 플랫폼을 담장 안이라고 부릅니다. 여기서는 노출 로그 전체가 내 것입니다. 그래서 3절의 다운샘플링 보정은 거의 공짜입니다. $r$을 내가 정했으니 값이 애초에 정확합니다. 추정할 것이 없으니 보정에 오차가 끼지 않습니다.
 
 4절의 Sample Selection Bias도 사정이 낫습니다. 후보에 올랐다가 떨어진 광고의 점수를 전부 로깅할 수 있습니다. 경매 후보 목록, 각자의 pCTR, 최종 순위가 모두 내 시스템 안에 있습니다. 그러면 propensity $e(x)$를 추정할 재료가 실제로 존재합니다. 탐색 트래픽도 내가 설계할 수 있습니다. 전체의 1~5%를 무작위 노출로 떼어 두면, 편향 없는 작은 데이터셋이 매일 쌓입니다.
 
@@ -803,7 +803,7 @@ def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
 ## 더 깊이 보기
 
 - pCTR의 정의와 eCPM 랭킹에서의 역할 → [pCTR 예측 모델링](post.html?id=pctr-prediction)
-- 보정 기법 일반론(Platt·Isotonic)과 P/O Ratio 읽는 법 → [Calibration](post.html?id=calibration)
+- 보정 기법 일반론(Platt, Isotonic)과 P/O Ratio 읽는 법 → [Calibration](post.html?id=calibration)
 - 자리 때문에 클릭이 왜곡되는 다른 편향 → [Position Bias & ULTR](post.html?id=position-bias-ultr)
 - 이 데이터를 먹고 자라는 모델 쪽 이야기 → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 로그가 학습 데이터가 되기까지의 경로 → [광고 로그 파이프라인](post.html?id=ad-log-pipeline)

@@ -8,19 +8,19 @@
 
 > **한 줄 요약:** 평균은 꼬리를 가리고, 같은 요청도 어디서 재느냐에 따라 예산 초과율이 3.72% 에서 19.42% 까지 벌어진다. API 팀과 맞출 것은 숫자 하나가 아니라 셋이다 — 어느 분위수를, 어느 지점에서, 어떤 부하에서 잰 값인가. 그리고 Grafana 는 그 셋을 다 바꿔 놓을 수 있다.
 
-> **골라 읽는 법** — 절이 열한 개인 글이다.
+> **골라 읽는 법** — 절이 11개인 글이다.
 >
 > - 요청 한 건이 지나가는 경로 → 1절
-> - latency·throughput·QPS 와 분위수의 뜻 → 2절
+> - latency, throughput, QPS 와 분위수의 뜻 → 2절
 > - 평균 대신 무엇을 보나 → 3절
 > - 두 팀 숫자가 안 맞는 이유 → 4절
 > - 부하가 오를 때 무엇이 먼저 나빠지나 → 5절
-> - API 팀과 합의할 목록과 재시도 사고 → 6·7절
+> - API 팀과 합의할 목록과 재시도 사고 → 6, 7절
 > - 배포하는 몇 분 동안만 생기는 지연 → 8절
-> - Grafana 숫자의 출처와 함정 → 9·10절
+> - Grafana 숫자의 출처와 함정 → 9, 10절
 > - 대시보드 패널과 알람 → 11절
 
-이 글의 숫자는 전부 설명을 위해 만든 가상 값이다. 다만 지연 분포와 부하 곡선은 5절의 시뮬레이션을 돌려 나온 값이다. 요청·응답 원문과 PromQL·메트릭은 HTTP 와 Prometheus·Grafana 가 쓰는 형식 그대로다.
+이 글의 숫자는 전부 설명을 위해 만든 가상 값이다. 다만 지연 분포와 부하 곡선은 5절의 시뮬레이션을 돌려 나온 값이다. 요청, 응답 원문과 PromQL, 메트릭은 HTTP 와 Prometheus, Grafana 가 쓰는 형식 그대로다.
 
 ---
 
@@ -44,7 +44,7 @@ Content-Type: application/json
 # API 서버 안에서 일어난 일
 #   0.00ms  요청 도착
 #   1.53ms  후보 광고 120개를 모으고 피처 조회까지 끝 — 여기까지는 API 서버 혼자
-#   6.18ms  모델 서버에서 pCTR 120개를 받음 (모델 호출에 4.65ms · 이 구간 예산 8ms)
+#   6.18ms  모델 서버에서 pCTR 120개를 받음 (모델 호출에 4.65ms, 이 구간 예산 8ms)
 #   6.38ms  순위를 정해 응답 — 요청 하나에 전부 6.38ms (전체 예산 12ms)
 
 HTTP/1.1 200 OK                             ← API 서버가 앱에 돌려준 응답
@@ -59,9 +59,9 @@ Content-Type: application/json
 
 이 말들이 이 글의 뼈대다. 회의에서 숫자가 안 맞은 이유는 어느 쪽이 틀렸기 때문이 아니라 같은 말을 서로 다른 자리에서 썼기 때문이다. 자리를 안 맞추면 뒤의 모든 숫자가 서로 다른 것을 재게 된다. 다음 절부터 이 경로 위의 숫자를 하나씩 읽는다.
 
-요청·응답과 상태코드 자체가 처음이면 [API 기초](post.html?id=api-basics) 를 먼저 보고 와도 된다.
+요청, 응답과 상태코드 자체가 처음이면 [API 기초](post.html?id=api-basics) 를 먼저 보고 와도 된다.
 
-## 2. latency·throughput·QPS — 무엇을 재는 말인가
+## 2. latency, throughput, QPS — 무엇을 재는 말인가
 
 **"응답이 몇 ms 인가"와 "초당 몇 건을 받나"는 다른 질문이다. 단위가 다르고, 한쪽이 멀쩡한데 다른 쪽이 나빠지는 일이 실제로 생긴다.**
 
@@ -160,7 +160,7 @@ def pct(xs, q):
 
 mean_svc = MED_MS * math.exp(SIGMA ** 2 / 2)      # 로그정규의 평균
 cap = SLOTS / (mean_svc / 1000)                   # 이론 처리 한계
-print(f"평균 추론 {mean_svc:.2f}ms · 처리 한계 {cap:,.0f} QPS")
+print(f"평균 추론 {mean_svc:.2f}ms, 처리 한계 {cap:,.0f} QPS")
 print("  QPS  부하율    p50    p90    p99  p99.9   큐p99  예산초과")
 for qps in (1200, 1800, 2639, 3000, 3300):
     stay, queue = simulate(qps)
@@ -169,7 +169,7 @@ for qps in (1200, 1800, 2639, 3000, 3300):
           f"  {pct(stay,.99):5.2f}  {pct(stay,.999):5.2f}   {pct(queue,.99):5.2f}   {bad:5.2f}%")
 
 # 출력:
-# 평균 추론 3.49ms · 처리 한계 3,439 QPS
+# 평균 추론 3.49ms, 처리 한계 3,439 QPS
 #   QPS  부하율    p50    p90    p99  p99.9   큐p99  예산초과
 # 1,200    0.35   3.00   6.05  10.79  16.54    0.00    3.69%
 # 1,800    0.52   3.01   6.08  10.78  16.48    0.52    3.76%
@@ -240,10 +240,10 @@ for qps in (1200, 1800, 2639, 3000, 3300):
 
 | 기준 요청량 | 재시도 없을 때 초과 | 재시도를 켜면 도달하는 곳 |
 |---|---|---|
-| 2,639 QPS | 4.62% | 2,780 QPS · 초과 5.4% 에서 멈춤 |
-| 2,750 QPS | 5.17% | 2,978 QPS · 초과 8.3% 에서 멈춤 |
-| 2,800 QPS | 5.55% | **5,599 QPS · 초과 100%** |
-| 3,000 QPS | 8.93% | **5,998 QPS · 초과 100%** |
+| 2,639 QPS | 4.62% | 2,780 QPS, 초과 5.4% 에서 멈춤 |
+| 2,750 QPS | 5.17% | 2,978 QPS, 초과 8.3% 에서 멈춤 |
+| 2,800 QPS | 5.55% | **5,599 QPS, 초과 100%** |
+| 3,000 QPS | 8.93% | **5,998 QPS, 초과 100%** |
 
 셋째 줄이 이 절의 전부다. 요청량이 2,750에서 2,800으로 1.8% 늘었을 뿐인데 결과가 "8.3% 에서 멈춤"에서 "전부 실패"로 바뀐다. **재시도가 만든 추가 부하가 초과율을 올리고, 올라간 초과율이 재시도를 더 만드는 것이 멈추지 않는 지점**이 그 사이에 있기 때문이다.
 
@@ -351,7 +351,7 @@ TUNED   = [.002, .003, .004, .005, .006, .008, .010, .012, .015, .020, .030, .05
 
 xs = samples()
 real = sorted(xs)[int(0.99 * len(xs))]
-print(f"표본 {len(xs):,}건 · 원본에서 직접 센 p99   {real:.2f} ms\n")
+print(f"표본 {len(xs):,}건, 원본에서 직접 센 p99   {real:.2f} ms\n")
 for name, bk in (("기본 버킷", DEFAULT), ("맞춘 버킷", TUNED)):
     got = histogram_quantile(0.99, bk, xs)
     print(f"{name}으로 낸 p99   {got:6.2f} ms   ({100 * (got / real - 1):+.1f}%)")
@@ -361,7 +361,7 @@ for b in (.005, .01, .025):
     print(f"  le={b:<5} ({b * 1000:>2.0f}ms 이하)   누적 {cum:6.3f}%")
 
 # 출력:
-# 표본 316,680건 · 원본에서 직접 센 p99   11.19 ms
+# 표본 316,680건, 원본에서 직접 센 p99   11.19 ms
 #
 # 기본 버킷으로 낸 p99    16.43 ms   (+46.8%)
 # 맞춘 버킷으로 낸 p99    11.42 ms   (+2.0%)
@@ -377,7 +377,7 @@ for b in (.005, .01, .025):
 <figure>
 <img class="fig-light" loading="lazy" src="images/grafana-buckets-light.png" alt="Grafana 패널에 평평한 두 줄이 그려져 있다. 위쪽 줄이 널리 쓰는 기본 버킷으로 낸 p99 16.5ms, 아래쪽 줄이 예산에 맞춘 버킷으로 낸 p99 11.5ms 다. 두 줄 아래로 예산 8ms 를 나타내는 점선이 가로로 지나간다. 범례에 두 값이 그대로 적혀 있다.">
 <img class="fig-dark" loading="lazy" src="images/grafana-buckets-dark.png" alt="">
-<figcaption>같은 표본을 버킷만 바꿔 담고 <code>histogram_quantile</code> 로 낸 p99. 화면에 뜨는 값이 16.5ms 와 11.5ms 로 나뉜다. 점선은 예산 8ms 다. 이 글의 시뮬레이션 값을 로컬 Prometheus·Grafana 에 넣어 캡쳐한 실제 패널이다.</figcaption>
+<figcaption>같은 표본을 버킷만 바꿔 담고 <code>histogram_quantile</code> 로 낸 p99. 화면에 뜨는 값이 16.5ms 와 11.5ms 로 나뉜다. 점선은 예산 8ms 다. 이 글의 시뮬레이션 값을 로컬 Prometheus, Grafana 에 넣어 캡쳐한 실제 패널이다.</figcaption>
 </figure>
 
 **둘째, 서버별 p99 를 평균 내면 안 된다.** 4절에서 본 성질이 여기서 사고가 된다. 요청은 12대에 돌아가며 고르게 배정되는데 그중 한 대만 응답이 3.4배 느려졌다고 두자. 줄이 길어지는 효과까지 넣지 않고 그 한 대의 응답 시간만 3.4배로 두고, 5절 표본을 그렇게 나눠 재면 이렇게 달라진다.
@@ -404,7 +404,7 @@ histogram_quantile(0.99, sum by (le) (rate(pctr_infer_duration_seconds_bucket[5m
 <figure>
 <img class="fig-light" loading="lazy" src="images/grafana-window-light.png" alt="Grafana 패널 하나에 세 줄이 그려져 있다. 같은 30초 스파이크를 rate() 윈도우 길이만 바꿔 그린 것으로, 1분 윈도우는 21.9% 까지 뾰족하게 솟고 5분 윈도우는 4.16% 에서 넓게 눌리며 15분 윈도우는 1.44% 로 거의 평평하다. 범례에 세 값이 그대로 적혀 있다.">
 <img class="fig-dark" loading="lazy" src="images/grafana-window-dark.png" alt="">
-<figcaption>같은 30초 스파이크를 윈도우 길이만 바꿔 그린 것. 세 줄이 각각 21.9% · 4.16% · 1.44% 다. 1분 윈도우가 산식대로 20% 가 아닌 이유는 아래에 적었다.</figcaption>
+<figcaption>같은 30초 스파이크를 윈도우 길이만 바꿔 그린 것. 세 줄이 각각 21.9%, 4.16%, 1.44% 다. 1분 윈도우가 산식대로 20% 가 아닌 이유는 아래에 적었다.</figcaption>
 </figure>
 
 1분 윈도우가 20% 가 아니라 21.9% 인 것도 같은 성질이다. `rate()` 는 윈도우 안에 든 표본의 첫 값과 끝 값 사이만 재는데, 5초 간격으로 긁으면 1분 윈도우가 실제로 덮는 것은 55초다. 30초 스파이크가 그 55초 안에서 더 큰 몫을 차지한다.
@@ -419,7 +419,7 @@ histogram_quantile(0.99, sum by (le) (rate(pctr_infer_duration_seconds_bucket[5m
 |---|---|---|
 | 요청량 | `sum(rate(..._count[1m]))` | 부하율. 3,000 QPS 선을 같이 그린다 |
 | 예산 초과율 | 8ms 이하 비율의 여집합 | 이 서비스의 진짜 오류율 |
-| 지연 분위수 | p50 · p95 · p99 세 줄 | 꼬리만 꺾이는지, 전체가 밀리는지 |
+| 지연 분위수 | p50, p95, p99 세 줄 | 꼬리만 꺾이는지, 전체가 밀리는지 |
 | 포화 | 큐 대기 p99, 처리 중 건수 | 절벽까지 얼마나 남았나 |
 | 서버별 p99 | 인스턴스별로 나눠 그린 p99 | 한 대만 느려진 상황 |
 | 배포 표시 | 배포 시각 세로선 | 지연이 튄 원인이 배포인지 |
@@ -428,7 +428,7 @@ histogram_quantile(0.99, sum by (le) (rate(pctr_infer_duration_seconds_bucket[5m
 <figure>
 <img class="fig-light" loading="lazy" src="images/grafana-oncall-light.png" alt="Grafana 대시보드 한 화면에 패널 여섯이 두 줄로 놓여 있다. 위쪽은 요청량, 예산 초과율, 지연 분위수이고 아래쪽은 포화, 서버별 p99, 배포 표시다. 요청량 패널에는 3,000 QPS 선이 점선으로 그려져 있고, 예산 초과율은 평시 5% 에서 피크에 35% 까지 솟는다. 서버별 p99 는 회색 열한 줄 위로 느려진 한 대만 굵은 주황색으로 40ms 까지 올라간다. 배포가 돈 구간은 모든 패널에 세로 띠로 표시돼 있다.">
 <img class="fig-dark" loading="lazy" src="images/grafana-oncall-dark.png" alt="">
-<figcaption>위 표대로 만든 화면. 배포가 돈 구간은 세로 띠로 모든 패널에 같이 표시된다. 서버별 패널의 굵은 선 한 줄이 느려진 한 대다. 이 글의 시뮬레이션 값을 로컬 Prometheus·Grafana 에 넣어 캡쳐한 실제 대시보드다.</figcaption>
+<figcaption>위 표대로 만든 화면. 배포가 돈 구간은 세로 띠로 모든 패널에 같이 표시된다. 서버별 패널의 굵은 선 한 줄이 느려진 한 대다. 이 글의 시뮬레이션 값을 로컬 Prometheus, Grafana 에 넣어 캡쳐한 실제 대시보드다.</figcaption>
 </figure>
 아래 두 줄이 대개 빠지는 것이다. 서버별 패널이 없으면 10절 두 번째 함정을 영원히 못 본다. 배포 표시가 없으면 8절의 20.87% 구간이 원인 없는 스파이크로 남는다. 열린 RTB 라면 여기에 **거래소가 본 타임아웃**을 하나 더 붙인다. 우리 쪽 200 응답에는 안 잡히기 때문이다.
 
@@ -471,5 +471,5 @@ histogram_quantile(0.99, sum by (le) (rate(pctr_infer_duration_seconds_bucket[5m
 - [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 배치 크기를 키울 때 처리량과 p99 가 맞붙는 지점, 그리고 조회 한 번의 1% 꼬리가 요청의 63.4% 를 물들이는 계산
 - [모델 성능 모니터링](post.html?id=model-monitoring) — 이 글이 시스템 지연을 봤다면 그쪽은 모델 품질이 조용히 나빠지는 것을 본다. 알람 설정 네 개도 거기 있다
 - [피처 서빙과 Feature Store](post.html?id=feature-store-serving) — 4절에서 "피처 조회와 후처리"로 묶은 1.73ms 안쪽
-- [로드밸런서 · Ingress · API Gateway](post.html?id=gateway-ingress-router) — 12ms 예산이 정해지는 자리와 요청이 모델 서버까지 오는 길
+- [로드밸런서, Ingress, API Gateway](post.html?id=gateway-ingress-router) — 12ms 예산이 정해지는 자리와 요청이 모델 서버까지 오는 길
 - [API 연동 실무](post.html?id=api-kinds-and-contracts) — 타임아웃과 재시도를 남의 회사 서버와 맞출 때 무엇을 문서에 적어야 하나

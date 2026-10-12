@@ -81,7 +81,7 @@
 
 ## 3. 배치 한 번: 줄마다 자기 광고 칸을 고릅니다
 
-**배치 4줄을 두 타워에 넣으면 4×4 점수표가 나옵니다. 대각선 넷이 정답이고, 나머지 열두 칸이 음성입니다.**
+**배치 4줄을 두 타워에 넣으면 4×4 점수표가 나옵니다. 대각선 넷이 정답이고, 나머지 12칸이 음성입니다.**
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-two-tower-training.html?embed=1&fig=3" height="760" loading="lazy" title="배치 네 줄의 점수표와 손실, 버튼으로 학습 단계와 온도를 바꾼다"></iframe>

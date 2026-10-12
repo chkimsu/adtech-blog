@@ -13,7 +13,7 @@
 </defs>
 <rect x="12" y="74" width="96" height="56" rx="9" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="60" y="100" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">사용자</text>
-<text x="60" y="117" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">웹·모바일·API</text>
+<text x="60" y="117" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">웹, 모바일, API</text>
 <line x1="108" y1="102" x2="148" y2="102" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#kov-arr)"/>
 <rect x="150" y="66" width="138" height="74" rx="10" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:1.8"/>
 <text x="219" y="94" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--accent-primary)">Ingress</text>
@@ -92,7 +92,7 @@
 <rect x="96" y="78" width="150" height="74" rx="10" style="fill:var(--bg-secondary); stroke:var(--accent-secondary); stroke-width:1.8"/>
 <text x="171" y="104" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--accent-secondary)">Service</text>
 <text x="171" y="121" text-anchor="middle" style="font-size:10px; fill:var(--text-primary); font-family:var(--font-mono)">10.96.0.1</text>
-<text x="171" y="136" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">고정 IP · DNS 이름</text>
+<text x="171" y="136" text-anchor="middle" style="font-size:9.5px; fill:var(--text-muted)">고정 IP, DNS 이름</text>
 <rect x="392" y="20" width="150" height="46" rx="8" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.5"/>
 <text x="467" y="42" text-anchor="middle" style="font-size:12px; fill:var(--text-primary)">Pod</text>
 <text x="467" y="57" text-anchor="middle" style="font-size:9px; fill:var(--text-muted); font-family:var(--font-mono)">10.1.2.7</text>
@@ -251,12 +251,12 @@ Ingress 없이 서비스마다 입구를 내면 어떻게 되는지도 세어 �
 
 SERVICES = 12                 # 마이크로서비스 12개
 LB_MONTHLY_USD = 18           # 클라우드 LoadBalancer 1개 월 요금(대략치, 공급자마다 다름)
-CERT_MANAGE_MIN = 20          # 인증서 하나를 갱신·점검하는 데 드는 시간(분/월)
+CERT_MANAGE_MIN = 20          # 인증서 하나를 갱신, 점검하는 데 드는 시간(분/월)
 
 # ── A) 서비스마다 LoadBalancer ──
 a_cost = SERVICES * LB_MONTHLY_USD
 a_ips = SERVICES               # 공인 IP도 그만큼 필요하다
-a_certs = SERVICES             # 도메인·인증서도 그만큼
+a_certs = SERVICES             # 도메인, 인증서도 그만큼
 a_minutes = SERVICES * CERT_MANAGE_MIN
 
 # ── B) Ingress 하나 ──

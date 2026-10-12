@@ -17,7 +17,7 @@
 > - 왜 며칠 들고 있나 → 8절
 > - 밀기와 가지러 가기를 한 표로 → 9절
 
-이 글이 따라가는 것은 **클릭 한 건**입니다. 2026년 8월 16일 16시 48분 21초, A앱 메인 상단에 뜬 광고(광고 번호 `9931`)를 누군가 눌렀습니다. [API 기초](post.html?id=api-basics) 편 8절에서 두 줄로 남았던 그 클릭입니다. 숫자는 설명을 위해 지어낸 값이지만, 로그 줄의 **형식**은 nginx·Filebeat·Logstash 가 실제로 내는 모양 그대로입니다.
+이 글이 따라가는 것은 **클릭 한 건**입니다. 2026년 8월 16일 16시 48분 21초, A앱 메인 상단에 뜬 광고(광고 번호 `9931`)를 누군가 눌렀습니다. [API 기초](post.html?id=api-basics) 편 8절에서 두 줄로 남았던 그 클릭입니다. 숫자는 설명을 위해 지어낸 값이지만, 로그 줄의 **형식**은 nginx, Filebeat, Logstash 가 실제로 내는 모양 그대로입니다.
 
 ---
 
@@ -64,14 +64,14 @@
 <div class="chart-step-content">
 <div class="chart-step-title">Kafka</div>
 <div class="chart-step-desc">한 번 쓰이고 여럿이 읽는 자리입니다. 읽혔다고 지우지 않습니다</div>
-<span class="chart-step-badge orange">밀려 옵니다 · 들고 있습니다</span>
+<span class="chart-step-badge orange">밀려 옵니다, 들고 있습니다</span>
 </div>
 </div>
 <div class="chart-step">
 <div class="chart-step-indicator"><div class="chart-step-dot green">6</div></div>
 <div class="chart-step-content">
 <div class="chart-step-title">읽는 쪽 넷</div>
-<div class="chart-step-desc">대시보드·예산 소진 확인·광고주 리포트·모델 학습이 각자 자기 속도로 읽어 갑니다</div>
+<div class="chart-step-desc">대시보드, 예산 소진 확인, 광고주 리포트, 모델 학습이 각자 자기 속도로 읽어 갑니다</div>
 <span class="chart-step-badge green">가지러 갑니다</span>
 </div>
 </div>
@@ -135,7 +135,7 @@ location /v1/events {
 그런데 이 줄은 아직 텍스트입니다. `ad_id` 가 9931이라는 것을 사람은 읽지만 프로그램은 못 읽습니다. 저 줄에서 광고 번호만 뽑아 세려면 문자열을 잘라야 하고, 자르는 규칙은 로그 형식이 바뀌는 순간 깨집니다. **그래서 이 줄은 아직 세거나 더할 수 있는 데이터가 아닙니다.**
 
 :::deep 왜 `$request_body` 가 비어 있을 수 있나
-`$request_body` 는 요청 본문이 **메모리 버퍼로 읽힌 뒤**에만 값이 찹니다. nginx 문서가 밝히는 조건은 `proxy_pass`·`fastcgi_pass`·`uwsgi_pass`·`scgi_pass` 로 넘기는 자리입니다. nginx 가 직접 받아 끝내는 자리에서는 비어 있습니다.
+`$request_body` 는 요청 본문이 **메모리 버퍼로 읽힌 뒤**에만 값이 찹니다. nginx 문서가 밝히는 조건은 `proxy_pass`, `fastcgi_pass`, `uwsgi_pass`, `scgi_pass` 로 넘기는 자리입니다. nginx 가 직접 받아 끝내는 자리에서는 비어 있습니다.
 
 본문이 크면 nginx 가 디스크 임시 파일로 넘기는데 그때도 변수는 빕니다. 값을 확실히 채우려면 버퍼 크기를 본문보다 크게 잡습니다.
 
@@ -182,7 +182,7 @@ client_body_in_single_buffer  on;
 | 무슨 일 | 앞 | 뒤 |
 |---|---|---|
 | 타입이 붙습니다 | `"ad_id":9931` 이 텍스트 줄 안에 있습니다 | `ad_id` 가 숫자 9931입니다 — 셀 수 있습니다 |
-| 없던 값이 붙습니다 | 과금액도 캠페인도 없습니다 | `cost` 182.4 · `campaign_id` 5502 |
+| 없던 값이 붙습니다 | 과금액도 캠페인도 없습니다 | `cost` 182.4, `campaign_id` 5502 |
 | 시각이 둘로 나뉩니다 | 시각처럼 보이는 것이 셋 섞여 있습니다 | `event_time` 과 `ingest_time` 이 따로 |
 
 **타입이 붙는 것이 가장 큽니다.** 앞 자리까지는 "오늘 광고 9931이 몇 번 눌렸나"를 내려면 줄마다 문자열을 잘라야 했습니다. 이제는 `ad_id` 로 묶어 세면 됩니다. 이 차이 때문에 이 자리를 지나야 비로소 집계할 수 있는 데이터라고 부릅니다.
@@ -210,7 +210,7 @@ Kafka 는 그 사이에 **쓰는 자리 하나**를 세웁니다. 변환기는 �
 </div>
 </div>
 <div class="chart-layer-arrow">&#8595; 민다 &mdash; 언제 쓸지는 변환기가 정합니다</div>
-<div class="chart-layer-title">Kafka &mdash; topic ad.click &middot; partition 6개 &middot; 보존 7일</div>
+<div class="chart-layer-title">Kafka &mdash; topic ad.click, partition 6개, 보존 7일</div>
 <div class="chart-layer-row">
 <div class="chart-layer-group">
 <div class="chart-layer-group-label">줄이 놓이는 자리</div>
@@ -327,12 +327,12 @@ key 를 안 붙이면 갈래에 고르게 흩어집니다. 고르게 퍼지는 �
 
 | 자리 | 하는 일 | 나가는 모양 | 방식 |
 |---|---|---|---|
-| 앱 SDK | 눌린 사실에 이름을 붙입니다 | 85 B · 필드 5 | 민다 |
-| 웹서버 | 받으며 알게 된 넷을 붙여 파일에 씁니다 | 183 B · 텍스트 한 줄 | 민다 |
-| 수집 에이전트 | 파일 끝을 읽고 어디까지 읽었는지 적습니다 | 346 B · 원문은 그대로 | 가지러 간다 |
-| 변환기 | 통짜 텍스트를 쪼개고 없던 값을 붙입니다 | 309 B · 필드 15 | 민다 |
+| 앱 SDK | 눌린 사실에 이름을 붙입니다 | 85 B, 필드 5 | 민다 |
+| 웹서버 | 받으며 알게 된 넷을 붙여 파일에 씁니다 | 183 B, 텍스트 한 줄 | 민다 |
+| 수집 에이전트 | 파일 끝을 읽고 어디까지 읽었는지 적습니다 | 346 B, 원문은 그대로 | 가지러 간다 |
+| 변환기 | 통짜 텍스트를 쪼개고 없던 값을 붙입니다 | 309 B, 필드 15 | 민다 |
 | Kafka | 한 번 받아 여럿에게 읽힙니다 | partition 1 / offset 88,214 | 들고 있는다 |
-| 읽는 쪽 넷 | 각자 속도로 읽어 네 결과를 만듭니다 | 집계 · 예산 · 리포트 · 학습 데이터 | 가지러 간다 |
+| 읽는 쪽 넷 | 각자 속도로 읽어 네 결과를 만듭니다 | 집계, 예산, 리포트, 학습 데이터 | 가지러 간다 |
 
 ## 헷갈리기 쉬운 점
 
@@ -346,7 +346,7 @@ key 를 안 붙이면 갈래에 고르게 흩어집니다. 고르게 퍼지는 �
 ## 더 깊이 보기
 
 - 이 다음은 [로그 수집](post.html?id=log-hops-to-kafka) 편입니다. 같은 클릭 한 건을 자리마다 열어 무엇이 붙고 무엇이 사라지는지를 봅니다.
-- Kafka 안쪽 — topic·partition·consumer group·offset 은 [Kafka 기초](post.html?id=kafka-log-pipeline) 편에서 다룹니다.
+- Kafka 안쪽 — topic, partition, consumer group, offset 은 [Kafka 기초](post.html?id=kafka-log-pipeline) 편에서 다룹니다.
 - 이 여섯 자리에 무엇을 세울지 정하는 순서는 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편입니다. 읽는 쪽의 마감에서 거꾸로 짭니다.
-- 7절의 읽는 쪽이 여섯·일곱으로 늘 때는 [데이터 유통 층](post.html?id=data-distribution-layer) 편을 봅니다.
+- 7절의 읽는 쪽이 여섯, 일곱으로 늘 때는 [데이터 유통 층](post.html?id=data-distribution-layer) 편을 봅니다.
 - 이 클릭이 만들어진 자리, 곧 앱과 서버가 주고받은 요청 자체는 [API 기초](post.html?id=api-basics) 편에 있습니다.

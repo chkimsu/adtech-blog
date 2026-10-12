@@ -1171,30 +1171,30 @@ window.DEMO_EDU = {
                 const total = document.querySelectorAll('#kp-grid .kp-rec').length;
                 const moved = document.querySelectorAll('#kp-grid .kp-rec.is-moved').length;
                 const shuffle = document.querySelector('#kp-shuffle');
-                const head = `partition을 <strong>${prev}칸 → ${value}칸</strong>으로 바꿨습니다. `;
-                // 칸 수 알림이 숨어 있으면 지금 칸 수가 비교 기준과 같다는 뜻이다.
+                const head = `partition 수를 <strong>${prev}개 → ${value}개</strong>로 바꿨습니다. `;
+                // partition 수 알림이 숨어 있으면 지금 partition 수가 비교 기준과 같다는 뜻이다.
                 // 이때 옮겨간 줄이 0인 것은 우연이 아니라 기준으로 되돌아왔기 때문이므로,
                 // 아래의 "우연히 제자리를 지켰다" 를 그대로 쓰면 반대로 말하게 된다.
                 if (shuffle && shuffle.hidden) {
-                    return head + '비교 기준으로 잡아 둔 칸 수로 되돌아왔습니다. ' +
+                    return head + '비교 기준으로 잡아 둔 partition 수로 되돌아왔습니다. ' +
                         '배정도 기준과 같아져 <strong>↰</strong> 표시가 사라집니다.';
                 }
                 if (moved) {
-                    return head + `같은 ${total}줄인데 <strong>${moved}줄</strong>이 다른 칸으로 옮겨갔습니다(<strong>↰</strong> 표시). ` +
-                        '칸 수가 나눗셈에 들어가니, <strong>칸 수를 나중에 바꾸면 그 시점에서 순서 보장이 끊깁니다.</strong>';
+                    return head + `같은 ${total}줄인데 <strong>${moved}줄</strong>이 다른 partition으로 옮겨갔습니다(<strong>↰</strong> 표시). ` +
+                        'partition 수가 나눗셈에 들어가니, <strong>partition 수를 나중에 바꾸면 그 시점에서 순서 보장이 끊깁니다.</strong>';
                 }
-                return head + `이번에는 옮겨간 줄이 없습니다. 표본 ${total}줄이 우연히 제자리를 지킨 것이지, 칸 수를 바꿔도 안전하다는 뜻은 아닙니다.`;
+                return head + `이번에는 옮겨간 줄이 없습니다. 표본 ${total}줄이 우연히 제자리를 지킨 것이지, partition 수를 바꿔도 안전하다는 뜻은 아닙니다.`;
             },
             '#kp-cons': ({ value, prev }) => {
                 const parts = document.querySelectorAll('#kp-grid .kp-card').length;
                 const idle = document.querySelectorAll('#kp-legend .kp-legend-item.is-idle').length;
                 return `consumer를 <strong>${prev}명 → ${value}명</strong>으로 바꿨습니다. ` +
                     (idle
-                        ? `칸이 ${parts}개뿐이라 <strong>${idle}명은 아무 칸도 못 맡습니다</strong> — 범례에 "맡은 칸 없음"으로 나옵니다. 사람을 더 붙여도 처리량은 그대로입니다.`
-                        : `${value}명이 칸 ${parts}개를 나눠 맡았습니다. ` +
+                        ? `partition이 ${parts}개뿐이라 <strong>${idle}명은 아무 partition도 못 맡습니다</strong> — 범례에 "맡은 partition 없음"으로 나옵니다. 사람을 더 붙여도 처리량은 그대로입니다.`
+                        : `${value}명이 partition ${parts}개를 나눠 맡았습니다. ` +
                           (value < parts
-                              ? '아직 칸이 남아 있어 사람을 더 붙이면 처리량이 늘어납니다.'
-                              : '칸 수와 인원이 딱 맞았습니다 — 여기서 더 늘리려면 칸부터 늘려야 합니다.'));
+                              ? '아직 partition이 사람보다 많아서 사람을 더 붙이면 처리량이 늘어납니다.'
+                              : 'partition 수와 인원이 딱 맞았습니다 — 여기서 더 늘리려면 partition부터 늘려야 합니다.'));
             },
             // 라디오도 <label>이 <input>을 감싸고 있다. 위 .rp-toggles label 과 같은 이유로
             // input 에 직접 걸면 해설이 안 나오고, 라벨에 걸면 라벨 글자를 누를 때 두 번 온다.
@@ -1211,37 +1211,37 @@ window.DEMO_EDU = {
                 if (said === now) return '';
                 row.dataset.eduSaid = now;
                 if (now === 'none') {
-                    return 'key를 <strong>없음</strong>으로 바꿨습니다. 줄이 칸에 차례대로 들어가 가장 고르게 퍼집니다. ' +
-                        '대신 <strong>같은 요청의 노출과 클릭이 다른 칸으로 흩어져</strong> 순서를 맞출 수 없습니다.';
+                    return 'key를 <strong>없음</strong>으로 바꿨습니다. 줄이 partition에 차례대로 들어가 가장 고르게 퍼집니다. ' +
+                        '대신 <strong>같은 요청의 노출과 클릭이 다른 partition으로 흩어져</strong> 순서를 맞출 수 없습니다.';
                 }
                 if (now === 'ad_id') {
-                    return 'key를 <strong>ad_id</strong>로 바꿨습니다. 같은 광고는 늘 같은 칸으로 가서 광고별 집계를 한 칸 안에서 끝낼 수 있습니다. ' +
-                        '대신 <strong>4건짜리 인기 광고 9931이 있는 칸만 부풀고</strong>, 그 칸을 맡은 consumer만 밀립니다.';
+                    return 'key를 <strong>ad_id</strong>로 바꿨습니다. 같은 광고는 늘 같은 partition으로 가서 광고별 집계를 partition 하나 안에서 끝낼 수 있습니다. ' +
+                        '대신 <strong>4건짜리 인기 광고 9931이 있는 partition만 부풀고</strong>, 그 partition을 맡은 consumer만 밀립니다.';
                 }
-                return 'key를 <strong>req_id</strong>로 바꿨습니다. 같은 요청의 노출과 클릭이 같은 칸에 모여 순서대로 읽힙니다 — 둘을 이어 붙이기 좋은 상태입니다.';
+                return 'key를 <strong>req_id</strong>로 바꿨습니다. 같은 요청의 노출과 클릭이 같은 partition에 모여 순서대로 읽힙니다 — 둘을 이어 붙이기 좋은 상태입니다.';
             },
             '#kp-shuffle-reset': () =>
-                '지금 배정을 새 기준으로 삼았습니다. <strong>↰</strong> 표시와 칸 수가 바뀌었다는 알림이 사라지고, ' +
-                '이제부터 칸 수를 바꾸면 방금 이 배정과 비교합니다. 옮겨간 줄이 제자리로 돌아온 것은 아닙니다.'
+                '지금 배정을 새 기준으로 삼았습니다. <strong>↰</strong> 표시와 partition 수가 바뀌었다는 알림이 사라지고, ' +
+                '이제부터 partition 수를 바꾸면 방금 이 배정과 비교합니다. 옮겨간 줄이 제자리로 돌아온 것은 아닙니다.'
         },
         tour: [
             {
                 el: '.kp-grid',
-                title: '12줄이 칸에 나뉜 모습',
-                body: '칸 하나가 partition 하나입니다. 칸마다 그 칸을 맡은 consumer 이름과 줄 수가 적혀 있어요. ' +
-                    '한 칸은 그룹 안에서 <strong>언제나 한 명만</strong> 맡습니다.'
+                title: '12줄이 partition에 나뉜 모습',
+                body: '상자 하나가 partition 하나입니다. 상자마다 그 partition을 맡은 consumer 이름과 줄 수가 적혀 있습니다. ' +
+                    'partition 하나는 그룹 안에서 <strong>언제나 consumer 한 명만</strong> 맡습니다.'
             },
             {
                 el: '#kp-cons',
                 title: '사람을 늘려 보기',
-                body: 'consumer를 칸 수보다 많게 밀어 보세요. 범례에 <strong>"맡은 칸 없음"</strong>이 나타납니다 — ' +
+                body: 'consumer를 partition 수보다 많게 밀어 보세요. 범례에 <strong>"맡은 partition 없음"</strong>이 나타납니다 — ' +
                     '사람을 늘려도 처리량이 안 느는 지점입니다.',
                 waitFor: 'input'
             },
             {
                 el: '#kp-part',
-                title: '칸 수를 바꿔 보기',
-                body: 'partition 수를 움직여 보세요. 같은 key가 다른 칸으로 옮겨간 줄에 <strong>↰</strong>가 붙습니다 — ' +
+                title: 'partition 수를 바꿔 보기',
+                body: 'partition 수를 움직여 보세요. 같은 key가 다른 partition으로 옮겨간 줄에 <strong>↰</strong>가 붙습니다 — ' +
                     '순서 보장이 끊기는 순간입니다.',
                 waitFor: 'input'
             },
@@ -1853,10 +1853,10 @@ window.DEMO_EDU = {
                 : 'IDFA 를 다시 올렸습니다. iOS 940건이 다시 줄 단위로 사람에 붙습니다.',
 
             '#sl-sw-label': ({ el }) => el.getAttribute('aria-checked') === 'false'
-                ? '<strong>이 데모의 핵심 장면입니다.</strong> 유저 단위 전환 라벨을 내리자 계기 2·3·4 가 한꺼번에 내려갔는데 ' +
-                  '계기 1(타겟팅)은 100.0% 그대로입니다. 라벨이 없어진 것이 아니라 <strong>모양이 바뀐 것</strong>이에요 — ' +
-                  '학습 데이터의 한 줄이 사람에서 칸으로 바뀝니다. 집계 라벨도 계수의 평균은 참값과 맞습니다. ' +
-                  '틀어지는 것은 흔들림이고, 그 값이 3.3배입니다. 되돌리려면 데이터가 3.3의 제곱, 곧 11배 필요해요.'
+                ? '<strong>이 데모의 핵심 장면입니다.</strong> 유저 단위 전환 라벨을 내리자 계기 2, 3, 4 가 한꺼번에 내려갔는데 ' +
+                  '계기 1(타겟팅)은 100.0% 그대로입니다. 라벨이 없어진 것이 아니라 <strong>모양이 바뀐 것</strong>입니다. ' +
+                  '학습 데이터의 한 줄이 사람에서 버킷으로 바뀝니다. 집계 라벨도 계수의 평균은 참값과 맞습니다. ' +
+                  '틀어지는 것은 흔들림이고, 그 값이 3.3배입니다. 되돌리려면 데이터가 3.3의 제곱, 곧 11배 필요합니다.'
                 : '전환 라벨을 다시 올렸습니다. 유효 표본이 원래대로 돌아옵니다. ' +
                   '스위치 하나로 계기 셋이 같이 움직인 자리가 여기입니다.',
 
@@ -1868,11 +1868,11 @@ window.DEMO_EDU = {
                 : '빈도 제어를 다시 올렸습니다. 상한 5회를 걸어 초과분 1,998,000건을 새 사람에게 돌립니다.',
 
             '#sl-sw-noise': ({ el }) => el.getAttribute('aria-checked') === 'false'
-                ? '<strong>노이즈</strong>가 붙었습니다. 라플라스 스케일 b=20 이라 칸마다 평균 20건씩 어긋나고, ' +
-                  '표준편차는 28.3건입니다. 노이즈는 <strong>칸의 크기와 무관하게 같은 크기로</strong> 붙어요 — ' +
-                  '전환 40건 칸에도 28.3, 4,000건 칸에도 28.3 입니다. 그래서 상대 오차가 100배 갈립니다. ' +
-                  '거기에 50건 미만인 칸은 지워집니다. 지워진 칸은 0 이 아니라 결측이에요.'
-                : '노이즈를 껐습니다. 리포트가 원본 그대로 옵니다. 억제로 지워진 칸도 돌아왔어요.',
+                ? '<strong>노이즈</strong>가 붙었습니다. 라플라스 스케일 b=20 이라 버킷마다 평균 20건씩 어긋나고, ' +
+                  '표준편차는 28.3건입니다. 노이즈는 <strong>버킷의 크기와 무관하게 같은 크기로</strong> 붙습니다. ' +
+                  '전환 40건 버킷에도 28.3, 4,000건 버킷에도 28.3 입니다. 그래서 상대 오차가 100배 차이 납니다. ' +
+                  '거기에 50건 미만인 버킷은 지워집니다. 지워진 버킷은 0 이 아니라 결측입니다.'
+                : '노이즈를 껐습니다. 리포트가 원본 그대로 옵니다. 억제로 지워진 버킷도 돌아왔습니다.',
 
             '#sl-conv-level': ({ value, prev }) => {
                 const L = [10, 40, 120, 400, 1200, 4000];
@@ -1881,9 +1881,9 @@ window.DEMO_EDU = {
                 const WK = [106.9, 26.6, 8.9, 2.7, 0.9, 0.3];
                 const i = +value, p = +prev;
                 const fmt = n => n.toLocaleString('en-US');
-                return '광고 규모를 <strong>' + fmt(L[p]) + '건 → ' + fmt(L[i]) + '건</strong>으로 바꿨어요. ' +
-                    '노이즈가 만드는 상대 오차는 ' + SD[i].toFixed(1) + '% 이고, 이 칸이 지워지는 날은 ' +
-                    SUP[i].toFixed(1) + '% 입니다. 7일을 합산하면 ' + WK[i].toFixed(1) + '% 로 내려가요 — ' +
+                return '광고 규모를 <strong>' + fmt(L[p]) + '건 → ' + fmt(L[i]) + '건</strong>으로 바꿨습니다. ' +
+                    '노이즈가 만드는 상대 오차는 ' + SD[i].toFixed(1) + '% 이고, 이 버킷이 지워지는 날은 ' +
+                    SUP[i].toFixed(1) + '% 입니다. 7일을 합산하면 ' + WK[i].toFixed(1) + '% 로 내려갑니다. ' +
                     '신호는 7배가 되는데 노이즈는 제곱근 7배만 커지기 때문입니다. ' +
                     (L[i] <= 40
                         ? '이 규모에서는 5% 차이가 ' + (L[i] * 0.05).toFixed(0) + '건이라 노이즈에 완전히 묻힙니다. ' +
@@ -1938,8 +1938,8 @@ window.DEMO_EDU = {
             {
                 el: '#sl-conv-card',
                 title: '전환 4,060건의 모양',
-                body: '같은 4,060건인데 개인 라벨 · 집계로 값이 오는 것 · 건수만 오는 것 · 칸째 지워진 것 · 아예 못 보는 것으로 갈립니다. ' +
-                    '건수와 비율은 막대 아래 표에 그대로 있어요.'
+                body: '같은 4,060건이 다섯 가지로 나뉩니다. 개인 라벨, 집계로 값이 오는 것, 건수만 오는 것, 버킷째 지워진 것, 아예 못 보는 것입니다. ' +
+                    '건수와 비율은 막대 아래 표에 그대로 있습니다.'
             },
             {
                 el: '#sl-conv-level',
@@ -2952,16 +2952,16 @@ window.DEMO_EDU = {
     // 학습 파이프라인 카드 다섯 장 (입문)
     // ==========================================
     'pipeline-cards': {
-        analogy: '모델은 사람이 만드는 것이 아니라 매일 04:00 에 도는 일곱 칸이 만든다. 알람은 어느 칸이 멈췄나부터 본다',
+        analogy: '모델은 사람이 만드는 것이 아니라 매일 04:00 에 도는 태스크 일곱 개가 만든다. 알람은 어느 태스크가 멈췄나부터 본다',
         anchor: '.tg-host',
         embedKeep: ['.tg-grid'],
         embedHide: ['.tg-hero', '.tg-real'],
         explain: {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
-                    case 'dag': return '헷갈리는 것은 <strong>알람에 적힌 이름</strong>입니다. pctr_daily 는 일곱 칸 전체의 이름이지 실패한 칸의 이름이 아닙니다. 알람 뒤에 붙은 build_features 같은 칸 이름이 진짜 자리입니다.';
-                    case 'sensor': return '헷갈리는 것은 <strong>센서가 계산을 하지 않는다는 점</strong>입니다. 파티션이 있나 없나만 1분마다 봅니다. 그런데 이 칸이 없으면 23개만 온 채로 다음 칸이 시작되고, 모델은 오류 없이 반쪽 데이터로 학습됩니다.';
-                    case 'rerun': return '헷갈리는 것은 <strong>왜 처음부터 다시 돌리지 않나</strong>입니다. 1, 2 의 결과가 이미 파티션에 놓여 있고 그 사이 입력이 안 바뀌었기 때문입니다. 멈춘 칸부터 돌리면 129분이 100분으로 줍니다.';
+                    case 'dag': return '헷갈리는 것은 <strong>알람에 적힌 이름</strong>입니다. pctr_daily 는 태스크 일곱 개 전체의 이름이지 실패한 태스크의 이름이 아닙니다. 알람 뒤에 붙은 build_features 같은 태스크 이름이 진짜 자리입니다.';
+                    case 'sensor': return '헷갈리는 것은 <strong>센서가 계산을 하지 않는다는 점</strong>입니다. 파티션이 있나 없나만 1분마다 봅니다. 그런데 이 태스크가 없으면 23개만 온 채로 다음 태스크가 시작되고, 모델은 오류 없이 반쪽 데이터로 학습됩니다.';
+                    case 'rerun': return '헷갈리는 것은 <strong>왜 처음부터 다시 돌리지 않나</strong>입니다. 1, 2 의 결과가 이미 파티션에 놓여 있고 그 사이 입력이 안 바뀌었기 때문입니다. 멈춘 태스크부터 돌리면 129분이 100분으로 줍니다.';
                     case 'backfill': return '헷갈리는 것은 <strong>학습을 30번 하지 않는다는 점</strong>입니다. 백필은 라벨과 피처 파티션 30개를 다시 만드는 일이고, 모델은 그 30개가 다 준비된 뒤 한 번 학습합니다. 그래서 한 날이 63분입니다.';
                     case 'idempotent': return '헷갈리는 것은 <strong>덧붙이기가 왜 위험한가</strong>입니다. 결과가 틀리는 것이 아니라 두 번 들어간 줄이 두 배로 학습됩니다. 절반에서 죽었다 다시 돌리면 그 절반 시간대의 로그만 2배 가중이 됩니다.';
                     default: return '';
@@ -2969,8 +2969,8 @@ window.DEMO_EDU = {
             }
         },
         tour: [
-            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 데이터와 끝난 칸, 벽돌색은 알람과 실패와 지금 도는 칸, 먹색은 모델과 서버, 회색은 만드는 작업입니다.' },
-            { el: '[data-card="dag"]', title: '가장 먼저 볼 것', body: '일곱 칸이 04:00 부터 06:09 까지 순서로 돕니다. 알람은 이 중 어느 칸이 멈췄나를 말합니다.', waitFor: 'click' },
+            { el: '.tg-legend', title: '색 네 가지', body: '파랑은 놓여 있는 데이터와 끝난 태스크, 벽돌색은 알람과 실패와 지금 도는 태스크, 먹색은 모델과 서버, 회색은 만드는 작업입니다.' },
+            { el: '[data-card="dag"]', title: '가장 먼저 볼 것', body: '태스크 일곱 개가 04:00 부터 06:09 까지 순서로 돕니다. 알람은 이 중 어느 태스크가 멈췄나를 말합니다.', waitFor: 'click' },
             { el: '[data-card="idempotent"]', title: '다시 돌려도 되는 조건', body: '덮어쓰기면 몇 번 돌려도 같은 행 수입니다. 이 조건이 있어야 재실행과 백필을 안심하고 합니다.' }
         ]
     },

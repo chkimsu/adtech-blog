@@ -25,7 +25,7 @@
     "js/api-course-demo.js": 2,
     "js/cart-pipeline-demo.js": 2,
     "js/course-data.js": 1,
-    "js/demo-edu-content.js": 9,
+    "js/demo-edu-content.js": 6,
     "js/ecosystem-easy.js": 1,
     "js/ecosystem.js": 2,
     "js/log-hops-demo.js": 1,
@@ -82,7 +82,7 @@
     "js/demo-edu-content.js": 39,
     "js/demo-log-to-model.js": 14,
     "js/ecosystem-easy.js": 40,
-    "js/ecosystem-terms.js": 25,
+    "js/ecosystem-terms.js": 19,
     "js/ecosystem.js": 74,
     "js/feedback-loop-demo.js": 5,
     "js/glossary.js": 13,
@@ -179,6 +179,7 @@
     "posts/uplift-incrementality.md": 25,
     "posts/walled-garden.md": 23
   },
+  "analogy": {},
   "wordnum": {
     "demo-two-tower-training.html": 1,
     "js/demo-edu-content.js": 4,

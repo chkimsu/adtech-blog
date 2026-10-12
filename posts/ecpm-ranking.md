@@ -37,7 +37,7 @@ $$eCPM = 0.02 \times 0.05 \times 10{,}000 \times 1{,}000 = 10{,}000\text{원}$$
 
 eCPM의 "e"는 **effective**, 즉 "실질적"이라는 뜻입니다. 실제 CPM 과금이 아닌 캠페인도 CPM 기준으로 **환산**했다는 의미입니다. CPC 캠페인이든 CPA 캠페인이든, eCPM이라는 공통 기준 위에서 비교할 수 있게 됩니다.
 
-> [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)를 참고하세요. eCPM이 전체 파이프라인에서 어디에 위치하는지 확인할 수 있습니다. DSP의 Ad Ranking 단계에서 참 가치(True Value) 계산의 핵심이 바로 eCPM입니다.
+> eCPM이 전체 파이프라인에서 어디에 위치하는지는 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 확인할 수 있습니다. DSP의 Ad Ranking 단계에서 참 가치(True Value) 계산의 핵심이 바로 eCPM입니다.
 
 ---
 
@@ -272,7 +272,7 @@ $$\text{Ranking Score} = pCTR_{\text{platform}} \times \text{Bid}$$
 
 닫힌 생태계에서는 이 구조가 정반대로 굳어집니다. pCTR 모델도, Ranking Score 공식도, 여기 곱해지는 보정 계수도 전부 플랫폼 한 회사가 정합니다. 그러니 이 랭킹 기준은 단순한 기술적 선택이 아니라 사실상 정책이 됩니다. 플랫폼이 pCTR 가중치를 오늘 조금만 바꿔도, 어떤 업종이 유리해지는지가 통째로 달라집니다. 열린 RTB처럼 여러 회사의 기준이 겹쳐 결과가 흐려지는 게 아닙니다. 단 하나의 기준이 시장 전체에 그대로 적용되는 구조입니다. 광고주 입장에서는 그 기준을 예측하거나 이의를 제기할 방법이 마땅치 않습니다.
 
-> [닫힌 생태계 포스트](post.html?id=walled-garden)를 참고하세요. 폐쇄형 생태계의 구조와 열린 RTB와의 차이를 더 깊이 확인할 수 있습니다.
+> 폐쇄형 생태계의 구조와 열린 RTB와의 차이는 [닫힌 생태계 포스트](post.html?id=walled-garden)에서 더 깊이 확인할 수 있습니다.
 
 ```python
 def ranking_comparison():
@@ -347,7 +347,7 @@ pCTR 모델이 정확할수록:
 | 후보 수 | 수백 개/요청 | 하나의 지면에 경쟁하는 광고 후보 |
 | 모델 갱신 | 일 1회 이상 | CTR 패턴 변화를 반영하기 위해 |
 
-pCTR 모델의 아키텍처와 서빙 전략은 별도의 깊은 주제입니다. 이에 대해서는 [모델 서빙 아키텍처 포스트](post.html?id=model-serving-architecture)를 참고하세요.
+pCTR 모델의 아키텍처와 서빙 전략은 별도의 깊은 주제입니다. 이 내용은 [모델 서빙 아키텍처 포스트](post.html?id=model-serving-architecture)에 있습니다.
 
 ### 5.2 광고주 관점: 같은 예산으로 더 높은 랭킹을 얻기
 

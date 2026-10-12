@@ -561,7 +561,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
 
-지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누르세요.
+지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누릅니다.
 
 ```python
 # 두뇌 층은 고리다. 로그가 한 바퀴 돌아 다시 심장에 닿는 시간을 더한다.

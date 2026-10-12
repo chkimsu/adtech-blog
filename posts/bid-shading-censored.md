@@ -5,7 +5,7 @@
 - **Ghosh et al. (Adobe Research, 2020)** — "Scalable Bid Landscape Forecasting in Real-time Bidding"
 - **Zhou et al. (Yahoo/Verizon Media, KDD 2021)** — "An Efficient Deep Distribution Network for Bid Shading in First-Price Auctions"
 
-> 먼저 직관으로 체험하고 싶다면 [Bid Shading Visualizer 데모](demo-bid-shading.html)의 슬라이더를 움직여 보세요. 이 글의 수식이 실제로 어떻게 움직이는지 볼 수 있습니다.
+> 먼저 직관으로 체험하고 싶다면 [Bid Shading Visualizer 데모](demo-bid-shading.html)의 슬라이더를 움직여 봅니다. 이 글의 수식이 실제로 어떻게 움직이는지 볼 수 있습니다.
 
 ---
 
@@ -137,7 +137,7 @@ for label, mu in [("평상시", 6.2), ("경쟁 과열", 7.0)]:
 #   -> 최적은 20% 깎기
 ```
 
-경쟁이 과열되면 최적점이 움직입니다. 시장 평균이 546원에서 1,215원으로 오르자 최적 깎기가 40%에서 20%로 내려왔습니다. 비싼 시장에서는 덜 깎아야 이깁니다. 꼭대기가 평평한 것도 눈여겨보세요. 과열 시장의 20%와 30%는 0.1원 차이입니다.
+경쟁이 과열되면 최적점이 움직입니다. 시장 평균이 546원에서 1,215원으로 오르자 최적 깎기가 40%에서 20%로 내려왔습니다. 비싼 시장에서는 덜 깎아야 이깁니다. 꼭대기가 평평한 것도 눈여겨봅니다. 과열 시장의 20%와 30%는 0.1원 차이입니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-bid-landscape.html?embed=1" height="560" loading="lazy" title="입찰 지형 미니 데모"></iframe>
@@ -192,7 +192,7 @@ DSP 입장에서 경매 결과 데이터는 **비대칭적**입니다:
 
 이것은 의학의 **생존 분석(Survival Analysis)**과 정확히 같은 구조입니다. "관찰 기간 내 사망하지 않은 환자의 실제 수명을 모른다"와 "패찰한 경매의 실제 시장 가격을 모른다"는 수학적으로 동치입니다.
 
-> [데모](demo-bid-shading.html)에서 **"Censored View로 전환"** 버튼을 눌러보세요. 내 입찰가 이상의 히스토그램이 "???" 사선 패턴으로 바뀝니다. DSP가 보는 정보의 한계를 눈으로 확인할 수 있습니다.
+> [데모](demo-bid-shading.html)에서 **"Censored View로 전환"** 버튼을 눌러 봅니다. 내 입찰가 이상의 히스토그램이 "???" 사선 패턴으로 바뀝니다. DSP가 보는 정보의 한계를 눈으로 확인할 수 있습니다.
 
 ### ② Naive 추정이 실패하는 이유
 
@@ -717,7 +717,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 2. **Censored data 를 무시하면 시장 가격을 체계적으로 과소추정** — Naive 추정의 위험성. 반드시 censored regression 또는 Survival Analysis 기법이 필요합니다.
 
-3. **분포 선택이 성능을 좌우** — Log-normal이 RTB 시장에서 가장 강력합니다. 다봉 분포가 의심되면 MCNet을 고려하세요.
+3. **분포 선택이 성능을 좌우** — Log-normal이 RTB 시장에서 가장 강력합니다. 다봉 분포가 의심되면 MCNet을 고려합니다.
 
 4. **Unimodality 증명 덕분에 황금 비율 탐색으로 O(log n) 최적 입찰** — Grid Search 없이 실시간 서빙이 가능합니다.
 

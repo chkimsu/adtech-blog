@@ -194,8 +194,8 @@ d = {3: '실수로 덮어씀'}  항목 수 1
 
 | 키로 쓸 수 있나 | 자료형 | 이유 |
 |---|---|---|
-| 된다 | 정수·실수·문자열·튜플·`frozenset` | 만든 뒤 못 바꾼다 |
-| 안 된다 | 리스트·딕셔너리·집합 | 내용이 바뀌면 해시값도 바뀐다 |
+| 된다 | 정수, 실수, 문자열, 튜플, `frozenset` | 만든 뒤 못 바꾼다 |
+| 안 된다 | 리스트, 딕셔너리, 집합 | 내용이 바뀌면 해시값도 바뀐다 |
 | 조건부 | 직접 만든 클래스 | `__hash__` 와 `__eq__` 를 짝 맞춰 정의해야 한다 |
 
 좌표나 이름 조합처럼 여러 값을 묶어 키로 쓰고 싶으면 튜플로 감싸면 된다. `방문[(x, y)] = True` 같은 꼴은 격자 문제에서 계속 나온다.
@@ -232,7 +232,7 @@ for i, v in enumerate(ARR):
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 200" role="img" aria-label="네 회차를 위에서 아래로 쌓은 그림. 회차마다 값 여섯 개가 칸으로 놓여 있고 지금 보는 칸이 굵게 표시된다. 오른쪽에는 그 회차에서 찾는 짝과 지금까지 적어 둔 값이 적혀 있다. 네 번째 회차에서 찾는 짝 3 이 이미 적혀 있어 답을 찾는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
-<text x="6" y="13" style="font-size:12.5px; fill:var(--text-secondary)">목표 10 · 값 [8, 3, 11, 7, 2, 15]</text>
+<text x="6" y="13" style="font-size:12.5px; fill:var(--text-secondary)">목표 10, 값 [8, 3, 11, 7, 2, 15]</text>
 <g style="font-size:11px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">
 <text x="72" y="34">8</text><text x="104" y="34">3</text><text x="136" y="34">11</text>
 <text x="168" y="34">7</text><text x="200" y="34">2</text><text x="232" y="34">15</text></g>
@@ -253,21 +253,21 @@ for i, v in enumerate(ARR):
 <g style="font-size:11px; fill:var(--text-muted); text-anchor:end; font-family:var(--font-mono)">
 <text x="50" y="55">1회</text><text x="50" y="85">2회</text><text x="50" y="115">3회</text><text x="50" y="145">4회</text></g>
 <g style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">
-<text x="258" y="55">찾는 짝 2 · 적어 둔 것 없음</text>
-<text x="258" y="85">찾는 짝 7 · 적어 둔 것 8</text>
-<text x="258" y="115">찾는 짝 −1 · 적어 둔 것 8, 3</text></g>
-<text x="258" y="145" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">찾는 짝 3 · 이미 적혀 있다</text>
+<text x="258" y="55">찾는 짝 2 / 적어 둔 것 없음</text>
+<text x="258" y="85">찾는 짝 7 / 적어 둔 것 8</text>
+<text x="258" y="115">찾는 짝 −1 / 적어 둔 것 8, 3</text></g>
+<text x="258" y="145" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">찾는 짝 3 / 이미 적혀 있다</text>
 <line x1="104" y1="152" x2="104" y2="164" style="stroke:var(--accent-primary); stroke-width:2"/>
 <line x1="104" y1="164" x2="168" y2="164" style="stroke:var(--accent-primary); stroke-width:2"/>
 <line x1="168" y1="164" x2="168" y2="152" style="stroke:var(--accent-primary); stroke-width:2"/>
-<text x="186" y="168" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">3 + 7 = 10 · 답은 1번 칸과 3번 칸</text>
+<text x="186" y="168" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">3 + 7 = 10, 답은 1번 칸과 3번 칸</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">회차마다 하는 일은 딱 두 가지다. 필요한 짝을 뺄셈으로 구하고, 그것이 적어 둔 것 안에 있는지 묻는다. 둘 다 상수 시간이라 전체가 O(n) 이 된다.</figcaption>
 </figure>
 
 이 구조를 한 번 익혀 두면 응용이 넓다. **"지금 값에 대해 필요한 짝이 하나로 정해지는가"를 물어서 그렇다면 이 방법이 통한다.** 두 수의 차가 K인 짝, 합이 0인 짝, 나머지가 같은 짝이 모두 같은 꼴이다.
 
-## 6. 세는 일 — get·defaultdict·Counter
+## 6. 세는 일 — get, defaultdict, Counter
 
 **무엇이 몇 번 나왔는지 세는 코드는 셋 중 하나로 쓴다.**
 
@@ -409,7 +409,7 @@ print("            ", [(s[0], s[2], s[1]) for s in one])
 <g style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">
 <text x="140" y="35">지훈 3반 88</text><text x="232" y="35">민서 1반 92</text>
 <text x="324" y="35">서연 3반 92</text><text x="416" y="35">도윤 1반 88</text></g>
-<text x="6" y="84" style="font-size:12.5px; fill:var(--text-secondary)">1단계 · 반</text>
+<text x="6" y="84" style="font-size:12.5px; fill:var(--text-secondary)">1단계: 반</text>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2">
 <rect x="188" y="70" width="88" height="22"/><rect x="280" y="70" width="88" height="22"/></g>
 <g style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:2">
@@ -417,7 +417,7 @@ print("            ", [(s[0], s[2], s[1]) for s in one])
 <g style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">
 <text x="140" y="85">민서 1반 92</text><text x="232" y="85">도윤 1반 88</text>
 <text x="324" y="85">지훈 3반 88</text><text x="416" y="85">서연 3반 92</text></g>
-<text x="6" y="148" style="font-size:12.5px; fill:var(--text-secondary)">2단계 · 점수</text>
+<text x="6" y="148" style="font-size:12.5px; fill:var(--text-secondary)">2단계: 점수</text>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2">
 <rect x="280" y="134" width="88" height="22"/><rect x="372" y="134" width="88" height="22"/></g>
 <g style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:2">
@@ -557,9 +557,9 @@ i=3 값  0  L=4( 1) R=5( 2)  합  3 > 0  R을 당긴다
 | 몇 번 나왔는지 센다 | `Counter` | `most_common` 까지 딸려 온다 |
 | 키마다 여러 개를 모은다 | `defaultdict(list)` | 첫 등장을 따로 처리 안 해도 된다 |
 | 두 목록을 비교한다 | 집합 연산 | 이중 반복문이 기호 하나가 된다 |
-| 순서·크기 비교가 필요하다 | 정렬 | 해시는 순서를 버린다 |
+| 순서, 크기 비교가 필요하다 | 정렬 | 해시는 순서를 버린다 |
 | 기준이 둘 이상이다 | 튜플 `key` | 한 번만 정렬하고 기준이 한눈에 보인다 |
-| 겹침·중복을 다룬다 | 정렬 후 한 번 훑기 | 같은 것끼리 붙어 있게 된다 |
+| 겹침, 중복을 다룬다 | 정렬 후 한 번 훑기 | 같은 것끼리 붙어 있게 된다 |
 
 ## 헷갈리기 쉬운 점
 

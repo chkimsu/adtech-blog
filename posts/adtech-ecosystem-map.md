@@ -12,7 +12,7 @@ pCTR 모델을 만드는 입장에서, "내 모델이 실제로 어디에서 어
 graph TB
   subgraph Advertiser["광고주 (Advertiser)"]
     ADV(["광고주<br/>KPI: ROAS, CPA, ROI"])
-    CAMP(["캠페인 설정<br/>예산 · 타겟 · 소재"])
+    CAMP(["캠페인 설정<br/>예산, 타겟, 소재"])
     CREATIVE(["광고 소재<br/>배너, 동영상, 네이티브"])
   end
 
@@ -32,7 +32,7 @@ graph TB
 
     TARGETING(["타겟팅 엔진"])
     ADSELECT(["Ad Ranking"])
-    FEAT[("Feature Store<br/>유저·지면·시간 피처")]
+    FEAT[("Feature Store<br/>유저, 지면, 시간 피처")]
   end
 
   subgraph DMP_CDP["데이터 플랫폼"]
@@ -66,7 +66,7 @@ graph TB
 
   ADV -->|캠페인 등록| CAMP
   CAMP --> CREATIVE
-  CAMP ==>|예산·타겟·KPI| DSP_System
+  CAMP ==>|예산, 타겟, KPI| DSP_System
 
   CDP --> SEGMENT
   DMP --> SEGMENT
@@ -140,7 +140,7 @@ graph TB
 눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 23개 모듈을 **두 층**으로 놓았습니다.
 
 - **위층 = 두뇌 층.** 피처 스토어(Feature Store) 에서 Training 을 거쳐, 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 입찰가를 정하는 Bid Optimizer, 그리고 Monitoring 입니다.
-- **아래층 = 거래 층.** 사용자 → 매체·SSP → 광고 거래소(Ad Exchange) → DSP → 광고주.
+- **아래층 = 거래 층.** 사용자 → 매체, SSP → 광고 거래소(Ad Exchange) → DSP → 광고주.
 
 두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다. DSP 안에서 일이 일어나는 순서는 [DSP 안의 순서](ecosystem.html?flow=dspinside) 칩으로 봅니다. 지도 위의 무대 바꾸기로 열린 RTB 와 닫힌 생태계를 바꿔 볼 수도 있습니다.
 
@@ -210,7 +210,7 @@ graph TB
 ```python
 # 지도의 "SSP → Exchange → DSP" 화살표 하나는 요청 1건이 아니다.
 # 페이지가 한 번 열릴 때 그 화살표가 몇 갈래로 갈라지는지 센다.
-SLOTS, SSP_PER_SLOT, DSP_PER_AUCTION = 5, 3, 20  # 지면 수·지면당 SSP·경매당 DSP
+SLOTS, SSP_PER_SLOT, DSP_PER_AUCTION = 5, 3, 20  # 지면 수, 지면당 SSP, 경매당 DSP
 PAGEVIEW = 10_000_000                            # 이 매체의 하루 페이지뷰
 
 per_page = SLOTS * SSP_PER_SLOT * DSP_PER_AUCTION  # 페이지 1회의 Bid Request
@@ -426,7 +426,7 @@ for k in range(max(dist.values()) + 1):
 <div class="chart-arch-grid">
 <div class="chart-arch-node">
 <div class="chart-arch-node-name">최종 입찰가: b* = $0.034</div>
-<div class="chart-arch-node-desc">Surplus 최대화: b* = argmax (V-b)&middot;F(b|x), shading 29%</div>
+<div class="chart-arch-node-desc">Surplus 최대화: b* = argmax (V-b)×F(b|x), shading 29%</div>
 </div>
 </div>
 </div>
@@ -478,7 +478,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 <div class="chart-layer-group">
 <div class="chart-layer-group-label">Feature Engineering</div>
 <div class="chart-layer-items">
-<span class="chart-layer-item pink">유저 &middot; 지면 &middot; 시간 &middot; 소재 피처</span>
+<span class="chart-layer-item pink">유저, 지면, 시간, 소재 피처</span>
 </div>
 </div>
 <div class="chart-layer-group">
@@ -561,17 +561,17 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
 
-지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습·서빙 흐름](ecosystem.html?flow=modeling) 칩을 누릅니다.
+지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습, 서빙 흐름](ecosystem.html?flow=modeling) 칩을 누릅니다.
 
 ```python
 # 두뇌 층은 고리다. 로그가 한 바퀴 돌아 다시 심장에 닿는 시간을 더한다.
 STAGES = [
-    ("로그 수집·조인", 0.5),   # 노출·클릭 로그가 모여 붙기까지
+    ("로그 수집, 조인", 0.5),   # 노출, 클릭 로그가 모여 붙기까지
     ("전환 라벨 대기", 24.0),  # 전환은 클릭보다 한참 늦게 온다
     ("학습셋 만들기", 1.5),    # Feature Store에서 피처를 붙인다
     ("모델 학습", 4.0),        # Training
-    ("오프라인 검증", 1.0),    # AUC·LogLoss가 기준을 넘는지
-    ("배포·워밍업", 0.5),      # Model Serving 교체
+    ("오프라인 검증", 1.0),    # AUC, LogLoss가 기준을 넘는지
+    ("배포, 워밍업", 0.5),      # Model Serving 교체
 ]
 loop = sum(h for _, h in STAGES)
 for name, h in STAGES:
@@ -584,12 +584,12 @@ for n in (1, 4, 24):
     print(f"하루 {n:2d}회 학습 → 모델 나이 평균 {loop + 12 / n:.1f}시간")
 
 # 출력:
-#   0.5시간 ( 2%)  로그 수집·조인
+#   0.5시간 ( 2%)  로그 수집, 조인
 #  24.0시간 (76%)  전환 라벨 대기
 #   1.5시간 ( 5%)  학습셋 만들기
 #   4.0시간 (13%)  모델 학습
 #   1.0시간 ( 3%)  오프라인 검증
-#   0.5시간 ( 2%)  배포·워밍업
+#   0.5시간 ( 2%)  배포, 워밍업
 #  31.5시간         한 바퀴 전체
 # 하루  1회 학습 → 모델 나이 평균 43.5시간
 # 하루  4회 학습 → 모델 나이 평균 34.5시간
@@ -671,7 +671,7 @@ for n in (1, 4, 24):
 
 ### 지도에서 같은 연결을 눌러 보기
 
-위 표를 외울 필요는 없습니다. [살아있는 생태계 지도](ecosystem.html)에서 상자를 클릭하면, 그 모듈의 정의와 연결된 데모·글이 옆 패널에 열립니다. DSP 상자를 누르면 위 표의 데모가 거기 다 붙어 있습니다. 지도와 글이 같은 색인을 공유한다는 뜻입니다. 두뇌 층만 순서대로 훑고 싶다면 [ML 엔지니어 트랙](ml-track.html)이 읽는 순서를 정해 줍니다. 회사별 역할은 [DSP·SSP·Exchange](post.html?id=dsp-ssp-exchange), 전체 관문은 [30분 입문 가이드](post.html?id=adtech-30min-primer)입니다.
+위 표를 외울 필요는 없습니다. [살아있는 생태계 지도](ecosystem.html)에서 상자를 클릭하면, 그 모듈의 정의와 연결된 데모, 글이 옆 패널에 열립니다. DSP 상자를 누르면 위 표의 데모가 거기 다 붙어 있습니다. 지도와 글이 같은 색인을 공유한다는 뜻입니다. 두뇌 층만 순서대로 훑고 싶다면 [ML 엔지니어 트랙](ml-track.html)이 읽는 순서를 정해 줍니다. 회사별 역할은 [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange), 전체 관문은 [30분 입문 가이드](post.html?id=adtech-30min-primer)입니다.
 
 ---
 
@@ -691,15 +691,15 @@ for n in (1, 4, 24):
 | DSP → Advertiser | 있음 | 5~20% | 각 단계의 실제 수수료율 |
 | DSP ↔ pCTR/pCVR (두 층 연결선) | 없음 | 0% | 없음 |
 
-마지막 줄이 요점입니다. 두 층을 잇는 세로선만 어느 무대에서도 경계를 넘지 않습니다. 수수료 곱셈은 [DSP·SSP·Exchange](post.html?id=dsp-ssp-exchange)에 있습니다.
+마지막 줄이 요점입니다. 두 층을 잇는 세로선만 어느 무대에서도 경계를 넘지 않습니다. 수수료 곱셈은 [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange)에 있습니다.
 
 :::deep 화살표에 실려 가는 것 — OpenRTB 입찰 요청의 뼈대
-경계를 넘는 화살표에는 정해진 서식의 JSON이 실립니다. `imp`(지면 크기·바닥값), `site`/`app`, `device`, `user`, `tmax`(제한시간)가 뼈대입니다. 여기 없는 값은 좋은 모델로도 쓸 수 없습니다.
+경계를 넘는 화살표에는 정해진 서식의 JSON이 실립니다. `imp`(지면 크기, 바닥값), `site`/`app`, `device`, `user`, `tmax`(제한시간)가 뼈대입니다. 여기 없는 값은 좋은 모델로도 쓸 수 없습니다.
 :::
 
 ### 상자 여럿이 한 회사 안에 있을 때 [무대: 닫힌 생태계]
 
-담장 안(네이버·카카오)에서는 매체·SSP·Exchange·DSP가 대부분 한 회사입니다. 위 표의 수수료 칸과 정보 단절 칸이 함께 사라집니다. 열린 RTB에서 어려운 건 가로 화살표(회사 사이)이고, 담장 안에서는 세로선(두 층 사이)이 거의 전부입니다. 비교는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에서 다룹니다.
+담장 안(네이버, 카카오)에서는 매체, SSP, Exchange, DSP가 대부분 한 회사입니다. 위 표의 수수료 칸과 정보 단절 칸이 함께 사라집니다. 열린 RTB에서 어려운 건 가로 화살표(회사 사이)이고, 담장 안에서는 세로선(두 층 사이)이 거의 전부입니다. 비교는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에서 다룹니다.
 
 ---
 
@@ -721,7 +721,7 @@ for n in (1, 4, 24):
 
 - [살아있는 생태계 지도](ecosystem.html) — 눌러 보고 흐름 재생
 - [ML 엔지니어 트랙](ml-track.html) — 두뇌 층 읽는 순서
-- [DSP·SSP·Exchange](post.html?id=dsp-ssp-exchange)
+- [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange)
 - [30분 입문 가이드](post.html?id=adtech-30min-primer)
 - [광고 서빙 플로우](post.html?id=ad-serving-flow)
 - [타겟팅 기초](post.html?id=targeting-basics) — 그림의 타겟팅 엔진이 하는 일

@@ -88,7 +88,7 @@ for n in (1000, 2000, 4000, 8000):
 
 <div class="table-wrapper">
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 150" role="img" aria-label="n 이 1000·2000·4000·8000 으로 두 배씩 커질 때 짝을 전부 만드는 방법의 걸린 시간을 막대로 그린 그림. 막대 길이가 매번 네 배 가까이 길어져 마지막 막대가 첫 막대의 예순한 배다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 150" role="img" aria-label="n 이 1000, 2000, 4000, 8000 으로 두 배씩 커질 때 짝을 전부 만드는 방법의 걸린 시간을 막대로 그린 그림. 막대 길이가 매번 네 배 가까이 길어져 마지막 막대가 첫 막대의 61배다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <text x="6" y="14" style="font-size:12.5px; fill:var(--text-secondary)">짝을 전부 만드는 방법 — n 이 두 배가 될 때마다 막대가 네 배</text>
 <g style="stroke:var(--rule); stroke-width:1"><line x1="86" y1="26" x2="86" y2="140"/></g>
 <g style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.4">
@@ -247,7 +247,7 @@ print()
 for lo, hi in [(2, 5), (0, 3), (5, 7)]:
     direct = sum(ARR[lo:hi + 1])
     fast = pre[hi + 1] - pre[lo]
-    print(f"{lo}~{hi} 칸의 합  더해서 {direct:>2}  ·  누적합으로 pre[{hi+1}]-pre[{lo}] = "
+    print(f"{lo}~{hi} 칸의 합  더해서 {direct:>2}, 누적합으로 pre[{hi+1}]-pre[{lo}] = "
           f"{pre[hi+1]}-{pre[lo]} = {fast:>2}  {'같다' if direct == fast else '다르다'}")
 
 # 출력:
@@ -255,9 +255,9 @@ for lo, hi in [(2, 5), (0, 3), (5, 7)]:
 # 값       3   1   4   1   5   9   2   6
 # 누적합   0   3   4   8   9  14  23  25  31
 #
-# 2~5 칸의 합  더해서 19  ·  누적합으로 pre[6]-pre[2] = 23-4 = 19  같다
-# 0~3 칸의 합  더해서  9  ·  누적합으로 pre[4]-pre[0] = 9-0 =  9  같다
-# 5~7 칸의 합  더해서 17  ·  누적합으로 pre[8]-pre[5] = 31-14 = 17  같다
+# 2~5 칸의 합  더해서 19, 누적합으로 pre[6]-pre[2] = 23-4 = 19  같다
+# 0~3 칸의 합  더해서  9, 누적합으로 pre[4]-pre[0] = 9-0 =  9  같다
+# 5~7 칸의 합  더해서 17, 누적합으로 pre[8]-pre[5] = 31-14 = 17  같다
 ```
 
 <div class="table-wrapper">
@@ -349,7 +349,7 @@ def two_sum_sorted(arr, target):
 
 print(f"목표 {TARGET}")
 found = two_sum_sorted(ARR, TARGET)
-print(f"→ 칸 {found[0]}·{found[1]} 의 {ARR[found[0]]} + {ARR[found[1]]} = {TARGET}")
+print(f"→ 칸 {found[0]}, {found[1]} 의 {ARR[found[0]]} + {ARR[found[1]]} = {TARGET}")
 print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 여기서는 4번이었다.")
 
 # 출력:
@@ -358,7 +358,7 @@ print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 
 # 2회차  L=0( 2)  R=6(38)  합 40  크다 → 오른쪽을 당긴다
 # 3회차  L=0( 2)  R=5(23)  합 25  작다 → 왼쪽을 민다
 # 4회차  L=1( 5)  R=5(23)  합 28  찾음
-# → 칸 1·5 의 5 + 23 = 28
+# → 칸 1, 5 의 5 + 23 = 28
 # → 짝을 전부 만들면 28번 비교한다. 여기서는 4번이었다.
 ```
 
@@ -382,7 +382,7 @@ print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 
 <line x1="342" y1="52" x2="342" y2="46" style="stroke:var(--accent-primary); stroke-width:1.6" marker-end="url(#ca7-arr)"/>
 <text x="118" y="62" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">L</text>
 <text x="342" y="62" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">R</text>
-<text x="366" y="38" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 47 · 크다</text>
+<text x="366" y="38" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 47, 크다</text>
 <text x="6" y="96" style="font-size:12px; fill:var(--text-secondary)">2회차</text>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.4">
 <rect x="104" y="82" width="28" height="20"/><rect x="136" y="82" width="28" height="20"/><rect x="168" y="82" width="28" height="20"/><rect x="200" y="82" width="28" height="20"/>
@@ -396,7 +396,7 @@ print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 
 <line x1="310" y1="110" x2="310" y2="104" style="stroke:var(--accent-primary); stroke-width:1.6" marker-end="url(#ca7-arr)"/>
 <text x="118" y="120" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">L</text>
 <text x="310" y="120" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">R</text>
-<text x="366" y="96" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 40 · 크다</text>
+<text x="366" y="96" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 40, 크다</text>
 <text x="6" y="154" style="font-size:12px; fill:var(--text-secondary)">3회차</text>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.4">
 <rect x="104" y="140" width="28" height="20"/><rect x="136" y="140" width="28" height="20"/><rect x="168" y="140" width="28" height="20"/><rect x="200" y="140" width="28" height="20"/>
@@ -412,7 +412,7 @@ print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 
 <line x1="278" y1="168" x2="278" y2="162" style="stroke:var(--accent-primary); stroke-width:1.6" marker-end="url(#ca7-arr)"/>
 <text x="118" y="178" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">L</text>
 <text x="278" y="178" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">R</text>
-<text x="366" y="154" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 25 · 작다</text>
+<text x="366" y="154" style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">합 25, 작다</text>
 <text x="6" y="212" style="font-size:12px; fill:var(--text-secondary)">4회차</text>
 <rect x="104" y="198" width="28" height="20" style="fill:var(--bg-tertiary); stroke:var(--rule2); stroke-width:1; stroke-dasharray:3 2"/>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.4">
@@ -430,7 +430,7 @@ print(f"→ 짝을 전부 만들면 {len(ARR)*(len(ARR)-1)//2}번 비교한다. 
 <line x1="278" y1="226" x2="278" y2="220" style="stroke:var(--accent-primary); stroke-width:1.6" marker-end="url(#ca7-arr)"/>
 <text x="150" y="236" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">L</text>
 <text x="278" y="236" style="font-size:11px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">R</text>
-<text x="366" y="212" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">합 28 · 찾음</text>
+<text x="366" y="212" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">합 28, 찾음</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">점선으로 흐려진 칸이 후보에서 지워진 값이다. 한 회차에 최소 한 칸씩 지워지므로 회차 수가 값의 개수를 넘지 못한다. 그래서 O(n)이다.</figcaption>
 </figure>
@@ -518,7 +518,7 @@ print(f"→ 구간마다 다시 더하면 {(len(ARR)-K+1)*K}번 더한다. 여�
 <g style="font-size:12.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">
 <text x="118" y="162">3</text><text x="150" y="162">1</text><text x="182" y="162">4</text><text x="214" y="162">1</text>
 <text x="246" y="162">5</text><text x="278" y="162">9</text><text x="310" y="162">2</text><text x="342" y="162">6</text></g>
-<text x="370" y="162" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">합 17 · 최대</text>
+<text x="370" y="162" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">합 17, 최대</text>
 <text x="6" y="192" style="font-size:12.5px; fill:var(--text-muted)">윈도우가 한 칸 옮겨 갈 때 바뀌는 것은 양 끝 하나씩뿐이다. 가운데는 그대로 있다.</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">여섯 자리 중 세 자리만 그렸다. 윈도우의 굵기가 다른 마지막 자리가 합이 가장 큰 곳이다.</figcaption>
@@ -545,12 +545,12 @@ print(f"→ 구간마다 다시 더하면 {(len(ARR)-K+1)*K}번 더한다. 여�
 
 | 상황 | 쓸 것 | 왜 |
 |---|---|---|
-| "안에 있나"를 반복해서 묻는다 | 집합·딕셔너리 | 리스트는 앞에서부터 훑는다 |
+| "안에 있나"를 반복해서 묻는다 | 집합, 딕셔너리 | 리스트는 앞에서부터 훑는다 |
 | 맨 앞을 자주 뺀다 | `deque` | 리스트는 뒤를 전부 당긴다 |
 | 구간 합을 여러 번 묻는다 | 누적합 | 만들 때 한 번, 그 뒤로는 뺄셈 하나 |
 | 정렬된 배열에서 짝을 찾는다 | 투 포인터 | 한쪽이 크면 그 값은 어떤 짝에도 크다 |
 | 연속한 구간을 차례로 본다 | 슬라이딩 윈도우 | 옆 구간과 양 끝만 다르다 |
-| 최댓값·합계처럼 한 값만 필요하다 | 한 번 훑기 | 정렬은 필요 이상으로 비싸다 |
+| 최댓값, 합계처럼 한 값만 필요하다 | 한 번 훑기 | 정렬은 필요 이상으로 비싸다 |
 
 ## 헷갈리기 쉬운 점
 

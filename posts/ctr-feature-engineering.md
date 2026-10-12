@@ -87,8 +87,8 @@ true_ctr = [random.lognormvariate(-4.6, 0.6) for _ in range(N)]
 # 노출은 지프 분포. 인기 i번째가 1/i 만큼 받는다. 광고 트래픽은 늘 머리가 무겁다.
 harm = sum(1.0 / (i + 1) for i in range(N))
 imps = [max(1, round(IMP / harm / (i + 1))) for i in range(N)]
-print(f"상위 1,000개가 먹는 노출 {sum(imps[:1000])/sum(imps)*100:.1f}% · "
-      f"상위 1만 개 {sum(imps[:TOP])/sum(imps)*100:.1f}% · 꼴찌 광고 {imps[-1]}회\n")
+print(f"상위 1,000개가 먹는 노출 {sum(imps[:1000])/sum(imps)*100:.1f}%, "
+      f"상위 1만 개 {sum(imps[:TOP])/sum(imps)*100:.1f}%, 꼴찌 광고 {imps[-1]}회\n")
 
 def analyze(m, dedicated=0):
     """버킷 m개에 넣는다. dedicated>0이면 상위 그만큼은 전용 버킷을 준다.
@@ -137,7 +137,7 @@ for d in (0, 10_000, 50_000):
           f"  테이블 {(2**18+d)*16*4/1024**2:5.1f} MB")
 
 # 출력:
-# 상위 1,000개가 먹는 노출 52.0% · 상위 1만 개 68.0% · 꼴찌 광고 7회
+# 상위 1,000개가 먹는 노출 52.0%, 상위 1만 개 68.0%, 꼴찌 광고 7회
 #
 #   버킷    쓴 버킷    겹친ID  전체오차  상위1만   꼬리   (이론 예상 버킷)
 #   2^16    65,536  100.0%     22.2%    4.95%   58.7%   (65,536)
@@ -235,7 +235,7 @@ OOV를 하나만 두면 새로 만들어진 화장품 광고와 대출 광고가
 여기에 최근성 가중을 얹는다. 3분 전에 본 상품과 3주 전에 본 상품은 가중치가 달라야 한다. 흔한 방법은 반감기다. 24시간마다 가중치가 절반이 되게 한다.
 
 ```python
-# "최근 본 것 20개"를 고정 길이 배열로 만든다. 자르기·채우기·마스크·최근성 가중.
+# "최근 본 것 20개"를 고정 길이 배열로 만든다. 자르기, 채우기, 마스크, 최근성 가중.
 L, PAD, HALF = 20, 0, 24.0   # 시퀀스 길이 20 / 빈 자리 번호 0 / 최근성 반감기 24시간
 CAT = {"운동": 11, "전자기기": 12, "여행": 13}   # 카테고리 -> ID (실무에선 상품 ID)
 
@@ -365,7 +365,7 @@ def draw(n):
     return out
 
 def agg(days):
-    """조합별 클릭·노출을 센다. 여러 날을 한꺼번에 넘길 수 있다."""
+    """조합별 클릭, 노출을 센다. 여러 날을 한꺼번에 넘길 수 있다."""
     c, n = [0.0] * (N_AD * N_SLOT), [0.0] * (N_AD * N_SLOT)
     for rows in days:
         for key, _, y in rows: c[key] += y; n[key] += 1
@@ -376,7 +376,7 @@ today, tmrw = draw(IMP), draw(IMP)       # D = 학습에 쓸 날 / D+1 = 실서�
 A = agg([today])                         # 누출 피처의 재료 — 오늘 하루
 C = agg(past)                            # 정상 피처의 재료 — 과거 7일
 S = agg(past[1:] + [today])              # 서빙 시점에 존재하는 값(D-6 ~ D)
-print(f"하루 노출 1건뿐인 조합 {sum(1 for x in A[1] if x == 1):,}개 · "
+print(f"하루 노출 1건뿐인 조합 {sum(1 for x in A[1] if x == 1):,}개, "
       f"한 번이라도 뜬 조합 {sum(1 for x in A[1] if x > 0):,}개\n")
 
 def feat(rows, mode):
@@ -428,7 +428,7 @@ print(f"\n오프라인에선 A가 C보다 {a[0]-c[0]:+.4f} — 이 숫자로 배
 print(f"실서빙에선 A가 C보다 {a[1]-c[1]:+.4f} — 개선은 없었다")
 
 # 출력:
-# 하루 노출 1건뿐인 조합 2,321개 · 한 번이라도 뜬 조합 6,926개
+# 하루 노출 1건뿐인 조합 2,321개, 한 번이라도 뜬 조합 6,926개
 #
 # [A 같은 날 CTR(누출)] 가중치 조합CTR  1.55 / 유저친화도  1.55
 #    오프라인 AUC 0.8938 -> 실서빙 AUC 0.7786  (-0.1152)
@@ -462,7 +462,7 @@ B가 흥미롭다. "자기 행만 빼면 되지 않나"는 아주 흔한 제안�
 ```python
 # 피처를 늘리면 무엇이 먼저 한계를 넘나. 정확도가 아니라 메모리와 대역폭이다. 전부 산수다.
 CAND, QPS, DIM, BUCKET, VAL_B = 200, 50_000, 16, 2**18, 8
-#     후보 200개 · 초당 5만 요청 · 임베딩 16차원 · 해시 2^18 · 집계값 하나 8바이트
+#     후보 200개, 초당 5만 요청, 임베딩 16차원, 해시 2^18, 집계값 하나 8바이트
 MISS_NS = 100          # 임베딩 테이블은 커서 캐시에 안 들어간다. 랜덤 접근 1회 100ns
 GB = 1024 ** 3
 RAM_GB, NIC_GBPS, FETCH_MS = 4.0, 10.0, 3.0   # 서버 예산: 램 4GB / 10Gbps / 조회 3ms
@@ -541,10 +541,10 @@ for n in (40, 80, 160):
 ## 10. 더 깊이 보기
 
 - [Deep CTR 모델의 진화: LR에서 DIN까지](post.html?id=deep-ctr-models) — 여기서 만든 피처를 어떤 구조가 조합하나
-- [Feature Store](post.html?id=feature-store-serving) — 피처를 저장·조회하는 인프라와 training-serving skew
+- [Feature Store](post.html?id=feature-store-serving) — 피처를 저장, 조회하는 인프라와 training-serving skew
 - [Negative Sampling](post.html?id=negative-sampling-bias) — 어떤 노출을 학습 표본으로 쓸까
 - [Two-Tower Retrieval](post.html?id=two-tower-retrieval) — 임베딩으로 후보를 추리는 단계
-- [오디언스 세그멘테이션](post.html?id=audience-segmentation) · [Lookalike Modeling](post.html?id=lookalike-modeling) — 유저 신호를 세그먼트로 만드는 쪽
+- [오디언스 세그멘테이션](post.html?id=audience-segmentation), [Lookalike Modeling](post.html?id=lookalike-modeling) — 유저 신호를 세그먼트로 만드는 쪽
 - [pCTR: 이 사람이 누를까](post.html?id=pctr-prediction) — 이 모델의 출력이 왜 돈이 되나
 - [Calibration](post.html?id=calibration) — 확률의 절댓값을 맞추는 문제
 - [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 10ms 예산을 어떻게 쪼개 쓰나

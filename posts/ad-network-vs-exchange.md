@@ -2,7 +2,7 @@ DSP, SSP, RTB, 헤더비딩(Header Bidding)... 광고 기술(Ad Tech) 생태계�
 
 이 질문의 답은 시대에 따라 **광고 네트워크(Ad Network)**에서 **광고 거래소(Ad Exchange)**로 진화했습니다. 그 과정에서 순차 호출(Waterfall), RTB, 헤더비딩이라는 기술이 차례로 등장했습니다. 이 글은 그 **전환이 왜 일어났고 무엇을 바꿨는지**를 숫자로 따라갑니다.
 
-> 각 회사가 정확히 무슨 일을 하는지는 [DSP·SSP·광고 거래소](post.html?id=dsp-ssp-exchange)에서 다룹니다. 전체 조감도는 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에 있습니다.
+> 각 회사가 정확히 무슨 일을 하는지는 [DSP, SSP, 광고 거래소](post.html?id=dsp-ssp-exchange)에서 다룹니다. 전체 조감도는 [생태계 전체 지도](post.html?id=adtech-ecosystem-map)에 있습니다.
 
 ---
 
@@ -10,7 +10,7 @@ DSP, SSP, RTB, 헤더비딩(Header Bidding)... 광고 기술(Ad Tech) 생태계�
 
 **광고 네트워크는 지면을 묶어 미리 정한 값으로 파는 중개자이고, 광고 거래소는 노출 한 건씩 실시간 경매로 파는 장입니다.** 파는 물건이 아니라 파는 단위와 값 정하는 방법이 다릅니다.
 
-아래 표는 위에서 아래로 읽으면 인과가 보입니다. 첫 줄 다음의 세 줄(거래 단위·가격 결정·속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
+아래 표는 위에서 아래로 읽으면 인과가 보입니다. 첫 줄 다음의 세 줄(거래 단위, 가격 결정, 속도)이 원인이고 나머지는 그 결과입니다. 거래 단위가 묶음이면 값을 미리 정해 둘 수밖에 없습니다. 그러면 지면마다 다른 가치를 반영할 수 없습니다. 반대로 노출 한 건으로 쪼개면 값도 건마다 새로 정할 수 있습니다. 그 방법이 실시간 경매입니다. 아래쪽 차이는 모두 여기서 따라 나옵니다.
 
 | 차원 | 광고 네트워크 | 광고 거래소 |
 |------|-----------|-------------|
@@ -18,10 +18,10 @@ DSP, SSP, RTB, 헤더비딩(Header Bidding)... 광고 기술(Ad Tech) 생태계�
 | **거래 단위** | 인벤토리 패키지 (묶음) | 개별 Impression (1건씩) |
 | **가격 결정** | 사전 협상 / 고정 CPM | 실시간 경매 (RTB) |
 | **의사결정 속도** | 수 시간~수 일 (캠페인 단위) | 100ms 이내 (impression 단위) |
-| **투명성** | 낮음 (매체·가격 불투명) | 높음 (입찰 요청(Bid Request)에 지면 정보 포함) |
+| **투명성** | 낮음 (매체, 가격 불투명) | 높음 (입찰 요청(Bid Request)에 지면 정보 포함) |
 | **참여자** | Publisher ↔ Advertiser (중개) | DSP, SSP, Agency, 광고 네트워크 모두 참여 |
 | **타겟팅** | 세그먼트 단위 (카테고리, 지면 등급) | 유저 단위 (실시간 피처 활용) |
-| **매체 제어권** | 제한적 (Network이 가격·배치 결정) | 높음 (최저가(Floor Price), Block List 설정 가능) |
+| **매체 제어권** | 제한적 (Network이 가격, 배치 결정) | 높음 (최저가(Floor Price), Block List 설정 가능) |
 | **등장 시기** | 1990년대 후반 | 2005년~ (Right Media) |
 
 ---
@@ -46,7 +46,7 @@ graph LR
     subgraph Network["Ad Network"]
         AGG["인벤토리 수집<br/>& 세그먼트 분류"]
         SEG["Premium / Standard<br/>/ Remnant 등급"]
-        PKG["패키지 구성<br/>(카테고리 · 지면 등급)"]
+        PKG["패키지 구성<br/>(카테고리, 지면 등급)"]
     end
 
     subgraph Advertisers["광고주 (Advertisers)"]
@@ -119,15 +119,15 @@ print(f"노출 단위 경매   실효 CPM ₩{auc:,.0f}")
 for price in (620, 1100, 2400):
     rev, cheap, unsold = bundle(price)
     print(f"고정 ₩{price:>5,}    실효 ₩{rev:>3,.0f}"
-          f"  (헐값 {cheap:>3,.0f} · 유찰 {unsold:>3,.0f})  경매 대비 {rev/auc-1:+.0%}")
+          f"  (헐값 {cheap:>3,.0f}, 유찰 {unsold:>3,.0f})  경매 대비 {rev/auc-1:+.0%}")
 best = max((bundle(v)[0], v) for _, _, v in INV)
 print(f"최선의 고정가 ₩{best[1]:,}조차 경매의 {best[0]/auc:.0%}밖에 못 번다")
 
 # 출력:
 # 노출 단위 경매   실효 CPM ₩1,101
-# 고정 ₩  620    실효 ₩465  (헐값 566 · 유찰  70)  경매 대비 -58%
-# 고정 ₩1,100    실효 ₩495  (헐값 350 · 유찰 256)  경매 대비 -55%
-# 고정 ₩2,400    실효 ₩480  (헐값  90 · 유찰 531)  경매 대비 -56%
+# 고정 ₩  620    실효 ₩465  (헐값 566, 유찰  70)  경매 대비 -58%
+# 고정 ₩1,100    실효 ₩495  (헐값 350, 유찰 256)  경매 대비 -55%
+# 고정 ₩2,400    실효 ₩480  (헐값  90, 유찰 531)  경매 대비 -56%
 # 최선의 고정가 ₩1,100조차 경매의 45%밖에 못 번다
 ```
 
@@ -173,7 +173,7 @@ graph TD
 
 ### 순서가 수익을 정한다 — 숫자로
 
-**순차 호출의 성적은 Network의 실력이 아니라 매체가 세운 순서가 정합니다.** 같은 5곳·같은 입찰가로 순서만 120가지 바꿔 봅니다.
+**순차 호출의 성적은 Network의 실력이 아니라 매체가 세운 순서가 정합니다.** 같은 5곳, 같은 입찰가로 순서만 120가지 바꿔 봅니다.
 
 ```python
 import itertools, random
@@ -202,14 +202,14 @@ hi, lo = max(sc, key=sc.get), min(sc, key=sc.get)
 
 print(f"동시 입찰(경매)   평균 CPM ₩{auc:,.0f}")
 for tag, o in (("최선", hi), ("최악", lo)):
-    print(f"Waterfall {tag}  ₩{sc[o]:,.0f}  ({'·'.join(o)})  경매 대비 {sc[o]/auc-1:+.0%}")
+    print(f"Waterfall {tag}  ₩{sc[o]:,.0f}  ({', '.join(o)})  경매 대비 {sc[o]/auc-1:+.0%}")
 # '평균 CPM 1위' A를 맨 앞에 세운 24가지 순서의 평균 — 실무 관행
 print(f"A를 1순위로 세움  ₩{sum(v for o, v in sc.items() if o[0] == 'A')/24:,.0f}")
 
 # 출력:
 # 동시 입찰(경매)   평균 CPM ₩2,217
-# Waterfall 최선  ₩1,847  (D·B·A·E·C)  경매 대비 -17%
-# Waterfall 최악  ₩1,435  (C·E·A·D·B)  경매 대비 -35%
+# Waterfall 최선  ₩1,847  (D, B, A, E, C)  경매 대비 -17%
+# Waterfall 최악  ₩1,435  (C, E, A, D, B)  경매 대비 -35%
 # A를 1순위로 세움  ₩1,711
 ```
 
@@ -219,21 +219,21 @@ print(f"A를 1순위로 세움  ₩{sum(v for o, v in sc.items() if o[0] == 'A')
 두 번째 대가는 시간입니다. 한 곳씩 물으면 응답 시간이 더해집니다.
 
 ```python
-RESP, FILL, N = 120, 0.45, 5     # 한 곳 응답 ms · 한 곳이 채울 확률 · Network 수
+RESP, FILL, N = 120, 0.45, 5     # 한 곳 응답 ms, 한 곳이 채울 확률, Network 수
 leave = lambda ms: 0.015 * ms / 100    # 100ms 기다릴수록 이탈 +1.5%p라는 가정
 # k번째에서 채워질 확률 × 그때까지 기다린 시간을 다 더하면 평균 대기 시간이 나온다
 wait = sum((1 - FILL) ** (k - 1) * FILL * k * RESP for k in range(1, N + 1))
 wait += (1 - FILL) ** N * N * RESP     # 다 실패해도 기다린 시간은 그대로 쓴다
 fill = 1 - (1 - FILL) ** N             # 채움 비율. 순차든 동시든 수요가 같으니 똑같다
-print(f"순차 대기 {wait:.0f}ms · 이탈 {leave(wait):.1%}"
-      f"   (최악 {N*RESP}ms · 이탈 {leave(N*RESP):.0%})")
-print(f"동시 대기 {RESP}ms · 이탈 {leave(RESP):.1%}   채움은 양쪽 다 {fill:.1%}")
+print(f"순차 대기 {wait:.0f}ms, 이탈 {leave(wait):.1%}"
+      f"   (최악 {N*RESP}ms, 이탈 {leave(N*RESP):.0%})")
+print(f"동시 대기 {RESP}ms, 이탈 {leave(RESP):.1%}   채움은 양쪽 다 {fill:.1%}")
 print(f"하루 1,000만 노출이면 사라지는 노출 "
       f"{(leave(wait) - leave(RESP)) * fill * 1e7:,.0f}건")
 
 # 출력:
-# 순차 대기 253ms · 이탈 3.8%   (최악 600ms · 이탈 9%)
-# 동시 대기 120ms · 이탈 1.8%   채움은 양쪽 다 95.0%
+# 순차 대기 253ms, 이탈 3.8%   (최악 600ms, 이탈 9%)
+# 동시 대기 120ms, 이탈 1.8%   채움은 양쪽 다 95.0%
 # 하루 1,000만 노출이면 사라지는 노출 189,810건
 ```
 
@@ -262,7 +262,7 @@ sequenceDiagram
 
     User->>Pub: 페이지 방문
     Pub->>SSP: 광고 슬롯 요청
-    SSP->>Exchange: Bid Request (유저·지면 정보)
+    SSP->>Exchange: Bid Request (유저, 지면 정보)
 
     par 동시 입찰 요청
         Exchange->>DSP1: Bid Request
@@ -289,7 +289,7 @@ sequenceDiagram
 
 - **가격 발견(Price Discovery)**: 시장의 수요-공급이 실시간으로 가격에 반영
 - **매체 수익 극대화**: 가장 높은 가격을 제시한 바이어에게 판매
-- **광고주 효율 극대화**: 특정 유저·지면에 높은 가치를 부여하는 광고주만 높게 입찰
+- **광고주 효율 극대화**: 특정 유저, 지면에 높은 가치를 부여하는 광고주만 높게 입찰
 
 ### 참여자의 확장
 
@@ -351,7 +351,7 @@ Ad Network과 Ad Exchange는 **아키텍처 패러다임 자체가 다릅니다*
 | **레이턴시 요구** | 수 초~수 분 (비동기) | 100ms 이내 (동기) |
 | **프로토콜** | 자체 API (비표준) | OpenRTB 표준 프로토콜 |
 | **ML 모델 역할** | 제한적 (세그먼트 분류 정도) | 핵심 (pCTR, pCVR, Bid Shading) |
-| **데이터 활용** | 사전 집계된 세그먼트 | 실시간 유저·컨텍스트 피처 |
+| **데이터 활용** | 사전 집계된 세그먼트 | 실시간 유저, 컨텍스트 피처 |
 | **확장 과제** | 매체 온보딩 | 수십만 QPS 처리, 10ms 추론 |
 
 ### Ad Network: 배치 매칭 아키텍처
@@ -361,8 +361,8 @@ Ad Network의 핵심 로직은 **오프라인 매칭**입니다:
 ```mermaid
 graph LR
     subgraph Offline["오프라인 (배치)"]
-        INV["인벤토리 DB<br/>(매체 · 지면 · 카테고리)"]
-        CAMP["캠페인 DB<br/>(광고주 · 타겟 · 예산)"]
+        INV["인벤토리 DB<br/>(매체, 지면, 카테고리)"]
+        CAMP["캠페인 DB<br/>(광고주, 타겟, 예산)"]
         MATCH["매칭 엔진<br/>(세그먼트 → 캠페인)"]
         INV --> MATCH
         CAMP --> MATCH
@@ -392,7 +392,7 @@ graph LR
 ```mermaid
 graph LR
     subgraph RTB["실시간 (100ms 이내)"]
-        BR["Bid Request<br/>(유저·지면·시간 정보)"] --> FE["Feature<br/>Engineering"]
+        BR["Bid Request<br/>(유저, 지면, 시간 정보)"] --> FE["Feature<br/>Engineering"]
         FE --> PCTR["pCTR 모델"]
         FE --> PCVR["pCVR 모델"]
         PCTR --> TV["True Value 계산<br/>V = pCTR x pCVR x ConvValue"]
@@ -481,7 +481,7 @@ graph TB
 
 ### 담장 안에는 순차 호출이 없었다 [무대: 닫힌 생태계]
 
-**위 타임라인은 열린 RTB의 역사입니다.** 네이버·카카오는 지면도 광고주도 자기 것이라 중개를 맡길 Network이 없었습니다. 순서를 정할 일이 없으니 순차 호출도, 그 뒤의 [헤더비딩](post.html?id=header-bidding)도 필요하지 않았습니다.
+**위 타임라인은 열린 RTB의 역사입니다.** 네이버, 카카오는 지면도 광고주도 자기 것이라 중개를 맡길 Network이 없었습니다. 순서를 정할 일이 없으니 순차 호출도, 그 뒤의 [헤더비딩](post.html?id=header-bidding)도 필요하지 않았습니다.
 
 ---
 
@@ -586,7 +586,7 @@ Exchange(RTB) 환경에서는 입찰 요청에 포함된 **실시간 피처**를
 
 - [헤더비딩](post.html?id=header-bidding) — Waterfall 다음 이야기
 - [2등 가격 경매](post.html?id=second-price-auction) — 경매 규칙 자체
-- [ML 엔지니어 트랙](ml-track.html) — pCTR·pCVR부터 서빙까지
+- [ML 엔지니어 트랙](ml-track.html) — pCTR, pCVR부터 서빙까지
 
 ### 참고 자료
 

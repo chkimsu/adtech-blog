@@ -11,9 +11,9 @@
 > **골라 읽는 법** — 절이 열 개인 글입니다.
 >
 > - 그래프를 코드로 담는 법 → 앞의 두 절
-> - DFS·BFS와 그 차이 → 셋째~다섯째 절
+> - DFS, BFS와 그 차이 → 셋째~다섯째 절
 > - 흔히 틀리는 자리 → 여섯째 절
-> - 격자·가중치·순서 문제 → 일곱째 절부터
+> - 격자, 가중치, 순서 문제 → 일곱째 절부터
 
 ---
 
@@ -127,7 +127,7 @@ for n in 마디:
     print(f" {n} " + " ".join(str(x) for x in 행렬[자리[n]]))
 
 간선수 = len(간선)
-print(f"\n마디 {len(마디)}개 · 간선 {간선수}개")
+print(f"\n마디 {len(마디)}개, 간선 {간선수}개")
 print(f"인접 리스트가 들고 있는 칸  {2*간선수}")
 print(f"인접 행렬이 들고 있는 칸    {len(마디)**2}")
 ```
@@ -152,7 +152,7 @@ print(f"인접 행렬이 들고 있는 칸    {len(마디)**2}")
  F 0 0 0 1 1 0 1
  G 0 0 0 0 0 1 0
 
-마디 7개 · 간선 8개
+마디 7개, 간선 8개
 인접 리스트가 들고 있는 칸  16
 인접 행렬이 들고 있는 칸    49
 ```
@@ -280,12 +280,12 @@ b = bfs("A")
 <text x="286" y="112">A</text><text x="332" y="36">B</text><text x="332" y="150">C</text>
 <text x="378" y="36">D</text><text x="378" y="150">E</text><text x="424" y="112">F</text><text x="470" y="112">G</text></g>
 <text x="6" y="180" style="font-size:11.5px; fill:var(--text-secondary)">왼쪽은 B(2)→D(3) 로 깊이 들어갔다가 C(4) 로 돌아온다.</text>
-<text x="6" y="200" style="font-size:11.5px; fill:var(--accent-primary)">오른쪽은 B(2)·C(3) 를 먼저 다 보고 D(4)·E(5) 로 넘어간다 — 이 차이가 다음 절의 근거다.</text>
+<text x="6" y="200" style="font-size:11.5px; fill:var(--accent-primary)">오른쪽은 B(2), C(3)를 먼저 다 보고 D(4), E(5)로 넘어간다 — 이 차이가 다음 절의 근거다.</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">마디 안의 숫자가 몇 번째로 방문했는지다. 코드에서 다른 것은 <code>스택.pop()</code> 이 <code>큐.popleft()</code> 로 바뀐 것뿐인데, 훑는 모양이 통째로 달라진다.</figcaption>
 </figure>
 
-같은 그래프 위에서 둘을 번갈아 돌려 보면 차이가 더 분명하다. 아래에서 `Step` 을 눌러 스택·큐에 무엇이 들어 있는지 보고, 방법을 바꿔 같은 그래프를 다시 훑어 보자.
+같은 그래프 위에서 둘을 번갈아 돌려 보면 차이가 더 분명하다. 아래에서 `Step` 을 눌러 스택, 큐에 무엇이 들어 있는지 보고, 방법을 바꿔 같은 그래프를 다시 훑어 보자.
 
 <iframe class="demo-embed" src="demo-bfs-dfs.html?embed=1" height="820" loading="lazy" title="DFS 와 BFS 회차별 시각화"></iframe>
 
@@ -322,7 +322,7 @@ for n in sorted(거리):
 길 = ["G"]
 while 길[-1] in 앞마디:
     길.append(앞마디[길[-1]])
-print("\nA 에서 G 까지 최단 경로", " → ".join(reversed(길)), f"· {거리['G']}칸")
+print("\nA 에서 G 까지 최단 경로", " → ".join(reversed(길)) + f", {거리['G']}칸")
 ```
 
 ```
@@ -342,7 +342,7 @@ print("\nA 에서 G 까지 최단 경로", " → ".join(reversed(길)), f"· {�
   F  3
   G  4
 
-A 에서 G 까지 최단 경로 A → B → D → F → G · 4칸
+A 에서 G 까지 최단 경로 A → B → D → F → G, 4칸
 ```
 
 `앞마디` 한 줄을 더 적어 두면 거리뿐 아니라 **경로 자체**가 나온다. 도착점에서 시작해 앞마디를 거슬러 올라가다 보면 출발점에 닿고, 그것을 뒤집으면 길이 된다.
@@ -409,7 +409,7 @@ print("\n마디는 10개뿐인데 '꺼낼 때' 쪽은 그보다 훨씬 많이 �
 
 **"미로에서 최단 거리", "섬의 개수" 같은 문제는 그래프 문제다. 이웃 목록을 만들지 않을 뿐이다.**
 
-격자에서 한 칸의 이웃은 위·아래·왼쪽·오른쪽 네 칸이다. 이 이웃을 미리 만들어 둘 필요가 없다. 지금 칸이 `(r, c)` 면 이웃은 계산으로 나온다.
+격자에서 한 칸의 이웃은 위, 아래, 왼쪽, 오른쪽 네 칸이다. 이 이웃을 미리 만들어 둘 필요가 없다. 지금 칸이 `(r, c)` 면 이웃은 계산으로 나온다.
 
 ```python
 from collections import deque
@@ -429,7 +429,7 @@ H, W = len(판), len(판[0])
 큐 = deque([(0, 0)])
 while 큐:
     r, c = 큐.popleft()
-    for dr, dc in ((-1,0), (1,0), (0,-1), (0,1)):      # 위·아래·왼·오
+    for dr, dc in ((-1,0), (1,0), (0,-1), (0,1)):      # 위, 아래, 왼, 오
         nr, nc = r+dr, c+dc
         if 0 <= nr < H and 0 <= nc < W and 판[nr][nc] == "0" and 거리[nr][nc] == -1:
             거리[nr][nc] = 거리[r][c] + 1

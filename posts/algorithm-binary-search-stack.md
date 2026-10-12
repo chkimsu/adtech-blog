@@ -27,7 +27,7 @@
 ARR = [2, 5, 8, 12, 16, 23, 38, 45, 56, 72, 91, 100]
 TARGET = 38
 
-print(f"찾는 값 {TARGET} · 값 {len(ARR)}개")
+print(f"찾는 값 {TARGET}, 값 {len(ARR)}개")
 print(f"{'회차':<5}{'lo':>4}{'hi':>4}{'mid':>5}{'ARR[mid]':>10}   {'판정':<12}{'남은 후보'}")
 lo, hi, k = 0, len(ARR) - 1, 0
 while lo <= hi:
@@ -44,17 +44,17 @@ while lo <= hi:
         hi = mid - 1
         판정 = "크다 → 왼쪽"
     print(f"{k:<5}{lo:>4}{hi:>4}{mid:>5}{v:>10}   {판정:<12}{hi-lo+1}개")
-print(f"\n{len(ARR)}개를 {k}회에 찾았다 · 앞에서부터 훑었다면 {ARR.index(TARGET)+1}회")
+print(f"\n{len(ARR)}개를 {k}회에 찾았다, 앞에서부터 훑었다면 {ARR.index(TARGET)+1}회")
 ```
 
 ```
-찾는 값 38 · 값 12개
+찾는 값 38, 값 12개
 회차     lo  hi  mid  ARR[mid]   판정          남은 후보
 1       6  11    5        23   작다 → 오른쪽    6개
 2       6   7    8        56   크다 → 왼쪽     2개
 3       6   7    6        38   같다 → 찾음     -
 
-12개를 3회에 찾았다 · 앞에서부터 훑었다면 7회
+12개를 3회에 찾았다, 앞에서부터 훑었다면 7회
 ```
 
 <figure style="text-align:center; margin:2rem 0;">
@@ -106,7 +106,7 @@ print(f"\n{len(ARR)}개를 {k}회에 찾았다 · 앞에서부터 훑었다면 {
 <rect x="266" y="118" width="28" height="18" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:2.5"/>
 <text x="280" y="131" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">38</text>
 <g style="font-size:11px; fill:var(--text-muted); text-anchor:end; font-family:var(--font-mono)">
-<text x="66" y="55">1회 · 12칸</text><text x="66" y="93">2회 · 6칸</text><text x="66" y="131">3회 · 2칸</text></g>
+<text x="66" y="55">1회, 12칸</text><text x="66" y="93">2회, 6칸</text><text x="66" y="131">3회, 2칸</text></g>
 <text x="74" y="164" style="font-size:12px; fill:var(--text-secondary)">회차마다 진한 칸이 절반으로 준다. 흐려진 칸은 끝까지 다시 안 본다.</text>
 <text x="74" y="184" style="font-size:12px; fill:var(--accent-primary)">앞에서부터 훑었다면 7번 봐야 했다.</text>
 </svg>
@@ -219,7 +219,7 @@ for t in (0, 3, 5, 7, 9):
       9      -1        5          5         4
 ```
 
-찾는 값이 3인 줄을 보자. 3은 1·2·3번 칸에 있는데 네 변형이 각각 2, 1, 4, 3을 낸다. **같은 배열, 같은 값인데 네 개의 다른 답이 나온다.** 어느 것도 틀린 답이 아니고, 서로 다른 질문에 답하고 있을 뿐이다.
+찾는 값이 3인 줄을 보자. 3은 1, 2, 3번 칸에 있는데 네 변형이 각각 2, 1, 4, 3을 낸다. **같은 배열, 같은 값인데 네 개의 다른 답이 나온다.** 어느 것도 틀린 답이 아니고, 서로 다른 질문에 답하고 있을 뿐이다.
 
 | 변형 | `hi` 초기값 | `while` | `mid` | 답의 뜻 |
 |---|---|---|---|---|
@@ -282,7 +282,7 @@ print()
 print(f"{'찾는 값':>7}{'bisect_left':>13}{'bisect_right':>14}   {'뜻'}")
 for t in (5, 20, 25, 40, 50):
     l, r = bisect_left(ARR, t), bisect_right(ARR, t)
-    뜻 = f"{t} 이 {r-l}개 있다" if r > l else f"{t} 은 없다 · {l}번 칸에 넣으면 된다"
+    뜻 = f"{t} 이 {r-l}개 있다" if r > l else f"{t} 은 없다, {l}번 칸에 넣으면 된다"
     print(f"{t:>7}{l:>13}{r:>14}   {뜻}")
 print()
 print("20 의 개수      ", bisect_right(ARR, 20) - bisect_left(ARR, 20))
@@ -295,11 +295,11 @@ print("20 보다 큰 첫 값 ", ARR[bisect_right(ARR, 20)])
 배열 [10, 20, 20, 20, 30, 40]  칸 번호 [0, 1, 2, 3, 4, 5]
 
    찾는 값  bisect_left  bisect_right   뜻
-      5            0             0   5 은 없다 · 0번 칸에 넣으면 된다
+      5            0             0   5 은 없다, 0번 칸에 넣으면 된다
      20            1             4   20 이 3개 있다
-     25            4             4   25 은 없다 · 4번 칸에 넣으면 된다
+     25            4             4   25 은 없다, 4번 칸에 넣으면 된다
      40            5             6   40 이 1개 있다
-     50            6             6   50 은 없다 · 6번 칸에 넣으면 된다
+     50            6             6   50 은 없다, 6번 칸에 넣으면 된다
 
 20 의 개수       3
 20 미만 개수     1
@@ -319,7 +319,7 @@ print("20 보다 큰 첫 값 ", ARR[bisect_right(ARR, 20)])
 
 문제를 하나 보자. 길이가 802, 743, 457, 539인 나무 넷이 있다. 절단기 높이를 정해 그 위로 올라온 부분만 가져가는데, 1000만큼 얻으려면 높이를 최대 얼마로 둘 수 있을까.
 
-높이를 하나씩 올려 보면 최대 802번 시도해야 한다. 그런데 여기에 **단조성**이 있다. 높이를 올리면 얻는 양은 반드시 줄어든다. 그러면 "이 높이로 1000을 얻을 수 있나"라는 예·아니오 질문의 답이 어느 지점을 경계로 딱 나뉜다.
+높이를 하나씩 올려 보면 최대 802번 시도해야 한다. 그런데 여기에 **단조성**이 있다. 높이를 올리면 얻는 양은 반드시 줄어든다. 그러면 "이 높이로 1000을 얻을 수 있나"라는 예, 아니오 질문의 답이 어느 지점을 경계로 딱 나뉜다.
 
 경계가 있으면 이분 탐색이 통한다. 찾는 것이 배열의 칸이 아니라 **높이 그 자체**로 바뀌었을 뿐이다.
 
@@ -343,7 +343,7 @@ while lo < hi:
         hi = mid - 1
         판정 = f"{목표} 미만 → 낮춰야 한다"
     print(f"{k:<5}{lo:>6}{hi:>6}{mid:>6}{양:>9}   {판정}")
-print(f"\n답 {lo} · 이때 얻는 양 {얻는양(lo)}")
+print(f"\n답 {lo}, 이때 얻는 양 {얻는양(lo)}")
 ```
 
 ```
@@ -359,7 +359,7 @@ print(f"\n답 {lo} · 이때 얻는 양 {얻는양(lo)}")
 9       384   385   386      997   1000 미만 → 낮춰야 한다
 10      385   385   385     1001   1000 이상 → 더 높여 본다
 
-답 385 · 이때 얻는 양 1001
+답 385, 이때 얻는 양 1001
 ```
 
 높이 0에서 802까지 803가지를 10회에 좁혔다. `mid` 를 올림으로 구한 것에 주목하자. 이 코드는 "조건을 만족하는 **가장 큰** 값"을 찾으니 2절의 마지막 변형과 같은 꼴이고, 따라서 올림이 필요하다.
@@ -584,7 +584,7 @@ print(f"\n답 {답}")
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 180" role="img" aria-label="네 회차를 위에서 아래로 쌓은 그림. 회차마다 여덟 칸의 값이 놓여 있고 윈도우 세 칸이 굵게 표시된다. 오른쪽에는 그 회차의 덱 내용과 최댓값이 적혀 있다. 덱에 남은 칸 수가 윈도우 크기보다 적은 회차가 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
-<text x="6" y="13" style="font-size:12.5px; fill:var(--text-secondary)">값 [1, 3, −1, −3, 5, 3, 6, 7] · 윈도우 크기 3</text>
+<text x="6" y="13" style="font-size:12.5px; fill:var(--text-secondary)">값 [1, 3, −1, −3, 5, 3, 6, 7], 윈도우 크기 3</text>
 <text x="6" y="32" style="font-size:10.5px; fill:var(--text-muted); font-family:var(--font-mono)">칸 번호</text>
 <g style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">
 <text x="72" y="32">0</text><text x="104" y="32">1</text><text x="136" y="32">2</text><text x="168" y="32">3</text>
@@ -615,10 +615,10 @@ print(f"\n답 {답}")
 <text x="136" y="104">−1</text><text x="168" y="104">−3</text><text x="200" y="104">5</text>
 <text x="232" y="130">3</text><text x="264" y="130">6</text><text x="296" y="130">7</text></g>
 <g style="font-size:12px; fill:var(--text-muted); font-family:var(--font-mono)">
-<text x="322" y="52">덱 [1] · 최대 3</text>
-<text x="322" y="78">덱 [1,2,3] · 최대 3</text>
-<text x="322" y="104">덱 [4] · 최대 5</text></g>
-<text x="322" y="130" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">덱 [7] · 최대 7</text>
+<text x="322" y="52">덱 [1], 최대 3</text>
+<text x="322" y="78">덱 [1,2,3], 최대 3</text>
+<text x="322" y="104">덱 [4], 최대 5</text></g>
+<text x="322" y="130" style="font-size:12px; fill:var(--accent-primary); font-family:var(--font-mono)">덱 [7], 최대 7</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">덱이 윈도우보다 짧은 회차가 있다. 4번 칸에서 5가 들어오자 덱이 <code>[1,2,3]</code> 에서 <code>[4]</code> 로 한 번에 줄었다. 5보다 작으면서 더 왼쪽에 있던 셋은 앞으로 어떤 윈도우에서도 최댓값이 될 수 없으니 한꺼번에 버린 것이다.</figcaption>
 </figure>
@@ -633,7 +633,7 @@ print(f"\n답 {답}")
 
 정렬이 없어도 **답이 단조로우면** 파라메트릭 서치가 통한다. "최소의 최대", "최대의 최소", "가능한 가장 큰 값"이 신호다. 이때 이분하는 것은 배열이 아니라 답의 범위다.
 
-배열을 왼쪽에서 오른쪽으로 지나가면서 **가장 최근 것과 짝을 맞추면** 스택이다. 괄호·수식·되돌리기가 여기 든다. 짝을 맞추는 기준이 "나보다 큰 첫 값" 같은 크기 비교면 단조 스택이다.
+배열을 왼쪽에서 오른쪽으로 지나가면서 **가장 최근 것과 짝을 맞추면** 스택이다. 괄호, 수식, 되돌리기가 여기 든다. 짝을 맞추는 기준이 "나보다 큰 첫 값" 같은 크기 비교면 단조 스택이다.
 
 마지막으로 **양끝을 다 쓰면** 덱이다. 큐가 필요한 BFS가 대표적이고, 슬라이딩 윈도우에서 최댓값이나 최솟값을 물으면 단조 덱이다.
 
@@ -648,10 +648,10 @@ print(f"\n답 {답}")
 | "그 값이 몇 개인가" | 두 `bisect` 의 차 | 훑지 않고 개수가 나온다 |
 | "최소의 최대", "최대의 최소" | 파라메트릭 서치 | 답의 범위를 이분한다 |
 | 회전된 정렬 배열 | 반쪽 판정 후 이분 | 한쪽은 반드시 정렬돼 있다 |
-| 가장 최근 것과 짝 맞추기 | 스택 | 괄호·되돌리기가 이 꼴 |
+| 가장 최근 것과 짝 맞추기 | 스택 | 괄호, 되돌리기가 이 꼴 |
 | "나보다 큰 첫 값" | 단조 스택 | 각 칸이 한 번 들어가고 한 번 나온다 |
 | 앞뒤로 넣고 빼기 | `deque` | 리스트는 앞이 O(n) |
-| 윈도우 안의 최댓값·최솟값 | 단조 덱 | 될 수 없는 값을 미리 버린다 |
+| 윈도우 안의 최댓값, 최솟값 | 단조 덱 | 될 수 없는 값을 미리 버린다 |
 
 ## 헷갈리기 쉬운 점
 
@@ -666,7 +666,7 @@ print(f"\n답 {답}")
 
 ## 더 깊이 보기
 
-- 앞 편의 [복잡도와 배열 훑기](post.html?id=algorithm-complexity-array)에서 투 포인터와 슬라이딩 윈도우를 다뤘다. 이 글의 단조 스택·단조 덱이 그 생각의 확장이다.
+- 앞 편의 [복잡도와 배열 훑기](post.html?id=algorithm-complexity-array)에서 투 포인터와 슬라이딩 윈도우를 다뤘다. 이 글의 단조 스택, 단조 덱이 그 생각의 확장이다.
 - [해시와 정렬](post.html?id=algorithm-hash-sort) 편의 정렬이 이 글의 이분 탐색과 파라메트릭 서치의 전제가 된다.
 - 답의 범위를 좁혀 최적점을 찾는 같은 구조가 광고 입찰가 계산에 쓰인다. [Bid Shading](post.html?id=bid-shading-censored) 4절의 황금 비율 탐색을 보면 된다.
 - 위 [이분 탐색 데모](demo-binary-search.html)에서 세 변형을 같은 배열 위에 번갈아 돌려 보면 경계 차이가 눈에 들어온다.

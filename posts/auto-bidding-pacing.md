@@ -1,6 +1,6 @@
 광고주가 "CPA $10, 일 예산 $1,000"을 설정하면, DSP는 하루 동안 수십만 번의 입찰 기회를 만납니다. 매번 최적의 입찰가를 결정하되, 하루가 끝나기 전에 예산이 소진되지 않아야 합니다. 이 글은 **자동 입찰(Auto-Bidding)**과 **예산 페이싱(Budget Pacing)**이 이 문제를 어떻게 푸는지 해부합니다.
 
-> "얼마를 부를까"는 두 층입니다 — 아래층은 경매 한 번의 최적가를 찾고, 위층은 목표·예산에 맞춰 그 값을 밉니다.
+> "얼마를 부를까"는 두 층입니다 — 아래층은 경매 한 번의 최적가를 찾고, 위층은 목표, 예산에 맞춰 그 값을 밉니다.
 > [Bid Shading 포스트](post.html?id=bid-shading-censored)에서는 "한 번의 입찰에서 최적 입찰가 b*를 계산하는 방법"을 다뤘습니다. 이 글은 그 다음 단계 — **수십만 번의 입찰을 하루 예산 안에서 어떻게 배분하는가**를 다룹니다.
 
 ---
@@ -56,7 +56,7 @@
   </div>
 </div>
 
-질문 1-2는 이전 포스트에서 다뤘습니다. 가치 V의 재료는 [pCTR](post.html?id=pctr-prediction)·[pCVR](post.html?id=pcvr-modeling)이고, 그 값을 순위로 바꾸는 규칙은 [eCPM](post.html?id=ecpm-ranking)입니다. 이 글은 **질문 3: 예산 페이싱**에 집중합니다.
+질문 1-2는 이전 포스트에서 다뤘습니다. 가치 V의 재료는 [pCTR](post.html?id=pctr-prediction), [pCVR](post.html?id=pcvr-modeling)이고, 그 값을 순위로 바꾸는 규칙은 [eCPM](post.html?id=ecpm-ranking)입니다. 이 글은 **질문 3: 예산 페이싱**에 집중합니다.
 
 ### Bid Shading vs 예산 페이싱: 스코프가 다르다
 
@@ -313,7 +313,7 @@ PID 는 원래 온도 조절기 같은 제어 장치에 쓰이는 방법입니�
     </div>
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
-        <div class="chart-arch-node-name">&lambda;(t+1) = clamp(&lambda;(t) + K_p&middot;e + K_i&middot;&Sigma;e + K_d&middot;&Delta;e, 0.1, 1.0)</div>
+        <div class="chart-arch-node-name">&lambda;(t+1) = clamp(&lambda;(t) + K_p×e + K_i×&Sigma;e + K_d×&Delta;e, 0.1, 1.0)</div>
         <div class="chart-arch-node-desc">다음 구간의 pacing multiplier 결정</div>
       </div>
     </div>
@@ -694,5 +694,5 @@ $\lambda$가 낮아지면 입찰가가 낮아지고, Win Rate가 떨어집니다
 ## 더 깊이 보기
 
 - 확률이 틀리면 CPA도 어긋난다 → [Calibration](post.html?id=calibration)
-- 카카오의 실제 입찰·측정 → [카카오 사례](post.html?id=kakao-ads-bidding-measurement)
+- 카카오의 실제 입찰, 측정 → [카카오 사례](post.html?id=kakao-ads-bidding-measurement)
 - 광고 ML 전체 지도 → [ML 엔지니어 트랙](ml-track.html)

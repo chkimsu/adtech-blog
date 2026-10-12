@@ -75,7 +75,7 @@ sequenceDiagram
 | # | 로그(Log) | 트리거 시점 | 기록 주체 | 요청 대비 지연 | 주요 소비자 |
 |---|-----|-----------|----------|-------------|-----------|
 | ① | **요청 로그(Request Log)** | 입찰 요청 수신 즉시 | DSP 입찰 서버(DSP Bidder) | 0ms | QPS 모니터링, 잇는 키(JOIN key) |
-| ② | **후보 로그(Candidate Log)** | 후보 생성·필터 완료 | 랭킹 파이프라인(Ranking Pipeline) | ~1-2ms | 후보 생성(Retrieval) recall 분석 |
+| ② | **후보 로그(Candidate Log)** | 후보 생성, 필터 완료 | 랭킹 파이프라인(Ranking Pipeline) | ~1-2ms | 후보 생성(Retrieval) recall 분석 |
 | ③ | **피처 로그(Feature Log)** | 피처 벡터(Feature Vector) 조합 완료 | 피처 게이트웨이(Feature Gateway) | ~2-3ms | 학습과 서빙의 피처 어긋남(Training-Serving Skew) 감지 |
 | ④ | **모델 점수 로그(Model Score Log)** | 모델 추론 완료 | 모델 서버(Model Server) | ~5-8ms | Calibration 모니터링 |
 | ⑤ | **입찰 로그(Bid Log)** | 입찰 응답(Bid Response) 전송 | DSP 입찰 서버 | ~10ms | 입찰 전략 분석 |
@@ -144,7 +144,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">전환 로그 — 전환 이벤트</div>
-      <div class="chart-step-desc">구매·가입·설치가 일어난 순간(수 시간~수 일). 광고주 사이트에서 발생합니다. 광고주 SDK 또는 Server-to-Server Postback으로 DSP에 전달됩니다.</div>
+      <div class="chart-step-desc">구매, 가입, 설치가 일어난 순간(수 시간~수 일). 광고주 사이트에서 발생합니다. 광고주 SDK 또는 Server-to-Server Postback으로 DSP에 전달됩니다.</div>
       <span class="chart-step-badge pink">Advertiser → DSP, 수 시간~수 일</span>
     </div>
   </div>
@@ -154,7 +154,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">낙찰과 패찰 로그 — 경매 결과</div>
-      <div class="chart-step-desc">낙찰·패찰을 Exchange가 알려줍니다. 입찰 응답 전송 후 ~50-100ms 안에 옵니다. 낙찰이면 낙찰가(clearing price)가 실리고, 패찰이면 가격이 안 보입니다(Right-Censored).</div>
+      <div class="chart-step-desc">낙찰, 패찰을 Exchange가 알려줍니다. 입찰 응답 전송 후 ~50-100ms 안에 옵니다. 낙찰이면 낙찰가(clearing price)가 실리고, 패찰이면 가격이 안 보입니다(Right-Censored).</div>
       <span class="chart-step-badge blue">Exchange → DSP, ~100ms</span>
     </div>
   </div>
@@ -307,7 +307,7 @@ sequenceDiagram
 - **ROAS 계산**: Return on Ad Spend = conversion_value 합 / 광고비 합
 - **광고주 리포팅**: 캠페인별 전환 수, 전환 가치 집계
 
-<a href="demo-attribution-window.html" class="btn-demo">윈도우·모델이 공로를 어떻게 바꾸는지 직접 눌러보기 →</a>
+<a href="demo-attribution-window.html" class="btn-demo">윈도우, 모델이 공로를 어떻게 바꾸는지 직접 눌러보기 →</a>
 
 > [온라인 학습(Online Learning) & 지연 피드백(Delayed Feedback) 포스트](post.html?id=online-learning-delayed-feedback)에도 같은 뼈대가 나옵니다. 전환 지연이 **가짜 음성(Fake Negative)를 만들어 pCVR을 과소추정**시킵니다. 클릭 후 3일 뒤에 전환이 발생했는데, 학습 데이터를 1일 뒤에 잘라버리면 이 전환은 "비전환(y=0)"으로 잘못 라벨링됩니다. 전환 로그의 도착 지연이 이 문제의 근원입니다.
 
@@ -602,7 +602,7 @@ training_data = (
   </div>
 </div>
 
-노출·클릭까지의 실시간 로그는 DSP 내부에서 동기적으로 기록할 수 있습니다. 하지만 전환·어트리뷰션 같은 지연 로그는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [지연 피드백](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
+노출, 클릭까지의 실시간 로그는 DSP 내부에서 동기적으로 기록할 수 있습니다. 하지만 전환, 어트리뷰션 같은 지연 로그는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [지연 피드백](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
 
 ---
 
@@ -612,7 +612,7 @@ training_data = (
 
 숫자로 보면 이렇습니다. 요청 로그는 하루 수십억 행이고, 전환 로그는 수백만 행입니다. **1,000배 이상 차이 납니다.** 왜냐하면 각 단계마다 사람이 떨어져 나가기 때문입니다. 요청 100건 중 낙찰은 일부이고, 낙찰된 노출 100건 중 클릭은 약 1건이고, 클릭 100건 중 구매는 5~10건입니다.
 
-그래서 저장 전략이 로그마다 다릅니다. **위쪽(요청·후보)은 양이 많고 값이 싸고, 아래쪽(클릭·전환)은 양이 적고 값이 비쌉니다.** 요청 로그는 전부 남기려면 비용이 감당이 안 돼서 샘플링합니다. 반대로 전환 로그는 한 행이 곧 매출이라 2년 이상 남깁니다.
+그래서 저장 전략이 로그마다 다릅니다. **위쪽(요청, 후보)은 양이 많고 값이 싸고, 아래쪽(클릭, 전환)은 양이 적고 값이 비쌉니다.** 요청 로그는 전부 남기려면 비용이 감당이 안 돼서 샘플링합니다. 반대로 전환 로그는 한 행이 곧 매출이라 2년 이상 남깁니다.
 
 요청 로그에서 전환 로그로 갈수록 깔때기처럼 줄어듭니다.
 
@@ -631,7 +631,7 @@ training_data = (
 
 표에서 보존 기간을 눈여겨봅니다. 7일부터 2년까지 벌어집니다. 이 차이는 "얼마나 오래 필요한가"로 정해집니다.
 
-요청·후보 로그는 대개 **어제 무슨 일이 있었는지 디버깅할 때** 봅니다. 일주일이면 충분합니다. 반면 노출·클릭 로그는 **모델 학습 데이터의 본체**라서 1년 이상 남깁니다. 계절성을 배우려면 최소한 작년 같은 달이 있어야 하기 때문입니다.
+요청, 후보 로그는 대개 **어제 무슨 일이 있었는지 디버깅할 때** 봅니다. 일주일이면 충분합니다. 반면 노출, 클릭 로그는 **모델 학습 데이터의 본체**라서 1년 이상 남깁니다. 계절성을 배우려면 최소한 작년 같은 달이 있어야 하기 때문입니다.
 
 전환 로그가 2년인 이유는 하나 더 있습니다. **정산 근거**입니다. 광고주와 금액을 다투게 되면 이 로그가 유일한 증거입니다. 모델이 필요 없어져도 회계는 남습니다.
 
@@ -645,7 +645,7 @@ training_data = (
 # 로그 볼륨이 왜 1,000배씩 벌어지나 — 깔때기를 직접 곱해 본다.
 #
 # 각 단계의 통과율(가상)을 순서대로 곱하면 하루 행 수가 나온다.
-# 저장 단가는 Parquet 압축 후 대략치다. 실제 값은 회사·리전마다 다르다.
+# 저장 단가는 Parquet 압축 후 대략치다. 실제 값은 회사와 리전마다 다르다.
 
 DAILY_REQUESTS = 5_000_000_000        # 하루 입찰 요청 50억 건 (대형 DSP 가정)
 
@@ -653,7 +653,7 @@ DAILY_REQUESTS = 5_000_000_000        # 하루 입찰 요청 50억 건 (대형 D
 STAGES = [
     ("Request",     1.0,      420,   7),   # 요청 그 자체 — 통과율 1.0
     ("Candidate",   1.0,      180,   7),   # 요청당 후보 여러 개지만 샘플링해 1:1로 남긴다고 가정
-    ("Bid",         0.60,     260,  30),   # 40%는 입찰 자체를 포기(예산·타겟 미스)
+    ("Bid",         0.60,     260,  30),   # 40%는 입찰 자체를 포기(예산, 타겟 미스)
     ("Win",         0.08,     150,  90),   # 낙찰률 8%
     ("Impression",  0.95,     200, 365),   # 낙찰 중 5%는 실제 노출 실패
     ("Click",       0.01,     160, 365),   # CTR 1%

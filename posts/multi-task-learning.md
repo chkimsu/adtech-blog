@@ -43,7 +43,7 @@
 광고의 전환 퍼널은 세 단계입니다. 각 단계에서 사용 가능한 데이터의 규모가 급격히 줄어듭니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=ssb" height="480" loading="lazy" title="배우는 칸과 쓰이는 칸이 다르다"></iframe>
+<iframe class="demo-embed" src="demo-training-cards.html?embed=1&card=ssb" height="480" loading="lazy" title="학습 표본과 추론 표본이 다르다"></iframe>
 <a class="demo-embed-open" href="demo-training-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
@@ -79,7 +79,7 @@ graph LR
 
 ### 문제의 본질: Train/Serve 분포 불일치
 
-pCVR 모델을 단독으로 학습하면, 학습 데이터는 "클릭이 발생한 샘플"에 한정됩니다. 그런데 서빙 시에는 "전체 노출"에 대해 전환 확률을 예측해야 합니다. 이것이 **Sample Selection Bias(배운 자리와 쓰는 자리가 다른 편향)**입니다.
+pCVR 모델을 단독으로 학습하면, 학습 데이터는 "클릭이 발생한 샘플"에 한정됩니다. 그런데 서빙 시에는 "전체 노출"에 대해 전환 확률을 예측해야 합니다. 이것이 **Sample Selection Bias(표본 선택 편향)**입니다. 학습 표본(클릭한 노출)과 추론 표본(노출 전체)이 달라서 생깁니다.
 
 수식으로 정리하면:
 

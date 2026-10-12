@@ -284,11 +284,11 @@
               <tr><th>메서드</th><th>시키는 일</th><th>본문을 보내나</th><th>잘 되면 오는 상태</th><th>서버 데이터가 바뀌나</th><th>같은 요청을 두 번 보내면</th></tr>
             </thead>
             <tbody>
-              <tr><td>GET</td><td>주세요</td><td>안 보냅니다</td><td><span class="code">200 OK</span></td><td>안 바뀝니다</td><td>같은 답이 두 번 옵니다</td></tr>
-              <tr><td>POST</td><td>이걸 처리해 주세요<br>여기서는 새 글 만들기</td><td>보냅니다</td><td><span class="code">201 Created</span><br>새 주소가 <span class="code">Location</span> 헤더에 옵니다</td><td>줄이 하나 늘어납니다</td><td>글이 두 개 생깁니다</td></tr>
-              <tr><td>PUT</td><td>이 자리를 통째로 바꿔 주세요</td><td>보냅니다<br>전체를</td><td><span class="code">200 OK</span></td><td>그 줄이 통째로 바뀝니다<br>안 보낸 필드는 기본값이 됩니다</td><td>결과가 같습니다</td></tr>
-              <tr><td>PATCH</td><td>이 부분만 바꿔 주세요</td><td>보냅니다<br>바꿀 필드만</td><td><span class="code">200 OK</span></td><td>보낸 필드만 바뀝니다</td><td>결과가 같습니다</td></tr>
-              <tr><td>DELETE</td><td>지워 주세요</td><td>안 보냅니다</td><td><span class="code">204 No Content</span><br>본문이 없습니다</td><td>그 줄이 사라집니다</td><td>두 번째는 <span class="code">404</span> 가 옵니다</td></tr>
+              <tr><td>GET</td><td>「주세요」</td><td>안 보냅니다</td><td><span class="code">200 OK</span></td><td>안 바뀝니다</td><td>같은 답이 두 번 옵니다</td></tr>
+              <tr><td>POST</td><td>「이걸 처리해 주세요」<br>여기서는 새 글 만들기</td><td>보냅니다</td><td><span class="code">201 Created</span><br>새 주소가 <span class="code">Location</span> 헤더에 옵니다</td><td>줄이 하나 늘어납니다</td><td>글이 두 개 생깁니다</td></tr>
+              <tr><td>PUT</td><td>「이 자리를 통째로 바꿔 주세요」</td><td>보냅니다<br>전체를</td><td><span class="code">200 OK</span></td><td>그 줄이 통째로 바뀝니다<br>안 보낸 필드는 기본값이 됩니다</td><td>결과가 같습니다</td></tr>
+              <tr><td>PATCH</td><td>「이 부분만 바꿔 주세요」</td><td>보냅니다<br>바꿀 필드만</td><td><span class="code">200 OK</span></td><td>보낸 필드만 바뀝니다</td><td>결과가 같습니다</td></tr>
+              <tr><td>DELETE</td><td>「지워 주세요」</td><td>안 보냅니다</td><td><span class="code">204 No Content</span><br>본문이 없습니다</td><td>그 줄이 사라집니다</td><td>두 번째는 <span class="code">404</span> 가 옵니다</td></tr>
             </tbody>
           </table>
         </div>

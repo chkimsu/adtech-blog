@@ -238,11 +238,11 @@
       </div>
 
       <ol class="demo-steps">
-        <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
+        <span class="demo-steps-title">이렇게 해봅니다 — 4분</span>
         <li><span class="step-text">partition을 <strong>3</strong>, consumer를 <strong>5</strong>로 — 두 명이 아무 partition도 못 맡습니다. 사람을 늘려도 처리량이 안 늘어나는 지점입니다.</span></li>
-        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 보세요. 인기 광고 <code>9931</code>이 있는 partition만 부풀고 빈 partition이 생깁니다.</span></li>
+        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 봅니다. 인기 광고 <code>9931</code>이 있는 partition만 부풀고 빈 partition이 생깁니다.</span></li>
         <li><span class="step-text">key를 <strong>없음</strong>으로 — 가장 고르게 퍼지지만, 같은 요청의 노출과 클릭이 다른 partition으로 흩어집니다.</span></li>
-        <li><span class="step-text">key를 <code>req_id</code>로 되돌리고 partition을 <strong>4 → 8</strong>로 밀어 보세요. 옮겨간 줄에 <code>↰</code> 가 붙습니다 — 순서 보장이 끊기는 순간입니다.</span></li>
+        <li><span class="step-text">key를 <code>req_id</code>로 되돌리고 partition을 <strong>4 → 8</strong>로 밀어 봅니다. 옮겨간 줄에 <code>↰</code> 가 붙습니다 — 순서 보장이 끊기는 순간입니다.</span></li>
       </ol>
 
       <div class="kp-intro">

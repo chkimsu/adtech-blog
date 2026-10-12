@@ -340,11 +340,11 @@
         <p class="demo-subtitle">
             1st Price Auction에서 Surplus를 극대화하는 최적 입찰가 b*를
             <strong>황금 비율 탐색</strong>으로 찾는 과정을 단계별로 시각화합니다.
-            매 반복마다 탐색 구간이 1/&phi; &approx; 0.618배로 줄어드는 것을 관찰하세요.
+            매 반복마다 탐색 구간이 1/&phi; &approx; 0.618배로 줄어드는 것을 관찰합니다.
         </p>
 
         <div class="demo-prereq">
-          <span class="demo-prereq-label">먼저 보면 좋아요</span>
+          <span class="demo-prereq-label">먼저 보면 좋습니다</span>
           <a href="demo-bid-landscape.html">Bid Landscape</a>
           <a href="demo-bid-shading.html">Bid Shading</a>
         </div>
@@ -362,11 +362,11 @@
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰가를 올리면 이길 확률은 커지지만 남는 이익은 줄어드는 시소 관계에서, 기대 이익이 최대인 균형점(최적 입찰가 b*)을 탐색 구간을 0.618배씩 잘라내며 20번 안팎의 계산으로 찾아내는 과정을 봅니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>실시간 경매(RTB)는 입찰 요청마다 수 밀리초 안에 답해야 합니다. "1원이라도 싸게 이기는" <strong>비드 셰이딩</strong>의 마지막 계산 단계가 바로 이 탐색이고, 이 빠르기 덕분에 하루 수십억 건 경매에 쓸 수 있어요.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>실시간 경매(RTB)는 입찰 요청마다 수 밀리초 안에 답해야 합니다. "1원이라도 싸게 이기는" <strong>비드 셰이딩</strong>의 마지막 계산 단계가 바로 이 탐색이고, 이 빠르기 덕분에 하루 수십억 건 경매에 쓸 수 있습니다.</div>
         </div>
 
         <ol class="demo-steps">
-          <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+          <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
           <li><span class="step-text"><code>Step</code> 버튼을 3번 — 매 iteration마다 Bracket [a, b]가 좁아지는 걸 확인.</span></li>
           <li><span class="step-text">우측 Iteration Log에서 Bracket 폭이 0.618배씩 줄어드는 패턴 관찰.</span></li>
           <li><span class="step-text"><code>Play</code>로 끝까지 → Convergence 차트가 로그 스케일 직선(기하급수 수렴)이 되는 걸 확인.</span></li>
@@ -645,20 +645,20 @@
 
             <h3>시나리오 1: V를 시장 가격 근처로</h3>
             <p>
-                V = 2.5달러, &mu; = 0.8 (중앙값 &approx; 2.23달러)으로 설정해보세요.
+                V = 2.5달러, &mu; = 0.8 (중앙값 &approx; 2.23달러)으로 설정해봅니다.
                 True Value가 시장 평균에 가까우면 Surplus 곡선이 매우 낮고 좁아져,
                 최적 입찰가와 이익 모두 작아집니다. 이런 경매는 입찰 자체를 skip하는 것이 합리적입니다.
             </p>
 
             <h3>시나리오 2: 높은 정밀도</h3>
             <p>
-                &epsilon; = $0.001로 줄여보세요. 반복 횟수가 늘어나지만, Grid Search 대비 효율성 격차는 더 벌어집니다.
+                &epsilon; = $0.001로 줄여봅니다. 반복 횟수가 늘어나지만, Grid Search 대비 효율성 격차는 더 벌어집니다.
                 Results 패널의 Speedup 배수가 크게 증가하는 것을 확인할 수 있습니다.
             </p>
 
             <h3>시나리오 3: 변동성이 큰 시장</h3>
             <p>
-                &sigma; = 1.0으로 키워보세요. Surplus 곡선이 넓고 완만해져 최적 지점이 넓어집니다.
+                &sigma; = 1.0으로 키워봅니다. Surplus 곡선이 넓고 완만해져 최적 지점이 넓어집니다.
                 이런 시장에서는 정밀한 최적화보다 대략적인 shading도 충분히 효과적입니다.
             </p>
 
@@ -709,7 +709,7 @@
           <a href="demos.html" class="demo-next-card">
             <span class="demo-next-label"> 8개 데모 완주</span>
             <span class="demo-next-title">데모 허브로 돌아가기</span>
-            <span class="demo-next-excerpt">처음부터 다시 보거나 관심 있는 데모만 골라보세요</span>
+            <span class="demo-next-excerpt">처음부터 다시 보거나 관심 있는 데모만 골라봅니다</span>
           </a>
           <a href="post.html?id=auto-bidding-pacing" class="demo-next-card">
             <span class="demo-next-label">관련 포스트</span>

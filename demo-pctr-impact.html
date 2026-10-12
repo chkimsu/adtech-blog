@@ -276,7 +276,7 @@
 
     <div class="pq-container">
       <div class="demo-prereq">
-        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
         <a href="demo-bid-landscape.html">Bid Landscape</a>
         <a href="demo-bid-shading.html">Bid Shading</a>
       </div>
@@ -287,21 +287,21 @@
           <div class="demo-tldr-analogy-label">한 줄 비유</div>
           <div class="demo-tldr-analogy-text">
             <strong>예측 모델이 1% 틀리면 입찰가가 1% 틀리고, 매출은 3~5% 흔들린다</strong>. 입력단 오차가
-            <em>비대칭적으로</em> 증폭되는 이유와, 과대입찰이 과소입찰보다 더 큰 손해인 까닭을 슬라이더로 직접 만져보세요.
+            <em>비대칭적으로</em> 증폭되는 이유와, 과대입찰이 과소입찰보다 더 큰 손해인 까닭을 슬라이더로 직접 만져봅니다.
           </div>
         </div>
       </div>
 
       <div class="demo-intro">
         <div><span class="demo-intro-label">이 데모가 보여주는 것</span>pCTR 모델의 작은 편향이 입찰가 → 낙찰률 → Surplus(남는 이익)로 연쇄 증폭되는 과정을 슬라이더 하나로 실시간 계산해 봅니다.</div>
-        <div><span class="demo-intro-label">왜 알아야 하나</span>"모델 1% 개선"이 매출에서는 3~5%로 증폭됩니다. 특히 <strong>과대입찰이 과소입찰보다 더 아픈</strong> 비대칭을 알아야 모델 오차의 비용을 제대로 읽을 수 있어요.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>"모델 1% 개선"이 매출에서는 3~5%로 증폭됩니다. 특히 <strong>과대입찰이 과소입찰보다 손해가 더 큰</strong> 비대칭을 알아야 모델 오차의 비용을 제대로 읽을 수 있습니다.</div>
       </div>
 
       <ol class="demo-steps">
-        <span class="demo-steps-title">이렇게 해보세요 — 6분</span>
+        <span class="demo-steps-title">이렇게 해봅니다 — 6분</span>
         <li><span class="step-text"><strong>편향 = 0</strong>(기본) 상태에서 계산표 한 번 읽기 → Surplus(이익) 기본값 메모.</span></li>
-        <li><span class="step-text">편향을 <strong>+10%</strong>로 올려보세요 → 과대입찰 시 Surplus가 얼마나 떨어지는지 확인.</span></li>
-        <li><span class="step-text">편향을 <strong>−10%</strong>로 내려보세요 → 과소입찰의 손실은 더 작은 게 보임 (비대칭).</span></li>
+        <li><span class="step-text">편향을 <strong>+10%</strong>로 올려봅니다 → 과대입찰 시 Surplus가 얼마나 떨어지는지 확인.</span></li>
+        <li><span class="step-text">편향을 <strong>−10%</strong>로 내려봅니다 → 과소입찰의 손실은 더 작은 게 보임 (비대칭).</span></li>
       </ol>
 
       <div class="pq-intro">
@@ -310,7 +310,7 @@
         따라서 <code>True Value = $0.020</code> per impression.<br><br>
         DSP의 pCTR 모델이 <em>얼마나 정확한가</em>에 따라 예측 True Value가 달라지고, 그 값을 근거로 입찰가가 결정됩니다.
         경매 시장은 경쟁자 입찰가 분포(Log-normal)로 단순화했습니다.
-        <strong>"모델 오차가 수익으로 어떻게 번역되는가"</strong>를 슬라이더로 직접 만져 확인하세요.
+        <strong>"모델 오차가 수익으로 어떻게 번역되는가"</strong>를 슬라이더로 직접 만져 확인합니다.
       </div>
 
       <!-- Slider controls -->
@@ -409,12 +409,12 @@
         <h2>현업에서는 이렇게 씁니다</h2>
         <p>
           DSP에서 pCTR 모델 개선은 "오프라인 지표 몇 점"이 아니라 <strong>돈의 언어</strong>로 번역해 보고합니다.
-          이 데모의 Surplus 곡선이 바로 그 번역기예요.
+          이 데모의 Surplus 곡선이 모델 오차를 금액으로 바꿔 보여 줍니다.
         </p>
         <ul>
-          <li><strong>모델 투자 설득:</strong> "AUC 0.01 개선"보다 "편향 10%p 감소 → 1000 노출당 Surplus $X 회복"이 예산 결정을 움직입니다. 모델 팀과 비즈니스 팀이 같은 곡선을 보고 대화해요.</li>
+          <li><strong>모델 투자 설득:</strong> "AUC 0.01 개선"보다 "편향 10%p 감소 → 1000 노출당 Surplus $X 회복"이 예산 결정을 움직입니다. 모델 팀과 비즈니스 팀이 같은 곡선을 보고 이야기합니다.</li>
           <li><strong>과대예측 안전장치:</strong> 과대입찰 쪽 손실이 더 크기 때문에, 새 모델·새 지면처럼 예측이 불안한 구간에는 bid cap이나 더 보수적인 shading을 걸어 하방을 막습니다.</li>
-          <li><strong>성수기 재점검:</strong> 시장 경쟁도가 오르면 같은 편향이라도 손실 금액이 커집니다. 블랙프라이데이 같은 성수기 전에 모델 보정과 shading 파라미터를 다시 맞추는 이유예요.</li>
+          <li><strong>성수기 재점검:</strong> 시장 경쟁도가 오르면 같은 편향이라도 손실 금액이 커집니다. 블랙프라이데이 같은 성수기 전에 모델 보정과 shading 파라미터를 다시 맞추는 이유입니다.</li>
         </ul>
       </section>
 

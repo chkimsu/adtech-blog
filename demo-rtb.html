@@ -315,7 +315,7 @@
             <p class="post-excerpt">
                 Real-Time Bidding 경매 과정을 시각적으로 시뮬레이션합니다.
                 <strong>First Price</strong>와 <strong>Second Price</strong> 경매 방식의 차이를
-                직접 확인하고, DSP별 입찰 전략이 결과에 미치는 영향을 관찰해 보세요.
+                직접 확인하고, DSP별 입찰 전략이 결과에 미치는 영향을 관찰해 봅니다.
             </p>
         </div>
 
@@ -328,19 +328,19 @@
               <strong>경매장 vs eBay.</strong>
               First Price는 부동산 경매처럼 <strong>내가 부른 가격을 그대로 낸다</strong>,
               Second Price는 eBay처럼 <strong>이긴 사람이 2등 가격만 낸다</strong>.
-              같은 입찰가에서 두 방식이 만들어내는 결과 차이를 직접 비교해 보세요.
+              같은 입찰가에서 두 방식이 만들어내는 결과 차이를 직접 비교해 봅니다.
             </div>
           </div>
         </div>
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고 지면 하나를 놓고 4개 DSP가 벌이는 실시간 경매 — 경매 방식(1st/2nd Price)과 Floor Price에 따라 낙찰자와 실제 지불 가격이 어떻게 달라지는지 직접 돌려보며 확인합니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>여러분이 보는 거의 모든 배너 광고가 이 0.1초짜리 경매의 결과물입니다. <strong>경매 방식의 차이</strong>를 알아야 Bid Shading 같은 입찰 전략이 왜 생겼는지 이해할 수 있어요.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>여러분이 보는 거의 모든 배너 광고가 이 0.1초짜리 경매의 결과물입니다. <strong>경매 방식의 차이</strong>를 알아야 Bid Shading 같은 입찰 전략이 왜 생겼는지 이해할 수 있습니다.</div>
         </div>
 
         <!-- 3단계 가이드 -->
         <ol class="demo-steps">
-          <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+          <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
           <li><span class="step-text"><strong>First Price</strong> 상태에서 <code>Run Auction</code>을 1회 → 어떤 DSP가 얼마에 낙찰됐는지 로그에서 확인.</span></li>
           <li><span class="step-text"><strong>Second Price</strong>로 바꾼 뒤 한 번 더 실행 → "낙찰가 vs 실제 지불가"의 차이가 생기는 걸 비교.</span></li>
           <li><span class="step-text"><code>Auto Run (50 Rounds)</code>로 양쪽 통계를 누적 → "First는 평균 지불액이 더 높지만 단순, Second는 낮지만 분석이 필요"를 체감.</span></li>
@@ -431,7 +431,7 @@
             </p>
             <p>
                 이 시뮬레이터에서는 4개의 DSP가 각기 다른 입찰 전략으로 경쟁하는 과정을 직접 관찰할 수 있습니다.
-                Auction Type과 Floor Price를 바꿔가며 전략별 낙찰 결과가 어떻게 달라지는지 확인해 보세요.
+                Auction Type과 Floor Price를 바꿔가며 전략별 낙찰 결과가 어떻게 달라지는지 확인해 봅니다.
             </p>
 
             <h2>First Price vs Second Price Auction</h2>
@@ -494,7 +494,7 @@
             <ul>
                 <li>Floor Price를 높이면: 저가 입찰이 걸러져 낙찰 단가가 올라가지만, 입찰자가 줄어 미판매(Unsold) 위험이 있습니다.</li>
                 <li>Floor Price를 낮추면: 더 많은 DSP가 참여하여 경쟁이 활발해지지만, 낙찰 단가가 낮아질 수 있습니다.</li>
-                <li>위 시뮬레이터에서 Floor Price를 조절하며 DSP별 탈락/참여 패턴을 관찰해 보세요.</li>
+                <li>위 시뮬레이터에서 Floor Price를 조절하며 DSP별 탈락/참여 패턴을 관찰해 봅니다.</li>
             </ul>
 
             <h2>OpenRTB 생태계 — 실제 서비스 맵</h2>
@@ -795,13 +795,13 @@ Winner: The Trade Desk, Pays $2.80
             </p>
             <ul>
                 <li><strong>1st Price 전환기의 DSP:</strong> "써낸 값 그대로 지불"이 되자 The Trade Desk, DV360 같은
-                    DSP들은 일제히 Bid Shading 알고리즘을 도입했습니다. 이 데모의 DSP C가 그 축소판이에요 —
+                    DSP들은 일제히 Bid Shading 알고리즘을 도입했습니다. 이 데모의 DSP C가 그 축소판입니다 —
                     Auto Run으로 두 경매 방식을 10라운드씩 돌려 비교하면 그 효과를 직접 볼 수 있습니다.</li>
                 <li><strong>SSP의 Floor Price 운영:</strong> 퍼블리셔와 SSP는 지면·시간대·유저별로 최저가를 다르게 거는
                     Dynamic Floor를 운영합니다. 너무 높으면 미판매가 늘고, 너무 낮으면 수익을 놓치는 —
                     이 데모의 Floor Price 슬라이더 실험 그대로입니다.</li>
                 <li><strong>경매 로그 분석:</strong> DSP 운영팀은 이 데모의 Activity Log에 해당하는 입찰 로그(입찰가·지불가·낙찰률)를
-                    매일 분석해 전략을 조정합니다. "낙찰은 많은데 Surplus가 마이너스"라면 과다입찰 신호예요.</li>
+                    매일 분석해 전략을 조정합니다. "낙찰은 많은데 Surplus가 마이너스"라면 과다입찰 신호입니다.</li>
             </ul>
         </section>
     </main>

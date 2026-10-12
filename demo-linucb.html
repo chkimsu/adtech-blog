@@ -180,12 +180,12 @@
             <h1>LinUCB Interactive Simulation</h1>
             <p style="text-align: center; max-width: 600px; margin: 0 auto; color: var(--text-secondary);">
                 컨텍스트(유저 특성)를 활용해 광고를 추천하는 <strong>Contextual Bandit</strong> 알고리즘이
-                어떻게 실시간으로 유저 취향을 학습하는지 직접 클릭하며 확인하세요.
+                어떻게 실시간으로 유저 취향을 학습하는지 직접 클릭하며 확인합니다.
             </p>
         </div>
 
         <div class="demo-prereq">
-          <span class="demo-prereq-label">먼저 보면 좋아요</span>
+          <span class="demo-prereq-label">먼저 보면 좋습니다</span>
           <a href="demo-ucb1.html">UCB1</a>
         </div>
 
@@ -203,11 +203,11 @@
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>광고마다 "예측 점수(색깔 막대) + 불확실성 보너스(회색 막대)"를 합쳐 추천을 고르고, 클릭 피드백 한 번이 학습 가중치(θ)를 실시간으로 바꾸는 과정을 직접 만들어 봅니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>UCB1·톰슨 샘플링은 모든 유저에게 같은 답을 주지만, 실제 광고는 <strong>유저마다 다른 답(개인화)</strong>이 필요합니다. LinUCB는 유저·광고의 특징을 수식에 넣는 가장 기본적인 문맥형 밴딧이라, 실무 추천 시스템 공부의 출발점이에요.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>UCB1·톰슨 샘플링은 모든 유저에게 같은 답을 주지만, 실제 광고는 <strong>유저마다 다른 답(개인화)</strong>이 필요합니다. LinUCB는 유저와 광고의 특징을 수식에 넣는 가장 기본적인 문맥형 밴딧이라, 실무 추천 시스템 공부의 출발점입니다.</div>
         </div>
 
         <ol class="demo-steps">
-          <span class="demo-steps-title">이렇게 해보세요 — 10분</span>
+          <span class="demo-steps-title">이렇게 해봅니다 — 10분</span>
           <li><span class="step-text">유저 타입을 <strong>Tech</strong>로 선택 → 추천된 Ad A를 5번 Click → θ 행렬이 어떻게 업데이트되는지 관찰.</span></li>
           <li><span class="step-text">유저 타입을 <strong>Fashion</strong>으로 변경 → 같은 Ad A를 클릭해도 점수가 다른 이유 확인 (context가 다름).</span></li>
           <li><span class="step-text">α 슬라이더로 탐색 강도 조정 → α↑ 시 새 광고도 자주 시도, α↓ 시 익숙한 광고에 집중.</span></li>
@@ -249,7 +249,7 @@
                 <!-- Right: Interaction -->
                 <div class="interaction-area">
                     <h3 style="margin-bottom: 0.5rem;">Simulate User Action</h3>
-                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">광고를 클릭해 유저 반응을 시뮬레이션하세요. 모델이 클릭 결과를 학습하여 다음 추천에 반영합니다.</p>
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">광고를 클릭해 유저 반응을 시뮬레이션합니다. 모델이 클릭 결과를 학습하여 다음 추천에 반영합니다.</p>
 
                     <div id="ad-cards-container" class="ad-cards">
                         <!-- Cards will be injected by JS -->
@@ -267,7 +267,7 @@
         <div
             style="margin-top: 2rem; background: var(--glass-bg); padding: 1.5rem; border-radius: 0; border: 1px solid var(--glass-border);">
             <h3 style="margin-bottom: 0.5rem;">Model Internals (Real-time)</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary);">클릭할 때마다 모델의 가중치(θ)와 점수가 어떻게 변하는지 실시간으로 확인하세요.</p>
+            <p style="font-size: 0.9rem; color: var(--text-secondary);">클릭할 때마다 모델의 가중치(θ)와 점수가 어떻게 변하는지 실시간으로 확인합니다.</p>
             <div id="model-internals-container" style="overflow-x: auto;">
                 <!-- Table injected by JS -->
             </div>
@@ -298,12 +298,12 @@
             <h2>Disjoint LinUCB 점수 뜯어보기</h2>
             <p>보내주신 JS 코드와 이 스크린샷 화면은 <strong>Disjoint LinUCB</strong> 모델이 작동하는 모습을 완벽하게 시각화한 것입니다.</p>
             <p><strong>"이 그래프가 도대체 무엇을 의미하는지"</strong>, 그리고 <strong>"왜 Ad A가 추천되었는지"</strong>를 AdTech 전문가 관점에서 명쾌하게 해석해
-                드릴게요.</p>
+                드립니다.</p>
 
             <hr>
 
             <h3>1. 코드 확인: "네, Disjoint LinUCB입니다."</h3>
-            <p>작성하신 코드에서 <code>this.A = []</code> 배열을 만들어 광고(Arm)마다 별도의 행렬을 관리했었죠?<br>
+            <p>이 데모의 코드는 <code>this.A = []</code> 배열을 만들어 광고(Arm)마다 별도의 행렬을 관리합니다.<br>
                 이 화면에서도 4개의 막대그래프가 서로 <strong>남남처럼</strong> 각자의 점수를 계산하고 있습니다.</p>
             <ul>
                 <li><strong>Ad A의 점수:</strong> 오직 Ad A의 과거 데이터(클릭)만 반영됨.</li>
@@ -326,7 +326,7 @@
                 <li><strong>의미:</strong> "지금까지 배운 바로는, 이 유저가 이 광고를 클릭할 확률이 이만큼이야."</li>
                 <li><strong>해석:</strong>
                     <ul>
-                        <li><strong>Ad A (분홍색):</strong> 색깔 막대가 제일 높죠? 모델은 <strong>"이 유저 취향엔 Ad A가 딱이야!"</strong>라고 아주
+                        <li><strong>Ad A (분홍색):</strong> 색깔 막대가 제일 높습니다. 모델은 <strong>"이 유저 취향엔 Ad A가 딱이야!"</strong>라고 아주
                             강하게 확신하고 있습니다.</li>
                         <li><strong>Ad C (노란색):</strong> 색깔 막대가 낮습니다. "음.. 경험상 이 유저는 Ad C를 별로 안 좋아할 것 같은데..."라고 생각하는
                             겁니다.</li>
@@ -340,7 +340,7 @@
                 <li><strong>해석:</strong>
                     <ul>
                         <li>데이터가 많이 쌓일수록(많이 노출될수록) 이 <strong>회색 막대는 점점 줄어듭니다.</strong> (아니까 안 궁금함)</li>
-                        <li><strong>Ad D (청록색 위의 회색):</strong> 회색 부분이 꽤 두툼하죠? 모델이 <strong>"Ad D는 아직 긴가민가해. 기회를 좀 더
+                        <li><strong>Ad D (청록색 위의 회색):</strong> 회색 부분이 꽤 두툼합니다. 모델이 <strong>"Ad D는 아직 긴가민가해. 기회를 좀 더
                                 줘볼까?"</strong>라고 생각하고 있는 겁니다.</li>
                     </ul>
                 </li>

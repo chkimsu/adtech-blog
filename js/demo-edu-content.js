@@ -1305,7 +1305,7 @@ window.DEMO_EDU = {
                 return [
                     '<strong>1번 앱 SDK</strong>입니다. 만드는 것은 85 B 뿐이고 <strong>누가·어디서·어느 캠페인·얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
                     '<strong>2번 웹서버</strong>입니다. 98 B 가 앞에 붙어 183 B 가 됐습니다. 붙은 것은 전부 <strong>받는 쪽만 아는 값</strong>이에요 — 앱은 자기 요청이 204 를 받았는지 보내는 시점에 모릅니다.',
-                    '<strong>3번 수집 에이전트</strong>입니다. 여기가 처음 <strong>가지러 가는</strong> 자리예요. 원문은 message 칸에 한 글자도 안 바뀌고 들어가고, 붙는 것은 봉투 셋뿐입니다.',
+                    '<strong>3번 수집 에이전트</strong>입니다. 여기가 처음 <strong>가지러 가는</strong> 자리입니다. 원문은 message 필드에 한 글자도 안 바뀌고 들어가고, 붙는 것은 envelope 필드 셋뿐입니다.',
                     '<strong>4번 변환기</strong>입니다. 크기는 37 B <strong>줄었는데</strong> 필드가 5개에서 15개가 됐습니다. 바이트로는 줄어든 자리에서 가장 큰 일이 일어납니다.',
                     '<strong>5번 Kafka</strong>입니다. 값은 한 글자도 안 바뀌고 <strong>주소만 붙습니다</strong> — topic·partition·offset. 여기서부터 한 번 쓰이고 여럿이 읽습니다.',
                     '<strong>6번 읽는 쪽 넷</strong>입니다. 아래 칩을 갈아 눌러 보세요. <strong>왼쪽은 그대로인데 오른쪽만 바뀝니다</strong> — 같은 한 줄이 네 결과가 됩니다.'
@@ -1318,7 +1318,7 @@ window.DEMO_EDU = {
                 host.dataset.eduSaid = i;
                 return [
                     '대시보드는 <strong>건수와 과금액만</strong> 남기고 나머지 12개를 버립니다. 2초 안에 답해야 하니 완벽함보다 속도예요.',
-                    '예산 소진 확인은 <code>req_id</code> 를 들고 갑니다. 같은 클릭을 두 번 처리하면 예산이 <strong>364.8원 줄어들기</strong> 때문에, 이미 본 줄인지 확인할 열쇠가 필요합니다.',
+                    '예산 소진 확인은 <code>req_id</code> 를 들고 갑니다. 같은 클릭을 두 번 처리하면 예산이 <strong>364.8원 줄어들기</strong> 때문에, 이미 본 줄인지 확인할 키가 필요합니다.',
                     '광고주 리포트는 <strong>여기 숫자가 그대로 청구서</strong>가 됩니다. 몇 건 빠지면 금액이 안 맞으니, 속도보다 빠짐없이 세는 쪽이 먼저입니다.',
                     '모델 학습은 <code>req_id</code> 로 <strong>노출과 클릭을 이어 붙입니다</strong>. 접속 주소나 응답 코드는 학습에 안 쓰니 뺍니다.'
                 ][+i] || '';
@@ -2466,9 +2466,9 @@ window.DEMO_EDU = {
                     case 'POST':
                         return 'POST 를 골랐습니다. 목록 주소 <strong>/v1/posts</strong> 로 보내면 새 글이 만들어집니다. 본문에 title 이 꼭 있어야 합니다.';
                     case 'PUT':
-                        return 'PUT 을 골랐습니다. 글 하나를 <strong>통째로 교체</strong>합니다. 본문에 없는 칸은 기본값으로 돌아가니 likes 칸을 지켜보세요.';
+                        return 'PUT 을 골랐습니다. 글 하나를 <strong>통째로 교체</strong>합니다. 본문에 없는 필드는 기본값으로 돌아가니 likes 필드를 지켜보세요.';
                     case 'PATCH':
-                        return 'PATCH 를 골랐습니다. 본문에 적은 <strong>칸만</strong> 바뀌고 나머지는 그대로입니다.';
+                        return 'PATCH 를 골랐습니다. 본문에 적은 <strong>필드만</strong> 바뀌고 나머지는 그대로입니다.';
                     case 'DELETE':
                         return 'DELETE 를 골랐습니다. 본문 없이 주소의 글을 지웁니다. 잘 되면 <strong>본문 없는 204</strong> 가 옵니다.';
                     default:
@@ -2500,7 +2500,7 @@ window.DEMO_EDU = {
                 el: '.hm-server',
                 title: '서버 데이터',
                 body: '표에 14번 글이 <strong>새로 생김</strong> 표시와 함께 늘었습니다. ' +
-                    '이제 <strong>4 제목만 고치기</strong>와 <strong>5 통째로 바꾸기</strong>를 번갈아 눌러 likes 칸이 어떻게 다른지 보세요.'
+                    '이제 <strong>4 제목만 고치기</strong>와 <strong>5 통째로 바꾸기</strong>를 번갈아 눌러 likes 필드가 어떻게 다른지 보세요.'
             }
         ]
     },

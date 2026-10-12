@@ -40,6 +40,8 @@ jobs:
         run: node scripts/test-long-sentences.js
       - name: 디자인 정합 (각진·무그림자·팔레트·serif 없음·장식글자 없음)
         run: node scripts/check-design.js
+      - name: 말투와 낱말 (해요체, 쓰지 않는 낱말, 가운뎃점, 말로 쓴 숫자, 지어낸 말)
+        run: node scripts/check-wording.js
       - name: 코스 표준 데이터가 글과 맞나
         run: node scripts/check-course-data.js
       - name: 코스 순수 로직 시험

@@ -450,21 +450,21 @@
     if (m.overPool) {
       list.push({
         bad: true, short: '커넥션 풀',
-        line: '먼저 터지는 것은 <strong>커넥션 풀</strong>입니다 — 동시 ' + fmt(m.conc) +
+        line: '먼저 생기는 문제는 <strong>커넥션 풀</strong>입니다 — 동시 ' + fmt(m.conc) +
           '개가 필요한데 풀은 ' + POOL + '개입니다. 이 API 와 상관없는 요청까지 같이 멈춥니다.'
       });
     }
     if (m.secret.state === 'bad') {
       list.push({
         bad: true, short: '시크릿 노출',
-        line: '먼저 터지는 것은 <strong>시크릿</strong>입니다 — ' + AUTH[m.state.auth].label +
+        line: '먼저 생기는 문제는 <strong>시크릿</strong>입니다 — ' + AUTH[m.state.auth].label +
           ' 의 비밀을 사용자 기기에 둬야 합니다. 배포는 성공하고, 드러나는 것은 몇 달 뒤입니다.'
       });
     }
     if (m.dup > 0) {
       list.push({
         bad: true, short: '중복 ' + fmt(m.dup) + '줄',
-        line: '먼저 터지는 것은 <strong>중복</strong>입니다 — 전환 테이블 ' + fmt(m.records) +
+        line: '먼저 생기는 문제는 <strong>중복</strong>입니다 — 전환 테이블 ' + fmt(m.records) +
           '줄(+' + pct1(m.inflate) + '), 리포트 CPA ' + fmt(m.reportCpa) + '원. 에러가 아니라 알람이 울릴 자리가 없습니다.'
       });
     }
@@ -497,7 +497,7 @@
     var html, bad;
     if (!list.length) {
       bad = false;
-      html = '<strong>지금 설정에서는 먼저 터지는 것이 없습니다.</strong> 재시도 ' + m.state.retry +
+      html = '<strong>지금 설정에서는 문제가 생기지 않습니다.</strong> 재시도 ' + m.state.retry +
         '회가 전건을 건져 오고, 멱등키가 중복 ' + fmt(m.blocked) + '건을 막고, 하위 타임아웃 ' +
         fmt(m.timeout) + 'ms 가 예산 ' + BUDGET_MS + 'ms 안에 있습니다.';
     } else {

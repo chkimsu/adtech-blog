@@ -425,15 +425,15 @@
     var html;
     if (!m.problems.length) {
       box.className = 'pb-verdict is-ok';
-      html = '<p class="pb-verdict-head">터지는 것이 없다</p>' +
+      html = '<p class="pb-verdict-head">생기는 문제가 없다</p>' +
         '<p class="pb-verdict-lead">소비자 넷의 마감이 다 지켜지고, 목적지를 하나 더 붙일 때 손대는 처리 잡도 0개다.</p>';
     } else {
       var first = m.problems[0];
       box.className = 'pb-verdict is-bad';
-      html = '<p class="pb-verdict-head">먼저 터지는 것</p>' +
+      html = '<p class="pb-verdict-head">먼저 생기는 문제</p>' +
         '<p class="pb-verdict-lead"><strong>' + first.t + '</strong> — ' + first.d + '</p>';
       if (m.problems.length > 1) {
-        html += '<p class="pb-verdict-sub">뒤따라 터지는 것 ' + (m.problems.length - 1) + '개</p><ul class="pb-verdict-list">';
+        html += '<p class="pb-verdict-sub">뒤따라 생기는 문제 ' + (m.problems.length - 1) + '개</p><ul class="pb-verdict-list">';
         m.problems.slice(1).forEach(function (p) {
           html += '<li><strong>' + p.t + '</strong> — ' + p.d + '</li>';
         });

@@ -364,7 +364,7 @@
     if (m >= 1.5 || m <= 0.7) {
       return '예측을 <b>' + m.toFixed(2) + '배</b>로 밀었습니다. 순위 지표는 제자리인데 ' +
         'NE 가 <b>' + fmt4(res.ne) + '</b>, COPC 가 <b>' + res.copc.toFixed(3) + '</b> 입니다 — ' +
-        '크기를 재는 지표만 무너집니다.';
+        '크기를 재는 지표만 나빠집니다.';
     }
     if (sb >= 1.2) {
       return '요청 간 편차가 큽니다. 전체 AUC 와 GAUC 의 간격이 <b>' + gap.toFixed(4) + '</b> 입니다. ' +

@@ -54,7 +54,7 @@
 ```python
 import random
 # 앞 글([피드백 루프 편향](post.html?id=feedback-loop-bias))의
-# TRUE·ADS·N·CAP·GENS·allocate·gini·run 을 그대로 쓴다. 그 글의 코드를 먼저 붙여 놓고
+# TRUE, ADS, N, CAP, GENS, allocate, gini, run 을 그대로 쓴다. 그 글의 코드를 먼저 붙여 놓고
 # 아래를 이어 붙이면 그대로 돌아간다.
 
 
@@ -92,7 +92,7 @@ for name, kw in [('기본', {}), ('ε탐색 5%', {'mode': 'ε탐색'}),
           % (imps[9931], sum(clicks.values()), first5, h[-1][3]))
 
 rng = random.Random(37)                       # 진짜 CTR 을 처음부터 알았다면
-best = allocate(TRUE)                         # 6000·6000·6000·2000 으로 고정 배분
+best = allocate(TRUE)                         # 6000, 6000, 6000, 2000 으로 고정 배분
 tot = sum(sum(rng.random() < TRUE[ad] for _ in range(500 if g == 1 else best[ad]))
           for g in range(1, GENS + 1) for ad in ADS)
 print('참고 — 진짜 CTR 을 알고 배분했다면 40세대 클릭 %d건' % tot)
@@ -222,7 +222,7 @@ print('틀린 시드만: 기본 %.0f → ε탐색 %.0f'
 | 기본 고리가 잃은 클릭 | 18,831건 대비 17,350건 | 2절 |
 | ε 탐색이 A 를 상위 셋에 올린 세대 | 여드레째 | 2절 |
 | 강제 슬롯이 A 를 상위 셋에 올린 세대 | 사흘째 | 2절 |
-| 한 세대에 A 가 받는 몫 | ε 탐색 125건 · 강제 슬롯 400건 | 1절 |
+| 한 세대에 A 가 받는 몫 | ε 탐색 125건, 강제 슬롯 400건 | 1절 |
 | 시드 100개 중 A 가 40세대까지 못 돌아온 시드 | 6개 | 3절 |
 | 시드 100개 중 상위 셋 구성이 틀린 시드 | 40개 | 3절 |
 | 옳게 굳은 시드에서 ε 탐색의 값 | 16건 손해 (₩8,000) | 3절 |
@@ -241,7 +241,7 @@ print('틀린 시드만: 기본 %.0f → ε탐색 %.0f'
 ## 더 깊이 보기
 
 - [피드백 루프 편향](post.html?id=feedback-loop-bias) — 이 글이 푸는 그 굳음을 만드는 편, 시뮬레이션과 코드가 여기서 온다
-- [탐색과 활용](post.html?id=exploration-exploitation) — ε 탐색·UCB·톰슨 샘플링을 고르는 기준
+- [탐색과 활용](post.html?id=exploration-exploitation) — ε 탐색, UCB, 톰슨 샘플링을 고르는 기준
 - [위치 편향과 ULTR](post.html?id=position-bias-ultr) — 위치별 성향점수와 역확률 가중의 원형
 - [새 광고의 pCTR — 콜드 스타트](post.html?id=cold-start-pctr) — 표본이 적을 때 값을 빌려 오는 법
 - [모델 A/B 테스트](post.html?id=model-ab-testing) — 처방을 실제 트래픽에서 재는 설계

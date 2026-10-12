@@ -60,7 +60,7 @@ model: pctr-v418.onnx (38MB)
 inputs
   ids     int64   [800, 6]     # 후보마다 해시된 ID 피처 여섯 (광고, 지면, 카테고리 등)
   emb     float32 [800, 32]    # 임베딩 서비스에서 가져온 광고 줄 800개
-  dense   float32 [800, 12]    # 집계 피처 열두 개 (7일 클릭률 등)
+  dense   float32 [800, 12]    # 집계 피처 12개 (7일 클릭률 등)
 outputs
   pctr    float32 [800]        # 후보마다 클릭 확률 하나
 ```

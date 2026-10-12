@@ -69,7 +69,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
       <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline) (수 시간)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item yellow">Spark / Hive</span>
-        <span class="chart-layer-item yellow">집계 &middot; 통계 &middot; 임베딩</span>
+        <span class="chart-layer-item yellow">집계, 통계, 임베딩</span>
       </div>
     </div>
     <div class="chart-layer-group">
@@ -83,7 +83,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
       <div class="chart-layer-group-label">실시간(Real-Time) (요청 시점)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item green">Application 내부</span>
-        <span class="chart-layer-item green">파싱 &middot; 변환</span>
+        <span class="chart-layer-item green">파싱, 변환</span>
       </div>
     </div>
   </div>
@@ -837,7 +837,7 @@ user_ctr = clicks_7d / max(impressions_7d, 1)  # 0으로 나누기 방지
 
 | 어긋남(Skew) 유형 | 원인 | 결과 |
 |-----------|------|------|
-| **로직 어긋남** | 학습/서빙 코드가 다른 언어·로직 | 동일 입력에 다른 피처 값 → 모델 성능 저하 |
+| **로직 어긋남** | 학습/서빙 코드가 다른 언어, 로직 | 동일 입력에 다른 피처 값 → 모델 성능 저하 |
 | **시간 어긋남** | 학습 시 미래 데이터 포함 (data leakage) | 오프라인 AUC 높지만 온라인 성능 낮음 |
 | **분포 어긋남** | 학습 데이터와 서빙 데이터의 분포 차이 | 입력 분포가 벗어나면 예측 신뢰도 하락 |
 
@@ -1095,7 +1095,7 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 피처 스토어는 광고 입찰의 **크리티컬 패스**에 있습니다. 장애가 곧 매출 손실입니다.
 
-여기서 갈리는 것은 장애가 났느냐가 아니라, 장애가 났을 때 무엇으로 대신하느냐입니다. 온라인 저장소가 통째로 죽으면 대신할 것이 없어 입찰이 멈춥니다. 반면 실시간 피처만 끊기면 배치 피처로 내려앉아 계속 입찰할 수 있습니다. 정확도는 떨어지지만 매출은 이어집니다. 그래서 아래 표에서 볼 것은 증상이 아니라 마지막 칸입니다.
+여기서 중요한 것은 장애가 났느냐가 아니라, 장애가 났을 때 무엇으로 대신하느냐입니다. 온라인 저장소가 통째로 죽으면 대신할 것이 없어 입찰이 멈춥니다. 반면 실시간 피처만 끊기면 배치 피처로 내려앉아 계속 입찰할 수 있습니다. 정확도는 떨어지지만 매출은 이어집니다. 그래서 아래 표에서 볼 것은 증상이 아니라 마지막 칸입니다.
 
 무엇으로 대신하는지를 순서대로 카드로 보면 이렇습니다.
 

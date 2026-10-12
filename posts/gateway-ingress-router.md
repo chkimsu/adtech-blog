@@ -1,12 +1,12 @@
 셋째 주에 지훈 씨가 만든 클릭 수집 API 가 배포됐습니다. 매체 쪽에 주소를 알려 주려고 서버 IP `10.0.3.14:8080` 을 적어 메일을 쓰는데, 선배가 그걸 붙잡았습니다. **"그 주소를 주면 다음 배포 때 매체 요청이 통째로 날아갑니다."**
 
-그러면서 대신 알려 준 주소는 `ads.example.com` 이었습니다. 서버 IP 도 아니고 포트도 없습니다. 그 이름과 지훈 씨 서버 사이에 부품이 셋 서 있는데, 이름이 로드밸런서·Ingress·API Gateway 입니다.
+그러면서 대신 알려 준 주소는 `ads.example.com` 이었습니다. 서버 IP 도 아니고 포트도 없습니다. 그 이름과 지훈 씨 서버 사이에 부품이 셋 서 있는데, 이름이 로드밸런서, Ingress, API Gateway 입니다.
 
 **넷 다 "요청을 어디로 보낼지 정하는" 일을 합니다. 그런데 왜 넷일까요?**
 
 한꺼번에 설계된 것이 아니기 때문입니다. 서비스가 늘 때마다 구체적인 사고가 하나씩 나고, 그걸 막으려고 부품이 하나씩 생겼습니다. 이 글은 서버 한 대에서 시작해 그 순서를 따라갑니다. 순서대로 보면 넷의 경계가 저절로 보입니다.
 
-> **한 줄 요약:** 로드밸런서·Ingress·API Gateway 는 한꺼번에 설계된 것이 아닙니다. 서비스가 늘 때마다 생긴 문제에 하나씩 답한 결과라, 생긴 순서가 그대로 경계입니다.
+> **한 줄 요약:** 로드밸런서, Ingress, API Gateway 는 한꺼번에 설계된 것이 아닙니다. 서비스가 늘 때마다 생긴 문제에 하나씩 답한 결과라, 생긴 순서가 그대로 경계입니다.
 
 > **골라 읽는 법** — 절이 다섯 개입니다.
 >
@@ -15,7 +15,7 @@
 > - Ingress 와 API Gateway 의 경계만 → 4절
 > - 넷을 한 표로 비교만 → 5절
 
-이 글의 숫자는 전부 설명을 위해 지어낸 값입니다. 다만 설정 파일의 **모양**은 실제 nginx · 쿠버네티스 · Gateway 제품이 쓰는 그대로입니다. 그리고 이 글이 따라가는 요청은 지훈 씨의 클릭 수집이 아니라, 같은 길을 지나는 것 중 가장 빡빡한 **입찰 요청**입니다. 12ms 안에 답해야 하는 요청에서 부품 하나의 비용이 가장 선명하게 드러납니다.
+이 글의 숫자는 전부 설명을 위해 지어낸 값입니다. 다만 설정 파일의 **모양**은 실제 nginx, 쿠버네티스, Gateway 제품이 쓰는 그대로입니다. 그리고 이 글이 따라가는 요청은 지훈 씨의 클릭 수집이 아니라, 같은 길을 지나는 것 중 가장 빡빡한 **입찰 요청**입니다. 12ms 안에 답해야 하는 요청에서 부품 하나의 비용이 가장 선명하게 드러납니다.
 
 ---
 
@@ -109,8 +109,8 @@ bidders:
 <rect x="6" y="116" width="140" height="72" rx="9" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
 <text x="76" y="140" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--accent-primary)">로드밸런서</text>
 <text x="76" y="160" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대표 IP 1개</text>
-<text x="76" y="180" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP·포트만 봅니다</text>
-<text x="76" y="212" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz · 5초</text>
+<text x="76" y="180" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP, 포트만 봅니다</text>
+<text x="76" y="212" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted); font-family:var(--font-mono)">GET /healthz, 5초</text>
 <text x="76" y="232" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">점선 = 헬스체크</text>
 <rect x="330" y="14" width="164" height="222" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
 <text x="412" y="34" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">대상 그룹 — bidder 3대</text>
@@ -150,11 +150,11 @@ bidders:
 
 지금 이 로드밸런서는 IP 와 포트만 봅니다. 연결이 들어오면 대상 하나를 골라 그대로 넘길 뿐, 그 연결에 어떤 요청이 실려 오는지는 열어 보지 않습니다.
 
-우리가 매체에 열어 준 주소는 두 개입니다. `POST /v1/bid` 는 12ms 안에 답해야 하는 입찰 요청입니다. `POST /v1/track` 은 노출·클릭을 기록하는 요청이라 100ms 가 걸려도 됩니다. **그런데 이 로드밸런서에게는 둘 다 그냥 "8080 포트로 들어온 연결"입니다.**
+우리가 매체에 열어 준 주소는 두 개입니다. `POST /v1/bid` 는 12ms 안에 답해야 하는 입찰 요청입니다. `POST /v1/track` 은 노출, 클릭을 기록하는 요청이라 100ms 가 걸려도 됩니다. **그런데 이 로드밸런서에게는 둘 다 그냥 "8080 포트로 들어온 연결"입니다.**
 
 구분하지 못하면 사고가 납니다. `/v1/track` 이 100ms 를 쓰는 동안 그 서버의 처리 슬롯 하나가 묶입니다. 트래킹이 몰리는 시간대에는 `/v1/bid` 가 슬롯을 못 잡아 12ms 를 넘깁니다. **느린 쪽이 빠른 쪽을 끌어내리는 것입니다.**
 
-포트를 나누면 되지 않느냐고 할 수 있습니다. 8080은 입찰, 8081은 트래킹으로 말입니다. 그러면 매체 설정을 다시 고쳐 달라고 부탁해야 하고, 서비스가 열둘이 되면 포트도 열두 개입니다. 방금 벗어난 자리로 되돌아가는 셈입니다.
+포트를 나누면 되지 않느냐고 할 수 있습니다. 8080은 입찰, 8081은 트래킹으로 말입니다. 그러면 매체 설정을 다시 고쳐 달라고 부탁해야 하고, 서비스가 12개가 되면 포트도 12개입니다. 방금 벗어난 자리로 되돌아가는 셈입니다.
 
 그래서 판단 기준은 하나로 정리됩니다. **같은 포트로 들어오는 요청 중 응답 시간 예산이 다른 것이 섞여 있으면, 경로를 열어 보는 부품이 필요합니다.** 그것이 3절입니다.
 
@@ -162,7 +162,7 @@ bidders:
 
 **서비스를 넷으로 나누면 앞에 세울 대표 주소도 넷이 됩니다. Ingress 는 주소를 다시 하나로 되돌리고, 대신 경로를 보고 나눠 보냅니다.**
 
-`bidder` 한 프로세스에 네 가지가 같이 들어 있었습니다. 입찰 응답 만들기, pCTR 예측, 피처 조회, 노출·클릭 기록입니다. 이걸 `bidder`·`pctr`·`feature-store`·`log-collector` 넷으로 나눴습니다. pCTR 모델만 하루 세 번 올리고 싶은데, 그때마다 입찰 프로세스까지 같이 내려야 했기 때문입니다.
+`bidder` 한 프로세스에 네 가지가 같이 들어 있었습니다. 입찰 응답 만들기, pCTR 예측, 피처 조회, 노출, 클릭 기록입니다. 이걸 `bidder`, `pctr`, `feature-store`, `log-collector` 넷으로 나눴습니다. pCTR 모델만 하루 세 번 올리고 싶은데, 그때마다 입찰 프로세스까지 같이 내려야 했기 때문입니다.
 
 서비스마다 로드밸런서를 하나씩 세우면 2절을 네 번 반복하는 꼴이 됩니다. 대표 주소가 4개, 대상 그룹과 헬스체크 설정이 4벌, 월 비용이 4배이고, 매체가 알아야 할 주소도 2개가 됩니다.
 
@@ -240,11 +240,11 @@ rules:
 
 | 어디서 쓰는 말인가 | 무엇을 가리키나 | 실제 이름 |
 |---|---|---|
-| 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx·traefik) |
+| 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx, traefik) |
 | OpenShift | 규칙표에 해당하는 자체 리소스 | `Route` 오브젝트 |
 | 앱 코드 안 | 들어온 경로를 함수에 연결하는 것 | `@app.route("/v1/bid")` |
 
-셋이 하는 일은 같습니다. 경로를 보고 어디로 보낼지 정합니다. 다른 것은 **어느 층에서 도느냐**입니다. 그런데 셋이 세 층은 아닙니다. 1·2행은 같은 층이고 플랫폼만 다릅니다 — 쿠버네티스를 쓰면 1행, OpenShift 를 쓰면 2행이지 둘을 같이 지나가지 않습니다. 3행만 다른 층입니다.
+셋이 하는 일은 같습니다. 경로를 보고 어디로 보낼지 정합니다. 다른 것은 **어느 층에서 도느냐**입니다. 그런데 셋이 세 층은 아닙니다. 1, 2행은 같은 층이고 플랫폼만 다릅니다 — 쿠버네티스를 쓰면 1행, OpenShift 를 쓰면 2행이지 둘을 같이 지나가지 않습니다. 3행만 다른 층입니다.
 
 그래서 `POST /v1/bid` 한 건은 두 층을 지납니다. 바깥에서는 Ingress Controller 가 `bidder-service` 를 고릅니다. 그 안에서는 `@app.route("/v1/bid")` 함수가 실행됩니다. **회의에서 "라우터에서 막힌 것 같다"는 말을 들으면 어느 층인지부터 되물어야 합니다.** 둘은 고치는 사람도 배포 주기도 다릅니다.
 
@@ -271,7 +271,7 @@ rules:
 
 - **매체별 인증키 확인** — 요청을 누가 보냈는지 규칙표가 모릅니다.
 - **초당 호출 제한** — 매체를 구분 못 하니 500과 8,000을 따로 걸 수 없습니다.
-- **v1·v2 분기** — 버전은 `x-api-version` 헤더로 오는데 규칙표는 헤더를 안 봅니다.
+- **v1, v2 분기** — 버전은 `x-api-version` 헤더로 오는데 규칙표는 헤더를 안 봅니다.
 - **응답 형식 변환** — v1 매체는 옛 필드 이름을 기대하는데 `bidder` 는 v2 형식만 만듭니다.
 
 **API Gateway** 가 Ingress 뒤에 서서 이 넷을 맡습니다. 규칙표와 다른 점은 헤더 조건과 정책 칸입니다.
@@ -301,7 +301,7 @@ routes:
 
 ### 정책을 서비스마다 따로 두면
 
-Gateway 없이 서비스 넷이 인증·쿼터·타임아웃 세 정책을 각자 구현하면 어떻게 되는지 개수로 세어 보겠습니다.
+Gateway 없이 서비스 넷이 인증, 쿼터, 타임아웃 세 정책을 각자 구현하면 어떻게 되는지 개수로 세어 보겠습니다.
 
 | | 서비스마다 각자 | Gateway 한 곳 |
 |---|---|---|
@@ -319,8 +319,8 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 
 | | Ingress | API Gateway |
 |---|---|---|
-| 무엇을 보고 나누나 | 호스트 · 경로 | 호스트 · 경로 + 헤더 · 인증키 · 매체 |
-| 정책을 갖나 | 아니요 (규칙표뿐) | 예 — 인증 · 쿼터 · 변환 · 타임아웃 |
+| 무엇을 보고 나누나 | 호스트, 경로 | 호스트, 경로 + 헤더, 인증키, 매체 |
+| 정책을 갖나 | 아니요 (규칙표뿐) | 예 — 인증, 쿼터, 변환, 타임아웃 |
 | 설정이 바뀌는 이유 | 서비스가 늘거나 줄 때 | 매체가 늘거나 정책이 바뀔 때 |
 
 ## 5. 완성된 지도
@@ -328,7 +328,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 **네 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 됩니다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 엽니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 로드밸런서·Ingress·API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 로드밸런서, Ingress, API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw5-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -338,15 +338,15 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 <line x1="76" y1="72" x2="76" y2="90" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="92" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="114" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">로드밸런서</text>
-<text x="76" y="134" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP · 포트</text>
+<text x="76" y="134" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">IP, 포트</text>
 <line x1="76" y1="144" x2="76" y2="162" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="164" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="186" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">Ingress</text>
-<text x="76" y="206" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">호스트 · 경로</text>
+<text x="76" y="206" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">호스트, 경로</text>
 <line x1="76" y1="216" x2="76" y2="234" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="6" y="236" width="140" height="52" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="76" y="258" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">API Gateway</text>
-<text x="76" y="278" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">+ 헤더 · 인증키 · 매체</text>
+<text x="76" y="278" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">+ 헤더, 인증키, 매체</text>
 <rect x="334" y="20" width="160" height="250" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
 <text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스</text>
 <line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
@@ -355,7 +355,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 <rect x="346" y="54" width="136" height="62" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="74" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
 <rect x="354" y="82" width="120" height="26" rx="6" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1.5"/>
-<text x="414" y="100" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">라우터 · 코드 경로</text>
+<text x="414" y="100" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">라우터, 코드 경로</text>
 <rect x="346" y="126" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="147" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">pctr</text>
 <rect x="346" y="168" width="136" height="34" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
@@ -369,9 +369,9 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 
 | 부품 | 어디서 도나 | 무엇을 보고 나누나 | 없으면 사람이 관리할 것 |
 |---|---|---|---|
-| 로드밸런서 | 클러스터 밖 | IP · 포트 | 매체 설정에 IP 가 서버 수만큼 — 3대면 3줄 |
-| Ingress | 클러스터 입구 | 호스트 · 경로 | 대표 주소 4개 · 헬스체크 4벌 |
-| API Gateway | 앱 계층 | 경로 + 헤더 · 인증키 · 매체 | 정책 구현 12벌 · 값 하나 고칠 때 배포 4번 |
+| 로드밸런서 | 클러스터 밖 | IP, 포트 | 매체 설정에 IP 가 서버 수만큼 — 3대면 3줄 |
+| Ingress | 클러스터 입구 | 호스트, 경로 | 대표 주소 4개, 헬스체크 4벌 |
+| API Gateway | 앱 계층 | 경로 + 헤더, 인증키, 매체 | 정책 구현 12벌, 값 하나 고칠 때 배포 4번 |
 | 라우터 | 앱 안 | 코드 경로 | 어느 절에서 새로 생긴 것이 아닙니다 |
 
 **마지막 칸이 이 글의 줄거리입니다.** 부품은 기능을 더하려고 들어온 것이 아닙니다. 없을 때 사람이 관리할 것이 몇 벌로 불어나느냐가 먼저였고, 부품은 그 뒤에 왔습니다.
@@ -396,7 +396,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 | 매체에 서버 IP 를 주면 안 되나 | 배포할 때마다 그 시간만큼 요청이 통째로 사라집니다 |
 | 로드밸런서는 무엇을 보나 | IP 와 포트만. 어떤 요청인지는 안 엽니다 |
 | 헬스체크에 무엇을 넣나 | 나만 빠지면 되는 것은 넣고, 다 같이 쓰는 것은 뺍니다 |
-| Ingress 는 무엇을 하나 | 대표 주소를 하나로 되돌리고 호스트·경로로 나눠 보냅니다 |
+| Ingress 는 무엇을 하나 | 대표 주소를 하나로 되돌리고 호스트, 경로로 나눠 보냅니다 |
 | 규칙표에서 무엇이 이기나 | 위치가 아니라 길이. 가장 길게 맞는 줄입니다 |
 | 라우터가 뭔가 | 문맥마다 다릅니다. 어느 층인지부터 되묻습니다 |
 | API Gateway 는 왜 또 필요한가 | 규칙표에 "누가 보냈나"를 적을 칸이 없기 때문입니다 |
@@ -408,7 +408,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 
 아닙니다. 둘 다 경로를 보는 것까지는 같습니다. 3절 규칙표도 `/v1/bid` 를 보고 나눴고, 4절 Gateway 도 같은 경로를 봅니다. 겹치는 것은 여기까지입니다.
 
-다른 곳은 정책입니다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없고, Gateway 에는 인증·쿼터·타임아웃·응답 변환이 설정 항목으로 있습니다. **그래서 바뀌는 이유가 다릅니다** — 규칙표는 서비스가 늘 때, Gateway 는 매체가 늘 때 바뀝니다.
+다른 곳은 정책입니다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없고, Gateway 에는 인증, 쿼터, 타임아웃, 응답 변환이 설정 항목으로 있습니다. **그래서 바뀌는 이유가 다릅니다** — 규칙표는 서비스가 늘 때, Gateway 는 매체가 늘 때 바뀝니다.
 
 다만 경계가 고정된 것은 아닙니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API 는 헤더 조건을 규격 안에 갖고 있습니다. 4절에서 구현체마다 다르게 밀어 넣던 것이 표준이 된 셈입니다.
 
@@ -435,4 +435,4 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 - 3절에서 서비스를 넷으로 쪼갠 판단은 [소프트웨어 아키텍처 패턴](post.html?id=software-architecture-patterns) 편에서 다룹니다.
 - `bidder` 가 시간을 떼어 준 `pctr` 안에서 실제로 벌어지는 일은 [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 편에 있습니다.
 - 이 경로로 들어온 입찰 한 건이 로그를 몇 줄 남기는지는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리해 뒀습니다.
-- 여기서 쪼갠 12ms 를 실제로 지키는지 재고 대시보드로 읽는 법은 [지연·처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput) 편에 있습니다.
+- 여기서 쪼갠 12ms 를 실제로 지키는지 재고 대시보드로 읽는 법은 [지연, 처리량과 Grafana 읽는 법](post.html?id=serving-latency-throughput) 편에 있습니다.

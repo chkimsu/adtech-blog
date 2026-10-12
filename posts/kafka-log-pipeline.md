@@ -4,7 +4,7 @@
 
 **따로 놓인 두 줄을 어떻게 다시 붙일까요? 그리고 왜 같은 줄을 네 팀이 각자 읽을까요?**
 
-이 글은 브로커 안을 봅니다. `topic`·`partition`·`consumer group`·`offset` 네 이름이 나오는데, **넷 다 이 두 질문에 답하려고 있는 것들입니다.** 먼저 Kafka 없이 해 보면 어디서 문제가 생기는지부터 봅니다.
+이 글은 브로커 안을 봅니다. `topic`, `partition`, `consumer group`, `offset` 네 이름이 나오는데, **넷 다 이 두 질문에 답하려고 있는 것들입니다.** 먼저 Kafka 없이 해 보면 어디서 문제가 생기는지부터 봅니다.
 
 > **한 줄 요약:** Kafka 는 한 번 쓰고 여러 팀이 각자 읽는 로그 보관소입니다. 보내는 쪽과 읽는 쪽을 떼어 놓는 것이 전부이고, 네 이름은 그 떼어 놓기를 어떻게 하는지의 이름입니다.
 
@@ -41,7 +41,7 @@
 {"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786000101}
 ```
 
-**입찰 요청 하나는 12 밀리초 안에 답해야 합니다.** [로드밸런서·Ingress·API Gateway](post.html?id=gateway-ingress-router) 편에서 정한 그 예산이고, 넘긴 응답은 매체가 버립니다. 이 제약이 아래 셋을 전부 정합니다.
+**입찰 요청 하나는 12 밀리초 안에 답해야 합니다.** [로드밸런서, Ingress, API Gateway](post.html?id=gateway-ingress-router) 편에서 정한 그 예산이고, 넘긴 응답은 매체가 버립니다. 이 제약이 아래 셋을 전부 정합니다.
 
 ### ① `bidder` 가 네 곳을 직접 부릅니다
 
@@ -66,7 +66,7 @@
 
 **셋의 공통점은 하나입니다.** ①은 네 곳의 주소와 재시도 정책을 `bidder` 가 들고 있습니다. ②는 파일 이름과 주기를 양쪽이 맞춰야 하고, ③은 인덱스와 보존 기간을 네 팀이 합의해야 합니다. **받는 쪽이 하나 늘 때마다 보내는 쪽이 따라 바뀝니다.**
 
-그리고 셋 다 "평소에는 멀쩡한데 특정 순간에만 사라진다"는 성질이 있습니다. 평균 그래프로는 안 보이고 배포 시각·축소 시각·마감 시각에 맞춰 봐야 보입니다.
+그리고 셋 다 "평소에는 멀쩡한데 특정 순간에만 사라진다"는 성질이 있습니다. 평균 그래프로는 안 보이고 배포 시각, 축소 시각, 마감 시각에 맞춰 봐야 보입니다.
 
 **그러면 답은 무엇일까요.** 받는 쪽을 하나 더 만드는 것이 아닙니다. 보내는 쪽과 받는 쪽 **사이에 놓을 자리** 하나가 필요합니다. 보내는 쪽은 그 자리에만 쓰고 받는 쪽은 그 자리에서만 읽어, 서로를 모르게 하는 것입니다. **Kafka 가 하는 일이 정확히 이것입니다.**
 
@@ -74,13 +74,13 @@
 
 **topic 은 이름표이고, 그 안은 partition 여러 개로 나뉘어 있습니다. partition 수가 처리량 상한이고, key 가 순서 보장 범위입니다.**
 
-먼저 보내는 쪽부터 짚고 넘어가겠습니다. **Kafka 로 보내는 것은 별도 서버가 아니라 `bidder` 프로세스 안의 라이브러리입니다.** 의존성에 한 줄이 늘고 객체가 하나 생기는 것이 전부이고, 넘기는 것은 셋입니다 — 어느 topic 에, 어떤 key 로, 무슨 값을. **여기 받는 쪽 주소가 없습니다.** 1절 ①이 들고 있던 네 곳의 주소·상태·재시도 정책이 사라진 자리가 이것입니다.
+먼저 보내는 쪽부터 짚고 넘어가겠습니다. **Kafka 로 보내는 것은 별도 서버가 아니라 `bidder` 프로세스 안의 라이브러리입니다.** 의존성에 한 줄이 늘고 객체가 하나 생기는 것이 전부이고, 넘기는 것은 셋입니다 — 어느 topic 에, 어떤 key 로, 무슨 값을. **여기 받는 쪽 주소가 없습니다.** 1절 ①이 들고 있던 네 곳의 주소, 상태, 재시도 정책이 사라진 자리가 이것입니다.
 
 그리고 보내는 함수는 기다리지 않습니다. 버퍼에 넣고 바로 돌아오고 실제 전송은 뒤에서 배치로 묶여 나갑니다. 그래서 1절 ①의 8 밀리초가 여기서는 셈에 안 들어옵니다. 다만 **어디까지 기다렸다 성공으로 칠지는 설정 한 줄로 정합니다.** 보냈으면 끝으로 칠 수도 있고, 복제본까지 받은 것을 확인할 수도 있습니다. 광고주 리포트가 이 줄을 읽으니 우리는 복제본까지 확인하는 쪽으로 둡니다. **한 topic 을 여러 팀이 읽으면 가장 엄한 읽는 쪽에 맞춥니다.**
 
 ### topic 을 무엇으로 나누나
 
-`ad.impression` · `ad.click` · `ad.conversion` 셋으로 나눕니다. 하나로 합치면 노출만 필요한 대시보드도 클릭·전환까지 읽어 걸러야 합니다.
+`ad.impression`, `ad.click`, `ad.conversion` 셋으로 나눕니다. 하나로 합치면 노출만 필요한 대시보드도 클릭, 전환까지 읽어 걸러야 합니다.
 
 **나누는 기준은 사건 종류이지 읽는 팀이 아닙니다.** 리포트용으로 `ad.impression.report` 를 따로 만들면 같은 줄이 팀 수만큼 복사됩니다. 디스크와 쓰기가 그만큼 늘고, 네 벌이 어긋나기 시작하면 어느 벌이 맞는지 아무도 모릅니다. 값은 그다음이 더 큽니다. **topic 이름에 받는 팀 이름이 들어가는 순간 보내는 쪽이 다시 받는 쪽을 알게 됩니다.** 1절이 없앤 것이 그대로 돌아옵니다.
 
@@ -311,7 +311,7 @@ key       r-8f21
 value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 ```
 
-**`offset` 8412 는 보내는 쪽이 만든 적 없는 값입니다.** 넘긴 것은 topic·key·value 셋이었고, 8412 는 브로커가 partition 5 끝에 붙이면서 매긴 번호입니다.
+**`offset` 8412 는 보내는 쪽이 만든 적 없는 값입니다.** 넘긴 것은 topic, key, value 셋이었고, 8412 는 브로커가 partition 5 끝에 붙이면서 매긴 번호입니다.
 
 앞 글에서 본 수집 에이전트의 위치 파일과 하는 일이 같습니다. **다른 것은 있는 자리입니다.** 그 파일은 인스턴스 디스크에 있어 인스턴스가 사라지면 같이 없어지지만, 이 번호는 브로커에 남습니다.
 
@@ -359,8 +359,8 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 <text x="107" y="126" text-anchor="middle" style="font-size:13px; fill:var(--text-primary)">클릭</text>
 <rect x="325" y="108" width="76" height="26" rx="9" style="fill:none; stroke:var(--state-bad); stroke-width:1.8; stroke-dasharray:6 4"/>
 <text x="363" y="126" text-anchor="middle" style="font-size:13px; fill:var(--state-bad)">클릭</text>
-<text x="107" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">윈도우 안 · y = 1</text>
-<text x="363" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">윈도우 밖 · y = 0</text>
+<text x="107" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">윈도우 안, y = 1</text>
+<text x="363" y="152" text-anchor="middle" style="font-size:12.5px; fill:var(--state-bad)">윈도우 밖, y = 0</text>
 <line x1="30" y1="178" x2="500" y2="178" style="stroke:var(--text-muted); stroke-width:1.2"/>
 <g style="stroke:var(--text-muted); stroke-width:1.2"><line x1="60" y1="174" x2="60" y2="182"/><line x1="270" y1="174" x2="270" y2="182"/><line x1="480" y1="174" x2="480" y2="182"/></g>
 <g style="font-size:12.5px; fill:var(--text-muted); text-anchor:middle"><text x="60" y="198">노출 시각</text><text x="270" y="198">3시간 뒤</text><text x="480" y="198">6시간 뒤</text></g>
@@ -401,7 +401,7 @@ value     {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21",…}
 
 - 앞 글인 [로그 수집](post.html?id=log-hops-to-kafka) 편은 이 글이 시작한 자리까지 오는 길입니다. 같은 클릭 한 건이 자리마다 어떤 모양이었는지를 봅니다.
 - 이 다음은 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편입니다. Kafka 앞뒤에 무엇을 세울지를 읽는 쪽의 마감에서 거꾸로 짭니다.
-- 읽는 쪽이 여섯·일곱으로 늘 때는 [데이터 유통 층](post.html?id=data-distribution-layer) 편을 봅니다.
+- 읽는 쪽이 여섯, 일곱으로 늘 때는 [데이터 유통 층](post.html?id=data-distribution-layer) 편을 봅니다.
 - 6절이 만든 학습 한 줄의 X 쪽 — 학습 피처와 서빙 피처가 어긋나는 자리는 [Feature Store](post.html?id=feature-store-serving) 편에 있습니다.
 - 윈도우의 확대판 — 클릭은 3시간이지만 전환은 며칠이 걸리는 이야기는 [지연 피드백과 온라인 학습](post.html?id=online-learning-delayed-feedback) 편입니다.
 - 입찰 한 건이 남기는 로그 열 종은 [광고 시스템 로그 파이프라인](post.html?id=ad-log-pipeline) 편이 정리했습니다.

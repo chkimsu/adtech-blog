@@ -376,7 +376,7 @@ $$P(\text{click}) = P(\text{examine} | \text{position}) \times P(\text{relevant}
 
 $$w_i = \frac{1}{P(\text{examine} | \text{position}_i)}$$
 
-자리=1의 가중치는 낮게 잡습니다. 어차피 눈에 잘 띄는 자리니까요.
+자리=1의 가중치는 낮게 잡습니다. 어차피 눈에 잘 띄는 자리이기 때문입니다.
 자리=3의 가중치는 높게 잡습니다. 잘 안 보이는데도 클릭했다면 정말 좋은 광고입니다.
 :::
 

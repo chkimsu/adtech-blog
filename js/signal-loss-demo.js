@@ -29,7 +29,7 @@
     cookie: [0.040, 0.007],  // 관심사 세그먼트(0.021/0.004) + 크로스 사이트 리타겟(0.019/0.003)
     idfa: [0.016, 0.003],    // 크로스 앱 최근 행동
     freq: [0.012, 0.002]     // 식별자 기반 노출빈도·최근성
-    // 셋을 다 빼면 0.762 - 0.068 = 0.694 / 0.771 - 0.012 = 0.759 — 글 3절 표와 같다
+    // 셋을 다 빼면 0.762 - 0.068 = 0.694 / 0.771 - 0.012 = 0.759 — 글 2절 표와 같다
   };
 
   // 4절 — 집계로 오면 규모가 작은 조합은 값을 못 받는다(940건 중 415건이 값 없음)
@@ -77,7 +77,7 @@
   function compute() {
     const s = state;
 
-    // 못 봄: 3rd-party 쿠키가 끊기면 광고주 픽셀 경유 780건이 안 붙는다(9절)
+    // 못 봄: 3rd-party 쿠키가 끊기면 광고주 픽셀 경유 780건이 안 붙는다(8절)
     const lost = s.cookie ? 0 : POOL.pixel;
     const rest = CONV_TOTAL - lost;
 
@@ -103,7 +103,7 @@
     // 계기 2 — 값이 오는 전환의 비율
     const observed = ind + aggValue;
 
-    // 계기 3 — pCVR 학습의 유효 표본(개인 라벨 줄 수로 환산). 집계 한 줄은 1/11 값(6절)
+    // 계기 3 — pCVR 학습의 유효 표본(개인 라벨 줄 수로 환산). 집계 한 줄은 1/11 값(5절)
     const effective = ind + survive / DATA_MULT;
 
     // 계기 4 — 하루 전환 n 건짜리 광고 하나의 지표 흔들림 폭(상대 표준편차)
@@ -413,9 +413,9 @@
     $('sl-conv-svg').innerHTML = drawConv(m, panelW('sl-conv-svg'));
     $('sl-conv-legend').innerHTML = drawConvLegend(m);
     $('sl-conv-note').innerHTML = '집계로 오면 ' + pct(NOVALUE_RATE * 100) +
-      ' 는 값 없이 건수만 온다 — 글 4절의 940건 중 415건이다. ' +
-      '억제로 지워지는 비율 ' + pct(SUPPRESS * 100) + ' 는 글 4절 조합표(270 · 155 · 100건)에 ' +
-      '글 7절 억제율(93.6 · 69.5 · 1.6%)을 각각 곱해 얻었다.';
+      ' 는 값 없이 건수만 온다 — 글 3절의 940건 중 415건이다. ' +
+      '억제로 지워지는 비율 ' + pct(SUPPRESS * 100) + ' 는 글 3절 조합표(270, 155, 100건)에 ' +
+      '글 6절 억제율(93.6, 69.5, 1.6%)을 각각 곱해 얻었다.';
 
     $('sl-spread-svg').innerHTML = drawSpread(m, panelW('sl-spread-svg'));
     $('sl-spread-note').innerHTML = '이 광고의 평균오차는 ' + pct(state.noise ? 0 : MEAN_ERR[levelIdx]) +

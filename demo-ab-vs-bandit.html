@@ -98,11 +98,11 @@
   <main class="ab-container">
     <div class="ab-hero">
       <h1>A/B vs Bandit 트래픽 시뮬레이터</h1>
-      <p>같은 광고 3개를 두고, <strong>A/B 테스트</strong>(트래픽 균등 고정)와 <strong>멀티암드 밴딧</strong>(잘 되는 쪽으로 트래픽 이동)이 10일 동안 어떻게 갈라지는지 직접 돌려보세요.</p>
+      <p>같은 광고 3개를 두고, <strong>A/B 테스트</strong>(트래픽 균등 고정)와 <strong>멀티암드 밴딧</strong>(잘 되는 쪽으로 트래픽 이동)이 10일 동안 어떻게 갈라지는지 직접 돌려봅니다.</p>
     </div>
 
     <div class="ab-intro">
-      각 광고의 <strong>진짜 클릭률(CTR)</strong>을 슬라이더로 정하세요 (우리는 이걸 알지만, 알고리즘은 모릅니다). <strong>하루 150명</strong>에게 노출하며 10일을 진행합니다. A/B는 매일 트래픽을 <strong>1/3씩 똑같이</strong> 나누고, 밴딧은 <strong>톰슨 샘플링</strong>으로 매 노출마다 더 좋아 보이는 광고를 고릅니다. 누가 클릭을 더 버는지 보세요.
+      각 광고의 <strong>진짜 클릭률(CTR)</strong>을 슬라이더로 정합니다 (우리는 이걸 알지만, 알고리즘은 모릅니다). <strong>하루 150명</strong>에게 노출하며 10일을 진행합니다. A/B는 매일 트래픽을 <strong>1/3씩 똑같이</strong> 나누고, 밴딧은 <strong>톰슨 샘플링</strong>으로 매 노출마다 더 좋아 보이는 광고를 고릅니다. 누가 클릭을 더 버는지 봅니다.
     </div>
 
     <div class="demo-tldr-analogy">
@@ -119,14 +119,14 @@
 
     <div class="demo-intro">
       <div><span class="demo-intro-label">이 데모가 보여주는 것</span>같은 광고 3개를 두고 A/B 테스트(트래픽 균등 고정)와 밴딧(잘 되는 쪽으로 이동)이 10일 동안 트래픽을 어떻게 다르게 나누고, 그 차이가 누적 클릭으로 얼마나 벌어지는지를 비교합니다.</div>
-      <div><span class="demo-intro-label">왜 알아야 하나</span>A/B 테스트는 결과를 기다리는 동안 <strong>나쁜 광고에도 트래픽을 계속 태우는 기회비용</strong>을 치릅니다. 캠페인 기간이 짧은 광고 운영에서는 이 비용이 커서, 밴딧으로 바꾸는 것만으로 클릭이 늘어나는 경우가 많아요.</div>
+      <div><span class="demo-intro-label">왜 알아야 하나</span>A/B 테스트는 결과를 기다리는 동안 <strong>나쁜 광고에도 트래픽을 계속 태우는 기회비용</strong>을 치릅니다. 캠페인 기간이 짧은 광고 운영에서는 이 비용이 커서, 밴딧으로 바꾸는 것만으로 클릭이 늘어나는 경우가 많습니다.</div>
     </div>
 
     <ol class="demo-steps">
-      <span class="demo-steps-title">이렇게 해보세요</span>
-      <li><span class="step-text"><strong>10일 자동 ▸▸</strong>을 눌러 한 번 끝까지 돌려 보세요 — 누적 클릭 그래프에서 밴딧 선이 A/B 선 위로 벌어집니다.</span></li>
-      <li><span class="step-text">오른쪽 <strong>트래픽 배분 차트</strong>를 보세요. 밴딧은 며칠 만에 클릭률 높은 광고에 노출을 몰아주기 시작합니다.</span></li>
-      <li><span class="step-text">슬라이더로 <strong>광고들의 CTR 차이를 좁혀</strong> 보세요(예: 3% vs 3.5%). 차이가 작을수록 밴딧의 이득도 줄어드는 걸 확인하세요.</span></li>
+      <span class="demo-steps-title">이렇게 해봅니다</span>
+      <li><span class="step-text"><strong>10일 자동 ▸▸</strong>을 눌러 한 번 끝까지 돌려 봅니다 — 누적 클릭 그래프에서 밴딧 선이 A/B 선 위로 벌어집니다.</span></li>
+      <li><span class="step-text">오른쪽 <strong>트래픽 배분 차트</strong>를 봅니다. 밴딧은 며칠 만에 클릭률 높은 광고에 노출을 몰아주기 시작합니다.</span></li>
+      <li><span class="step-text">슬라이더로 <strong>광고들의 CTR 차이를 좁혀</strong> 봅니다(예: 3% vs 3.5%). 차이가 작을수록 밴딧의 이득도 줄어드는 것을 확인합니다.</span></li>
     </ol>
 
     <div class="ab-sim">
@@ -183,7 +183,7 @@
           정확한 효과 측정이 필요해서, 트래픽을 균등하게 나누는 A/B 테스트가 여전히 표준입니다.</li>
         <li><strong>하이브리드 운영:</strong> 실제 광고 플랫폼은 초반 며칠은 탐색 비중을 높게(균등에 가깝게) 두고,
           데이터가 쌓이면 밴딧이 서서히 쏠리게 하는 절충안을 자주 씁니다. 이 데모의 밴딧도 첫 1~2일은
-          거의 균등하게 나누는 걸 볼 수 있어요.</li>
+          거의 균등하게 나누는 것을 볼 수 있습니다.</li>
       </ul>
     </section>
 

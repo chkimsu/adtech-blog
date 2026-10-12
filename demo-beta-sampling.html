@@ -93,9 +93,9 @@
             <h1>베타 분포에서 샘플링하기</h1>
             <p class="post-excerpt">
                 "분포에서 한 번 뽑는다"는 게 정확히 무슨 뜻일까요? 베타 분포 곡선에서
-                샘플을 반복해 뽑아 보세요. 점들이 <strong>봉우리 아래에 더 자주</strong> 쌓이고,
+                샘플을 반복해 뽑아 봅니다. 점들이 <strong>봉우리 아래에 더 자주</strong> 쌓이고,
                 많이 모일수록 히스토그램이 <strong>원래 곡선 모양을 그대로 재현</strong>합니다.
-                이것이 톰슨 샘플링이 매 라운드 "한 번 뽑는" 바로 그 행위예요.
+                이것이 톰슨 샘플링이 매 라운드 "한 번 뽑는" 바로 그 행위입니다.
             </p>
         </div>
 
@@ -104,7 +104,7 @@
             <div class="demo-tldr-analogy-body">
                 <div class="demo-tldr-analogy-label">한 줄 비유</div>
                 <div class="demo-tldr-analogy-text">
-                    분포 곡선을 <strong>땅의 높낮이</strong>라고 생각하세요. 샘플은
+                    분포 곡선을 <strong>땅의 높낮이</strong>라고 생각해 봅니다. 샘플은
                     <em>높은 곳(확률이 큰 곳)에 더 자주 떨어지는 빗방울</em>입니다.
                     빗방울을 충분히 모으면, 그 자국이 곡선 모양을 똑같이 그려냅니다.
                 </div>
@@ -113,14 +113,14 @@
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>"확률 분포에서 샘플을 한 번 뽑는다"는 추상적인 말이 실제로 어떤 행위인지 — 뽑힌 점들이 어디에 쌓이고, 많이 모이면 무엇이 되는지를 눈으로 확인합니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>광고 추천의 핵심 알고리즘인 <strong>톰슨 샘플링</strong>이 매 라운드 수행하는 단 하나의 행위가 바로 이 "한 번 뽑기"입니다. 이게 이해되면 톰슨 샘플링의 절반은 이해한 거예요.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>광고 추천의 핵심 알고리즘인 <strong>톰슨 샘플링</strong>이 매 라운드 수행하는 단 하나의 행위가 바로 이 "한 번 뽑기"입니다. 이것을 이해하면 톰슨 샘플링의 절반을 이해한 것입니다.</div>
         </div>
 
         <ol class="demo-steps">
-            <span class="demo-steps-title">이렇게 해보세요</span>
-            <li><span class="step-text"><strong>샘플 1번</strong>을 여러 번 눌러 보세요 — 점(세로 막대)이 곡선의 봉우리 근처에 더 자주 찍힙니다.</span></li>
-            <li><span class="step-text"><strong>100번</strong>·<strong>자동</strong>으로 많이 뽑으면, 막대들이 쌓여 <strong>곡선과 거의 같은 모양</strong>이 됩니다. (표본 평균도 분포 평균에 가까워져요.)</span></li>
-            <li><span class="step-text">슬라이더로 <strong>α·β</strong>를 바꿔 곡선 모양을 바꿔 보세요. α는 클릭(성공), β는 무시(실패)에 해당합니다.</span></li>
+            <span class="demo-steps-title">이렇게 해봅니다</span>
+            <li><span class="step-text"><strong>샘플 1번</strong>을 여러 번 눌러 봅니다 — 점(세로 막대)이 곡선의 봉우리 근처에 더 자주 찍힙니다.</span></li>
+            <li><span class="step-text"><strong>100번</strong>·<strong>자동</strong>으로 많이 뽑으면, 막대들이 쌓여 <strong>곡선과 거의 같은 모양</strong>이 됩니다. (표본 평균도 분포 평균에 가까워집니다.)</span></li>
+            <li><span class="step-text">슬라이더로 <strong>α, β</strong>를 바꿔 곡선 모양을 바꿔 봅니다. α는 클릭(성공), β는 무시(실패)에 해당합니다.</span></li>
         </ol>
 
         <div class="demo-container">
@@ -178,17 +178,17 @@
             <p>
                 샘플을 하나만 보면 그냥 점 하나지만, 많이 모으면 <strong>큰 수의 법칙</strong>에 따라
                 히스토그램이 원래 곡선을 재현합니다. 표본 평균도 분포의 평균
-                $\;\mathbb{E}[\theta] = \frac{\alpha}{\alpha + \beta}\;$ 에 점점 가까워지죠.
+                $\;\mathbb{E}[\theta] = \frac{\alpha}{\alpha + \beta}\;$ 에 점점 가까워집니다.
             </p>
             <h3>톰슨 샘플링과의 연결</h3>
             <ul>
                 <li><strong>α = 클릭(성공) + 1, β = 무시(실패) + 1.</strong> 데이터가 쌓일수록 곡선이 좁고 높아져 "확신"이 커집니다.</li>
-                <li><strong>매 라운드 딱 한 번 뽑아</strong> 가장 큰 값을 낸 광고를 선택합니다. 이 데모의 "샘플 1번"이 바로 그 행위예요.</li>
+                <li><strong>매 라운드 딱 한 번 뽑아</strong> 가장 큰 값을 낸 광고를 선택합니다. 이 데모의 "샘플 1번"이 바로 그 행위입니다.</li>
                 <li>데이터가 적은 광고는 곡선이 <strong>넓어서</strong> 가끔 큰 값이 뽑힙니다 → 자연스러운 <strong>탐색(exploration)</strong>. 데이터가 많으면 좁은 곳에서만 뽑혀 <strong>안정적(exploitation)</strong>.</li>
             </ul>
             <p>
                 여러 광고를 동시에 놓고 "각자 한 번 뽑아 최고를 고르고, 결과로 곡선을 업데이트"하는
-                전체 과정은 <a href="demo-ts.html">Thompson Sampling Simulator</a>에서 볼 수 있어요.
+                전체 과정은 <a href="demo-ts.html">Thompson Sampling Simulator</a>에서 볼 수 있습니다.
             </p>
         </section>
 
@@ -203,7 +203,7 @@
                 <li><strong>광고 소재 선택:</strong> 광고 플랫폼들은 한 캠페인의 여러 소재(이미지/문구) 중 무엇을 내보낼지를
                     이 방식으로 고릅니다. 소재마다 베타 분포를 하나씩 들고, 요청이 올 때마다 각자 한 번씩 뽑아 가장 큰 값의 소재를 노출합니다.</li>
                 <li><strong>탐색 예산이 공짜:</strong> A/B 테스트처럼 트래픽을 미리 50:50으로 가르지 않아도, 데이터가 적은
-                    소재는 분포가 넓어 가끔 큰 값이 뽑히며 자연스럽게 기회를 받습니다. 명시적인 탐색 로직 없이도요.</li>
+                    소재는 분포가 넓어 가끔 큰 값이 뽑히며 자연스럽게 기회를 받습니다. 명시적인 탐색 로직이 따로 없어도 됩니다.</li>
                 <li><strong>실시간 업데이트가 쉬움:</strong> 모델 재학습 없이 클릭 1건 = α+1, 무시 1건 = β+1만 하면 끝이라
                     초당 수만 건 요청을 받는 광고 서버에서도 부담이 없습니다.</li>
             </ul>

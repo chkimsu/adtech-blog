@@ -107,13 +107,13 @@
       <div class="cal-container">
         <h1>Calibration Explorer</h1>
         <p>AUC가 높아도 — 즉 순위를 잘 매겨도 — 출력 <em>확률</em>이 실제와 어긋나면 입찰가가 왜곡됩니다.
-          보정 상태를 슬라이더로 바꿔가며 신뢰도 곡선과 입찰 왜곡을 직접 보세요.</p>
+          보정 상태를 슬라이더로 바꿔가며 신뢰도 곡선과 입찰 왜곡을 직접 봅니다.</p>
       </div>
     </section>
 
     <div class="cal-container">
       <div class="demo-prereq">
-        <span class="demo-prereq-label">먼저 보면 좋아요</span>
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
         <a href="demo-pctr-impact.html">pCTR Impact</a>
         <a href="demo-bid-landscape.html">Bid Landscape</a>
       </div>
@@ -131,11 +131,11 @@
 
       <div class="demo-intro">
         <div><span class="demo-intro-label">이 데모가 보여주는 것</span>모델이 말하는 확률이 실제와 어긋나면(miscalibration) 신뢰도 곡선이 어떻게 휘고, 그 어긋남이 입찰가를 얼마나 비틀어 놓는지 슬라이더로 직접 확인합니다.</div>
-        <div><span class="demo-intro-label">왜 알아야 하나</span>입찰가는 <strong>pCTR 확률을 그대로 곱해서</strong> 만들기 때문에, 확률이 10% 부풀면 입찰가도 10% 부풀어 그대로 돈이 샙니다 — AUC만 보고 모델을 배포하면 안 되는 이유예요.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>입찰가는 <strong>pCTR 확률을 그대로 곱해서</strong> 만들기 때문에, 확률이 10% 부풀면 입찰가도 10% 부풀어 그대로 돈이 샙니다 — AUC만 보고 모델을 배포하면 안 되는 이유입니다.</div>
       </div>
 
       <ol class="demo-steps">
-        <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
+        <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
         <li><span class="step-text"><strong>완벽</strong> 프리셋에서 두 곡선이 대각선/겹침인지 확인하고 ECE ≈ 0 메모.</span></li>
         <li><span class="step-text"><strong>과신</strong> 프리셋 → 신뢰도 곡선이 S자로 휘고, 높은 확률에서 모델이 과대입찰하는 것 확인.</span></li>
         <li><span class="step-text"><strong>양성 편향</strong> → 모든 구간에서 입찰선이 적정선 위로 떠 과지출되는 모습 확인.</span></li>
@@ -222,9 +222,9 @@
           확률이 "말한 만큼 맞는지"를 점검하고 고치는 <strong>보정 단계</strong>가 평가 파이프라인에 따로 들어갑니다.
         </p>
         <ul>
-          <li><strong>배포 전 보정 게이트:</strong> 새 모델은 AUC뿐 아니라 ECE·신뢰도 곡선도 함께 통과해야 배포됩니다. 어긋나 있으면 Platt Scaling·Isotonic Regression·Temperature Scaling 같은 후처리로 확률을 펴서 내보내요.</li>
+          <li><strong>배포 전 보정 게이트:</strong> 새 모델은 AUC뿐 아니라 ECE·신뢰도 곡선도 함께 통과해야 배포됩니다. 어긋나 있으면 Platt Scaling, Isotonic Regression, Temperature Scaling 같은 후처리로 확률을 보정해서 내보냅니다.</li>
           <li><strong>운영 중 드리프트 감시:</strong> 새 지면 추가나 시즌 변화로 트래픽 분포가 바뀌면 잘 보정됐던 모델도 다시 틀어집니다. ECE를 대시보드 지표로 두고 임계치를 넘으면 재보정을 돌립니다.</li>
-          <li><strong>과신 모델 우선 수리:</strong> 과신 모델은 비싼 고pCTR 트래픽일수록 더 크게 과대입찰해 손해가 집중됩니다. 모델 재학습 없이 보정만 고쳐도 입찰 효율(ROAS)이 바로 개선되는 경우가 많아요.</li>
+          <li><strong>과신 모델 우선 수리:</strong> 과신 모델은 비싼 고pCTR 트래픽일수록 더 크게 과대입찰해 손해가 집중됩니다. 모델 재학습 없이 보정만 고쳐도 입찰 효율(ROAS)이 바로 개선되는 경우가 많습니다.</li>
         </ul>
       </section>
 

@@ -161,7 +161,7 @@
             <h1>Bid Landscape Explorer</h1>
             <p class="post-excerpt">
                 입찰 가격에 따른 <strong>낙찰률(Win Rate)</strong>, <strong>예상 비용</strong>, <strong>예상 수익</strong>의
-                변화를 시각적으로 탐색합니다. 슬라이더를 조절하여 최적 입찰가를 찾아보세요.
+                변화를 시각적으로 탐색합니다. 슬라이더를 조절하여 최적 입찰가를 찾아봅니다.
             </p>
         </div>
 
@@ -171,20 +171,20 @@
             <div class="demo-tldr-analogy-label">한 줄 비유</div>
             <div class="demo-tldr-analogy-text">
               <strong>고객 한 명을 데려오는 비용</strong> vs <strong>그 고객이 가져올 매출</strong> — 입찰가는 이 둘 사이 어딘가가 정답.
-              너무 낮으면 매번 패배, 너무 높으면 이기긴 하지만 손해. <em>수익 곡선의 봉우리</em>가 어디에 있는지 슬라이더로 찾아보세요.
+              너무 낮으면 매번 패배, 너무 높으면 이기긴 하지만 손해. <em>수익 곡선의 봉우리</em>가 어디에 있는지 슬라이더로 찾아봅니다.
             </div>
           </div>
         </div>
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰가를 올리고 내릴 때 낙찰률·비용·이익 곡선이 어떻게 움직이는지, 그리고 이익이 최대가 되는 단 하나의 <strong>최적 입찰가</strong>가 어디 있는지 슬라이더로 찾아봅니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>DSP의 <strong>자동 입찰</strong>이 매 광고 요청마다 실제로 푸는 문제가 바로 이것입니다. 이 곡선 하나만 읽을 줄 알면 "왜 입찰가를 무작정 올리면 손해인가"가 명확해져요.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>DSP의 <strong>자동 입찰</strong>이 매 광고 요청마다 실제로 푸는 문제가 바로 이것입니다. 이 곡선 하나만 읽을 줄 알면 "왜 입찰가를 무작정 올리면 손해인가"가 명확해집니다.</div>
         </div>
 
         <ol class="demo-steps">
-          <span class="demo-steps-title">이렇게 해보세요 — 5분</span>
-          <li><span class="step-text"><strong>Bid Price 슬라이더만</strong> 좌우로 움직여 보세요. 차트의 초록 곡선(예상 수익)이 어디서 가장 높은지 확인.</span></li>
-          <li><span class="step-text">우측의 <strong>Optimal Bid</strong> 값을 메모하고, Bid Price를 그 근처로 맞춰 보세요.</span></li>
+          <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
+          <li><span class="step-text"><strong>Bid Price 슬라이더만</strong> 좌우로 움직여 봅니다. 차트의 초록 곡선(예상 수익)이 어디서 가장 높은지 확인.</span></li>
+          <li><span class="step-text">우측의 <strong>Optimal Bid</strong> 값을 메모하고, Bid Price를 그 근처로 맞춰 봅니다.</span></li>
           <li><span class="step-text">"고급 모드"로 전환 후 <strong>pCTR</strong> 또는 <strong>Competition(k)</strong>을 바꾸면 Optimal Bid가 어떻게 이동하는지 관찰.</span></li>
         </ol>
 
@@ -325,7 +325,7 @@
 
             <h3>시나리오 1: 경쟁이 심한 프리미엄 지면</h3>
             <p>
-                Market Median을 $3.0 이상으로, Competition Level을 6.0 이상으로 설정해 보세요.
+                Market Median을 $3.0 이상으로, Competition Level을 6.0 이상으로 설정해 봅니다.
                 Win Rate 곡선이 매우 가파르게 변하며, Optimal Bid가 높아지는 것을 확인할 수 있습니다.
                 이런 환경에서는 조금이라도 낮게 입찰하면 거의 낙찰되지 않습니다.
             </p>
@@ -352,9 +352,9 @@
             </p>
             <ul>
                 <li><strong>자동 입찰(Autobidding):</strong> 광고주는 목표 CPA나 ROAS만 입력하고, The Trade Desk·DV360 같은
-                    DSP가 매 요청마다 이 곡선에서 최적 입찰가를 자동으로 골라줍니다. 사람이 건별 입찰가를 정하는 일은 거의 없어요.</li>
+                    DSP가 매 요청마다 이 곡선에서 최적 입찰가를 자동으로 골라줍니다. 사람이 건별 입찰가를 정하는 일은 거의 없습니다.</li>
                 <li><strong>Win Rate 곡선 추정:</strong> 데모는 매끈한 S자 곡선을 그려주지만, 실제로는 과거 낙찰·패찰 로그로 추정해야
-                    합니다. 패찰하면 시장가를 모르는 censored 데이터 문제가 끼어들어 통계적 보정이 필요해요.</li>
+                    합니다. 패찰하면 시장가를 모르는 censored 데이터 문제가 끼어들어 통계적 보정이 필요합니다.</li>
                 <li><strong>pCTR 모델 품질 관리:</strong> 곡선의 입력값인 pCTR이 조금만 틀려도 최적 입찰가는 크게 틀어집니다.
                     그래서 광고 플랫폼들은 pCTR 모델의 보정(calibration)을 별도 지표로 상시 모니터링합니다.</li>
             </ul>

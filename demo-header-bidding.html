@@ -328,7 +328,7 @@
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 8분</span>
         <li><span class="step-text"><code>1회 시뮬레이션</code> → 타임라인에서 두 방식이 어떻게 호출되는지 시각 비교.</span></li>
-        <li><span class="step-text"><code>100회 반복</code> → CPM 분포(평균·중앙값)와 총 지연 비교.</span></li>
+        <li><span class="step-text"><code>100회 반복</code> → CPM 분포(평균, 중앙값)와 총 지연 비교.</span></li>
         <li><span class="step-text"><code>1000회 반복</code> → 통계적으로 안정된 분포에서 "HB가 평균적으로 +몇 % 더 비싼가" 확인.</span></li>
       </ol>
 
@@ -415,7 +415,7 @@
           스크립트를 한 번 심어 두면, 광고 서버로 가기 전에 여러 SSP를 동시에 불러 가격을 받아옵니다.
         </p>
         <ul>
-          <li><strong>Prebid.js 도입 매체:</strong> 오픈소스 표준인 Prebid.js가 사실상 업계 표준입니다. 주요 언론사·커뮤니티
+          <li><strong>Prebid.js 도입 매체:</strong> 오픈소스 표준인 Prebid.js가 사실상 업계 표준입니다. 주요 언론사, 커뮤니티
               매체 대부분이 이걸로 Magnite, PubMatic, Index Exchange 같은 SSP를 동시에 붙입니다.</li>
           <li><strong>타임아웃 튜닝:</strong> 데모에서 본 "가장 느린 SSP만큼 기다리는" 문제 때문에, 실무에서는 보통 수백 ms의
               타임아웃을 걸고 그 안에 응답한 SSP만 경매에 참여시킵니다. 수익과 페이지 속도 사이의 트레이드오프입니다.</li>
@@ -431,7 +431,7 @@
           <ol>
             <li><strong>병렬 경매가 평균 CPM을 끌어올린다</strong> — 수백 회 반복하면 Header Bidding의 평균 CPM이 Waterfall을 체계적으로 상회. 업계에서 "HB 도입 시 매체 수익 +10~30%" 보고가 이 분포 차이에서 온다.</li>
             <li><strong>대신 지연은 가변적</strong> — Waterfall은 한 SSP 통과 시 바로 멈춰 예측 가능. HB는 "가장 느린 SSP"까지 기다리므로 때로 더 오래 걸린다.</li>
-            <li><strong>SSP 우선순위 설계가 Waterfall의 성패를 가른다</strong> — CPM 높은 SSP를 맨 앞에 두지 않으면 낮은 가격에 조기 낙찰될 수 있다. HB는 순서 영향을 받지 않는다.</li>
+            <li><strong>SSP 우선순위 설계가 Waterfall의 성패를 정한다</strong> — CPM 높은 SSP를 맨 앞에 두지 않으면 낮은 가격에 조기 낙찰될 수 있다. HB는 순서 영향을 받지 않는다.</li>
           </ol>
         </div>
       </section>
@@ -445,12 +445,12 @@
               <span class="demo-next-label">관련 데모</span>
               <span class="demo-next-title">RTB Auction Simulator</span>
               <span class="demo-next-excerpt">HB가 끝나고 Exchange로 넘어간 뒤 일어나는 DSP 간 경매 과정</span>
-              <span class="demo-next-meta">⏱ 10분 · 입문</span>
+              <span class="demo-next-meta">⏱ 10분, 입문</span>
             </a>
             <a href="post.html?id=ad-network-vs-exchange" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>
               <span class="demo-next-title">Ad Network vs Ad Exchange — 유통 구조의 진화</span>
-              <span class="demo-next-excerpt">Waterfall에서 RTB·Header Bidding까지, 디지털 광고 유통 구조의 진화사</span>
+              <span class="demo-next-excerpt">Waterfall에서 RTB, Header Bidding까지, 디지털 광고 유통 구조의 진화사</span>
             </a>
           </div>
         </div>
@@ -472,10 +472,10 @@
 
     // SSPs: 평균 CPM (log-normal 근사), 지연 평균/분산 (ms), fill rate
     const SSPS = [
-      { name: 'SSP A · Premium', color: '#5a6b7a', cpmMean: 3.20, cpmStd: 1.00, latMean: 180, latStd: 40, fillRate: 0.75 },
-      { name: 'SSP B · Open',    color: '#7d5e72', cpmMean: 2.40, cpmStd: 0.80, latMean: 140, latStd: 30, fillRate: 0.85 },
-      { name: 'SSP C · Regional',color: 'var(--state-bad)', cpmMean: 1.80, cpmStd: 0.60, latMean: 120, latStd: 35, fillRate: 0.80 },
-      { name: 'SSP D · Backup',  color: 'var(--state-good)', cpmMean: 1.10, cpmStd: 0.40, latMean: 200, latStd: 25, fillRate: 0.90 }
+      { name: 'SSP A / Premium', color: '#5a6b7a', cpmMean: 3.20, cpmStd: 1.00, latMean: 180, latStd: 40, fillRate: 0.75 },
+      { name: 'SSP B / Open',    color: '#7d5e72', cpmMean: 2.40, cpmStd: 0.80, latMean: 140, latStd: 30, fillRate: 0.85 },
+      { name: 'SSP C / Regional',color: 'var(--state-bad)', cpmMean: 1.80, cpmStd: 0.60, latMean: 120, latStd: 35, fillRate: 0.80 },
+      { name: 'SSP D / Backup',  color: 'var(--state-good)', cpmMean: 1.10, cpmStd: 0.40, latMean: 200, latStd: 25, fillRate: 0.90 }
     ];
     const TIMELINE_MAX = 900; // ms
 
@@ -578,7 +578,7 @@
         const wPct = ((end - start) / TIMELINE_MAX) * 100;
         const leftPct = (start / TIMELINE_MAX) * 100;
         const label = (end - start) > 0
-          ? `${s.name.split('·')[0].trim()} · ${d.filled ? '$' + d.cpm.toFixed(2) : 'no-fill'} · ${Math.round(d.latency)}ms`
+          ? `${s.name.split('/')[0].trim()}, ${d.filled ? '$' + d.cpm.toFixed(2) : 'no-fill'}, ${Math.round(d.latency)}ms`
           : '';
         const bg = d.filled ? s.color : '#555';
         const isWinner = outcome.winnerIdx === i;
@@ -589,7 +589,7 @@
               <div class="hb-bar-fill" style="left:${leftPct}%; width:${wPct}%; background:${bg}; ${border}">
                 ${label}
               </div>
-            ` : `<div class="hb-bar-label">${s.name.split('·')[0].trim()} · skip</div>`}
+            ` : `<div class="hb-bar-label">${s.name.split('/')[0].trim()}, skip</div>`}
           </div>
         `;
       }).join('');

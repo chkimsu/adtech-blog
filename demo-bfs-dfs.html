@@ -271,7 +271,7 @@
         <h1>DFS vs BFS</h1>
         <p class="demo-subtitle">
             같은 그래프를 <strong>스택으로</strong> 훑을 때와 <strong>큐로</strong> 훑을 때가 어떻게 달라지는지 한 회차씩 봅니다.
-            두 코드의 차이는 꺼내는 자리 하나뿐인데, 그 하나가 <strong>최단 거리를 주느냐</strong>를 가릅니다.
+            두 코드의 차이는 꺼내는 자리 하나뿐인데, 그 하나에 따라 <strong>최단 거리가 나오는지</strong>가 정해집니다.
         </p>
 
         <div class="demo-tldr-analogy">
@@ -285,7 +285,7 @@
         </div>
 
         <div class="demo-intro">
-            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>회차마다 스택·큐에서 무엇을 꺼내고 무엇을 넣는지, 그리고 방문 순서가 어떻게 쌓이는지를 봅니다. BFS 에서는 각 마디 위에 출발점에서의 거리가 뜨고, 끝나면 최단 경로가 굵은 선으로 표시됩니다.</div>
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>회차마다 스택과 큐에서 무엇을 꺼내고 무엇을 넣는지, 그리고 방문 순서가 어떻게 쌓이는지를 봅니다. BFS 에서는 각 마디 위에 출발점에서의 거리가 뜨고, 끝나면 최단 경로가 굵은 선으로 표시됩니다.</div>
             <div><span class="demo-intro-label">왜 알아야 하나</span>코딩 테스트에서 "최단"이 지문에 있으면 BFS 입니다. DFS 로 풀면 답이 우연히 맞을 때가 있어서 더 위험합니다. 방문 표시를 언제 하느냐로 큐 크기가 몇 배 달라지는 것도 여기서 직접 비교할 수 있습니다.</div>
         </div>
 
@@ -336,13 +336,13 @@
             <button id="bd-step">Step</button>
             <button id="bd-play">Play</button>
             <button id="bd-reset">Reset</button>
-            <span class="bd-counts">넣은 횟수 <b id="bd-push">0</b> · 꺼낸 횟수 <b id="bd-pop">0</b></span>
+            <span class="bd-counts">넣은 횟수 <b id="bd-push">0</b>, 꺼낸 횟수 <b id="bd-pop">0</b></span>
         </div>
 
         <div class="bd-legend">
             <span class="lg-current">지금 보는 마디</span>
             <span class="lg-visited">이미 본 마디</span>
-            <span class="lg-frontier">스택·큐에 들어 있는 마디</span>
+            <span class="lg-frontier">스택과 큐에 들어 있는 마디</span>
         </div>
     </main>
 

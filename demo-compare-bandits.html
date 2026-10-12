@@ -381,14 +381,14 @@
       </div>
 
       <div class="demo-intro">
-        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>똑같은 4개 광고를 두고 UCB1(점수를 계산해 고르는 계산기형)과 톰슨 샘플링(분포에서 뽑아 고르는 주사위형)이 각자 어떻게 선택하고, 누적 손실(Regret)이 어떻게 갈리는지를 나란히 비교합니다.</div>
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>똑같은 4개 광고를 두고 UCB1(점수를 계산해 고르는 계산기형)과 톰슨 샘플링(분포에서 뽑아 고르는 주사위형)이 각자 어떻게 선택하고, 누적 손실(Regret)이 어떻게 달라지는지를 나란히 비교합니다.</div>
         <div><span class="demo-intro-label">왜 알아야 하나</span>실무에서 밴딧을 도입할 때 첫 질문이 "<strong>UCB냐 TS냐</strong>"입니다. 성능 차이는 크지 않아서, 결국 결정적이냐 확률적이냐는 성격 차이를 알아야 자기 시스템 조건(감사 필요, 피드백 지연 등)에 맞는 쪽을 고를 수 있습니다.</div>
       </div>
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 7분</span>
         <li><span class="step-text"><code>Step</code> 5번 — 매 라운드마다 두 알고리즘이 다른 선택을 하는지 관찰.</span></li>
-        <li><span class="step-text"><code>Auto Run (100 Rounds)</code> → Regret 곡선이 어떻게 갈리는지, "수렴 속도" 차이 확인.</span></li>
+        <li><span class="step-text"><code>Auto Run (100 Rounds)</code> → Regret 곡선이 어떻게 달라지는지, "수렴 속도" 차이 확인.</span></li>
         <li><span class="step-text"><code>실제 CTR 공개</code> 버튼으로 정답 확인 → 누가 정답에 더 가까운지 평가.</span></li>
       </ol>
 
@@ -422,7 +422,7 @@
           <div class="cmp-algo-head">
             <span class="cmp-algo-name ucb">UCB1</span>
             <span class="cmp-algo-sub">
-              <code>$\bar{x}_a + \sqrt{\frac{2 \ln t}{n_a}}$</code> · 결정적 선택
+              <code>$\bar{x}_a + \sqrt{\frac{2 \ln t}{n_a}}$</code>, 결정적 선택
             </span>
           </div>
           <div class="cmp-algo-metrics">
@@ -452,7 +452,7 @@
           <div class="cmp-algo-head">
             <span class="cmp-algo-name ts">Thompson Sampling</span>
             <span class="cmp-algo-sub">
-              <code>$\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$</code> · 샘플링 선택
+              <code>$\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$</code>, 샘플링 선택
             </span>
           </div>
           <div class="cmp-algo-metrics">
@@ -497,12 +497,12 @@
         <h2>현업에서는 이렇게 씁니다</h2>
         <p>
           두 알고리즘 모두 충분히 좋아서, 실무에서의 선택은 성능보다
-          "우리 시스템이 어떤 운영 조건이냐"가 가릅니다.
+          "우리 시스템이 어떤 운영 조건이냐"가 정합니다.
         </p>
         <ul>
           <li><strong>설명 책임이 무거우면 UCB:</strong> 같은 입력이면 항상 같은 선택을 하므로,
             "이 광고가 왜 나갔나"를 점수표 그대로 재현해 광고주 리포트나 장애 분석에 쓸 수 있습니다.</li>
-          <li><strong>피드백이 늦게 오면 TS:</strong> 클릭·전환 로그가 몇 분에서 몇 시간 지연되는 DSP 환경에서는,
+          <li><strong>피드백이 늦게 오면 TS:</strong> 클릭, 전환 로그가 몇 분에서 몇 시간 지연되는 DSP 환경에서는,
             선택을 확률적으로 분산하는 TS가 낡은 정보로 한 광고에 몰빵하는 실수를 덜 합니다.</li>
           <li><strong>배치 업데이트 환경도 TS:</strong> 모델을 실시간이 아니라 주기적으로(예: 5분마다) 갱신하는
             광고 서버에서는, UCB는 갱신 사이에 계속 같은 광고만 내보내지만 TS는 자연스럽게 트래픽을 섞어줍니다.</li>
@@ -530,7 +530,7 @@
               <span class="demo-next-label">다음 데모</span>
               <span class="demo-next-title">LinUCB (Contextual Bandit)</span>
               <span class="demo-next-excerpt">Context를 활용하는 밴딧으로 개인화까지 — UCB/TS의 자연스러운 확장</span>
-              <span class="demo-next-meta">⏱ 15분 · 중급</span>
+              <span class="demo-next-meta">⏱ 15분, 중급</span>
             </a>
             <a href="post.html?id=ucb-vs-ts" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>
@@ -558,10 +558,10 @@
 
     // -- Scenario setup --
     const ADS = [
-      { name: 'Ad A', type: '전자제품 · 인기',   trueCTR: 0.18 },
-      { name: 'Ad B', type: '패션 · 평균',       trueCTR: 0.10 },
-      { name: 'Ad C', type: '여행 · 시즌성',     trueCTR: 0.06 },
-      { name: 'Ad D', type: '신규 · 불확실',     trueCTR: 0.02 }
+      { name: 'Ad A', type: '전자제품, 인기',   trueCTR: 0.18 },
+      { name: 'Ad B', type: '패션, 평균',       trueCTR: 0.10 },
+      { name: 'Ad C', type: '여행, 시즌성',     trueCTR: 0.06 },
+      { name: 'Ad D', type: '신규, 불확실',     trueCTR: 0.02 }
     ];
     const OPTIMAL = 0; // Ad A
     const OPTIMAL_CTR = ADS[OPTIMAL].trueCTR;

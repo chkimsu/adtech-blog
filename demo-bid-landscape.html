@@ -176,7 +176,7 @@
         </div>
 
         <div class="demo-intro">
-            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰가를 올리고 내릴 때 낙찰률·비용·이익 곡선이 어떻게 움직이는지, 그리고 이익이 최대가 되는 단 하나의 <strong>최적 입찰가</strong>가 어디 있는지 슬라이더로 찾아봅니다.</div>
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>입찰가를 올리고 내릴 때 낙찰률, 비용, 이익 곡선이 어떻게 움직이는지, 그리고 이익이 최대가 되는 단 하나의 <strong>최적 입찰가</strong>가 어디 있는지 슬라이더로 찾아봅니다.</div>
             <div><span class="demo-intro-label">왜 알아야 하나</span>DSP의 <strong>자동 입찰</strong>이 매 광고 요청마다 실제로 푸는 문제가 바로 이것입니다. 이 곡선 하나만 읽을 줄 알면 "왜 입찰가를 무작정 올리면 손해인가"가 명확해집니다.</div>
         </div>
 
@@ -350,9 +350,9 @@
                 광고 요청이 올 때마다 해당 조합의 Bid Landscape를 조회해, 100ms 안에 곡선 위의 최적점으로 입찰합니다.
             </p>
             <ul>
-                <li><strong>자동 입찰(Autobidding):</strong> 광고주는 목표 CPA나 ROAS만 입력하고, The Trade Desk·DV360 같은
+                <li><strong>자동 입찰(Autobidding):</strong> 광고주는 목표 CPA나 ROAS만 입력하고, The Trade Desk, DV360 같은
                     DSP가 매 요청마다 이 곡선에서 최적 입찰가를 자동으로 골라줍니다. 사람이 건별 입찰가를 정하는 일은 거의 없습니다.</li>
-                <li><strong>Win Rate 곡선 추정:</strong> 데모는 매끈한 S자 곡선을 그려주지만, 실제로는 과거 낙찰·패찰 로그로 추정해야
+                <li><strong>Win Rate 곡선 추정:</strong> 데모는 매끈한 S자 곡선을 그려주지만, 실제로는 과거 낙찰, 패찰 로그로 추정해야
                     합니다. 패찰하면 시장가를 모르는 censored 데이터 문제가 끼어들어 통계적 보정이 필요합니다.</li>
                 <li><strong>pCTR 모델 품질 관리:</strong> 곡선의 입력값인 pCTR이 조금만 틀려도 최적 입찰가는 크게 틀어집니다.
                     그래서 광고 플랫폼들은 pCTR 모델의 보정(calibration)을 별도 지표로 상시 모니터링합니다.</li>
@@ -367,7 +367,7 @@
         <ol>
           <li><strong>Win Rate는 S자 커브</strong> — 입찰가가 오르면 낙찰률은 시그모이드로 포화. 너무 낮으면 기회 상실, 너무 높으면 한계 수익이 빠르게 떨어진다.</li>
           <li><strong>최적 입찰가는 Profit 곡선의 정점</strong> — "Revenue × Win Rate − Cost × Win Rate"가 최대가 되는 유일한 지점이 존재한다 (단봉 함수).</li>
-          <li><strong>pCTR·Conversion Value 오차의 파급 효과</strong> — 입력값이 10% 빗나가면 최적 입찰가는 훨씬 크게 흔들린다. 모델 품질이 곧 수익이다.</li>
+          <li><strong>pCTR, Conversion Value 오차의 파급 효과</strong> — 입력값이 10% 빗나가면 최적 입찰가는 훨씬 크게 흔들린다. 모델 품질이 곧 수익이다.</li>
         </ol>
       </div>
     </section>
@@ -381,7 +381,7 @@
             <span class="demo-next-label">다음 데모</span>
             <span class="demo-next-title">UCB1 Algorithm</span>
             <span class="demo-next-excerpt">"어떤 광고에 예산을 할당할까" — 탐색-활용 트레이드오프를 손으로 느낀다</span>
-            <span class="demo-next-meta">⏱ 10분 · 입문</span>
+            <span class="demo-next-meta">⏱ 10분, 입문</span>
           </a>
           <a href="post.html?id=ecpm-ranking" class="demo-next-card">
             <span class="demo-next-label">관련 포스트</span>

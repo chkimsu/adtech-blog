@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="pCTR 모델의 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지 실시간 슬라이더로 보는 인터랙티브 대시보드.">
+    content="pCTR 모델의 오차가 입찰가, 낙찰률, 수익에 어떻게 연쇄적으로 영향을 주는지 실시간 슬라이더로 보는 인터랙티브 대시보드.">
   <title>pCTR Model Quality Impact — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -269,7 +269,7 @@
     <section class="pq-hero">
       <div class="pq-container">
         <h1>pCTR Model Quality Impact</h1>
-        <p>pCTR 예측 모델의 오차가 입찰가·낙찰률·수익에 어떻게 연쇄적으로 영향을 주는지,
+        <p>pCTR 예측 모델의 오차가 입찰가, 낙찰률, 수익에 어떻게 연쇄적으로 영향을 주는지,
           슬라이더 하나로 실시간 계산해 봅니다.</p>
       </div>
     </section>
@@ -305,7 +305,7 @@
 
       <div class="pq-intro">
         <strong>시나리오</strong> — 광고 지면 하나, 진짜 세계의 <em>True</em> 파라미터는 고정입니다:
-        <code>True pCTR = 2.0%</code>, <code>pCVR = 5.0%</code>, <code>Conversion Value = $20</code> ·
+        <code>True pCTR = 2.0%</code>, <code>pCVR = 5.0%</code>, <code>Conversion Value = $20</code>,
         따라서 <code>True Value = $0.020</code> per impression.<br><br>
         DSP의 pCTR 모델이 <em>얼마나 정확한가</em>에 따라 예측 True Value가 달라지고, 그 값을 근거로 입찰가가 결정됩니다.
         경매 시장은 경쟁자 입찰가 분포(Log-normal)로 단순화했습니다.
@@ -387,7 +387,7 @@
           </div>
           <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.7rem; line-height:1.5;">
             x축: pCTR 편향(%), y축: 1000 impression당 Surplus. 0% 편향에서 최적점이 형성되며,
-            양쪽으로 갈수록 과대·과소입찰 손실이 비대칭적으로 커집니다.
+            양쪽으로 갈수록 과대, 과소입찰 손실이 비대칭적으로 커집니다.
           </p>
         </div>
       </div>
@@ -412,7 +412,7 @@
         </p>
         <ul>
           <li><strong>모델 투자 설득:</strong> "AUC 0.01 개선"보다 "편향 10%p 감소 → 1000 노출당 Surplus $X 회복"이 예산 결정을 움직입니다. 모델 팀과 비즈니스 팀이 같은 곡선을 보고 이야기합니다.</li>
-          <li><strong>과대예측 안전장치:</strong> 과대입찰 쪽 손실이 더 크기 때문에, 새 모델·새 지면처럼 예측이 불안한 구간에는 bid cap이나 더 보수적인 shading을 걸어 하방을 막습니다.</li>
+          <li><strong>과대예측 안전장치:</strong> 과대입찰 쪽 손실이 더 크기 때문에, 새 모델, 새 지면처럼 예측이 불안한 구간에는 bid cap이나 더 보수적인 shading을 걸어 하방을 막습니다.</li>
           <li><strong>성수기 재점검:</strong> 시장 경쟁도가 오르면 같은 편향이라도 손실 금액이 커집니다. 블랙프라이데이 같은 성수기 전에 모델 보정과 shading 파라미터를 다시 맞추는 이유입니다.</li>
         </ul>
       </section>
@@ -426,7 +426,7 @@
               <span class="demo-next-label">관련 데모</span>
               <span class="demo-next-title">Bid Shading Visualizer</span>
               <span class="demo-next-excerpt">정확한 pCTR이 있어도 입찰가를 어떻게 조정해야 Surplus가 최대가 되는가</span>
-              <span class="demo-next-meta">⏱ 15분 · 중급</span>
+              <span class="demo-next-meta">⏱ 15분, 중급</span>
             </a>
             <a href="post.html?id=calibration" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>

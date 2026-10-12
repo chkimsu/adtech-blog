@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="클릭 로그 한 건이 앱 SDK에서 Kafka까지 여섯 층을 내려가는 것을 직접 돌려 보는 데모. 층마다 모양·크기·머무는 시간이 바뀐다. 수집 에이전트를 멈추면 파일이 차고, Kafka를 멈추면 에이전트가 밀린다. 점 하나를 클릭하면 그 건이 지금 어떤 글자로 있는지 보여준다.">
+    content="클릭 로그 한 건이 앱 SDK에서 Kafka까지 여섯 층을 내려가는 것을 직접 돌려 보는 데모. 층마다 모양, 크기, 머무는 시간이 바뀐다. 수집 에이전트를 멈추면 파일이 차고, Kafka를 멈추면 에이전트가 밀린다. 점 하나를 클릭하면 그 건이 지금 어떤 글자로 있는지 보여준다.">
   <title>로그 여섯 층 내려가기 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -483,7 +483,7 @@
       <div class="lh-brief">
         <strong>설정</strong> — 2026년 8월 6일 16시 48분 21초, A앱에서 광고 <code>9931</code>을 탭했습니다. 요청 번호는 <code>r-8f21</code>입니다.
         이 탭 한 번이 Kafka의 <code>ad.click</code> topic에 닿기까지를 따라갑니다.
-        같은 길을 노출 확인도 지나는데, 그쪽은 <code>ad.impression.confirm</code>으로 갈라집니다.
+        같은 길을 노출 확인도 지나는데, 그쪽은 <code>ad.impression.confirm</code>으로 나뉩니다.
         <strong>둘의 차이가 이 화면의 두 가지 점</strong>입니다 — 클릭은 만들자마자 낱개로 가고(동그란 점), 노출은 큐에 모았다가 묶여서 갑니다(네모 점).
         이 글의 값은 <a href="post.html?id=log-hops-to-kafka">로그 한 건이 Kafka에 닿기까지</a>에서 그대로 가져왔습니다.
       </div>
@@ -504,7 +504,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">앱 SDK</span>
             <span class="lh-lane-map">글 표 1번 홉</span>
-            <span class="lh-lane-meta">102 B · 0 ms</span>
+            <span class="lh-lane-meta">102 B, 0 ms</span>
           </div>
           <div class="lh-timebar"><i style="width:0.6%"></i></div>
           <div class="lh-track" data-track="sdk"></div>
@@ -520,7 +520,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">수집 서버 + 로컬 파일</span>
             <span class="lh-lane-map">글 표 3+4번 홉</span>
-            <span class="lh-lane-meta">169 B · 642 ms</span>
+            <span class="lh-lane-meta">169 B, 642 ms</span>
           </div>
           <div class="lh-timebar"><i style="width:71.3%"></i></div>
           <div class="lh-track" data-track="collector"></div>
@@ -540,7 +540,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">수집 에이전트</span>
             <span class="lh-lane-map">글 표 5번 홉</span>
-            <span class="lh-lane-meta">169 B · 46 ms</span>
+            <span class="lh-lane-meta">169 B, 46 ms</span>
           </div>
           <div class="lh-timebar"><i style="width:5.1%"></i></div>
           <div class="lh-track" data-track="agent"></div>
@@ -560,7 +560,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">변환기</span>
             <span class="lh-lane-map">글 표 6번 홉</span>
-            <span class="lh-lane-meta">308 B · 220 ms</span>
+            <span class="lh-lane-meta">308 B, 220 ms</span>
           </div>
           <div class="lh-timebar"><i style="width:24.4%"></i></div>
           <div class="lh-track" data-track="transform"></div>
@@ -580,7 +580,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">Kafka 브로커</span>
             <span class="lh-lane-map">글 표 7번 홉</span>
-            <span class="lh-lane-meta">36.6 B · 7일</span>
+            <span class="lh-lane-meta">36.6 B, 7일</span>
           </div>
           <div class="lh-timebar is-offaxis" title="7일은 위 다섯 층과 다른 시계라 같은 축으로 안 그린다"></div>
           <div class="lh-track" data-track="kafka"></div>
@@ -595,7 +595,7 @@
           <div class="lh-lane-head">
             <span class="lh-lane-name">consumer</span>
             <span class="lh-lane-map">글 표 8번 홉</span>
-            <span class="lh-lane-meta">308 B · 900 ms</span>
+            <span class="lh-lane-meta">308 B, 900 ms</span>
           </div>
           <div class="lh-timebar"><i style="width:100%"></i></div>
           <div class="lh-track" data-track="consumer"></div>
@@ -670,7 +670,7 @@
       <span class="lh-scale-title">이 화면의 축척과 기준</span>
       <ul>
         <li><b>점 하나 = 요청 한 번</b>이다. 클릭 요청은 이벤트 1건, 노출 요청은 <span data-fill="batch">4</span>건을 들고 간다.
-          1x에서 초당 점 <span id="lh-rate">6.3</span>개 · 이벤트 <b>16.7건</b>을 그린다. 실제는 초당 이벤트 <b>2,665건</b>이라 약 <span id="lh-ratio">160</span>분의 1로 줄여 그린 것이다.</li>
+          1x에서 초당 점 <span id="lh-rate">6.3</span>개, 이벤트 <b>16.7건</b>을 그린다. 실제는 초당 이벤트 <b>2,665건</b>이라 약 <span id="lh-ratio">160</span>분의 1로 줄여 그린 것이다.</li>
         <li><b>클릭 섞는 비율도 줄였다.</b> 화면은 6이벤트에 한 번 클릭을 넣는다. 실제는 <b>101건에 한 번</b>이다 — 하루 이벤트 2억 3,028만 중 클릭이 228만이라서다.</li>
         <li><b>2층의 642 ms는 글의 홉 표와 다르게 센 값이다.</b> 글 9절 표의 <b>3번 홉 수집 서버 2 ms</b>와 <b>4번 홉 로컬 파일 640 ms</b>를 한 층으로 합쳤다. 그래서 여기는 여섯 층, 글의 표는 아홉 홉이다.</li>
         <li><b>5층 Kafka의 7일은 다른 시계다.</b> 나머지 다섯은 다음 자리로 가려고 기다린 시간이고, 7일은 놓인 뒤 안 지워지는 기한이다. 같은 축에 안 그리고 누적에도 안 더한다.</li>
@@ -716,7 +716,7 @@
             <a href="post.html?id=kafka-log-pipeline" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>
               <span class="demo-next-title">Kafka는 왜 있나</span>
-              <span class="demo-next-excerpt">이 글이 끝나는 자리에서 시작합니다. acks · partition · offset · 보존 기간</span>
+              <span class="demo-next-excerpt">이 글이 끝나는 자리에서 시작합니다. acks, partition, offset, 보존 기간</span>
             </a>
             <a href="demo-kafka-partition.html" class="demo-next-card">
               <span class="demo-next-label">관련 데모</span>

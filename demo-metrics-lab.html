@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="AUC · GAUC · LogLoss · NE · COPC 다섯 지표를 같은 표본 하나에서 동시에 재 보는 데모. 요청 간 난이도 편차를 키우면 전체 AUC 는 오르는데 GAUC 는 제자리다. 예측에 배수를 곱하면 순위 지표는 그대로인데 NE 와 COPC 만 나빠진다.">
+    content="AUC, GAUC, LogLoss, NE, COPC 다섯 지표를 같은 표본 하나에서 동시에 재 보는 데모. 요청 간 난이도 편차를 키우면 전체 AUC 는 오르는데 GAUC 는 제자리다. 예측에 배수를 곱하면 순위 지표는 그대로인데 NE 와 COPC 만 나빠진다.">
   <title>지표 실험실 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -328,7 +328,7 @@
   <main>
     <section class="mx-hero">
       <h1>지표 실험실</h1>
-      <p>같은 표본 하나에서 AUC · GAUC · LogLoss · NE · COPC 를 동시에 잽니다.
+      <p>같은 표본 하나에서 AUC, GAUC, LogLoss, NE, COPC 를 동시에 잽니다.
         슬라이더 넷을 밀면 다섯 숫자가 각자 다른 방향으로 움직입니다.
         요청 간 난이도 편차를 키우면 전체 AUC 는 오르는데 GAUC 는 제자리인 것을 그 자리에서 봅니다.</p>
     </section>
@@ -357,11 +357,11 @@
         <span class="mx-brief-title">이 화면의 축척과 기준</span>
         <ul>
           <li><b>요청 12,000건 × 자리 5개 = 노출 60,000건</b>이 기본값입니다. 기저 CTR 은 <b>2.5%</b>로, 글 3절이 쓰는 자리당 CTR 과 같은 값입니다.</li>
-          <li><b>모델은 요청 수준 차이를 그대로 봅니다.</b> 지면·시간대 같은 요청 단위 신호는 맞힌다고 두고, 요청 안에서 광고를 가르는 능력만 <b>분별력</b> 슬라이더가 정합니다. 그래서 요청 간 편차를 키우면 전체 AUC 만 오릅니다.</li>
+          <li><b>모델은 요청 수준 차이를 그대로 봅니다.</b> 지면, 시간대 같은 요청 단위 신호는 맞힌다고 두고, 요청 안에서 광고를 구분하는 능력만 <b>분별력</b> 슬라이더가 정합니다. 그래서 요청 간 편차를 키우면 전체 AUC 만 오릅니다.</li>
           <li><b>보정 배수 1.00 이면 예측 총합이 실제 클릭 수와 정확히 맞습니다.</b> 평균은 맞게 학습됐다고 두고, 슬라이더가 거기서 얼마나 밀어내는지를 봅니다.</li>
-          <li><b>예측은 0.99 에서 자릅니다.</b> 배수를 3까지 올리면 잘린 예측이 동점을 만들어 AUC·GAUC 의 넷째 자리가 조금 움직입니다. 순위가 바뀐 것이 아니라 동점이 생긴 것입니다.</li>
-          <li><b>아래 두 슬라이더는 성격이 다릅니다.</b> 분별력·보정 배수는 <b>모델</b>을 바꾸고, 요청 간 편차·요청당 광고 수는 <b>평가 표본</b>을 바꿉니다. 표본이 바뀌면 "기존 모델 대비" 문턱은 견줄 자리가 없어져 배지가 <code>표본이 다름</code>으로 바뀝니다. NE 절댓값과 COPC 범위는 표본이 달라도 그대로 유효합니다 — 그러라고 있는 지표입니다.</li>
-          <li><b>이 화면의 숫자는 이 표본이 낸 값입니다.</b> 글 1절 배포 표의 AUC 0.7412 · GAUC 0.6180 · NE 0.9031 · COPC 1.012 와는 다른 표본입니다. 기본값을 그 근처에 놓아 뒀을 뿐입니다.</li>
+          <li><b>예측은 0.99 에서 자릅니다.</b> 배수를 3까지 올리면 잘린 예측이 동점을 만들어 AUC, GAUC 의 넷째 자리가 조금 움직입니다. 순위가 바뀐 것이 아니라 동점이 생긴 것입니다.</li>
+          <li><b>아래 두 슬라이더는 성격이 다릅니다.</b> 분별력, 보정 배수는 <b>모델</b>을 바꾸고, 요청 간 편차, 요청당 광고 수는 <b>평가 표본</b>을 바꿉니다. 표본이 바뀌면 "기존 모델 대비" 문턱은 견줄 자리가 없어져 배지가 <code>표본이 다름</code>으로 바뀝니다. NE 절댓값과 COPC 범위는 표본이 달라도 그대로 유효합니다 — 그러라고 있는 지표입니다.</li>
+          <li><b>이 화면의 숫자는 이 표본이 낸 값입니다.</b> 글 1절 배포 표의 AUC 0.7412, GAUC 0.6180, NE 0.9031, COPC 1.012 와는 다른 표본입니다. 기본값을 그 근처에 놓아 뒀을 뿐입니다.</li>
         </ul>
       </div>
     </div>
@@ -371,7 +371,7 @@
       <div class="mx-controls-grid">
         <div class="mx-row">
           <div class="mx-row-label">요청 안 분별력
-            <small>한 요청 안에서 광고를 얼마나 잘 가르나 · GAUC 를 정하는 값</small>
+            <small>한 요청 안에서 광고를 얼마나 잘 가르나, GAUC 를 정하는 값</small>
           </div>
           <input type="range" class="mx-slider" id="mx-skill" min="0" max="0.95" step="0.001" value="0.494"
             aria-label="요청 안 분별력">
@@ -380,7 +380,7 @@
 
         <div class="mx-row">
           <div class="mx-row-label">보정 배수
-            <small>예측 확률에 곱하는 수 · 1.00 이면 총합이 실제와 맞는다</small>
+            <small>예측 확률에 곱하는 수, 1.00 이면 총합이 실제와 맞는다</small>
           </div>
           <input type="range" class="mx-slider" id="mx-slope" min="0.3" max="3" step="0.01" value="1"
             aria-label="보정 배수">
@@ -389,7 +389,7 @@
 
         <div class="mx-row">
           <div class="mx-row-label">요청당 광고 수
-            <small>한 요청이 만드는 노출 수 · 요청 안 짝 수를 정한다</small>
+            <small>한 요청이 만드는 노출 수, 요청 안 짝 수를 정한다</small>
           </div>
           <input type="range" class="mx-slider" id="mx-slots" min="2" max="8" step="1" value="5"
             aria-label="요청당 광고 수">
@@ -398,7 +398,7 @@
 
         <div class="mx-row">
           <div class="mx-row-label">요청 간 난이도 편차
-            <small>요청마다 기저 CTR 이 얼마나 다른가 · 모델이 아니라 데이터 쪽</small>
+            <small>요청마다 기저 CTR 이 얼마나 다른가, 모델이 아니라 데이터 쪽</small>
           </div>
           <input type="range" class="mx-slider" id="mx-spread" min="0" max="1.4" step="0.005" value="0.915"
             aria-label="요청 간 난이도 편차">
@@ -429,7 +429,7 @@
         </div>
         <div class="mx-metric">
           <div class="mx-metric-head">
-            <span class="mx-metric-label">GAUC (요청·짝 가중)</span>
+            <span class="mx-metric-label">GAUC (요청, 짝 가중)</span>
             <span class="mx-gate is-good" id="mx-gauc-g">통과</span>
           </div>
           <div class="mx-metric-value" id="mx-gauc-v">—</div>
@@ -638,12 +638,12 @@
             <a href="post.html?id=offline-metrics-gauc" class="demo-next-card">
               <span class="demo-next-label">이 데모의 짝 글</span>
               <span class="demo-next-title">오프라인 지표는 무엇을 재고 무엇을 못 재나</span>
-              <span class="demo-next-excerpt">AUC · GAUC · LogLoss · NE · COPC 를 하나씩 손으로 세어 보는 글. 이 화면의 규칙이 전부 거기서 왔습니다</span>
+              <span class="demo-next-excerpt">AUC, GAUC, LogLoss, NE, COPC 를 하나씩 손으로 세어 보는 글. 이 화면의 규칙이 전부 거기서 왔습니다</span>
             </a>
             <a href="post.html?id=calibration" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>
               <span class="demo-next-title">Calibration — AUC가 높아도 돈을 잃는 이유</span>
-              <span class="demo-next-excerpt">보정 배수 슬라이더가 만든 어긋남을 실제로 고치는 방법. Platt·Isotonic·Temperature</span>
+              <span class="demo-next-excerpt">보정 배수 슬라이더가 만든 어긋남을 실제로 고치는 방법. Platt, Isotonic, Temperature</span>
             </a>
             <a href="post.html?id=ecpm-ranking" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>

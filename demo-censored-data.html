@@ -649,7 +649,7 @@
 
         <ol class="demo-steps">
           <span class="demo-steps-title">이렇게 해봅니다 — 12분 (5단계)</span>
-          <li><span class="step-text"><strong>Step 1 (God View)</strong>: 시장 전체를 볼 수 있다고 가정. μ·σ 슬라이더로 분포 모양 익히기.</span></li>
+          <li><span class="step-text"><strong>Step 1 (God View)</strong>: 시장 전체를 볼 수 있다고 가정. μ, σ 슬라이더로 분포 모양 익히기.</span></li>
           <li><span class="step-text"><strong>Step 2~3 (Engineer View / Naive)</strong>: 패찰 경매를 가린 채 추정 → 평균이 실제보다 낮아지는 <em>편향</em> 직접 확인.</span></li>
           <li><span class="step-text"><strong>Step 4~5 (Censored Regression)</strong>: Likelihood에 censoring 항 추가 → 추정치가 진짜에 가까워지는 걸 비교.</span></li>
         </ol>
@@ -1117,10 +1117,10 @@
             <h2>현업에서는 이렇게 씁니다</h2>
             <p>
                 DSP의 입찰 로그는 절반 이상이 "진 경매"입니다. 이 패찰 로그를 버리느냐 살리느냐가
-                시장가 추정 모델의 품질을 가르고, 그 추정이 곧 입찰가가 됩니다.
+                시장가 추정 모델의 품질을 좌우하고, 그 추정이 곧 입찰가가 됩니다.
             </p>
             <ul>
-                <li><strong>Bid Shading 모델 학습:</strong> Adobe(MCNet)·Yahoo(KDD 2021)처럼 낙찰 로그는 가격 그대로, 패찰 로그는 "내 입찰가 이상"이라는 하한 정보로 손실 함수에 함께 넣습니다. 이 데모의 Step 4가 바로 그 손실 함수입니다.</li>
+                <li><strong>Bid Shading 모델 학습:</strong> Adobe(MCNet), Yahoo(KDD 2021)처럼 낙찰 로그는 가격 그대로, 패찰 로그는 "내 입찰가 이상"이라는 하한 정보로 손실 함수에 함께 넣습니다. 이 데모의 Step 4가 바로 그 손실 함수입니다.</li>
                 <li><strong>추정 편향 진단:</strong> 입찰가를 내린 뒤 시장가 추정치가 따라 내려가 보이면 시장이 싸진 게 아니라 Selection Bias일 수 있습니다 — 관측률(낙찰률)과 함께 봐야 합니다.</li>
                 <li><strong>탐색 트래픽 운영:</strong> 일부 트래픽에 일부러 높게 입찰해 관측률을 확보합니다. 약간의 손해로 원래는 보이지 않는 시장가 데이터를 사 오는 탐색-활용 트레이드오프입니다.</li>
             </ul>
@@ -1152,7 +1152,7 @@
             <span class="demo-next-label">다음 데모</span>
             <span class="demo-next-title">Golden Section Search</span>
             <span class="demo-next-excerpt">Surplus 곡선의 최대점을 황금비로 25배 빠르게 찾는 최적화</span>
-            <span class="demo-next-meta">⏱ 10분 · 중급</span>
+            <span class="demo-next-meta">⏱ 10분, 중급</span>
           </a>
           <a href="post.html?id=bid-shading-censored" class="demo-next-card">
             <span class="demo-next-label">관련 포스트</span>

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="어트리뷰션 윈도우(7/14/30일)와 모델(마지막·첫·선형·위치 기반)에 따라 같은 전환의 공로가 채널마다 어떻게 달라지는지 — 여정 타임라인으로 직접 보는 인터랙티브 데모.">
+    content="어트리뷰션 윈도우(7/14/30일)와 모델(마지막, 첫, 선형, 위치 기반)에 따라 같은 전환의 공로가 채널마다 어떻게 달라지는지 — 여정 타임라인으로 직접 보는 인터랙티브 데모.">
   <title>Attribution Window Playground — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -129,7 +129,7 @@
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
-        <li><span class="step-text"><strong>30일 · 마지막 터치</strong>에서 공로가 어디로 가는지 확인(전환 직전 채널 독식).</span></li>
+        <li><span class="step-text"><strong>30일, 마지막 터치</strong>에서 공로가 어디로 가는지 확인(전환 직전 채널 독식).</span></li>
         <li><span class="step-text">윈도우를 <strong>7일</strong>로 줄여봅니다 → 오래된 터치(Display, Search)가 회색으로 빠지는 것 확인.</span></li>
         <li><span class="step-text">모델을 <strong>선형/위치 기반</strong>으로 바꿔 공로가 여러 채널로 나뉘는 걸 비교.</span></li>
       </ol>
@@ -157,7 +157,7 @@
             <button class="aw-btn" data-model="last">마지막 터치</button>
             <button class="aw-btn" data-model="first">첫 터치</button>
             <button class="aw-btn" data-model="linear">선형 (균등)</button>
-            <button class="aw-btn" data-model="position">위치 기반 (40·20·40)</button>
+            <button class="aw-btn" data-model="position">위치 기반 (40, 20, 40)</button>
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@
       <!-- Credit bar -->
       <div class="aw-card">
         <h3>채널별 공로 배분</h3>
-        <p class="note">현재 윈도우·모델 기준으로 각 채널이 가져가는 공로(%). 윈도우 밖 채널은 0%.</p>
+        <p class="note">현재 윈도우, 모델 기준으로 각 채널이 가져가는 공로(%). 윈도우 밖 채널은 0%.</p>
         <div class="aw-chart-wrap"><canvas id="aw-credit-chart"></canvas></div>
       </div>
 
@@ -187,9 +187,9 @@
         <div class="demo-tldr-inner">
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
-            <li><strong>공로는 "사실"이 아니라 "규칙"</strong> — 같은 여정이라도 윈도우·모델을 바꾸면 1등 채널이 바뀐다. 마지막 터치는 전환 직전 채널을, 첫 터치는 발견 채널을 띄운다.</li>
-            <li><strong>윈도우가 채널을 살리고 죽인다</strong> — 윈도우를 좁히면 인지 단계의 오래된 채널(Display·Search)이 통째로 0이 된다. 윈도우 선택이 곧 예산 배분을 흔든다.</li>
-            <li><strong>그래서 인크리멘털리티</strong> — 어떤 규칙도 "진짜 기여"를 보장하지 못한다. 그래서 holdout·지오 실험 같은 인과적 측정이 어트리뷰션을 보완한다.</li>
+            <li><strong>공로는 "사실"이 아니라 "규칙"</strong> — 같은 여정이라도 윈도우와 모델을 바꾸면 1등 채널이 바뀐다. 마지막 터치는 전환 직전 채널을, 첫 터치는 발견 채널을 띄운다.</li>
+            <li><strong>윈도우가 채널을 살리고 죽인다</strong> — 윈도우를 좁히면 인지 단계의 오래된 채널(Display, Search)이 통째로 0이 된다. 윈도우 선택이 곧 예산 배분을 흔든다.</li>
+            <li><strong>그래서 인크리멘털리티</strong> — 어떤 규칙도 "진짜 기여"를 보장하지 못한다. 그래서 holdout, 지오 실험 같은 인과적 측정이 어트리뷰션을 보완한다.</li>
           </ol>
         </div>
       </section>
@@ -203,7 +203,7 @@
         <ul>
           <li><strong>플랫폼 간 수치 차이 해명:</strong> 한쪽은 클릭 후 28일, 다른 쪽은 7일 윈도우라면 전환수가 다른 게 정상입니다. 리포트를 합치기 전에 측정 규칙부터 맞춰야 합니다.</li>
           <li><strong>윈도우 변경 영향 분석:</strong> 플랫폼이 기본 윈도우를 줄이면(예: 개인정보 정책 이후 28일 → 7일) ROAS가 하락한 것처럼 보입니다. 성과 악화가 아니라 측정 규칙 변화임을 데이터로 설명하는 일이 실무에서 자주 생깁니다.</li>
-          <li><strong>인크리멘털리티 보완:</strong> 어떤 윈도우·모델 조합도 "진짜 기여"를 보장하지 못합니다. 그래서 중요한 예산 결정에는 holdout·지오 실험 같은 인과 측정을 병행해 어트리뷰션 수치를 교차 검증합니다.</li>
+          <li><strong>인크리멘털리티 보완:</strong> 어떤 윈도우, 모델 조합도 "진짜 기여"를 보장하지 못합니다. 그래서 중요한 예산 결정에는 holdout, 지오 실험 같은 인과 측정을 병행해 어트리뷰션 수치를 교차 검증합니다.</li>
         </ul>
       </section>
 
@@ -220,8 +220,8 @@
             <a href="demo-pctr-impact.html" class="demo-next-card">
               <span class="demo-next-label">관련 데모</span>
               <span class="demo-next-title">pCTR Model Quality Impact</span>
-              <span class="demo-next-excerpt">측정한 신호가 입찰가·수익으로 번역되는 과정</span>
-              <span class="demo-next-meta">⏱ 12분 · 중급</span>
+              <span class="demo-next-excerpt">측정한 신호가 입찰가와 수익으로 번역되는 과정</span>
+              <span class="demo-next-meta">⏱ 12분, 중급</span>
             </a>
           </div>
         </div>

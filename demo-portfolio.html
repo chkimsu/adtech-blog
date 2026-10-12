@@ -429,7 +429,7 @@
           <ol>
             <li><strong>고가치 지면에 몰빵 ≠ 최적</strong> — Diminishing Returns 때문에 같은 지면에 계속 붓다 보면 한계 수익이 0에 수렴. 다른 지면의 초반 큰 기울기를 놓치게 된다.</li>
             <li><strong>등한계효용 원리</strong> — 각 지면의 <em>한계 수익(Profit의 기울기)</em>이 모든 지면에서 같아지도록 분배할 때 전체 Profit이 최대. "Auto Optimize" 버튼이 이 조건을 수치적으로 찾아낸다.</li>
-            <li><strong>이것이 Budget Pacer의 본질</strong> — 실제 광고 시스템의 Pacing 알고리즘(PID·Lagrangian Dual)도 결국은 이 포트폴리오 문제를 <em>시간과 지면</em> 두 축으로 동시에 푸는 것.</li>
+            <li><strong>이것이 Budget Pacer의 본질</strong> — 실제 광고 시스템의 Pacing 알고리즘(PID, Lagrangian Dual)도 결국은 이 포트폴리오 문제를 <em>시간과 지면</em> 양쪽에서 동시에 푸는 것.</li>
           </ol>
         </div>
       </section>
@@ -441,7 +441,7 @@
           마지막 1달러의 이익이 모든 곳에서 같아지게 — 가 그 답의 공통 뼈대입니다.
         </p>
         <ul>
-          <li><strong>캠페인 예산 분배:</strong> 검색·디스플레이·리타게팅 등 여러 채널에 일 예산을 나눌 때, 채널별 한계 ROAS가 같아지는 쪽으로 옮깁니다. 잘 나가는 채널이라도 포화 조짐이 보이면 증액을 멈추는 근거가 됩니다.</li>
+          <li><strong>캠페인 예산 분배:</strong> 검색, 디스플레이, 리타게팅 등 여러 채널에 일 예산을 나눌 때, 채널별 한계 ROAS가 같아지는 쪽으로 옮깁니다. 잘 나가는 채널이라도 포화 조짐이 보이면 증액을 멈추는 근거가 됩니다.</li>
           <li><strong>예산 페이싱(Budget Pacing):</strong> 플랫폼의 페이서는 같은 문제를 시간축으로 풉니다 — 하루를 잘게 쪼개 시간대별 한계 가치가 같도록 지출 속도를 조절합니다. PID 제어와 Lagrangian Dual이 그 도구입니다.</li>
           <li><strong>신규 지면 온보딩:</strong> 기존 지면의 한계 수익이 충분히 낮아졌다면, 단가가 낮아 보여도 아직 포화되지 않은 새 지면(이 데모의 Slot E 같은)에 예산을 떼어주는 것이 전체 이익을 늘립니다.</li>
         </ul>
@@ -456,7 +456,7 @@
               <span class="demo-next-label">관련 데모</span>
               <span class="demo-next-title">Bid Landscape Explorer</span>
               <span class="demo-next-excerpt">단일 지면에서 최적 입찰가를 찾는 방법 — 이 데모 Slot 하나의 내부</span>
-              <span class="demo-next-meta">⏱ 10분 · 입문</span>
+              <span class="demo-next-meta">⏱ 10분, 입문</span>
             </a>
             <a href="post.html?id=auto-bidding-pacing" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>
@@ -484,11 +484,11 @@
     const TOTAL_BUDGET = 500;
     const COST_FACTOR = 0.3; // marginal cost multiplier
     const SLOTS = [
-      { name: 'Slot A · 프리미엄 지면',   desc: '고가치·빨리 포화 (전환 단가 높음)', V: 3.5, K: 60,  color: '#5a6b7a' },
-      { name: 'Slot B · 메인 지면',       desc: '균형형 (중간 V, 중간 K)',          V: 2.4, K: 90,  color: '#7d5e72' },
-      { name: 'Slot C · 리테일 지면',     desc: '낮은 V, 큰 용량(느린 포화)',       V: 1.5, K: 140, color: 'var(--state-bad)' },
-      { name: 'Slot D · 리마케팅',        desc: '중간 V, 좁은 타겟(빠른 포화)',     V: 2.2, K: 45,  color: 'var(--state-good)' },
-      { name: 'Slot E · 디스커버리',      desc: '낮은 V, 매우 큰 용량',             V: 1.1, K: 200, color: '#a8783a' }
+      { name: 'Slot A / 프리미엄 지면',   desc: '고가치, 빨리 포화 (전환 단가 높음)', V: 3.5, K: 60,  color: '#5a6b7a' },
+      { name: 'Slot B / 메인 지면',       desc: '균형형 (중간 V, 중간 K)',          V: 2.4, K: 90,  color: '#7d5e72' },
+      { name: 'Slot C / 리테일 지면',     desc: '낮은 V, 큰 용량(느린 포화)',       V: 1.5, K: 140, color: 'var(--state-bad)' },
+      { name: 'Slot D / 리마케팅',        desc: '중간 V, 좁은 타겟(빠른 포화)',     V: 2.2, K: 45,  color: 'var(--state-good)' },
+      { name: 'Slot E / 디스커버리',      desc: '낮은 V, 매우 큰 용량',             V: 1.1, K: 200, color: '#a8783a' }
     ];
     // Start budget equally split
     let budgets = SLOTS.map(() => TOTAL_BUDGET / SLOTS.length);
@@ -537,7 +537,7 @@
       pieChart = new Chart(document.getElementById('budget-pie'), {
         type: 'doughnut',
         data: {
-          labels: SLOTS.map(s => s.name.split('·')[0].trim()),
+          labels: SLOTS.map(s => s.name.split('/')[0].trim()),
           datasets: [{
             data: budgets.slice(),
             backgroundColor: SLOTS.map(s => s.color),
@@ -557,7 +557,7 @@
       barChart = new Chart(document.getElementById('profit-bar'), {
         type: 'bar',
         data: {
-          labels: SLOTS.map(s => s.name.split('·')[0].trim()),
+          labels: SLOTS.map(s => s.name.split('/')[0].trim()),
           datasets: [{
             label: 'Profit ($)',
             data: SLOTS.map((s, i) => slotProfit(s, budgets[i])),
@@ -593,7 +593,7 @@
           <div class="po-slot" style="border-left-color:${s.color}">
             <div class="po-slot-head">
               <span class="po-slot-name">${s.name}</span>
-              <span class="po-slot-type">V=$${s.V} · K=${s.K}</span>
+              <span class="po-slot-type">V=$${s.V}, K=${s.K}</span>
             </div>
             <div class="po-slot-desc">${s.desc}</div>
             <div class="po-slot-stats">

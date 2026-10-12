@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="3rd-party 쿠키·IDFA·유저 단위 전환 라벨·크로스 앱 빈도 제어·집계 노이즈를 하나씩 내리면서 타겟 가능 유저 비율·관측 가능한 전환 비율·pCVR 유효 표본·지표 흔들림 폭이 어떻게 떨어지는지 보는 데모. 타겟팅보다 라벨이 먼저 부서진다.">
+    content="3rd-party 쿠키, IDFA, 유저 단위 전환 라벨, 크로스 앱 빈도 제어, 집계 노이즈를 하나씩 내리면서 타겟 가능 유저 비율, 관측 가능한 전환 비율, pCVR 유효 표본, 지표 흔들림 폭이 어떻게 떨어지는지 보는 데모. 타겟팅보다 라벨이 먼저 빠진다.">
   <title>신호 소실 계단 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -253,20 +253,20 @@
 
       <div class="demo-intro">
         <div><span class="demo-intro-label">이 데모가 보여주는 것</span>신호 스위치 다섯 개를 하나씩 내리면서
-          <strong>타겟 가능 유저 비율 · 관측 가능한 전환 비율 · pCVR 유효 표본 · 지표 흔들림 폭</strong>이
-          어떻게 떨어지는지 봅니다. 판정 박스가 "이 조합에서 무엇이 먼저 부서지나"를 한 줄로 말해 줍니다.</div>
+          <strong>타겟 가능 유저 비율, 관측 가능한 전환 비율, pCVR 유효 표본, 지표 흔들림 폭</strong>이
+          어떻게 떨어지는지 봅니다. 판정 박스가 "이 조합에서 무엇이 먼저 빠지나"를 한 줄로 말해 줍니다.</div>
         <div><span class="demo-intro-label">왜 알아야 하나</span>"신호가 사라졌다"는 문장만으로는 무엇을 고쳐야 하는지 알 수 없습니다.
-          잃는 것이 <strong>피처 · 라벨 · 제어</strong> 세 종류이고 각각 대응이 다릅니다.
+          잃는 것이 <strong>피처, 라벨, 제어</strong> 세 종류이고 각각 대응이 다릅니다.
           먼저 아픈 것은 피처가 아니라 라벨입니다 — 피처가 빠지면 성능이 조금 내려가지만,
           라벨이 버킷(같은 캠페인끼리 묶어 센 단위) 합계로 오면 손실 함수부터 바꿔야 합니다.</div>
       </div>
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 4분</span>
-        <li><span class="step-text"><strong>3rd-party 쿠키</strong>를 내립니다. 계기 1만 크게 떨어지고 계기 3·4는 그대로입니다.
+        <li><span class="step-text"><strong>3rd-party 쿠키</strong>를 내립니다. 계기 1만 크게 떨어지고 계기 3, 4는 그대로입니다.
           피처가 줄어든 것이지 학습이 멈춘 것이 아닙니다.</span></li>
         <li><span class="step-text">쿠키를 다시 올리고 <strong>유저 단위 전환 라벨</strong>을 내립니다.
-          계기 2·3·4가 <em>동시에</em> 내려가는데 계기 1은 100.0% 그대로입니다. 이 데모의 핵심 장면입니다.</span></li>
+          계기 2, 3, 4가 <em>동시에</em> 내려가는데 계기 1은 100.0% 그대로입니다. 이 데모의 핵심 장면입니다.</span></li>
         <li><span class="step-text"><strong>집계 노이즈</strong>까지 내립니다. 아래 막대에 <code>억제로 지워짐</code> 칸이 생깁니다.
           빈칸은 0이 아니라 결측입니다.</span></li>
         <li><span class="step-text">아래 슬라이더로 광고 규모를 <strong>40건 → 4,000건</strong>으로 밉니다.
@@ -276,7 +276,7 @@
       <div class="sl-brief">
         <strong>설정</strong> — 캠페인 <code>c-4417</code>의 2026년 8월 12일 하루입니다.
         회사 전체 하루 노출 2.28억 줄 중 이 캠페인이 <code>1,200만</code>을 가져갔습니다.
-        웹 지면 780만 · iOS 앱 지면 420만이고, 클릭은 15.6만 · 8.4만으로 둘 다 CTR 2.0%입니다.
+        웹 지면 780만, iOS 앱 지면 420만이고, 클릭은 15.6만, 8.4만으로 둘 다 CTR 2.0%입니다.
         전환 칸에서 달라집니다 — 웹 3,120건은 대부분 누가 언제 얼마를 샀는지가 붙어 있고,
         iOS 윈도우 1 포스트백 940건에는 사람이 없습니다. 그중 415건은 금액 칸까지 비어 있습니다.
         <strong>이 화면의 숫자는 전부 짝 글에서 가져온 가데이터</strong>입니다 —
@@ -319,7 +319,7 @@
           <button type="button" class="sl-switch" id="sl-sw-freq" role="switch" aria-checked="true">
             <span class="sl-switch-box" aria-hidden="true"></span>
             <span class="sl-switch-name">크로스 앱 빈도 제어</span>
-            <span class="sl-switch-note">같은 사람인지 판정하는 능력. 빈도 상한·중복 제거·제외 목록이 여기에 걸린다</span>
+            <span class="sl-switch-note">같은 사람인지 판정하는 능력. 빈도 상한, 중복 제거, 제외 목록이 여기에 걸린다</span>
             <span class="sl-switch-state">상한 5회를 건다</span>
           </button>
 
@@ -340,7 +340,7 @@
 
           <div class="sl-level">
             <label class="sl-level-label" for="sl-conv-level">지표를 볼 광고 하나 — 하루 전환
-              <small>계기 4와 가운데 판만 이 값을 씁니다. 10 · 40 · 120 · 400 · 1,200 · 4,000건</small></label>
+              <small>계기 4와 가운데 판만 이 값을 씁니다. 10건, 40건, 120건, 400건, 1,200건, 4,000건</small></label>
             <input type="range" class="sl-slider" id="sl-conv-level" min="0" max="5" step="1" value="1">
             <span class="sl-level-val" id="sl-conv-level-val">40건</span>
           </div>
@@ -352,7 +352,7 @@
               <div class="sl-gauge-label">타겟 가능 유저 비율</div>
               <div class="sl-gauge-value" id="sl-g1">—</div>
               <div class="sl-gauge-sub" id="sl-g1-sub">—</div>
-              <div class="sl-gauge-foot">크로스 사이트·크로스 앱 신호가 붙는 노출입니다.
+              <div class="sl-gauge-foot">크로스 사이트, 크로스 앱 신호가 붙는 노출입니다.
                 자사 로그인 지면의 1st-party 신호는 이 계기 밖입니다.</div>
             </div>
             <div class="sl-gauge">
@@ -379,7 +379,7 @@
           </div>
 
           <div class="sl-verdict">
-            <span class="sl-verdict-label">이 조합에서 무엇이 먼저 부서지나</span>
+            <span class="sl-verdict-label">이 조합에서 무엇이 먼저 빠지나</span>
             <p id="sl-verdict">—</p>
           </div>
         </section>
@@ -390,7 +390,7 @@
     <div class="sl-panels">
       <section class="sl-card sl-card-conv" id="sl-conv-card">
         <h3>전환 4,060건이 어떤 모양으로 오나</h3>
-        <p class="sl-card-note">웹 3,120건(자사 완결 1,950 · 광고주 픽셀 780 · MMP 앱 270 · 오프라인 120)과
+        <p class="sl-card-note">웹 3,120건(자사 완결 1,950, 광고주 픽셀 780, MMP 앱 270, 오프라인 120)과
           iOS 윈도우 1 포스트백 940건입니다.</p>
         <div id="sl-conv-svg"></div>
         <div class="sl-legend" id="sl-conv-legend"></div>
@@ -418,8 +418,8 @@
         <div class="demo-tldr-inner">
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
-            <li><strong>라벨이 피처보다 먼저 부서진다</strong> — 3rd-party 쿠키를 내리면 계기 1만 움직인다.
-              유저 단위 전환 라벨을 내리면 계기 2·3·4가 한꺼번에 내려가는데 계기 1은 100.0% 그대로다.
+            <li><strong>라벨이 피처보다 먼저 빠진다</strong> — 3rd-party 쿠키를 내리면 계기 1만 움직인다.
+              유저 단위 전환 라벨을 내리면 계기 2, 3, 4가 한꺼번에 내려가는데 계기 1은 100.0% 그대로다.
               피처가 빠지면 성능이 조금 내려가고, 라벨이 바뀌면 학습 코드가 읽는 단위가 달라진다.</li>
             <li><strong>집계는 계수를 비틀지 않는다. 흔들림만 키운다</strong> — 집계 라벨로 배운 계수도 평균은 참값과 맞는다.
               표준편차가 3.3배로 커질 뿐이다. 그래서 "보정하면 되지 않나"가 안 통한다.
@@ -443,11 +443,11 @@
             AUC 하락폭이 매출 하락폭은 아닙니다 — 경쟁자도 같이 눈이 어두워지기 때문에 매출 영향은 실험으로만 잽니다.</li>
           <li><strong>2층(라벨)은 학습 방법을 바꿉니다:</strong> 줄마다 정답을 맞추는 손실 대신
             버킷(bag) 합계를 맞추는 손실로 갑니다. 다만 SKAN 라벨로 모델 전체를 학습하지는 않습니다.
-            웹·자사 앱의 개인 라벨로 본체를 학습하고 집계는 캠페인 단위 보정에만 씁니다.</li>
+            웹, 자사 앱의 개인 라벨로 본체를 학습하고 집계는 캠페인 단위 보정에만 씁니다.</li>
           <li><strong>빈칸을 0으로 채우지 않습니다:</strong> 전환 40건짜리 버킷은 69.5%의 날에 지워집니다.
             그 날들을 0으로 채우면 그 소재의 전환율이 3분의 1로 보입니다. 결측으로 다뤄야 합니다.</li>
           <li><strong>3층(제어)은 예산을 옮깁니다:</strong> 빈도 상한과 중복 제거는 대체 신호로 못 메웁니다.
-            판정이 되거나 안 되거나 둘 중 하나입니다. 그래서 로그인 지면·자사 앱·광고주 1st-party 결합처럼
+            판정이 되거나 안 되거나 둘 중 하나입니다. 그래서 로그인 지면, 자사 앱, 광고주 1st-party 결합처럼
             판정이 되는 구간으로 예산을 옮깁니다.</li>
           <li><strong>포스트백 수를 설치 수로 세지 않습니다:</strong> 측정 윈도우가 셋이라 같은 설치가 최대 세 번 옵니다.
             윈도우 1은 3~4일, 윈도우 3은 최대 41일 뒤에 도착합니다. 윈도우별로 나눠 세야 합니다.</li>
@@ -461,7 +461,7 @@
             <a href="post.html?id=privacy-signal-loss" class="demo-next-card">
               <span class="demo-next-label">이 데모의 짝 글</span>
               <span class="demo-next-title">신호가 사라진 자리에서 모델은 무엇을 잃나</span>
-              <span class="demo-next-excerpt">피처·라벨·제어 세 층으로 나눠 손실을 재는 글. 이 화면의 값이 전부 거기서 왔습니다</span>
+              <span class="demo-next-excerpt">피처, 라벨, 제어 세 층으로 나눠 손실을 재는 글. 이 화면의 값이 전부 거기서 왔습니다</span>
             </a>
             <a href="post.html?id=walled-garden" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>

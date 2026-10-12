@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="노출 로그 12줄을 Kafka partition에 직접 나눠 보는 인터랙티브 데모. partition 수가 처리량 상한을 정하고, key 선택이 순서 보장 범위를 정한다. 칸 수를 나중에 바꾸면 같은 key가 다른 칸으로 옮겨가는 것까지 표시한다.">
+    content="노출 로그 12줄을 Kafka partition에 직접 나눠 보는 인터랙티브 데모. partition 수가 처리량 상한을 정하고, key 선택이 순서 보장 범위를 정한다. partition 수를 나중에 바꾸면 같은 key가 다른 partition으로 옮겨가는 것까지 표시한다.">
   <title>Kafka Partition 놀이터 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -31,7 +31,7 @@
     /* ---------- 흙톤 6색 — consumer 구분에만 쓴다 ----------
        쓰는 자리는 카드 왼쪽 테두리와 작은 사각형 표식뿐 — 글자에는 절대 안 쓴다.
        뜻은 색이 아니라 글자가 담는다(카드와 범례 양쪽에 consumer 이름이 적혀 있다).
-       색은 "같은 사람이 맡은 칸"을 한눈에 묶어 주는 보조 표시다.
+       색은 "같은 사람이 맡은 partition"을 한눈에 묶어 주는 보조 표시다.
 
        라이트값은 css/style.css 의 .chart-layer-item 색과 같은 여섯 색이다.
        거기서는 알파 0.2 의 배경 얼룩으로 쓰지만 여기서는 알파 1 의 표식 자체로 쓴다 —
@@ -120,7 +120,7 @@
     .kp-verdict.is-warn .kp-verdict-badge { color: var(--state-warn); }
     .kp-verdict.is-bad .kp-verdict-badge { color: var(--state-bad); }
     /* 문제가 두 가지 겹칠 때 붙는 둘째 줄.
-       첫 줄 뒤에 이어 붙이면 묻히므로 줄을 떼고, 칸에 붙는 것과 똑같은 "쏠림" 배지를 앞에 세운다.
+       첫 줄 뒤에 이어 붙이면 묻히므로 줄을 떼고, partition 카드에 붙는 것과 똑같은 "쏠림" 배지를 앞에 세운다.
        그래야 카드의 배지와 이 설명이 같은 것을 가리킨다는 게 보인다. */
     .kp-verdict-extra {
       display: block; margin-top: 0.5rem; padding-top: 0.5rem;
@@ -128,7 +128,7 @@
     }
     .kp-verdict-extra .kp-verdict-hot { margin-right: 0.4rem; vertical-align: 0.08em; }
 
-    /* ---------- 칸 수를 바꿨을 때의 알림 ---------- */
+    /* ---------- partition 수를 바꿨을 때의 알림 ---------- */
     .kp-shuffle {
       max-width: 980px; margin: 0 auto 1rem; padding: 0.8rem 1.15rem;
       background: var(--bg-secondary); border: 1px dashed var(--border-color);
@@ -154,13 +154,13 @@
       padding: 0.3rem 0.7rem; font-size: 0.78rem; color: var(--text-secondary);
       background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0;
     }
-    /* 아무 칸도 못 맡은 consumer — 점선 + 옅은 글자 + "맡은 칸 없음" 이라는 말까지 함께 */
+    /* 아무 partition도 못 맡은 consumer — 점선 + 옅은 글자 + "맡은 partition 없음" 이라는 말까지 함께 */
     .kp-legend-item.is-idle { border-style: dashed; color: var(--text-muted); }
     .kp-swatch { width: 0.62rem; height: 0.62rem; border-radius: 0; background: var(--kp-tone); flex: none; }
     .kp-legend-item.is-idle .kp-swatch { background: transparent; border: 1px dashed var(--text-muted); }
 
-    /* ---------- 칸 ---------- */
-    /* align-items:start — 칸 높이를 내용에 맞춘다. 그래야 많이 들어간 칸이 눈에 띈다 */
+    /* ---------- partition 카드 ---------- */
+    /* align-items:start — 카드 높이를 내용에 맞춘다. 그래야 줄이 많이 들어간 partition이 눈에 띈다 */
     .kp-grid {
       max-width: 980px; margin: 0 auto 1.8rem; align-items: start;
       display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 0.6rem;
@@ -173,9 +173,9 @@
       background: var(--bg-secondary); border: 1px solid var(--border-color);
       border-left: 3px solid var(--kp-tone); border-radius: 0;
     }
-    /* 빈 칸 — 점선 (색을 안 쓴다) */
+    /* 빈 partition — 점선 (색을 안 쓴다) */
     .kp-card.is-empty { border-style: dashed; }
-    /* 가장 많이 몰린 칸 — 테두리를 굵게 + 머리에 "쏠림" 글자 */
+    /* 가장 많이 몰린 partition — 테두리를 굵게 + 머리에 "쏠림" 글자 */
     .kp-card.is-hot { border-width: 2px; border-left-width: 5px; }
     .kp-card-head {
       display: flex; align-items: center; flex-wrap: wrap; gap: 0.3rem 0.4rem;
@@ -196,7 +196,7 @@
       color: var(--text-primary); overflow-wrap: anywhere;
     }
     .kp-rec-ad { color: var(--text-muted); }
-    /* 칸 수가 바뀌면서 다른 칸으로 옮겨온 줄 — 왼쪽 굵은 선 + ↰ 표시 + 예전 칸 번호 */
+    /* partition 수가 바뀌면서 다른 partition으로 옮겨온 줄 — 왼쪽 굵은 선 + ↰ 표시 + 예전 partition 번호 */
     .kp-rec.is-moved {
       margin-left: -0.7rem; padding-left: 0.5rem;
       border-left: 2px solid var(--accent-primary);
@@ -226,22 +226,22 @@
     <section class="kp-hero">
       <div class="kp-container">
         <h1>Kafka Partition 놀이터</h1>
-        <p>토픽 하나에 노출 로그 12줄이 들어옵니다. 칸을 몇 개로 쪼갤지, 몇 명이 나눠 읽을지,
+        <p>토픽 하나에 노출 로그 12줄이 들어옵니다. 토픽을 partition 몇 개로 쪼갤지, 몇 명이 나눠 읽을지,
           무엇을 key로 삼을지 — 이 세 가지가 처리량과 순서를 각각 어떻게 묶어 두는지 직접 돌려서 봅니다.</p>
       </div>
     </section>
 
     <div class="kp-container">
       <div class="demo-intro">
-        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>노출 로그 12줄을 <code>ad.impression</code> 토픽에 넣습니다. partition 수 · consumer 수 · key를 바꾸면 12줄이 어느 칸으로 들어가고 누가 그 칸을 맡는지 바로 다시 그려집니다.</div>
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>노출 로그 12줄을 <code>ad.impression</code> 토픽에 넣습니다. partition 수, consumer 수, key를 바꾸면 12줄이 어느 partition으로 들어가고 누가 그 partition을 맡는지 바로 다시 그려집니다.</div>
         <div><span class="demo-intro-label">왜 알아야 하나</span>"Kafka를 쓴다"는 말로는 아무것도 안 정해집니다. 실제로 정해지는 것은 <strong>partition 수가 처리량 상한</strong>이라는 것, 그리고 <strong>key가 순서 보장 범위</strong>라는 것 둘입니다. 둘 다 나중에 바꾸면 대가가 따릅니다.</div>
       </div>
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해보세요 — 4분</span>
-        <li><span class="step-text">partition을 <strong>3</strong>, consumer를 <strong>5</strong>로 — 두 명이 아무 칸도 못 맡습니다. 사람을 늘려도 처리량이 안 늘어나는 지점입니다.</span></li>
-        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 보세요. 인기 광고 <code>9931</code>이 있는 칸만 부풀고 빈 칸이 생깁니다.</span></li>
-        <li><span class="step-text">key를 <strong>없음</strong>으로 — 가장 고르게 퍼지지만, 같은 요청의 노출과 클릭이 다른 칸으로 흩어집니다.</span></li>
+        <li><span class="step-text">partition을 <strong>3</strong>, consumer를 <strong>5</strong>로 — 두 명이 아무 partition도 못 맡습니다. 사람을 늘려도 처리량이 안 늘어나는 지점입니다.</span></li>
+        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 보세요. 인기 광고 <code>9931</code>이 있는 partition만 부풀고 빈 partition이 생깁니다.</span></li>
+        <li><span class="step-text">key를 <strong>없음</strong>으로 — 가장 고르게 퍼지지만, 같은 요청의 노출과 클릭이 다른 partition으로 흩어집니다.</span></li>
         <li><span class="step-text">key를 <code>req_id</code>로 되돌리고 partition을 <strong>4 → 8</strong>로 밀어 보세요. 옮겨간 줄에 <code>↰</code> 가 붙습니다 — 순서 보장이 끊기는 순간입니다.</span></li>
       </ol>
 
@@ -249,7 +249,7 @@
         <strong>설정</strong> — bidder가 노출 한 건마다 로그 한 줄을 <code>ad.impression</code> 토픽에 씁니다.
         한 줄에 들어 있는 것은 요청 식별자 <code>req_id</code>와 광고 소재 번호 <code>ad_id</code> 두 가지입니다 — 아래 칸에서 한 줄마다 이 둘이 나란히 찍히고, key로 고를 수 있는 것도 그 둘입니다.
         표본 12줄은 실제 트래픽처럼 <strong>일부러 한쪽으로 쏠려</strong> 있습니다 — 광고 <code>9931</code>이 혼자 4건입니다.
-        읽는 쪽은 <strong>같은 consumer group에 속한 consumer들</strong>입니다. 한 칸은 그 그룹 안에서 언제나 한 명만 맡습니다.
+        읽는 쪽은 <strong>같은 consumer group에 속한 consumer들</strong>입니다. partition 하나는 그 그룹 안에서 언제나 consumer 한 명만 맡습니다.
       </div>
 
       <!-- Controls -->
@@ -288,9 +288,9 @@
         <div class="demo-tldr-inner">
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
-            <li><strong>처리량 상한은 partition 수가 정한다</strong> — 한 칸은 그룹 안에서 한 명만 맡는다. consumer를 칸 수보다 많이 두면 남는 사람은 놀기만 한다. 사람을 늘려서 밀린 것을 따라잡으려면 칸부터 늘려야 한다.</li>
-            <li><strong>순서 보장 범위는 key가 정한다</strong> — 같은 key는 늘 같은 칸으로 가고, 한 칸 안에서만 순서가 지켜진다. key를 빼면 가장 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 갈라진다. <code>ad_id</code>로 잡으면 순서는 광고 단위로 묶이지만 인기 광고 칸만 부푼다.</li>
-            <li><strong>칸 수는 나중에 바꾸기 어렵다</strong> — 칸이 몇 개냐가 나눗셈에 들어가므로, 칸 수를 바꾸는 순간 같은 key가 다른 칸으로 옮겨간다. 옮겨간 줄은 예전 칸에 남은 줄과 순서가 더 이상 이어지지 않는다.</li>
+            <li><strong>처리량 상한은 partition 수가 정한다</strong> — partition 하나는 그룹 안에서 consumer 한 명만 맡는다. consumer를 partition 수보다 많이 두면 남는 사람은 놀기만 한다. 사람을 늘려서 밀린 것을 따라잡으려면 partition부터 늘려야 한다.</li>
+            <li><strong>순서 보장 범위는 key가 정한다</strong> — 같은 key는 늘 같은 partition으로 가고, partition 하나 안에서만 순서가 지켜진다. key를 빼면 가장 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 갈라진다. <code>ad_id</code>로 잡으면 순서는 광고 단위로 묶이지만 인기 광고가 든 partition만 부푼다.</li>
+            <li><strong>partition 수는 나중에 바꾸기 어렵다</strong> — partition이 몇 개냐가 나눗셈에 들어가므로, partition 수를 바꾸는 순간 같은 key가 다른 partition으로 옮겨간다. 옮겨간 줄은 예전 partition에 남은 줄과 순서가 더 이상 이어지지 않는다.</li>
           </ol>
         </div>
       </section>
@@ -302,9 +302,9 @@
           그중 되돌리기 가장 비싼 것이 partition 수라서, 보통 지금 필요한 수보다 넉넉하게 잡고 시작합니다.
         </p>
         <ul>
-          <li><strong>칸 수 정하기:</strong> 초당 들어오는 줄 수를 consumer 한 명이 감당하는 처리량으로 나눈 값이 최소치입니다. 여기에 앞으로 늘어날 몫을 얹습니다. 칸은 늘릴 수 있지만, 늘리는 순간 기존 key의 배정이 흔들립니다.</li>
+          <li><strong>partition 수 정하기:</strong> 초당 들어오는 줄 수를 consumer 한 명이 감당하는 처리량으로 나눈 값이 최소치입니다. 여기에 앞으로 늘어날 몫을 얹습니다. partition은 늘릴 수 있지만, 늘리는 순간 기존 key의 배정이 흔들립니다.</li>
           <li><strong>key 정하기:</strong> "무엇 단위로 순서가 지켜져야 하나"를 먼저 답합니다. 노출과 클릭을 이어 붙일 거라면 <code>req_id</code>, 광고별 카운터를 갱신할 거라면 <code>ad_id</code>입니다. 쏠림이 걱정되면 key 뒤에 작은 번호를 붙여 몇 갈래로 쪼개고, 대신 그만큼 순서 보장 범위가 좁아지는 것을 받아들입니다.</li>
-          <li><strong>밀릴 때 진단:</strong> 특정 consumer만 밀린다면 사람을 늘리기 전에 칸별 줄 수부터 봅니다. 한 칸만 부풀어 있으면 원인은 인원이 아니라 key입니다. 모든 칸이 고르게 밀려 있을 때만 칸과 인원을 함께 늘리는 것이 답이 됩니다.</li>
+          <li><strong>밀릴 때 진단:</strong> 특정 consumer만 밀린다면 사람을 늘리기 전에 partition별 줄 수부터 봅니다. partition 하나만 부풀어 있으면 원인은 인원이 아니라 key입니다. 모든 partition이 고르게 밀려 있을 때만 partition과 인원을 함께 늘리는 것이 답이 됩니다.</li>
         </ul>
       </section>
 

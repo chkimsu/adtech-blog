@@ -221,7 +221,7 @@
     { how: '자원 이름이 원래 다름', sample: '/v1/events 대 /v1/conversions', common: '가장 흔합니다', splitBy: '경로',
       why: '앱은 클릭을, 광고주 서버는 전환을 보냅니다. 보내는 것이 다르니 주소가 다릅니다' },
     { how: '호스트로', sample: 'api.example.com 대 partner.example.com', common: '흔합니다', splitBy: '호스트',
-      why: '인증, 한도, 방화벽을 호스트 단위로 겁니다. 문 앞에서 제일 먼저 갈립니다' },
+      why: '인증, 한도, 방화벽을 호스트 단위로 겁니다. 요청이 들어오는 입구에서 가장 먼저 나뉩니다' },
     { how: '/internal 접두사', sample: '/internal/v1/scores', common: '흔합니다', splitBy: '경로',
       why: '주소만 보고 밖에 안 열려 있다는 것을 압니다' },
     { how: '/s2s 접두사', sample: '/v1/s2s/conversions', common: '드뭅니다', splitBy: '경로',

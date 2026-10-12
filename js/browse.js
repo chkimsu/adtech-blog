@@ -40,7 +40,7 @@
     grid.innerHTML = '';
     if (!items.length) {
       grid.innerHTML = `<div class="browse-empty"><h3>검색 결과가 없습니다</h3>
-        <p>다른 키워드나 필터를 시도해 보세요.</p>
+        <p>다른 키워드나 필터로 다시 찾아봅니다.</p>
         <button class="btn-try" id="browse-empty-clear">필터 초기화</button></div>`;
       $('browse-empty-clear').onclick = clearAll;
       return;

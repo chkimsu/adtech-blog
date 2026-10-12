@@ -315,7 +315,7 @@
                 '<td class="mono">' + p.id + '</td><td>' + esc(p.title) + '</td><td class="mono">' + esc(p.author) + '</td>' +
                 '<td class="num">' + p.likes + '</td><td class="tag"><span class="hm-tag b">지워짐</span></td></tr>');
         });
-        if (!rows.length) rows.push('<tr class="hm-empty"><td colspan="5">글이 하나도 없습니다. POST 로 만들어 보세요.</td></tr>');
+        if (!rows.length) rows.push('<tr class="hm-empty"><td colspan="5">글이 하나도 없습니다. POST 로 만들어 봅니다.</td></tr>');
         el.serverBody.innerHTML = rows.join('');
         el.serverCount.textContent = posts.length + '건';
     }

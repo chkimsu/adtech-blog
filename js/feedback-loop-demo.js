@@ -554,7 +554,7 @@
     const best = S.ads[0];
 
     if (!h) {
-      el.innerHTML = '아직 한 세대도 안 돌았습니다. <strong>한 세대 진행</strong>을 눌러 첫날 배분부터 보세요.';
+      el.innerHTML = '아직 한 세대도 안 돌았습니다. <strong>한 세대 진행</strong>을 눌러 첫날 배분부터 봅니다.';
       return;
     }
     if (S.gen === 1) {
@@ -609,7 +609,7 @@
     $('fb-auto').disabled = done;
     $('fb-gen-note').textContent = S.gen === 0
       ? '아직 한 세대도 안 돌았습니다.'
-      : done ? '40세대를 다 돌았습니다. 처음으로 를 눌러 다시 시작하세요.'
+      : done ? '40세대를 다 돌았습니다. 「처음으로」를 눌러 다시 시작합니다.'
         : S.gen + '세대까지 돌았습니다.';
   }
 

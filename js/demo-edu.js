@@ -225,7 +225,7 @@
             foot.appendChild(prev);
         }
         if (step.waitFor) {
-            foot.appendChild(el('span', 'edu-tour-wait', '✋ 직접 해보세요'));
+            foot.appendChild(el('span', 'edu-tour-wait', '직접 해 봅니다'));
         } else {
             const isLast = i + 1 === steps.length;
             const next = el('button', 'edu-tour-btn primary', isLast ? '마침' : '다음');

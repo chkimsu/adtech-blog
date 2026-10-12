@@ -122,7 +122,7 @@
         const id = 'hb3-ar';
         let s = '';
         s += card(40, 56, 250, 76, [{ t: '내 쿼리', cls: 'h' }, { t: 'SELECT count(*) FROM ad_click', cls: 'mono' }, { t: 'tez.queue.name=analytics', cls: 'mono' }]);
-        s += arrow(292, 94, 356, 94, { id, label: '자원 주세요', ly: 82 });
+        s += arrow(292, 94, 356, 94, { id, label: '자원 요청', ly: 82 });
         const rx = 360, ry = 46;
         let inner = `<text class="t" x="${rx + 130}" y="${ry + 24}" text-anchor="middle">ResourceManager</text>`;
         [['default', 0.55, false], ['analytics', 0.75, true], ['adhoc', 0.35, false]].forEach((ln, i) => {

@@ -1056,7 +1056,7 @@ const posts = [
     world: 'both',
     worldNote: '수백만 후보를 순식간에 추리는 기법은 양쪽 공통이다. 닫힌 생태계는 자기 지면에 여러 광고를 줄 세우려 크게 돌리고, 열린 RTB의 광고주는 노출 한 자리에 낼 입찰 후보를 추리는 데 쓴다.',
     title: 'Two-Tower Retrieval: 수백만 광고에서 10ms 안에 후보를 추리는 법',
-    excerpt: '광고 10만 개에 정밀 랭킹 모델(1건 0.3ms)을 다 돌리면 30초입니다. 100ms 예산의 300배죠. 같은 10만 개를 유저 벡터와 광고 벡터의 내적으로 훑으면 13.6ms, 2,206배 빨라집니다. 후보가 100만 개로 늘면 전수 내적도 128.8ms로 예산을 넘고, 그때 ANN이 전체의 2%만 훑어 3.4ms로 떨어뜨립니다. in-batch negative를 log-Q로 보정하지 않으면 인기 광고가 negative로 11.4배 자주 등장해, 적합도 1위 광고가 4위로 밀립니다.',
+    excerpt: '광고 10만 개에 정밀 랭킹 모델(1건 0.3ms)을 다 돌리면 30초입니다. 100ms 예산의 300배입니다. 같은 10만 개를 유저 벡터와 광고 벡터의 내적으로 훑으면 13.6ms, 2,206배 빨라집니다. 후보가 100만 개로 늘면 전수 내적도 128.8ms로 예산을 넘고, 그때 ANN이 전체의 2%만 훑어 3.4ms로 떨어뜨립니다. in-batch negative를 log-Q로 보정하지 않으면 인기 광고가 negative로 11.4배 자주 등장해, 적합도 1위 광고가 4위로 밀립니다.',
     date: '2026-04-11',
     categories: ['ML Infrastructure'],
     tags: ['Model Serving', 'ML Infra', 'pCTR'],
@@ -1412,7 +1412,7 @@ const startHere = ['adtech-30min-primer', 'adtech-ecosystem-map', 'ad-serving-fl
 // posts의 id만 참조한다(검증기가 존재 여부 확인). 3단계는 신규 글이 늘며 채워진다.
 const mlTrack = {
   title: 'ML 엔지니어 트랙',
-  subtitle: 'pCTR/pCVR 실무 커리큘럼 — 광고 ML의 심장을 입문부터 심화까지. 일반 독자도 지도처럼 훑어보세요.',
+  subtitle: 'pCTR/pCVR 실무 커리큘럼 — 광고 ML 의 핵심을 입문부터 심화까지 다룹니다. 처음 보는 독자도 순서대로 읽을 수 있습니다.',
   stages: [
     {
       id: 'stage-1',

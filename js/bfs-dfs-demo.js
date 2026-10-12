@@ -183,7 +183,7 @@ function render() {
     const v = $('bd-verdict');
     if (!last) {
         v.classList.remove('is-done');
-        v.innerHTML = `<code>Step</code> 을 눌러 한 회차씩 보세요. ${통이름}에서 하나 꺼내 이웃을 넣습니다.`;
+        v.innerHTML = `<code>Step</code> 을 눌러 한 회차씩 봅니다. ${통이름}에서 하나 꺼내 이웃을 넣습니다.`;
     } else if (last.skipped) {
         v.classList.remove('is-done');
         v.innerHTML = `<strong>${last.node}</strong> 를 꺼냈지만 <strong>이미 본 마디</strong>라 버렸습니다. ` +

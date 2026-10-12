@@ -205,7 +205,7 @@
     {
       key: 'consumer', label: '읽는 쪽 넷', sub: '각자 읽어 갑니다',
       recv: 'pull', recvLabel: '가지러 갑니다',
-      did: '넷이 같은 한 줄을 읽어 네 개의 다른 결과를 만듭니다. 아래 칩을 눌러 갈아 보세요.',
+      did: '넷이 같은 한 줄을 읽어 네 개의 다른 결과를 만듭니다. 아래 칩을 눌러 바꿔 봅니다.',
       inTitle: '브로커에서 읽은 것', outTitle: '',
       before: [L(' ', '필드 15개', 'ad.click / partition 1 / offset 88,214', '넷이 같은 줄을 읽습니다')],
       after: null,

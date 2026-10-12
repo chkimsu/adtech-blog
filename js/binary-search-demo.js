@@ -229,7 +229,7 @@ function render() {
     } else {
         verdict.classList.remove('is-done');
         verdict.innerHTML = last.mid === null
-            ? '<code>Step</code> 을 눌러 한 회차씩 보세요.'
+            ? '<code>Step</code> 을 눌러 한 회차씩 봅니다.'
             : `${engine.iteration}회차 — ${last.verdict}`;
     }
 

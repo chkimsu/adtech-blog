@@ -192,7 +192,7 @@
       return;
     }
     if (!v) {
-      $('apc-res').textContent = '아직 보내지 않았습니다. 보내기를 눌러 보세요.';
+      $('apc-res').textContent = '아직 보내지 않았습니다. 보내기를 눌러 봅니다.';
       $('apc-verdict').textContent = '아직 보내지 않았습니다.';
       delete $('apc-verdict').dataset.tone;
       return;

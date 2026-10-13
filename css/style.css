@@ -6568,10 +6568,20 @@ pre.cb-wrap code.hljs { overflow: visible; }
 .cb-src { display: block; position: relative; white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(var(--ind, 0) * 1ch + 4ch); text-indent: -4ch; }
 .cb-ln.is-wrapped > .cb-src::before,
 .cb-oln.is-wrapped > .cb-src::before { content: ""; position: absolute; left: calc(var(--ind, 0) * 1ch - 10px); top: 4px; bottom: 4px; width: 2px; background: var(--navy); }
+/* 들여쓰기가 칸을 거의 다 차지하면 줄이 칸 밖으로 나가 페이지가 옆으로 밀린다. 칸 폭을 다 쓰는 줄은 들여쓰기 뒤에
+   글자 20자 자리를 남기도록 들여쓰기를 줄인다(4자 내어쓰기 밑으로는 줄이지 않는다). 들여쓰기가 들어가는 줄은 그대로다.
+   메모가 옆에 붙은 줄과 출력 세 열의 찍힌 줄은 칸이 글자에 맞춰져 있어(100% 가 그 칸 폭이다) 넘치지 않으니 건드리지 않는다. */
+.cb-ln:not(.has-note) > .cb-src,
+.cb-ln.is-drop > .cb-src,
+.cb-out[data-layout="stack"] .cb-oln > .cb-src { padding-left: max(4ch, min(var(--ind, 0) * 1ch + 4ch, 100% - 20ch)); }
+.cb-ln:not(.has-note).is-wrapped > .cb-src::before,
+.cb-ln.is-drop.is-wrapped > .cb-src::before,
+.cb-out[data-layout="stack"] .cb-oln.is-wrapped > .cb-src::before { left: calc(max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)) - 10px); }
 .cb-ln.has-note:not(.is-drop) { display: grid; grid-template-columns: calc(var(--nc, 40) * 1ch) minmax(0, 1fr); align-items: baseline; }
 .cb-note { justify-self: start; padding: 1px 8px; font-family: var(--font-sans); font-size: 0.844rem; line-height: 1.55; white-space: normal; color: var(--ink); background: var(--navy-bg); border-left: 2px solid var(--navy); }
+/* 줄 아래 메모와 줄 사이 메모는 들여쓰기 자리에서 시작하고, 위의 코드 줄과 같은 자리에서 멈춘다(들여쓰기를 줄인 줄과 떨어지지 않게) */
 .cb-ln.is-drop .cb-note,
-.cb-ln-note .cb-note { display: block; width: fit-content; max-width: calc(100% - var(--ind, 0) * 1ch); margin: 1px 0 4px calc(var(--ind, 0) * 1ch); }
+.cb-ln-note .cb-note { --note-at: max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)); display: block; width: fit-content; max-width: calc(100% - var(--note-at)); margin: 1px 0 4px var(--note-at); }
 .cb-k, .cb-fn { color: var(--ink); font-weight: 600; }
 .cb-bi { color: var(--ink2); }
 .cb-s { color: var(--series-6); }

@@ -128,8 +128,8 @@ eq('열린 span 을 닫고 다시 연다', C.splitLines('<span class="a">x\ny</s
 eq('겹친 span', C.splitLines('<span class="a"><span class="b">1\n2</span></span>'),
   ['<span class="a"><span class="b">1</span></span>', '<span class="a"><span class="b">2</span></span>']);
 eq('들여쓰기를 떼고 --ind 로', C.wrapLines('  <span class="k">key</span>: 1\nb', '  key: 1\nb'),
-  '<span class="cb-ln" style="--ind:2"><span class="cb-src"><span class="k">key</span>: 1</span></span>' +
-  '<span class="cb-ln" style="--ind:0"><span class="cb-src">b</span></span>');
+  '<span class="cb-ln" data-ln="0" style="--ind:2"><span class="cb-src"><span class="k">key</span>: 1</span></span>' +
+  '<span class="cb-ln" data-ln="1" style="--ind:0"><span class="cb-src">b</span></span>');
 eq('선 글자 그림', [C.hasDrawing('┌─┐'), C.hasDrawing('a -> b')], [true, false]);
 
 console.log('\n배치 계산');
@@ -140,6 +140,30 @@ eq('출력 세 열', C.outputLayout(50, 120, false), 'three');
 eq('출력이 넓으면 뜻을 아래로', C.outputLayout(80, 120, false), 'stack');
 eq('좁은 블록은 늘 아래로', C.outputLayout(10, 120, true), 'stack');
 eq('한글 폭', C.widthCounts('손실 8.2'), { wl: 4, ww: 2 });
+
+console.log('\n손으로 고른 글 복사 — 원문 줄 번호와 복사할 글');
+const lns = h => [...h.matchAll(/data-ln="(\d+)"/g)].map(m => Number(m[1]));
+eq('그린 조각의 원문 줄 번호(머리, 하는 일, 코드, 번호와 제목, 풀이 줄, 출력, 뜻, 찍힌 줄)', lns(html), [0, 0, 1, 3, 3, 4, 5, 6, 8, 8, 9, 11, 12, 13]);
+eq('줄 번호는 data-src 의 줄을 가리킨다', [6, 8, 13].map(n => ok1.src.split('\n')[n]), ['a, b = 1, 2          # 가상 값', '# 2단계: 더해서 찍는다', '# 3']);
+eq('상태 표시가 있으면 하는 일 줄은 그 다음', /class="cb-title" data-ln="(\d+)"/.exec(C.render(labels3))[1], '1');
+eq('이어 붙인 메모는 원문 줄마다 번호', C.render(notes).match(/class="cb-note">.*?<\/span><\/div>/g).map(lns), [[3, 4], [6]]);
+eq('앞뒤 빈 줄을 뺀 찍힌 줄의 번호', [...C.render(blanks).matchAll(/class="cb-oln" data-ln="(\d+)"/g)].map(m => Number(m[1])), [7, 8, 9]);
+eq('파이썬이 아닌 블록은 줄마다 번호', lns(C.wrapLines('a:\n  b: 1\n  c: 2', 'a:\n  b: 1\n  c: 2')), [0, 1, 2]);
+
+const SRC = block('def f(xs):', '    for x in xs:', '        print(x)  # 하나씩', '', '# 2단계: 부른다', '# 풀이 줄이다.', 'f([1])', '# 출력:', '# 2단계 뜻: 1 이다.', '# 1');
+const spot = (line, part) => ({ line, part });
+eq('여러 줄을 고르면 그 줄들을 들여쓰기째', C.copySource(SRC, [spot(0, 'code'), spot(1, 'code'), spot(2, 'code')]),
+  'def f(xs):\n    for x in xs:\n        print(x)  # 하나씩');
+eq('다음 단계로 넘어가면 단계 줄과 풀이 줄이 같이 온다', C.copySource(SRC, [spot(2, 'code'), spot(2, 'note'), spot(4, 'exp'), spot(5, 'exp'), spot(6, 'code')]),
+  '        print(x)  # 하나씩\n\n# 2단계: 부른다\n# 풀이 줄이다.\nf([1])');
+eq('설명 칸에서 시작하면 그 설명 줄부터', C.copySource(SRC, [spot(5, 'exp'), spot(6, 'code')]), '# 풀이 줄이다.\nf([1])');
+eq('한 줄의 코드와 메모에 함께 닿으면 그 줄을 # 째', C.copySource(SRC, [spot(2, 'code'), spot(2, 'note')]), '        print(x)  # 하나씩');
+eq('코드에서 출력 영역까지', C.copySource(SRC, [spot(6, 'code'), spot(7, 'out'), spot(8, 'out'), spot(9, 'out')]),
+  'f([1])\n# 출력:\n# 2단계 뜻: 1 이다.\n# 1');
+eq('한 줄의 코드 글자만, 메모만이면 브라우저에 맡긴다', [C.copySource(SRC, [spot(1, 'code')]), C.copySource(SRC, [spot(2, 'note')])], [null, null]);
+eq('설명 칸, 출력 영역, 머리 안에서만 고르면 브라우저에 맡긴다',
+  [C.copySource(SRC, [spot(4, 'exp'), spot(5, 'exp')]), C.copySource(SRC, [spot(8, 'out'), spot(9, 'out')]), C.copySource(SRC, [spot(0, 'head')]), C.copySource(SRC, [])],
+  [null, null, null, null]);
 
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

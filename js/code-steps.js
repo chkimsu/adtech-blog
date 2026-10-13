@@ -151,8 +151,9 @@
     if (!head) err(headAt, '하는 일이 비어 있습니다');
 
     // 몸통 — 단계로 나눈다. 번호 0 은 첫 단계 앞의 줄이다.
+    // 풀이는 문단마다 [{ line, text }] 로 둔다. 손으로 고른 글을 복사할 때 원문 줄을 찾는다.
     const raw = [];
-    let cur = { n: 0, title: '', detail: [], from: headAt + 1, lines: [] };
+    let cur = { n: 0, title: '', paras: [], from: headAt + 1, lines: [] };
     let expect = 1;
     for (let j = headAt + 1; j < bodyEnd; j++) {
       if (isCol0(j) && HEAD.test(lines[j])) { err(j, '하는 일 줄은 블록에 하나만 둡니다'); continue; }
@@ -162,14 +163,14 @@
         if (num !== expect) err(j, `단계 번호는 ${expect} 이어야 합니다`);
         expect = num + 1;
         raw.push(cur);
-        cur = { n: num, title: m[2], detail: [], from: j, lines: [] };
+        cur = { n: num, title: m[2], paras: [], from: j, lines: [] };
         let para = [];
         let k = j + 1;
         for (; k < bodyEnd && isCol0(k) && !STEP.test(lines[k]) && !HEAD.test(lines[k]); k++) {
           const t = lines[k].replace(/^#\s?/, '').trim();
-          if (!t) { if (para.length) cur.detail.push(para.join(' ')); para = []; } else para.push(t);
+          if (!t) { if (para.length) cur.paras.push(para); para = []; } else para.push({ line: k, text: t });
         }
-        if (para.length) cur.detail.push(para.join(' '));
+        if (para.length) cur.paras.push(para);
         j = k - 1;
         continue;
       }
@@ -183,12 +184,12 @@
       let note = null; // 이어 붙일 수 있는 줄 사이 메모
       for (const j of idx) {
         const indent = lines[j].length - lines[j].replace(/^[ \t]+/, '').length;
-        if (!info[j].startsInString && !lines[j].trim()) { out.push({ kind: 'blank' }); note = null; continue; }
+        if (!info[j].startsInString && !lines[j].trim()) { out.push({ kind: 'blank', line: j }); note = null; continue; }
         if (isComment(j)) {
           const t = lines[j].trim().replace(/^#\s?/, '').trim();
           if (!t) { note = null; continue; }
-          if (note && note.ind === indent) note.text += ' ' + t;
-          else { note = { kind: 'note', ind: indent, text: t }; out.push(note); }
+          if (note && note.ind === indent) { note.text += ' ' + t; note.parts.push({ line: j, text: t }); }
+          else { note = { kind: 'note', ind: indent, text: t, parts: [{ line: j, text: t }] }; out.push(note); }
           continue;
         }
         note = null;
@@ -203,8 +204,9 @@
       return out;
     }
     const steps = raw.filter(r => r.n > 0).map(r => r.n);
-    const rows = raw.map(r => ({ n: r.n, title: r.title, detail: r.detail, from: r.from, items: items(r.lines) }))
-      .filter(r => r.n > 0 || r.items.length);
+    const rows = raw.map(r => ({
+      n: r.n, title: r.title, detail: r.paras.map(p => p.map(x => x.text).join(' ')), paras: r.paras, from: r.from, items: items(r.lines),
+    })).filter(r => r.n > 0 || r.items.length);
 
     // 출력 영역 — 뜻 줄이 아래 찍힌 줄들의 머리다.
     let out = null;
@@ -276,28 +278,31 @@
     return h;
   }
 
+  // data-ln 은 그 조각이 나온 원문 줄 번호(src.split('\n') 의 0부터)다. 손으로 고른 글을 복사할 때 쓴다.
+  const lnSpans = parts => parts.map(p => `<span data-ln="${p.line}">${esc(p.text)}</span>`).join(' ');
+
   function lineHtml(it) {
-    if (it.kind === 'blank') return '<div class="cb-ln cb-blank"><span class="cb-src"> </span></div>';
-    if (it.kind === 'note') return `<div class="cb-ln cb-ln-note" style="--ind:${it.ind}"><span class="cb-note">${esc(it.text)}</span></div>`;
+    if (it.kind === 'blank') return `<div class="cb-ln cb-blank" data-ln="${it.line}"><span class="cb-src"> </span></div>`;
+    if (it.kind === 'note') return `<div class="cb-ln cb-ln-note" style="--ind:${it.ind}"><span class="cb-note">${lnSpans(it.parts)}</span></div>`;
     const toks = dropIndent(it.toks, it.ind);
     const w = widthCounts(toks.map(t => t.v).join(''));
     const note = it.note ? `<span class="cb-note">${esc(it.note)}</span>` : '';
-    return `<div class="cb-ln${it.note ? ' has-note' : ''}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
+    return `<div class="cb-ln${it.note ? ' has-note' : ''}" data-ln="${it.line}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
       `${it.note ? ' data-note="1"' : ''}><span class="cb-src"><span class="cb-t">${codeHtml(toks) || ' '}</span></span>${note}</div>`;
   }
 
-  function outLineHtml(t) {
+  function outLineHtml(t, line) {
     const ind = t.length - t.replace(/^ +/, '').length;
     const w = widthCounts(t);
-    return `<div class="cb-oln" style="--ind:${ind}" data-wl="${w.wl}" data-ww="${w.ww}"><span class="cb-src">${esc(t.slice(ind)) || ' '}</span></div>`;
+    return `<div class="cb-oln" data-ln="${line}" style="--ind:${ind}" data-wl="${w.wl}" data-ww="${w.ww}"><span class="cb-src">${esc(t.slice(ind)) || ' '}</span></div>`;
   }
 
-  // 묶음 맨 앞과 맨 끝의 빈 줄은 그리지 않는다(검사는 그대로 비교한다).
+  // 묶음 맨 앞과 맨 끝의 빈 줄은 그리지 않는다(검사는 그대로 비교한다). 그릴 줄의 [처음, 끝) 을 돌려준다.
   function trimBlank(ls) {
     let a = 0, b = ls.length;
     while (a < b && !ls[a].trim()) a++;
     while (b > a && !ls[b - 1].trim()) b--;
-    return ls.slice(a, b);
+    return [a, b];
   }
 
   function render(m) {
@@ -307,7 +312,8 @@
       : `<span class="cb-label">${esc(l.text)}</span>`)).join('');
     const rows = m.rows.map(r => {
       const exp = r.n > 0
-        ? `<div class="cb-exp"><span class="cb-num">${r.n}</span><b>${esc(r.title)}</b>${r.detail.map(p => `<p>${esc(p)}</p>`).join('')}</div>`
+        ? `<div class="cb-exp"><span class="cb-num" data-ln="${r.from}">${r.n}</span><b data-ln="${r.from}">${esc(r.title)}</b>` +
+          `${r.paras.map(p => `<p>${lnSpans(p)}</p>`).join('')}</div>`
         : '<div class="cb-exp cb-exp0"></div>';
       return `<div class="cb-row" data-step="${r.n}">${exp}<div class="cb-code">${r.items.map(lineHtml).join('')}</div></div>`;
     }).join('');
@@ -315,11 +321,12 @@
     if (m.out) {
       const groups = m.out.groups.map(g => {
         const num = g.n !== null ? `<span class="cb-num cb-num-o">${g.n}</span>` : '<span class="cb-num-none"></span>';
-        return `<div class="cb-grp" data-step="${g.n !== null ? g.n : ''}">${num}` +
-          `<div class="cb-out-lines">${trimBlank(g.lines).map(outLineHtml).join('')}</div>` +
+        const [a, b] = trimBlank(g.lines);
+        return `<div class="cb-grp" data-step="${g.n !== null ? g.n : ''}" data-ln="${g.from}">${num}` +
+          `<div class="cb-out-lines">${g.lines.slice(a, b).map((t, k) => outLineHtml(t, g.from + 1 + a + k)).join('')}</div>` +
           `<div class="cb-out-mean">${esc(g.meaning)}</div></div>`;
       }).join('');
-      out = '<div class="cb-out" data-layout="three">' +
+      out = `<div class="cb-out" data-layout="three" data-ln="${m.out.at}">` +
         `<div class="cb-out-head"><span class="cb-out-tab">출력</span>${m.out.hint ? `<span class="cb-out-hint">${esc(m.out.hint)}</span>` : ''}</div>` +
         `<div class="cb-out-cols"><span>단계</span><span>찍힌 줄</span><span>뜻</span></div>${groups}</div>`;
     }
@@ -327,9 +334,10 @@
       // 글자 폭을 재는 숨은 글자. 크기 0 인 상자 안에 둬서 페이지 폭을 늘리지 않는다.
       `<span class="cb-probes" aria-hidden="true"><span class="cb-probe">${'0'.repeat(100)}</span>` +
       `<span class="cb-probe cb-probe-w">${'가'.repeat(100)}</span></span>` +
-      `<div class="cb-head"><div class="cb-meta"><span class="cb-kicker">이 코드가 하는 일</span>${labels}` +
+      // 상태 표시 줄은 0번부터, 하는 일 줄은 그 바로 다음이다.
+      `<div class="cb-head"><div class="cb-meta" data-ln="0"><span class="cb-kicker">이 코드가 하는 일</span>${labels}` +
       '<span class="cb-lang">python</span><button class="cb-copy copy-btn" type="button">Copy</button></div>' +
-      `<div class="cb-title">${esc(m.head)}</div></div>` +
+      `<div class="cb-title" data-ln="${m.labels.length}">${esc(m.head)}</div></div>` +
       `<div class="cb-rows">${rows}</div>${out}</div>`;
   }
 
@@ -361,7 +369,7 @@
     return parts.map((h, i) => {
       const r = rawLines[i] || '';
       const ind = r.length - r.replace(/^ +/, '').length;
-      return `<span class="cb-ln" style="--ind:${ind}"><span class="cb-src">${stripIndent(h, ind) || ' '}</span></span>`;
+      return `<span class="cb-ln" data-ln="${i}" style="--ind:${ind}"><span class="cb-src">${stripIndent(h, ind) || ' '}</span></span>`;
     }).join('');
   }
 
@@ -374,6 +382,21 @@
       left -= cut;
       return sp.slice(cut);
     });
+  }
+
+  // ---------- 손으로 고른 글 복사 ----------
+  // 들여쓰기는 화면에서 여백이라 글자로 남지 않는다. 그래서 코드를 여러 줄 골라 복사하면 원문 줄을 그대로 준다.
+  // spots 는 고른 글자가 닿은 조각 [{ line, part }] 이다. line 은 src.split('\n') 의 줄 번호,
+  // part 는 code(코드 글자와 빈 줄), note(메모), exp(설명 칸), out(출력 영역), head(머리) 가운데 하나다.
+  // 코드 칸(code, note)에 닿고, 원문 두 줄 이상에 닿거나 한 줄의 코드와 메모에 함께 닿으면
+  // 처음 줄부터 끝 줄까지 원문을 준다. 그 밖에는 null 이다(브라우저가 복사한다).
+  function copySource(src, spots) {
+    const code = spots.filter(s => s.part === 'code' || s.part === 'note');
+    if (!code.length) return null;
+    const lo = spots.reduce((a, s) => Math.min(a, s.line), Infinity);
+    const hi = spots.reduce((a, s) => Math.max(a, s.line), -Infinity);
+    if (lo === hi && new Set(code.map(s => s.part)).size < 2) return null;
+    return String(src).split('\n').slice(lo, hi + 1).join('\n');
   }
 
   // ---------- 배치(브라우저) ----------
@@ -422,17 +445,57 @@
       el.classList.toggle('is-hot', !!n && n !== '0' && el.dataset.step === n);
     });
     cb.addEventListener('mouseover', e => {
+      // 터치 기기는 탭이 mouseover 를 내서 밝힌 것이 남는다. 마우스를 올릴 수 있는 기기에서만 밝힌다.
+      if (!matchMedia('(hover: hover)').matches) return;
       const t = e.target.closest('[data-step]');
       set(t ? t.dataset.step : null);
     });
     cb.addEventListener('mouseleave', () => set(null));
   }
 
+  // 고른 글자가 하나라도 있는 글 마디만 센다. 원문 줄은 가장 가까운 data-ln 이다.
+  const partOf = el => (el.closest('.cb-note') ? 'note' : el.closest('.cb-code, pre.cb-wrap') ? 'code'
+    : el.closest('.cb-exp') ? 'exp' : el.closest('.cb-out') ? 'out' : 'head');
+
+  function spotsOf(range, block) {
+    const spots = [];
+    const walk = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+      if (!range.intersectsNode(t)) continue;
+      const a = t === range.startContainer ? range.startOffset : 0;
+      const b = t === range.endContainer ? range.endOffset : t.length;
+      const el = t.parentElement.closest('[data-ln]');
+      if (b > a && el && block.contains(el)) spots.push({ line: Number(el.dataset.ln), part: partOf(t.parentElement) });
+    }
+    return spots;
+  }
+
+  // 고른 자리가 블록 하나(.cb 또는 pre.cb-wrap) 안에 있을 때만 끼어든다. 원문은 Copy 버튼이 복사하는 data-src 다.
+  function onCopy(e) {
+    const sel = document.getSelection();
+    if (!e.clipboardData || !sel || sel.rangeCount !== 1 || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    const start = range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentElement;
+    const block = start && start.closest('.cb, pre.cb-wrap');
+    if (!block || !block.contains(range.endContainer)) return;
+    const src = block.classList.contains('cb') ? block.dataset.src : block.querySelector('code').dataset.src;
+    const text = src === undefined ? null : copySource(src, spotsOf(range, block));
+    if (text === null) return;
+    e.clipboardData.setData('text/plain', text);
+    e.preventDefault();
+  }
+
+  let copyOn = false;
   function mount(root) {
+    if (!copyOn) { copyOn = true; document.addEventListener('copy', onCopy); }
     const blocks = [...root.querySelectorAll('.cb')];
     const wraps = [...root.querySelectorAll('pre.cb-wrap')];
-    const redo = () => { blocks.forEach(layout); wraps.forEach(markWrapped); };
-    blocks.forEach(hover);
+    // 블록마다 따로 감싼다. 한 블록이 실패해도 나머지 블록은 배치된다.
+    const each = (els, fn) => els.forEach(el => {
+      try { fn(el); } catch (err) { console.warn('코드 블록 하나를 배치하지 못했습니다', err); }
+    });
+    const redo = () => { each(blocks, layout); each(wraps, markWrapped); };
+    each(blocks, hover);
     redo();
     if (typeof ResizeObserver !== 'undefined') {
       let raf = 0;
@@ -442,5 +505,5 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(redo);
   }
 
-  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, outputLayout, mount };
+  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, outputLayout, copySource, mount };
 });

@@ -885,9 +885,14 @@ function enhanceCodeBlocks(container) {
 
     // 긴 줄은 접는다 — 파이썬이 아닌 블록만. 옮기기 전 파이썬 블록과 선 글자 그림은 지금처럼 옆으로 민다.
     const raw = codeEl.dataset.src;
-    if (raw !== undefined && lang !== 'python' && typeof CodeSteps !== 'undefined' && !CodeSteps.hasDrawing(raw)) {
-      codeEl.innerHTML = CodeSteps.wrapLines(codeEl.innerHTML, raw);
-      pre.classList.add('cb-wrap');
+    // 실패하면 그 블록은 손대지 않은 모양 그대로 둔다.
+    try {
+      if (raw !== undefined && lang !== 'python' && typeof CodeSteps !== 'undefined' && !CodeSteps.hasDrawing(raw)) {
+        codeEl.innerHTML = CodeSteps.wrapLines(codeEl.innerHTML, raw);
+        pre.classList.add('cb-wrap');
+      }
+    } catch (e) {
+      console.warn('코드 블록을 줄마다 접지 못했습니다', e);
     }
 
     // Build wrapper
@@ -1230,9 +1235,14 @@ async function renderPostDetail() {
 
               // 파이썬 블록 — 「# 하는 일:」 형식이면 하는 일, 단계, 뜻으로 그린다 (js/code-steps.js).
               // 옛 형식이거나 형식이 틀리면 아래 hljs 로 지금처럼 그린다.
+              // 그리다 실패해도 그 블록만 hljs 로 그린다. 글 전체가 「Error loading post」가 되지 않게.
               if (lang === 'python' && typeof CodeSteps !== 'undefined') {
-                const model = CodeSteps.parse(text);
-                if (model.format === 'steps' && model.ok) return CodeSteps.render(model);
+                try {
+                  const model = CodeSteps.parse(text);
+                  if (model.format === 'steps' && model.ok) return CodeSteps.render(model);
+                } catch (e) {
+                  console.warn('파이썬 블록을 그리지 못해 hljs 로 그립니다', e);
+                }
               }
 
               // 원문 — Copy 버튼과 줄 접기가 쓴다
@@ -1267,7 +1277,9 @@ async function renderPostDetail() {
       enhanceCodeBlocks(contentContainer);
 
       // 새 파이썬 블록의 메모 자리, 접힌 줄 막대, 같은 번호 밝히기 (js/code-steps.js)
-      if (typeof CodeSteps !== 'undefined') CodeSteps.mount(contentContainer);
+      if (typeof CodeSteps !== 'undefined') {
+        try { CodeSteps.mount(contentContainer); } catch (e) { console.warn('코드 블록 배치를 건너뜁니다', e); }
+      }
 
       // Wrap tables for mobile scroll
       wrapTables(contentContainer);

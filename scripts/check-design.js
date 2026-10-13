@@ -5,7 +5,8 @@
 //   node scripts/check-design.js <파일…>   → 지정 파일만
 //
 // 데이터 시각화 계열색(--series-1..6)과 코드 구문 강조(hljs)는 3색조 밖이지만
-// 의도한 예외다. 아래 ALLOWED_HEX 에 적어 두고, 그 밖의 hex 만 잡는다.
+// 의도한 예외다. 계열색은 차트와, 파이썬 블록(js/code-steps.js)의 문자열과 숫자에 쓴다.
+// 아래 ALLOWED_HEX 에 적어 두고, 그 밖의 hex 만 잡는다.
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
@@ -24,7 +25,7 @@ const PALETTE = [
   // 무채색 축약형
   '#fff', '#000',
 ];
-// hljs 구문 강조 — 코드 가독성 때문에 남긴 예외. 세이지 주석색은 표기 규칙에 박혀 있다.
+// hljs 구문 강조 — 파이썬이 아닌 블록과, 아직 옮기지 않은 옛 형식 파이썬 블록이 쓴다. 세이지 주석색은 그 블록들의 주석이다.
 const HLJS = ['#383a42', '#a626a4', '#50a14f', '#986801', '#4e6b47', '#4078f2'];
 const ALLOWED = new Set([...PALETTE, ...HLJS]);
 

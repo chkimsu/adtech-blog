@@ -6623,3 +6623,9 @@ pre.cb-wrap code.hljs { overflow: visible; }
   .cb-nosteps .cb-out[data-layout] .cb-grp, .cb-nosteps .cb-out[data-layout] .cb-out-cols { grid-template-columns: minmax(0, 1fr); }
   .cb-nosteps .cb-out[data-layout] .cb-out-mean { grid-column: 1; }
 }
+
+/* 휴대폰 — 글 칸이 화면을 채운다. 위쪽 휴대폰 규칙(2rem 1.5rem)이 맨 끝 디자인 블록의 3.2rem 에 덮어써지던 것을 여기서 바로잡는다 */
+@media (max-width: 768px) {
+  .post-content { --post-pad: 24px; padding: 2rem var(--post-pad); border-left: 0; border-right: 0; }
+  .post-container { padding-left: 0; padding-right: 0; }
+}

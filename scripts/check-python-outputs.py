@@ -205,7 +205,7 @@ def main():
             return b, 'norun', None
         job = json.dumps({'prefix': prefix_of(b, by_post), 'code': code_of(b)})
         try:
-            r = subprocess.run([sys.executable, '-s', harness], input=job, cwd=tempfile.mkdtemp(dir=work),
+            r = subprocess.run([sys.executable, harness], input=job, cwd=tempfile.mkdtemp(dir=work),
                                capture_output=True, text=True, timeout=TIMEOUT, env=env)
         except subprocess.TimeoutExpired:
             return b, 'fail', ['%d초 안에 끝나지 않았습니다' % TIMEOUT]

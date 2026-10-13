@@ -34,9 +34,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
       - name: 글 메타 정합성
         run: node scripts/validate-posts.js
       - name: 장문 검사기 회귀 시험
@@ -55,6 +52,9 @@ jobs:
         run: node scripts/check-code-blocks.js
       - name: 코드 블록 파서 단위 테스트
         run: node scripts/test-code-steps.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
       - name: 파이썬 블록 실행 검사 시험
         run: python scripts/test-python-outputs.py
       - name: 파이썬 블록 실행 (표준 라이브러리, 찍힌 줄과 단계)

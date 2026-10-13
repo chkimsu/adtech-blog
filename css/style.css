@@ -6515,3 +6515,110 @@ a.cover-heart:hover { background: var(--ink); border-color: var(--ink); }
 .cover-wire { top: auto; bottom: 0.7rem; left: 1%; right: 1%; }
 .cover-dot { top: auto; bottom: calc(0.7rem - 4px); }
 .cover-layer-label { top: -1.15rem; }
+
+/* =========================================================
+   코드 블록 — 하는 일, 단계, 뜻
+   설계: docs/superpowers/specs/2026-10-13-python-code-blocks-design.md
+   파이썬 블록은 js/code-steps.js 가 .cb 로 그린다. 다른 블록은 pre.cb-wrap 으로 줄마다 접는다.
+   ========================================================= */
+.post-content { --post-pad: 3.2rem; padding: 3rem var(--post-pad); }
+
+/* 넓은 화면 — 글 칸 바로 아래 블록만 안쪽 여백까지 넓힌다(인용과 접는 절 안의 블록은 그대로) */
+.post-content > .cb,
+.post-content > .code-block-wrapper { margin-left: calc(-1 * var(--post-pad)); margin-right: calc(-1 * var(--post-pad)); }
+.post-content > .cb { border-left: 0; border-right: 0; }
+/* 접는 절(:::deep) 안의 블록은 접는 절 안쪽 끝까지 넓힌다(좌우 1.1rem 여백을 뺀다) */
+.post-content .deep-dive > .cb,
+.post-content .deep-dive > .code-block-wrapper { margin-left: 0; margin-right: 0; }
+.post-content .deep-dive > .cb { border-left: 0; border-right: 0; }
+.post-content > .code-block-wrapper > .code-header,
+.post-content .deep-dive > .code-block-wrapper > .code-header,
+:root[data-theme] .post-content > .code-block-wrapper > pre:not(.mermaid),
+:root[data-theme] .post-content .deep-dive > .code-block-wrapper > pre:not(.mermaid) { border-left: 0; border-right: 0; }
+
+.cb { container: cb / inline-size; position: relative; margin: 2rem 0; background: var(--plate); border: 1px solid var(--rule); border-top: 2px solid var(--ink); }
+.cb-probes { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
+.cb-probe { position: absolute; left: 0; top: 0; white-space: pre; font-family: var(--font-mono); font-size: 0.9rem; }
+
+.cb-head { background: var(--paper); padding: 14px 20px 16px; border-bottom: 1px solid var(--rule); }
+.cb-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
+.cb-kicker { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; color: var(--navy); }
+.cb-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink2); border: 1px solid var(--rule); padding: 0 6px; }
+a.cb-label { color: var(--navy); border-color: var(--navy-bd); text-decoration: none; }
+.cb-lang { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); }
+.cb-title { font-size: 1.125rem; font-weight: 700; line-height: 1.55; color: var(--ink); }
+
+.cb-row { display: grid; grid-template-columns: 260px minmax(0, 1fr); border-bottom: 1px solid var(--rule); }
+.cb-row:last-child { border-bottom: 0; }
+.cb-nosteps .cb-row { grid-template-columns: minmax(0, 1fr); }
+.cb-nosteps .cb-exp0 { display: none; }
+.cb-exp { background: var(--paper); padding: 12px 18px 14px; border-right: 1px solid var(--rule); font-size: 0.906rem; color: var(--ink2); }
+.cb-exp b { display: block; margin: 6px 0 2px; font-size: 0.97rem; line-height: 1.5; color: var(--ink); }
+.post-content .cb-exp p { margin: 0; font-size: inherit; line-height: 1.6; color: inherit; }
+.post-content .cb-exp p + p { margin-top: 6px; }
+.cb-num { display: inline-block; min-width: 24px; padding: 1px 7px; text-align: center; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; line-height: 1.5; background: var(--navy); color: var(--paper); }
+.cb-num-o { padding: 0 6px; background: var(--navy-bg); color: var(--navy); border: 1px solid var(--navy-bd); }
+.cb-code { min-width: 0; padding: 12px 22px; }
+
+/* 코드 줄 — 접힌 뒷줄은 들여쓰기에서 4자 더 들어간다(내어쓰기) */
+.cb .cb-ln { font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.75; color: var(--ink2); }
+pre.cb-wrap code { display: block; white-space: normal; }
+pre.cb-wrap .cb-ln { display: block; }
+.cb-src { display: block; position: relative; white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(var(--ind, 0) * 1ch + 4ch); text-indent: -4ch; }
+.cb-ln.is-wrapped > .cb-src::before,
+.cb-oln.is-wrapped > .cb-src::before { content: ""; position: absolute; left: calc(var(--ind, 0) * 1ch - 10px); top: 4px; bottom: 4px; width: 2px; background: var(--navy); }
+.cb-ln.has-note:not(.is-drop) { display: grid; grid-template-columns: calc(var(--nc, 40) * 1ch) minmax(0, 1fr); align-items: baseline; }
+.cb-note { justify-self: start; padding: 1px 8px; font-family: var(--font-sans); font-size: 0.844rem; line-height: 1.55; white-space: normal; color: var(--ink); background: var(--navy-bg); border-left: 2px solid var(--navy); }
+.cb-ln.is-drop .cb-note,
+.cb-ln-note .cb-note { display: block; width: fit-content; max-width: calc(100% - var(--ind, 0) * 1ch); margin: 1px 0 4px calc(var(--ind, 0) * 1ch); }
+.cb-k, .cb-fn { color: var(--ink); font-weight: 600; }
+.cb-bi { color: var(--ink2); }
+.cb-s { color: var(--series-6); }
+.cb-n { color: var(--series-5); }
+
+/* 같은 번호 밝히기 */
+.cb-row.is-hot .cb-exp, .cb-row.is-hot .cb-code { background: var(--navy-bg); }
+.cb-row.is-hot .cb-note { background: var(--paper); }
+.cb-grp.is-hot { background: var(--navy-bg); }
+.cb-grp.is-hot .cb-num-o { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+
+/* 출력 — 묶음마다 번호, 찍힌 줄, 뜻. 찍힌 줄이 넓으면(data-layout="stack") 뜻을 아래로 */
+.cb-out { background: var(--paper); border-top: 2px solid var(--ink); }
+.cb-out-head { display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--rule); }
+.cb-out-tab { padding: 6px 14px; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; background: var(--ink); color: var(--paper); }
+.cb-out-hint { font-size: 0.844rem; color: var(--ink3); }
+.cb-grp, .cb-out-cols { display: grid; grid-template-columns: 52px calc(var(--oc, 40) * 1ch) minmax(0, 1fr); column-gap: 14px; align-items: baseline; padding: 10px 20px 10px 16px; font-family: var(--font-mono); font-size: 0.9rem; border-bottom: 1px solid var(--rule2); }
+.cb-grp:last-child { border-bottom: 0; }
+.cb-out-cols { padding-top: 7px; padding-bottom: 5px; }
+.cb-out-cols span { font-size: 0.72rem; letter-spacing: 0.02em; color: var(--ink3); }
+.cb-grp > .cb-num { justify-self: start; }
+.cb-out-lines { min-width: 0; }
+.cb-oln { line-height: 1.7; color: var(--ink); }
+.cb-out-mean { font-family: var(--font-sans); font-size: 0.906rem; line-height: 1.6; color: var(--ink2); }
+.cb-out[data-layout="stack"] .cb-grp, .cb-out[data-layout="stack"] .cb-out-cols { grid-template-columns: 52px minmax(0, 1fr); }
+.cb-out[data-layout="stack"] .cb-out-mean { grid-column: 2; margin-top: 4px; }
+.cb-out[data-layout="stack"] .cb-out-cols span:nth-child(3) { display: none; }
+.cb-nosteps .cb-num-none, .cb-nosteps .cb-out-cols span:first-child { display: none; }
+.cb-nosteps .cb-grp, .cb-nosteps .cb-out-cols { grid-template-columns: calc(var(--oc, 40) * 1ch) minmax(0, 1fr); }
+.cb-nosteps .cb-out[data-layout="stack"] .cb-grp, .cb-nosteps .cb-out[data-layout="stack"] .cb-out-cols { grid-template-columns: minmax(0, 1fr); }
+.cb-nosteps .cb-out[data-layout="stack"] .cb-out-mean { grid-column: 1; }
+
+/* 블록 폭 926px 이하 — 설명이 단계마다 코드 위로 간다 */
+@container cb (max-width: 926px) {
+  .cb-row { grid-template-columns: minmax(0, 1fr); }
+  .cb-exp { padding: 9px 18px 10px 17px; border-right: 0; border-left: 3px solid var(--navy); background: var(--navy-bg); }
+  .cb-exp0 { display: none; }
+  .cb-exp b { display: inline; margin: 0 0 0 8px; }
+  .post-content .cb-exp p { margin-top: 2px; }
+}
+/* 블록 폭 600px 이하 — 메모는 모두 줄 아래(js), 출력은 번호와 찍힌 줄 두 열 */
+@container cb (max-width: 600px) {
+  .cb-head { padding: 12px 14px 14px; }
+  .cb-title { font-size: 1.03rem; }
+  .cb-code { padding: 10px 14px; }
+  .cb-out[data-layout] .cb-grp, .cb-out[data-layout] .cb-out-cols { grid-template-columns: 40px minmax(0, 1fr); padding: 10px 14px 10px 12px; }
+  .cb-out[data-layout] .cb-out-mean { grid-column: 2; margin-top: 4px; }
+  .cb-out[data-layout] .cb-out-cols span:nth-child(3) { display: none; }
+  .cb-nosteps .cb-out[data-layout] .cb-grp, .cb-nosteps .cb-out[data-layout] .cb-out-cols { grid-template-columns: minmax(0, 1fr); }
+  .cb-nosteps .cb-out[data-layout] .cb-out-mean { grid-column: 1; }
+}

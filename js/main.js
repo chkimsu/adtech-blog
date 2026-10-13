@@ -268,7 +268,7 @@ function autoLinkGlossary(container) {
     for (const child of [...node.childNodes]) {
       if (child.nodeType === 1) {
         if (SKIP.has(child.tagName)) continue;
-        if (child.classList && (child.classList.contains('katex') || child.classList.contains('demo-term'))) continue;
+        if (child.classList && (child.classList.contains('katex') || child.classList.contains('demo-term') || child.classList.contains('cb'))) continue;
         walk(child);
       } else if (child.nodeType === 3) {
         const text = child.textContent;
@@ -732,8 +732,6 @@ function restoreMathBlocks(html) {
 function preprocessMarkdown(text) {
   if (!text) return '';
   text = text
-    // Normalize 3+ consecutive blank lines to max 2
-    .replace(/\n{3,}/g, '\n\n')
     // Remove lines that are only a list marker with trailing whitespace (empty list items)
     .replace(/^([*\-+]) +$/gm, '')
     // Remove <br> tags that appear on their own line (avoids double-break artifacts)
@@ -751,6 +749,9 @@ function preprocessMarkdown(text) {
     .replace(/`[^`\n]*`/g, hold)        // 인라인 코드
     .replace(/\$\$[\s\S]*?\$\$/g, hold) // 블록 수식
     .replace(/\$[^$\n]+?\$/g, hold);    // 인라인 수식
+
+  // 빈 줄 3개 이상은 2개로 줄인다. 코드 펜스를 빼 둔 뒤에 해야 코드 안의 빈 줄이 원문 그대로 남는다(Copy 가 원문을 복사한다).
+  text = text.replace(/\n{3,}/g, '\n\n');
 
   // **...** → <strong>...</strong>
   // marked.js는 한글(CJK)이 ** 에 인접하면 flanking 규칙 때문에 굵게를 놓쳐 literal "**" 가 노출된다.
@@ -834,7 +835,36 @@ function applyStageMarkers(container) {
 // Code Block Post-Processing
 // ========================================
 
+// 복사 버튼 — 「Copied!」를 2초 보이고, 클립보드가 막힌 곳(https 아님)에서는 textarea 로 복사한다.
+function copyText(text, btn) {
+  const done = () => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  };
+  navigator.clipboard.writeText(text).then(done).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  });
+}
+
 function enhanceCodeBlocks(container) {
+  // 새 파이썬 블록(js/code-steps.js 가 그린 .cb)은 머리와 Copy 를 스스로 갖는다. 원문을 복사한다.
+  container.querySelectorAll('.cb').forEach(cb => {
+    const btn = cb.querySelector('.cb-copy');
+    if (btn) btn.addEventListener('click', () => copyText(cb.dataset.src, btn));
+  });
+
   const preBlocks = container.querySelectorAll('pre');
   preBlocks.forEach(pre => {
     // Skip mermaid blocks
@@ -851,6 +881,13 @@ function enhanceCodeBlocks(container) {
     } else if (codeEl.dataset.highlighted) {
       // Try to get detected language from hljs result attribute
       lang = codeEl.getAttribute('data-lang') || '';
+    }
+
+    // 긴 줄은 접는다 — 파이썬이 아닌 블록만. 옮기기 전 파이썬 블록과 선 글자 그림은 지금처럼 옆으로 민다.
+    const raw = codeEl.dataset.src;
+    if (raw !== undefined && lang !== 'python' && typeof CodeSteps !== 'undefined' && !CodeSteps.hasDrawing(raw)) {
+      codeEl.innerHTML = CodeSteps.wrapLines(codeEl.innerHTML, raw);
+      pre.classList.add('cb-wrap');
     }
 
     // Build wrapper
@@ -870,33 +907,7 @@ function enhanceCodeBlocks(container) {
     const copyBtn = document.createElement('button');
     copyBtn.className = 'copy-btn';
     copyBtn.textContent = 'Copy';
-    copyBtn.addEventListener('click', () => {
-      const text = codeEl.innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        copyBtn.textContent = 'Copied!';
-        copyBtn.classList.add('copied');
-        setTimeout(() => {
-          copyBtn.textContent = 'Copy';
-          copyBtn.classList.remove('copied');
-        }, 2000);
-      }).catch(() => {
-        // Fallback for non-https
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        copyBtn.textContent = 'Copied!';
-        copyBtn.classList.add('copied');
-        setTimeout(() => {
-          copyBtn.textContent = 'Copy';
-          copyBtn.classList.remove('copied');
-        }, 2000);
-      });
-    });
+    copyBtn.addEventListener('click', () => copyText(raw !== undefined ? raw : codeEl.innerText, copyBtn));
 
     header.appendChild(langLabel);
     header.appendChild(copyBtn);
@@ -1217,13 +1228,22 @@ async function renderPostDetail() {
                 return `<pre class="mermaid">${text}</pre>`;
               }
 
+              // 파이썬 블록 — 「# 하는 일:」 형식이면 하는 일, 단계, 뜻으로 그린다 (js/code-steps.js).
+              // 옛 형식이거나 형식이 틀리면 아래 hljs 로 지금처럼 그린다.
+              if (lang === 'python' && typeof CodeSteps !== 'undefined') {
+                const model = CodeSteps.parse(text);
+                if (model.format === 'steps' && model.ok) return CodeSteps.render(model);
+              }
+
+              // 원문 — Copy 버튼과 줄 접기가 쓴다
+              const src = text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
               const language = lang && hljs.getLanguage(lang) ? lang : null;
               try {
                 const highlighted = language
                   ? hljs.highlight(text, { language }).value
                   : text ? hljs.highlightAuto(text).value : '';
                 const detectedLang = language || '';
-                return `<pre><code class="hljs language-${detectedLang}" data-lang="${detectedLang}">${highlighted}</code></pre>`;
+                return `<pre><code class="hljs language-${detectedLang}" data-lang="${detectedLang}" data-src="${src}">${highlighted}</code></pre>`;
               } catch (e) {
                 return `<pre><code>${text}</code></pre>`;
               }
@@ -1246,6 +1266,9 @@ async function renderPostDetail() {
       // Enhance code blocks with language label + copy button
       enhanceCodeBlocks(contentContainer);
 
+      // 새 파이썬 블록의 메모 자리, 접힌 줄 막대, 같은 번호 밝히기 (js/code-steps.js)
+      if (typeof CodeSteps !== 'undefined') CodeSteps.mount(contentContainer);
+
       // Wrap tables for mobile scroll
       wrapTables(contentContainer);
 
@@ -1265,6 +1288,7 @@ async function renderPostDetail() {
               { left: '\\[', right: '\\]', display: true },
               { left: '\\(', right: '\\)', display: false }
             ],
+            ignoredClasses: ['cb'],
             throwOnError: false
           });
         } else {

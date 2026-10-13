@@ -6564,6 +6564,7 @@ a.cb-label { color: var(--navy); border-color: var(--navy-bd); text-decoration: 
 .cb .cb-ln { font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.75; color: var(--ink2); }
 pre.cb-wrap code { display: block; white-space: normal; }
 pre.cb-wrap .cb-ln { display: block; }
+pre.cb-wrap code.hljs { overflow: visible; }
 .cb-src { display: block; position: relative; white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(var(--ind, 0) * 1ch + 4ch); text-indent: -4ch; }
 .cb-ln.is-wrapped > .cb-src::before,
 .cb-oln.is-wrapped > .cb-src::before { content: ""; position: absolute; left: calc(var(--ind, 0) * 1ch - 10px); top: 4px; bottom: 4px; width: 2px; background: var(--navy); }

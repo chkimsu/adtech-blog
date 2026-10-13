@@ -144,6 +144,10 @@
 
 - `.post-content` 에 `--post-pad` 를 두고 블록은 `margin-inline: calc(-1 * var(--post-pad))` 로 넓힙니다. `.post-content` 바로 아래 자식인 블록만 넓힙니다. 인용 안의 블록(git-practical-guide 의 2개)은 그대로 둡니다.
 
+- 접는 절(`:::deep`) 안의 블록은 접는 절 안쪽 끝까지 넓힙니다. 접는 절은 안의 것에 좌우 1.1rem 여백을 주는데, 블록에서만 그 여백을 뺍니다. 파이썬 블록 11개가 접는 절 안에 있고, 시안의 two-tower 블록도 그중 하나입니다. 1440 화면에서 그 블록 폭은 947px 이라 설명 칸과 코드가 나란히 섭니다.
+
+- 접힌 절 안의 블록은 처음 그릴 때 폭이 0 입니다. 펼치면 `ResizeObserver` 가 폭을 다시 재서 배치를 잡습니다.
+
 - 768px 이하에서는 `--post-pad` 를 24px 로 둡니다. 글 칸을 감싼 `.container` 의 좌우 여백을 0 으로 하고 글 칸의 좌우 테두리를 뺍니다. 그래서 글 칸이 화면을 채웁니다. 이 규칙은 스타일 파일 맨 끝 디자인 블록 뒤에 둬서 넓은 화면 값을 이기게 합니다.
 
 - 휴대폰 여백 수정은 모든 글의 휴대폰 화면을 바꿉니다. 390 화면에서 글 문단이 342px 이 됩니다.
@@ -187,6 +191,8 @@
 - 행의 맨 앞과 맨 끝 빈 줄은 그리지 않습니다. 행 안의 빈 줄은 그대로 둡니다.
 
 - 출력 영역 안의 줄은 모두 들여쓰기 없는 `#` 로 시작합니다. 찍힌 줄은 앞의 `# ` 두 글자를 뗀 나머지이고, `#` 한 글자만 있는 줄은 빈 줄입니다.
+
+- 묶음 맨 앞과 맨 끝의 빈 찍힌 줄은 화면에 그리지 않습니다. `print()` 나 `\n` 으로 찍은 빈 줄이 묶음 경계에 걸리는 일이 많아서입니다. 실행 검사는 빈 줄까지 비교합니다.
 
 - 출력 줄 뒤에 코드 줄이 오면 안 됩니다. 지금 블록 247개에는 그런 블록이 없습니다.
 
@@ -288,6 +294,10 @@ member_tower, ad_tower = Tower(), Tower()
 
 - 본문을 넣은 뒤 `CodeSteps.mount(contentContainer)` 를 부릅니다.
 
+- 본문의 용어 풀이(`autoLinkGlossary`)와 수식 렌더러(KaTeX auto-render)는 `<pre>` 와 `<code>` 만 건너뜁니다. 새 블록은 `div` 로 그리므로 둘 다 `.cb` 를 건너뛰게 합니다. 파이썬 블록 5개에 `$` 가 있습니다.
+
+- 글자 폭을 재는 숨은 글자(라틴 100자, 한글 100자)는 크기 0 인 상자 안에 둡니다. 한글 100자는 1,200px 이 넘어서, 그냥 두면 페이지가 옆으로 넘칩니다.
+
 > `js/main.js` 에는 NUL 바이트가 있습니다. 찾을 때는 `grep -a` 를 쓰고, 고칠 때는 파일을 통째로 다시 쓰지 않습니다.
 
 ### 6-3. `post.html`, `css/style.css`
@@ -360,13 +370,15 @@ member_tower, ad_tower = Tower(), Tower()
 
 - 로컬에서 돌리면 설치된 라이브러리만큼 더 돕니다. 지금 로컬에는 torch 2.7.0, numpy 1.26.4 가 있습니다. pyspark 처럼 로컬에도 없는 라이브러리를 쓰는 블록은 로컬에서도 건너뛰고, 건너뛴 블록은 이름을 찍습니다.
 
-- 옵션은 셋입니다. `--legacy` 는 옛 형식 블록도 돌립니다. `--post <id>` 는 글 하나만 돌립니다. `--jobs <n>` 은 동시에 돌릴 수입니다.
+- 옵션은 넷입니다. `--legacy` 는 옛 형식 블록도 돌립니다. `--post <id>` 는 글 하나만 돌립니다. `--jobs <n>` 은 동시에 돌릴 수입니다. `--root <폴더>` 는 그 폴더의 `posts/` 를 읽습니다(시험용).
+
+- 시험 `scripts/test-python-outputs.py` 가 임시 폴더에 작은 글을 만들어 통과, 실패, 건너뜀을 확인합니다. CI 에서 같이 돌립니다.
 
 - 로컬에서 247개를 8개씩 동시에 돌리니 48초 걸렸습니다. 블록 하나가 가장 오래 걸린 것은 34초(privacy-signal-loss)였습니다.
 
 - CI 의 파이썬은 `actions/setup-python` 으로 로컬과 같은 3.9 에 맞춥니다. 3.9 를 받을 수 없으면 CI 기본 버전으로 247개를 먼저 돌려 출력이 다른 블록이 없는지 보고 정합니다.
 
-- `validate.yml` 에 단계 셋(형식 검사, 단위 테스트, 실행 검사)을 더합니다.
+- `validate.yml` 에 단계 넷(형식 검사, 단위 테스트, 실행 검사, 실행 검사 시험)을 더합니다.
 
 ### 7-3. 다른 검사와의 관계
 
@@ -397,17 +409,18 @@ member_tower, ad_tower = Tower(), Tower()
 | 돌려 본 결과 | 블록 | 옮길 때 |
 |---|---|---|
 | 적힌 출력과 똑같다 | 200 (블록 안 154, 별도 블록 46) | 하는 일, 단계, 뜻을 더합니다. 공백만 다른 2개(ecpm-ranking, instrumental-variables)는 찍힌 그대로 고칩니다 |
-| 시간을 재서 돌릴 때마다 숫자가 다르다 | 8 | 출력 머리에 「시간은 돌릴 때마다 다르다」를 씁니다. algorithm-binary-search-stack 1, algorithm-complexity-array 2, algorithm-dp-greedy 2, algorithm-hash-sort 2, algorithm-tree-heap 1 |
+| 시간을 재서 돌릴 때마다 숫자가 다르다 | 9 | 출력 머리에 「시간은 돌릴 때마다 다르다」를 씁니다. algorithm-binary-search-stack 1, algorithm-complexity-array 2, algorithm-dp-greedy 2, algorithm-hash-sort 2, algorithm-tree-heap 1, container-ci-pipeline 1 |
 | 앞 블록에 이어서 돌려야 돈다 | 14 | 상태 표시를 붙입니다. 같은 글 12개(algorithm-graph-search 2, algorithm-tree-heap 4, bentoml-model-serving 1, feedback-loop-bias 2, negative-sampling-bias 1, offpolicy-evaluation 2), 앞 글 2개(feedback-loop-remedies, feedback-loop-bias 에 이어서) |
-| 적힌 출력과 다르다 | 4 | 다시 돌려 고칩니다. 아래 표 |
+| 적힌 출력과 다르다 | 3 | 다시 돌려 고칩니다. 아래 표 |
 | 의사코드이거나 여기서 돌릴 수 없다 | 11 | 의사코드 6, 없는 라이브러리 3(ad-log-pipeline 의 pyspark 2, data-engineer-first-six-months 1), 코드 조각 1(bentoml-model-serving), 없는 파일 1(audience-segmentation). 조각과 없는 파일에는 「그대로 실행되지 않습니다」 표시를 붙입니다 |
 | 찍는 것이 없거나 출력을 안 적었다 | 10 | 찍는 것이 없는 8개는 출력 영역 없이 둡니다. 찍는데 안 적은 2개(ecpm-ranking)에는 출력과 뜻을 붙입니다 |
 
-적힌 출력과 다른 4개입니다.
+적힌 출력과 다른 3개입니다.
+
+> container-ci-pipeline 첫 블록은 처음에 0줄로 나왔습니다. unittest 가 stderr 에 쓰기 때문이었습니다. stderr 를 같이 모으고 블록을 진짜 `__main__` 모듈로 돌리니 적힌 출력과 같았습니다. 걸린 시간 줄(`Ran 3 tests in 0.000s`)이 있어서 시간을 재는 블록에 넣었습니다.
 
 | 블록 | 다른 점 | 할 일 |
 |---|---|---|
-| container-ci-pipeline 첫 블록 | unittest 가 stderr 에 써서 stdout 만 모으면 0줄 | stderr 를 같이 모은 뒤 다시 봅니다. 걸린 시간 줄이 있으면 시간 표시를 붙입니다 |
 | lookalike-modeling 둘째 블록 | `[82]` 가 `[83]` 으로 나옴 | 라이브러리 버전 차이로 보입니다. 다시 돌려 고치고 본문 숫자를 맞춥니다 |
 | ltv-ad-ranking 첫 블록 | 적힌 13줄, 찍힌 9줄 | 다시 돌려 고칩니다 |
 | negative-sampling-bias 일곱째 블록 | 적힌 3줄이 찍히지 않음. 함수가 돌려주는 값을 출력처럼 적었습니다 | `print` 를 더하거나, 출력 대신 메모로 옮깁니다 |
@@ -450,7 +463,7 @@ member_tower, ad_tower = Tower(), Tower()
 | `css/style.css` | 맨 끝에 코드 블록 묶음, 휴대폰 여백 바로잡기 |
 | `scripts/check-code-blocks.js`, `scripts/code-blocks-baseline.json` | 새 파일. 형식 검사와 기준표 |
 | `scripts/test-code-steps.js` | 새 파일. 토크나이저와 파서 단위 테스트 |
-| `scripts/check-python-outputs.py` | 새 파일. 실행 검사 |
+| `scripts/check-python-outputs.py`, `scripts/test-python-outputs.py` | 새 파일. 실행 검사와 그 시험 |
 | `scripts/check-design.js` | 머리 주석 두 줄 |
 | `.github/workflows/validate.yml` | 파이썬 준비와 검사 단계 셋 |
 | `MARKDOWN_GUIDE.md` | 파이썬 예제 규칙, 「주석이 곧 설명 본문」 규칙, 디자인 절의 세이지 주석 문장, 의사코드 규칙, 맨 위 검사 명령 목록 |

@@ -3,9 +3,10 @@
 
   python3 scripts/check-python-outputs.py              새 형식 블록을 돌린다 (CI)
   python3 scripts/check-python-outputs.py --legacy     옛 형식 블록도 돌린다 (옮길 때 로컬에서)
-  python3 scripts/check-python-outputs.py --post <id>  글 하나만 돌린다
+  python3 scripts/check-python-outputs.py --post <글>   글 하나만 돌린다 (posts/ 의 파일 이름, .md 는 뺀다)
   python3 scripts/check-python-outputs.py --jobs <n>   동시에 돌릴 수 (기본 4)
   python3 scripts/check-python-outputs.py --root <폴더> posts/ 를 그 폴더에서 찾는다 (시험용)
+  python3 scripts/check-python-outputs.py --show       블록마다 찍힌 줄을 뜻 줄 자리와 함께 보여 준다 (옮길 때 붙여 쓴다)
 
 블록 읽기는 js/code-steps.js 한 곳에 있다. node scripts/check-code-blocks.js --json 으로 받아 쓴다.
 표준 라이브러리만 쓴다. import 할 수 없는 라이브러리를 쓰는 블록은 실패로 치지 않고 건너뛴다.
@@ -127,7 +128,8 @@ def prefix_of(b, by_post):
     for x in mine[:b['index'] + 1]:
         for l in x['labels']:
             if l['kind'] == 'cont-post':
-                other += by_post.get(l['post'], [])
+                # 글 id 에 맞는 파일 이름은 형식 검사가 file 에 넣어 준다 (mab-summary 는 mab.md)
+                other += by_post.get(l.get('file') or l['post'], [])
     seen, codes = set(), []
     for x in other + mine[:b['index']]:
         key = (x['post'], x['index'])
@@ -178,13 +180,32 @@ def check(b, res):
     return []
 
 
+def show_lines(b, res):
+    """찍힌 줄을 그 줄을 찍은 단계마다 묶어 출력 영역에 붙일 꼴로 돌려준다. 뜻은 … 자리에 쓴다."""
+    out, last = [], object()
+    steps = b['format'] == 'steps' and bool(b['stepLines'])
+    for text, lineno in trim(res['lines'], lambda x: x[0]):
+        s = step_of(b, lineno) if steps else 0
+        if s != last:
+            out.append('# %d단계 뜻: …' % s if s else '# 뜻: …')
+            last = s
+        out.append('# ' + text if text else '#')
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description='파이썬 블록을 돌려 적힌 출력과 견준다')
     ap.add_argument('--legacy', action='store_true', help='옛 형식 블록도 돌린다')
-    ap.add_argument('--post', help='글 하나만 (id)')
+    ap.add_argument('--post', help='글 하나만 (posts/ 의 파일 이름, .md 는 뺀다)')
     ap.add_argument('--jobs', type=int, default=4, help='동시에 돌릴 수')
     ap.add_argument('--root', help='posts/ 가 있는 폴더 (시험용)')
+    ap.add_argument('--show', action='store_true', help='블록마다 찍힌 줄을 뜻 줄 자리와 함께 보여 준다')
     args = ap.parse_args()
+
+    # 없는 글을 주면 아무것도 안 돌리고 통과로 끝나던 것을 막는다
+    if args.post and not os.path.exists(os.path.join(args.root or ROOT, 'posts', args.post + '.md')):
+        print('✗ posts/%s.md 가 없습니다. --post 에는 posts/ 의 파일 이름을 .md 없이 씁니다' % args.post)
+        sys.exit(2)
 
     blocks = load_blocks(args.root)
     by_post = {}
@@ -193,38 +214,39 @@ def main():
     todo = [b for b in blocks
             if (args.post is None or b['post'] == args.post)
             and ((b['format'] == 'steps' and b['ok']) or (args.legacy and b['format'] == 'legacy'))]
-
-    work = tempfile.mkdtemp(prefix='pyblocks-')
-    harness = os.path.join(work, 'harness.py')
-    with open(harness, 'w', encoding='utf-8') as f:
-        f.write(HARNESS)
     env = dict(os.environ, PYTHONHASHSEED='0', PYTHONIOENCODING='utf-8', MPLBACKEND='Agg')
 
-    def run(b):
-        if norun(b):
-            return b, 'norun', None
-        job = json.dumps({'prefix': prefix_of(b, by_post), 'code': code_of(b)})
-        try:
-            r = subprocess.run([sys.executable, harness], input=job, cwd=tempfile.mkdtemp(dir=work),
-                               capture_output=True, text=True, timeout=TIMEOUT, env=env)
-        except subprocess.TimeoutExpired:
-            return b, 'fail', ['%d초 안에 끝나지 않았습니다' % TIMEOUT]
-        try:
-            res = json.loads(r.stdout.strip().splitlines()[-1])
-        except (ValueError, IndexError):
-            return b, 'fail', ['실행기가 결과를 내지 못했습니다: ' + r.stderr[-300:]]
-        if res['missing']:
-            return b, 'missing', res['missing']
-        if res['err']:
-            return b, 'fail', [res['err']]
-        errs = check(b, res)
-        return b, ('fail' if errs else 'pass'), errs
+    # 실행기와 블록마다 쓰는 작업 폴더는 끝나면 지운다
+    with tempfile.TemporaryDirectory(prefix='pyblocks-') as work:
+        harness = os.path.join(work, 'harness.py')
+        with open(harness, 'w', encoding='utf-8') as f:
+            f.write(HARNESS)
 
-    with cf.ThreadPoolExecutor(max(1, args.jobs)) as ex:
-        results = list(ex.map(run, todo))
+        def run(b):
+            if norun(b):
+                return b, 'norun', None, None
+            job = json.dumps({'prefix': prefix_of(b, by_post), 'code': code_of(b)})
+            try:
+                r = subprocess.run([sys.executable, harness], input=job, cwd=tempfile.mkdtemp(dir=work),
+                                   capture_output=True, text=True, timeout=TIMEOUT, env=env)
+            except subprocess.TimeoutExpired:
+                return b, 'fail', ['%d초 안에 끝나지 않았습니다' % TIMEOUT], None
+            try:
+                res = json.loads(r.stdout.strip().splitlines()[-1])
+            except (ValueError, IndexError):
+                return b, 'fail', ['실행기가 결과를 내지 못했습니다: ' + r.stderr[-300:]], None
+            if res['missing']:
+                return b, 'missing', res['missing'], None
+            if res['err']:
+                return b, 'fail', [res['err']], res
+            errs = check(b, res)
+            return b, ('fail' if errs else 'pass'), errs, res
+
+        with cf.ThreadPoolExecutor(max(1, args.jobs)) as ex:
+            results = list(ex.map(run, todo))
 
     count = {'pass': 0, 'fail': 0, 'missing': 0, 'norun': 0}
-    for b, status, detail in results:
+    for b, status, detail, res in results:
         count[status] += 1
         where = 'posts/%s.md 의 %d번째 파이썬 블록' % (b['post'], b['index'] + 1)
         if status == 'fail':
@@ -232,6 +254,10 @@ def main():
                 print('✗ %s — %s' % (where, e))
         elif status == 'missing':
             print('  건너뜀 %s (%s 없음)' % (where, detail))
+        if args.show and res is not None:
+            print('── %s — 찍힌 줄' % where)
+            for line in show_lines(b, res):
+                print(line)
     skipped = count['missing'] + count['norun']
     print('%s 통과 %d, 건너뜀 %d (라이브러리 없음 %d, 실행 안 됨 %d), 실패 %d' % (
         '✗' if count['fail'] else '✓', count['pass'], skipped, count['missing'], count['norun'], count['fail']))

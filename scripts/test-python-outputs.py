@@ -97,11 +97,40 @@ POSTS = {
         '# 하는 일: 조각이다.',
         '    return x',
     ],
+    'raise': [
+        '# 하는 일: 일부러 예외를 낸다.',
+        'raise ValueError("일부러")',
+    ],
+    'step0-mean': [
+        '# 하는 일: 단계가 찍은 줄에 번호 없는 뜻을 붙였다.',
+        '# 1단계: 하나를 찍는다',
+        'print("하나")',
+        '',
+        '# 출력:',
+        '# 뜻: 번호 없는 뜻은 첫 단계 앞 코드가 찍은 줄에만 붙인다.',
+        '# 하나',
+    ],
 }
 # 이어지는 블록 — 두 블록을 한 글에 둔다
 CONT = [
     ['x = 41'],
     ['# (앞 블록에 이어서 돌린다.)', '# 하는 일: 앞 블록의 x 를 쓴다.', 'print(x + 1)', '', '# 출력:', '# 뜻: 앞 블록이 x 를 만들었다.', '# 42'],
+]
+# 앞 블록이 예외를 내면 이어지는 블록은 실패한다
+CONT_RAISE = [
+    ['x = 1 / 0'],
+    ['# (앞 블록에 이어서 돌린다.)', '# 하는 일: 앞 블록의 x 를 쓴다.', 'print(x)', '', '# 출력:', '# 뜻: 앞 블록이 x 를 만든다.', '# 1'],
+]
+# 그대로 실행되지 않는 블록은 앞 코드에서 뺀다. 빼지 않으면 들여쓴 조각이 IndentationError 를 낸다
+CONT_NORUN = [
+    ['# (발췌 — 그대로 실행되지 않습니다.)', '# 하는 일: 조각이다.', '    return x'],
+    ['x = 41'],
+    ['# (앞 블록에 이어서 돌린다.)', '# 하는 일: 앞 블록의 x 를 쓴다.', 'print(x + 1)', '', '# 출력:', '# 뜻: 발췌 블록을 빼고 돌렸다.', '# 42'],
+]
+# 다른 글에 이어서 — 글 id(other-id)와 파일 이름(Other_File)이 다른 글을 js/posts.js 로 잇는다
+OTHER = [['y = 6']]
+CONT_POST = [
+    ['# (other-id 글의 코드에 이어서 돌린다.)', '# 하는 일: 앞 글의 y 를 쓴다.', 'print(y * 7)', '', '# 출력:', '# 뜻: 앞 글의 블록을 먼저 돌렸다.', '# 42'],
 ]
 
 pass_, fail = 0, 0
@@ -125,11 +154,19 @@ def run(root, pid):
     return r.returncode, r.stdout
 
 
-root = tempfile.mkdtemp(prefix='pyout-test-')
+tmp = tempfile.TemporaryDirectory(prefix='pyout-test-')
+root = tmp.name
 os.makedirs(os.path.join(root, 'posts'))
+os.makedirs(os.path.join(root, 'js'))
+with open(os.path.join(root, 'js', 'posts.js'), 'w', encoding='utf-8') as f:
+    f.write("const posts = [{ id: 'other-id', contentUrl: 'posts/Other_File.md' }];\nmodule.exports = { posts };\n")
 for pid, lines in POSTS.items():
     write_post(root, pid, [lines])
 write_post(root, 'cont', CONT)
+write_post(root, 'cont-raise', CONT_RAISE)
+write_post(root, 'cont-norun', CONT_NORUN)
+write_post(root, 'Other_File', OTHER)
+write_post(root, 'cont-post', CONT_POST)
 
 print('맞게 적은 블록은 통과한다')
 eq('두 단계', run(root, 'ok')[0], 0)
@@ -152,5 +189,23 @@ eq('없는 라이브러리', (code, 'no_such_module_for_test 없음' in out), (0
 code, out = run(root, 'norun')
 eq('그대로 실행되지 않는 블록', (code, '실행 안 됨 1' in out), (0, True))
 
+print('\n예외와 앞 코드')
+code, out = run(root, 'raise')
+eq('블록이 예외를 내면 실패', (code, 'ValueError: 일부러' in out), (1, True))
+code, out = run(root, 'cont-raise')
+eq('앞 블록이 예외를 내면 실패', (code, '앞 블록에서 ZeroDivisionError' in out), (1, True))
+eq('그대로 실행되지 않는 블록은 앞 코드에서 뺀다', run(root, 'cont-norun')[0], 0)
+eq('다른 글의 코드에 이어서 (글 id 를 파일 이름으로)', run(root, 'cont-post')[0], 0)
+code, out = run(root, 'step0-mean')
+eq('번호 없는 뜻 아래 줄은 첫 단계 앞 코드가 찍어야 한다',
+   (code, '1번째 찍힌 줄은 1단계가 찍었는데 뜻 줄은 첫 단계 앞 코드입니다' in out), (1, True))
+
+print('\n글 이름과 보여 주기')
+r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'no-such-post'], capture_output=True, text=True)
+eq('없는 글을 주면 멈춘다', (r.returncode, 'posts/no-such-post.md 가 없습니다' in r.stdout), (2, True))
+r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'ok', '--show'], capture_output=True, text=True)
+eq('--show 는 찍힌 줄을 단계마다 뜻 줄 자리와 함께 보여 준다', '# 1단계 뜻: …\n# 하나\n# 2단계 뜻: …\n# 둘' in r.stdout, True)
+
+tmp.cleanup()
 print('\n%d 통과, %d 실패' % (pass_, fail))
 sys.exit(1 if fail else 0)

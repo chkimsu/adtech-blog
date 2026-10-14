@@ -104,10 +104,13 @@
 
   // ---------- 파서 ----------
   const HEAD = /^# 하는 일:(.*)$/;
+  // 띄어쓰기나 들여쓰기가 틀린 하는 일 줄. 옛 형식으로 넘어가 아무 말 없이 지나가지 않게 잡는다.
+  const HEAD_LOOSE = /^\s*#\s*하는\s*일\s*:/;
   const STATUS = [
     { re: /^# \((.+?) — 그대로 실행되지 않습니다\.\)\s*$/, make: m => ({ kind: 'norun', text: m[1] }) },
     { re: /^# \(앞 블록에 이어서 돌린다\.\)\s*$/, make: () => ({ kind: 'cont', text: '앞 블록에 이어서' }) },
-    { re: /^# \(([a-z0-9-]+) 글의 코드에 이어서 돌린다\.\)\s*$/, make: m => ({ kind: 'cont-post', post: m[1], text: '앞 글에 이어서' }) },
+    // <글 id> 는 js/posts.js 의 id 다. TS-linTS 처럼 대문자가 든 id 도 있다. 글 id 가 맞는지는 형식 검사가 본다.
+    { re: /^# \(([A-Za-z0-9_-]+) 글의 코드에 이어서 돌린다\.\)\s*$/, make: m => ({ kind: 'cont-post', post: m[1], text: '앞 글에 이어서' }) },
   ];
   const STEP = /^# (\d+)단계: (.*\S)\s*$/;
   const STEP_LOOSE = /^\s*#\s*\d+\s*단계\s*:/;
@@ -141,7 +144,12 @@
     if (!(i < n && isCol0(i) && HEAD.test(lines[i]))) {
       let stray = -1;
       for (let j = 0; j < bodyEnd; j++) if (isCol0(j) && HEAD.test(lines[j])) { stray = j; break; }
-      if (stray < 0) return { format: 'legacy', ok: true, errors: [], src: text };
+      if (stray < 0) {
+        const loose = lines.findIndex((l, j) => isComment(j) && HEAD_LOOSE.test(l));
+        if (loose < 0) return { format: 'legacy', ok: true, errors: [], src: text };
+        err(loose, '하는 일 줄은 들여쓰기 없이 `# 하는 일: …` 꼴로 씁니다');
+        return { format: 'steps', ok: false, errors, src: text };
+      }
       if (i < n && isCol0(i) && /^# \(.*\)\s*$/.test(lines[i])) err(i, '상태 표시는 정해진 세 가지 꼴 가운데 하나로 씁니다');
       err(stray, '하는 일 줄은 블록 맨 위, 상태 표시 바로 다음 줄에 둡니다');
       return { format: 'steps', ok: false, errors, src: text };
@@ -167,6 +175,8 @@
         let para = [];
         let k = j + 1;
         for (; k < bodyEnd && isCol0(k) && !STEP.test(lines[k]) && !HEAD.test(lines[k]); k++) {
+          // 단계 줄 바로 아래의 「#2단계: 둘」, 「# 2단계 : 둘」 같은 오타는 풀이로 넘어가 아무 말 없이 지나가니 여기서 잡는다
+          if (STEP_LOOSE.test(lines[k])) err(k, '단계 표시는 들여쓰기 없이 `# N단계: 제목` 꼴로 씁니다');
           const t = lines[k].replace(/^#\s?/, '').trim();
           if (!t) { if (para.length) cur.paras.push(para); para = []; } else para.push({ line: k, text: t });
         }
@@ -232,6 +242,7 @@
       if (!out.groups.length) err(outAt, '출력 표시 아래에 뜻 줄과 찍힌 줄이 없습니다');
       for (const gg of out.groups) {
         if (!gg.lines.length) err(gg.from, '뜻 줄 아래에 찍힌 줄이 없습니다');
+        else if (!gg.lines.some(t => t.trim())) err(gg.from, '뜻 줄 아래에 빈 줄만 있습니다. 빈 줄은 앞이나 뒤 묶음에 붙입니다');
         if (steps.length && gg.n !== null && !steps.includes(gg.n)) err(gg.from, `${gg.n}단계가 이 블록에 없습니다`);
         if (!steps.length && gg.n !== null) err(gg.from, '단계 없는 블록의 뜻 줄에는 번호를 붙이지 않습니다');
       }

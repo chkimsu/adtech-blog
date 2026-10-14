@@ -232,11 +232,10 @@ r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'blank', '-
 eq('--show 는 단계 없는 블록을 번호 없는 뜻으로, 빈 줄을 # 로 보여 준다', '# 뜻: …\n# 하나\n#\n# 둘' in r.stdout, True)
 r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', ''], capture_output=True, text=True)
 eq('--post 를 비워 주면 멈춘다', (r.returncode, 'posts/.md 가 없습니다' in r.stdout), (2, True))
-private = tempfile.mkdtemp(prefix='pyout-tmpdir-')
-subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'ok'], capture_output=True, text=True,
-               env=dict(os.environ, TMPDIR=private))
-eq('돌린 뒤 임시 폴더가 남지 않는다', os.listdir(private), [])
-os.rmdir(private)
+with tempfile.TemporaryDirectory(prefix='pyout-tmpdir-') as private:
+    r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'ok'], capture_output=True, text=True,
+                       env=dict(os.environ, TMPDIR=private))
+    eq('돌린 뒤 임시 폴더가 남지 않는다', (r.returncode, '✓ 통과 1,' in r.stdout, os.listdir(private)), (0, True, []))
 
 tmp.cleanup()
 print('\n%d 통과, %d 실패' % (pass_, fail))

@@ -198,17 +198,33 @@ eq('textarea 와 input 에 포커스가 있으면 복사 처리가 비켜선다'
   [true, true, false, false]);
 {
   // 배치가 실패하는 블록 하나를 두고 두 번 배치한다. 화면에서는 글꼴과 창 크기가 바뀔 때마다 다시 배치한다.
+  // 첫 mount 가 문서에 붙이는 복사 처리기도 여기서 붙잡는다. 처리기는 문서에 한 번만 붙는다.
   const warns = [];
   const realWarn = console.warn;
+  let onCopy = null, asked = 0;
   console.warn = msg => warns.push(msg);
-  global.document = { addEventListener() {} };
-  const bad = { querySelector() { throw new Error('일부러'); }, addEventListener() {} };
-  const root = { querySelectorAll: sel => (sel === '.cb' ? [bad] : []) };
-  C.mount(root);
-  C.mount(root);
-  console.warn = realWarn;
-  delete global.document;
-  eq('실패한 블록은 다시 배치해도 한 번만 알린다', warns, ['코드 블록 하나를 배치하지 못했습니다']);
+  global.document = {
+    activeElement: null,
+    addEventListener(type, fn) { if (type === 'copy') onCopy = fn; },
+    getSelection() { asked++; return null; },
+  };
+  try {
+    const bad = { querySelector() { throw new Error('일부러'); }, addEventListener() {} };
+    const root = { querySelectorAll: sel => (sel === '.cb' ? [bad] : []) };
+    C.mount(root);
+    C.mount(root);
+    eq('실패한 블록은 다시 배치해도 한 번만 알린다', warns, ['코드 블록 하나를 배치하지 못했습니다']);
+    const ev = { clipboardData: { setData() {} }, preventDefault() {} };
+    document.activeElement = { tagName: 'TEXTAREA' };
+    onCopy(ev);
+    const inField = asked;
+    document.activeElement = { tagName: 'DIV' };
+    onCopy(ev);
+    eq('글자 칸에 포커스가 있으면 복사 처리가 고른 자리를 보지 않는다', [inField, asked], [0, 1]);
+  } finally {
+    console.warn = realWarn;
+    delete global.document;
+  }
 }
 
 console.log(`\n${pass} 통과, ${fail} 실패`);

@@ -6588,8 +6588,10 @@ pre.cb-wrap code.hljs { overflow: visible; }
 .cb-k, .cb-fn { color: var(--ink); font-weight: 600; }
 .cb-bi { color: var(--ink2); }
 .cb-s { color: var(--series-6); }
-/* 숫자 한 덩어리(3e-3, 1_000)는 줄 끝에서 끊지 않는다. 휴대폰에서 lr=3e-3 이 3e- 에서 끊겼다 */
+/* 숫자 한 덩어리(3e-3, 1_000)는 줄 끝에서 끊지 않는다. 휴대폰에서 lr=3e-3 이 3e- 에서 끊겼다.
+   파이썬이 아닌 블록(pre.cb-wrap)의 숫자도 같다 */
 .cb-n { color: var(--series-5); white-space: nowrap; }
+pre.cb-wrap .hljs-number { white-space: nowrap; }
 
 /* 같은 번호 밝히기 */
 .cb-row.is-hot .cb-exp, .cb-row.is-hot .cb-code { background: var(--navy-bg); }

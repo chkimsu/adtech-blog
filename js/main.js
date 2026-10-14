@@ -850,11 +850,13 @@ function copyText(text, btn) {
     ta.value = text;
     ta.style.position = 'fixed';
     ta.style.opacity = '0';
+    ta.readOnly = true;          // 휴대폰에서 포커스가 가도 자판이 뜨지 않게 한다
     document.body.appendChild(ta);
     ta.focus();                  // 포커스가 있어야 js/code-steps.js 의 복사 처리가 이 칸을 알아보고 비켜선다
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
+    btn.focus();                 // 숨은 칸으로 옮겨 간 포커스를 Copy 단추에 돌려준다
     done();
   });
 }

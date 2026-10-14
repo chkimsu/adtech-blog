@@ -6564,6 +6564,8 @@ a.cb-label { color: var(--navy); border-color: var(--navy-bd); text-decoration: 
 .cb .cb-ln { font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.75; color: var(--ink2); }
 pre.cb-wrap code { display: block; white-space: normal; }
 pre.cb-wrap .cb-ln { display: block; }
+/* 접힌 줄 막대는 줄 왼쪽 10px 바깥에 그린다. hljs 의 code 는 가로 스크롤 상자라 그 막대를 잘라 버려서 넘침을 보이게 둔다.
+   줄을 접으니 가로 스크롤은 쓰지 않는다. */
 pre.cb-wrap code.hljs { overflow: visible; }
 .cb-src { display: block; position: relative; white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(var(--ind, 0) * 1ch + 4ch); text-indent: -4ch; }
 .cb-ln.is-wrapped > .cb-src::before,
@@ -6579,13 +6581,15 @@ pre.cb-wrap code.hljs { overflow: visible; }
 .cb-out[data-layout="stack"] .cb-oln.is-wrapped > .cb-src::before { left: calc(max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)) - 10px); }
 .cb-ln.has-note:not(.is-drop) { display: grid; grid-template-columns: calc(var(--nc, 40) * 1ch) minmax(0, 1fr); align-items: baseline; }
 .cb-note { justify-self: start; padding: 1px 8px; font-family: var(--font-sans); font-size: 0.844rem; line-height: 1.55; white-space: normal; color: var(--ink); background: var(--navy-bg); border-left: 2px solid var(--navy); }
-/* 줄 아래 메모와 줄 사이 메모는 들여쓰기 자리에서 시작하고, 위의 코드 줄과 같은 자리에서 멈춘다(들여쓰기를 줄인 줄과 떨어지지 않게) */
+/* 줄 아래 메모와 줄 사이 메모는 그 줄의 들여쓰기 자리에서 시작하고, 들여쓰기를 줄인 코드 줄처럼 글자 24자 자리를 남기는 곳에서 멈춘다.
+   메모의 ch 는 본문 글꼴의 폭이라 코드 줄과 몇 px 어긋난다(390 화면의 깊은 들여쓰기에서 14px 쯤). */
 .cb-ln.is-drop .cb-note,
 .cb-ln-note .cb-note { --note-at: max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)); display: block; width: fit-content; max-width: calc(100% - var(--note-at)); margin: 1px 0 4px var(--note-at); }
 .cb-k, .cb-fn { color: var(--ink); font-weight: 600; }
 .cb-bi { color: var(--ink2); }
 .cb-s { color: var(--series-6); }
-.cb-n { color: var(--series-5); }
+/* 숫자 한 덩어리(3e-3, 1_000)는 줄 끝에서 끊지 않는다. 휴대폰에서 lr=3e-3 이 3e- 에서 끊겼다 */
+.cb-n { color: var(--series-5); white-space: nowrap; }
 
 /* 같은 번호 밝히기 */
 .cb-row.is-hot .cb-exp, .cb-row.is-hot .cb-code { background: var(--navy-bg); }

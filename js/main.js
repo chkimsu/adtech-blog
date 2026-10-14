@@ -851,6 +851,7 @@ function copyText(text, btn) {
     ta.style.position = 'fixed';
     ta.style.opacity = '0';
     document.body.appendChild(ta);
+    ta.focus();                  // 포커스가 있어야 js/code-steps.js 의 복사 처리가 이 칸을 알아보고 비켜선다
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);

@@ -380,7 +380,9 @@
     return parts.map((h, i) => {
       const r = rawLines[i] || '';
       const ind = r.length - r.replace(/^ +/, '').length;
-      return `<span class="cb-ln" data-ln="${i}" style="--ind:${ind}"><span class="cb-src">${stripIndent(h, ind) || ' '}</span></span>`;
+      // 여러 줄에 걸친 span 안의 빈 줄은 닫고 다시 연 빈 span 만 남는다. 글자가 없으면 공백 하나를 둬야 줄 높이가 산다.
+      const body = stripIndent(h, ind);
+      return `<span class="cb-ln" data-ln="${i}" style="--ind:${ind}"><span class="cb-src">${body.replace(/<[^>]*>/g, '') ? body : ' '}</span></span>`;
     }).join('');
   }
 
@@ -481,8 +483,13 @@
     return spots;
   }
 
+  // 글자를 넣는 칸(textarea, input)에 포커스가 있으면 그 칸이 복사하는 것이다. Copy 버튼은 클립보드가 막히면
+  // 숨은 textarea 를 골라 복사하는데, 그때 문서에 남아 있던 블록 선택을 가로채지 않게 비켜선다.
+  const inTextField = el => !!el && /^(TEXTAREA|INPUT)$/.test(el.tagName);
+
   // 고른 자리가 블록 하나(.cb 또는 pre.cb-wrap) 안에 있을 때만 끼어든다. 원문은 Copy 버튼이 복사하는 data-src 다.
   function onCopy(e) {
+    if (inTextField(document.activeElement)) return;
     const sel = document.getSelection();
     if (!e.clipboardData || !sel || sel.rangeCount !== 1 || sel.isCollapsed) return;
     const range = sel.getRangeAt(0);
@@ -497,13 +504,17 @@
   }
 
   let copyOn = false;
+  // 배치는 창 크기와 글꼴이 바뀔 때마다 다시 돈다. 실패한 블록은 처음 한 번만 알린다.
+  const warned = new WeakSet();
   function mount(root) {
     if (!copyOn) { copyOn = true; document.addEventListener('copy', onCopy); }
     const blocks = [...root.querySelectorAll('.cb')];
     const wraps = [...root.querySelectorAll('pre.cb-wrap')];
     // 블록마다 따로 감싼다. 한 블록이 실패해도 나머지 블록은 배치된다.
     const each = (els, fn) => els.forEach(el => {
-      try { fn(el); } catch (err) { console.warn('코드 블록 하나를 배치하지 못했습니다', err); }
+      try { fn(el); } catch (err) {
+        if (!warned.has(el)) { warned.add(el); console.warn('코드 블록 하나를 배치하지 못했습니다', err); }
+      }
     });
     const redo = () => { each(blocks, layout); each(wraps, markWrapped); };
     each(blocks, hover);
@@ -516,5 +527,5 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(redo);
   }
 
-  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, outputLayout, copySource, mount };
+  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, outputLayout, copySource, inTextField, mount };
 });

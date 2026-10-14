@@ -148,6 +148,10 @@ eq('들여쓰기를 떼고 --ind 로', C.wrapLines('  <span class="k">key</span>
   '<span class="cb-ln" data-ln="0" style="--ind:2"><span class="cb-src"><span class="k">key</span>: 1</span></span>' +
   '<span class="cb-ln" data-ln="1" style="--ind:0"><span class="cb-src">b</span></span>');
 eq('선 글자 그림', [C.hasDrawing('┌─┐'), C.hasDrawing('a -> b')], [true, false]);
+eq('여러 줄 span 안의 빈 줄은 공백 하나', C.wrapLines('<span class="c">a\n\nb</span>', 'a\n\nb'),
+  '<span class="cb-ln" data-ln="0" style="--ind:0"><span class="cb-src"><span class="c">a</span></span></span>' +
+  '<span class="cb-ln" data-ln="1" style="--ind:0"><span class="cb-src"> </span></span>' +
+  '<span class="cb-ln" data-ln="2" style="--ind:0"><span class="cb-src"><span class="c">b</span></span></span>');
 
 console.log('\n배치 계산');
 eq('메모 자리 = 가장 긴 줄 + 2', C.noteColumn(40, 86), 42);
@@ -181,6 +185,25 @@ eq('한 줄의 코드 글자만, 메모만이면 브라우저에 맡긴다', [C.
 eq('설명 칸, 출력 영역, 머리 안에서만 고르면 브라우저에 맡긴다',
   [C.copySource(SRC, [spot(4, 'exp'), spot(5, 'exp')]), C.copySource(SRC, [spot(8, 'out'), spot(9, 'out')]), C.copySource(SRC, [spot(0, 'head')]), C.copySource(SRC, [])],
   [null, null, null, null]);
+
+console.log('\n복사와 배치 — 브라우저 밖에서 볼 수 있는 것');
+eq('textarea 와 input 에 포커스가 있으면 복사 처리가 비켜선다',
+  [C.inTextField({ tagName: 'TEXTAREA' }), C.inTextField({ tagName: 'INPUT' }), C.inTextField({ tagName: 'DIV' }), C.inTextField(null)],
+  [true, true, false, false]);
+{
+  // 배치가 실패하는 블록 하나를 두고 두 번 배치한다. 화면에서는 글꼴과 창 크기가 바뀔 때마다 다시 배치한다.
+  const warns = [];
+  const realWarn = console.warn;
+  console.warn = msg => warns.push(msg);
+  global.document = { addEventListener() {} };
+  const bad = { querySelector() { throw new Error('일부러'); }, addEventListener() {} };
+  const root = { querySelectorAll: sel => (sel === '.cb' ? [bad] : []) };
+  C.mount(root);
+  C.mount(root);
+  console.warn = realWarn;
+  delete global.document;
+  eq('실패한 블록은 다시 배치해도 한 번만 알린다', warns, ['코드 블록 하나를 배치하지 못했습니다']);
+}
 
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

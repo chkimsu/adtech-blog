@@ -147,7 +147,8 @@
       if (stray < 0) {
         const loose = lines.findIndex((l, j) => isComment(j) && HEAD_LOOSE.test(l));
         if (loose < 0) return { format: 'legacy', ok: true, errors: [], src: text };
-        err(loose, '하는 일 줄은 들여쓰기 없이 `# 하는 일: …` 꼴로 씁니다');
+        // 출력 영역 안의 하는 일 줄은 꼴이 아니라 자리가 틀린 것이다
+        err(loose, loose < bodyEnd ? '하는 일 줄은 들여쓰기 없이 `# 하는 일: …` 꼴로 씁니다' : '하는 일 줄은 블록 맨 위, 상태 표시 바로 다음 줄에 둡니다');
         return { format: 'steps', ok: false, errors, src: text };
       }
       if (i < n && isCol0(i) && /^# \(.*\)\s*$/.test(lines[i])) err(i, '상태 표시는 정해진 세 가지 꼴 가운데 하나로 씁니다');

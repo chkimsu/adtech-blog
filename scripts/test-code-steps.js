@@ -126,6 +126,12 @@ const printedStep = C.parse(block('# 하는 일: x.', '# 1단계: 찍는다', 'p
 eq('「1단계」 로 시작하는 찍힌 줄은 찍힌 줄', [printedStep.ok, printedStep.out.groups[0].lines], [true, ['  1단계 반']]);
 eq('대문자가 든 글 id', C.parse(block('# (TS-linTS 글의 코드에 이어서 돌린다.)', '# 하는 일: 앞 글에 이어서 돈다.', 'run()')).labels,
   [{ kind: 'cont-post', post: 'TS-linTS', text: '앞 글에 이어서' }]);
+eq('밑줄이 든 글 id', C.parse(block('# (ucb_ts 글의 코드에 이어서 돌린다.)', '# 하는 일: 앞 글에 이어서 돈다.', 'run()')).labels,
+  [{ kind: 'cont-post', post: 'ucb_ts', text: '앞 글에 이어서' }]);
+eq('쌍점 앞에 띄어 쓴 하는 일도 잡는다', msgs(block('# 하는 일 : x.', 'print(1)')), ['1:하는 일 줄은 들여쓰기 없이 `# 하는 일: …` 꼴로 씁니다']);
+eq('출력 영역 안의 하는 일 줄은 자리가 틀렸다고 알린다', msgs(block('print(1)', '# 출력:', '# 뜻: 하나.', '# 1', '# 하는 일: x.')),
+  ['5:하는 일 줄은 블록 맨 위, 상태 표시 바로 다음 줄에 둡니다']);
+eq('문자열 속 하는 일 줄은 옛 형식 그대로', C.parse(block('s = """', '# 하는 일: 문자열 안이다.', '"""', 'print(s)')).format, 'legacy');
 
 console.log('\n그리기');
 const html = C.render(ok1);

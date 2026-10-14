@@ -18,6 +18,8 @@ function eq(name, got, want) {
 
 // posts 는 { 파일 이름: [[꼬리표, 줄, 줄, ...], ...] }. ids 가 있으면 [[글 id, 파일 이름], ...] 로 js/posts.js 를 둔다.
 const roots = [];
+// 시험이 중간에 던져도 임시 폴더를 지운다
+process.on('exit', () => { for (const d of roots) fs.rmSync(d, { recursive: true, force: true }); });
 function site(posts, baseline, ids) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cb-test-'));
   roots.push(root);
@@ -30,7 +32,8 @@ function site(posts, baseline, ids) {
   if (baseline) fs.writeFileSync(path.join(root, 'scripts', 'code-blocks-baseline.json'), JSON.stringify(baseline));
   if (ids) {
     fs.mkdirSync(path.join(root, 'js'));
-    const list = ids.map(([id, file]) => `{ id: '${id}', contentUrl: 'posts/${file}.md' }`).join(', ');
+    // [글 id, 파일 이름] 이고, 셋째 값이 있으면 그것을 contentUrl 로 그대로 쓴다
+    const list = ids.map(([id, file, url]) => `{ id: '${id}', contentUrl: '${url || `posts/${file}.md`}' }`).join(', ');
     fs.writeFileSync(path.join(root, 'js', 'posts.js'), `const posts = [${list}];\nmodule.exports = { posts };\n`);
   }
   return root;
@@ -56,6 +59,8 @@ const up = site({ a: [OLD], b: [NEW] }, { 'a.md': 3 });
 r = run(up, '--update');
 eq('--update 는 지금 수를 기준표로 적는다',
   [r.code, JSON.parse(fs.readFileSync(path.join(up, 'scripts', 'code-blocks-baseline.json'), 'utf8'))], [0, { 'a.md': 1 }]);
+r = run(site({ a: [OLD], b: [OLD] }, { 'a.md': 2, 'b.md': 3 }));
+eq('줄어든 글이 여럿이면 쉼표로 잇는다', [r.code, r.out.includes('기준표보다 줄어든 글 2편 (a.md 2→1, b.md 3→1)')], [0, true]);
 
 console.log('\n형식 오류는 파일의 줄 번호로 알린다');
 // 글 맨 위가 「# 시험」, 빈 줄, 여는 울타리라서 블록 첫 줄이 파일 4번째 줄이다
@@ -73,6 +78,10 @@ r = run(site({ a: [['python title', 'print(1)']] }, {}));
 eq('python 뒤에 글을 붙여도 실패', [r.code, r.out.includes('(지금 `python title`)')], [1, true]);
 r = run(site({ a: [['text', 'print(1)'], ['pyramid', 'x = 1']] }, {}));
 eq('파이썬이 아닌 꼬리표는 보지 않는다', r.code, 0);
+r = run(site({ a: [['Python', 'print(1)'], ['py3', 'print(2)']] }, {}));
+eq('대문자 Python 과 py3 도 실패', [r.code, r.out.includes('(지금 `Python`)'), r.out.includes('(지금 `py3`)')], [1, true, true]);
+r = run(site({ a: [['python3', 'print(0)'], NEW] }, {}), '--json');
+eq('--json 은 꼬리표가 틀린 블록을 빼고 파이썬 블록 차례를 센다', JSON.parse(r.out).map(b => [b.post, b.index]), [['a', 0]]);
 
 console.log('\n이어서 돌릴 글은 글 id 로 쓴다');
 const cont = id => ['python', `# (${id} 글의 코드에 이어서 돌린다.)`, '# 하는 일: 앞 글에 이어서 돈다.', 'print(y)', '', '# 출력:', '# 뜻: 앞 글의 y 다.', '# 6'];
@@ -86,11 +95,19 @@ r = run(idSite('B_File'));
 eq('파일 이름으로 쓰면 글 id 를 알려 준다', [r.code, r.out.includes('posts/B_File.md 의 글 id 는 b-id 입니다')], [1, true]);
 r = run(idSite('nope'));
 eq('없는 글', [r.code, r.out.includes('이어서 돌릴 글 nope 가 js/posts.js 에 없습니다')], [1, true]);
+r = run(site({ c: [cont('b-id')] }, {}, [['b-id', 'Gone'], ['c', 'c']]));
+eq('글 id 는 있는데 파일이 없다', [r.code, r.out.includes('이어서 돌릴 글 b-id 의 파일 posts/Gone.md 가 없습니다')], [1, true]);
+r = run(site({ c: [cont('b-id')] }, {}, [['b-id', null, 'https://example.com/b'], ['c', 'c']]));
+eq('contentUrl 이 꼴에 안 맞는 글', [r.code, r.out.includes('이어서 돌릴 글 b-id 의 contentUrl 이 posts/<파일 이름>.md 꼴이 아닙니다')], [1, true]);
+const noList = site({ c: [cont('b-id')] }, {});
+fs.mkdirSync(path.join(noList, 'js'));
+fs.writeFileSync(path.join(noList, 'js', 'posts.js'), 'module.exports = {};\n');
+r = run(noList);
+eq('js/posts.js 에 글 목록이 없으면 멈춘다', [r.code, r.out.includes('js/posts.js 에서 글 목록(posts 배열)을 읽지 못했습니다')], [2, true]);
 
 console.log('\n폴더');
 r = run(path.join(os.tmpdir(), 'cb-test-no-such-folder'));
 eq('posts/ 가 없으면 멈춘다', [r.code, r.out.includes('posts/ 폴더가 없습니다')], [2, true]);
 
-for (const d of roots) fs.rmSync(d, { recursive: true, force: true });
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

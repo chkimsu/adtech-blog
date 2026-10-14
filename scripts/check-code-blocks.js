@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // 파이썬 코드 블록 형식 검사. 설계: docs/superpowers/specs/2026-10-13-python-code-blocks-design.md
-//   node scripts/check-code-blocks.js            → 새 형식 블록의 표시 오류와, 기준표보다 늘어난 옛 형식 블록을 알린다 (CI)
+//   node scripts/check-code-blocks.js            → 새 형식 블록의 표시 오류, python 이 아닌 파이썬 꼬리표, 이어서 돌릴 글의 id,
+//                                                   기준표보다 늘어난 옛 형식 블록을 알린다 (CI). 기준표보다 줄면 --update 를 권한다
 //   node scripts/check-code-blocks.js --update   → 지금 옛 형식 블록 수를 기준표로 다시 적는다
 //   node scripts/check-code-blocks.js --json     → 블록마다 읽은 결과를 JSON 으로 낸다 (scripts/check-python-outputs.py 가 쓴다)
 //   --root <폴더>                                → posts/ 와 기준표, js/posts.js 를 그 폴더에서 찾는다 (시험용)
@@ -49,9 +50,15 @@ function idsOf(files) {
   const ids = new Map();
   const js = path.join(root, 'js', 'posts.js');
   if (fs.existsSync(js)) {
-    for (const p of require(js).posts) {
+    const list = require(js).posts;
+    if (!Array.isArray(list)) {
+      console.error(`✗ js/posts.js 에서 글 목록(posts 배열)을 읽지 못했습니다: ${js}`);
+      process.exit(2);
+    }
+    for (const p of list) {
+      // contentUrl 이 posts/<파일 이름>.md 꼴이 아니면 파일 이름을 '' 로 둔다. 그 글에 이어서 돌리면 아래에서 알린다.
       const m = /^posts\/(.+)\.md$/.exec(p.contentUrl || '');
-      if (m) ids.set(p.id, m[1]);
+      ids.set(p.id, m ? m[1] : '');
     }
   } else {
     for (const f of files) ids.set(f.replace(/\.md$/, ''), f.replace(/\.md$/, ''));
@@ -104,6 +111,8 @@ function contPostErrors(b) {
       errors.push({ line, msg: byFile
         ? `이어서 돌릴 글은 글 id 로 씁니다 — posts/${l.post}.md 의 글 id 는 ${byFile[0]} 입니다`
         : `이어서 돌릴 글 ${l.post} 가 js/posts.js 에 없습니다` });
+    } else if (file === '') {
+      errors.push({ line, msg: `이어서 돌릴 글 ${l.post} 의 contentUrl 이 posts/<파일 이름>.md 꼴이 아닙니다` });
     } else if (!stems.has(file)) {
       errors.push({ line, msg: `이어서 돌릴 글 ${l.post} 의 파일 posts/${file}.md 가 없습니다` });
     }

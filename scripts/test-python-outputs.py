@@ -101,6 +101,25 @@ POSTS = {
         '# 하는 일: 일부러 예외를 낸다.',
         'raise ValueError("일부러")',
     ],
+    'broken': [
+        '# 하는 일: 단계 번호를 건너뛰었다.',
+        '# 1단계: 하나를 찍는다',
+        'print("하나")',
+        '# 3단계: 셋을 찍는다',
+        'print("셋")',
+    ],
+    'blank': [
+        '# 하는 일: 두 줄 사이에 빈 줄을 찍는다.',
+        'print("하나")',
+        'print()',
+        'print("둘")',
+        '',
+        '# 출력:',
+        '# 뜻: 가운데가 빈 줄이다.',
+        '# 하나',
+        '#',
+        '# 둘',
+    ],
     'step0-mean': [
         '# 하는 일: 단계가 찍은 줄에 번호 없는 뜻을 붙였다.',
         '# 1단계: 하나를 찍는다',
@@ -194,8 +213,12 @@ code, out = run(root, 'raise')
 eq('블록이 예외를 내면 실패', (code, 'ValueError: 일부러' in out), (1, True))
 code, out = run(root, 'cont-raise')
 eq('앞 블록이 예외를 내면 실패', (code, '앞 블록에서 ZeroDivisionError' in out), (1, True))
-eq('그대로 실행되지 않는 블록은 앞 코드에서 뺀다', run(root, 'cont-norun')[0], 0)
-eq('다른 글의 코드에 이어서 (글 id 를 파일 이름으로)', run(root, 'cont-post')[0], 0)
+code, out = run(root, 'cont-norun')
+eq('그대로 실행되지 않는 블록은 앞 코드에서 뺀다', (code, '✓ 통과 1,' in out), (0, True))
+code, out = run(root, 'cont-post')
+eq('다른 글의 코드에 이어서 (글 id 를 파일 이름으로)', (code, '✓ 통과 1,' in out), (0, True))
+code, out = run(root, 'broken')
+eq('형식 오류가 있는 블록은 돌리지 않고 실패로 알린다', (code, '형식 오류가 있어 돌리지 않았습니다' in out), (1, True))
 code, out = run(root, 'step0-mean')
 eq('번호 없는 뜻 아래 줄은 첫 단계 앞 코드가 찍어야 한다',
    (code, '1번째 찍힌 줄은 1단계가 찍었는데 뜻 줄은 첫 단계 앞 코드입니다' in out), (1, True))
@@ -205,6 +228,15 @@ r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'no-such-po
 eq('없는 글을 주면 멈춘다', (r.returncode, 'posts/no-such-post.md 가 없습니다' in r.stdout), (2, True))
 r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'ok', '--show'], capture_output=True, text=True)
 eq('--show 는 찍힌 줄을 단계마다 뜻 줄 자리와 함께 보여 준다', '# 1단계 뜻: …\n# 하나\n# 2단계 뜻: …\n# 둘' in r.stdout, True)
+r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'blank', '--show'], capture_output=True, text=True)
+eq('--show 는 단계 없는 블록을 번호 없는 뜻으로, 빈 줄을 # 로 보여 준다', '# 뜻: …\n# 하나\n#\n# 둘' in r.stdout, True)
+r = subprocess.run([sys.executable, CHECK, '--root', root, '--post', ''], capture_output=True, text=True)
+eq('--post 를 비워 주면 멈춘다', (r.returncode, 'posts/.md 가 없습니다' in r.stdout), (2, True))
+private = tempfile.mkdtemp(prefix='pyout-tmpdir-')
+subprocess.run([sys.executable, CHECK, '--root', root, '--post', 'ok'], capture_output=True, text=True,
+               env=dict(os.environ, TMPDIR=private))
+eq('돌린 뒤 임시 폴더가 남지 않는다', os.listdir(private), [])
+os.rmdir(private)
 
 tmp.cleanup()
 print('\n%d 통과, %d 실패' % (pass_, fail))

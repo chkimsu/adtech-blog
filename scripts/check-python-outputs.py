@@ -203,7 +203,7 @@ def main():
     args = ap.parse_args()
 
     # 없는 글을 주면 아무것도 안 돌리고 통과로 끝나던 것을 막는다
-    if args.post and not os.path.exists(os.path.join(args.root or ROOT, 'posts', args.post + '.md')):
+    if args.post is not None and not os.path.exists(os.path.join(args.root or ROOT, 'posts', args.post + '.md')):
         print('✗ posts/%s.md 가 없습니다. --post 에는 posts/ 의 파일 이름을 .md 없이 씁니다' % args.post)
         sys.exit(2)
 
@@ -214,6 +214,9 @@ def main():
     todo = [b for b in blocks
             if (args.post is None or b['post'] == args.post)
             and ((b['format'] == 'steps' and b['ok']) or (args.legacy and b['format'] == 'legacy'))]
+    # 형식 오류가 있는 새 형식 블록은 돌리지 않는다. 통과로 세지 않고 실패로 알린다
+    broken = [b for b in blocks
+              if (args.post is None or b['post'] == args.post) and b['format'] == 'steps' and not b['ok']]
     env = dict(os.environ, PYTHONHASHSEED='0', PYTHONIOENCODING='utf-8', MPLBACKEND='Agg')
 
     # 실행기와 블록마다 쓰는 작업 폴더는 끝나면 지운다
@@ -246,6 +249,10 @@ def main():
             results = list(ex.map(run, todo))
 
     count = {'pass': 0, 'fail': 0, 'missing': 0, 'norun': 0}
+    for b in broken:
+        count['fail'] += 1
+        print('✗ posts/%s.md 의 %d번째 파이썬 블록 — 형식 오류가 있어 돌리지 않았습니다. '
+              'node scripts/check-code-blocks.js 로 먼저 고칩니다' % (b['post'], b['index'] + 1))
     for b, status, detail, res in results:
         count[status] += 1
         where = 'posts/%s.md 의 %d번째 파이썬 블록' % (b['post'], b['index'] + 1)

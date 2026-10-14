@@ -127,12 +127,11 @@ jobs:
 지훈 씨의 피처 함수를 예로 보겠습니다. 광고별 최근 7일 클릭률입니다. 7일 윈도우 안의 로그만 세고, 윈도우 밖의 로그는 뺍니다. 노출이 없으면 나눗셈을 못 하니 0 을 돌려줍니다. 이 세 가지가 테스트 셋이 됩니다. 아래는 표준 라이브러리만으로 그 테스트를 돌린 것입니다.
 
 ```python
-# 광고별 최근 7일 클릭률 피처와 그 유닛 테스트 셋.
-# CI 는 이런 테스트 214개를 커밋마다 돌린다. 하나라도 틀리면 이미지가 만들어지지 않는다.
-# 로그 값은 전부 가상이다.
-
+# 하는 일: 광고별 최근 7일 클릭률 피처를 만들고, 그 유닛 테스트 셋을 돌린다.
 import unittest
 
+# 1단계: 피처 함수를 만든다
+# 다른 광고의 로그와 윈도우 밖의 로그는 세지 않는다.
 def ad_ctr_7d(logs, ad_id, today):
     """today 를 뺀 앞 7일(D-7 ~ D-1) 로그로 광고 하나의 클릭률을 낸다. 노출이 없으면 0."""
     imp = clk = 0
@@ -143,10 +142,14 @@ def ad_ctr_7d(logs, ad_id, today):
         clk += is_click
     return clk / imp if imp else 0.0
 
+# 2단계: 가상 로그를 만든다
+# 로그 값은 전부 가상이다.
 LOGS = [(day, 9931, 0) for day in range(1, 11)]   # 광고 9931: 1~10일 노출 10건
 LOGS += [(3, 9931, 1), (9, 9931, 1)]             # 그중 3일과 9일에 클릭 (노출 12건, 클릭 2)
 LOGS += [(5, 7720, 1)]                            # 다른 광고 7720 의 클릭 하나
 
+# 3단계: 테스트 셋을 만들어 돌린다
+# CI 는 이런 테스트 214개를 커밋마다 돌린다. 하나라도 틀리면 이미지가 만들어지지 않는다.
 class TestAdCtr7d(unittest.TestCase):
     def test_window_only(self):
         # today=10 이면 윈도우는 3~9일. 그 안의 9931 노출 9건, 클릭 2건 → 2/9
@@ -160,7 +163,8 @@ class TestAdCtr7d(unittest.TestCase):
 
 unittest.main(argv=["x"], verbosity=2, exit=False)
 
-# 출력:
+# 출력 (시간은 돌릴 때마다 다르다):
+# 3단계 뜻: 세 테스트가 모두 ok 이고, 마지막 줄의 OK 가 테스트 셋 전체가 통과했다는 뜻이다.
 # test_no_impression (__main__.TestAdCtr7d) ... ok
 # test_other_ad_excluded (__main__.TestAdCtr7d) ... ok
 # test_window_only (__main__.TestAdCtr7d) ... ok
@@ -191,16 +195,17 @@ unittest.main(argv=["x"], verbosity=2, exit=False)
 아래는 그 부하 시험을 흉내 낸 것입니다. 추론 시간의 분포는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편과 같은 값을 썼습니다. 중앙값 3.0ms 에 흩어진 정도 0.55 입니다. 새 피처의 조회가 요청마다 더하는 시간을 바꿔 가며 초과율을 봅니다.
 
 ```python
-# 계약 테스트의 부하 부분 — 요청 1,000건에서 8ms 초과율을 센다.
-# 추론 시간은 로그정규(중앙값 3.0ms, 흩어짐 0.55)로 잡았고, 새 피처의 조회가
-# 요청마다 더하는 시간을 0 부터 1.0ms 까지 바꿔 본다. 통과 기준은 6% 이하. 전부 가상 값이다.
-
+# 하는 일: 계약 테스트의 부하 부분으로 요청 1,000건의 8ms 초과율을 세고, 새 피처가 더하는 시간마다 기준 6% 를 넘는지 본다.
 import random, math
 
+# 1단계: 예산과 통과 기준을 둔다
+# 통과 기준은 6% 이하다. 전부 가상 값이다.
 BUDGET_MS = 8.0
 LIMIT_PCT = 6.0
 N = 1000
 
+# 2단계: 초과율을 세는 함수를 만든다
+# 추론 시간은 로그정규(중앙값 3.0ms, 흩어짐 0.55)로 잡는다.
 def exceed_rate(extra_ms, seed=20260917):
     """요청 N 건 중 예산 8ms 를 넘긴 비율(%). extra_ms 는 새 피처가 더하는 시간."""
     rnd = random.Random(seed)
@@ -211,6 +216,8 @@ def exceed_rate(extra_ms, seed=20260917):
         over += t > BUDGET_MS
     return 100 * over / N
 
+# 3단계: 더하는 시간을 바꿔 가며 판정한다
+# 새 피처의 조회가 요청마다 더하는 시간을 0 부터 1.0ms 까지 바꿔 본다.
 print(f"{'새 피처가 더하는 시간':>14}  {'8ms 초과율':>8}  판정 (기준 {LIMIT_PCT}% 이하)")
 for extra in (0.0, 0.2, 0.5, 1.0):
     rate = exceed_rate(extra)
@@ -218,6 +225,7 @@ for extra in (0.0, 0.2, 0.5, 1.0):
     print(f"{extra:>12.1f}ms  {rate:>7.1f}%  {verdict}")
 
 # 출력:
+# 3단계 뜻: 새 피처가 0.5ms 를 더하면 초과율이 3.2% 에서 4.8% 로 올라도 통과하고, 1.0ms 를 더하면 6.3% 로 기준을 넘어 탈락한다.
 #   새 피처가 더하는 시간   8ms 초과율  판정 (기준 6.0% 이하)
 #          0.0ms      3.2%  통과
 #          0.2ms      3.6%  통과

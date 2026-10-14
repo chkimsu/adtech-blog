@@ -53,6 +53,8 @@ jobs:
         run: node scripts/check-code-blocks.js
       - name: 코드 블록 파서 단위 테스트
         run: node scripts/test-code-steps.js
+      - name: 코드 블록 형식 검사 시험
+        run: node scripts/test-check-code-blocks.js
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'

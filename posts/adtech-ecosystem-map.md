@@ -208,8 +208,7 @@ graph TB
 지도에 화살표는 한 개지만, 실제로는 초마다 수만 번 겹칩니다.
 
 ```python
-# 지도의 "SSP → Exchange → DSP" 화살표 하나는 요청 1건이 아니다.
-# 페이지가 한 번 열릴 때 그 화살표가 몇 갈래로 갈라지는지 센다.
+# 하는 일: 페이지가 한 번 열릴 때 지도의 「SSP → Exchange → DSP」 화살표 하나에서 Bid Request 가 몇 건 나가는지 세고, 하루와 초당으로 늘려 본다.
 SLOTS, SSP_PER_SLOT, DSP_PER_AUCTION = 5, 3, 20  # 지면 수, 지면당 SSP, 경매당 DSP
 PAGEVIEW = 10_000_000                            # 이 매체의 하루 페이지뷰
 
@@ -223,6 +222,7 @@ for label, n in [("페이지 1회", per_page), ("하루 전체", daily), ("초�
     print(f"{n:>15,.0f} 건  {label}")
 
 # 출력:
+# 뜻: 페이지 한 번이 Bid Request 300건을 만든다. 하루면 3,000,000,000건이고, 초당 평균 34,722건에 피크는 104,167건이다. 매체가 100곳이면 초당 3,472,222건이다.
 #             300 건  페이지 1회
 #   3,000,000,000 건  하루 전체
 #          34,722 건  초당 평균
@@ -296,20 +296,26 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
 [생태계 지도](ecosystem.html)에서 pCTR/pCVR 상자만 크고 색이 다릅니다. 위 표의 네 줄이 그 이유입니다. 이 숫자가 틀리면 True Value가 틀리고, 입찰가와 비용이 함께 틀어집니다. 얼마나 넓게 퍼지는지는 지도의 모양으로 확인할 수 있습니다. 화살표를 코드로 옮겨 적고, 심장에서 각 모듈까지 몇 다리인지 세어 봅니다.
 
 ```python
+# 하는 일: 지도의 모듈을 이웃 관계로 잇고, 각 모듈이 pCTR 에서 화살표 몇 개 떨어져 있는지 센다.
 from collections import deque
 
+# 1단계: 지도의 화살표를 옮겨 적는다
 # 지도의 화살표를 짧은 이름으로 옮겨 적었다(방향은 빼고 이웃 관계만 본다).
 TRADE = ("user-pub pub-ssp ssp-ex ex-dsp dsp-adv ex-auc ex-pub pub-hb hb-ssp user-log "
          "pub-log log-mmp mmp-adv dmp-dsp dco-dsp brand-adv cmp-dmp journey-log journey-cmp")
 BRAIN = "fs-train train-serve serve-mon mon-train fs-serve cand-serve serve-pctr pctr-calib calib-bid"
 CROSS = "dsp-pctr dsp-serve dsp-cand dmp-cand auc-pctr bid-dsp log-fs"  # 두 층을 잇는 화살표
 
+# 2단계: 이웃 관계 그래프를 만든다
+# 화살표 양 끝을 서로의 이웃으로 담는다.
 g = {}
 for pair in f"{TRADE} {BRAIN} {CROSS}".split():
     a, b = pair.split("-")
     g.setdefault(a, set()).add(b)   # 이웃 관계는 양방향으로 담는다
     g.setdefault(b, set()).add(a)
 
+# 3단계: pCTR 에서 너비 우선 탐색으로 거리를 잰다
+# pCTR 에서 출발해 화살표 몇 개를 건너면 닿는지를 다리 수로 센다.
 dist, q = {"pctr": 0}, deque(["pctr"])  # 심장에서 출발하는 너비 우선 탐색
 while q:
     n = q.popleft()
@@ -324,6 +330,7 @@ for k in range(max(dist.values()) + 1):
     print(f"{k}다리 {len(same):2d}개  {' '.join(same)}")
 
 # 출력:
+# 3단계 뜻: 모듈 23개 가운데 pCTR 에 바로 닿는 것이 4개, 두 다리가 9개, 세 다리가 6개다. 가장 먼 hb, journey, user 도 네 다리다.
 # 모듈 23개, 두 층을 잇는 화살표 7개
 # 0다리  1개  pctr
 # 1다리  4개  auc calib dsp serve
@@ -564,7 +571,9 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 지도 위층은 왼쪽에서 오른쪽으로 흐르지 않습니다. **고리**입니다. 로그에서 피처 스토어, Training, 모델 서빙을 지나 pCTR/pCVR 이 나옵니다. 그다음 Monitoring 을 거쳐 다시 Training 으로 돌아옵니다. 이 고리만 따라가려면 [모델 학습, 서빙 흐름](ecosystem.html?flow=modeling) 칩을 누릅니다.
 
 ```python
-# 두뇌 층은 고리다. 로그가 한 바퀴 돌아 다시 심장에 닿는 시간을 더한다.
+# 하는 일: 로그가 학습을 거쳐 다시 서빙 모델에 닿기까지 한 바퀴 걸리는 시간을 더하고, 하루 학습 횟수마다 서빙 모델이 평균 몇 시간 전 데이터를 보는지 구한다.
+# 1단계: 고리의 단계와 시간을 둔다
+# 두뇌 층은 로그가 한 바퀴 돌아 다시 모델에 닿는 고리다. 단계마다 걸리는 시간(시간 단위)을 둔다.
 STAGES = [
     ("로그 수집, 조인", 0.5),   # 노출, 클릭 로그가 모여 붙기까지
     ("전환 라벨 대기", 24.0),  # 전환은 클릭보다 한참 늦게 온다
@@ -573,17 +582,21 @@ STAGES = [
     ("오프라인 검증", 1.0),    # AUC, LogLoss가 기준을 넘는지
     ("배포, 워밍업", 0.5),      # Model Serving 교체
 ]
+# 2단계: 한 바퀴 시간을 더해 찍는다
+# 단계마다 한 바퀴에서 차지하는 몫을 함께 찍는다.
 loop = sum(h for _, h in STAGES)
 for name, h in STAGES:
     print(f"{h:5.1f}시간 ({h / loop:3.0%})  {name}")
 print(f"{loop:5.1f}시간         한 바퀴 전체")
 
-# 학습을 하루 n번 돌리면 지금 서빙 중인 모델은 평균 몇 시간 전 세상을 보는가.
+# 3단계: 학습 횟수별 모델 나이를 구한다
+# 학습을 하루 n번 돌리면 지금 서빙 중인 모델이 평균 몇 시간 전 세상을 보는지 구한다.
 # 모델 나이는 한 주기 안에서 loop ~ loop+24/n을 오가니 평균은 loop+12/n이다.
 for n in (1, 4, 24):
     print(f"하루 {n:2d}회 학습 → 모델 나이 평균 {loop + 12 / n:.1f}시간")
 
 # 출력:
+# 2단계 뜻: 한 바퀴는 31.5시간이고, 그중 전환 라벨 대기 24.0시간이 76% 를 차지한다. 모델 학습은 4.0시간, 13% 다.
 #   0.5시간 ( 2%)  로그 수집, 조인
 #  24.0시간 (76%)  전환 라벨 대기
 #   1.5시간 ( 5%)  학습셋 만들기
@@ -591,6 +604,7 @@ for n in (1, 4, 24):
 #   1.0시간 ( 3%)  오프라인 검증
 #   0.5시간 ( 2%)  배포, 워밍업
 #  31.5시간         한 바퀴 전체
+# 3단계 뜻: 학습을 하루 1회에서 24회로 늘려도 모델 나이는 43.5시간에서 32.0시간까지만 줄어든다. 4회만 돌려도 34.5시간이다.
 # 하루  1회 학습 → 모델 나이 평균 43.5시간
 # 하루  4회 학습 → 모델 나이 평균 34.5시간
 # 하루 24회 학습 → 모델 나이 평균 32.0시간

@@ -107,8 +107,11 @@ $$\mathrm{UCB}_a(x) = x^T\theta_a + \alpha\sqrt{x^T A_a^{-1} x}$$
 나머지는 벡터 연산 몇 개뿐이다. 내적(`dot`)과 행렬-벡터 곱(`matvec`), 신뢰상한에 쓰이는 이차형식 $x^TA^{-1}x$(`quad`)까지 합쳐도 열 줄이 안 된다. 이 도구들 위에 `DisjointLinUCB` 클래스를 얹으면 2절의 가데이터가 그대로 재현된다.
 
 ```python
+# 하는 일: 2절 표의 학습 로그 8건으로 스포츠와 육아 arm 의 계수 θ 를 따로 학습하고, 새 요청 두 개에서 arm 마다 예측, 탐색 보너스, UCB 점수를 계산한다.
 import math
 
+# 1단계: 역행렬과 벡터 계산 함수를 만든다
+# 가우스-조던 소거법으로 역행렬을 구하는 mat_inv 와, 내적(dot), 행렬-벡터 곱(matvec), 이차형식(quad)을 둔다.
 def mat_inv(A):
     """가우스-조던 소거법으로 n x n 역행렬을 구한다. numpy 없이 리스트만으로."""
     n = len(A)
@@ -131,6 +134,9 @@ def matvec(M, v):
 def quad(M, x):                                        # x^T M x, 신뢰상한에 쓰는 이차형식
     return dot(x, matvec(M, x))
 
+# 2단계: arm 마다 A 와 b 를 따로 두는 클래스를 만든다
+# 처음 보는 arm 은 A 를 항등행렬, b 를 0 으로 두고 시작한다.
+# score 는 예측(θ = A^-1 b 와 x 의 내적)에 탐색 보너스 alpha * sqrt(x^T A^-1 x) 를 더해 UCB 를 낸다.
 class DisjointLinUCB:
     """arm마다 A(공분산 누적), b(보상 가중합)를 따로 갖는다 — 이름 그대로 'disjoint'."""
     def __init__(self, d, alpha):
@@ -157,6 +163,7 @@ class DisjointLinUCB:
                 self.A[arm][i][j] += x[i] * x[j]
             self.b[arm][i] += reward * x[i]
 
+# 3단계: 학습 로그 8건으로 두 arm 을 학습시킨다
 # 학습 로그 — 유저 컨텍스트(연령대, 관심사, 저녁여부)와 노출된 arm, 클릭여부
 log = [
     (0.20, 0.90, 0, "스포츠", 1), (0.30, 0.80, 1, "스포츠", 1),
@@ -168,10 +175,14 @@ model = DisjointLinUCB(d=3, alpha=1.0)
 for age, interest, evening, arm, click in log:
     model.update(arm, [age, interest, evening], click)
 
+# 4단계: 학습한 θ 를 찍는다
+# θ 의 세 값은 (연령대, 관심사, 저녁) 계수 순서다.
 for arm in ("스포츠", "육아"):
     theta = matvec(mat_inv(model.A[arm]), model.b[arm])
     print(f"theta[{arm}] = {[round(v, 4) for v in theta]}")
 
+# 5단계: 새 요청 두 개에서 arm 마다 점수를 찍는다
+# 첫 요청은 관심사 0.50 인 저녁 요청이고, 둘째는 연령대 0.85 인 낮 요청이다.
 print()
 for x in ([0.25, 0.50, 1], [0.85, 0.15, 0]):
     print(f"x={x}")
@@ -180,8 +191,10 @@ for x in ([0.25, 0.50, 1], [0.85, 0.15, 0]):
         print(f"  {arm}: 예측={pred:.4f} + 보너스={bonus:.4f} = UCB {ucb:.4f}")
 
 # 출력:
+# 4단계 뜻: 스포츠 arm 은 관심사 계수가 0.7257 로 가장 크고, 육아 arm 은 연령대 계수가 0.6988 로 가장 크다.
 # theta[스포츠] = [0.2545, 0.7257, 0.049]
 # theta[육아] = [0.6988, 0.044, -0.0234]
+# 5단계 뜻: 첫 요청 x=[0.25, 0.5, 1] 에서는 스포츠가 UCB 1.0636 으로 육아의 0.8669 를 앞선다. 둘째 요청에서는 육아의 예측이 0.6006 으로 스포츠의 0.3252 보다 높지만, 스포츠의 보너스가 0.7771 로 커서 UCB 가 1.1023 대 1.1012 로 거의 같다.
 #
 # x=[0.25, 0.5, 1]
 #   스포츠: 예측=0.4755 + 보너스=0.5881 = UCB 1.0636
@@ -204,9 +217,12 @@ for x in ([0.25, 0.50, 1], [0.85, 0.15, 0]):
 진짜 클릭 확률은 스포츠 arm이 관심사 점수에, 육아 arm이 연령대 점수에 비례하도록 정해 뒀다. 두 알고리즘 모두 이 진짜 값은 모른 채로 시작한다. 대조군 삼아 컨텍스트와 거의 무관한 "가전" arm도 하나 추가했다. 같은 800번의 요청, 같은 시드로 두 알고리즘을 각각 돌린 결과가 아래다.
 
 ```python
+# 하는 일: 진짜 클릭 확률을 정해 둔 arm 3개에서 Disjoint LinUCB 와 컨텍스트를 안 보는 UCB1 을 같은 800번, 같은 시드로 돌려 누적 클릭을 견주고, alpha 를 0.1, 1.0, 3.0 으로 바꿔 다시 돌린다.
 import random
 import math
 
+# 1단계: 역행렬과 벡터 계산 함수를 둔다
+# 4절 코드와 같은 함수다.
 def mat_inv(A):
     n = len(A)
     aug = [row[:] + [1.0 if i == j else 0.0 for j in range(n)] for i, row in enumerate(A)]
@@ -225,6 +241,8 @@ def dot(u, v):
 def matvec(M, v):
     return [dot(row, v) for row in M]
 
+# 2단계: arm 3개와 진짜 클릭 확률을 둔다
+# 스포츠는 관심사 점수가, 육아는 연령대 점수가 높을수록 잘 클릭되고, 가전은 컨텍스트와 상관없이 0.08 이다.
 ARMS = ["스포츠", "육아", "가전"]
 
 def true_ctr(arm, x):                     # 알고리즘은 모르는 '진짜' 클릭 확률
@@ -237,6 +255,8 @@ def true_ctr(arm, x):                     # 알고리즘은 모르는 '진짜' �
         p = 0.08
     return min(0.4, max(0.01, p))
 
+# 3단계: 두 알고리즘을 클래스로 만든다
+# DisjointLinUCB 는 arm 마다 A 와 b 를 따로 두고, UCB1ContextBlind 는 arm 마다 관측 평균과 시도 횟수 보너스만 본다.
 class DisjointLinUCB:
     def __init__(self, d, alpha):
         self.d, self.alpha = d, alpha
@@ -271,6 +291,8 @@ class UCB1ContextBlind:                    # 컨텍스트를 아예 안 보는 �
         self.counts[arm] += 1
         self.sums[arm] += r
 
+# 4단계: 한 번 돌리는 함수를 만든다
+# 매 라운드 무작위 유저 컨텍스트를 만들고, 고른 arm 의 진짜 클릭 확률로 클릭 여부를 뽑아 누적 클릭과 arm 별 선택 횟수를 센다.
 def run(policy, rounds, seed):
     random.seed(seed)
     total, picks = 0, {a: 0 for a in ARMS}
@@ -283,6 +305,7 @@ def run(policy, rounds, seed):
         picks[arm] += 1
     return total, picks
 
+# 5단계: 같은 800번, 같은 시드로 두 알고리즘을 견준다
 ROUNDS, SEED = 800, 2026
 
 lin_total, lin_picks = run(DisjointLinUCB(d=3, alpha=1.0), ROUNDS, SEED)
@@ -291,15 +314,18 @@ print(f"LinUCB(a=1.0)  누적클릭 {lin_total:3d}  {lin_picks}")
 print(f"UCB1(무맥락)    누적클릭 {ucb_total:3d}  {ucb_picks}")
 print(f"LinUCB가 {lin_total - ucb_total}건 더 획득 ({(lin_total/ucb_total - 1)*100:.1f}% 더)")
 
+# 6단계: alpha 를 바꿔 LinUCB 를 다시 돌린다
 print()
 for alpha in (0.1, 1.0, 3.0):
     total, picks = run(DisjointLinUCB(d=3, alpha=alpha), ROUNDS, SEED)
     print(f"alpha={alpha:<4}  누적클릭 {total:3d}  {picks}")
 
 # 출력:
+# 5단계 뜻: LinUCB 는 누적 클릭 172 로 UCB1 의 124 보다 48건, 38.7% 더 얻는다. 대조군 가전은 LinUCB 가 90번, UCB1 이 167번 고른다.
 # LinUCB(a=1.0)  누적클릭 172  {'스포츠': 388, '육아': 322, '가전': 90}
 # UCB1(무맥락)    누적클릭 124  {'스포츠': 250, '육아': 383, '가전': 167}
 # LinUCB가 48건 더 획득 (38.7% 더)
+# 6단계 뜻: alpha 0.1 은 스포츠를 6번만 골라 누적 클릭이 137 이고, 3.0 은 가전을 175번 골라 154 다. 1.0 은 5단계의 LinUCB 와 같은 172 로 가장 많다.
 #
 # alpha=0.1   누적클릭 137  {'스포츠': 6, '육아': 646, '가전': 148}
 # alpha=1.0   누적클릭 172  {'스포츠': 388, '육아': 322, '가전': 90}
@@ -345,8 +371,11 @@ $$(A + xx^T)^{-1} = A^{-1} - \frac{A^{-1}xx^TA^{-1}}{1 + x^TA^{-1}x}$$
 아래 코드는 항등행렬에서 시작해 5번 갱신한다. 매번 "처음부터 다시 구한 역행렬"과 "Sherman-Morrison으로 갱신한 역행렬"을 나란히 비교한다.
 
 ```python
+# 하는 일: 항등행렬에서 시작해 A 에 xx^T 를 5번 더하며, 역행렬을 매번 처음부터 구한 값과 Sherman-Morrison 으로 갱신한 값의 최대 오차를 잰다.
 import random
 
+# 1단계: 역행렬과 벡터 계산 함수를 둔다
+# 4절 코드와 같은 함수다.
 def mat_inv(A):
     n = len(A)
     aug = [row[:] + [1.0 if i == j else 0.0 for j in range(n)] for i, row in enumerate(A)]
@@ -365,6 +394,8 @@ def dot(u, v):
 def matvec(M, v):
     return [dot(row, v) for row in M]
 
+# 2단계: Sherman-Morrison 갱신 함수를 만든다
+# 위 공식대로, 이전 역행렬과 새 x 만으로 다음 역행렬을 구한다.
 def sherman_morrison_update(A_inv, x):
     """(A + xx^T)^-1 를 O(d^2)로 갱신 — 전체 역행렬 재계산 없이."""
     Ax = matvec(A_inv, x)
@@ -372,11 +403,14 @@ def sherman_morrison_update(A_inv, x):
     d = len(x)
     return [[A_inv[i][j] - (Ax[i] * Ax[j]) / denom for j in range(d)] for i in range(d)]
 
+# 3단계: 두 방식 모두 항등행렬에서 시작한다
 random.seed(3)
 d = 3
 A = [[1.0 if i == j else 0.0 for j in range(d)] for i in range(d)]
 A_inv_sm = mat_inv(A)                    # 시작은 둘 다 항등행렬의 역행렬(자기 자신)
 
+# 4단계: 5번 갱신하며 두 방식을 견준다
+# 매번 무작위 x 로 A 를 직접 갱신한 뒤, 처음부터 구한 역행렬과 갱신한 역행렬의 원소별 최대 차이를 찍는다.
 for step in range(1, 6):
     x = [random.uniform(-1, 1) for _ in range(d)]
     for i in range(d):                   # A를 직접 갱신
@@ -389,6 +423,7 @@ for step in range(1, 6):
     print(f"갱신 {step}회차 — 두 방식의 최대 오차: {diff:.2e}")
 
 # 출력:
+# 4단계 뜻: 5번 모두 최대 오차가 4.16e-17 에서 2.22e-16 사이로, 부동소수점 반올림 수준이다.
 # 갱신 1회차 — 두 방식의 최대 오차: 1.11e-16
 # 갱신 2회차 — 두 방식의 최대 오차: 1.11e-16
 # 갱신 3회차 — 두 방식의 최대 오차: 2.22e-16
@@ -396,7 +431,7 @@ for step in range(1, 6):
 # 갱신 5회차 — 두 방식의 최대 오차: 1.11e-16
 ```
 
-오차는 전부 $10^{-16}$대다. 부동소수점 반올림 오차 수준이라는 뜻이다. 두 방식이 수학적으로 완전히 같다는 걸 확인해 준다. 실서비스에서는 arm 하나가 클릭 데이터를 받을 때마다 이 갱신 한 번만 하면 된다. 굳이 `mat_inv`를 다시 부를 필요가 없다.
+오차는 전부 $10^{-16}$대 이하다. 부동소수점 반올림 오차 수준이라는 뜻이다. 두 방식이 수학적으로 완전히 같다는 걸 확인해 준다. 실서비스에서는 arm 하나가 클릭 데이터를 받을 때마다 이 갱신 한 번만 하면 된다. 굳이 `mat_inv`를 다시 부를 필요가 없다.
 :::
 
 둘째는 arm이 자주 바뀌는 환경에서의 콜드스타트다. 4절의 `_ensure` 메서드가 보여줬듯, 처음 보는 arm은 항상 $A=I$, $b=0$에서 시작한다. 소재가 하루에도 수십 개씩 새로 올라오는 광고판이라면, 새 arm은 예측 항이 0이라 사실상 탐색 보너스만으로 순위가 매겨진다. 이 상태 자체가 나쁜 건 아니다. 아직 모르니 기회를 주는 게 맞는 동작이다. 문제는 그 arm이 실제로 나쁜 광고여도, 데이터가 쌓이기 전까지는 계속 경쟁에 낄 자격을 얻는다는 점이다. arm 수명 자체가 짧은 환경(9절)에서는 이 초기 탐색 비용을 회수할 시간조차 없을 수 있다. Disjoint 구조로는 이 문제를 근본적으로 풀 수 없다. 광고끼리 지식을 일부 공유하는 Hybrid LinUCB로 넘어가야 완화된다.

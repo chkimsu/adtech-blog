@@ -163,18 +163,25 @@ flowchart TD
 3. 광고 B(여행용 캐리어)는 입찰가가 가장 낮지만, **검색 의도와 완벽히 매칭**되어 β가 작고 pCTR도 높아 LTV 1위를 차지합니다.
 
 ```python
+# 하는 일: 검색어 「여행 가방」에 나온 광고 셋의 eCPM 에서 사용자 비용 β 를 빼 LTV 를 구하고, LTV 가 음수인 광고는 빼고 순위를 정한다.
+# 1단계: LTV 를 구하는 함수를 만든다
+# LTV 는 eCPM 에서 그 노출이 사용자에게 지우는 비용 β 를 뺀 값이다.
 def compute_ltv(pCTR, bid, beta):
     """LTV = eCPM - β"""
     ecpm = pCTR * bid * 1000
     ltv = ecpm - beta
     return ecpm, ltv
 
+# 2단계: 광고 셋을 둔다
+# 광고마다 pCTR, 입찰가, 사용자 비용 β 를 담는다.
 ads = [
     {"name": "광고A(명품 가방)",   "pCTR": 0.02, "bid": 3000, "beta": 25000},
     {"name": "광고B(여행용 캐리어)", "pCTR": 0.05, "bid": 1500, "beta": 5000},
     {"name": "광고C(다이어트 약)",  "pCTR": 0.003, "bid": 5000, "beta": 20000},
 ]
 
+# 3단계: 광고마다 LTV 를 구하고 순위를 찍는다
+# LTV 가 음수인 광고는 노출에서 뺀다.
 print("  검색어: '여행 가방'\n")
 ranked = []
 for ad in ads:
@@ -191,6 +198,7 @@ for i, (name, ltv) in enumerate(ranked, 1):
     print(f"    {i}위: {name} (LTV {ltv:,.0f}원)")
 
 # 출력:
+# 3단계 뜻: eCPM 만 보면 A 의 60,000원이 C 의 15,000원보다 훨씬 앞이고 셋 다 노출 후보다. 사용자 비용 β 를 빼면 C 는 LTV 가 -5,000원으로 음수가 되어 빠지고, B 가 70,000원으로 1위다. 지금 버는 돈보다 그 노출이 사용자를 얼마나 지치게 하는지가 순위를 정한다.
 #   검색어: '여행 가방'
 #
 #   광고A(명품 가방): eCPM=60,000원, β=25,000원, LTV=35,000원 → 노출
@@ -200,10 +208,6 @@ for i, (name, ltv) in enumerate(ranked, 1):
 #   최종 랭킹:
 #     1위: 광고B(여행용 캐리어) (LTV 70,000원)
 #     2위: 광고A(명품 가방) (LTV 35,000원)
-#
-# eCPM만 보면 A(60,000)가 C(15,000)보다 훨씬 앞이고 셋 다 노출 후보다.
-# 사용자 비용 β를 빼면 C는 LTV가 음수가 되어 아예 탈락한다.
-# 지금 당장 버는 돈보다, 그 노출이 사용자를 얼마나 지치게 하는지가 순위를 정한다.
 ```
 
 ---
@@ -237,8 +241,9 @@ $$\text{LTV 기준 점수} = pCTR \times (\text{90일 고객 LTV}) \times 1{,}00
 파이썬으로 그대로 확인해 보겠습니다.
 
 ```python
-# 5개 광고의 '단기 eCPM 순위'와 '90일 LTV 순위'를 각각 계산해 비교한다.
-# 표준 라이브러리만 쓰니 그대로 복붙해 돌려볼 수 있다.
+# 하는 일: 광고 5개의 단기 eCPM 순위와 90일 LTV 순위를 각각 계산해 견준다.
+# 1단계: 광고 5개를 둔다
+# 표준 라이브러리만 쓰니 그대로 복붙해 돌려 볼 수 있다.
 ads = [
     # 광고명, 입찰가(CPC,원), pCTR, 예상 재구매율(90일), 90일 LTV(원)
     {"name": "반값특가 무선이어폰",   "bid": 1500, "pctr": 0.080, "repurchase": 0.05, "ltv90": 25_000},
@@ -248,6 +253,8 @@ ads = [
     {"name": "원두커피 정기구독",     "bid": 800,  "pctr": 0.030, "repurchase": 0.55, "ltv90": 150_000},
 ]
 
+# 2단계: 단기 점수와 장기 점수를 구한다
+# 단기 eCPM 은 이번 클릭이 지금 버는 돈이고, LTV 점수는 이번 클릭이 남기는 손님의 90일 가치다.
 for ad in ads:
     ad["ecpm"] = ad["pctr"] * ad["bid"] * 1000         # 단기: 이번 클릭이 지금 버는 돈
     ad["ltv_score"] = ad["pctr"] * ad["ltv90"] * 1000  # 장기: 이번 클릭이 남기는 손님의 90일 가치
@@ -259,14 +266,17 @@ def rank_by(key):                                       # 점수 내림차순으
 ecpm_rank = rank_by("ecpm")
 ltv_rank = rank_by("ltv_score")
 
+# 3단계: 두 순위를 나란히 찍는다
+# 단기 eCPM 순위대로 줄 세우고 LTV 순위와 변동을 함께 찍는다.
 print(f"{'광고':<22}{'단기eCPM':>10}{'eCPM순위':>9}{'LTV점수':>13}{'LTV순위':>8}  변동")
 for ad in sorted(ads, key=lambda a: ecpm_rank[a["name"]]):
     name = ad["name"]
-    delta = ecpm_rank[name] - ltv_rank[name]            # 양수면 LTV로 갈수록 순위가 내려간 것
+    delta = ecpm_rank[name] - ltv_rank[name]            # 양수면 LTV로 보면 순위가 올라간 것
     mark = f"{delta:+d}" if delta else "-"
     print(f"{name:<22}{ad['ecpm']:>9,.0f}원{ecpm_rank[name]:>7}위{ad['ltv_score']:>12,.0f}{ltv_rank[name]:>7}위  {mark}")
 
 # 출력:
+# 3단계 뜻: 단기 eCPM 1, 2위인 무선이어폰과 미스터리박스는 LTV 로 보면 4, 5위로 내려가고, 4, 5위였던 기저귀 정기배송과 원두커피 정기구독이 1, 2위로 올라온다. 비타민만 3위 그대로다.
 # 광고                        단기eCPM   eCPM순위        LTV점수   LTV순위  변동
 # 반값특가 무선이어폰              120,000원      1위   2,000,000      4위  -3
 # 미스터리박스 반짝특가              66,000원      2위   1,800,000      5위  -3
@@ -289,8 +299,9 @@ eCPM 1위였던 이어폰과 2위였던 미스터리박스는 둘 다 LTV 순위
 이 예측 오차가 랭킹에 그대로 번집니다. 아래는 위 표의 '실제 90일 LTV'에 노이즈를 섞어, '7일 신호 기반 예측치'인 척 흉내 낸 것입니다.
 
 ```python
-# 7일 초기 신호로 90일 LTV를 '예측'한다고 가정하고, 그 오차가 순위를 얼마나 흔드는지 본다.
-# 표준 라이브러리만 쓴다. 노이즈는 seed를 고정해 재현 가능하게 만든다.
+# 하는 일: 7일 초기 신호로 90일 LTV 를 예측한다고 놓고, 그 예측 오차가 광고 5개의 순위를 얼마나 흔드는지 본다.
+# 1단계: 광고 5개와 예측 오차를 둔다
+# 표준 라이브러리만 쓰고, 노이즈는 seed 를 고정해 누가 돌려도 같게 만든다.
 import random
 random.seed(6)
 
@@ -303,6 +314,9 @@ ads = [
 ]
 NOISE = 0.35   # 7일 신호만으로 90일 값을 맞히는 모델의 예측 오차(표준편차 비율). 이 정도도 낙관적이다.
 
+# 2단계: 실제 점수와 예측 점수로 순위를 매긴다
+# 예측 LTV 는 실제 LTV 에 (1 + 노이즈)를 곱한 값이고, 노이즈는 평균 0, 표준편차 0.35 다.
+# 순위는 LTV 가 아니라 pCTR 에 LTV 를 곱한 점수로 매긴다.
 def rank_by(data, key):
     ordered = sorted(data, key=lambda a: -a[key])
     return {a["name"]: i + 1 for i, a in enumerate(ordered)}
@@ -316,6 +330,8 @@ for ad in ads:
 true_rank = rank_by(ads, "score_true")
 pred_rank = rank_by(ads, "score_pred")
 
+# 3단계: 두 순위를 견주어 찍는다
+# 예측 순위가 실제와 다르면 표시한다.
 print(f"{'광고':<22}{'실제 LTV':>11}{'예측 LTV':>11}{'실제순위':>8}{'예측순위':>8}")
 for ad in sorted(ads, key=lambda a: true_rank[a["name"]]):
     name = ad["name"]
@@ -323,6 +339,7 @@ for ad in sorted(ads, key=lambda a: true_rank[a["name"]]):
     print(f"{name:<22}{ad['ltv90_true']:>10,.0f}{ad['ltv90_pred']:>11,.0f}{true_rank[name]:>7}위{pred_rank[name]:>7}위{flag}")
 
 # 출력:
+# 3단계 뜻: 실제 순위로는 기저귀가 1위지만, 예측이 원두커피의 LTV 를 227,413 으로 부풀려 1위와 2위가 뒤집힌다. 광고 5개 가운데 4개의 순위가 틀린다.
 # 광고                         실제 LTV     예측 LTV    실제순위    예측순위
 # 유아용 기저귀 정기배송             180,000    184,607      1위      2위  <- 순위 오류
 # 원두커피 정기구독                150,000    227,413      2위      1위  <- 순위 오류
@@ -341,8 +358,9 @@ for ad in sorted(ads, key=lambda a: true_rank[a["name"]]):
 돈은 지금 받는 게 나중에 받는 것보다 낫습니다. 은행 이자와 같은 이유입니다. 그래서 미래에 들어올 돈은 할인율만큼 깎아 **현재가치(PV, Present Value)**로 환산하는 게 금융의 표준 관행입니다. 90일 LTV 중에서도 **이미 확정된 최초 구매분**은 깎을 필요가 없지만, **아직 오지 않은 재구매분**은 할인 대상입니다.
 
 ```python
-# 90일 LTV 중 '이미 확정된 몫(최초 구매)'과 '아직 안 온 몫(재구매)'을 나누고,
-# 재구매 몫만 할인율로 현재가치(PV)로 환산해 세 번째 순위를 만든다.
+# 하는 일: 90일 LTV 를 이미 확정된 최초 구매분과 아직 안 온 재구매분으로 나누고, 재구매분만 현재가치(PV)로 할인해 세 번째 순위를 만든다.
+# 1단계: 광고 5개를 둔다
+# 앞 표와 같은 광고 5개다.
 ads = [
     {"name": "반값특가 무선이어폰",   "pctr": 0.080, "repurchase": 0.05, "ltv90": 25_000},
     {"name": "미스터리박스 반짝특가", "pctr": 0.060, "repurchase": 0.08, "ltv90": 30_000},
@@ -351,6 +369,8 @@ ads = [
     {"name": "원두커피 정기구독",     "pctr": 0.030, "repurchase": 0.55, "ltv90": 150_000},
 ]
 
+# 2단계: 할인율을 정한다
+# 재구매분은 대략 3개월 뒤에 들어오니 월 5% 로 세 번 할인한다.
 MONTHLY_RATE = 0.05   # 월 5% -- "미래 가치를 얼마나 믿는가"를 나타내는 값
 MONTHS_OUT = 3        # 재구매분은 대략 90일(3개월) 시점에 들어온다고 가정
 discount = 1 / (1 + MONTHLY_RATE) ** MONTHS_OUT   # ≈ 0.864
@@ -359,6 +379,8 @@ def rank_by(data, key):
     ordered = sorted(data, key=lambda a: -a[key])
     return {a["name"]: i + 1 for i, a in enumerate(ordered)}
 
+# 3단계: 할인 전과 후의 점수로 순위를 매긴다
+# 최초 구매분은 이미 확정이라 그대로 두고, 재구매분만 할인한다.
 for ad in ads:
     ad["ltv_score"] = ad["pctr"] * ad["ltv90"] * 1000             # 할인 전(위 표의 LTV 점수와 동일)
     immediate = ad["ltv90"] * (1 - ad["repurchase"])              # 최초 구매분 -- 이미 확정, 할인 없음
@@ -369,6 +391,7 @@ for ad in ads:
 before_rank = rank_by(ads, "ltv_score")
 after_rank = rank_by(ads, "ltv_score_pv")
 
+# 4단계: 두 순위를 찍는다
 print(f"{'광고':<22}{'LTV순위(할인전)':>16}{'LTV순위(할인후)':>16}")
 for ad in sorted(ads, key=lambda a: before_rank[a["name"]]):
     name = ad["name"]
@@ -376,6 +399,7 @@ for ad in sorted(ads, key=lambda a: before_rank[a["name"]]):
     print(f"{name:<22}{before_rank[name]:>15}위{after_rank[name]:>15}위{flag}")
 
 # 출력:
+# 4단계 뜻: 할인하면 비타민이 3위에서 4위로, 무선이어폰이 4위에서 3위로 자리를 바꾼다. 1, 2위와 5위는 그대로다.
 # 광고                          LTV순위(할인전)      LTV순위(할인후)
 # 유아용 기저귀 정기배송                        1위              1위
 # 원두커피 정기구독                           2위              2위

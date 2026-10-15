@@ -381,19 +381,17 @@ graph TB
 다음 코드로 두 효과 — 수수료 구조와 예측 정확도 — 를 각각 계산하고, 마지막에 곱해 봅니다. 모든 수치는 가상값입니다.
 
 ```python
-# 담장 안(Walled Garden)과 열린 RTB, 같은 광고 예산이 최종적으로 어떻게 다르게 쓰이는지 계산한다.
-# 두 가지 효과를 따로 구하고, 마지막에 곱한다.
-#   효과 1: 중개 수수료 구조 (경유하는 회사 수만큼 수수료가 곱으로 쌓인다)
-#   효과 2: 데이터 우위가 만드는 pCTR 예측 정확도 차이 (예측이 정확할수록 더 좋은 광고를 고른다)
-# 모든 요율, 숫자는 예시를 위한 가상값이다. 표준 라이브러리만 쓴다.
+# 하는 일: 같은 광고 예산이 담장 안(Walled Garden)과 열린 RTB 에서 얼마나 다르게 쓰이는지, 수수료 구조와 예측 정확도 두 효과로 나눠 구하고 곱한다.
+# 1단계: 예산을 둔다
+# 모든 요율과 숫자는 예시를 위한 가상값이다. 표준 라이브러리만 쓴다.
 import random
 
 random.seed(7)
 
 BUDGET = 10_000_000  # 광고주가 한 달에 쓰는 예산(원) — 가상값
 
-# --- 효과 1: 중개 수수료 구조 ---
-# 열린 RTB: 광고주 지출 -> DSP -> Ad Exchange -> SSP -> 매체. 각 단계가 수수료를 뗀다.
+# 2단계: 효과 1, 중개 수수료 구조를 구한다
+# 열린 RTB 는 광고주 지출 -> DSP -> Ad Exchange -> SSP -> 매체로 가며 단계마다 수수료를 뗀다. 경유하는 회사 수만큼 수수료가 곱으로 쌓인다.
 OPEN_RTB_FEES = [0.15, 0.10, 0.15]  # DSP, Ad Exchange, SSP 수수료율(가상)
 # 담장 안: 회사가 하나뿐이라 '수수료'가 아니라 내부 운영비만 나간다(가상).
 WALLED_GARDEN_COST = 0.03
@@ -408,10 +406,9 @@ open_rtb_revenue = take_home(BUDGET, OPEN_RTB_FEES)
 walled_garden_revenue = take_home(BUDGET, [WALLED_GARDEN_COST])
 structural_ratio = walled_garden_revenue / open_rtb_revenue
 
-# --- 효과 2: 데이터 우위가 만드는 예측 정확도 차이 ---
-# 매 경매마다 후보 광고 5개 중 하나를 골라 노출한다고 가정.
-# 후보의 '진짜 클릭 확률'은 아무도 모르고, pCTR '예측치'로 순위를 매겨 1등을 고른다.
-# 예측치 = 진짜값 x (1 + 노이즈). 담장 안은 1st-party 데이터가 풍부해 노이즈가 더 작다(가상).
+# 3단계: 효과 2, 예측 정확도 차이를 구한다
+# 경매마다 후보 광고 5개를 pCTR 예측치로 줄 세워 1등을 노출한다. 진짜 클릭 확률은 아무도 모르니, 예측이 정확할수록 더 좋은 광고를 고른다.
+# 예측치는 진짜값 x (1 + 노이즈)다. 담장 안은 1st-party 데이터가 풍부해 노이즈가 더 작다(가상).
 N_AUCTIONS = 50_000
 N_CANDIDATES = 5
 NOISE_OPEN_RTB = 0.40       # 예측 오차의 상대 표준편차 — 데이터가 부족할수록 큼(가상)
@@ -430,7 +427,8 @@ avg_ctr_open = avg_true_ctr_of_winners(NOISE_OPEN_RTB)
 avg_ctr_walled = avg_true_ctr_of_winners(NOISE_WALLED_GARDEN)
 prediction_ratio = avg_ctr_walled / avg_ctr_open
 
-# --- 두 효과를 곱해 '같은 예산 1원'의 최종 효율 격차를 본다 ---
+# 4단계: 두 효과를 곱해 찍는다
+# 같은 예산 1원의 최종 효율 격차를 본다.
 combined_ratio = structural_ratio * prediction_ratio
 
 print(f"열린 RTB 매체 실수령      {open_rtb_revenue:>12,.0f}원  ({open_rtb_revenue/BUDGET:.1%})")
@@ -442,6 +440,7 @@ print(f"효과2: 예측 정확도 격차   {prediction_ratio:.2f}배")
 print(f"두 효과를 곱한 최종 격차  {combined_ratio:.2f}배")
 
 # 출력:
+# 4단계 뜻: 열린 RTB 는 매체에 65.0% 만 닿고 담장 안은 97.0% 가 닿아 구조 격차가 1.49배다. 예측도 정확해 고른 광고의 진짜 CTR 이 4.2076% 로 1.06배 높고, 둘을 곱하면 1.59배다.
 # 열린 RTB 매체 실수령         6,502,500원  (65.0%)
 # 담장 안 플랫폼 실수령        9,700,000원  (97.0%)
 # 효과1: 구조적 격차        1.49배

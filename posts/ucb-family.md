@@ -48,13 +48,13 @@ UCB1은 이 차이를 볼 방법이 없다. 지금이 뉴스 지면인지 커뮤
 아래 코드는 1절의 표와 같은 진짜 클릭률로 4,000회를 시뮬레이션한다. 시드를 고정했으니 그대로 복붙해 돌리면 같은 결과가 나온다.
 
 ```python
-# UCB1을 '컨텍스트 무시'와 '컨텍스트별 분리' 두 방식으로 돌려 누적 클릭을 비교한다.
-# 표준 라이브러리만 쓴다 — 행렬 역행렬 없이, 컨텍스트별 카운터 분리만으로 충분하다.
+# 하는 일: UCB1 을 컨텍스트 무시와 컨텍스트별 분리 두 방식으로 4,000회 돌려 누적 클릭을 견준다.
 import random
 import math
 
 random.seed(3)
 
+# 1단계: 컨텍스트 4종의 진짜 클릭률을 둔다
 # 1절 표와 같은 '진짜' 클릭률. 지면 2종 x 시간대 2종, 소재 2개.
 TRUE_CTR = {
     ("뉴스", "오전"):    {"A": 0.08, "B": 0.03},
@@ -66,11 +66,16 @@ CONTEXTS = list(TRUE_CTR)
 ARMS = ["A", "B"]
 ROUNDS = 4000
 
+# 2단계: UCB1 고르기 함수를 만든다
+# 관측 평균에 탐색 보너스를 더한 값이 가장 큰 소재를 고른다.
 def ucb1_pick(counts, sums, t):
     unseen = [a for a in ARMS if counts[a] == 0]
     if unseen:
         return unseen[0]
     return max(ARMS, key=lambda a: sums[a] / counts[a] + math.sqrt(2 * math.log(t) / counts[a]))
+
+# 3단계: 두 방식의 통계를 둔다
+# 행렬 역행렬 없이 컨텍스트별 카운터 분리만으로 충분하다. 표준 라이브러리만 쓴다.
 
 # (a) 컨텍스트를 무시한다 — 소재별 통계를 딱 하나만 쓴다.
 blind_counts = {a: 0 for a in ARMS}
@@ -82,6 +87,8 @@ sep_counts = {c: {a: 0 for a in ARMS} for c in CONTEXTS}
 sep_sums = {c: {a: 0 for a in ARMS} for c in CONTEXTS}
 sep_clicks = 0
 
+# 4단계: 4,000회 돌린다
+# 매회 컨텍스트 하나가 무작위로 오고, 두 방식이 각자 소재를 고른다.
 for _ in range(1, ROUNDS + 1):
     ctx = random.choice(CONTEXTS)
 
@@ -99,12 +106,14 @@ for _ in range(1, ROUNDS + 1):
     sep_sums[ctx][arm_s] += reward_s
     sep_clicks += reward_s
 
+# 5단계: 두 방식의 누적 클릭을 찍는다
 gain = (sep_clicks / blind_clicks - 1) * 100
 print(f"{ROUNDS}회 후 누적 클릭 — 컨텍스트 무시: {blind_clicks}회, 컨텍스트별 분리: {sep_clicks}회")
 print(f"분리 방식이 {sep_clicks - blind_clicks}회 더 많음 ({gain:.1f}% 더 많음)")
 print(f"컨텍스트 무시 방식의 소재 선택 횟수: {blind_counts}")
 
 # 출력:
+# 5단계 뜻: 컨텍스트별로 나누면 클릭이 245회로, 무시할 때의 192회보다 53회(27.6%) 많다. 무시하면 A 와 B 를 1943회와 2057회로 거의 반반 고른다.
 # 4000회 후 누적 클릭 — 컨텍스트 무시: 192회, 컨텍스트별 분리: 245회
 # 분리 방식이 53회 더 많음 (27.6% 더 많음)
 # 컨텍스트 무시 방식의 소재 선택 횟수: {'A': 1943, 'B': 2057}

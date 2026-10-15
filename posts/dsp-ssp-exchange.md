@@ -166,9 +166,10 @@ take rate가 왜 생기는지는 당연하다. SSP도 DSP도 Exchange도 회사�
 아래 코드는 표준 라이브러리만 쓴다. 7절의 표와 같은 예시 수수료율(20%, 15%, 20%)을 그대로 넣어 검산한 뒤, 중개 단계 하나를 추가하거나 제거했을 때를 비교한다.
 
 ```python
-# 광고주 지출이 몇 단계 중개를 거쳐 매체에 도착하는지 계산한다.
-# 수수료율은 이 글에서 쓰는 예시값이다 — 특정 회사의 공개 요율이 아니다.
+# 하는 일: 광고주가 쓴 1,000원이 중개 몇 곳을 거쳐 매체에 얼마로 도착하는지 계산한다.
 
+# 1단계: 지출과 수수료를 떼는 함수를 둔다
+# 중개마다 남은 금액에서 자기 몫을 떼고 넘긴다. 수수료율은 이 글에서 쓰는 예시값이고, 특정 회사의 공개 요율이 아니다.
 SPEND = 1_000  # 광고주가 이 노출 1건에 쓴 돈(원)
 
 def take_home(spend, fee_rates):
@@ -185,7 +186,8 @@ def effective_take_rate(spend, publisher_revenue):
     # 광고주 지출 대비, 중간에서 사라진 비율
     return (spend - publisher_revenue) / spend
 
-# 3단계 구조: DSP 20%, Exchange 15%, SSP 20% (예시 수치)
+# 2단계: 중개 세 곳을 거친 잔액을 찍는다
+# DSP 20%, Exchange 15%, SSP 20% 는 예시 수치다.
 base_rates = [0.20, 0.15, 0.20]
 publisher_revenue, trail = take_home(SPEND, base_rates)
 
@@ -194,7 +196,8 @@ for step, amount in enumerate(trail):
     print(f"  단계 {step}   잔액 {amount:8,.0f}원")
 print(f"실효 take rate {effective_take_rate(SPEND, publisher_revenue):.1%}")
 
-# 중개 단계가 하나 늘거나(리셀러 추가) 줄 때(Exchange 생략, PMP 직거래)
+# 3단계: 중개 수를 바꿔 견준다
+# 리셀러가 하나 끼어 넷이 되거나, Exchange 를 빼고 PMP 로 직거래해 둘이 되는 경우다.
 scenarios = {
     "기본 3단계(DSP, Exchange, SSP)": [0.20, 0.15, 0.20],
     "리셀러 추가 4단계(+10%p 단계)": [0.20, 0.15, 0.10, 0.20],
@@ -209,12 +212,14 @@ for name, rates in scenarios.items():
     print(f"  {name:<28} 매체 실수령 {revenue:6,.0f}원   take rate {rate:5.1%}")
 
 # 출력:
+# 2단계 뜻: 남은 돈에서 차례로 떼니 1,000원이 800원, 680원을 거쳐 544원이 된다. 중간에서 45.6% 가 사라진다.
 # 기본 3단계 검산
 #   단계 0   잔액    1,000원
 #   단계 1   잔액      800원
 #   단계 2   잔액      680원
 #   단계 3   잔액      544원
 # 실효 take rate 45.6%
+# 3단계 뜻: 리셀러가 끼면 매체 몫이 490원으로 줄고, Exchange 를 빼면 640원으로 늘어난다. 중개가 하나 늘 때마다 take rate 가 오른다.
 #
 # 중개 단계별 비교
 #   기본 3단계(DSP, Exchange, SSP)   매체 실수령    544원   take rate 45.6%

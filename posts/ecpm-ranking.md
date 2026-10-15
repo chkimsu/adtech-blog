@@ -107,6 +107,9 @@ graph LR
 이 정규화가 **공정한 비교**를 가능하게 하는 이유는 간단합니다. 모든 캠페인을 "1,000회 노출당 플랫폼 기대 수익"이라는 동일한 단위로 변환했기 때문입니다. 과금 모델이 무엇이든, 플랫폼은 **가장 높은 기대 수익을 주는 광고**를 선택합니다.
 
 ```python
+# 하는 일: 과금 방식이 다른 캠페인 셋(CPM, CPC, CPA)의 입찰을 eCPM 으로 바꿔 한 지면에서 견준다.
+# 1단계: 과금 방식별 eCPM 함수를 만든다
+# eCPM 은 1,000회 노출당 기대 수익이다. CPC 는 클릭 확률을, CPA 는 전환 확률까지 곱해 같은 단위로 맞춘다.
 def compute_ecpm(bid_type, bid, pCTR=None, pCVR=None):
     """과금 모델별 eCPM 정규화: 1,000회 노출당 기대 수익"""
     if bid_type == "CPM":
@@ -117,7 +120,7 @@ def compute_ecpm(bid_type, bid, pCTR=None, pCVR=None):
         return pCTR * pCVR * bid * 1000       # 클릭 × 전환 확률 × CPA × 1000
     raise ValueError(f"Unknown: {bid_type}")
 
-# 세 캠페인이 동일 지면에서 경쟁
+# 2단계: 세 캠페인을 같은 지면에서 견준다
 campaigns = [
     {"name": "캠페인A(CPM)", "type": "CPM", "bid": 8000},
     {"name": "캠페인B(CPC)", "type": "CPC", "bid": 2000, "pCTR": 0.05},
@@ -133,7 +136,14 @@ for c in campaigns:
 
 winner = max(results, key=lambda x: x[1])
 print(f"\n  승자: {winner[0]} (eCPM {winner[1]:,.0f}원)")
-# 과금 모델이 달라도 eCPM으로 공정 비교 가능
+
+# 출력:
+# 2단계 뜻: eCPM 으로 바꾸면 A 는 8,000원, B 는 100,000원, C 는 150,000원이라 CPA 캠페인 C 가 이긴다. 과금 모델이 달라도 eCPM 으로 공정하게 견줄 수 있다.
+#   캠페인A(CPM): eCPM = 8,000원
+#   캠페인B(CPC): eCPM = 100,000원
+#   캠페인C(CPA): eCPM = 150,000원
+#
+#   승자: 캠페인C(CPA) (eCPM 150,000원)
 ```
 
 여기서 핵심은 pCTR과 pCVR 모델의 정확도입니다. 모델이 클릭률을 과대 예측하면 eCPM이 부풀려져서 실제 수익보다 높은 랭킹을 받게 되고, 이는 플랫폼 매출 손실로 이어집니다.
@@ -275,6 +285,7 @@ $$\text{Ranking Score} = pCTR_{\text{platform}} \times \text{Bid}$$
 > 폐쇄형 생태계의 구조와 열린 RTB와의 차이는 [닫힌 생태계 포스트](post.html?id=walled-garden)에서 더 깊이 확인할 수 있습니다.
 
 ```python
+# 하는 일: 고품질 광고 A 와 고입찰 광고 B 를 세 시장 유형의 랭킹 식으로 점수 매겨, 누가 이기는지 견준다.
 def ranking_comparison():
     """세 시장 유형에서 동일 광고주의 랭킹 결과 비교"""
     ads = {
@@ -295,8 +306,12 @@ def ranking_comparison():
         print(f"  {market:15s}: {parts}")
 
 ranking_comparison()
-# Open RTB: 돈이 결정 → B 승리
-# CPC/Walled Garden: 품질이 결정 → A 승리
+
+# 출력:
+# 뜻: 입찰가만 보는 Open RTB 에서는 고입찰 B 가 25,000 으로 이기고, pCTR 을 곱하는 CPC Exchange 와 Walled Garden 에서는 고품질 A 가 이긴다. 돈이 결정하느냐, 품질이 결정하느냐의 차이다.
+#   Open RTB       : A(고품질)=8,000  B(고입찰)=25,000 ← 승
+#   CPC Exchange   : A(고품질)=100,000 ← 승  B(고입찰)=30,000
+#   Walled Garden  : A(고품질)=100 ← 승  B(고입찰)=30
 ```
 
 ### 4.4 세 시장의 비교
@@ -455,8 +470,9 @@ eCPM의 "C"는 Click입니다. 하지만 광고의 가치가 항상 클릭에 �
 결과를 보면 기준마다 다른 광고가 1등입니다. 순수 eCPM 기준으로는 대출 광고(C)가 이깁니다. 입찰가가 가장 높기 때문입니다. 품질 가중 기준으로는 지역 맛집(D)이 이깁니다. eCPM은 중간이지만 품질계수가 가장 높습니다. LTV 기준으로는 구독 서비스(B)가 이깁니다. 순수 eCPM은 네 후보 중 가장 낮지만, 사용자 비용(β)이 가장 작아 장기 순가치가 가장 큽니다.
 
 ```python
-# 같은 광고 후보 4개에 랭킹 기준 3가지를 적용해 1등이 바뀌는지 확인한다.
-# 순수 eCPM(돈) / 품질 가중(eCPM x 품질계수) / LTV 기준(eCPM - 사용자 비용)
+# 하는 일: 같은 광고 후보 4개에 랭킹 기준 셋을 적용해 1등이 바뀌는지 본다.
+# 1단계: 광고 후보 4개를 둔다
+# 광고마다 pCTR, CPC, 품질계수, 사용자 비용(beta)을 담는다.
 ads = {
     "A(반짝세일 쿠폰)": {"pctr": 0.080, "cpc": 500,  "quality": 0.60, "beta": 32_000},
     "B(구독 서비스)":   {"pctr": 0.025, "cpc": 1400, "quality": 0.90, "beta": 500},
@@ -464,6 +480,8 @@ ads = {
     "D(지역 맛집)":     {"pctr": 0.050, "cpc": 750,  "quality": 1.20, "beta": 6_000},
 }
 
+# 2단계: 세 랭킹 기준을 만든다
+# 기준은 순수 eCPM(돈), 품질 가중(eCPM x 품질계수), LTV 기준(eCPM - 사용자 비용) 셋이다.
 def ecpm(a):
     return a["pctr"] * a["cpc"] * 1000   # 순수 eCPM: pCTR x Bid x 1,000 (1절)
 
@@ -474,6 +492,7 @@ criteria = {
     "LTV 기준":  lambda a: ecpm(a) - a["beta"],        # - 사용자 비용(beta) -> LTV 포스트 참고
 }
 
+# 3단계: 기준마다 순위를 찍는다
 for name, score_fn in criteria.items():
     scores = {ad: score_fn(v) for ad, v in ads.items()}
     ranked = sorted(scores, key=scores.get, reverse=True)
@@ -482,9 +501,10 @@ for name, score_fn in criteria.items():
     print(f"{name:10s}: {line}")
 
 # 출력:
-# 순수 eCPM : C(대출 광고)=72,000 <- 1위  A(반짝세일 쿠폰)=40,000  D(지역 맛집)=37,500  B(구독 서비스)=35,000
-# 품질 가중  : D(지역 맛집)=45,000 <- 1위  B(구독 서비스)=31,500  C(대출 광고)=28,800  A(반짝세일 쿠폰)=24,000
-# LTV 기준  : B(구독 서비스)=34,500 <- 1위  D(지역 맛집)=31,500  C(대출 광고)=24,000  A(반짝세일 쿠폰)=8,000
+# 3단계 뜻: 돈만 보면 대출 광고 C 가 72,000 으로 1위지만, 품질을 곱하면 지역 맛집 D 가, 사용자 비용을 빼면 구독 서비스 B 가 1위다. 기준만 바꿔도 1위가 셋 다 다르다.
+# 순수 eCPM   : C(대출 광고)=72,000 <- 1위  A(반짝세일 쿠폰)=40,000  D(지역 맛집)=37,500  B(구독 서비스)=35,000
+# 품질 가중     : D(지역 맛집)=45,000 <- 1위  B(구독 서비스)=31,500  C(대출 광고)=28,800  A(반짝세일 쿠폰)=24,000
+# LTV 기준    : B(구독 서비스)=34,500 <- 1위  D(지역 맛집)=31,500  C(대출 광고)=24,000  A(반짝세일 쿠폰)=8,000
 ```
 
 세 기준 다 "말이 되는" 규칙입니다. 그런데 승자가 매번 바뀝니다. 대출 광고처럼 입찰가만 높은 광고는 품질, LTV를 반영하는 순간 밀려납니다. 반대로 구독 서비스처럼 당장의 돈은 적어도 오래 남는 광고는 LTV 기준에서만 1등을 합니다. 어떤 기준을 쓸지 정하는 것 자체가 플랫폼의 가치판단입니다. LTV 계산의 구체적인 방법은 [LTV 포스트](post.html?id=ltv-ad-ranking)에서 더 다룹니다.

@@ -44,14 +44,17 @@
 함수는 두 개면 충분하다. `run_ab`는 짝수 번째 노출을 소재A에, 홀수 번째를 소재B에 기계적으로 배정한다. `run_bandit`은 톰슨 샘플링으로, 매 노출마다 베타 분포에서 표본을 뽑아 큰 쪽에 배정한다. 톰슨 샘플링이 왜 이렇게 작동하는지는 [UCB vs 톰슨 샘플링](post.html?id=ucb-vs-ts)에서 이미 다뤘다. 여기서는 "그런 밴딧이 있다"는 정도로만 쓴다.
 
 ```python
-# 소재 2개(A: 진짜 CTR 2.0%, B: 3.0%)에 노출 10만 건을 A/B와 밴딧에 각각 태워
-# 총 클릭, 후회, 소재별 최종 추정치(95% 신뢰구간)를 비교한다. 표준 라이브러리만 쓴다.
+# 하는 일: 진짜 CTR 2.0% 인 소재 A 와 3.0% 인 B 에 노출 10만 건을 A/B 와 밴딧으로 각각 태워, 총 클릭과 후회, 소재별 추정치와 95% 신뢰구간을 견준다.
 import random, math
 
+# 1단계: 노출 수와 진짜 CTR 을 둔다
+# 표준 라이브러리만 쓴다.
 N = 100_000
 TRUE_CTR = {"A": 0.02, "B": 0.03}   # 우리는 이 값을 모른 채 실험을 시작한다
 BEST_CTR = max(TRUE_CTR.values())
 
+# 2단계: A/B, 밴딧, 신뢰구간 함수를 만든다
+# A/B 는 끝까지 50:50 으로 고정하고, 밴딧(톰슨 샘플링)은 매번 베타 분포 표본이 큰 쪽에 배정한다.
 def run_ab(n, true_ctr, seed):
     """A/B 테스트: 끝까지 50:50 고정 배정."""
     rng = random.Random(seed)
@@ -86,6 +89,7 @@ def ci95(clicks, imps):
     p = clicks / imps
     return p, 1.96 * math.sqrt(p * (1 - p) / imps) * 100
 
+# 3단계: 같은 seed 로 두 실험을 돌린다
 SEED = 3   # A/B와 밴딧 모두 같은 시드로 돌려 공정하게 비교한다
 imps_ab, clicks_ab = run_ab(N, TRUE_CTR, SEED)
 imps_bd, clicks_bd = run_bandit(N, TRUE_CTR, SEED)
@@ -93,21 +97,25 @@ imps_bd, clicks_bd = run_bandit(N, TRUE_CTR, SEED)
 total_ab, total_bd = sum(clicks_ab.values()), sum(clicks_bd.values())
 best_possible = N * BEST_CTR
 
+# 4단계: 총 클릭과 후회를 찍는다
 print(f"이론상 최선(전부 B에게 몰아줬을 때 기대 클릭): {best_possible:,.0f}")
 print(f"A/B   총 클릭 {total_ab:,}   후회 {best_possible - total_ab:6.1f}")
 print(f"밴딧  총 클릭 {total_bd:,}   후회 {best_possible - total_bd:6.1f}")
 print()
 
+# 5단계: 소재별 추정치와 신뢰구간을 찍는다
 for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, clicks_bd)]:
     for arm in ("A", "B"):
         p_hat, half_width = ci95(clicks[arm], imps[arm])
         print(f"  [{label}] 소재{arm}: n={imps[arm]:6,}   관측CTR={p_hat*100:5.2f}%   95%CI=±{half_width:.3f}pp")
 
 # 출력:
+# 4단계 뜻: 전부 B 에 몰아줬다면 클릭 3,000 을 기대한다. 밴딧은 2,980 으로 후회가 20.0 뿐이고, 끝까지 반반 나눈 A/B 는 후회가 479.0 이다.
 # 이론상 최선(전부 B에게 몰아줬을 때 기대 클릭): 3,000
 # A/B   총 클릭 2,521   후회  479.0
 # 밴딧  총 클릭 2,980   후회   20.0
 #
+# 5단계 뜻: A/B 는 두 소재를 50,000건씩 봐서 신뢰구간이 ±0.124pp 와 ±0.149pp 다. 밴딧은 A 를 4,171건만 봐서 A 의 신뢰구간이 ±0.453pp 로 넓다.
 #   [A/B] 소재A: n=50,000   관측CTR= 2.06%   95%CI=±0.124pp
 #   [A/B] 소재B: n=50,000   관측CTR= 2.99%   95%CI=±0.149pp
 #   [밴딧] 소재A: n= 4,171   관측CTR= 2.28%   95%CI=±0.453pp
@@ -127,14 +135,17 @@ for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, cli
 이번엔 소재A 2.0%, 소재B 2.1%로 놓고 같은 코드를 다시 돌린다. 함수는 그대로고 진짜 클릭률과 시드만 바꿨다.
 
 ```python
-# 진짜 차이가 작을 때(A 2.0% vs B 2.1%, 0.1%p 차이) 밴딧이 어떻게 되는지 본다.
-# 함수는 위 코드와 동일 — TRUE_CTR과 시드만 바꿔 같은 비교를 반복한다.
+# 하는 일: 진짜 차이가 0.1%p 로 작을 때(A 2.0%, B 2.1%) 같은 비교를 다시 돌려 밴딧이 어떻게 되는지 본다.
 import random, math
 
+# 1단계: 노출 수와 진짜 CTR 을 둔다
+# 이번에는 B 가 0.1%p 만 높다.
 N = 100_000
 TRUE_CTR = {"A": 0.02, "B": 0.021}   # 이번엔 차이가 0.1%p뿐이다
 BEST_CTR = max(TRUE_CTR.values())
 
+# 2단계: 앞 블록과 같은 함수를 둔다
+# 함수는 위 코드와 같고, TRUE_CTR 과 시드만 바꿔 같은 비교를 반복한다.
 def run_ab(n, true_ctr, seed):
     rng = random.Random(seed)
     imps = {"A": 0, "B": 0}
@@ -166,6 +177,7 @@ def ci95(clicks, imps):
     p = clicks / imps
     return p, 1.96 * math.sqrt(p * (1 - p) / imps) * 100
 
+# 3단계: seed 2 로 두 실험을 돌린다
 SEED = 2
 imps_ab, clicks_ab = run_ab(N, TRUE_CTR, SEED)
 imps_bd, clicks_bd = run_bandit(N, TRUE_CTR, SEED)
@@ -173,6 +185,7 @@ imps_bd, clicks_bd = run_bandit(N, TRUE_CTR, SEED)
 total_ab, total_bd = sum(clicks_ab.values()), sum(clicks_bd.values())
 best_possible = N * BEST_CTR
 
+# 4단계: 총 클릭과 후회, 밴딧의 배분을 찍는다
 print(f"이론상 최선(전부 B에게 몰아줬을 때 기대 클릭): {best_possible:,.0f}")
 print(f"A/B   총 클릭 {total_ab:,}   후회 {best_possible - total_ab:6.1f}")
 print(f"밴딧  총 클릭 {total_bd:,}   후회 {best_possible - total_bd:6.1f}")
@@ -180,18 +193,21 @@ print()
 print(f"밴딧 최종 트래픽 배분 — 소재A(열세) {imps_bd['A']:,} : 소재B(우세) {imps_bd['B']:,}")
 print()
 
+# 5단계: 소재별 추정치와 신뢰구간을 찍는다
 for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, clicks_bd)]:
     for arm in ("A", "B"):
         p_hat, half_width = ci95(clicks[arm], imps[arm])
         print(f"  [{label}] 소재{arm}: n={imps[arm]:6,}   관측CTR={p_hat*100:5.2f}%   95%CI=±{half_width:.3f}pp")
 
 # 출력:
+# 4단계 뜻: 차이가 작으면 밴딧이 열세인 A 에 94,014건을 몰아줘, 후회가 78.0 으로 A/B 의 15.0 보다 크다.
 # 이론상 최선(전부 B에게 몰아줬을 때 기대 클릭): 2,100
 # A/B   총 클릭 2,085   후회   15.0
 # 밴딧  총 클릭 2,022   후회   78.0
 #
 # 밴딧 최종 트래픽 배분 — 소재A(열세) 94,014 : 소재B(우세) 5,986
 #
+# 5단계 뜻: A/B 로는 B 가 2.12% 로 A 의 2.05% 보다 높게 나오지만, 밴딧은 B 를 5,986건만 봐서 1.85% 로 낮게 본다.
 #   [A/B] 소재A: n=50,000   관측CTR= 2.05%   95%CI=±0.124pp
 #   [A/B] 소재B: n=50,000   관측CTR= 2.12%   95%CI=±0.126pp
 #   [밴딧] 소재A: n=94,014   관측CTR= 2.03%   95%CI=±0.090pp

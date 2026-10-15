@@ -48,9 +48,12 @@ $$s(b; V, x) = \underbrace{(V - b)}_{\text{낙찰 시 이익 (Surplus)}} \cdot \
 이 **맞바꿈**의 균형점이 최적 입찰가 $b^*$입니다. [데모의 Sweep 차트](demo-bid-shading.html)에서 이 균형점을 직접 확인할 수 있습니다.
 
 ```python
+# 하는 일: 진짜 가치 $5 인 노출에서 시장 가격이 로그정규를 따를 때, 이익 × 낙찰 확률(Surplus)이 가장 큰 입찰가 b* 를 찾는다.
 import numpy as np
 from scipy.stats import lognorm
 
+# 1단계: Surplus 함수를 만든다
+# Surplus 는 이익 (V - b) 에 낙찰 확률 F(b) 를 곱한 값이다.
 def surplus(b, V, mu, sigma):
     """Surplus = (V - b) × F(b|x): 이익 × 낙찰 확률"""
     if b <= 0 or b >= V:
@@ -58,7 +61,8 @@ def surplus(b, V, mu, sigma):
     win_prob = lognorm.cdf(b, s=sigma, scale=np.exp(mu))
     return (V - b) * win_prob
 
-# True Value $5, 시장가격 Log-normal(μ=0.8, σ=0.5)
+# 2단계: 입찰가 50개로 Surplus 가 가장 큰 곳을 찾는다
+# True Value 는 $5, 시장 가격은 Log-normal(μ=0.8, σ=0.5)이다. $0.1 에서 $4.9 까지 입찰가 50개를 잰다.
 V, mu, sigma = 5.0, 0.8, 0.5
 bids = np.linspace(0.1, V - 0.1, 50)
 surpluses = [surplus(b, V, mu, sigma) for b in bids]
@@ -67,8 +71,9 @@ best_idx = np.argmax(surpluses)
 print(f"  최적 입찰가 b* = ${bids[best_idx]:.2f}")
 print(f"  최대 Surplus  = ${surpluses[best_idx]:.3f}")
 print(f"  Shading 비율  = {(1 - bids[best_idx]/V)*100:.0f}% 할인")
-# b를 올리면 Win Rate↑ but 이익↓, 내리면 반대 — 이 균형이 b*
+
 # 출력:
+# 2단계 뜻: 입찰가를 $2.65 로 47% 깎을 때 Surplus 가 $1.496 으로 가장 크다. 입찰가를 올리면 낙찰 확률은 오르지만 이익이 줄고, 내리면 반대라서 그 균형점이 b* 다.
 #   최적 입찰가 b* = $2.65
 #   최대 Surplus  = $1.496
 #   Shading 비율  = 47% 할인
@@ -88,21 +93,27 @@ print(f"  Shading 비율  = {(1 - bids[best_idx]/V)*100:.0f}% 할인")
 0%는 이겨도 남는 게 없습니다. 50%는 마진이 크지만 절반을 놓칩니다. 최적점은 양 끝이 아니라 **가운데**에 있습니다.
 
 ```python
+# 하는 일: 가치 1,000원인 노출에서 입찰가를 0% 부터 50% 까지 깎으며, 평상시와 경쟁 과열 시장의 승률과 기대이익을 견준다.
 import random
 
 V = 1000  # 이 노출의 진짜 가치(원). pCTR x 전환가치로 계산된 값.
 
+# 1단계: 가상의 시장 분포를 만든다
 # 가상 데이터: 경쟁자 최고가를 20,000번 뽑아 '진짜 시장 분포'를 만든다.
 # 로그정규를 쓰는 이유는 입찰가가 늘 양수이고 오른쪽 꼬리가 길기 때문이다.
 def market(mu):
     random.seed(42)
     return [random.lognormvariate(mu, 0.45) for _ in range(20000)]
 
+# 2단계: 입찰가별 승률과 기대이익을 구하는 함수를 만든다
+# 경쟁가가 내 입찰가보다 낮으면 이긴다. 기대이익은 승률 x (가치 - 입찰가)다.
 def profit(bid, prices):
     wins = sum(1 for p in prices if p < bid)   # 경쟁가가 내 입찰가보다 낮으면 내가 이김
     win_rate = wins / len(prices)
     return win_rate, win_rate * (V - bid)      # 기대이익 = 승률 x (가치 - 입찰가)
 
+# 3단계: 두 시장에서 깎는 비율별로 찍는다
+# 평상시는 μ=6.2, 경쟁 과열은 μ=7.0 이다.
 for label, mu in [("평상시", 6.2), ("경쟁 과열", 7.0)]:
     prices = market(mu)
     print("%s: 시장 평균 %.0f원" % (label, sum(prices) / len(prices)))
@@ -117,6 +128,7 @@ for label, mu in [("평상시", 6.2), ("경쟁 과열", 7.0)]:
     print("  -> 최적은 %d%% 깎기" % best[0])
 
 # 출력:
+# 3단계 뜻: 평상시에는 40% 깎은 600원이 기대이익 267.6원으로 가장 크다. 경쟁이 과열돼 시장 평균이 1215원으로 오르면, 20% 만 깎은 800원이 48.3원으로 가장 크다.
 # 평상시: 시장 평균 546원
 #   깎기 |   입찰 |   승률 | 기대이익
 #    0% | 1000원 |  94.0% |    0.0원
@@ -212,12 +224,17 @@ Ghosh et al.은 iPinYou 데이터에서 이 문제를 Figure 1로 직접 보여�
 얼마나 어긋나는지 직접 돌려 봅니다. 이긴 경매의 낙찰가만 모아 분포를 다시 적합하고, 그 분포로 입찰가를 다시 정합니다. 이걸 세 번 반복합니다.
 
 ```python
+# 하는 일: 이긴 경매의 낙찰가만 보고 시장 분포를 추정하면, 회차를 거듭할수록 시장을 낮게 보고 입찰가를 더 깎아 기대이익을 잃는 과정을 본다.
 import math, random, statistics
 
+# 1단계: 1절과 같은 시장을 만든다
+# 가치 1,000원에 경쟁자 최고가 20,000개를 뽑는다.
 V = 1000
 random.seed(42)
 TRUE = [random.lognormvariate(6.2, 0.45) for _ in range(20000)]  # 1절과 같은 시장(진짜 평균 546원)
 
+# 2단계: 최적 입찰가와 실제 성적을 구하는 함수를 만든다
+# best_bid 는 어떤 승률 함수를 주든 그 함수 기준의 최적 입찰가를 고른다.
 def best_bid(win_prob):
     """승률 함수를 받아 기대이익이 가장 큰 입찰가를 10원 단위로 고른다."""
     return max(range(200, 1000, 10), key=lambda b: win_prob(b) * (V - b))
@@ -227,9 +244,12 @@ def real(bid):
     wr = sum(1 for p in TRUE if p < bid) / len(TRUE)
     return wr, wr * (V - bid)
 
+# 3단계: 시장을 다 알 때의 정답을 구한다
 bid = best_bid(lambda b: real(b)[0])   # 시장을 다 안다고 가정한 최적값 = 비교 기준
 print("정답: 입찰 %d원 | 승률 %.1f%% | 기대이익 %.1f원" % (bid, real(bid)[0] * 100, real(bid)[1]))
 
+# 4단계: 이긴 경매만 보고 세 번 다시 추정한다
+# 이긴 경매의 낙찰가에 로그정규를 그대로 맞추고, 그 분포로 다시 최적화한다.
 for rnd in (1, 2, 3):
     won = [math.log(p) for p in TRUE if p < bid]        # 이긴 경매의 낙찰가만 관측된다
     m, s = statistics.mean(won), statistics.stdev(won)  # 그 표본에 로그정규를 그대로 적합
@@ -239,7 +259,9 @@ for rnd in (1, 2, 3):
           % (rnd, math.exp(m + s * s / 2), bid, real(bid)[0] * 100, real(bid)[1]))
 
 # 출력:
+# 3단계 뜻: 시장을 다 알면 570원을 불러 승률 62.5%, 기대이익 268.9원을 얻는다.
 # 정답: 입찰 570원 | 승률 62.5% | 기대이익 268.9원
+# 4단계 뜻: 이긴 경매만 보면 시장 평균을 392원, 360원, 345원으로 점점 낮게 보고, 입찰가도 460원까지 내려가 기대이익이 237.6원으로 준다.
 # 1회차: 추정평균 392원 -> 입찰 500원 | 승률 51.3% | 기대이익 256.4원
 # 2회차: 추정평균 360원 -> 입찰 470원 | 승률 45.9% | 기대이익 243.0원
 # 3회차: 추정평균 345원 -> 입찰 460원 | 승률 44.0% | 기대이익 237.6원
@@ -254,12 +276,10 @@ for rnd in (1, 2, 3):
 핵심은 패찰도 정보라는 점입니다. 졌다는 건 "낙찰가가 적어도 내 입찰가는 넘었다"는 뜻입니다. 정확한 값은 몰라도 하한은 압니다. 이 정보를 버리지 않고 쓰는 도구가 **Kaplan-Meier**입니다. 원래 의학에서 "환자가 아직 살아 있는데 추적이 끊긴" 경우를 다루려고 만든 방법입니다. 여기서는 "경매가 아직 안 끝났는데 관측이 끊긴" 것으로 그대로 옮겨집니다.
 
 ```python
-# 잘린 데이터에서 진짜 분포를 되찾는 법 — Kaplan-Meier.
-#
-# 상황: 내가 입찰가 b를 냈다. 이기면 낙찰가를 본다. 지면 "b보다 높았다"만 안다.
-#       이긴 것만 모아 평균을 내면 시장을 실제보다 싸게 본다(비싼 경매가 통째로 빠지니까).
-# 아이디어: 패찰도 "적어도 b는 넘었다"는 정보다. 그 정보를 버리지 않고 쓴다.
+# 하는 일: 입찰가 570원에서 잘린 낙찰가 데이터로 시장을 추정할 때, 이긴 것만 평균한 값과 Kaplan-Meier 추정을 정답과 견준다.
 
+# 1단계: 가상 시장과 내 입찰가를 둔다
+# 내가 입찰가 b 를 내면, 이길 때는 낙찰가를 보고 질 때는 b 보다 높았다는 것만 안다.
 import random
 random.seed(42)
 
@@ -270,15 +290,19 @@ MY_BID = 570                        # 내 입찰가 — 이보다 비싸면 패�
 market = [random.lognormvariate(MEAN_LOG, SIGMA_LOG) for _ in range(N)]
 true_mean = sum(market) / N
 
+# 2단계: 관측 데이터를 만든다
 # 관측 데이터: 이기면 (낙찰가, 관측됨), 지면 (내 입찰가, 잘림=censored)
 obs = [(p, True) if p <= MY_BID else (MY_BID, False) for p in market]
 lost = sum(1 for _, seen in obs if not seen)
 
-# ── ① 흔히 저지르는 계산: 이긴 것만 평균 ──
+# 3단계: 이긴 것만 평균한다
+# 흔히 저지르는 계산이다. 비싼 경매가 통째로 빠지니 시장을 실제보다 싸게 본다.
 won = [p for p, seen in obs if seen]
 naive_mean = sum(won) / len(won)
 
-# ── ② Kaplan-Meier 생존함수 ──
+# 4단계: Kaplan-Meier 생존함수로 추정한다
+# 패찰도 「적어도 b 는 넘었다」는 정보라서, 버리지 않고 계산에 넣는다.
+
 # S(t) = "낙찰가가 t를 넘을 확률". 가격을 오름차순으로 훑으며
 # 관측된 지점마다 (1 - 그 가격에서 끝난 수 / 아직 남은 수) 를 곱해 간다.
 # 잘린 항목은 '끝났다'로 세지 않지만, 그 전까지 '남은 수'에는 들어간다 —
@@ -300,10 +324,12 @@ while i < len(events):
     prev = price
     i += len(tied)
 
+# 5단계: 정답도 같은 방식으로 잘라 둔다
 # KM이 가정 없이 맞힐 수 있는 건 "내 입찰가까지 자른 평균"이다.
 # 정답도 같은 방식으로 잘라서 비교해야 공정하다.
 true_restricted = sum(min(p, MY_BID) for p in market) / N
 
+# 6단계: 정답과 두 추정을 견주어 찍는다
 print(f"경매 {N:,}건, 내 입찰가 {MY_BID}원, 패찰 {lost/N*100:.1f}%")
 print()
 print("[내 입찰가까지 자른 평균] — KM이 가정 없이 맞힐 수 있는 구간")
@@ -320,6 +346,7 @@ print("→ 하지만 내 입찰가 위쪽은 되살릴 수 없다. 그건 데이
 print("→ 그래서 실무는 일부 트래픽에 일부러 높게 입찰해 꼬리를 사 온다(탐색 비용).")
 
 # 출력:
+# 6단계 뜻: 패찰이 40.6% 인 데이터에서 이긴 것만 평균하면 355.9원으로, 정답 591.0원보다 39.8% 싸게 본다. Kaplan-Meier 는 내 입찰가까지 자른 평균을 442.9원으로 정답과 똑같이 맞힌다.
 # 경매 20,000건, 내 입찰가 570원, 패찰 40.6%
 #
 # [내 입찰가까지 자른 평균] — KM이 가정 없이 맞힐 수 있는 구간
@@ -470,9 +497,12 @@ $$s''(b) = \frac{f_{\ln}(b)}{b\sigma^2} \left[(\mu - \sigma^2 - \ln b)(V - b) - 
 단봉 함수에서 최적값을 찾는 가장 효율적인 방법은 **황금 비율 탐색(Golden Section Search)**입니다. [데모](demo-golden-section.html)에서 단계별로 찾아가는 과정을 볼 수 있습니다.
 
 ```python
+# 하는 일: 황금 비율 탐색으로, 진짜 가치 $5 에 시장 가격이 Log-normal(μ=0.8, σ=0.5)인 경매의 최적 입찰가 b* 를 구한다.
 import numpy as np
 from scipy.stats import lognorm
 
+# 1단계: 황금 비율 탐색 함수를 만든다
+# 구간 양 끝에서 구간 폭의 0.618배(황금 비율의 역수)만큼 안쪽으로 들어간 두 점을 견주어, Surplus 가 작은 쪽 구간을 버린다.
 def golden_section_search(V, mu, sigma, tol=0.01):
     """황금 비율 탐색으로 최적 입찰가 b* 계산"""
     def surplus(b):
@@ -495,14 +525,17 @@ def golden_section_search(V, mu, sigma, tol=0.01):
     print(f"  b* = ${optimal_bid:.4f}  ({iters}회 반복, 구간 < ${tol})")
     return optimal_bid
 
-# V=$5.00, 시장가격 Log-normal(μ=0.8, σ=0.5)
+# 2단계: 같은 경매로 돌린다
+# 첫 블록과 같은 경매(V=$5.00, 시장 가격 Log-normal(μ=0.8, σ=0.5))다.
+# Grid Search(500개)가 Surplus 를 500번 계산할 때, 이 탐색은 반복마다 두 번씩만 계산한다.
 b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
-# Grid Search(500개) 대비 수십 배 빠른 수렴
+
 # 출력:
+# 2단계 뜻: 13번 반복하면 구간이 $0.01 보다 좁아져 b* = $2.6788 에 닿는다.
 #   b* = $2.6788  (13회 반복, 구간 < $0.01)
 ```
 
-**수렴 속도**: 매 반복마다 탐색 구간이 $1/\phi \approx 0.618$배로 줄어듭니다. $V = \$5.00$, $\varepsilon = \$0.01$일 때 **13회 반복**이면 충분합니다. Grid Search($N = 500$개 그리드)보다 수십 배 빠릅니다.
+**수렴 속도**: 매 반복마다 탐색 구간이 $1/\phi \approx 0.618$배로 줄어듭니다. $V = \$5.00$, $\varepsilon = \$0.01$일 때 **13회 반복**이면 충분합니다. Grid Search($N = 500$개 그리드)보다 20배 가까이 빠릅니다.
 
 이 효율성이 **수십억 건/일의 실시간 서빙**을 가능하게 합니다. CDF 평가($F(b \mid x)$)만 빠르면 bid 최적화가 $O(\log(1/\varepsilon))$에 끝납니다.
 
@@ -511,7 +544,7 @@ b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
 <a class="demo-embed-open" href="demo-golden-section.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
 </div>
 
-한 걸음씩 눌러 보면 위 코드가 하는 일이 그대로 보입니다. 탐색 구간의 양 끝이 안쪽으로 좁혀지고, 매번 **평가를 한 번만 더 하고도 구간이 0.618배로 줄어듭니다.** 위 코드는 13회 반복에서 구간이 0.01보다 작아져 멈췄습니다.
+한 걸음씩 눌러 보면 위 코드가 하는 일이 그대로 보입니다. 탐색 구간의 양 끝이 안쪽으로 좁혀지고, 매번 **구간이 0.618배로 줄어듭니다.** 새 두 점 가운데 하나는 앞 반복의 점과 같은 자리라, 그 값을 다시 쓰면 평가는 한 번이면 됩니다. 위 코드는 두 점을 매번 새로 계산하고, 13회 반복에서 구간이 0.01보다 작아져 멈췄습니다.
 
 눈여겨볼 것은 **버리는 쪽**입니다. 두 지점을 비교해 낮은 쪽이 있는 구간을 통째로 버립니다. 단봉이라는 전제가 있어서 이 과격한 버리기가 안전합니다. 만약 극대값이 둘이면 잘못된 봉우리에 갇힙니다 — 앞 절의 단봉성 증명이 왜 필요했는지가 여기서 드러납니다.
 

@@ -88,12 +88,12 @@
 아래 코드는 표준 라이브러리만 쓴다. `waterfall()`은 1절의 우선순위 순서대로 훑다가 바닥값을 넘는 첫 응답에서 멈춘다. `header_bidding()`은 타임아웃 안에 응답한 SSP를 모아 1등가 또는 2등가로 낙찰가를 정한다.
 
 ```python
-# Waterfall(순서대로 한 곳씩)과 헤더비딩(동시에 여러 곳)이 같은 6개 SSP 응답을 두고
-# 얼마나 다른 값을 받아 내는지 직접 비교한다. 표준 라이브러리만 쓴다.
+# 하는 일: 같은 SSP 6곳의 응답을 두고, Waterfall(순서대로 한 곳씩)과 헤더비딩(동시에 여러 곳)이 받아 내는 값을 견준다.
 
+# 1단계: 바닥값과 SSP 6곳의 응답을 둔다
+# SSP 6곳은 본문 1절 표 그대로이고, 줄마다 이름, Waterfall 우선순위, 입찰가(CPM), 응답 시간(ms)이다. 표준 라이브러리만 쓴다.
 FLOOR = 900  # 바닥값(reserve price, CPM) — 이 값 밑으로는 팔지 않는다
 
-# (이름, Waterfall 우선순위, 응답 입찰가 CPM, 응답 시간 ms) — 본문 1절 표 그대로
 ssps = [
     {"name": "A", "priority": 1, "bid": 1000, "ms": 120},
     {"name": "B", "priority": 2, "bid": 1250, "ms": 180},
@@ -103,6 +103,8 @@ ssps = [
     {"name": "F", "priority": 6, "bid": 860, "ms": 110},
 ]
 
+# 2단계: 두 방식의 낙찰 규칙을 함수로 만든다
+# Waterfall 은 우선순위대로 묻다가 바닥값을 넘는 첫 응답에 판다. 헤더비딩은 타임아웃 안에 온 응답 가운데 바닥값을 넘는 것만 모아 가장 높은 값을 부른 곳에 판다.
 def waterfall(ssps, floor):
     """우선순위 순서대로 하나씩 묻다가, 바닥값을 넘는 첫 응답에서 즉시 판다.
     반환값: (낙찰가, 물어본 SSP 수, 낙찰자 이름). 뒤 순번은 아예 묻지 않는다."""
@@ -127,6 +129,8 @@ def header_bidding(bids, timeout_ms, rule):
         price = ranked[1]["bid"] if len(ranked) > 1 else FLOOR
     return price, ranked[0]["name"], responded
 
+# 3단계: Waterfall 과 타임아웃별 헤더비딩을 견준다
+# 타임아웃을 100ms 에서 300ms 까지 늘리며, 응답한 SSP 와 낙찰가를 찍는다.
 wf_price, wf_asked, wf_winner = waterfall(ssps, FLOOR)
 print(f"Waterfall        낙찰 {wf_winner}  ₩{wf_price:,}   (물어본 SSP {wf_asked}개)")
 
@@ -137,11 +141,13 @@ for timeout in (100, 150, 200, 300):
     diff_pct = (price - wf_price) / wf_price * 100
     print(f"  {timeout:>3}ms  응답 {names:<17} 낙찰 {winner} ₩{price:,}   Waterfall 대비 {diff_pct:+.0f}%")
 
-# 300ms(전부 응답)에서 규칙만 2등가로 바꾸면 얼마가 되는지 — 본문 3절의 비교 포인트
+# 4단계: 같은 응답에 2등가 규칙을 쓴다
+# 전부 응답한 300ms 에서 규칙만 2등가로 바꾸면 얼마가 되는지 본다. 본문 3절이 견주는 값이다.
 price_2nd, winner_2nd, _ = header_bidding(ssps, 300, rule="second")
 print(f"\n300ms, 2등가 규칙  낙찰 {winner_2nd}  ₩{price_2nd:,}")
 
 # 출력:
+# 3단계 뜻: Waterfall 은 SSP 1개만 물어 A 의 1,000원에 판다. 헤더비딩은 100ms 면 C 하나만 와서 2% 덜 받지만, 300ms 면 여섯 곳이 다 와서 D 가 1,420원에 낙찰되고 42% 를 더 받는다.
 # Waterfall        낙찰 A  ₩1,000   (물어본 SSP 1개)
 #
 # 타임아웃별 헤더비딩(1등가 규칙):
@@ -149,6 +155,7 @@ print(f"\n300ms, 2등가 규칙  낙찰 {winner_2nd}  ₩{price_2nd:,}")
 #   150ms  응답 A, C, E, F        낙찰 E ₩1,100   Waterfall 대비 +10%
 #   200ms  응답 A, B, C, E, F     낙찰 B ₩1,250   Waterfall 대비 +25%
 #   300ms  응답 A, B, C, D, E, F  낙찰 D ₩1,420   Waterfall 대비 +42%
+# 4단계 뜻: 같은 300ms 라도 2등가 규칙이면 D 가 이기되 2등 값인 1,250원을 낸다.
 #
 # 300ms, 2등가 규칙  낙찰 D  ₩1,250
 ```
@@ -234,7 +241,7 @@ pbjs.que.push(function () {
 });
 ```
 
-`bidderTimeout: 200`이 바로 4절 표의 200ms 행이다. 이 값을 100이나 300으로 바꾸면 표의 다른 행으로 그대로 옮겨 간다고 생각하면 된다. `bids` 배열에 등록한 네 곳(A, B, C, E)은 4절의 200ms 행에서 실제로 응답한 다섯 곳(A, B, C, E, F)을 기준으로 한다. 그중 D, F를 뺀 조합과 거의 같다. D를 여기 등록하지 않으면, 서버가 아무리 빨라도 D의 1,420원은 영영 이 경매에 들어오지 못한다. 2절에서 Waterfall이 D를 아예 묻지 않은 것과 결과적으로 같은 실수다. `priceGranularity`는 낙찰가를 얼마나 잘게 쪼개 보고할지 정하는 값이다. 너무 성기게 잡으면(예: 100원 단위) 위에서 다룬 Bid Shading의 미세한 값 차이가 뭉개져 버린다.
+`bidderTimeout: 200`이 바로 4절 표의 200ms 행이다. 이 값을 100이나 300으로 바꾸면 표의 다른 행으로 그대로 옮겨 간다고 생각하면 된다. `bids` 배열에 등록한 네 곳(A, B, C, E)은 여섯 곳에서 D, F를 뺀 조합으로, 4절의 200ms 행에서 실제로 응답한 다섯 곳(A, B, C, E, F)과 거의 같다. D를 여기 등록하지 않으면, 서버가 아무리 빨라도 D의 1,420원은 영영 이 경매에 들어오지 못한다. 2절에서 Waterfall이 D를 아예 묻지 않은 것과 결과적으로 같은 실수다. `priceGranularity`는 낙찰가를 얼마나 잘게 쪼개 보고할지 정하는 값이다. 너무 성기게 잡으면(예: 100원 단위) 위에서 다룬 Bid Shading의 미세한 값 차이가 뭉개져 버린다.
 :::
 
 ---

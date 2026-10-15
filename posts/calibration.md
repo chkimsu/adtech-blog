@@ -43,7 +43,7 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 ## 2. 보정이 광고 비즈니스에 미치는 영향
 
-### 과대 예측(Over-confident) (과대 예측) 시나리오
+### 과대 예측(Over-confident) 시나리오
 
 pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입찰가를 높게 제출합니다.
 
@@ -59,7 +59,7 @@ pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입
 - 광고주 CPA가 3배 상승 (목표 `$10` → 실제 `$30`)
 - 광고주 이탈, 플랫폼 신뢰도 하락
 
-### 과소 예측(Under-confident) (과소 예측) 시나리오
+### 과소 예측(Under-confident) 시나리오
 
 pCTR을 실제보다 낮게 예측하면, 참 가치가 과소 계산되고, 입찰가를 낮게 제출합니다.
 
@@ -90,15 +90,10 @@ pCTR을 실제보다 낮게 예측하면, 참 가치가 과소 계산되고, 입
 '실제 CTR'은 로그가 충분히 쌓인 뒤에야 알 수 있는 값입니다. 랭킹을 매기는 순간 손에 있는 건 모델 pCTR뿐입니다. 지면마다 틀린 방향이 다르다는 점을 눈여겨봅니다. A, D, E는 부풀려 봤고, B와 C는 낮춰 봤습니다.
 
 ```python
-# 보정이 틀리면 얼마를 잃는가 — 표준 라이브러리만 씁니다.
-# 상황: 한 번의 노출 기회에 광고 후보 5개가 들어왔습니다. 하나만 보여줄 수 있습니다.
-# 플랫폼은 eCPM(노출 1,000회당 기대 매출)이 가장 큰 후보를 고릅니다.
-# eCPM 계산의 상세는 eCPM 랭킹 글에 있습니다. 여기서는 '1등이 바뀌는가'만 봅니다.
+# 하는 일: 광고 후보 5개를 모델 pCTR 로 줄 세울 때, 보정하지 않을 때와 전체 COPC 로 보정할 때, 지면별로 보정할 때의 1등과 노출 1,000회 실제 매출을 견준다.
 
-# --- 가상 데이터 ---------------------------------------------------------
-# 각 행 = (광고, 지면 세그먼트, 모델이 내놓은 pCTR, 나중에 확인된 실제 CTR, CPC 입찰가(원))
-# '실제 CTR'은 로그가 충분히 쌓인 뒤에야 알 수 있는 값입니다.
-# 랭킹을 매기는 순간 손에 있는 건 모델 pCTR뿐입니다. 그게 이 문제의 핵심입니다.
+# 1단계: 가상 후보 5개를 둔다
+# 한 번의 노출 기회에 광고 후보 5개가 들어오고, 하나만 보여 줄 수 있다. 각 행은 (광고, 지면 세그먼트, 모델이 내놓은 pCTR, 나중에 확인된 실제 CTR, CPC 입찰가(원))이다. 표준 라이브러리만 쓴다.
 CANDIDATES = [
     ("A", "앱 하단 배너", 0.024, 0.015, 300),
     ("B", "웹 인피드",   0.012, 0.014, 500),
@@ -110,9 +105,12 @@ IMPRESSIONS = 1000              # 이 지면에 노출 기회가 1,000회 있다
 DAILY_IMPRESSIONS = 10_000_000  # 서비스 전체 하루 노출 규모 (환산용)
 
 CPC = {ad: cpc for ad, _s, _p, _r, cpc in CANDIDATES}    # 광고별 클릭 단가
+# '실제 CTR'은 로그가 충분히 쌓인 뒤에야 알 수 있는 값이다. 랭킹을 매기는 순간 손에 있는 건 모델 pCTR 뿐이고, 그게 이 문제의 핵심이다.
 REAL = {ad: real for ad, _s, _p, real, _c in CANDIDATES}  # 광고별 실제 CTR
 
 
+# 2단계: eCPM 으로 줄 세우는 함수를 만든다
+# 플랫폼은 eCPM(노출 1,000회당 기대 매출)이 가장 큰 후보를 고른다. eCPM 계산의 상세는 eCPM 랭킹 글에 있고, 여기서는 '1등이 바뀌는가'만 본다.
 def ranking(pctr_by_ad):
     """주어진 pCTR로 eCPM을 매겨 큰 순서대로 돌려줍니다.
     eCPM = pCTR x CPC x 1000. 클릭당 과금이라 pCTR을 곱해야 노출 가치가 됩니다."""
@@ -128,10 +126,8 @@ def show(title, board):
         print(f"  {i}위 {ad}  eCPM {score:,.0f}원")
 
 
-# --- 1단계: 후보별로 예측이 얼마나 틀렸는지 본다 --------------------------
-# COPC = Click Over Predicted Click = 실제 클릭 / 예측 클릭.
-# 1보다 크면 실제가 더 많았다는 뜻 → 모델이 '과소예측'했습니다.
-# 1보다 작으면 예측이 더 많았다는 뜻 → 모델이 '과대예측'했습니다.
+# 3단계: 후보별 COPC 와 전체 COPC 를 구해 찍는다
+# COPC(Click Over Predicted Click)는 실제 클릭 / 예측 클릭이다. 1 보다 크면 실제가 더 많았으니 모델이 과소예측한 것이고, 1 보다 작으면 과대예측한 것이다.
 print("광고  모델pCTR  실제CTR   COPC  판정        지면")
 pred_clicks = 0.0   # 예측 클릭 총합 (COPC의 분모)
 real_clicks = 0.0   # 실제 클릭 총합 (COPC의 분자)
@@ -147,30 +143,26 @@ print(f"\n전체 COPC = {real_clicks:.0f} / {pred_clicks:.0f} = {global_copc:.3f
       f"  (1보다 작으니 전체적으로 과대예측)")
 print(f"뒤집어 본 P/O Ratio = 예측/실제 = {1 / global_copc:.3f}")
 
-# --- 2단계: 보정 없이 랭킹을 매긴다 ---------------------------------------
+# 4단계: 보정 없이 랭킹을 매긴다
 raw = {ad: pctr for ad, _s, pctr, _r, _c in CANDIDATES}
 board_raw = ranking(raw)
 show("\n[보정 없음] eCPM 랭킹", board_raw)
 
-# --- 3단계: 전체 COPC로 한 번에 보정한다 (가장 흔한 첫 시도) --------------
-# 모든 예측에 같은 배수(global_copc)를 곱해 전체 평균만 맞춥니다.
-# 같은 배수를 곱하는 건 단조 변환이라, 순서를 절대 바꾸지 못합니다.
+# 5단계: 전체 COPC 로 한 번에 보정한다
+# 가장 흔한 첫 시도다. 모든 예측에 같은 배수(global_copc)를 곱해 전체 평균만 맞춘다. 같은 배수를 곱하는 건 단조 변환이라 순서를 절대 바꾸지 못한다.
 scaled = {ad: pctr * global_copc for ad, _s, pctr, _r, _c in CANDIDATES}
 after = real_clicks / sum(IMPRESSIONS * p for p in scaled.values())
 show(f"\n[전체 보정] 보정 후 전체 COPC = {after:.3f}  <- 지표는 완벽해졌다",
      ranking(scaled))
 
-# --- 4단계: 세그먼트별로 보정한다 -----------------------------------------
-# 지면마다 틀리는 방향이 달랐으니, 지면별 배수를 따로 씁니다.
-# 이 예시는 세그먼트마다 광고가 하나씩이라 보정값이 곧 실제 CTR이 됩니다.
-# 실제로는 한 세그먼트에 광고가 수천 개 있고, 세그먼트 배수는 그 평균 오차만 걷어냅니다.
+# 6단계: 지면 세그먼트별로 보정한다
+# 지면마다 틀리는 방향이 달랐으니 지면별 배수를 따로 쓴다. 이 예시는 세그먼트마다 광고가 하나씩이라 보정값이 곧 실제 CTR 이 된다. 실제로는 한 세그먼트에 광고가 수천 개 있고, 세그먼트 배수는 그 평균 오차만 걷어낸다.
 by_segment = {ad: pctr * (REAL[ad] / pctr) for ad, _s, pctr, _r, _c in CANDIDATES}
 board_seg = ranking(by_segment)
 show("\n[세그먼트별 보정] eCPM 랭킹", board_seg)
 
-# --- 5단계: 그래서 얼마 손해인가 ------------------------------------------
-# 뽑힌 광고가 다르면 실제로 들어오는 돈도 달라집니다.
-# 실제 매출 = 노출 수 x 실제 CTR x CPC. 예측이 아니라 실제 CTR로 계산합니다.
+# 7단계: 1등이 바뀐 만큼의 손해를 돈으로 센다
+# 그래서 얼마 손해인가를 본다. 뽑힌 광고가 다르면 실제로 들어오는 돈도 달라진다. 실제 매출은 노출 수 × 실제 CTR × CPC 로, 예측이 아니라 실제 CTR 로 계산한다.
 bad = board_raw[0][1]    # 보정 안 하고 뽑은 1등
 good = board_seg[0][1]   # 제대로 보정하고 뽑은 1등
 rev_bad = IMPRESSIONS * REAL[bad] * CPC[bad]
@@ -182,6 +174,7 @@ print(f"차이 {gap:,.0f}원 = {gap / rev_good:.1%} 손실")
 print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_IMPRESSIONS:,.0f}원/일")
 
 # 출력:
+# 3단계 뜻: COPC 가 1 보다 작은 A, D, E 는 과대예측, 1 보다 큰 B, C 는 과소예측이다. 다섯을 뭉치면 실제 클릭 75 에 예측 클릭 84 라 전체 COPC 는 0.893 이고, 뒤집은 P/O Ratio 는 1.120 이다.
 # 광고  모델pCTR  실제CTR   COPC  판정        지면
 #  A    2.40%   1.50%  0.625  과대예측    앱 하단 배너
 #  B    1.20%   1.40%  1.167  과소예측    웹 인피드
@@ -191,6 +184,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 #
 # 전체 COPC = 75 / 84 = 0.893  (1보다 작으니 전체적으로 과대예측)
 # 뒤집어 본 P/O Ratio = 예측/실제 = 1.120
+# 4단계 뜻: 보정하지 않으면 A 가 eCPM 7,200원으로 1위, C 가 4,000원으로 5위다.
 #
 # [보정 없음] eCPM 랭킹
 #   1위 A  eCPM 7,200원
@@ -198,6 +192,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 #   3위 B  eCPM 6,000원
 #   4위 E  eCPM 5,000원
 #   5위 C  eCPM 4,000원
+# 5단계 뜻: 전체 COPC 는 1.000 으로 맞았지만 eCPM 이 모두 같은 비율로 줄어 순서는 A, D, B, E, C 그대로다. 지표는 완벽해졌는데 1위는 여전히 A 다.
 #
 # [전체 보정] 보정 후 전체 COPC = 1.000  <- 지표는 완벽해졌다
 #   1위 A  eCPM 6,429원
@@ -205,6 +200,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 #   3위 B  eCPM 5,357원
 #   4위 E  eCPM 4,464원
 #   5위 C  eCPM 3,571원
+# 6단계 뜻: 지면마다 따로 보정하면 C 가 eCPM 8,000원으로 1위가 되고, A 는 4,500원으로 4위로 내려간다.
 #
 # [세그먼트별 보정] eCPM 랭킹
 #   1위 C  eCPM 8,000원
@@ -212,6 +208,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 #   3위 D  eCPM 5,600원
 #   4위 A  eCPM 4,500원
 #   5위 E  eCPM 2,500원
+# 7단계 뜻: 노출 1,000회에 A 를 보이면 실제 매출이 4,500원, C 를 보였다면 8,000원이다. 3,500원, 곧 C 매출의 43.8% 를 잃고, 하루 10,000,000회 노출이면 35,000,000원이다.
 #
 # 1등 비교: 보정 없음 → A / 세그먼트 보정 → C
 # 노출 1,000회 실제 매출: A 4,500원 vs C 8,000원
@@ -291,8 +288,11 @@ graph TD
 기울기와 편향을 움직여 보면 곡선이 대각선에서 떨어지는 모습이 보입니다.
 
 ```python
+# 하는 일: 실제 CTR 3% 인 노출 10,000건에 그와 상관없는 예측을 붙이고, 예측을 10구간으로 나눠 구간마다 평균 예측과 실제 클릭 비율을 견준다.
 import numpy as np
 
+# 1단계: 구간마다 평균 예측과 실제 비율을 내는 함수를 만든다
+# 예측을 [0, 0.1), [0.1, 0.2), … 10구간으로 나누고, 비어 있는 구간은 건너뛴다. 이 쌍을 점으로 찍은 것이 보정 그림(Reliability Diagram)이다.
 def reliability_diagram_data(y_true, y_prob, n_bins=10):
     """Reliability Diagram 데이터: (평균 예측, 실제 비율) 쌍"""
     bin_edges = np.linspace(0, 1, n_bins + 1)
@@ -306,7 +306,8 @@ def reliability_diagram_data(y_true, y_prob, n_bins=10):
         counts.append(mask.sum())
     return centers, accs, counts
 
-# 예시: Over-confident 모델의 Reliability Diagram 데이터
+# 2단계: 과대예측하는 모델의 예측을 만들어 구간마다 찍는다
+# 실제 클릭은 3% 확률로 뽑고, 예측은 그와 상관없이 Beta(2, 50) 에서 뽑는다. 예측 평균이 실제보다 높은 과대예측(Over-confident) 모델이다.
 np.random.seed(42)
 y_true = np.random.binomial(1, 0.03, size=10000)
 y_prob = np.clip(np.random.beta(2, 50, size=10000), 0, 1)
@@ -315,8 +316,9 @@ centers, accs, counts = reliability_diagram_data(y_true, y_prob)
 for c, a, n in zip(centers, accs, counts):
     gap = "Over ↓" if c > a else "Under ↑"
     print(f"  예측={c:.3f}  실제={a:.3f}  (n={n:,})  {gap}")
-# 대각선 위 = Under-confident, 아래 = Over-confident
+
 # 출력:
+# 2단계 뜻: 두 구간 모두 평균 예측(0.036, 0.120)이 실제 비율(0.026, 0.032)보다 높아 Over 다. 예측 0.120 인 280건은 실제가 0.032 라 차이가 더 크고, 보정 그림에서 점이 대각선 아래에 놓이면 Over, 위에 놓이면 Under 다.
 #   예측=0.036  실제=0.026  (n=9,720)  Over ↓
 #   예측=0.120  실제=0.032  (n=280)  Over ↓
 ```
@@ -339,8 +341,11 @@ $$ECE = \sum_{m=1}^{M} \frac{|B_m|}{n} \left| \text{acc}(B_m) - \text{conf}(B_m)
 > ECE를 계산할 때 구간 개수 $M$의 선택이 결과에 영향을 미칩니다. 일반적으로 $M = 10 \sim 20$을 사용하되, 구간당 샘플 수가 충분한지(최소 수백 개) 확인해야 합니다. 샘플이 적은 구간은 노이즈가 크므로 equal-frequency binning(각 구간의 샘플 수를 균등하게)을 권장합니다.
 
 ```python
+# 하는 일: 실제 CTR 2% 인 노출 10,000건에 과대예측한 예측을 붙이고, 구간마다 예측과 실제의 차이를 샘플 수로 가중 평균한 ECE 를 잰다.
 import numpy as np
 
+# 1단계: ECE 를 구하는 함수를 만든다
+# 예측을 10구간으로 나눠 구간마다 |실제 양성 비율 - 평균 예측 확률| 을 구하고, 구간의 샘플 비율을 곱해 더한다.
 def expected_calibration_error(y_true, y_prob, n_bins=10):
     """ECE: 예측 확률과 실제 비율의 가중 평균 차이"""
     bin_edges = np.linspace(0, 1, n_bins + 1)
@@ -354,14 +359,17 @@ def expected_calibration_error(y_true, y_prob, n_bins=10):
         ece += (mask.sum() / len(y_true)) * abs(bin_acc - bin_conf)
     return ece
 
-# 예시: Over-confident 모델
+# 2단계: 과대예측하는 모델로 ECE 를 잰다
+# 예측은 실제와 상관없이 Beta(2, 30) 에서 뽑는다. 평균이 2% 보다 높은 과대예측(Over-confident) 모델이다.
 np.random.seed(42)
 y_true = np.random.binomial(1, 0.02, size=10000)   # 실제 CTR 2%
 y_prob = np.clip(np.random.beta(2, 30, size=10000), 0, 1)
 
 print(f"  ECE = {expected_calibration_error(y_true, y_prob):.4f}")
 print(f"  (0에 가까울수록 보정이 잘 된 모델)")
+
 # 출력:
+# 2단계 뜻: ECE 가 0.0443 이다. 구간마다 예측과 실제의 차이를 샘플 수로 가중 평균한 값이 이만큼이고, 0 에 가까울수록 보정이 잘 된 모델이다.
 #   ECE = 0.0443
 #   (0에 가까울수록 보정이 잘 된 모델)
 ```
@@ -375,7 +383,7 @@ $$\text{P/O Ratio} = \frac{\bar{p}}{\bar{y}} = \frac{\text{평균 예측 CTR}}{\
 | P/O Ratio | 해석 | 조치 |
 |-----------|------|------|
 | 1.0 | 완벽하게 보정됨 | 유지 |
-| > 1.0 (예: 1.3) | 과대 예측 (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
+| > 1.0 (예: 1.3) | Over-confident (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
 | < 1.0 (예: 0.7) | Under-confident (30% 과소 예측) | 입찰가 30% 과소 → 보정 필요 |
 
 P/O Ratio의 진정한 가치는 **세그먼트별로 쪼개서 모니터링**할 수 있다는 점입니다.
@@ -443,10 +451,13 @@ $$q = \sigma(A \cdot f(x) + B) = \frac{1}{1 + \exp(-(A \cdot f(x) + B))}$$
 **학습 방법:** Validation set에서 $A$와 $B$를 NLL(Negative Log-Likelihood) 최소화로 학습합니다. 이때 학습에 사용하는 데이터는 반드시 모델 학습에 사용하지 않은 **hold-out** 데이터여야 합니다.
 
 ```python
+# 하는 일: 예측이 양 끝으로 치우친 모델의 logit 5,000개에 Platt Scaling 의 A, B 를 학습하고, 보정 전후 평균 예측을 실제 양성 비율과 견준다.
 import numpy as np
 from scipy.optimize import minimize
 from scipy.special import expit  # sigmoid
 
+# 1단계: NLL 을 최소로 하는 A, B 를 찾는 함수를 만든다
+# 보정된 확률은 q = sigmoid(A × logit + B) 이다. 실무에서는 모델 학습에 쓰지 않은 hold-out 데이터로 맞춘다.
 def platt_scaling_fit(logits, y_true):
     """Platt Scaling: NLL 최소화로 A, B 학습"""
     def nll(params):
@@ -456,18 +467,21 @@ def platt_scaling_fit(logits, y_true):
         return -np.mean(y_true * np.log(q) + (1 - y_true) * np.log(1 - q))
     return minimize(nll, x0=[1.0, 0.0], method="L-BFGS-B").x
 
-# 예시: Over-confident 모델 보정
+# 2단계: 예측이 양 끝으로 치우친 모델의 logit 과 실제 클릭을 만든다
+# 실제 확률은 sigmoid(0.7 × logit) 이라, 모델이 내놓는 sigmoid(logit) 은 실제보다 양 끝으로 치우친다.
 np.random.seed(42)
 logits = np.random.randn(5000) * 0.5
 y_true = (np.random.rand(5000) < expit(logits * 0.7)).astype(float)
 
+# 3단계: A, B 를 학습하고 보정 전후 평균을 견준다
 A, B = platt_scaling_fit(logits, y_true)
 print(f"  학습된 파라미터: A={A:.3f}, B={B:.3f}")
 print(f"  보정 전 평균 예측: {expit(logits).mean():.4f}")
 print(f"  보정 후 평균 예측: {expit(A * logits + B).mean():.4f}")
 print(f"  실제 양성 비율:    {y_true.mean():.4f}")
-# 서빙 시: calibrated_pCTR = sigmoid(A * model_logit + B)
+
 # 출력:
+# 3단계 뜻: A=0.761 은 양 끝으로 치우친 예측을 가운데로 당기고, B=0.063 은 평균 예측을 올려 0.5007 을 실제 양성 비율과 같은 0.5158 로 맞춘다. 서빙할 때는 calibrated_pCTR = sigmoid(A × model_logit + B) 로 쓴다.
 #   학습된 파라미터: A=0.761, B=0.063
 #   보정 전 평균 예측: 0.5007
 #   보정 후 평균 예측: 0.5158

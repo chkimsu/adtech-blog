@@ -286,17 +286,17 @@ $$\mathcal{L}_{\text{IPS}} = \sum_{i} \frac{c_i}{\hat{P}(\text{examine} | \text{
 2절에서 본 다섯 광고 표를 그대로 코드로 만들어 보겠습니다. 실험에서 눈길이 닿음 확률을 추정하는 부분까지 포함합니다.
 
 ```python
-# 위치 편향을 (1) 데이터에서 추정하고 (2) IPW로 되돌려 진짜 순위를 되찾는다.
-# 표준 라이브러리만 쓴다. 그대로 복붙해 돌리면 2절 표의 "보정 CTR" "보정 순위"가 똑같이 나온다.
+# 하는 일: 위치만 바꿔 보여 준 프로브 광고로 위치마다 Examination 확률을 추정하고, 그 확률로 광고 5개의 관측 CTR 을 IPW 로 되돌려 진짜 순위에 가깝게 고친다.
 import random
 
 random.seed(42)
 
+# 1단계: 같은 광고를 위치만 바꿔 보여 주는 실험에서 Examination 확률을 추정한다
+# 표준 라이브러리만 쓴다. 그대로 복사해 붙여 돌리면 2절 표의 "보정 CTR" "보정 순위"가 똑같이 나온다.
 def simulate_clicks(n_impressions, click_prob):
     # 노출 하나하나에 동전을 던져(무작위) 클릭 여부를 정하고, 클릭 수를 센다.
     return sum(1 for _ in range(n_impressions) if random.random() < click_prob)
 
-# --- 1단계: 같은 광고를 위치만 바꿔 보여주는 실험에서 Examination 확률을 "추정"한다 ---
 # 진짜 Examination 확률(TRUE_EXAM)은 세상만 알고, 우리는 노출, 클릭만 본다고 가정한다.
 TRUE_EXAM = {1: 1.00, 2: 0.75, 3: 0.50, 4: 0.30, 5: 0.15}   # 검증용 정답 -- 코드는 모르는 척한다
 PROBE_TRUE_RELEVANCE = 0.05      # 프로브 광고의 진짜 품질(위치를 바꿔도 불변)
@@ -310,7 +310,7 @@ for pos, exam in TRUE_EXAM.items():
 # 1위를 기준(100%)으로 삼아 상대 비율로 Examination 확률을 추정한다.
 est_exam = {pos: ctr / probe_ctr[1] for pos, ctr in probe_ctr.items()}
 
-# --- 2단계: 서로 다른 5개 광고가 각자 자기 위치에서 실제로 낸 관측 데이터 ---
+# 2단계: 서로 다른 5개 광고가 각자 자기 위치에서 낸 관측 데이터를 만든다
 ads = {
     #  광고: (위치, 노출수, 진짜 품질 -- 실무에선 아무도 모르는 값)
     "A": (1, 10_000, 0.0300),
@@ -326,7 +326,8 @@ for ad, (pos, n, true_relevance) in ads.items():
     clicks = simulate_clicks(n, true_relevance * exam)
     observed[ad] = {"pos": pos, "n": n, "clicks": clicks, "ctr": clicks / n}
 
-# --- 3단계: 관측 CTR을 추정 Examination 확률로 나눠 되돌린다 (IPW) ---
+# 3단계: 관측 CTR 을 추정 Examination 확률로 나눠 되돌린다
+# 이것이 IPW 다. 추정한 확률과 관측 순위, 보정 순위를 함께 찍는다.
 for ad, row in observed.items():
     row["corrected"] = row["ctr"] / est_exam[row["pos"]]
 
@@ -346,6 +347,7 @@ print("관측 순위(그냥 CTR 순)  :", " > ".join(raw_rank))
 print("보정 순위(IPW 적용 후)  :", " > ".join(corrected_rank))
 
 # 출력:
+# 3단계 뜻: 프로브 광고로 추정한 Examination 확률은 2위 74.4%, 5위 16.4% 처럼 실제 값에 가깝다.
 # 추정 Examination 확률 (실제 vs 추정):
 #   1위  실제 100.0%   추정 100.0%
 #   2위  실제  75.0%   추정  74.4%
@@ -353,6 +355,7 @@ print("보정 순위(IPW 적용 후)  :", " > ".join(corrected_rank))
 #   4위  실제  30.0%   추정  29.5%
 #   5위  실제  15.0%   추정  16.4%
 #
+# 3단계 뜻: 관측 CTR 은 위치 순서대로 A 2.77% 에서 E 0.17% 로 떨어진다. 추정 확률로 나누면 4위 D 가 4.06% 로 가장 높다.
 # 광고  위치        관측 CTR    보정 CTR
 # A   1          2.77%     2.77%
 # B   2          1.92%     2.58%
@@ -360,6 +363,7 @@ print("보정 순위(IPW 적용 후)  :", " > ".join(corrected_rank))
 # D   4          1.20%     4.06%
 # E   5          0.17%     1.03%
 #
+# 3단계 뜻: 관측 순위는 A > B > C > D > E 인데, 위치 효과를 걷어낸 보정 순위는 D > C > A > B > E 다.
 # 관측 순위(그냥 CTR 순)  : A > B > C > D > E
 # 보정 순위(IPW 적용 후)  : D > C > A > B > E
 ```

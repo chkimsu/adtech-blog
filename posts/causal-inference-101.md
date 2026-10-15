@@ -42,16 +42,19 @@
 아래 코드는 이 과정을 그대로 구현하고, 세 가지 효과 추정치를 나란히 뽑는다. (a) naive는 층을 무시한 전체 비교, (b) 층별 보정은 각 층 안에서 비교한 뒤 인구 비중으로 가중평균한 값이다. (c)는 노출을 층과 무관하게 무작위로 다시 배정하는 RCT 시뮬레이션이 알려주는 참값이다.
 
 ```python
-# 가짜 광고 캠페인 데이터를 만든다. 유저는 '원래 구매 의향' 높음/낮음 두 층으로 나뉘고,
-# 타겟팅 탓에 광고 노출은 의향 높은 층에 쏠린다(교란) — 표준 라이브러리만 쓴다.
+# 하는 일: 노출이 구매 의향 높은 층에 쏠린 가짜 캠페인 20만 명으로, naive 비교와 층별 보정, 무작위 배정 시뮬레이션이 잰 광고 효과를 견준다.
 import random
 random.seed(42)
 
+# 1단계: 가짜 캠페인의 설정을 둔다
+# 유저는 '원래 구매 의향' 높음/낮음 두 층으로 나뉜다. 광고가 실제로 올리는 구매율은 두 층이 같다. 표준 라이브러리만 쓴다.
 N = 200_000                        # 전체 유저 수
 HIGH_SHARE = 0.2                   # 의향 높은 층 비중 20%
 BASE_HIGH, BASE_LOW = 0.20, 0.04   # 광고가 없었을 때 각 층의 '원래' 구매율
 TRUE_LIFT = 0.02                   # 광고가 실제로 올리는 구매율(참값, 두 층 동일)
 
+# 2단계: 유저를 만들고 구매율 차이를 재는 함수를 만든다
+# make_users 는 층별 노출 확률만 받아 유저를 만든다. gap 은 노출군과 비노출군의 구매율 차이와 두 군의 인원을 돌려준다.
 def make_users(p_expose_high, p_expose_low):
     """층별 노출 확률만 받아 유저 (의향, 노출여부, 구매여부) 리스트를 만든다."""
     rows = []
@@ -71,7 +74,8 @@ def gap(rows):
     c = [r for r in rows if not r[1]]
     return rate(e) - rate(c), len(e), len(c)
 
-# 관측 데이터: 타겟팅 때문에 노출이 '의향 높음' 층에 쏠린 상태 그대로 (90% vs 10%)
+# 3단계: 노출이 쏠린 관측 데이터로 naive 와 층별 보정 효과를 구한다
+# 타겟팅 탓에 광고 노출은 의향 높은 층에 쏠린다(교란). 관측 데이터는 그 상태 그대로다(90% vs 10%). 층별 보정은 층 안에서 비교한 차이를 인구 비중으로 가중평균한다.
 obs = make_users(p_expose_high=0.9, p_expose_low=0.1)
 
 naive_gap, n_exp, n_unexp = gap(obs)                     # (a) 층을 무시하고 그냥 비교
@@ -81,10 +85,13 @@ layer_gaps = {name: gap(rows) for name, rows in layers.items()}
 weights = [len(rows) for rows in layers.values()]
 stratified_gap = sum(g[0] * w for g, w in zip(layer_gaps.values(), weights)) / sum(weights)  # (b)
 
+# 4단계: 노출을 무작위로 다시 배정해 참값을 구한다
+# 노출되는 비율은 그대로 두고, 누가 노출되는지만 무작위로 바꾼다.
 p_rct = n_exp / N                                          # 같은 노출 비율을 유지한 채 배정만 랜덤화
 rct = make_users(p_expose_high=p_rct, p_expose_low=p_rct)   # 노출이 의향과 무관해진다
 rct_gap, _, _ = gap(rct)                                    # (c) 무작위 배정 시뮬레이션 참값
 
+# 5단계: 층별 차이와 세 효과를 찍는다
 for name, (g, ne, nc) in layer_gaps.items():
     print(f"[{name}] 노출 {ne:,}명 / 비노출 {nc:,}명, 차이 {g*100:+.1f}%p")
 print(f"[전체, naive] 노출 {n_exp:,}명 / 비노출 {n_unexp:,}명, 차이 {naive_gap*100:+.1f}%p")
@@ -94,15 +101,19 @@ print(f"(b) 층별 보정 효과       {stratified_gap*100:+.2f}%p")
 print(f"(c) RCT 시뮬레이션 참값  {rct_gap*100:+.2f}%p")
 print(f"naive는 층별 보정 대비 {naive_gap/stratified_gap:.1f}배, RCT 참값 대비 {naive_gap/rct_gap:.1f}배 부풀렸다")
 
+# 6단계: 결과를 스스로 검증한다
+# naive 가 층별 보정의 3배를 넘는지, 층별 보정과 RCT 시뮬레이션이 참값에서 0.01 안쪽인지 본다.
 assert naive_gap > stratified_gap * 3          # 착시가 몇 배 이상임을 스스로 검증
 assert abs(stratified_gap - TRUE_LIFT) < 0.01   # 층별 보정은 참값 근처로 돌아온다
 assert abs(rct_gap - TRUE_LIFT) < 0.01          # RCT 시뮬레이션도 참값 근처로 돌아온다
 
 # 출력:
+# 5단계 뜻: 층 안에서 비교하면 차이가 +1.6%p, +2.0%p 인데, 층을 무시하면 +12.7%p 로 튄다. 노출된 51,976명 가운데 35,827명이 원래 구매율이 높은 의향 높음 층이라서다.
 # [의향 높음] 노출 35,827명 / 비노출 3,881명, 차이 +1.6%p
 # [의향 낮음] 노출 16,149명 / 비노출 144,143명, 차이 +2.0%p
 # [전체, naive] 노출 51,976명 / 비노출 148,024명, 차이 +12.7%p
 #
+# 5단계 뜻: 층별 보정 +1.90%p 와 RCT 시뮬레이션 +2.00%p 는 거의 같고, naive 는 그 둘보다 6.7배, 6.3배 부풀렸다.
 # (a) naive 효과          +12.65%p
 # (b) 층별 보정 효과       +1.90%p
 # (c) RCT 시뮬레이션 참값  +2.00%p

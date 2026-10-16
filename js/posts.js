@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'model-api-from-training-script',
+    world: 'both',
+    worldNote: '학습 스크립트와 서버 코드의 차이, 요청 하나의 예산 배분, 사용자 수에서 서버 대수로 가는 셈은 두 무대가 같습니다. 다른 것은 셈의 첫 줄을 누가 주느냐입니다. 담장 안은 우리 로그의 요청량과 우리 게이트웨이의 예산으로 적고, 열린 RTB 는 거래소가 정한 예산과 튀는 트래픽으로 적습니다.',
+    worldPractical: '담장 안에서는 하루 노출 2억 2,800만 건과 저녁 피크가 우리 로그에 있어 서버 대수를 어제 값으로 셉니다. 회원 ID 로 피처를 미리 만들어 두니 피처 조회가 2ms 안에 끝나고, 요청 전체 예산 12ms 의 구간 배분도 우리가 바꿉니다. 열린 RTB 에서는 거래소가 예산을 정하고 그 안에 네트워크 왕복이 들어 있어 서버가 쓸 시간이 더 짧습니다. 요청량은 거래소 사정에 따라 튀어 피크 배수를 우리가 정할 수 없고, 쿠키라 피처를 미리 만들어 둘 수 없어 그 자리에서 계산하는 몫이 붙습니다. 그래서 같은 셈을 거래소별 로그의 피크로 하고 폴백이 더 자주 나갑니다.',
+    title: '모델 API: 학습 스크립트에서 바뀌는 것은 함수 모양, 동시성, 실패 처리 셋',
+    excerpt: '지훈 씨가 열째 주에 광고 소재 품질 모델의 추론 서버를 직접 짜게 됐습니다. 학습 스크립트와 도커 이미지와 쿠버네티스 배포는 해 봤는데 요청을 받아 답하는 서버는 처음입니다. 학습 스크립트와 서버 코드의 차이는 「끝나는가, 기다리는가」이고 기다리는 부분은 라이브러리가 합니다. 표준 라이브러리만으로 API 하나를 띄워 요청 하나를 보내 보면 직접 쓴 줄은 셋입니다. 하루 노출 2억 2,800만 건은 평균 2,639 QPS, 피크 7,917 QPS 이고, 요청 하나에 CPU 6ms 가 들면 8코어 서버가 안전선 60% 에서 800 QPS 를 받아 10대, 예비 2대를 더해 12대입니다. 피처 조회가 2ms 를 넘기면 기본 피처로 점수를 내서 예산 12ms 를 넘기는 요청을 0건으로 만듭니다. 트래픽은 플랫폼, 앞단 서버, 모델 서버 세 층이 나눠 받고, 쿠버네티스 설정의 replicas 와 HPA 와 readiness probe 가 그대로 서빙 낱말입니다.',
+    date: '2026-10-16',
+    categories: ['ML Infrastructure'],
+    tags: ['MLOps', 'ML Infra', 'Model Serving', '입문'],
+    contentUrl: 'posts/model-api-from-training-script.md',
+    series: 'mlops-track'
+  },
+  {
     id: 'dcn-vs-din-slot',
     world: 'both',
     worldNote: '세 자리 구조와 DIN 모듈을 더할 때 바뀌는 곳은 두 무대가 같습니다. 다른 것은 행동 목록을 얼마나 길게 만들 수 있느냐입니다.',
@@ -1345,8 +1358,8 @@ const posts = [
 const series = {
   'mlops-track': {
     title: '모델 운영 트랙',
-    desc: '만든 모델을 매일 굴리는 자리 — 새벽 학습 파이프라인과 백필, 지난주 모델 재현, 컨테이너와 CI 검사, 추론 서버가 뜨는 41초, 카나리 배포와 14분 롤백, 스트림 윈도우와 워터마크, 미리 계산해 둘 것과 서빙 비용, 분산 학습과 서빙 도구까지 신입 지훈 씨의 아홉 주를 따라갑니다',
-    posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving'],
+    desc: '만든 모델을 매일 굴리는 자리 — 새벽 학습 파이프라인과 백필, 지난주 모델 재현, 컨테이너와 CI 검사, 추론 서버가 뜨는 41초, 카나리 배포와 14분 롤백, 스트림 윈도우와 워터마크, 미리 계산해 둘 것과 서빙 비용, 분산 학습과 서빙 도구, 그리고 첫 추론 서버를 직접 짜기까지 신입 지훈 씨의 열 주를 따라갑니다',
+    posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving', 'model-api-from-training-script'],
   },
   'judgment-track': {
     title: '판단, 측정 트랙',
@@ -1459,7 +1472,7 @@ const mlTrack = {
       id: 'stage-5',
       title: '5단계, 운영 — 만든 모델을 매일 굴린다',
       goal: '이 단계를 마치면: 새벽에 도는 학습 파이프라인을 읽고, 지난주 모델을 다시 만들고, CI 검사를 지나 이미지를 올리고, 1% 로 배포해 게이트가 닫히면 되돌리고, 실시간 피처의 윈도우를 정하고, 무엇을 미리 계산해 둘지와 GPU 를 몇 장 쓸지를 정하고, 새 모델을 도구로 띄울지 직접 짤지를 예산 숫자로 고를 수 있습니다. 앞 네 단계가 “무엇을 만들고 무엇을 믿나”였다면 여기는 “그것을 매일 어떻게 굴리나”입니다.',
-      posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving'],
+      posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving', 'model-api-from-training-script'],
     },
 
   ],

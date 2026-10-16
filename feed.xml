@@ -5,8 +5,16 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-10-11T00:00:00Z</updated>
+  <updated>2026-10-16T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>코딩테스트 핵심 도구: 지문 낱말로 이진 탐색, 정렬, 힙, BFS, DFS 고르기</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit</id>
+    <updated>2026-10-16T00:00:00Z</updated>
+    <summary>지문에 「최소 이동 횟수」가 보이면 BFS, 「상위 K개」가 보이면 힙, 「정렬된 배열에서 개수」가 보이면 bisect 입니다. 출제 빈도가 높은 다섯 도구를 지문 낱말로 고르는 표 한 장과, 표준 라이브러리로 바로 쓰는 템플릿을 모았습니다. bisect_left 와 bisect_right 의 차로 개수를 세는 법, 크기 K 최소 힙으로 Top-K 를 남기는 법, 격자 BFS 와 DFS 템플릿, 재귀 깊이 한도까지 제출 전에 볼 것을 정리했습니다.</summary>
+    <category term="Interview &amp; Algorithms"/>
+  </entry>
   <entry>
     <title>DCN 앞에 DIN 모듈 하나: 랭킹 모델의 세 자리와 무엇이 달라지나</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=dcn-vs-din-slot"/>
@@ -158,14 +166,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-basics</id>
     <updated>2026-09-23T00:00:00Z</updated>
     <summary>구매자 8만 명으로 맞춤타겟을 만들자 「유사타겟 만들기」 슬라이더가 생겼습니다. 1% 에서 14만 명, 10% 에서 140만 명입니다. 닮았다는 것은 무엇을 보고 정하고, 1% 는 무엇의 1% 일까요. 회원마다 붙은 벡터가 시드 평균과 얼마나 다른가로 닮음을 재고, 전체 회원 1,400만 명을 그 순서로 세워 앞에서 자른 것이 유사타겟입니다. 도달에 전환율을 곱하면 가장 닮은 1% 가 4,480건, 10% 가 12,600건으로 가장 많습니다. 시드가 300명이면 우연을 배우고 300만이면 평균이 흐려지는 이유까지 봅니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>오디언스와 세그먼트: 조건 한 벌이 사람 목록이 되는 과정</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=audience-and-segments"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=audience-and-segments</id>
-    <updated>2026-09-22T00:00:00Z</updated>
-    <summary>플랫폼 담당자는 「세그먼트 317」이라 하고 화면은 「오디언스 160만 명, 04:10 갱신」이라 합니다. 같은 것일까요. 세그먼트는 사람이 적은 조건 한 벌이고, 오디언스는 배치 작업이 매일 새벽 그 조건으로 만든 회원 ID 목록입니다. 조건 셋에 걸린 사람을 그냥 더하면 213만인데 겹치는 사람을 한 번만 세면 160만이 되는 것, 목록이 데이터 웨어하우스에서 광고 서버 옆 저장소로 옮겨지는 것, 한 사람이 여러 목록에 드는 것, 조건을 더할수록 160만이 92만으로 주는 것을 봅니다. 광고주가 올린 고객 파일이 맞춤타겟이 되는 과정까지입니다.</summary>
     <category term="Targeting &amp; Audience"/>
   </entry>
 </feed>

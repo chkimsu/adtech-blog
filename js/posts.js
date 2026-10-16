@@ -498,6 +498,17 @@ const posts = [
     series: 'algorithm-track'
   },
   {
+    id: 'algorithm-coding-test-toolkit',
+    world: 'na',
+    title: '코딩테스트 핵심 도구: 지문 낱말로 이진 탐색, 정렬, 힙, BFS, DFS 고르기',
+    excerpt: '지문에 「최소 이동 횟수」가 보이면 BFS, 「상위 K개」가 보이면 힙, 「정렬된 배열에서 개수」가 보이면 bisect 입니다. 출제 빈도가 높은 다섯 도구를 지문 낱말로 고르는 표 한 장과, 표준 라이브러리로 바로 쓰는 템플릿을 모았습니다. bisect_left 와 bisect_right 의 차로 개수를 세는 법, 크기 K 최소 힙으로 Top-K 를 남기는 법, 격자 BFS 와 DFS 템플릿, 재귀 깊이 한도까지 제출 전에 볼 것을 정리했습니다.',
+    date: '2026-10-16',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-coding-test-toolkit.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'api-basics',
     world: 'na',
     title: 'API 기초: 요청과 응답, 메서드 다섯, 로그가 남는 두 자리',
@@ -1392,7 +1403,8 @@ const series = {
     title: '알고리즘 코딩테스트 트랙',
     desc: '복잡도를 직접 재 보는 것부터 배열, 해시, 정렬, 이분탐색, 스택큐, 트리, 힙, 그래프, DP까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
     posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
-            'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy'],
+            'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
+            'algorithm-coding-test-toolkit'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

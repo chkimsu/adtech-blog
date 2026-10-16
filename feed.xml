@@ -8,6 +8,14 @@
   <updated>2026-10-16T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
   <entry>
+    <title>모델 API: 학습 스크립트에서 바뀌는 것은 함수 모양, 동시성, 실패 처리 셋</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=model-api-from-training-script"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=model-api-from-training-script</id>
+    <updated>2026-10-16T00:00:00Z</updated>
+    <summary>지훈 씨가 열째 주에 광고 소재 품질 모델의 추론 서버를 직접 짜게 됐습니다. 학습 스크립트와 도커 이미지와 쿠버네티스 배포는 해 봤는데 요청을 받아 답하는 서버는 처음입니다. 학습 스크립트와 서버 코드의 차이는 「끝나는가, 기다리는가」이고 기다리는 부분은 라이브러리가 합니다. 표준 라이브러리만으로 API 하나를 띄워 요청 하나를 보내 보면 직접 쓴 줄은 셋입니다. 하루 노출 2억 2,800만 건은 평균 2,639 QPS, 피크 7,917 QPS 이고, 요청 하나에 CPU 6ms 가 들면 8코어 서버가 안전선 60% 에서 800 QPS 를 받아 10대, 예비 2대를 더해 12대입니다. 피처 조회가 2ms 를 넘기면 기본 피처로 점수를 내서 예산 12ms 를 넘기는 요청을 0건으로 만듭니다. 트래픽은 플랫폼, 앞단 서버, 모델 서버 세 층이 나눠 받고, 쿠버네티스 설정의 replicas 와 HPA 와 readiness probe 가 그대로 서빙 낱말입니다.</summary>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
     <title>코딩테스트 핵심 도구: 지문 낱말로 이진 탐색, 정렬, 힙, BFS, DFS 고르기</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit</id>
@@ -158,14 +166,6 @@
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=retargeting-frequency-cap</id>
     <updated>2026-09-24T00:00:00Z</updated>
     <summary>친구는 「네 광고 오늘 다섯 번 봤어」라 하고 대표는 「장바구니에 담고 안 산 사람에게만 다시 보여 줄 수 있어요?」라 묻습니다. 반대처럼 보이는 둘이 같은 재료를 씁니다. 그 사람이 전에 무엇을 했나입니다. 리타겟팅은 광고주 사이트에 심은 픽셀 한 줄이 보낸 기록으로 10분마다 새로 만드는 목록이고, 「담고 안 산 사람」은 장바구니 7일 목록에서 구매 목록을 뺀 것입니다. 빈도 상한은 사람과 광고의 짝마다 오늘 본 횟수를 세는 카운터이고, 후보 2,310건 중 절반이 여기서 빠집니다. 상한을 1, 3, 5회로 두면 100만 노출이 몇 명에게 닿는지 세어 3회를 고릅니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>Lookalike 기초: 시드 8만 명에서 닮은 사람 140만 명을 찾는 법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-basics"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-basics</id>
-    <updated>2026-09-23T00:00:00Z</updated>
-    <summary>구매자 8만 명으로 맞춤타겟을 만들자 「유사타겟 만들기」 슬라이더가 생겼습니다. 1% 에서 14만 명, 10% 에서 140만 명입니다. 닮았다는 것은 무엇을 보고 정하고, 1% 는 무엇의 1% 일까요. 회원마다 붙은 벡터가 시드 평균과 얼마나 다른가로 닮음을 재고, 전체 회원 1,400만 명을 그 순서로 세워 앞에서 자른 것이 유사타겟입니다. 도달에 전환율을 곱하면 가장 닮은 1% 가 4,480건, 10% 가 12,600건으로 가장 많습니다. 시드가 300명이면 우연을 배우고 300만이면 평균이 흐려지는 이유까지 봅니다.</summary>
     <category term="Targeting &amp; Audience"/>
   </entry>
 </feed>

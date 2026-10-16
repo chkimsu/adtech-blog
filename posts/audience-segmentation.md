@@ -364,20 +364,20 @@ $$P(x) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$$
 **파이프라인**: 유저 임베딩 → 정규화(StandardScaler) → 차원 축소(PCA/UMAP) → 클러스터링(K-Means/GMM)
 
 ```python
+# (실무 파이프라인 — 그대로 실행되지 않습니다.)
+# 하는 일: Two-Tower 의 유저 임베딩을 정규화하고 PCA 로 32차원까지 줄인 뒤, K-Means 와 GMM 으로 세그먼트 8개를 할당하고, GMM 확률로 유저마다 주 세그먼트와 둘째 세그먼트를 적는다.
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
-# (실무 파이프라인 형태 — 자기 임베딩 파일이 있어야 그대로 돌아갑니다.
-#  아래 K 선택 기준과 라벨 붙이는 순서를 보는 게 이 코드의 목적입니다.)
-
-# ── 1. 유저 임베딩 로드 (Two-Tower User Tower 출력) ──
+# 1단계: 유저 임베딩을 읽는다
+# Two-Tower User Tower 의 출력이다. 자기 임베딩 파일이 있어야 그대로 돌아간다. K 선택 기준과 라벨 붙이는 순서를 보는 게 이 코드의 목적이다.
 user_embeddings = np.load('user_embeddings.npy')  # shape: (N, 128)
 user_ids = np.load('user_ids.npy')                # shape: (N,)
 
-# ── 2. 정규화 + 차원 축소 ──
+# 2단계: 정규화하고 32차원으로 줄인다
 scaler = StandardScaler()
 X = scaler.fit_transform(user_embeddings)
 
@@ -385,17 +385,20 @@ pca = PCA(n_components=32)
 X_reduced = pca.fit_transform(X)
 print(f"PCA 누적 설명 분산: {pca.explained_variance_ratio_.sum():.2%}")
 
-# ── 3-A. K-Means (Hard Assignment) ──
+# 3단계: K-Means 로 유저마다 세그먼트를 하나씩 할당한다
+# Hard Assignment 다.
 kmeans = KMeans(n_clusters=8, random_state=42, n_init=10)
 hard_labels = kmeans.fit_predict(X_reduced)
 
-# ── 3-B. GMM (Soft Assignment) ──
+# 4단계: GMM 으로 세그먼트마다 확률을 할당한다
+# Soft Assignment 다. 유저마다 세그먼트 8개의 확률이 한 행씩 나와 (N, 8) 확률 행렬이 된다.
 gmm = GaussianMixture(n_components=8, covariance_type='full', random_state=42)
 gmm.fit(X_reduced)
 soft_probs = gmm.predict_proba(X_reduced)   # shape: (N, 8) 확률 행렬
 primary_labels = gmm.predict(X_reduced)
 
-# ── 4. 세그먼트 테이블 생성 ──
+# 5단계: 세그먼트 테이블을 만든다
+# 유저마다 주 세그먼트와 둘째 세그먼트를 확률과 함께 적는다.
 segment_records = []
 for i, uid in enumerate(user_ids):
     primary_seg = primary_labels[i]
@@ -469,7 +472,8 @@ graph LR
 실시간 세그먼트 할당의 핵심은 **Complex Event Processing (CEP)**입니다. 단일 이벤트가 아니라, 일정 시간 윈도우 내의 이벤트 패턴을 감지하여 세그먼트를 할당합니다.
 
 ```python
-# Flink CEP 의사코드: 실시간 세그먼트 할당
+# (의사코드 — 그대로 실행되지 않습니다.)
+# 하는 일: Kafka 로 들어오는 유저 이벤트마다 규칙 셋을 확인해 실시간 세그먼트를 할당하고 해제하는 Flink CEP 처리 클래스의 구조를 보여 준다.
 class SegmentAssigner(ProcessFunction):
     """
     Kafka에서 유저 이벤트를 수신하고,
@@ -480,7 +484,7 @@ class SegmentAssigner(ProcessFunction):
     def process_element(self, event, ctx):
         user_id = event.user_id
         
-        # ── 규칙 1: 최근 1시간 내 3회 이상 검색 → "active_searcher" ──
+        # 규칙 1: 최근 1시간 내 3회 이상 검색 → "active_searcher"
         search_count = self.state.get_search_count(user_id, window='1h')
         if event.type == 'search':
             search_count += 1
@@ -488,13 +492,13 @@ class SegmentAssigner(ProcessFunction):
         if search_count >= 3:
             self.emit_segment(user_id, 'active_searcher', ttl=3600)
         
-        # ── 규칙 2: 장바구니 추가 후 10분 내 미구매 → "cart_abandoner_rt" ──
+        # 규칙 2: 장바구니 추가 후 10분 내 미구매 → "cart_abandoner_rt"
         if event.type == 'add_to_cart':
             ctx.timer_service().register_event_time_timer(
                 event.timestamp + 600_000  # 10분 후 트리거
             )
         
-        # ── 규칙 3: 구매 이벤트 → "converter" 세그먼트 즉시 할당 ──
+        # 규칙 3: 구매 이벤트 → "converter" 세그먼트 즉시 할당
         if event.type == 'purchase':
             self.emit_segment(user_id, 'converter', ttl=86400 * 30)
             # 장바구니 이탈 타이머가 있으면 취소

@@ -235,11 +235,13 @@ $$\text{score}(u) = \max_{j=1}^{K} \text{sim}(u, c_j)$$
 다음은 Multi-Centroid Lookalike의 전체 구현 예시입니다.
 
 ```python
+# 하는 일: 가짜 유저 20만 명의 임베딩에서 전환 유저 3,000명을 서브클러스터 3개로 나누고, 중심점마다 FAISS 로 검색해 Seed 를 뺀 Lookalike 오디언스 50,000명을 뽑는다.
 import numpy as np
 import faiss
 from sklearn.cluster import KMeans
 
-# 1. Seed 임베딩 로드 — 실전에서는 np.load(...), 여기서는 재현 가능한 가짜 데이터
+# 1단계: 가짜 유저 20만 명의 임베딩을 만들고 앞 3,000명을 Seed 로 둔다
+# 실전에서는 np.load(...) 로 읽고, 여기서는 재현 가능한 가짜 데이터를 쓴다.
 rng = np.random.default_rng(42)
 N, DIM, N_SEED = 200_000, 128, 3_000
 centers = rng.normal(size=(3, DIM)).astype('float32')      # 숨어 있는 3개 취향 군집
@@ -249,23 +251,23 @@ all_user_ids = np.arange(N)
 seed_user_ids = np.arange(N_SEED)                          # 앞 3,000명이 전환 유저
 seed_embeddings = all_embeddings[seed_user_ids].copy()
 
-# 2. 정규화 (cosine similarity → inner product)
+# 2단계: L2 정규화로 cosine 유사도를 내적으로 바꾼다
 faiss.normalize_L2(seed_embeddings)
 faiss.normalize_L2(all_embeddings)
 
-# 3. Multi-Centroid: Seed를 K개 서브클러스터로 분할
+# 3단계: Multi-Centroid 로 Seed 를 서브클러스터 3개로 나눈다
 K_SUB = 3
 kmeans_seed = KMeans(n_clusters=K_SUB, random_state=42, n_init=10)
 kmeans_seed.fit(seed_embeddings)
 centroids = kmeans_seed.cluster_centers_.astype('float32')  # (K, 128)
 faiss.normalize_L2(centroids)
 
-# 4. FAISS Inner Product 인덱스 구축
+# 4단계: FAISS 내적 인덱스를 만든다
 dim = all_embeddings.shape[1]
 index = faiss.IndexFlatIP(dim)
 index.add(all_embeddings)
 
-# 5. 각 Centroid로 ANN 검색
+# 5단계: 중심점마다 ANN 검색을 하고 유저마다 최대 유사도를 남긴다
 TOP_K = 50000  # 확장 대상 유저 수
 all_scores = np.full(len(all_embeddings), -1.0)
 
@@ -277,7 +279,7 @@ for j in range(K_SUB):
         score = scores[0][rank]
         all_scores[idx] = max(all_scores[idx], score)
 
-# 6. Seed 제외 + 상위 K 추출
+# 6단계: Seed 를 빼고 상위 50,000명을 뽑는다
 seed_user_set = set(seed_user_ids)
 candidates = [
     (all_user_ids[i], all_scores[i])
@@ -292,6 +294,7 @@ print(f"Top similarity: {lookalike_audience[0][1]:.4f}")
 print(f"Bottom similarity: {lookalike_audience[-1][1]:.4f}")
 
 # 출력:
+# 6단계 뜻: 확장 대상은 50000명이고, 유사도는 맨 위가 0.9435, 맨 아래가 0.1246 이다.
 # Lookalike audience size: 50000
 # Top similarity: 0.9435
 # Bottom similarity: 0.1246
@@ -394,13 +397,14 @@ DeepFM, DCN의 아키텍처가 여기서도 그대로 적용됩니다. 둘은 [D
 다음은 XGBoost 기반 성향 Lookalike의 구현 예시입니다.
 
 ```python
+# 하는 일: 가짜 유저 20만 명과 Seed 3,000명으로 Seed 와 일반 유저를 구분하는 XGBoost 를 학습하고, 전체 유저를 점수 매겨 Seed 를 뺀 상위 10만 명을 Lookalike 로 뽑는다.
 import xgboost as xgb
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 
-# 1. 데이터 구성: Seed (label=1) + Random Sample (label=0)
-#    실전에서는 np.load(...), 여기서는 재현 가능한 가짜 피처
+# 1단계: Seed 와 무작위 표본으로 학습 데이터를 만든다
+# Seed 는 label=1, 무작위 표본은 label=0 이다. 실전에서는 np.load(...) 로 읽고, 여기서는 재현 가능한 가짜 피처를 쓴다.
 np.random.seed(42)
 rng = np.random.default_rng(42)
 population_features = rng.normal(size=(200_000, 32))  # (n_pop, d)
@@ -417,7 +421,8 @@ y = np.array([1] * len(seed_features) + [0] * n_neg)
 
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-# 2. XGBoost 학습
+# 2단계: XGBoost 를 학습한다
+# 50라운드마다 검증 AUC 를 찍고, 20라운드 동안 나아지지 않으면 멈춘다. 돌리는 방식에 따라 마지막 줄이 [82] 로 찍히기도 하지만 학습은 83번째 라운드까지 간다.
 dtrain = xgb.DMatrix(X_train, label=y_train)
 dval = xgb.DMatrix(X_val, label=y_val)
 
@@ -439,12 +444,12 @@ model = xgb.train(
     verbose_eval=50
 )
 
-# 3. 전체 유저 스코어링
+# 3단계: 전체 유저를 점수 매긴다
 all_features = population_features
 dall = xgb.DMatrix(all_features)
 propensity_scores = model.predict(dall)
 
-# 4. 상위 K 추출 (Seed 제외)
+# 4단계: Seed 를 빼고 상위 10만 명을 뽑는다
 top_k = 100000
 ranked_indices = np.argsort(-propensity_scores)
 seed_index_set = set(range(len(seed_features)))  # Seed 유저 인덱스
@@ -454,9 +459,11 @@ print(f"AUC: {roc_auc_score(y_val, model.predict(dval)):.4f}")
 print(f"Lookalike top propensity: {propensity_scores[lookalike_indices[0]]:.4f}")
 
 # 출력:
+# 2단계 뜻: 검증 AUC 는 0번째 라운드 0.82460 에서 50번째 0.93412 로 오르고, 학습은 83번째 라운드 0.93408 에서 멈춘다.
 # [0]	val-auc:0.82460
 # [50]	val-auc:0.93412
-# [82]	val-auc:0.93408
+# [83]	val-auc:0.93408
+# 4단계 뜻: 검증 AUC 는 0.9341 이고, Seed 를 뺀 맨 위 유저의 성향 점수는 0.9900 이다.
 # AUC: 0.9341
 # Lookalike top propensity: 0.9900
 ```

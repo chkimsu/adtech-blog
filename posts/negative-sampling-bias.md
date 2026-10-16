@@ -217,8 +217,10 @@ graph TD
 가장 단순하고 널리 쓰이는 전략은 **Random Negative Downsampling**입니다. Positive 샘플은 전부 유지하고, Negative 샘플만 비율 $r$로 랜덤 추출합니다.
 
 ```python
+# 하는 일: positive 는 모두 두고 negative 만 비율 r 로 뽑는 Random Negative Downsampling 함수를 만들고, CTR 0.2% 인 로그 1,000만 건을 예로 둔다.
 import numpy as np
 
+# 1단계: negative 만 비율 r 로 남기는 함수를 만든다
 def negative_downsample(labels, features, ratio=0.1, seed=42):
     """Negative 샘플을 ratio 비율로 랜덤 다운샘플링.
     
@@ -244,12 +246,11 @@ def negative_downsample(labels, features, ratio=0.1, seed=42):
     keep = np.concatenate([pos_indices, sampled_neg])
     return labels[keep], features[keep]
 
-# 예시: CTR 0.2%, negative sampling ratio 0.1
+# 2단계: CTR 0.2% 인 로그 1,000만 건을 예로 둔다
+# negative 를 10% 만 남기면 positive 20,000 + negative 998,000 = 1,018,000행이 남는다. 데이터 크기는 약 10배 줄고, positive 비율은 0.2% 에서 약 2% 로 오른다.
 n_total = 10_000_000
 n_pos = 20_000    # 0.2%
 n_neg = 9_980_000 # 99.8%
-# 다운샘플링 후: positive 20,000 + negative 998,000 = 1,018,000
-# → 데이터 크기 약 10배 감소, positive 비율 0.2% → 약 2%로 상승
 ```
 
 **장점:**
@@ -287,6 +288,8 @@ $$\frac{q}{1-q} = \frac{1}{r} \cdot \frac{p}{1-p}$$
 :::
 
 ```python
+# 하는 일: negative 를 10% 만 남겨 학습한 모델이 15% 로 예측했을 때, 보정식으로 원래 확률을 되찾는다.
+# 1단계: 다운샘플링한 모델의 출력을 원래 확률로 되돌리는 함수를 만든다
 def calibrate_downsampling(q, r):
     """Downsampling된 모델 출력 q를 원래 확률 p로 보정.
     
@@ -298,15 +301,17 @@ def calibrate_downsampling(q, r):
     """
     return q / (q + (1 - q) / r)
 
-# 예시
+# 2단계: r = 0.1 로 학습한 모델이 15% 로 예측한 값을 보정한다
+# 15% 를 그대로 쓰면 입찰가가 8.65배 과대 평가된다(0.15 / 0.017341 = 8.65).
 r = 0.1  # negative 10%만 사용
 q = 0.15 # 모델이 15%로 예측
 
 p = calibrate_downsampling(q, r)
 print(f"모델 출력 q = {q:.2%}")
 print(f"보정 후   p = {p:.4%}")
-# 15%를 그대로 쓰면 입찰가가 약 8.6배 과대 평가된다 (0.15 / 0.017341 = 8.65)
+
 # 출력:
+# 2단계 뜻: 모델이 낸 15.00% 는 보정하면 1.7341% 다.
 # 모델 출력 q = 15.00%
 # 보정 후   p = 1.7341%
 ```
@@ -324,11 +329,12 @@ print(f"보정 후   p = {p:.4%}")
 아래 코드는 표준 라이브러리만 씁니다. 복사해서 그대로 돌리면 같은 숫자가 나옵니다.
 
 ```python
+# 하는 일: 진짜 CTR 2.0% 로 만든 가상 로그 50만 행에서 무클릭만 비율 r 로 줄여 학습하고, r 이 1.0, 0.1, 0.01 일 때 평균 예측이 얼마나 부풀고 보정식이 얼마나 되돌리는지 센다.
 import random
 
 random.seed(42)  # 시드 고정 — 몇 번 돌려도 같은 숫자가 나오게
 
-# ── 1. 가상 로그 만들기 ───────────────────────────────────────────────
+# 1단계: 진짜 클릭률을 아는 가상 로그 50만 행을 만든다
 # 세그먼트 3개. 오른쪽 숫자가 '진짜 클릭률'이다.
 # 우리는 정답을 알고 시작하지만, 모델은 로그만 보고 이 값을 맞혀야 한다.
 SEG_CTR = {"morning_mobile": 0.005, "evening_mobile": 0.020, "search_intent": 0.050}
@@ -357,7 +363,7 @@ for seg, _ in log:
     real_imp[seg] += 1
 
 
-# ── 2. negative(무클릭)만 비율 r로 남긴다 ─────────────────────────────
+# 2단계: negative 만 비율 r 로 남기는 함수를 만든다
 def downsample(rows, r, seed=42):
     """클릭은 전부 살리고, 무클릭은 확률 r로만 살린다.
     r=0.1이면 무클릭 10건 중 평균 1건만 학습 데이터에 남는다."""
@@ -365,7 +371,7 @@ def downsample(rows, r, seed=42):
     return [row for row in rows if row[1] == 1 or rng.random() < r]
 
 
-# ── 3. '모델' ────────────────────────────────────────────────────────
+# 3단계: 세그먼트별 평균 클릭률을 외우는 모델 함수를 만든다
 def fit(rows):
     """세그먼트별 평균 클릭률을 그대로 외우는, 가장 정직한 모델.
     학습 데이터 안에서는 완벽히 보정된 모델이다 — 그런데도 부푼다는 게 이 절의 요점."""
@@ -376,7 +382,8 @@ def fit(rows):
     return {s: clk[s] / imp[s] for s in imp}
 
 
-# ── 4. 보정식 — 이 글의 핵심 한 줄 ────────────────────────────────────
+# 4단계: 보정식과 트래픽 가중 평균 예측 함수를 만든다
+# 보정식이 이 글의 핵심 한 줄이다.
 def correct(q, r):
     """다운샘플링 데이터로 학습한 예측 q를 원래 확률로 되돌린다."""
     return q / (q + (1 - q) / r)
@@ -389,7 +396,7 @@ def avg_pred(model, r=None):
                for s in names) / total
 
 
-# ── 5. 샘플링 비율 세 가지를 나란히 ───────────────────────────────────
+# 5단계: 샘플링 비율 셋으로 학습해 보정 전후를 나란히 본다
 for r in (1.0, 0.1, 0.01):
     train = downsample(log, r)
     model = fit(train)
@@ -397,7 +404,7 @@ for r in (1.0, 0.1, 0.01):
     print(f"r={r:<5} 행 {len(train):>7,}, 학습셋 CTR {train_ctr:6.2%}"
           f", 보정 전 {avg_pred(model):6.2%}, 보정 후 {avg_pred(model, r):6.2%}")
 
-# ── 6. r=0.1에서 세그먼트별로 뜯어보기 ────────────────────────────────
+# 6단계: r = 0.1 에서 세그먼트별로 뜯어본다
 model = fit(downsample(log, 0.1))
 print("\n[r=0.1] 세그먼트별, 진짜 CTR, 모델 출력, 보정 후")
 for s in names:
@@ -408,10 +415,13 @@ ratio = avg_pred(model) / avg_pred(model, 0.1)
 print(f"\n보정을 빼먹으면 평균 예측이 진짜의 {ratio:.1f}배 → 입찰가도 그만큼 부푼다")
 
 # 출력:
+# 1단계 뜻: 가상 로그 500,000행에서 클릭이 9,937건 나와 CTR 이 1.99% 다.
 # 원본 로그 500,000행, 클릭 9,937건, CTR 1.99%
+# 5단계 뜻: 무클릭을 줄일수록 학습셋 CTR 이 16.86%, 67.05% 로 부풀고 보정 전 평균 예측도 15.14%, 54.43% 로 뜬다. 보정하면 1.98%, 1.96% 로 원래의 1.99% 근처로 돌아온다.
 # r=1.0   행 500,000, 학습셋 CTR  1.99%, 보정 전  1.99%, 보정 후  1.99%
 # r=0.1   행  58,931, 학습셋 CTR 16.86%, 보정 전 15.14%, 보정 후  1.98%
 # r=0.01  행  14,821, 학습셋 CTR 67.05%, 보정 전 54.43%, 보정 후  1.96%
+# 6단계 뜻: r = 0.1 이면 세 세그먼트 모두 모델 출력이 진짜의 몇 배로 뜨고, 보정하면 0.49%, 2.05%, 4.88% 로 돌아온다. 보정을 빼먹으면 평균 예측이 진짜의 7.7배다.
 #
 # [r=0.1] 세그먼트별, 진짜 CTR, 모델 출력, 보정 후
 #   morning_mobile  진짜  0.50%, 모델  4.69%, 보정  0.49%
@@ -431,7 +441,7 @@ print(f"\n보정을 빼먹으면 평균 예측이 진짜의 {ratio:.1f}배 → �
 
 읽는 법을 한 줄씩 짚어 봅니다. 첫 줄은 아무것도 줄이지 않은 기준선입니다. 학습셋 CTR 1.99%가 진짜 값이고, 모델도 1.99%라고 답합니다. 두 번째 줄에서 무클릭을 1/10로 줄였습니다. 학습셋 CTR이 16.86%로 뛰었습니다. 무클릭 10건 중 9건이 사라졌으니 당연한 결과입니다. 세 번째 줄은 1/100까지 줄인 경우입니다. 학습셋 CTR이 67%가 되어 "클릭이 반 이상"인 이상한 세상이 됩니다.
 
-중요한 건 마지막 두 열입니다. 보정 전 평균 예측은 15.14%, 진짜의 **7.7배**입니다. 여기에 보정식을 한 번 통과시키면 1.98%로 돌아옵니다. 진짜 값 1.99%와 소수점 둘째 자리에서 만납니다. 1/100로 줄인 경우도 1.96%까지 돌아옵니다. 남은 0.03%p는 보정식의 오차가 아니라 표본이 줄어서 생긴 잡음입니다.
+중요한 건 마지막 두 열입니다. 보정 전 평균 예측은 15.14%, 진짜의 **7.7배**입니다. 여기에 보정식을 한 번 통과시키면 1.98%로 돌아옵니다. 진짜 값 1.99%와 0.01%p 차이입니다. 1/100로 줄인 경우도 1.96%까지 돌아옵니다. 남은 0.03%p는 보정식의 오차가 아니라 표본이 줄어서 생긴 잡음입니다.
 
 세그먼트별 출력을 보면 보정의 성격이 더 잘 보입니다. 진짜 0.50%인 세그먼트를 모델은 4.69%라고 답했고, 보정 후 0.49%로 돌아왔습니다. 진짜 5.00%인 세그먼트는 33.90% → 4.88%입니다. 눈여겨볼 점은 부풀림의 배수가 세그먼트마다 다르다는 것입니다. 낮은 확률은 약 9.4배, 높은 확률은 약 6.8배 부풀었습니다. 그래서 "전체 평균을 상수로 나누는" 식의 보정은 통하지 않습니다. 예측 하나하나에 공식을 따로 적용해야 합니다.
 
@@ -448,6 +458,7 @@ Random Downsampling은 모든 negative 샘플을 동등하게 취급합니다. �
 **전략:** 지금 학습시키는 모델로 negative 샘플의 pCTR을 예측하고, 점수가 높은 순서대로 우선 추출합니다. 로그를 만든 이전 모델이 아니라 학습 중인 모델의 점수를 씁니다.
 
 ```python
+# 하는 일: 지금 학습 중인 모델이 positive 로 착각하는 negative 를 점수 순으로 먼저 뽑고, 나머지는 무작위로 채우는 Hard Negative Mining 함수를 만든다.
 def hard_negative_sampling(model, neg_features, neg_labels, k, mix_ratio=0.5):
     """Hard Negative Mining: 모델이 헷갈려하는 negative 우선 추출.
     
@@ -528,6 +539,9 @@ $$\mathcal{L}_{\text{IPS}} = \frac{1}{n} \sum_{i: O_i=1} \frac{1}{e(x_i)} \ell(f
 **직관:** 자주 노출되는 광고(높은 $e(x)$)는 학습 데이터에 과대 대표되므로 가중치를 줄입니다. 드물게 노출되는 광고(낮은 $e(x)$)는 과소 대표되므로 가중치를 높입니다. 이를 통해 "만약 모든 광고가 동등한 확률로 노출되었더라면" 관측했을 데이터 분포를 복원합니다.
 
 ```python
+# (앞 블록에 이어서 돌린다.)
+# 하는 일: propensity 의 역수로 손실을 가중하는 IPS 가중 Cross-Entropy 함수를 만들고, 노출 확률 다섯 개를 예로 둔다.
+# 1단계: propensity 의 역수로 가중한 Cross-Entropy 함수를 만든다
 def ips_weighted_loss(predictions, labels, propensities, clip_range=(0.01, 1.0)):
     """IPS 가중 Cross-Entropy Loss.
     
@@ -550,10 +564,10 @@ def ips_weighted_loss(predictions, labels, propensities, clip_range=(0.01, 1.0))
     
     return np.mean(weights * ce)
 
-# 예시
+# 2단계: 노출 확률 다섯 개를 예로 둔다
+# 자주 노출되는 0.8 은 가중치가 1.25 로 작고, 드물게 노출되는 0.02 는 가중치가 50 으로 크다. 가중치가 끝없이 커지지 않게 propensity 는 0.01 아래를 자른다.
+# numpy 는 이 글의 첫 블록이 불러온다.
 propensities = np.array([0.8, 0.05, 0.3, 0.9, 0.02])
-# 자주 노출(0.8) → 가중치 1.25 (낮춤)
-# 드물게 노출(0.02) → 가중치 50 (높임, but clipped)
 ```
 
 **IPS의 핵심 문제:**
@@ -593,6 +607,7 @@ $$\hat{\mathcal{L}}_{\text{DR}} = \frac{1}{n} \sum_{i=1}^{n} \left[ \hat{\mu}(x_
 4. IPS가 정확하면 잔차 보정이 편향 없이 작동합니다
 
 ```python
+# 하는 일: 직접 모델의 기대 손실에, 노출된 샘플의 잔차를 IPS 로 보정해 더하는 Doubly Robust 손실 함수를 만든다.
 def doubly_robust_loss(predictions, labels, propensities, 
                        imputed_outcomes, observed_mask):
     """Doubly Robust Loss Estimator.
@@ -713,6 +728,7 @@ $r$ 값을 어떻게 정할 것인가는 CTR과 데이터 규모에 따라 달�
 | 디바이스/OS | 새 디바이스 출시 시 데이터 부족 | 매월 |
 
 ```python
+# 하는 일: 세그먼트마다 예측 평균을 실제 평균으로 나눈 P/O Ratio 를 구하고, 1 에서 threshold 넘게 벗어나면 알림을 거는 모니터링 함수를 만든다.
 def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
     """세그먼트별 P/O Ratio 모니터링.
     
@@ -735,10 +751,7 @@ def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
             results[seg] = {"P/O": po_ratio, "n": mask.sum(), "alert": alert}
     return results
 
-# 출력 예시:
-# {"mobile_ios":   {"P/O": 1.05, "n": 2340000, "alert": False},
-#  "new_publisher": {"P/O": 1.45, "n":   12000, "alert": True},  ← 과대추정
-#  "desktop_win":  {"P/O": 0.72, "n":  890000, "alert": True}}   ← 과소추정
+# 돌려주는 값의 예(가상): mobile_ios(n 2,340,000)는 P/O 1.05 로 알림이 없고, new_publisher(n 12,000)는 1.45 로 과대추정, desktop_win(n 890,000)은 0.72 로 과소추정이라 둘 다 알림이 뜬다.
 ```
 
 ---

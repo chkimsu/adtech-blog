@@ -85,12 +85,15 @@ $$\text{Embedding}: \mathbb{R}^{|V|} \xrightarrow{\text{lookup}} \mathbb{R}^{k} 
 파라미터가 얼마나 줄어드는지는 직접 곱해 보면 바로 보입니다.
 
 ```python
-# One-hot 교차 vs Embedding — 파라미터 수를 실제로 곱해 본다.
+# 하는 일: 유저 1,000만 명과 광고 100만 개로 one-hot 교차 weight 수와 embedding 파라미터 수를 곱셈으로 세어 FP32 메모리와 함께 견주고, one-hot 교차에서 배울 수 있는 조합의 비율을 구한다.
+# 1단계: 유저 수, 광고 수, embedding 차원을 둔다
 # 표준 라이브러리만 쓰고, 무작위성도 없다. 그냥 산수다.
-
 N_USER = 10_000_000   # 유저 1,000만 명 (중견 서비스의 월간 활성 유저 규모)
 N_AD   = 1_000_000    # 광고 100만 개 (크리에이티브 단위로 세면 이 정도가 된다)
 K      = 16           # embedding 차원. 실무에서 8~128 사이를 쓴다.
+
+# 2단계: 두 방법의 파라미터 수를 곱한다
+# 방법 A 는 조합마다, 방법 B 는 유저와 광고마다 값을 둔다. 그 차이가 그대로 파라미터 수의 차이다.
 
 # 방법 A: "이 유저 × 이 광고" 조합마다 weight를 하나씩 준다.
 #   LR로 유저-광고 상호작용을 배우려면 이 방법밖에 없다.
@@ -104,24 +107,29 @@ print(f"A. one-hot 교차 weight : {onehot_cross:,} 개")
 print(f"B. embedding 파라미터  : {emb_params:,} 개")
 print(f"   B가 A보다 {onehot_cross / emb_params:,.0f}배 적다")
 
-# FP32(4바이트)로 저장했을 때 메모리. 서버에 올라가는지가 여기서 정해진다.
+# 3단계: FP32 로 저장했을 때 메모리를 구한다
+# 값 하나가 4바이트다. 서버에 올라가는지가 여기서 정해진다.
 GB = 1024 ** 3
 print(f"A 메모리(FP32): {onehot_cross * 4 / GB:,.0f} GB")
 print(f"B 메모리(FP32): {emb_params * 4 / GB:,.2f} GB")
 
+# 4단계: one-hot 교차에서 배울 수 있는 조합의 비율을 구한다
 # 파라미터가 줄어드는 것만 이득이 아니다. '배울 수 있느냐'가 더 큰 차이다.
-#   A는 그 유저와 그 광고가 함께 등장한 로그가 있어야 weight를 배운다.
-#   실제로 한 유저가 평생 만나는 광고는 많아야 수백 개다.
+# A는 그 유저와 그 광고가 함께 등장한 로그가 있어야 weight를 배운다.
+# 실제로 한 유저가 평생 만나는 광고는 많아야 수백 개다.
 seen_per_user = 300
 coverage = seen_per_user * N_USER / onehot_cross
 print(f"A에서 학습 가능한 조합 비율: {coverage * 100:.4f}%")
 
 # 출력:
+# 2단계 뜻: one-hot 교차는 weight 가 10,000,000,000,000개이고 embedding 은 176,000,000개라, B 가 A 보다 56,818배 적다.
 # A. one-hot 교차 weight : 10,000,000,000,000 개
 # B. embedding 파라미터  : 176,000,000 개
 #    B가 A보다 56,818배 적다
+# 3단계 뜻: FP32 로 담으면 A 는 37,253 GB, B 는 0.66 GB 다.
 # A 메모리(FP32): 37,253 GB
 # B 메모리(FP32): 0.66 GB
+# 4단계 뜻: one-hot 교차 weight 가운데 학습할 로그가 생기는 조합은 0.0300% 다. 나머지는 weight 를 한 번도 배우지 못한다.
 # A에서 학습 가능한 조합 비율: 0.0300%
 ```
 
@@ -168,17 +176,16 @@ feature["gender_X_adcat_X_hour"] = feature["gender"] + "_" + feature["ad_categor
 가상 로그를 하나 만듭니다. 20대는 저녁에 반응하고, 40대는 출근길 아침에 반응합니다. 대신 **나이만 봐도, 시간만 봐도 클릭률은 똑같이 2.5%**가 되게 설계했습니다. 신호가 조합에만 숨어 있는 상황입니다.
 
 ```python
-# LR은 "20대 × 저녁" 같은 조합을 스스로 배울 수 없다.
-# 교차 피처를 손으로 넣으면 무엇이 달라지는지 숫자로 확인한다.
-# 표준 라이브러리만 사용한다.
+# 하는 일: 가상 로그 4만 건에서 나이와 시간대만 넣은 LR 과 교차 피처를 하나 붙인 LR 을 학습해, LR 이 「20대 × 저녁」 같은 조합을 스스로 배우지 못하는 것을 AUC 와 LogLoss 로 확인한다.
 import random, math
 from collections import Counter
 
 random.seed(42)
 
-# ── 1. 가상 로그 만들기 ────────────────────────────────────────────
-# 조합이 맞으면 4.5%, 어긋나면 0.5%. 나이별 평균은 (4.5+0.5)/2 = 2.5%로
-# 두 나이대가 똑같다. 시간대도 같은 이유로 똑같다. 단독 신호가 0인 설계다.
+# 1단계: 조합에만 신호가 있는 가상 로그 4만 건을 만든다
+# 조합이 맞으면 4.5%, 어긋나면 0.5%. 나이별 평균은 (4.5+0.5)/2 = 2.5% 로
+# 두 나이대가 똑같다. 시간대도 같은 이유로 똑같다. 단독 신호가 0 인 설계다.
+# 표준 라이브러리만 쓴다.
 TRUE_CTR = {("20대", "저녁"): 0.045, ("20대", "아침"): 0.005,
             ("40대", "아침"): 0.045, ("40대", "저녁"): 0.005}
 
@@ -197,14 +204,15 @@ for key in ["20대", "40대", "아침", "저녁"]:            # 단독 피처의
     n_clk = sum(y for a, h, y in rows if key in (a, h))
     print(f"  {key} 단독: {n_clk/n_imp*100:.2f}%")
 
-# ── 2. 피처 두 가지 방식 ───────────────────────────────────────────
+# 2단계: 피처를 만드는 함수 둘을 만든다
+# 두 방식은 교차 피처 하나가 있고 없고만 다르다.
 def plain(a, h):                 # A: 나이, 시간을 따로따로 (LR이 흔히 받는 형태)
     return [f"age={a}", f"hour={h}"]
 
 def cross(a, h):                 # B: A + "나이_시간" 교차 피처 하나를 손으로 붙임
     return plain(a, h) + [f"age_x_hour={a}_{h}"]
 
-# ── 3. 학습 준비: 같은 조합끼리 미리 접는다 ───────────────────────
+# 3단계: 같은 조합끼리 노출과 클릭을 미리 접는다
 # 광고 로그는 조합 수가 유한하므로, 4만 행을 (노출, 클릭) 4행으로 접을 수 있다.
 # 접어도 로지스틱 손실은 완전히 같다. 대신 학습이 정확하고 빨라진다.
 imp, clk = Counter(), Counter()
@@ -212,6 +220,8 @@ for a, h, y in rows:
     imp[(a, h)] += 1
     clk[(a, h)] += y
 
+# 4단계: 전체 배치 경사하강으로 학습하는 함수를 만든다
+# 접은 4행으로 기울기를 구해 3000번 내려간다.
 def train(featfn, steps=3000, lr=2.0):
     """전체 배치 경사하강. 파라미터는 '피처 이름 → weight' 딕셔너리다."""
     w = {}
@@ -230,7 +240,8 @@ def train(featfn, steps=3000, lr=2.0):
             w[nm] = w.get(nm, 0.0) - lr * g
     return w, b
 
-# ── 4. 두 지표로 채점 ──────────────────────────────────────────────
+# 5단계: AUC 와 LogLoss 로 채점하는 함수를 만든다
+# LogLoss 는 확률의 절대값을, AUC 는 순위만 잰다.
 def evaluate(featfn, w, b):
     preds = []
     for a, h, y in rows:
@@ -254,6 +265,8 @@ def evaluate(featfn, w, b):
     nneg = len(preds) - npos
     return (rank_sum - npos*(npos+1)/2) / (npos*nneg), ll
 
+# 6단계: 두 방식으로 학습하고 채점한다
+# B 는 네 조합의 예측을 표본 클릭률과 나란히 찍는다.
 for label, fn in [("A 원 피처만", plain), ("B 교차 피처 추가", cross)]:
     w, b = train(fn)
     auc, ll = evaluate(fn, w, b)
@@ -265,11 +278,13 @@ for label, fn in [("A 원 피처만", plain), ("B 교차 피처 추가", cross)]
                   f"  표본 {clk[cell]/imp[cell]*100:5.2f}%")
 
 # 출력:
+# 1단계 뜻: 전체 클릭률은 2.43% 이고, 나이나 시간대 하나만 보면 2.37% 에서 2.48% 사이라 단독 피처에는 신호가 거의 없다.
 # 표본 전체 클릭률: 2.43%
 #   20대 단독: 2.48%
 #   40대 단독: 2.37%
 #   아침 단독: 2.42%
 #   저녁 단독: 2.43%
+# 6단계 뜻: 원 피처만 넣은 A 는 AUC 0.506 으로 순위를 세우지 못하고, 교차 피처를 붙인 B 는 AUC 0.707, LogLoss 0.1050 이다. B 의 예측은 조합마다 표본 클릭률과 같다.
 # A 원 피처만  AUC 0.506  LogLoss 0.1141  weight 4개
 # B 교차 피처 추가  AUC 0.707  LogLoss 0.1050  weight 8개
 #    20대 x 아침: 예측  0.51%  표본  0.51%
@@ -303,16 +318,18 @@ $$\sum_{i=1}^{n} \sum_{j=i+1}^{n} \langle v_i, v_j \rangle x_i x_j = \frac{1}{2}
 이 트릭 덕분에 FM은 대규모 광고 시스템에서도 실시간 서빙이 가능합니다. 두 방법이 정말 같은 값을 내는지 확인해 봅니다.
 
 ```python
-# FM의 2차 상호작용을 두 방법으로 계산해 결과가 같은지 확인한다.
-# 나이브한 방법은 O(k×n²), 트릭을 쓰면 O(k×n)이다. 표준 라이브러리만 사용한다.
+# 하는 일: FM 의 2차 상호작용을 모든 쌍을 도는 O(k×n²) 방법과 트릭을 쓴 O(k×n) 방법으로 계산해 값이 같은지 보고, 피처 수에 따라 두 방법이 도는 개수를 견준다.
 import random
 
 random.seed(42)
 
+# 1단계: 피처 5개의 latent vector 와 sparse 입력을 만든다
+# 표준 라이브러리만 쓴다.
 n, k = 5, 4                                                    # 피처 5개, latent 차원 4
 V = [[random.gauss(0, 1) for _ in range(k)] for _ in range(n)]  # 피처별 latent vector
 x = [1.0, 0.0, 1.0, 1.0, 0.0]                                  # sparse 입력: 1, 3, 4번만 켜짐
 
+# 2단계: 모든 피처 쌍을 직접 도는 함수를 만든다
 def naive(V, x):
     """모든 피처 쌍을 직접 돌면서 내적을 더한다 — 쌍의 개수만큼 반복한다."""
     total, pairs = 0.0, 0
@@ -323,6 +340,7 @@ def naive(V, x):
             pairs += 1
     return total, pairs
 
+# 3단계: 합의 제곱에서 제곱의 합을 빼는 트릭 함수를 만든다
 def fast(V, x):
     """(합의 제곱 - 제곱의 합) / 2. 쌍을 한 번도 만들지 않는다."""
     total = 0.0
@@ -332,20 +350,25 @@ def fast(V, x):
         total += s * s - sq                                      # 대각선 항을 걷어낸다
     return 0.5 * total
 
+# 4단계: 두 방법으로 계산해 값을 견준다
+# 파이썬 3.12 부터는 sum 이 부동소수점 오차를 보정해 차이가 0.0e+00 으로 찍힌다.
 a, pairs = naive(V, x)
 b = fast(V, x)
 print(f"naive O(k n^2) = {a:.6f}   (피처 쌍 {pairs}개를 직접 돌았다)")
 print(f"fast  O(k n)   = {b:.6f}   (쌍을 만들지 않았다)")
 print(f"차이 {abs(a-b):.1e} — 부동소수점 오차 수준")
 
+# 5단계: 피처 수를 늘려 쌍의 개수와 트릭이 훑는 개수를 견준다
 # 피처가 늘어나면 두 방법의 격차가 벌어진다. 서빙에 올릴 수 있는지가 이 차이로 정해진다.
 for nn in (10, 100, 1000, 10000):
     print(f"  피처 {nn:5d}개 → 쌍 {nn*(nn-1)//2:>11,}개  vs  트릭은 {nn:,}개 훑기")
 
-# 출력:
+# 출력 (파이썬 3.9):
+# 4단계 뜻: 두 방법이 모두 -1.423433 을 내고, 차이 4.4e-16 은 부동소수점 오차다. 나이브 방법은 피처 쌍 10개를 직접 돌았다.
 # naive O(k n^2) = -1.423433   (피처 쌍 10개를 직접 돌았다)
 # fast  O(k n)   = -1.423433   (쌍을 만들지 않았다)
 # 차이 4.4e-16 — 부동소수점 오차 수준
+# 5단계 뜻: 피처 10000개면 쌍이 49,995,000개지만 트릭은 10,000개만 훑는다.
 #   피처    10개 → 쌍          45개  vs  트릭은 10개 훑기
 #   피처   100개 → 쌍       4,950개  vs  트릭은 100개 훑기
 #   피처  1000개 → 쌍     499,500개  vs  트릭은 1,000개 훑기
@@ -671,11 +694,13 @@ graph TD
 같은 유저를 두 광고로 채점하면 가중치가 어떻게 달라지는지, 직접 돌려서 봅니다.
 
 ```python
-# DIN: 같은 유저라도 '어떤 광고를 채점하느냐'에 따라 유저 표현이 달라진다.
-# attention 가중치가 실제로 어떻게 달라지는지 확인한다. 표준 라이브러리만 사용한다.
+# 하는 일: 같은 유저의 최근 행동 5개를 러닝화 광고와 노트북 광고로 각각 채점해, DIN 의 attention 가중치가 후보 광고에 따라 어떻게 달라지는지 mean pooling 과 견준다.
 import random, math
 
 random.seed(42)
+
+# 1단계: 차원과 온도를 두고 가상 embedding 함수를 만든다
+# 같은 유저라도 '어떤 광고를 채점하느냐'에 따라 유저 표현이 달라지는 것을 본다. 표준 라이브러리만 쓴다.
 D = 8      # embedding 차원
 T = 3.0    # 점수를 누그러뜨리는 온도. 낮추면 가중치 차이가 더 벌어진다.
 
@@ -686,6 +711,7 @@ def emb(axis):
     v[axis] += 2.0
     return v
 
+# 2단계: 유저가 최근에 본 상품 5개를 카테고리 방향으로 만든다
 AXIS = {"운동": 0, "전자기기": 2, "여행": 3}     # 카테고리마다 쓰는 자리를 다르게
 behaviors = {                                     # 이 유저가 최근에 본 상품 5개
     "운동화": emb(AXIS["운동"]),
@@ -695,6 +721,7 @@ behaviors = {                                     # 이 유저가 최근에 본 
     "운동복": emb(AXIS["운동"]),
 }
 
+# 3단계: 방향과 거리로 가중치를 내는 attention 함수를 만든다
 def attention(behavior_vecs, candidate):
     """DIN의 attention. 실제로는 학습된 MLP가 행동마다 가중치를 내지만, 여기서는
        '방향이 맞고 거리가 가까우면 관련 있다'는 손 계산으로 대신한다.
@@ -707,6 +734,7 @@ def attention(behavior_vecs, candidate):
     total = sum(raw)
     return [x/total for x in raw], total              # (읽기용 비중, 나누지 않은 가중치의 합)
 
+# 4단계: 러닝화 광고와 노트북 광고로 같은 유저를 채점한다
 SPORTS = ["운동화", "러닝화", "운동복"]
 for ad_name, axis in [("러닝화 광고", "운동"), ("노트북 광고", "전자기기")]:
     ws, total = attention(list(behaviors.values()), emb(AXIS[axis]))
@@ -717,9 +745,11 @@ for ad_name, axis in [("러닝화 광고", "운동"), ("노트북 광고", "전�
     print(f"   운동 관련 3개가 가져간 비중: {share*100:.1f}%")
     print(f"   나누지 않은 가중치의 합: {total:.2f}")
 
+# 5단계: mean pooling 의 고정 비중과 견준다
 print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관련 비중은 60.0% 고정")
 
 # 출력:
+# 4단계 뜻: 러닝화 광고를 채점하면 운동 관련 3개가 비중 91.3% 를 가져가고, 노트북 광고로 바꾸면 9.1% 로 떨어진다. 나누지 않은 가중치의 합은 8.41 과 3.89 다.
 # [러닝화 광고] 채점 — 같은 유저, 같은 행동 5개
 #    운동화: 0.376 ███████████████
 #    노트북: 0.026 █
@@ -736,6 +766,7 @@ print(f"mean pooling이라면 5개 모두 {1/len(behaviors):.3f} — 운동 관�
 #    운동복: 0.040 ██
 #    운동 관련 3개가 가져간 비중: 9.1%
 #    나누지 않은 가중치의 합: 3.89
+# 5단계 뜻: mean pooling 은 5개에 0.200 씩 주어, 운동 관련 비중이 어느 광고에서나 60.0% 다.
 # mean pooling이라면 5개 모두 0.200 — 운동 관련 비중은 60.0% 고정
 ```
 
@@ -927,28 +958,32 @@ $a_t$가 낮으면 후보 광고와 무관한 관심사라는 뜻입니다. 이�
 셋째, **파라미터 수는 구조와 거의 무관합니다.** DCN-v2와 DIN의 차이는 0.4%뿐입니다. DeepFM까지 넓혀도 6% 남짓입니다. 전부 임베딩 table이 잡아먹기 때문입니다. 직접 세어 봅니다.
 
 ```python
-# 구조를 바꿔도 모델 크기는 거의 안 변한다 — embedding table이 전부 잡아먹기 때문이다.
-# 위 가상 표의 '파라미터 수' 열을 그대로 계산해 본다. 표준 라이브러리만 사용한다.
-
+# 하는 일: 해시 버킷 400만 개, 차원 16 으로 LR 부터 DIEN 까지 모델 9개의 파라미터 수를 부품별로 더해, embedding table 이 모델 크기의 대부분을 차지하는지 본다.
+# 1단계: 해시 버킷, 차원, 필드, 교차 피처 수를 둔다
+# 위 가상 표의 '파라미터 수' 열을 그대로 계산한다. 구조를 바꿔도 DeepFM, DCN-v2, DIN, DIEN 의 크기가 거의 안 변하는 까닭이 여기서 보인다. 표준 라이브러리만 쓴다.
 V      = 4_000_000     # 해시 버킷 400만 (hashing trick으로 vocabulary를 고정)
 K      = 16            # embedding 차원
 FIELDS = 40            # 필드(피처 그룹) 수. 유저ID, 광고ID, 시간대, 디바이스 등
 CROSS_KINDS, CROSS_BUCKETS = 200, 65_536   # 손으로 만든 cross feature 200종
 
+# 2단계: embedding table, 1차항, Wide 파트의 크기를 센다
 emb_table   = V * K                          # embedding table — 여기가 몸통이다
 lr_weight   = V                              # LR/FM 1차항: 피처마다 스칼라 하나
 wide_weight = CROSS_KINDS * CROSS_BUCKETS    # Wide 파트의 cross feature weight
 
+# 3단계: MLP 의 파라미터 수를 세는 함수를 만든다
 def mlp(dims):
     """dims를 순서대로 잇는 fully-connected MLP의 파라미터 수 (weight + bias)"""
     return sum(dims[i]*dims[i+1] + dims[i+1] for i in range(len(dims)-1))
 
+# 4단계: MLP, cross layer, attention, GRU, 트리의 크기를 센다
 deep_mlp = mlp([FIELDS*K, 400, 200, 1])      # 640 → 400 → 200 → 1
 cross_v2 = 3 * (FIELDS*K * 64 * 2)           # DCN-v2 cross layer 3장 (rank 64로 분해)
 att_mlp  = mlp([4*K, 80, 40, 1])             # DIN attention: 입력 4종(행동, 후보, 차, 곱)
 gru      = 2 * 3 * (K*K + K*K + K)           # GRU + AUGRU, gate 3개씩
 gbdt     = 500 * 63 * 2                      # 트리 500개, 노드 63개, 분기점+출력값
 
+# 5단계: 모델 9개를 부품 조합으로 적는다
 models = [
     ("LR (원 피처)",    {"linear": lr_weight}),
     ("LR + 수동 cross", {"linear": lr_weight, "wide": wide_weight}),
@@ -963,6 +998,7 @@ models = [
                          "attention": att_mlp, "gru": gru}),
 ]
 
+# 6단계: 모델마다 총 파라미터, embedding 비중, FP32 크기를 찍는다
 def pad(s, width):
     """한글은 표시 폭이 2칸이다. 글자 수로 맞추면 표가 어긋나므로 폭으로 맞춘다."""
     w = sum(2 if ord(c) > 0x2E80 else 1 for c in s)
@@ -974,12 +1010,14 @@ for name, parts in models:
     share = parts.get("embedding", 0) / total * 100
     print(f"{pad(name, 18)} {total:>13,} {share:>10.1f}% {total*4/1024**2:>8.0f} MB")
 
+# 7단계: embedding table 과 DIN 의 attention MLP 크기를 견준다
 print()
 print(f"embedding table 하나 = {emb_table:,}개 ({emb_table*4/1024**2:.0f} MB)")
 print(f"DIN이 DCN-v2 위에 더한 attention MLP = {att_mlp:,}개")
 print(f"  → embedding table의 {att_mlp/emb_table*100:.4f}%")
 
 # 출력:
+# 6단계 뜻: embedding 을 쓰는 모델은 총 파라미터의 78.6% 에서 99.5% 가 embedding 이다. DCN-v2, DIN, DIEN 의 FP32 크기는 246 MB, 245 MB, 245 MB 로 거의 같다.
 # 모델                 총 파라미터   embedding   FP32 크기
 # LR (원 피처)           4,000,000        0.0%       15 MB
 # LR + 수동 cross       17,107,200        0.0%       65 MB
@@ -990,6 +1028,7 @@ print(f"  → embedding table의 {att_mlp/emb_table*100:.4f}%")
 # DCN-v2                64,582,561       99.1%      246 MB
 # DIN                   64,345,282       99.5%      245 MB
 # DIEN                  64,348,450       99.5%      245 MB
+# 7단계 뜻: embedding table 하나가 64,000,000개(244 MB)이고, DIN 이 더한 attention MLP 8,481개는 그 0.0133% 다.
 #
 # embedding table 하나 = 64,000,000개 (244 MB)
 # DIN이 DCN-v2 위에 더한 attention MLP = 8,481개
@@ -1010,7 +1049,7 @@ $$L_{student} = \alpha \cdot L_{CE}(y, \hat{y}_{student}) + (1 - \alpha) \cdot L
 
 **Quantization**: FP32 → FP16 → INT8로 모델 정밀도를 낮춥니다. 모델 크기가 2-4배 줄고, 추론 속도가 1.5-3배 빨라지며, 정확도 손실은 보통 0.1% 미만입니다.
 
-**임베딩 Compression**: 전체 모델 크기의 90% 이상을 차지하는 임베딩 테이블을 압축합니다. Hash 임베딩, Mixed-Dimension 임베딩, Pruning 등의 기법이 있습니다.
+**임베딩 Compression**: 대부분의 모델에서 전체 크기의 90% 이상을 차지하는 임베딩 테이블을 압축합니다. Hash 임베딩, Mixed-Dimension 임베딩, Pruning 등의 기법이 있습니다.
 
 > 경량화 기법의 상세는 [서빙 아키텍처](post.html?id=model-serving-architecture)에서 다뤘습니다. 피처 공급 파이프라인은 [피처 스토어(Feature Store)](post.html?id=feature-store-serving)에 있습니다.
 
@@ -1088,7 +1127,7 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 
 - **최신 모델이 항상 좋은 게 아니다.** DIN의 이득은 유저 시퀀스에서 나옵니다. 시퀀스가 짧으면 DeepFM과 결과가 같습니다. 8절에서 봤듯 열린 RTB에서는 이 조건이 안 갖춰집니다.
 - **AUC가 올라도 돈은 잃을 수 있다.** AUC는 순위만 봅니다. 예측 확률의 절대값이 틀리면 입찰가가 통째로 틀어집니다. 1절에서 못 박은 대로, 이건 보정의 몫입니다 → [Calibration](post.html?id=calibration)
-- **파라미터가 많아서 느린 게 아니다.** 6절에서 DIN의 어텐션은 전체의 0.0133%였습니다. DIEN이 느린 진짜 이유는 GRU를 순서대로 밟아야 해서입니다.
+- **파라미터가 많아서 느린 게 아니다.** 6절에서 DIN의 어텐션은 embedding table의 0.0133%였습니다. DIEN이 느린 진짜 이유는 GRU를 순서대로 밟아야 해서입니다.
 - **LogLoss 0.04 같은 숫자는 나올 수 없다.** 클릭률 2~3%대 데이터에서 LogLoss는 대략 0.09~0.13입니다. 그보다 훨씬 낮으면 라벨이 새어 들어갔거나 계산이 틀린 것입니다.
 - **"교차 피처를 자동으로 배운다"는 말이 전처리를 없애 주지는 않는다.** FM, DeepFM이 배우는 건 임베딩 간의 조합입니다. 어떤 필드를 모델에 넣을지, 연속형 값을 어떻게 나눌지는 여전히 사람이 정합니다.
 - **DIN의 어텐션은 후보마다 다시 계산된다.** 유저 표현을 미리 캐시할 수 없습니다. 후보 50개면 50번 계산합니다. 이게 Pre-Ranking과 Ranking을 나누는 이유입니다.

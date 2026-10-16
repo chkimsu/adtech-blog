@@ -58,14 +58,18 @@
 틀린 예측 모델은 후보를 구분하지 못하고 지면 평균만 내놓는다. 로그를 지어내는 부분까지 안고 있어 그대로 복사해 돌려도 된다.
 
 ```python
-# DR(이중 강건) — 보상 모델과 성향점수 중 하나만 맞아도 값이 산다.
-# 넷을 다 만들어 본다: (성향점수 맞음/틀림) x (보상 모델 맞음/틀림)
+# 하는 일: 성향점수와 보상 모델이 각각 맞거나 틀린 네 경우를 다 만들어, DM, IPS, DR 세 추정치를 새 정책의 진짜 값과 견주고, IPS 와 DR 은 400주 동안의 평균과 편차를 낸다.
 import math, random
+
+# 1단계: 후보 수, 탐색 비율, 온도, 지면 다섯 곳을 둔다
+# DR(이중 강건)은 보상 모델과 성향점수 중 하나만 맞아도 값이 산다. (성향점수 맞음/틀림) x (보상 모델 맞음/틀림) 넷을 다 만들어 본다.
 K, EPS, TAU = 8, 0.10, 0.0014
 SLOTS = [("main_top", 2600, 0.024, 0.044, 0.000), ("search_top", 1400, 0.016, 0.032, 0.003),
          ("feed_mid", 3100, 0.007, 0.018, 0.010), ("feed_low", 2000, 0.004, 0.012, 0.014),
          ("detail_side", 900, 0.003, 0.009, 0.018)]
 
+# 2단계: 지난주 로그를 만드는 함수를 만든다
+# Off-Policy Evaluation 글 2절의 build_log 를 그대로 가져왔다.
 def build_log(seed=7):                          # 2절과 같은 함수다
     random.seed(seed); log = []
     for name, n, lo, hi, bonus in SLOTS:
@@ -84,6 +88,7 @@ def build_log(seed=7):                          # 2절과 같은 함수다
                         max(range(K), key=lambda i: new_s[i])))
     return log
 
+# 3단계: 노출마다 진짜 성향, 잘못 기록된 성향, 진짜 CTR, 뭉갠 예측을 모은다
 MEAN = {n: (lo + hi) / 2 + 0.2 * bonus for n, _, lo, hi, bonus in SLOTS}   # 지면 평균 CTR
 pool = []      # (진짜 성향, 잘못 기록된 성향, 진짜 CTR, 지면 평균으로 뭉갠 예측)
 for name, ctr, p, a, r, e in build_log():
@@ -93,6 +98,7 @@ N = len(pool)
 V = sum(c for _, _, c, _ in pool) / N
 DM = {1: sum(c for _, _, c, _ in pool) / N, 0: sum(q for _, _, _, q in pool) / N}
 
+# 4단계: 400주 동안 네 경우마다 IPS 와 DR 을 낸다
 est = {(tp, tq): {"ips": [], "dr": []} for tp in (1, 0) for tq in (1, 0)}
 for wk in range(400):
     rng = random.Random(1000 + wk)
@@ -108,6 +114,7 @@ for wk in range(400):
         box["ips"].append(ips / N)
         box["dr"].append(DM[tq] + corr / N)
 
+# 5단계: 네 경우의 평균과 편차를 표로 찍는다
 def sd(v):
     mu = sum(v) / len(v)
     return (sum((x - mu) ** 2 for x in v) / (len(v) - 1)) ** 0.5
@@ -121,6 +128,7 @@ for (tp, tq) in ((1, 1), (1, 0), (0, 1), (0, 0)):
           f"{sd(b['ips']):>10.3%}{sd(b['dr']):>10.3%}")
 
 # 출력:
+# 5단계 뜻: 새 정책의 진짜 값은 2.807% 다. DR 은 성향점수와 보상 모델 가운데 하나만 맞아도 2.774% 에서 2.797% 로 진짜 값 가까이 남고, 둘 다 틀리면 2.671% 로 내려간다. 성향점수가 틀리면 IPS 는 2.442% 로 내려간다.
 # 새 정책의 진짜 값 = 2.807%   (400주 평균)
 #
 # 성향점수      보상 모델              DM      IPS       DR    IPS 편차     DR 편차

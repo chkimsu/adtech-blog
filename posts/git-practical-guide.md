@@ -754,6 +754,7 @@ learning_rate = 0.01
 해결 후:
 
 ```python
+# 하는 일: 두 브랜치가 다르게 고친 learning_rate 를 둘 다 참고해 0.005 로 정한, 충돌을 푼 뒤의 줄이다.
 learning_rate = 0.005  # 둘 다 참고하여 결정
 ```
 

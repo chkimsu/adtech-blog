@@ -222,25 +222,27 @@
 | **Online Calibration** | 최신 편향 보정 | 수 분 ~ 수 시간 | Calibration Layer만 |
 
 ```python
-# (의사코드 — 구조만 보여 줍니다. DeepFM 같은 클래스 이름은 예시이고 그대로 실행되지 않습니다.)
-# 하이브리드 구조 (간략화)
+# (의사코드 — 그대로 실행되지 않습니다.)
+# 하는 일: 하루 한 번 다시 학습하는 Base Model 에 수 분마다 갱신하는 Online Calibration 을 더하는 하이브리드 구조만 간략히 보여 주며, DeepFM 같은 클래스 이름은 예시다.
 
-# 1. Base Model: 일 1회 Batch 재학습 (Spark + GPU)
+# 1단계: Base Model 을 하루 한 번 Batch 로 다시 학습한다
+# Spark 와 GPU 로 최근 30일 전체 데이터를 학습한다.
 base_pctr = DeepFM.train(
     data=last_30days_logs,    # 최근 30일 전체 데이터
     features=all_features,
     epochs=3
 )
 
-# 2. Online Calibration: 수 분마다 보정 (경량)
-#    Base Model의 출력을 Platt Scaling으로 보정
+# 2단계: 수 분마다 Online Calibration 을 갱신한다
+# 가벼운 작업이다. Base Model 의 출력을 Platt Scaling 으로 보정한다.
 calibrator = PlattScaling()
 calibrator.update(
     predictions=base_pctr.predict(recent_1hour),
     actuals=recent_1hour.labels    # 최근 1시간 실제 CTR
 )
 
-# 3. 서빙 시: Base Model + Calibration
+# 3단계: 서빙할 때 Base Model 예측을 보정해 돌려주는 함수를 만든다
+# 서빙은 Base Model 과 Calibration 을 차례로 지난다.
 def serve(x):
     raw_pctr = base_pctr.predict(x)      # Base Model 예측
     calibrated = calibrator.transform(raw_pctr)  # 보정
@@ -261,8 +263,11 @@ Online Learning의 단점 칸에 적힌 **Catastrophic Forgetting**은 추상적
 학습기 다섯 개를 나란히 돌립니다. 학습률이 느린 것(0.02)과 빠른 것(0.30). 최근 24시간만 보는 윈도우와 168시간(7일)을 보는 윈도우. 마지막으로 요일을 피처로 가진 학습기입니다. 앞의 네 개는 "요일"이라는 개념이 아예 없습니다.
 
 ```python
+# 하는 일: 평일 CTR 1.8%, 주말 CTR 3.2% 인 4주치 관측을 1시간마다 학습기 다섯 개에 넣어, 급변 직후와 안정 구간의 예측 오차, 4주차 주말 진입 직후의 예측을 견준다.
 import random
 
+# 1단계: 4주치 시간과 평일, 주말의 참 CTR 을 둔다
+# 가상 데이터다. 1스텝은 1시간이고, 한 시간마다 노출 2천 건의 관측이 들어온다.
 random.seed(42)
 
 HOURS = 4 * 7 * 24        # 4주치, 1스텝 = 1시간
@@ -271,6 +276,7 @@ CTR_WEEKDAY = 0.018       # 가상 데이터: 평일 CTR 1.8%
 CTR_WEEKEND = 0.032       # 가상 데이터: 주말 CTR 3.2%
 
 
+# 2단계: 표 칸을 맞추는 함수와 요일, 참 CTR 을 구하는 함수를 만든다
 def pad(s, w):
     """한글은 두 칸을 차지한다고 보고 표 폭을 맞춘다."""
     width = sum(2 if ord(c) > 0x2000 else 1 for c in s)
@@ -286,6 +292,8 @@ def true_ctr(hour):
     return CTR_WEEKEND if is_weekend(hour) else CTR_WEEKDAY
 
 
+# 3단계: 학습기 세 종류를 클래스로 만든다
+# 지수 이동평균, 최근 N시간 평균, 평일과 주말을 따로 두는 지수 이동평균이다. 앞의 둘에는 '요일'이라는 개념이 아예 없다.
 class Ema:
     """지수 이동평균. lr이 크면 최근 데이터를 세게 반영한다."""
     def __init__(self, lr):
@@ -319,6 +327,8 @@ class WeekdayEma:
         self.p[k] += self.lr * (obs - self.p[k])
 
 
+# 4단계: 학습기 다섯 개를 두고 급변 구간을 정한다
+# 학습률이 느린 것과 빠른 것, 24시간과 168시간 윈도우, 요일을 피처로 가진 것이다.
 models = {
     "EMA lr=0.02(느림)": Ema(0.02),
     "EMA lr=0.30(빠름)": Ema(0.30),
@@ -336,9 +346,11 @@ err_shock = {n: [] for n in models}
 err_calm = {n: [] for n in models}
 last_weekend_track = {n: [] for n in models}   # 4주차 주말 진입 6시간 예측값
 
+# 5단계: 4주 동안 시간마다 관측을 만들며 예측 오차를 모은다
+# 학습기마다 갱신하기 전에 먼저 예측해서, 진짜 예측 오차를 잰다.
 for hour in range(HOURS):
     p_true = true_ctr(hour)
-    # 노출 2천 건을 실제로 굴려 관측 CTR을 만든다 → 통계적 잡음 포함
+    # 노출 2천 건을 확률대로 하나씩 뽑아 관측 CTR을 만든다 → 통계적 잡음 포함
     clicks = sum(1 for _ in range(IMPS_PER_HOUR) if random.random() < p_true)
     obs = clicks / IMPS_PER_HOUR
     for name, m in models.items():
@@ -350,6 +362,7 @@ for hour in range(HOURS):
             last_weekend_track[name].append(pred)
         m.update(hour, obs)
 
+# 6단계: 학습기마다 전체, 급변 직후, 안정 구간의 오차를 찍는다
 print(pad("학습기", 22) + "전체오차  급변직후  안정구간")
 for n in models:
     a = sum(err_all[n]) / len(err_all[n]) * 100
@@ -357,6 +370,7 @@ for n in models:
     c = sum(err_calm[n]) / len(err_calm[n]) * 100
     print(pad(n, 22) + f"{a:6.3f}%p {s:6.3f}%p {c:6.3f}%p")
 
+# 7단계: 4주차 주말 진입 직후 6시간의 예측을 찍는다
 print()
 print("4주차 주말 진입 직후 6시간의 예측 CTR (참값 3.20%)")
 for n in models:
@@ -364,12 +378,14 @@ for n in models:
     print("  " + pad(n, 22) + track)
 
 # 출력:
+# 6단계 뜻: 요일을 피처로 가진 학습기가 전체 0.107%p, 급변 직후 0.165%p 로 가장 작다. 요일 피처가 없는 넷은 급변 직후 오차가 0.675%p 에서 1.227%p 사이로 크고, 그중 윈도우 24시간이 1.227%p 로 가장 크다.
 # 학습기                전체오차  급변직후  안정구간
 # EMA lr=0.02(느림)      0.440%p  1.080%p  0.397%p
 # EMA lr=0.30(빠름)      0.141%p  0.675%p  0.105%p
 # 윈도우 24시간          0.220%p  1.227%p  0.153%p
 # 윈도우 168시간         0.524%p  0.795%p  0.506%p
 # 요일피처+EMA 0.30      0.107%p  0.165%p  0.104%p
+# 7단계 뜻: 4주차 주말에 들어선 직후에도 요일 피처가 없는 넷은 참값 3.20% 에 한참 못 미치는 1.69 에서 2.21 사이에서 출발한다. 요일피처+EMA 0.30 은 3.03 에서 출발해 참값 근처에 머문다.
 #
 # 4주차 주말 진입 직후 6시간의 예측 CTR (참값 3.20%)
 #   EMA lr=0.02(느림)     1.89 1.93 1.96 1.99 2.01 2.03
@@ -402,7 +418,7 @@ Online Learning의 가장 큰 장애물이 **Delayed Feedback**입니다. 클릭
   <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:12px;">클릭 후 전환까지의 시간 분포 (가상 데이터).</div>
   <div class="chart-timeline-bar">
     <div class="chart-timeline-segment green" style="width:25%;">30분 이내<br/>35%</div>
-    <div class="chart-timeline-segment cyan" style="width:20%;">1-6시간<br/>25%</div>
+    <div class="chart-timeline-segment cyan" style="width:20%;">30분-6시간<br/>25%</div>
     <div class="chart-timeline-segment blue" style="width:20%;">6-24시간<br/>20%</div>
     <div class="chart-timeline-segment orange" style="width:15%;">1-3일<br/>12%</div>
     <div class="chart-timeline-segment pink" style="width:10%;">3-7일<br/>5%</div>
@@ -451,8 +467,11 @@ Fake Negative가 많아지면 모델이 전환율을 **과소추정**합니다.
 되돌리는 방법도 같은 코드에서 확인합니다. 각 전환을 "이 시점까지 도착할 확률" $F_d(t)$로 나누면 원래 크기로 복원됩니다. 확률이 작을수록 크게 부풀리는 셈입니다.
 
 ```python
+# 하는 일: 참 CVR 3% 인 클릭 30만 건을 지연 분포대로 시뮬레이션해, 지금 학습할 때 경과 시간대별로 보이는 관측 CVR 과 도착 확률로 나눠 되돌린 보정 CVR, 음성 가중치를 구한다.
 import random
 
+# 1단계: 지연 분포와 참 CVR, 클릭 수, 학습 시각을 둔다
+# 지금 학습을 돌린다고 할 때, 클릭 30만 건은 지난 24시간 사이에 흩어져 있다.
 random.seed(42)
 
 # 앞 타임라인과 같은 가상 지연 분포 (구간 상한 시각, 그 구간 비율)
@@ -463,6 +482,7 @@ N_CLICKS = 300_000
 TRAIN_AT = 24.0   # 학습을 도는 시각. 클릭은 지난 24시간 사이에 흩어져 있다.
 
 
+# 2단계: 표 칸을 맞추는 함수, 도착 확률 F(t) 를 구하는 함수, 지연을 뽑는 함수를 만든다
 def pad(s, w):
     """한글은 두 칸을 차지한다고 보고 표 폭을 맞춘다."""
     width = sum(2 if ord(c) > 0x2000 else 1 for c in s)
@@ -494,14 +514,15 @@ def draw_delay():
     return lo
 
 
-# ── 클릭 30만 건: 언제 눌렀나 + 전환하나 + 얼마 뒤 전환하나 ──────
+# 3단계: 클릭 30만 건이 언제 눌렸는지, 전환하는지, 얼마 뒤 전환하는지 뽑는다
 clicks = []
 for _ in range(N_CLICKS):
     elapsed = random.uniform(0.0, TRAIN_AT)      # 학습 시각까지 지난 시간
     delay = draw_delay() if random.random() < TRUE_CVR else None
     clicks.append((elapsed, delay))
 
-# ── 경과 시간대별로 나눠 본다 ─────────────────────────────────
+# 4단계: 경과 시간대별로 관측 CVR 과 보정 CVR 을 구한다
+# 각 전환을 '그 시점까지 도착할 확률' F(t) 로 나누면 원래 크기로 돌아온다. 확률이 작을수록 크게 부풀리는 셈이다.
 BINS = [(0, 1), (1, 3), (3, 6), (6, 12), (12, 24)]
 print(pad("경과시간", 10) + pad("클릭수", 10) + pad("관측전환", 11)
       + pad("관측CVR", 10) + pad("F(t)", 8) + "보정CVR")
@@ -520,13 +541,15 @@ for lo, hi in BINS:
           + pad(f"{delay_cdf((lo+hi)/2)*100:.1f}%", 8)
           + f"{w_sum/len(grp)*100:.2f}%")
 
+# 5단계: 전체 클릭의 관측 CVR 과 보정 CVR 을 참값과 견준다
 print()
 print(f"전체 관측 CVR (지연 무시) {tot_naive/N_CLICKS*100:.2f}%")
 print(f"전체 보정 CVR (역수 가중) {tot_fixed/N_CLICKS*100:.2f}%")
 print(f"참 CVR                    {TRUE_CVR*100:.2f}%")
 print(f"→ 지연을 무시하면 입찰가가 참값의 {tot_naive/N_CLICKS/TRUE_CVR*100:.0f}%로 주저앉는다")
 
-# ── 미전환 샘플에 붙는 가중치도 확인 (FSIW 음성 가중치) ─────────
+# 6단계: 전환하지 않은 샘플의 음성 가중치를 본다
+# FSIW 의 음성 가중치다.
 print()
 print(pad("경과시간", 10) + pad("F(t)", 9) + "음성 가중치")
 for t in [0.5, 2, 6, 24, 168, 720]:
@@ -535,17 +558,20 @@ for t in [0.5, 2, 6, 24, 168, 720]:
     print(pad(f"{t:.1f}h", 10) + pad(f"{f*100:.1f}%", 9) + f"{w_neg:.5f}")
 
 # 출력:
+# 4단계 뜻: 방금 누른 0~1h 클릭은 관측 CVR 이 0.72% 이고, 12~24h 클릭은 2.15% 다. 전환을 F(t) 로 나눠 되돌리면 구간마다 2.40% 에서 3.16% 사이가 된다.
 # 경과시간  클릭수    관측전환   관측CVR   F(t)    보정CVR
 # 0~1h      12,469    90         0.72%     35.0%   2.40%
 # 1~3h      25,103    294        1.17%     41.8%   2.79%
 # 3~6h      37,332    629        1.68%     53.2%   3.16%
 # 6~12h     74,882    1,421      1.90%     63.3%   2.99%
 # 12~24h    150,214   3,226      2.15%     73.3%   2.93%
+# 5단계 뜻: 지연을 무시하면 전체 관측 CVR 은 1.89% 로 참 CVR 3.00% 의 63% 에 머물고, 역수 가중으로 2.94% 까지 되돌린다.
 #
 # 전체 관측 CVR (지연 무시) 1.89%
 # 전체 보정 CVR (역수 가중) 2.94%
 # 참 CVR                    3.00%
 # → 지연을 무시하면 입찰가가 참값의 63%로 주저앉는다
+# 6단계 뜻: 전환하지 않은 샘플의 음성 가중치는 F(t) 가 35.0% 에서 100.0% 로 커져도 1.01082 에서 1.03093 까지만 움직인다. 한 건씩 크게 고치지 않는 셈이다.
 #
 # 경과시간  F(t)     음성 가중치
 # 0.5h      35.0%    1.01082
@@ -647,12 +673,13 @@ Attribution Window를 고를 때 실무자가 실제로 하는 계산입니다. 
 숫자로 보면 결정이 쉬워집니다. 잡히는 전환 비율과 데이터 나이를 같은 표에 올려 봅니다.
 
 ```python
+# 하는 일: 클릭 20만 건을 지연 분포대로 시뮬레이션해, 전환을 1시간, 6시간, 1일, 7일 기다릴 때 잡히는 전환 비율과 학습 데이터의 나이를 견준다.
 import random
 
+# 1단계: 전환 지연 분포와 참 CVR, 클릭 수를 둔다
+# 가상 데이터다. 행마다 (구간 상한 시각, 그 구간에 들어올 전환 비율)이고, 본문 타임라인과 같은 값이다.
 random.seed(42)
 
-# ── 가상 데이터: 클릭 후 전환까지 걸리는 시간 분포 ────────────────
-# (구간 상한 시각, 그 구간에 들어올 전환 비율). 본문 타임라인과 같은 값.
 DELAY_BUCKETS = [
     (0.5, 0.35),    # 30분 안에 35%
     (6.0, 0.25),    # 30분~6시간에 25%
@@ -665,6 +692,7 @@ TRUE_CVR = 0.03      # 참 전환율 3%
 N_CLICKS = 200_000
 
 
+# 2단계: 표 칸을 맞추는 함수와 전환 지연을 뽑는 함수를 만든다
 def pad(s, w):
     """한글은 두 칸을 차지한다고 보고 표 폭을 맞춘다."""
     width = sum(2 if ord(c) > 0x2000 else 1 for c in s)
@@ -683,14 +711,14 @@ def draw_delay():
     return lo
 
 
-# ── 클릭 20만 건 생성. 전환하면 지연 시간, 안 하면 None ──────────
+# 3단계: 클릭 20만 건을 만들고 전환 수를 센다
+# 전환하면 지연 시간을, 안 하면 None 을 둔다.
 clicks = [draw_delay() if random.random() < TRUE_CVR else None
           for _ in range(N_CLICKS)]
 n_conv = sum(1 for d in clicks if d is not None)
 
-# ── 기다리는 시간을 바꿔 가며 두 값을 잰다 ──────────────────────
-# (a) 잡히는 전환 비율: 기다리는 동안 도착한 전환 / 전체 전환
-# (b) 데이터 나이: 학습이 W시간 뒤처져 돌면 쓰는 데이터는 평균 1.5W 시간 전 것
+# 4단계: 기다리는 시간을 바꿔 가며 잡히는 전환 비율, 관측 CVR, 데이터 나이를 잰다
+# (a) 잡히는 전환 비율은 기다리는 동안 도착한 전환을 전체 전환으로 나눈 값이다. (b) 데이터 나이는 학습이 W시간 뒤처져 돌 때 쓰는 데이터가 평균 몇 시간 전 것인지로, 1.5W 시간이다.
 print(pad("대기", 8) + pad("잡힌전환", 11) + pad("관측CVR", 10)
       + pad("데이터나이", 12) + "한 줄 평")
 for label, wait_h in [("1시간", 1), ("6시간", 6), ("1일", 24), ("7일", 168)]:
@@ -703,16 +731,19 @@ for label, wait_h in [("1시간", 1), ("6시간", 6), ("1일", 24), ("7일", 168
           + pad(f"{observed_cvr*100:.2f}%", 10)
           + pad(f"{data_age:.0f}h", 12) + note)
 
+# 5단계: 참 CVR 과 한 줄 결론을 찍는다
 print()
 print(f"참 CVR {TRUE_CVR*100:.2f}%  (전환 {n_conv:,}건 / 클릭 {N_CLICKS:,}건)")
 print("최적점은 하나가 아니다. 대기를 늘리면 라벨은 맞아지고 모델은 낡는다.")
 
 # 출력:
+# 4단계 뜻: 대기를 1시간에서 7일로 늘리면 잡히는 전환이 38.3% 에서 97.2% 로 오르지만, 데이터 나이도 2h 에서 252h 로 늘어난다.
 # 대기    잡힌전환   관측CVR   데이터나이  한 줄 평
 # 1시간   38.3%      1.13%     2h          신선한데 라벨이 없다
 # 6시간   59.7%      1.77%     9h          신선한데 라벨이 없다
 # 1일     80.7%      2.39%     36h         라벨은 맞는데 낡았다
 # 7일     97.2%      2.87%     252h        라벨은 맞는데 낡았다
+# 5단계 뜻: 클릭 200,000건 가운데 전환이 5,913건 나왔고, 정해 둔 참 CVR 은 3.00% 다.
 #
 # 참 CVR 3.00%  (전환 5,913건 / 클릭 200,000건)
 # 최적점은 하나가 아니다. 대기를 늘리면 라벨은 맞아지고 모델은 낡는다.
@@ -736,7 +767,7 @@ FSIW의 핵심 아이디어: 관측 시점에 "미전환"으로 보이는 샘플
 
 $$w_i^{(+)} = \frac{1}{F_d(t - t_{\text{click}})}$$
 
-- **미전환 Negative 샘플**: 경과 시간이 길수록 진짜 Negative일 확률이 높으므로 가중치를 낮춤
+- **미전환 Negative 샘플**: 경과 시간이 길수록 진짜 Negative일 확률이 높으므로 가중치를 높임
 
 $$w_i^{(-)} = \frac{1 - p_{\text{cvr}} \cdot (1 - F_d(t - t_{\text{click}}))}{1 - p_{\text{cvr}}}$$
 

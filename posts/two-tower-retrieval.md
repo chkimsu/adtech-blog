@@ -86,9 +86,10 @@ Retrieval 단계에서 탈락한 광고는 이후 어떤 단계에서도 복구�
 앞에서는 광고 1건 추론을 0.1ms로 잡았습니다. 아래 코드는 실무 DeepFM에 더 가까운 0.3ms를 씁니다.
 
 ```python
-# 왜 후보 전체에 정밀 모델을 못 돌리는가 — 곱셈 횟수를 직접 세어 본다.
-# 표준 라이브러리만 쓴다. 숫자는 가상이지만 실제 범위에서 크게 벗어나지 않게 잡았다.
+# 하는 일: 후보 1만, 10만, 100만 개를 정밀 모델로 다 채점할 때와 투 타워 내적으로 훑을 때, ANN 으로 2% 만 훑을 때의 시간을 구해 100ms 예산과 견준다.
 
+# 1단계: 예산과 방식별 시간을 둔다
+# 왜 후보 전체에 정밀 모델을 못 돌리는지 곱셈 횟수를 직접 세어 본다. 숫자는 가상이지만 실제 범위에서 크게 벗어나지 않게 잡았다. 표준 라이브러리만 쓴다.
 BUDGET_MS      = 100.0   # 광고 요청 하나에 허용된 전체 시간 (가상)
 RANK_MS_PER_AD = 0.3     # 정밀 랭킹 모델이 광고 1건을 채점하는 시간 (가상)
 USER_TOWER_MS  = 0.8     # 유저 타워(경량 MLP) 1회 추론 시간 (가상)
@@ -96,6 +97,8 @@ DIM            = 64      # 임베딩 차원 = 내적 1건에 필요한 곱셈 �
 MULADD_PER_SEC = 5e8     # 최적화된 C 라이브러리가 1초에 처리하는 곱셈-덧셈 쌍 (가상)
 
 
+# 2단계: 표의 칸을 맞추는 함수와 두 방식의 시간을 구하는 함수를 만든다
+# 정밀 모델은 후보 수에 정비례한다. 투 타워는 유저 타워를 한 번 돌리고, 후보마다 내적 곱셈만 더한다.
 def cell(s, width, right=True):
     """한글은 화면에서 두 칸을 차지한다. 그만큼 빼서 표 자리를 맞춘다."""
     gap = " " * max(0, width - len(s) - sum(1 for c in s if ord(c) > 0x2000))
@@ -119,6 +122,7 @@ def two_tower_ms(n_ads, scan_ratio=1.0):
     return USER_TOWER_MS + dot_ms             # 유저 타워는 후보 수와 무관하게 딱 1회
 
 
+# 3단계: 후보 수마다 세 방식의 시간을 견준다
 print(cell("후보 수", 12) + cell("정밀모델 전수", 16)
       + cell("투타워 전수내적", 17) + cell("투타워+ANN 2%", 16) + cell("절감 배수", 11))
 for n in (10_000, 100_000, 1_000_000):
@@ -128,8 +132,9 @@ for n in (10_000, 100_000, 1_000_000):
     print(f"{n:>12,}{full:>14,.0f}ms{brute:>15.1f}ms{ann:>14.1f}ms"
           f"{full / brute:>10,.0f}배")
 
+# 4단계: 100ms 예산을 넘는지 하나씩 확인한다
+# 넘으면 그 방식은 애초에 못 쓴다.
 print()
-# 100ms 예산을 넘는지 하나씩 확인한다. 넘으면 그 방식은 애초에 못 쓴다.
 for label, ms in (("정밀모델 전수 (10만 개)", rank_all_ms(100_000)),
                   ("투타워 전수내적 (10만 개)", two_tower_ms(100_000)),
                   ("투타워 전수내적 (100만 개)", two_tower_ms(1_000_000)),
@@ -139,10 +144,12 @@ for label, ms in (("정밀모델 전수 (10만 개)", rank_all_ms(100_000)),
           + f"{ms:>10,.1f}ms   예산의 {ms / BUDGET_MS:>8.1%}  → {verdict}")
 
 # 출력:
+# 3단계 뜻: 정밀 모델은 후보 수에 정비례해 1,000,000개면 300,000ms 가 든다. 같은 후보를 투 타워 내적으로 다 훑으면 128.8ms, ANN 으로 2% 만 훑으면 3.4ms 다.
 #      후보 수   정밀모델 전수  투타워 전수내적   투타워+ANN 2%  절감 배수
 #       10,000         3,000ms            2.1ms           0.8ms     1,442배
 #      100,000        30,000ms           13.6ms           1.1ms     2,206배
 #    1,000,000       300,000ms          128.8ms           3.4ms     2,329배
+# 4단계 뜻: 예산 안에 드는 것은 10만 개를 내적으로 다 훑는 경우(13.6ms)와 100만 개를 ANN 으로 2% 만 훑는 경우(3.4ms)뿐이다. 10만 개를 정밀 모델로 다 채점하면 예산의 30000.0% 다.
 #
 # 정밀모델 전수 (10만 개)      30,000.0ms   예산의 30000.0%  → 예산 초과
 # 투타워 전수내적 (10만 개)        13.6ms   예산의    13.6%  → 통과
@@ -250,11 +257,12 @@ $$\text{score}(u, v) = \frac{u^T v}{\|u\| \cdot \|v\|}$$
 여기서 한 가지가 달라집니다. 내적은 벡터의 **길이**에도 영향을 받습니다. 코사인은 길이를 나눠 버리고 **방향**만 봅니다. 같은 후보 풀에서 둘이 다른 상위 5개를 뽑습니다.
 
 ```python
+# 하는 일: 4차원 유저 벡터 1개로 광고 벡터 20개를 내적과 코사인으로 각각 채점해 상위 5개를 뽑고, 두 기준이 다르게 뽑은 광고의 벡터 길이를 견준다.
 import math
 import random
 
-# 투 타워의 '검색' 부분을 직접 구현해 본다.
-# 유저 벡터 1개 vs 광고 벡터 20개. 차원은 눈으로 볼 수 있게 4로 줄였다 (실무는 64~128).
+# 1단계: 유저 벡터 1개와 광고 벡터 20개를 만든다
+# 투 타워의 '검색' 부분을 직접 구현해 본다. 차원은 눈으로 볼 수 있게 4 로 줄였다(실무는 64~128).
 random.seed(42)                      # 돌릴 때마다 같은 결과가 나오게 고정
 DIM = 4
 N_ADS = 20
@@ -270,6 +278,8 @@ for i in range(N_ADS):
     ads[f"ad_{i:02d}"] = [round(random.uniform(-1, 1), 3) for _ in range(DIM)]
 
 
+# 2단계: 내적, 길이, 코사인, 상위 k개를 구하는 함수를 만든다
+# 내적은 벡터의 길이에도 영향을 받고, 코사인은 길이를 나눠 버려 방향만 본다.
 def dot(a, b):
     """내적 = 같은 자리끼리 곱해서 전부 더한다. 투 타워의 점수 계산은 이게 전부다."""
     return sum(x * y for x, y in zip(a, b))
@@ -292,6 +302,7 @@ def top_k(score_fn, k=5):
     return scored[:k]
 
 
+# 3단계: 두 기준으로 상위 5개를 뽑아 나란히 찍는다
 print(f"유저 임베딩 u = {user_vec}  (길이 {norm(user_vec):.3f})")
 print(f"광고 후보 {N_ADS}개, 차원 {DIM} → 곱셈 {N_ADS * DIM}번으로 검색이 끝난다\n")
 
@@ -302,7 +313,8 @@ print("순위  내적 기준          코사인 기준")
 for rank, (d, c) in enumerate(zip(by_dot, by_cos), start=1):
     print(f" {rank}    {d[0]}  {d[1]:+.3f}     {c[0]}  {c[1]:+.3f}")
 
-# 두 방식이 고른 상위 5개 집합이 같은지 확인한다. 다르면 어디서 달라졌는지 들여다본다.
+# 4단계: 두 기준이 다르게 뽑은 광고를 들여다본다
+# 두 방식이 고른 상위 5개 집합이 같은지 확인하고, 다르면 어디서 달라졌는지 본다.
 set_dot, set_cos = {n for n, _ in by_dot}, {n for n, _ in by_cos}
 print(f"\n내적만 뽑은 광고   : {sorted(set_dot - set_cos)}")
 print(f"코사인만 뽑은 광고 : {sorted(set_cos - set_dot)}")
@@ -311,6 +323,7 @@ for name in sorted(set_dot ^ set_cos):
           f"내적 {dot(user_vec, ads[name]):+.3f}, 코사인 {cosine(user_vec, ads[name]):+.3f}")
 
 # 출력:
+# 3단계 뜻: 광고 20개를 곱셈 80번으로 채점해 검색이 끝난다. 두 기준 모두 ad_09 가 1위지만, 2위와 4위는 두 기준이 서로 다른 광고를 고른다.
 # 유저 임베딩 u = [0.279, -0.95, -0.45, -0.554]  (길이 1.221)
 # 광고 후보 20개, 차원 4 → 곱셈 80번으로 검색이 끝난다
 #
@@ -320,6 +333,7 @@ for name in sorted(set_dot ^ set_cos):
 #  3    ad_01  +1.097     ad_01  +0.812
 #  4    ad_10  +0.878     ad_05  +0.752
 #  5    ad_18  +0.802     ad_18  +0.607
+# 4단계 뜻: 내적만 뽑은 ad_10 은 벡터 길이가 1.351 로 길어, 코사인이 +0.533 인데도 내적 +0.878 로 내적 기준 상위에 든다. 코사인만 뽑은 ad_11 은 길이가 0.743 으로 짧아, 방향이 잘 맞는데도(코사인 +0.851) 내적은 +0.771 에 그친다.
 #
 # 내적만 뽑은 광고   : ['ad_10']
 # 코사인만 뽑은 광고 : ['ad_11']
@@ -366,11 +380,12 @@ Two-Tower 학습에서 **음성(negative) sampling 전략이 모델 성능의 �
 보정을 빼먹으면 학습이 수렴한 뒤의 점수가 진짜 점수와 어긋납니다. 어긋나는 양은 $-\log q$ 입니다. 여기서 $q$는 그 광고가 배치에 뽑힐 확률입니다. $q$가 큰 인기 광고는 더해지는 값이 작습니다. $q$가 작은 롱테일은 크게 부풀려집니다. 그래서 **인기 광고가 상대적으로 깎입니다**.
 
 ```python
+# 하는 일: 크기 8 인 배치 2,000개를 클릭 점유율대로 뽑아 광고마다 negative 로 쓰인 횟수를 세고, log-Q 보정 전과 후의 점수와 순위를 견준다.
 import math
 import random
 
-# in-batch negative의 함정을 숫자로 확인한다.
-# 배치 안의 '남의 정답'을 negative로 쓰면, 인기 광고가 negative 자리에 훨씬 자주 앉는다.
+# 1단계: 배치 크기와 배치 수, 광고 8개의 점유율, 진짜 적합도를 둔다
+# in-batch negative 의 함정을 숫자로 확인한다. 배치 안의 '남의 정답'을 negative 로 쓰면, 인기 광고가 negative 자리에 훨씬 자주 들어간다.
 random.seed(42)
 BATCH = 8            # 배치 크기. 한 행의 negative는 나머지 BATCH-1개다.
 N_BATCH = 2_000      # 학습 배치 수
@@ -385,33 +400,35 @@ true_score = {"ad_A": 3.0, "ad_B": 2.2, "ad_C": 1.6, "ad_D": 1.5,
 names = list(share)
 weights = [share[n] for n in names]
 
-# 클릭 로그를 점유율대로 뽑아 배치를 만든다. 배치 안에 몇 번 앉았는지만 센다.
+# 2단계: 클릭 로그를 점유율대로 뽑아 배치를 만들고, negative 로 쓰인 횟수를 세고 표집 확률 q 를 추정한다
+# 배치 안에 몇 번 들어갔는지만 세고, negative 로 쓰인 횟수와 q 는 그 수로 구한다.
 seen = {n: 0 for n in names}
 for _ in range(N_BATCH):
     for pick in random.choices(names, weights=weights, k=BATCH):
         seen[pick] += 1
 
 total_rows = N_BATCH * BATCH
-# 한 배치에 한 번 앉으면, 그 배치의 다른 BATCH-1개 행에 대해 negative로 쓰인다.
+# 한 배치에 한 번 들어가면, 그 배치의 다른 BATCH-1개 행에 대해 negative로 쓰인다.
 neg_count = {n: seen[n] * (BATCH - 1) for n in names}
 # 표집 확률 q는 관측된 등장 비율로 추정한다. 실무에서도 이렇게 스트리밍 카운트로 센다.
 q_hat = {n: seen[n] / total_rows for n in names}
 
-# 보정을 안 하면, 학습이 수렴한 모델의 점수는 진짜 점수에서 log q 만큼 밀린다.
-#   보정 전 점수 = 진짜 점수 - log(q)
-# q가 큰 인기 광고는 빼주는 값이 작고, q가 작은 롱테일은 크게 부풀려진다. 결과는 순위 왜곡.
+# 3단계: 보정 전과 보정 후의 점수를 구한다
+# 보정을 안 하면, 학습이 수렴한 모델의 점수는 진짜 점수에서 log q 만큼 밀린다(보정 전 점수 = 진짜 점수 - log q). log q 는 음수라 점수에는 -log q 가 더해진다. q 가 큰 인기 광고는 더해지는 값이 작고, q 가 작은 롱테일은 크게 부풀려진다. 결과는 순위 왜곡이다.
 biased = {n: true_score[n] - math.log(q_hat[n]) for n in names}
 # log-Q 보정은 학습 loss의 logit에 -log(q)를 미리 더해 이 밀림을 상쇄한다.
 #   보정 후 점수 = 진짜 점수
 fixed = dict(true_score)
 
 
+# 4단계: 점수 높은 순으로 등수를 매기는 함수를 만든다
 def rank_of(scores):
     """점수 높은 순으로 1위부터 등수를 매긴다."""
     order = sorted(scores, key=lambda n: scores[n], reverse=True)
     return {n: i + 1 for i, n in enumerate(order)}
 
 
+# 5단계: 광고마다 negative 등장 횟수와 두 점수의 순위를 찍는다
 r_biased, r_fixed = rank_of(biased), rank_of(fixed)
 
 print(f"배치 {N_BATCH}개 × 크기 {BATCH} = 학습 행 {total_rows:,}개\n")
@@ -421,6 +438,7 @@ for n in names:
           f"{true_score[n]:>7.2f}   {biased[n]:>8.2f} ({r_biased[n]}위)   "
           f"{fixed[n]:>8.2f} ({r_fixed[n]}위)")
 
+# 6단계: 두 Top-3 를 견주고, 인기 광고가 밀린 폭을 찍는다
 top3_biased = sorted(biased, key=lambda n: biased[n], reverse=True)[:3]
 top3_fixed = sorted(fixed, key=lambda n: fixed[n], reverse=True)[:3]
 print(f"\n보정 전 Top-3 : {top3_biased}")
@@ -432,6 +450,7 @@ print(f"\nad_A는 ad_H보다 negative로 {gap:.1f}배 자주 등장 → "
       f"보정 전 순위 {r_fixed['ad_A']}위에서 {r_biased['ad_A']}위로 밀렸다")
 
 # 출력:
+# 5단계 뜻: 점유율 35.0% 인 ad_A 는 negative 로 39,207번 쓰이고, 3.1% 인 ad_H 는 3,430번 쓰인다. 보정 전에는 ad_A 가 4위로 밀리고, 진짜 점수가 가장 낮은 ad_G(1.20)가 2위로 오른다.
 # 배치 2000개 × 크기 8 = 학습 행 16,000개
 #
 # 광고   점유율 negative등장 진짜점수 보정전점수(순위) 보정후점수(순위)
@@ -443,6 +462,7 @@ print(f"\nad_A는 ad_H보다 negative로 {gap:.1f}배 자주 등장 → "
 # ad_F     5.5%        6,209     1.30       4.19 (3위)       1.30 (7위)
 # ad_G     4.0%        4,529     1.20       4.41 (2위)       1.20 (8위)
 # ad_H     3.1%        3,430     2.40       5.89 (1위)       2.40 (2위)
+# 6단계 뜻: 보정 전과 보정 후의 Top-3 가 겹치는 광고는 ad_H 하나다. ad_A 는 ad_H 보다 negative 로 11.4배 자주 쓰여, 보정 후에는 1위인데 보정 전에는 4위로 밀렸다.
 #
 # 보정 전 Top-3 : ['ad_H', 'ad_G', 'ad_F']
 # 보정 후 Top-3 : ['ad_A', 'ad_H', 'ad_B']

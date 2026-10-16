@@ -53,6 +53,8 @@ README 첫 줄이 이 저장소를 한 문장으로 말합니다. 「Airflow 에
 첫 커밋의 파이썬 파일은 이렇습니다. 이름과 경로와 날짜를 바꿨습니다.
 
 ```python
+# (DAG 예시 — 그대로 실행되지 않습니다.)
+# 하는 일: 원천 표 하나를 매일 00시 05분에 어제 날짜 기준으로 웨어하우스에 복사하는 DAG 를, 팀이 만들어 둔 도구로 정의한다.
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 

@@ -119,15 +119,12 @@
 "집 주소를 그냥 외워 두면 안 되나?"라는 생각이 들 수 있습니다. 왜 안 되는지 세어 봅시다. 가상 데이터입니다.
 
 ```python
-# "집 주소를 그냥 외워 두면 안 되나?" — 안 되는 이유를 숫자로 본다.
-#
-# 상황: Pod 3개짜리 앱. 배포가 하루 4번 있고, 배포할 때마다 Pod가 새로 태어난다.
-#       Pod가 새로 태어나면 IP가 바뀐다.
-# 질문: 클라이언트가 Pod IP를 직접 외워 두면 요청이 얼마나 실패하나?
-
+# 하는 일: Pod 3개짜리 앱이 하루 4번 배포할 때, 클라이언트가 Pod IP 를 직접 외우는 경우와 Service 주소 하나만 외우는 경우의 한 달 실패 요청을 견준다.
 import random
 random.seed(42)
 
+# 1단계: 앱의 Pod 수와 배포, 요청량, 캐시 시간을 둔다
+# "집 주소를 그냥 외워 두면 안 되나?"에 숫자로 답한다. 배포할 때마다 Pod 가 새로 만들어지고, Pod 가 새로 만들어지면 IP 가 바뀐다. 가상 데이터다.
 PODS = 3                # Pod 3개
 DEPLOYS_PER_DAY = 4     # 하루 배포 4번
 DAYS = 30               # 한 달
@@ -135,30 +132,27 @@ RPS = 100               # 초당 요청 100건
 ROLLING_SEC = 40        # 롤링 배포 1회에 걸리는 시간(초) — 한 채씩 교체
 CACHE_TTL_SEC = 300     # 클라이언트가 IP를 5분간 외워 둔다고 가정
 
+# 2단계: 한 달 동안 Pod IP 가 바뀌는 횟수를 센다
 total_ip_changes = PODS * DEPLOYS_PER_DAY * DAYS
 print(f"한 달 동안 Pod IP가 바뀌는 횟수  {total_ip_changes}회")
 print(f"  = Pod {PODS}개 × 배포 {DEPLOYS_PER_DAY}회/일 × {DAYS}일")
 print()
 
-# ── 방식 A: Pod IP를 직접 외워 둔다 ──
-# 배포 중에는 외워 둔 IP 중 일부가 이미 사라진 Pod를 가리킨다.
-# 최악의 경우 캐시 TTL이 다 지나기 전까지 그 IP로 계속 찔러 본다.
-#
-# 롤링 배포는 한 채씩 교체하므로, 배포 진행 중 평균적으로
-# 전체 Pod의 1/PODS 가 "방금 사라진 Pod"다. 그 IP를 외운 클라이언트는 실패한다.
+# 3단계: Pod IP 를 직접 외울 때의 실패를 센다
+# 방식 A 다. 배포 중에는 외워 둔 IP 가운데 일부가 이미 사라진 Pod 를 가리키고, 최악이면 캐시 TTL 이 다 지나기 전까지 그 IP 로 계속 요청을 보낸다. 롤링 배포는 Pod 를 하나씩 교체하므로, 배포 중 평균적으로 전체 Pod 의 1/PODS 가 방금 사라진 Pod 이고 그 IP 를 외운 클라이언트는 실패한다.
 stale_window = min(CACHE_TTL_SEC, ROLLING_SEC + CACHE_TTL_SEC)  # 낡은 주소를 들고 있는 시간
 fail_share = 1 / PODS                                            # 그 시간에 실패하는 요청 비율
 fails_per_deploy = RPS * stale_window * fail_share
 fails_a = fails_per_deploy * DEPLOYS_PER_DAY * DAYS
 
-# ── 방식 B: Service 주소 하나만 외워 둔다 ──
-# Service의 IP는 배포와 무관하게 그대로다. Service가 살아 있는 Pod만 골라 보낸다.
-# 실패는 "교체 순간에 이미 연결이 진행 중이던 요청" 정도로 줄어든다.
+# 4단계: Service 주소 하나만 외울 때의 실패를 센다
+# 방식 B 다. Service 의 IP 는 배포와 무관하게 그대로이고, Service 가 살아 있는 Pod 만 골라 보낸다. 실패는 교체 순간에 이미 연결이 진행 중이던 요청 정도로 줄어든다.
 INFLIGHT_SEC = 1.0                                               # 교체 순간의 진행 중 요청 구간
 fails_b = RPS * INFLIGHT_SEC * PODS * DEPLOYS_PER_DAY * DAYS
 
 total_requests = RPS * 60 * 60 * 24 * DAYS
 
+# 5단계: 두 방식의 한 달 실패를 견준다
 print("방식 A — Pod IP를 직접 외운다")
 print(f"  배포 1회당 실패 요청   {fails_per_deploy:>12,.0f}건")
 print(f"  한 달 실패 요청        {fails_a:>12,.0f}건  (전체의 {fails_a/total_requests*100:.3f}%)")
@@ -172,9 +166,11 @@ print("→ Pod 주소를 외우면 배포마다 실패가 쏟아진다. 사라�
 print("→ Service 주소는 배포와 무관하게 그대로다. 그래서 외울 값은 이거 하나여야 한다.")
 
 # 출력:
+# 2단계 뜻: 하루 4회 배포할 때마다 Pod 3개가 새로 만들어져서, 한 달에 Pod IP 가 360회 바뀐다.
 # 한 달 동안 Pod IP가 바뀌는 횟수  360회
 #   = Pod 3개 × 배포 4회/일 × 30일
 #
+# 5단계 뜻: Pod IP 를 외우면 배포 1회마다 10,000건, 한 달에 1,200,000건(0.463%)이 실패한다. Service 주소만 외우면 36,000건(0.014%)으로 33배 적다.
 # 방식 A — Pod IP를 직접 외운다
 #   배포 1회당 실패 요청         10,000건
 #   한 달 실패 요청           1,200,000건  (전체의 0.463%)
@@ -243,28 +239,29 @@ print("→ Service 주소는 배포와 무관하게 그대로다. 그래서 외�
 Ingress 없이 서비스마다 입구를 내면 어떻게 되는지도 세어 봅시다. 클라우드 요금은 대략치이고 공급자마다 다릅니다.
 
 ```python
-# "Ingress 없이 서비스마다 입구를 내면 안 되나?" — 비용으로 답한다.
-#
-# 서비스를 바깥에 노출하는 방법은 두 가지다.
-#   A) 서비스마다 LoadBalancer를 하나씩 붙인다 (입구를 여러 개 낸다)
-#   B) Ingress 하나를 두고 경로로 나눈다     (입구 하나에서 경로로 나눈다)
+# 하는 일: 마이크로서비스 12개를 바깥에 낼 때 서비스마다 LoadBalancer 를 붙이는 경우와 Ingress 하나로 경로를 나누는 경우의 월 비용, 공인 IP, 인증서 관리 시간을 견준다.
 
+# 1단계: 서비스 수와 LoadBalancer 요금, 인증서 관리 시간을 둔다
+# "Ingress 없이 서비스마다 입구를 내면 안 되나?"에 비용으로 답한다. 요금은 대략치이고 공급자마다 다르다.
 SERVICES = 12                 # 마이크로서비스 12개
 LB_MONTHLY_USD = 18           # 클라우드 LoadBalancer 1개 월 요금(대략치, 공급자마다 다름)
 CERT_MANAGE_MIN = 20          # 인증서 하나를 갱신, 점검하는 데 드는 시간(분/월)
 
-# ── A) 서비스마다 LoadBalancer ──
+# 2단계: 서비스마다 LoadBalancer 를 붙일 때를 센다
+# 방식 A 다. 입구를 서비스 수만큼 여러 개 낸다.
 a_cost = SERVICES * LB_MONTHLY_USD
 a_ips = SERVICES               # 공인 IP도 그만큼 필요하다
 a_certs = SERVICES             # 도메인, 인증서도 그만큼
 a_minutes = SERVICES * CERT_MANAGE_MIN
 
-# ── B) Ingress 하나 ──
+# 3단계: Ingress 하나를 둘 때를 센다
+# 방식 B 다. 입구 하나에서 경로로 나눈다.
 b_cost = 1 * LB_MONTHLY_USD    # Ingress 컨트롤러 앞에 LB 하나만
 b_ips = 1
 b_certs = 1                    # 와일드카드 인증서 하나로 서브경로를 덮는다
 b_minutes = 1 * CERT_MANAGE_MIN
 
+# 4단계: 두 방식을 표로 견준다
 print(f"마이크로서비스 {SERVICES}개를 바깥에 노출한다면\n")
 print(f"{'':22}{'A) LB 여러 개':>16}{'B) Ingress 하나':>18}")
 print(f"{'월 비용':22}{'$' + str(a_cost):>16}{'$' + str(b_cost):>18}")
@@ -275,7 +272,9 @@ print()
 print(f"월 비용 차이   ${a_cost - b_cost}  (연 ${(a_cost - b_cost) * 12})")
 print(f"관리 시간 차이 {a_minutes - b_minutes}분/월  (연 {(a_minutes - b_minutes) * 12 / 60:.1f}시간)")
 print()
-# 서비스가 늘어나면 격차는 선형으로 벌어진다
+
+# 5단계: 서비스 수가 늘 때 격차를 본다
+# 서비스가 늘어나면 격차는 선형으로 벌어진다.
 for n in (3, 12, 50):
     print(f"  서비스 {n:>2}개 → A) ${n * LB_MONTHLY_USD:>4}/월   B) ${LB_MONTHLY_USD}/월   ({n}배 차이)")
 print()
@@ -283,6 +282,7 @@ print("→ 입구를 서비스마다 내면 입구 개수만큼 돈과 관리가
 print("→ Ingress는 입구 하나에서 경로(/api, /admin)로 나누니, 서비스가 늘어도 입구는 하나다.")
 
 # 출력:
+# 4단계 뜻: 서비스 12개를 LoadBalancer 로 하나씩 내면 월 $216, Ingress 하나면 $18 이라 월 $198, 연 $2376 차이 난다. 관리할 인증서도 12개와 1개로, 관리 시간이 연 44.0시간 차이 난다.
 # 마이크로서비스 12개를 바깥에 노출한다면
 #
 #                             A) LB 여러 개     B) Ingress 하나
@@ -294,6 +294,7 @@ print("→ Ingress는 입구 하나에서 경로(/api, /admin)로 나누니, 서
 # 월 비용 차이   $198  (연 $2376)
 # 관리 시간 차이 220분/월  (연 44.0시간)
 #
+# 5단계 뜻: A) 는 서비스 수만큼 요금이 늘어 50개면 월 $900 이고, B) 는 서비스가 몇 개든 월 $18 이다.
 #   서비스  3개 → A) $  54/월   B) $18/월   (3배 차이)
 #   서비스 12개 → A) $ 216/월   B) $18/월   (12배 차이)
 #   서비스 50개 → A) $ 900/월   B) $18/월   (50배 차이)

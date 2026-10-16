@@ -54,8 +54,8 @@ graph LR
 #### 일반적인 구조
 
 ```python
-# (의사코드 — 구조만 보여 줍니다. 그대로 실행되지 않습니다.)
-# Request Log 1건 (= 광고 요청 1건)
+# (의사코드 — 그대로 실행되지 않습니다.)
+# 하는 일: 광고 요청 1건마다 한 건씩 남는 Request Log 가 유저 컨텍스트, 지면 정보, 요청 메타, 응답 결과를 한 행에 담는 구조만 보여 준다.
 {
   "request_id": "req_abc123",           # 모든 다운스트림 로그의 조인 키
   "timestamp": "2026-04-11T14:30:00Z",
@@ -130,8 +130,8 @@ graph LR
 ### 일반적인 구조
 
 ```python
-# (의사코드 — 구조만 보여 줍니다. 그대로 실행되지 않습니다.)
-# Candidate Log 1건 (= 광고 요청 1건)
+# (의사코드 — 그대로 실행되지 않습니다.)
+# 하는 일: 광고 요청 1건마다 한 건씩 남는 Candidate Log 가 점수를 받은 후보 광고 전체를 candidates 목록에 담는 구조만 보여 준다.
 {
   "request_id": "req_abc123",
   "timestamp": "2026-04-11T14:30:00Z",
@@ -293,7 +293,7 @@ graph LR
 추론 시 **Batch + Streaming + Real-Time** 세 갈래 피처가 하나의 피처 벡터(Feature Vector) 로 합쳐집니다. 피처 벡터는 모델에 넣는 숫자 묶음입니다.
 
 ```python
-# (구조 예시 — 자리만 보여 줍니다. 그대로 실행해도 출력은 없습니다.)
+# 하는 일: 세 갈래 피처가 합쳐진 피처 벡터에서 피처마다 어느 갈래에 속하고 어디서 얼마나 자주 갱신되는지 자리만 보여 주며, 돌려도 찍는 것은 없다.
 feature_vector = {
     "user_30d_purchase_count": 5,        # Batch — Feature Store, 1일 1회
     "ad_embedding": [0.12, -0.34, ...],  # Batch — 모델 배포 때 갱신
@@ -420,15 +420,16 @@ rank=1로 추론한 스코어에 자리별 보정 계수를 곱해 실제 pCTR�
 ### 필드를 하나 고치면 어제 로그는 어떻게 되나
 
 ```python
-# 스키마를 고치면 '어제 로그'를 읽다가 어디서 오류가 나나 — 직접 읽어 본다.
-# 어제 찍힌 v1 로그는 저장소에 그대로 있다. 고칠 수도, 지울 수도 없다.
-# 오늘 (A) creative_type 추가, (B) slot_id -> placement_id 이름 변경,
-# (C) pctr 을 문자열에서 실수로 바꿨다. 새 코드로 어제 것을 읽는다.
+# 하는 일: 스키마를 세 가지로 고친 뒤 새 코드로 어제 로그를 읽어 어디서 오류가 나는지 보고, 규칙을 지킨 리더로 어제 것과 오늘 것을 함께 읽는다.
 
+# 1단계: 어제 로그와 오늘 로그를 둔다
+# 어제 찍힌 v1 로그는 저장소에 그대로 있다. 고칠 수도, 지울 수도 없다.
 OLD = {"request_id": "req-1", "slot_id": "slot_A", "pctr": "0.045"}   # 어제 것
 NEW = {"request_id": "req-9", "placement_id": "slot_A",               # 오늘 것
        "pctr": 0.048, "creative_type": "video"}
 
+# 2단계: 바꾼 필드 셋을 새 코드로 어제 로그에서 읽는다
+# 오늘 (A) creative_type 을 더하고, (B) slot_id 를 placement_id 로 이름을 바꾸고, (C) pctr 을 문자열에서 실수로 바꿨다. 새 코드로 어제 것을 읽는다.
 CHANGES = [
     ("(A) 추가   creative_type 를 읽는다", lambda r: r["creative_type"]),
     ("(B) 이름   placement_id 를 읽는다 ", lambda r: r["placement_id"]),
@@ -437,18 +438,21 @@ CHANGES = [
 for label, read_one in CHANGES:
     try:
         got = read_one(OLD)
-        # 오류가 안 나는 쪽이 더 무섭다. 문자열 * 1000 은 파이썬에서 '반복'이다
+        # 오류가 안 나는 쪽이 더 위험하다. 문자열 * 1000 은 파이썬에서 '반복'이다
         print(f"{label} -> 오류가 안 난다. 타입 {type(got).__name__}, 길이 {len(str(got))}")
     except KeyError as err:
         print(f"{label} -> KeyError: {err}")
 
 
+# 3단계: 규칙을 지킨 리더 함수를 만든다
+# 이름을 바꾼 필드, 더한 필드, 타입을 바꾼 필드를 하나씩 줄 끝의 규칙대로 읽는다.
 def read_safe(row):
     slot = row.get("placement_id") or row.get("slot_id")     # 옛 이름을 한 버전 더 본다
     ctype = row.get("creative_type", "unknown")              # 추가 필드는 기본값으로
     return slot, ctype, round(float(row["pctr"]) * 1000, 1)  # 타입은 읽는 쪽에서 통일
 
 
+# 4단계: 규칙을 지킨 리더로 두 로그를 읽는다
 print()
 for row in (OLD, NEW):
     print("규칙 지킨 리더", row["request_id"], read_safe(row))
@@ -458,9 +462,11 @@ print("→ 이름 변경은 삭제 + 추가다. 옛 이름을 한 버전 더 살
 print("→ 타입 변경은 오류 없이 틀린 값을 흘려보낸다. 새 필드를 만들고 옛 필드는 그대로 둔다.")
 
 # 출력:
+# 2단계 뜻: 더한 필드와 이름을 바꾼 필드는 어제 로그에 없어 곧바로 KeyError 가 난다. 타입을 바꾼 pctr 은 오류 없이 문자열을 1000번 이어 붙여 길이가 5000 인 str 이 된다.
 # (A) 추가   creative_type 를 읽는다 -> KeyError: 'creative_type'
 # (B) 이름   placement_id 를 읽는다  -> KeyError: 'placement_id'
 # (C) 타입   pctr * 1000 을 계산한다 -> 오류가 안 난다. 타입 str, 길이 5000
+# 4단계 뜻: 규칙을 지킨 리더는 어제 것(req-1)과 오늘 것(req-9)을 모두 읽는다. 어제 것에 없는 creative_type 은 'unknown' 으로 채우고, 세 번째 값은 pctr 의 타입이 달라도 둘 다 실수 45.0 과 48.0 으로 통일된다.
 #
 # 규칙 지킨 리더 req-1 ('slot_A', 'unknown', 45.0)
 # 규칙 지킨 리더 req-9 ('slot_A', 'video', 48.0)

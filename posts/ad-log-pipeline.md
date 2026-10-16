@@ -518,22 +518,19 @@ graph LR
 ### pCTR 학습 데이터 구성 예시
 
 ```python
-# pCTR 학습 데이터 = Impression Log + Click Log + Feature Log JOIN
-# 한 줄의 학습 데이터가 만들어지는 과정
+# (Spark 예시 — 그대로 실행되지 않습니다.)
+# 하는 일: 노출 로그에 클릭 로그와 피처 로그를 이어 붙여, 노출된 (user, ad) 쌍마다 서빙 시점 피처와 클릭 라벨이 한 줄인 pCTR 학습 데이터를 만든다.
 
 import pyspark.sql.functions as F
 
-# 1. Impression Log: 노출된 (user, ad) 쌍 = 샘플
+# 1단계: 세 로그를 읽는다
+# 한 줄의 학습 데이터는 Impression Log, Click Log, Feature Log 를 JOIN 해서 만든다. Impression Log 는 노출된 (user, ad) 쌍, 곧 샘플이다. Click Log 는 클릭 여부, 곧 라벨 y 다. Feature Log 는 서빙 시점의 피처, 곧 X 다.
 impression = spark.read.parquet("s3://logs/impression/dt=2026-04-11")
-
-# 2. Click Log: 클릭 여부 = 라벨 (y)
 click = spark.read.parquet("s3://logs/click/dt=2026-04-11")
-
-# 3. Feature Log: 서빙 시점의 피처 = X
 feature = spark.read.parquet("s3://logs/feature/dt=2026-04-11")
 
-# Impression LEFT JOIN Click → 라벨 생성
-#   - Click이 있으면 y=1, 없으면 y=0
+# 2단계: 라벨을 붙이고 서빙 시점 피처를 잇는다
+# Impression 에 Click 을 LEFT JOIN 해서 Click 이 있으면 y=1, 없으면 y=0 으로 라벨을 만든다. 결과는 노출된 모든 (user, ad) 쌍에 대해 X = feature_vector(서빙 시점 그대로), y = clicked(0 or 1) 다.
 training_data = (
     impression
     .join(click, on="impression_id", how="left")
@@ -547,9 +544,6 @@ training_data = (
         "position"          # Position Bias 보정용
     )
 )
-# 결과: 노출된 모든 (user, ad) 쌍에 대해
-#   X = feature_vector (서빙 시점 그대로)
-#   y = clicked (0 or 1)
 ```
 
 > 이 잇기 구조에는 함정이 하나 있습니다. 노출 로그를 기준으로 negative sampling하면 Class Imbalance 문제가 생깁니다. CTR이 1%라면 y=0이 99%, y=1이 1%입니다. 이 불균형을 어떻게 다루는지는 [안 눌린 로그를 줄여 생기는 편향 포스트](post.html?id=negative-sampling-bias)에서 다룹니다.
@@ -610,7 +604,7 @@ training_data = (
 
 로그를 다 남기면 될 것 같지만, 실제로는 그럴 수 없습니다. 볼륨 차이가 극적이기 때문입니다.
 
-숫자로 보면 이렇습니다. 요청 로그는 하루 수십억 행이고, 전환 로그는 수백만 행입니다. **1,000배 이상 차이 납니다.** 왜냐하면 각 단계마다 사람이 떨어져 나가기 때문입니다. 요청 100건 중 낙찰은 일부이고, 낙찰된 노출 100건 중 클릭은 약 1건이고, 클릭 100건 중 구매는 5~10건입니다.
+숫자로 보면 이렇습니다. 요청 로그는 하루 수십억 행이고, 전환 로그는 수십만 행입니다. **1,000배 이상 차이 납니다.** 왜냐하면 각 단계마다 사람이 떨어져 나가기 때문입니다. 요청 100건 중 낙찰은 일부이고, 낙찰된 노출 100건 중 클릭은 약 1건이고, 클릭 100건 중 구매는 5~10건입니다.
 
 그래서 저장 전략이 로그마다 다릅니다. **위쪽(요청, 후보)은 양이 많고 값이 싸고, 아래쪽(클릭, 전환)은 양이 적고 값이 비쌉니다.** 요청 로그는 전부 남기려면 비용이 감당이 안 돼서 샘플링합니다. 반대로 전환 로그는 한 행이 곧 매출이라 2년 이상 남깁니다.
 
@@ -625,9 +619,9 @@ training_data = (
 | 입찰 로그 | 수십억 행 | Kafka → S3 | 30일 | 입찰 건별 1행 |
 | 낙찰과 패찰 로그 | 수십억 행 | Kafka → S3 + Hive | 90일 | 낙찰 + 패찰 모두 저장 |
 | 노출 로그 | 수억 행 | Kafka → S3 + Hive | 1년+ | 학습 데이터 핵심 |
-| 클릭 로그 | 수천만 행 | Kafka → S3 + Hive | 1년+ | CTR ~1% |
-| 전환 로그 | 수백만 행 | Kafka → S3 + Hive | 2년+ | CVR ~5-10% of clicks |
-| 어트리뷰션 로그 | 수백만 행 | Kafka → S3 + Hive | 2년+ | 전환과 1:1 |
+| 클릭 로그 | 수백만 행 | Kafka → S3 + Hive | 1년+ | CTR ~1% |
+| 전환 로그 | 수십만 행 | Kafka → S3 + Hive | 2년+ | CVR ~5-10% of clicks |
+| 어트리뷰션 로그 | 수십만 행 | Kafka → S3 + Hive | 2년+ | 전환과 1:1 |
 
 표에서 보존 기간을 눈여겨봅니다. 7일부터 2년까지 벌어집니다. 이 차이는 "얼마나 오래 필요한가"로 정해집니다.
 
@@ -642,11 +636,10 @@ training_data = (
 "1,000배 차이"가 어디서 나오는지 통과율을 순서대로 곱해 확인해 봅시다. 가상 데이터입니다.
 
 ```python
-# 로그 볼륨이 왜 1,000배씩 벌어지나 — 깔때기를 직접 곱해 본다.
-#
-# 각 단계의 통과율(가상)을 순서대로 곱하면 하루 행 수가 나온다.
-# 저장 단가는 Parquet 압축 후 대략치다. 실제 값은 회사와 리전마다 다르다.
+# 하는 일: 하루 입찰 요청 50억 건이 로그 일곱 단계를 지나며 통과율대로 줄어드는 행 수와 저장량을 구하고, 저장량이 가장 큰 로그와 가장 작은 로그를 견준다.
 
+# 1단계: 하루 요청 수와 로그 일곱 단계를 둔다
+# 로그 볼륨이 왜 1,000배 넘게 벌어지는지 깔때기를 직접 곱해 본다. 각 단계의 통과율(가상)을 순서대로 곱하면 하루 행 수가 나온다. 행 크기(저장 단가)는 Parquet 압축 뒤의 대략치이고, 실제 값은 회사와 리전마다 다르다.
 DAILY_REQUESTS = 5_000_000_000        # 하루 입찰 요청 50억 건 (대형 DSP 가정)
 
 # (로그 이름, 이전 단계 대비 통과율, 행 1건당 크기(bytes), 보존일수)
@@ -660,6 +653,8 @@ STAGES = [
     ("Conversion",  0.07,     240, 730),   # 클릭 중 7% 전환
 ]
 
+# 2단계: 로그마다 하루 행 수와 보존 기간 전체의 저장량을 구한다
+# 앞 단계 행 수에 통과율을 곱해 행 수를 내고, 행 크기와 보존일수를 곱해 저장량을 낸다.
 rows = DAILY_REQUESTS
 print(f"{'로그':<12}{'하루 행 수':>18}{'요청 대비':>12}{'일 용량':>12}{'보존':>7}{'총 저장량':>13}")
 first_rows = None
@@ -672,18 +667,19 @@ for name, rate, size, keep in STAGES:
     total_gb = daily_gb * keep                    # 보존 기간 전체로 몇 GB인가
     ratio = first_rows / rows                     # 요청 대비 몇 분의 1인가
     results.append((name, rows, total_gb))
-    # GB가 1000을 넘으면 TB로 바꿔 읽기 쉽게 한다
+    # GB가 1000 을 넘으면 TB로 바꿔 읽기 쉽게 한다
     unit = f"{total_gb/1000:,.1f}TB" if total_gb >= 1000 else f"{total_gb:,.1f}GB"
     print(f"{name:<12}{rows:>18,}{'1/' + f'{ratio:,.0f}':>12}"
           f"{daily_gb:>10.1f}GB{keep:>6}일{unit:>12}")
 
+# 3단계: 요청 대비 전환 비율과 저장량 합계를 구한다
 req_rows = results[0][1]
 conv_rows = results[-1][1]
 print()
 print(f"요청 대비 전환 로그   1 / {req_rows / conv_rows:,.0f}")
 print(f"저장량 합계          {sum(t for _, _, t in results)/1000:,.1f}TB")
 
-# 저장량이 가장 큰 로그와 가장 작은 로그
+# 4단계: 저장량이 가장 큰 로그와 가장 작은 로그를 견준다
 big = max(results, key=lambda r: r[2])
 small = min(results, key=lambda r: r[2])
 print(f"저장량 1위           {big[0]} {big[2]/1000:,.1f}TB (보존 30일뿐인데도 1위)")
@@ -694,6 +690,7 @@ print("→ 위쪽은 '양이 많아 못 남기고', 아래쪽은 '적어서 오�
 print("→ 그래서 보존 정책이 로그마다 다르다. 한 규칙으로 통일하면 둘 다 손해다.")
 
 # 출력:
+# 2단계 뜻: 통과율을 곱할수록 행 수가 줄어 Request 5,000,000,000건이 Conversion 에서는 159,600건이 된다. 저장량은 보존이 30일인 Bid 가 23.4TB 로 가장 크다.
 # 로그                      하루 행 수       요청 대비        일 용량     보존        총 저장량
 # Request          5,000,000,000         1/1    2100.0GB     7일      14.7TB
 # Candidate        5,000,000,000         1/1     900.0GB     7일       6.3TB
@@ -702,9 +699,11 @@ print("→ 그래서 보존 정책이 로그마다 다르다. 한 규칙으로 �
 # Impression         228,000,000        1/22      45.6GB   365일      16.6TB
 # Click                2,280,000     1/2,193       0.4GB   365일     133.2GB
 # Conversion             159,600    1/31,328       0.0GB   730일      28.0GB
+# 3단계 뜻: 요청 31,328건에 전환이 1건꼴이고, 위 표의 로그 전부의 저장량을 다 더하면 64.4TB 다.
 #
 # 요청 대비 전환 로그   1 / 31,328
 # 저장량 합계          64.4TB
+# 4단계 뜻: 저장량 1위인 Bid 23.4TB 는 가장 작은 Conversion 28.0GB 의 837배다.
 # 저장량 1위           Bid 23.4TB (보존 30일뿐인데도 1위)
 # 저장량 최소          Conversion 28.0GB (2년 남겨도 이 정도)
 # 둘의 차이            837배
@@ -721,15 +720,18 @@ print("→ 그래서 보존 정책이 로그마다 다르다. 한 규칙으로 �
 
 여기서 실무 감각이 하나 생깁니다. **비용을 줄이려면 보존 기간이 아니라 위쪽 로그의 샘플링을 먼저 봐야 합니다.** 전환 로그를 2년에서 1년으로 줄여도 14GB밖에 안 아껴집니다. Bid 로그를 10%만 샘플링하면 21TB가 빠집니다. 차이가 1,500배입니다.
 
-:::deep 더 깊이 — 로그 스키마 실제 정의 (dataclass 5종)
+:::deep 더 깊이 — 로그 스키마 실제 정의 (dataclass 6종)
 
-앞의 표가 "무엇을 얼마나 남기나"였다면, 여기는 "각 행에 어떤 칼럼이 들어가나"입니다. 초심자는 넘어가도 됩니다. 다만 한 가지만 눈에 담아 두면 좋습니다 — `request_id`가 다섯 스키마에 전부 들어 있다는 것입니다. 이 칼럼 하나가 요청부터 전환까지를 잇는 유일한 끈입니다.
+앞의 표가 "무엇을 얼마나 남기나"였다면, 여기는 "각 행에 어떤 칼럼이 들어가나"입니다. 초심자는 넘어가도 됩니다. 다만 한 가지만 눈에 담아 두면 좋습니다 — `request_id`가 전환 로그를 뺀 다섯 스키마에 다 들어 있다는 것입니다. 이 칼럼 하나가 요청부터 클릭까지를 잇는 끈이고, 전환 로그는 click_id 나 impression_id 로 이어집니다.
 
 ```python
+# 하는 일: 요청, 노출, 클릭, 전환, 경매 결과, 입찰 로그 6종의 칼럼을 dataclass 로 정의하고, 로그끼리 잇는 키를 칼럼 옆에 적는다.
 from dataclasses import dataclass
 from typing import Optional, List
 from datetime import datetime
 
+# 1단계: 요청 로그를 클래스로 만든다
+# Bid Request 를 받자마자 남긴다. 여기서 생긴 request_id 가 뒤에 오는 로그를 잇는 JOIN key 다.
 @dataclass
 class RequestLog:
     """① Bid Request 수신 즉시 기록"""
@@ -746,6 +748,8 @@ class RequestLog:
     bid_floor: float              # Exchange가 설정한 최저가
     exchange_id: str
 
+# 2단계: 노출, 클릭, 전환 로그를 클래스로 만든다
+# 광고가 그려질 때 노출을, 유저가 누를 때 클릭을, 전환이 일어날 때 전환을 남긴다. 클릭은 impression_id 로 노출에, 전환은 click_id 나 impression_id 로 클릭이나 노출에 이어진다.
 @dataclass
 class ImpressionLog:
     """⑦ 광고 렌더링 확인 시점에 기록"""
@@ -785,6 +789,8 @@ class ConversionLog:
     timestamp: datetime
     attribution_window: str       # 7d_click, 1d_view
 
+# 3단계: 경매 결과와 입찰 로그를 클래스로 만든다
+# 경매 결과를 받을 때와 입찰 응답을 보낼 때 남기고, 둘 다 request_id 로 요청 로그에 이어진다. 입찰 로그는 내부 가치(true_value)와 깎은 비율(shading_ratio)을 함께 남긴다.
 @dataclass
 class WinLossLog:
     """⑥ 경매 결과 수신 시점에 기록"""
@@ -1062,21 +1068,25 @@ class BidLog:
 ### 로그 품질 모니터링 예시
 
 ```python
-# 로그 파이프라인 건전성 체크: 일일 배치
+# (Spark 예시 — 그대로 실행되지 않습니다.)
+# 하는 일: 하루치 노출, 클릭, 요청 로그로 노출 중복률, 노출 없는 클릭 비율, 요청 대비 노출 비율을 재서 로그 파이프라인이 건전한지 매일 배치로 본다.
 import pyspark.sql.functions as F
 
+# 1단계: 하루치 로그 셋을 읽는다
 dt = "2026-04-11"
 impression = spark.read.parquet(f"s3://logs/impression/dt={dt}")
 click = spark.read.parquet(f"s3://logs/click/dt={dt}")
 request = spark.read.parquet(f"s3://logs/request/dt={dt}")
 
-# 1. Impression 중복률 체크
+# 2단계: 노출 중복률을 잰다
+# 전체 노출 행 가운데 같은 impression_id 로 겹쳐 남은 행의 비율이다.
 total_imp = impression.count()
 unique_imp = impression.select("impression_id").distinct().count()
 dup_rate = 1 - unique_imp / total_imp
 print(f"Impression 중복률: {dup_rate:.4%}")  # 정상: < 0.1%
 
-# 2. Orphan Click 비율 (Impression 없는 Click)
+# 3단계: 노출 없는 클릭(Orphan Click)의 비율을 잰다
+# 노출 로그에 짝이 없는 클릭의 비율이다.
 orphan_clicks = (
     click.join(impression, on="impression_id", how="left_anti")
     .count()
@@ -1084,7 +1094,8 @@ orphan_clicks = (
 orphan_rate = orphan_clicks / click.count()
 print(f"Orphan Click 비율: {orphan_rate:.4%}")  # 정상: < 0.5%
 
-# 3. Request → Impression 전환율 (= Win Rate 근사)
+# 4단계: 요청 대비 노출 비율을 잰다
+# 요청 가운데 노출까지 간 비율로, Win Rate 를 어림한 값이다.
 req_count = request.count()
 imp_count = unique_imp
 win_rate_approx = imp_count / req_count
@@ -1097,7 +1108,7 @@ print(f"Request→Impression 전환율: {win_rate_approx:.2%}")  # 보통: 10-30
 
 1. **로그는 광고 ML의 원재료입니다.** 모든 학습 데이터는 로그의 JOIN으로 만들어집니다. 로그 스키마를 모르면 학습 데이터를 이해할 수 없습니다.
 
-2. **`request_id`가 모든 것을 잇습니다.** 10개 로그를 관통하는 단일 키. 이 키가 누락되면 JOIN이 불가능하고, 학습 데이터를 만들 수 없습니다.
+2. **`request_id`가 체인의 출발점입니다.** 요청부터 클릭까지는 이 키 하나로 잇고, 전환은 click_id 나 impression_id 로 이어 붙입니다. 이 키가 누락되면 JOIN이 불가능하고, 학습 데이터를 만들 수 없습니다.
 
 3. **시간축을 항상 의식해야 합니다.** Request Log는 0ms, Conversion Log는 수 일 후. 이 시간 차이가 [Delayed Feedback](post.html?id=online-learning-delayed-feedback) 문제의 근원입니다.
 

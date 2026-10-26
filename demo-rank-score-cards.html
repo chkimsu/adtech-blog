@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>위치 1 추론과 LTR 카드 12장 — Ad Tech Blog</title>
+  <meta name="description" content="점수의 순서는 맞는데 크기가 틀리는 두 경우를 카드 한 장씩으로. 서빙 때 모든 후보를 1위로 두고 pCTR 을 낼 때 생기는 일 여섯 장, 같은 검색 안의 쌍으로 학습하는 pairwise LTR 의 함정 여섯 장입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>위치 1 추론과 LTR 카드 12장</h1>
+      <p>두 문제는 같은 데로 이어집니다. 점수의 순서는 맞는데 크기가 틀립니다. 앞 여섯 장은 서빙 때 모든 후보를 1위로 두고 pCTR 을 낼 때이고, 뒤 여섯 장은 같은 검색 안의 쌍으로 학습할 때입니다. 숫자는 글의 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 광고와 맞는 값</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 틀리거나 의심스러운 값</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 랭커</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 위치 효과와 사람이 남긴 기록</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 모르는 것, 짐작</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 오가는 요청과 점수</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="p-learn"><h2>POSITION IN TRAINING</h2><p class="tg-k">학습 때는 위치를 압니다</p><p class="tg-easy"><b>쉽게 말하면</b> 노출 로그에 광고가 몇 위에 나왔는지 적혀 있어서, 모델이 광고 품질과 위치 효과를 나눠 배웁니다.</p><div class="tg-fig" id="rs-p-learn"></div>
+        <p class="tg-cap">B 는 3.0% 만 클릭됐지만 모델은 이것을 품질 4.0% 와 2위 위치 효과 0.75 로 나눠 배웁니다. 위치를 빼고 학습하면 B 가 <b>실제보다 나쁜 광고</b>로 배워집니다.</p></section>
+
+      <section class="tg-card" data-card="p-serve"><h2>POSITION AT SERVING</h2><p class="tg-k">서빙 때는 위치를 모릅니다</p><p class="tg-easy"><b>쉽게 말하면</b> 순서를 정해야 위치가 생기는데, 순서를 정하려면 점수가 필요합니다. 그래서 모든 후보를 1위로 두고 점수를 묻습니다.</p><div class="tg-fig" id="rs-p-serve"></div>
+        <p class="tg-cap">모두 같은 1위를 가정하니 비교는 공평합니다. 점수 5.0%, 4.0%, 3.0% 로 <b>순서 A, B, C</b> 는 맞게 나옵니다.</p></section>
+
+      <section class="tg-card" data-card="p-inflate"><h2>INFLATED SCORES</h2><p class="tg-k">그래서 값이 부풉니다</p><p class="tg-easy"><b>쉽게 말하면</b> 점수는 1위 기준인데 B 는 2위에, C 는 3위에 갑니다.</p><div class="tg-fig" id="rs-p-inflate"></div>
+        <p class="tg-cap">B 는 <b>1.3배</b>, C 는 <b>2배</b> 부풀어 나옵니다. 순서를 정할 때는 상관없지만 예상 클릭, 예상 매출, 광고비처럼 크기를 쓰는 계산에서는 틀립니다.</p></section>
+
+      <section class="tg-card" data-card="p-fix"><h2>MULTIPLY BY POSITION</h2><p class="tg-k">정해진 위치의 효과를 곱합니다</p><p class="tg-easy"><b>쉽게 말하면</b> 순서를 정할 때는 1위 점수를 그대로 쓰고, 돈을 계산할 때는 정해진 위치의 효과를 곱해 씁니다.</p><div class="tg-fig" id="rs-p-fix"></div>
+        <p class="tg-cap">B 는 2위에 갔으니 4.0% × 0.75 = <b>3.0%</b> 로 예상 클릭과 광고비를 셉니다.</p></section>
+
+      <section class="tg-card" data-card="p-swap"><h2>WHEN ORDER FLIPS</h2><p class="tg-k">순서가 바뀌기도 합니다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고마다 위치 효과가 다르면, 1위를 가정한 순서와 실제 위치의 순서가 다를 수 있습니다.</p><div class="tg-fig" id="rs-p-swap"></div>
+        <p class="tg-cap">둘 다 1위라면 A 가 앞서지만 둘 다 3위라면 <b>C 가 앞섭니다</b>. 피처끼리 곱해 배우는 DCN 같은 모델은 이런 위치와 광고의 조합을 배웁니다.</p></section>
+
+      <section class="tg-card" data-card="p-unseen"><h2>NEVER AT THE TOP</h2><p class="tg-k">1위에 가 본 적 없는 광고</p><p class="tg-easy"><b>쉽게 말하면</b> 늘 아래에만 나온 광고 D 를 1위로 가정하면, 모델은 본 적 없는 경우를 짐작합니다.</p><div class="tg-fig" id="rs-p-unseen"></div>
+        <p class="tg-cap">학습 데이터의 1위는 기존 랭킹이 올린 광고뿐이라 D 의 1위 점수는 <b>짐작</b>입니다. 실제보다 훨씬 높게 나오기도 합니다.</p></section>
+
+      <section class="tg-card" data-card="l-kinds"><h2>POINTWISE VS PAIRWISE</h2><p class="tg-k">배우는 문제가 다릅니다</p><p class="tg-easy"><b>쉽게 말하면</b> pointwise 는 광고마다 눌렸는지를 맞히고, pairwise 는 같은 검색 안에서 어느 광고가 더 눌릴 만한지를 맞힙니다.</p><div class="tg-fig" id="rs-l-kinds"></div>
+        <p class="tg-cap">같은 검색 한 번이 pointwise 로는 <b>3줄</b>, pairwise 로는 <b>2쌍</b>이 됩니다.</p></section>
+
+      <section class="tg-card" data-card="l-scale"><h2>NO SCALE</h2><p class="tg-k">점수의 크기를 배우지 않습니다</p><p class="tg-easy"><b>쉽게 말하면</b> pairwise 손실은 두 점수의 차이만 봅니다. 모든 점수에 같은 값을 더해도 손실이 그대로입니다.</p><div class="tg-fig" id="rs-l-scale"></div>
+        <p class="tg-cap">차이가 똑같이 2 인 두 모델은 손실도 같지만, 확률로 바꾸면 A 가 <b>88% 와 50%</b> 로 다릅니다.</p></section>
+
+      <section class="tg-card" data-card="l-bid"><h2>TIMES THE BID</h2><p class="tg-k">입찰가와 곱하면 뒤집힙니다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 순위는 입찰가 × 클릭 점수입니다. 다른 검색에서 학습된 광고끼리는 점수 크기가 맞춰진 적이 없습니다.</p><div class="tg-fig" id="rs-l-bid"></div>
+        <p class="tg-cap">맞는 크기라면 Y 가 24 로 1위인데, X 의 점수가 2% 대신 3% 로 나오면 <b>X 가 30 으로 1위</b>가 됩니다.</p></section>
+
+      <section class="tg-card" data-card="l-clicked"><h2>CLICKED SEARCHES ONLY</h2><p class="tg-k">클릭이 난 검색만 씁니다</p><p class="tg-easy"><b>쉽게 말하면</b> 쌍을 만들려면 눌린 광고와 안 눌린 광고가 한 검색에 함께 있어야 합니다.</p><div class="tg-fig" id="rs-l-clicked"></div>
+        <p class="tg-cap">검색 100번 중 <b>5번</b>만 쌍을 만들고 95번은 버립니다. 학습은 빨라지지만 버린 검색에만 나온 광고는 배우지 못합니다.</p></section>
+
+      <section class="tg-card" data-card="l-skip"><h2>POSITION IN PAIRS</h2><p class="tg-k">쌍에 위치가 섞입니다</p><p class="tg-easy"><b>쉽게 말하면</b> 2위를 누른 사람은 1위를 보고 지나간 것이 확실하지만, 3위는 아예 안 봤을 수 있습니다.</p><div class="tg-fig" id="rs-l-skip"></div>
+        <p class="tg-cap">B &gt; A 는 믿을 만한 쌍이고, B &gt; C 는 광고가 아니라 <b>위치의 차이</b>를 배울 수 있는 쌍입니다.</p></section>
+
+      <section class="tg-card" data-card="l-depth"><h2>DEEP SEARCHES WEIGH MORE</h2><p class="tg-k">광고가 많은 검색이 더 세게 배웁니다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 6개 검색의 클릭 하나는 쌍 5개가 되고, 광고 2개 검색의 클릭 하나는 쌍 1개가 됩니다.</p><div class="tg-fig" id="rs-l-depth"></div>
+        <p class="tg-cap">같은 클릭 하나가 <b>5배</b> 다르게 들어갑니다. 경쟁이 센 검색을 세게 배우는 장점이자, 그쪽으로 기우는 단점입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>순서를 정하는 점수와 돈을 계산하는 점수를 나눠 봅니다.</b> 위치 1 점수는 줄 세우기에 쓰고, 예상 클릭과 광고비에는 정해진 위치의 효과를 곱합니다.</li>
+        <li><b>오프라인 지표는 점수가 어디에 쓰이는지부터 보고 고릅니다.</b> 입찰가와 곱하는 점수라면 요청 단위 AUC 만으로는 부족하고, 전체 AUC 와 예측 합 대비 실제 합을 같이 봅니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>이어서 볼 것은</b> 글 <a href="post.html?id=position1-pairwise-ltr">Position 1 추론과 Pairwise LTR</a>과, 학습 쪽 보정을 다룬 <a href="post.html?id=position-bias-ultr">Position Bias</a> 글입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/rank-score-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

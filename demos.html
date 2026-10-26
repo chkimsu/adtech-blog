@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 62개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 63개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -547,6 +547,7 @@
               <a href="demo-experiment-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 실험 카드 두 장</a>
               <a href="demo-causal-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 인과추론 카드 네 장</a>
               <a href="demo-explore-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 탐색과 채점 카드 네 장</a>
+              <a href="demo-rank-score-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 위치 1 추론과 LTR 카드 12장</a>
               <a href="demo-ops-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 서빙과 감시 카드 여섯 장</a>
               <a href="demo-data-model-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터와 모델 카드 여덟 장</a>
               <a href="demo-feature-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 피처 카드 여섯 장</a>
@@ -660,7 +661,7 @@
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
           <a class="demos-jump-item" href="#demo-topic-auction">경매와 입찰<b>6</b></a>
-          <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>13</b></a>
+          <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>14</b></a>
           <a class="demos-jump-item" href="#demo-topic-bandit">탐색과 밴딧<b>8</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>4</b></a>
           <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>8</b></a>
@@ -767,7 +768,7 @@
         <section class="demo-topic" id="demo-topic-measure">
           <div class="demo-topic-head">
             <h3>측정과 모델링</h3>
-            <span class="demo-topic-count">13개</span>
+            <span class="demo-topic-count">14개</span>
           </div>
           <p class="demo-topic-desc">예측이 맞았는지, 광고가 정말 효과가 있었는지를 재는 자리입니다. 지표, 확률 보정, 어트리뷰션, 인과추론과 실험.</p>
 
@@ -846,6 +847,19 @@
                 <span class="demo-card-meta-item">확률, 로짓 기초</span>
               </div>
               <a href="demo-calibration.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>위치 1 추론과 LTR 카드 12장</h3>
+              <p>점수의 순서는 맞는데 크기가 틀리는 두 경우를 카드 한 장씩으로 봅니다. 모든 후보를 1위로 두고 낸 pCTR 이 2위에서 1.3배, 3위에서 2배 부푸는 모습과, 같은 검색 안의 쌍으로 배운 점수에 입찰가를 곱하면 1위가 뒤집히는 모습입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">Calibration 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-rank-score-cards.html" class="btn-try">체험하기</a>
             </div>
 
             <div class="demo-card">

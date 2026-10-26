@@ -8,6 +8,18 @@
 
 const posts = [
   {
+    id: 'position1-pairwise-ltr',
+    world: 'walled-garden',
+    worldNote: '서빙 때 위치를 모르는 문제와 쌍으로 학습한 점수의 크기 문제는 광고가 여러 개 줄을 서는 지면에서 커집니다. 검색과 피드에 광고를 여러 개 세우는 닫힌 생태계의 문제이고, 지면 하나에 광고 하나가 많은 열린 RTB 에서는 위치 문제가 덜한 대신 확률의 크기가 곧 입찰가입니다.',
+    worldPractical: '담장 안에서는 위치 로그가 정확하고 순서를 섞는 실험도 직접 할 수 있어서, 위치 효과를 재고 위치 1 점수를 되돌리는 일을 스스로 합니다. 예상 클릭, 예상 광고비, 매출 시뮬레이션을 내는 쪽도 같은 조직이라 크기가 틀린 점수가 어디로 번지는지 바로 보입니다.',
+    title: 'Position 1 추론과 Pairwise LTR: 순서는 맞는데 점수 크기가 틀리는 이유',
+    excerpt: '지훈 씨가 pCTR 점수로 센 예상 클릭이 실제보다 많은 것을 봅니다. 순서를 정하기 전에 불리는 pCTR 은 위치를 모르므로 모든 후보를 1위로 두고 추론하고, 그 점수는 1위 기준이라 아래 위치에서 부풉니다. 가상 데이터에서 2위 광고는 1.3배, 3위 광고는 2배 부풀고, 하루 1만 번 노출이면 2위 광고의 예상 광고비가 20만 원 대 15만 원으로 어긋납니다. 순서를 정할 때는 위치 1 점수를 그대로 쓰고, 돈을 셀 때는 정해진 위치의 효과를 곱합니다. Pairwise LTR 은 같은 검색 안의 순서만 배우고 점수 크기는 정하지 않아, 입찰가를 곱하면 클릭률 2% 광고가 3% 로 부풀어 1위가 뒤집힐 수 있습니다. 쌍 데이터가 기우는 세 자리와 PAL, skip-above 같은 처방까지 다룹니다.',
+    date: '2026-10-26',
+    categories: ['Measurement & Modeling'],
+    tags: ['pCTR', 'Calibration', 'Ad Ranking', 'eCPM'],
+    contentUrl: 'posts/position1-pairwise-ltr.md'
+  },
+  {
     id: 'model-api-from-training-script',
     world: 'both',
     worldNote: '학습 스크립트와 서버 코드의 차이, 요청 하나의 예산 배분, 사용자 수에서 서버 대수로 가는 셈은 두 무대가 같습니다. 다른 것은 셈의 첫 줄을 누가 주느냐입니다. 담장 안은 우리 로그의 요청량과 우리 게이트웨이의 예산으로 적고, 열린 RTB 는 거래소가 정한 예산과 튀는 트래픽으로 적습니다.',
@@ -1389,7 +1401,7 @@ const series = {
   'modeling-track': {
     title: '예측 모델링 트랙',
     desc: 'CTR 모델 진화 → 보정 → 멀티태스크 → 편향 보정',
-    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'din-architecture', 'dcn-vs-din-slot', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr'],
+    posts: ['deep-ctr-models', 'behavior-sequence-attention', 'din-architecture', 'dcn-vs-din-slot', 'calibration', 'multi-task-learning', 'negative-sampling-bias', 'position-bias-ultr', 'position1-pairwise-ltr'],
   },
   'ml-infra-track': {
     title: 'ML 인프라 트랙',

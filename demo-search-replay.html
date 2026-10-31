@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>질의 하나 따라가기 기록 — Ad Tech Blog</title>
+  <meta name="description" content="노트북 한 대에 Elasticsearch 노드 둘을 띄우고 기록한 응답을 다시 봅니다. 질의 하나가 BM25 100개와 kNN 100개를 거쳐 RRF 로 합쳐지는 길, 샤드 지도, 운영 인덱스에 바로 넣을 때와 새 인덱스로 바꿀 때의 p99.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .sr-hero { text-align: center; padding: 2rem 1rem 1rem; }
+    .sr-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .sr-hero p { color: var(--text-secondary); max-width: 800px; margin: 0 auto; font-size: 0.98rem; line-height: 1.7; }
+    .sr-page { max-width: 1240px; margin: 0 auto; padding: 0 1rem; }
+    .sr-sec { margin: 0 0 3rem; }
+    .sr-sec > h2 { font-size: 1.35rem; margin: 2.2rem 0 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .sr-sec > h2 .no { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; color: var(--text-muted); margin-right: 0.6rem; }
+    .sr-one { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.9rem; line-height: 1.6; }
+    .sr-cap { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin: 0.9rem 0 0; max-width: 92ch; }
+    .sr-cap b { color: var(--text-primary); }
+    .sr-host { max-width: 1240px; margin: 1rem auto 0; padding: 0 1rem; }
+    .sr-host:empty { display: none; }
+    html.is-embed .sr-sec { margin: 0 0 1rem; }
+    html.is-embed .sr-page { padding: 0 0.5rem; }
+
+    .sr-ctl { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin: 0 0 0.9rem; }
+    .sr-btn { font: inherit; font-size: 0.86rem; font-weight: 700; padding: 0.38rem 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); cursor: pointer; border-radius: 0; }
+    .sr-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .sr-btn[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: var(--paper); }
+    .sr-btn:focus-visible, .sr-range:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+    .sr-btn.go { border-color: var(--text-primary); }
+    .sr-sep { width: 1px; align-self: stretch; background: var(--border-color); margin: 0 0.2rem; }
+    .sr-clock { font-family: var(--font-mono); font-size: 0.92rem; font-weight: 700; margin-left: auto; color: var(--text-secondary); }
+    .sr-range { flex: 1 1 260px; accent-color: var(--navy); }
+    .sr-note { font-size: 0.82rem; color: var(--text-muted); }
+
+    .sr-stages { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--text-primary); margin: 0 0 0.3rem; }
+    .sr-stage { padding: 0.55rem 0.65rem 0.6rem; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--bg-primary); }
+    .sr-stage:last-child { border-right: none; }
+    .sr-stage .k { font-size: 0.76rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.03em; }
+    .sr-stage .t { font-weight: 750; color: var(--text-primary); margin: 0.1rem 0 0.2rem; font-size: 0.92rem; }
+    .sr-stage .v { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: var(--text-muted); }
+    .sr-stage .n { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem; }
+    .sr-stage.done .v { color: var(--navy); }
+    .sr-stage.run { background: var(--plate); }
+    .sr-stage.run .v { color: var(--oxide); }
+    .sr-time { position: relative; height: 14px; display: flex; border: 1px solid var(--rule); margin: 0.4rem 0 0.2rem; }
+    .sr-time span { display: block; height: 100%; border-right: 1px solid var(--paper); }
+    .sr-time span.es { background: color-mix(in srgb, var(--navy) 38%, transparent); }
+    .sr-time span.cpu { background: var(--navy); }
+    .sr-time span.knn { background: color-mix(in srgb, var(--oxide) 45%, transparent); }
+    .sr-time i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text-primary); left: 0; }
+    .sr-flow { font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.7; margin: 0.6rem 0 0.8rem; color: var(--text-primary); }
+    .sr-lists { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+    .sr-list { border: 1px solid var(--border-color); background: var(--bg-primary); min-width: 0; }
+    .sr-list h3 { margin: 0; padding: 0.5rem 0.7rem; font-size: 0.92rem; border-bottom: 1px solid var(--rule); background: var(--plate); display: flex; gap: 0.5rem; align-items: baseline; }
+    .sr-list h3 .s { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 600; color: var(--text-muted); margin-left: auto; }
+    .sr-list.b h3 { border-top: 3px solid var(--navy); }
+    .sr-list.k h3 { border-top: 3px solid var(--oxide); }
+    .sr-list.f h3 { border-top: 3px solid var(--text-primary); }
+    .sr-list ol { list-style: none; margin: 0; padding: 0.2rem 0; }
+    .sr-list li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 0.4rem; align-items: baseline; padding: 0.28rem 0.7rem; border-bottom: 1px solid var(--rule2); font-size: 0.84rem; }
+    .sr-list li:last-child { border-bottom: none; }
+    .sr-list li .r { font-family: var(--font-mono); color: var(--text-muted); font-weight: 700; }
+    .sr-list li .tt { color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sr-list li .sc { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); white-space: nowrap; }
+    .sr-list li .tags { grid-column: 2 / -1; display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .sr-tag { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; padding: 0 0.35rem; border: 1px solid var(--border-color); color: var(--text-muted); }
+    .sr-tag.b { border-color: var(--navy); color: var(--navy); }
+    .sr-tag.k { border-color: var(--oxide); color: var(--oxide); }
+    .sr-tag.off { border-style: dashed; }
+    .sr-list .empty { padding: 0.8rem 0.7rem; color: var(--text-muted); font-size: 0.85rem; margin: 0; }
+    .sr-drop { margin: 0.7rem 0 0; font-size: 0.85rem; color: var(--text-secondary); }
+    .sr-drop .sr-tag { margin-right: 0.3rem; }
+
+    .sr-nodes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .sr-node { border: 1px solid var(--text-primary); background: var(--bg-primary); }
+    .sr-node h3 { margin: 0; padding: 0.55rem 0.8rem; font-size: 0.95rem; border-bottom: 1px solid var(--rule); background: var(--plate); font-family: var(--font-mono); }
+    .sr-shards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; padding: 0.8rem; }
+    .sr-shard { border: 2px solid var(--navy); padding: 0.55rem 0.65rem; }
+    .sr-shard.r { border: 2px dashed var(--grey); }
+    .sr-shard .h { font-weight: 800; color: var(--text-primary); font-size: 0.9rem; }
+    .sr-shard .m { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem; }
+    .sr-shard .p { font-size: 0.76rem; font-weight: 800; letter-spacing: 0.03em; color: var(--navy); }
+    .sr-shard.r .p { color: var(--grey); }
+    .sr-facts { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin: 0.7rem 0 0; font-size: 0.86rem; color: var(--text-secondary); }
+    .sr-facts b { font-family: var(--font-mono); color: var(--text-primary); }
+
+    .sr-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--text-primary); margin: 0 0 1rem; }
+    .sr-stat { padding: 0.5rem 0.65rem; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); min-width: 0; }
+    .sr-stat:last-child { border-right: none; }
+    .sr-stat .k { font-size: 0.76rem; color: var(--text-muted); font-weight: 700; }
+    .sr-stat .v { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--text-primary); overflow-wrap: anywhere; }
+    .sr-stat .v.sm { font-size: 0.92rem; padding-top: 0.3rem; }
+    .sr-stat .v.bad { color: var(--oxide); }
+    .sr-chart { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 0.5rem 0.4rem 0.2rem; overflow-x: auto; }
+    .sr-chart svg { display: block; width: 100%; min-width: 600px; height: auto; }
+    .sr-chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--text-muted); }
+    .sr-chart text.lab { fill: var(--text-secondary); font-weight: 700; }
+    .sr-chart .ax { stroke: var(--rule); stroke-width: 1; }
+    .sr-chart .grid { stroke: var(--rule2); stroke-width: 1; }
+    .sr-chart .p99 { fill: none; stroke: var(--oxide); stroke-width: 2; }
+    .sr-chart .p50 { fill: none; stroke: var(--navy); stroke-width: 2; }
+    .sr-chart .mk { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+    .sr-chart .cur { stroke: var(--text-primary); stroke-width: 1.5; }
+    .sr-chart .za { fill: color-mix(in srgb, var(--oxide) 10%, transparent); }
+    .sr-chart .zb { fill: color-mix(in srgb, var(--navy) 10%, transparent); }
+    .sr-leg { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.82rem; color: var(--text-secondary); margin: 0.4rem 0 0; }
+    .sr-leg i { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: 0.35rem; }
+    .sr-leg i.a { background: var(--navy); }
+    .sr-leg i.b { background: var(--oxide); }
+    .sr-leg i.za { height: 12px; background: color-mix(in srgb, var(--oxide) 22%, transparent); }
+    .sr-leg i.zb { height: 12px; background: color-mix(in srgb, var(--navy) 22%, transparent); }
+    .sr-tw { overflow-x: auto; margin-top: 1rem; }
+    .sr-tbl { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+    .sr-tbl th, .sr-tbl td { text-align: left; padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+    .sr-tbl th { border-bottom: 2px solid var(--text-primary); font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+    .sr-tbl td.num { font-family: var(--font-mono); white-space: nowrap; }
+    .sr-tbl tr.a td:first-child { border-left: 3px solid var(--oxide); }
+    .sr-tbl tr.b td:first-child { border-left: 3px solid var(--navy); }
+    .sr-tbl tr.on td { background: var(--plate); }
+
+    .sr-real { max-width: 1240px; margin: 0 auto 3rem; padding: 0 1rem; }
+    .sr-real h2 { font-size: 1.35rem; margin: 2.2rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--text-primary); }
+    .sr-real ul { padding-left: 1.1rem; margin: 0.5rem 0 1rem; }
+    .sr-real li { margin: 0.35rem 0; line-height: 1.7; font-size: 0.93rem; }
+
+    @media (max-width: 900px) {
+      .sr-lists { grid-template-columns: minmax(0, 1fr); }
+      .sr-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sr-stage:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 640px) {
+      .sr-nodes, .sr-shards { grid-template-columns: minmax(0, 1fr); }
+      .sr-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sr-clock { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sr-hero">
+      <h1>질의 하나 따라가기 기록</h1>
+      <p>노트북 한 대에 Elasticsearch 노드 둘과 검색 API 를 띄우고, 광고 상품 3만 건을 색인해 질의를 보냈습니다. 상품 이름은 브랜드, 속성, 품목을 이어 만든 가짜입니다. 이 페이지는 그때 받은 응답을 다시 그립니다. 숫자는 지어낸 값이 아니라 그때 받은 값이고, 노트북에서 잰 값이므로 ms 의 크기보다 어느 자리가 큰지를 봅니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = BM25, 글자로 찾은 목록</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = kNN, 뜻으로 찾은 목록</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 두 목록을 RRF 로 합친 목록</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 거른 것, 레플리카</span>
+      </div>
+    </section>
+
+    <div class="sr-host"></div>
+
+    <div class="sr-page">
+      <section class="sr-sec" data-fig="1">
+        <h2><span class="no">1</span>질의 하나가 BM25 100개와 kNN 100개를 거쳐 후보가 되는 길</h2>
+        <p class="sr-one">질의 셋을 보냈습니다. 글자가 같은 「캠핑 의자」, 상품 이름에 없는 말 「헤드셋」, 동의어 사전이 운동화로 이어 주는 「스니커즈」입니다. 질의마다 BM25 와 kNN 으로 100개씩 찾고, RRF 로 합친 뒤 꺼진 상품을 뺐습니다.</p>
+        <div class="sr-ctl">
+          <span id="sr-tabs" class="sr-ctl" style="margin:0" role="group" aria-label="질의"></span>
+          <span class="sr-sep" aria-hidden="true"></span>
+          <button type="button" class="sr-btn go" id="sr-go">따라가기</button>
+          <span class="sr-note">100배 느리게 그립니다</span>
+          <span class="sr-clock" id="sr-clock">+0.0ms</span>
+        </div>
+        <div class="sr-stages" id="sr-stages"></div>
+        <div class="sr-time" id="sr-time" aria-hidden="true"></div>
+        <div class="sr-leg"><span><i class="za" style="background:var(--navy)"></i>API 안의 CPU 일 (질의 벡터, RRF, 거르기)</span><span><i class="zb"></i>BM25 질의 왕복</span><span><i class="za"></i>kNN 질의 왕복</span></div>
+        <p class="sr-flow" id="sr-flow"></p>
+        <div class="sr-lists">
+          <div class="sr-list b"><h3>BM25 위 10개<span class="s">점수 = BM25</span></h3><ol id="sr-l-b"></ol></div>
+          <div class="sr-list k"><h3>kNN 위 10개<span class="s">점수 = (1 + 코사인) ÷ 2</span></h3><ol id="sr-l-k"></ol></div>
+          <div class="sr-list f"><h3>RRF 로 합친 위 10개<span class="s">점수 = Σ 1 ÷ (60 + 순위)</span></h3><ol id="sr-l-f"></ol></div>
+        </div>
+        <p class="sr-drop" id="sr-drop"></p>
+        <p class="sr-cap">위 칸 다섯이 차례로 찹니다. BM25 와 kNN 은 각각 Elasticsearch 에 한 번씩 묻는 왕복이고, 질의 벡터와 RRF 와 거르기는 API 안의 계산입니다. 이 실습 환경은 둘을 차례로 불러 두 왕복이 더해집니다. 셋째 목록의 <b>B</b> 와 <b>K</b> 는 그 상품이 BM25 와 kNN 목록에서 몇 위였나입니다. 한쪽에만 있는 상품은 다른 쪽 표시가 없습니다.</p>
+      </section>
+
+      <section class="sr-sec" data-fig="2">
+        <h2><span class="no">2</span>인덱스 하나는 샤드 둘이고, 샤드마다 복사본이 두 노드에 하나씩 있습니다</h2>
+        <p class="sr-one">읽기 별칭이 가리키는 인덱스의 샤드 지도입니다. 질의 하나는 샤드 0 과 샤드 1 에 한 번씩 가고, 두 샤드의 답을 합쳐 위 10개를 고릅니다.</p>
+        <div class="sr-nodes" id="sr-nodes"></div>
+        <div class="sr-facts" id="sr-facts"></div>
+        <p class="sr-cap">실선이 primary, 점선이 replica 입니다. 둘은 같은 문서를 갖고, 읽기는 어느 쪽이 받아도 됩니다. 노드 하나가 꺼져도 남은 노드에 샤드 0 과 1 이 다 있어 검색이 계속됩니다. 쓰기는 primary 가 먼저 받고 replica 로 복사합니다.</p>
+      </section>
+
+      <section class="sr-sec" data-fig="3">
+        <h2><span class="no">3</span>운영 인덱스에 바로 넣을 때와 새 인덱스로 바꿀 때의 p99</h2>
+        <p class="sr-one">초당 50건의 검색을 보내는 채로 상품 피처를 두 방법으로 바꿨습니다. (가)는 지금 읽는 인덱스에 1만 5천 건을 바로 bulk 했고, (나)는 3만 건 전부로 새 인덱스를 만들어 별칭을 옮겼습니다.</p>
+        <div class="sr-ctl">
+          <button type="button" class="sr-btn go" id="sr-swap-play">재생</button>
+          <button type="button" class="sr-btn" id="sr-swap-fast" aria-pressed="true">4배 빠르게</button>
+          <input type="range" class="sr-range" id="sr-swap-range" min="0" max="0" value="0" step="1" aria-label="기록 시각">
+          <span class="sr-clock" id="sr-swap-clock">0초 / 82초</span>
+        </div>
+        <div class="sr-stats" id="sr-swap-stats"></div>
+        <div class="sr-chart" id="sr-swap-chart"></div>
+        <div class="sr-leg"><span><i class="b"></i>p99, 1초 동안 가장 느린 1% 의 경계</span><span><i class="a"></i>p50, 가운데 값</span><span><i class="za"></i>(가) 바로 bulk</span><span><i class="zb"></i>(나) 새 인덱스 만들기와 교체</span></div>
+        <div class="sr-tw"><table class="sr-tbl" id="sr-swap-tbl"></table></div>
+        <p class="sr-cap">(가)는 읽고 있는 인덱스의 문서 절반을 지우고 다시 넣는 일입니다. 그 8.8초 동안 색인 일과 검색이 같은 노드의 CPU 와 디스크를 나눠 썼습니다. (나)도 p99 가 올랐습니다. 이 실습 환경은 노드 둘이 새 인덱스 만들기와 검색을 같이 하기 때문입니다. 그래도 평균은 절반쯤이었고 교체 자체는 <b>22ms</b> 에 끝났습니다. 그래프의 표시선은 1초마다 색인기 상태를 읽어 찍어서 단계 경계가 1초쯤 어긋날 수 있습니다. 걸린 시간 칸은 색인기가 직접 잰 값입니다.</p>
+      </section>
+    </div>
+
+    <section class="sr-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>검색 결과가 비었다는 문의는 분석기부터 봅니다.</b> 질의가 어떤 토큰으로 쪼개졌고, 색인된 상품 이름은 어떤 토큰인지 _analyze 로 나란히 놓습니다. 「헤드셋」처럼 사전에 없는 말은 BM25 가 0건입니다.</li>
+        <li><b>kNN 은 꺼지지 않는 대신 틀릴 수 있습니다.</b> 늘 100개를 돌려주므로 0건은 없지만, 작은 임베딩 모델은 「스니커즈」에 선글라스를 1위로 줬습니다. 그래서 BM25 와 같이 씁니다.</li>
+        <li><b>RRF 는 점수가 아니라 순위만 봅니다.</b> BM25 점수와 코사인 점수는 단위가 달라 바로 더할 수 없습니다. 순위로 바꾸면 더할 수 있습니다.</li>
+        <li><b>날마다 바뀌는 피처는 새 인덱스로 만들어 별칭을 옮깁니다.</b> 옛 인덱스를 지우지 않고 두면 별칭만 되돌려 롤백합니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=elasticsearch-hybrid-retrieval">Elasticsearch 하이브리드 검색</a>에 이 그림 셋이 절마다 들어 있습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/search-replay-data.js"></script>
+  <script src="js/search-replay-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

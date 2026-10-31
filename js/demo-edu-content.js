@@ -3469,5 +3469,118 @@ window.DEMO_EDU = {
             { el: '[data-card="batching"]', title: '켜기 전에 볼 것', body: '요청 하나의 크기를 먼저 봅니다. 이미 크면 배치로 묶어도 얻는 것이 거의 없습니다.' },
             { el: '[data-card="workers"]', title: '워커 수와 한 건의 지연은 다릅니다', body: '워커를 늘리면 처리량이 늘어납니다. 요청 한 건의 지연은 줄지 않습니다.' }
         ]
+    },
+    // ==========================================
+    // 이벤트 한 건 따라가기 기록 (중급) — 실습 환경에서 기록한 응답을 다시 그린다
+    // ==========================================
+    'pipeline-replay': {
+        analogy: '쓰는 길은 초 단위다. 이벤트 한 건은 2초 hold 를 지나 Redis 에 적히고, 처리기가 멈추면 Kafka 에 쌓였다가 늦게 적용될 뿐 사라지지 않는다. 읽는 길은 ms 단위이고 모델 서버 한 번이 거의 다다',
+        anchor: '.pr-host',
+        embedKeep: ['.pr-page'],
+        embedHide: ['.pr-hero', '.pr-sec > h2', '.pr-one', '.pr-real'],
+        explain: {
+            '#pr-tabs [data-ev]': ({ el }) => {
+                switch (el.dataset.action) {
+                    case 'START': return 'START 는 <strong>초를 더하지 않습니다</strong>. 세션을 열 뿐입니다. 그래도 Hash 가 처음 생기고 events 가 1 이 됩니다. 보내기 전 값이 전부 (없음) 인 것이 그 때문입니다.';
+                    case 'PLAY': return 'PLAY 도 <strong>초를 더하지 않습니다</strong>. 재생 구간을 열고 그 시각을 open_play_ts 에 적어 둡니다. 초는 다음 PAUSE 나 END 가 올 때 시각의 차이만큼 더합니다.';
+                    case 'PAUSE': return '<strong>여기서 처음 초가 더해집니다.</strong> PAUSE 의 시각에서 열린 PLAY 의 시각을 빼 12초를 더하고 open_play_ts 를 비웁니다. 이 뺄셈 때문에 PLAY 와 PAUSE 의 순서가 중요합니다.';
+                    case 'END': return 'END 는 구간을 닫아 18초를 더하고 completed 를 1 로 둡니다. 누적은 12초와 18초를 더한 <strong>30초</strong>입니다. 이 사용자의 추천 캐시도 이때 지웁니다.';
+                    default: return '';
+                }
+            },
+            '#pr-replay': () => '같은 기록을 처음부터 다시 그립니다. 1번과 2번 자리는 바로 차고, 3번 자리에서 <strong>2초</strong>를 기다립니다.',
+            '#pr-slow': ({ el }) => el.getAttribute('aria-pressed') === 'true'
+                ? '4배 느리게 그립니다. 2초 hold 가 8초로 늘어 3번 자리의 막대가 차는 것이 보입니다. <strong>숫자는 그대로</strong>입니다.'
+                : '실제 속도로 돌아왔습니다. 기록한 그대로의 시간입니다.',
+            '#pr-lag-range': ({ value }) => {
+                const L = window.PIPELINE_REPLAY && window.PIPELINE_REPLAY.lag;
+                const f = L && L.frames[Number(value)];
+                if (!f) return '';
+                if (!f.paused && f.t < L.pause_at) return `${f.t.toFixed(1)}초. 처리기가 도는 중입니다. lag 이 0 이 아니라 80 인 것은 <strong>초당 40건 × hold 2초</strong>만큼 늘 들고 있어서입니다.`;
+                if (f.paused && f.t < L.pause_at + 2.5) return `${f.t.toFixed(1)}초. 막 멈췄습니다. 처리기가 <strong>이미 읽어 둔 80건</strong>을 마저 적용해서 lag 이 아직 그대로입니다.`;
+                if (f.paused) return `${f.t.toFixed(1)}초. 멈춘 지 ${(f.t - L.pause_at).toFixed(1)}초입니다. 보낸 것은 Kafka 에 쌓이고 lag 이 1초에 40씩 늘어납니다. v11 의 누적 재생 초는 <strong>${f.watch_total}</strong> 에서 멈춰 있습니다.`;
+                if (f.lag > 100) return `${f.t.toFixed(1)}초. 다시 켰습니다. 처리기가 쌓인 ${f.buffered}건을 한꺼번에 읽어 들고 있습니다. <strong>hold 2초</strong>가 지나면 적용합니다.`;
+                return `${f.t.toFixed(1)}초. 따라잡았습니다. lag 이 평소 값으로 돌아왔고 누적 재생 초가 <strong>${f.watch_total}</strong> 까지 한꺼번에 올랐습니다. 사라진 이벤트는 없습니다.`;
+            },
+            '#pr-lag-fast': ({ el }) => el.getAttribute('aria-pressed') === 'true'
+                ? '2배 빠르게 넘깁니다. 기록은 0.5초마다 하나라 장면 사이의 값은 없습니다.'
+                : '기록한 속도로 넘깁니다. 0.5초마다 장면 하나입니다.',
+            '.pr-stack button[data-key], .pr-tbl tr[data-key]': ({ el }) => {
+                switch (el.dataset.key) {
+                    case 'cache_get': return '추천 결과를 캐시해 둔 Redis 를 먼저 봅니다. 결과가 있으면 여기서 답하고 끝납니다. 이 기록은 <strong>캐시에 없을 때</strong> 끝까지 가는 길입니다.';
+                    case 'rank': return '후보 영상을 누적 재생 초 순위(ZSet)에서 꺼냅니다. 그림 1의 처리기가 더한 초가 <strong>이 순위</strong>를 만듭니다.';
+                    case 'features': return '후보마다 이 사용자의 피처 Hash 를 읽습니다. 명령을 묶어 한 번에 보내서(파이프라인) <strong>왕복이 한 번</strong>입니다. 후보 수만큼 따로 물으면 왕복이 그만큼 늘어납니다.';
+                    case 'user_stats': return '이 사용자가 본 영상 목록(Set)과 그 통계를 읽습니다. 왕복은 두 번입니다. 같은 컴퓨터 안이라 기다림보다 <strong>파이썬 쪽 CPU</strong>가 더 깁니다.';
+                    case 'video_stats': return '후보 영상들의 누적값을 묶어 읽습니다. 노트북 안의 Redis 왕복은 기다림이 0.1ms 아래입니다. 서버가 다른 기계에 있으면 이 칸이 <strong>네트워크 왕복만큼</strong> 커집니다.';
+                    case 'featurize': return '읽은 값을 모델 입력 행렬로 바꿉니다. numpy 라 <strong>0.04ms</strong>입니다.';
+                    case 'encode': return '모델 서버에 보낼 JSON 을 만듭니다. CPU 일이고 후보가 늘면 <strong>같이 늘어납니다</strong>.';
+                    case 'model_http': return '전체의 <strong>4분의 3</strong>입니다. 네트워크 왕복, 모델 서버가 요청을 모으려고 기다리는 시간, 그쪽 계산이 다 들어 있습니다. 기다리는 시간은 그때그때 달라서, 같은 환경에서 이 구간이 2ms 아래로 내려가기도 하고 9ms 를 넘기도 했습니다.';
+                    case 'decode': return '모델 서버의 답 JSON 을 풉니다. 0.02ms 라 거의 보이지 않습니다.';
+                    case 'respond': return '점수로 정렬하고 응답 JSON 을 만듭니다. 이 요청에서 <strong>마지막 CPU 일</strong>입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '#pr-tabs', title: '따라갈 이벤트 고르기', body: '다섯 건 가운데 하나를 누르면 그 한 건의 기록이 처음부터 다시 그려집니다. <strong>PAUSE</strong> 에서 처음 초가 더해집니다.', waitFor: 'click' },
+            { el: '#pr-trail [data-stop="3"]', title: '시간의 거의 전부', body: '처리기가 2초 들고 있는 자리입니다. 1번과 2번은 몇 ms 안에, 4번과 5번은 그 뒤 0.2초 안에 찹니다.' },
+            { el: '#pr-lag-chart', title: '멈춘 12초', body: '회색 띠가 처리기를 멈춘 동안입니다. 위 선(lag)이 자라고 아래 선(누적 재생 초)이 멈췄다가, 다시 켜고 2초 뒤 둘 다 제자리로 돌아옵니다.' },
+            { el: '#pr-stack', title: '읽는 길의 5.2ms', body: '옅은 칸이 다른 서버를 기다린 시간입니다. 모델 서버 한 번이 거의 다입니다.' }
+        ]
+    },
+    // ==========================================
+    // 질의 하나 따라가기 기록 (중급) — 실습 환경에서 기록한 응답을 다시 그린다
+    // ==========================================
+    'search-replay': {
+        analogy: 'BM25 는 글자가 같은 상품을, kNN 은 뜻이 가까운 상품을 100개씩 찾고 RRF 가 순위만 보고 합친다. 날마다 바뀌는 피처는 새 인덱스를 만들어 별칭을 옮기고, 교체 자체는 22ms 다',
+        anchor: '.sr-host',
+        embedKeep: ['.sr-page'],
+        embedHide: ['.sr-hero', '.sr-sec > h2', '.sr-one', '.sr-real'],
+        explain: {
+            '#sr-tabs [data-q]': ({ el }) => {
+                const q = window.SEARCH_REPLAY && window.SEARCH_REPLAY.queries[Number(el.dataset.q)];
+                if (!q) return '';
+                const st = q.stages, both = q.hybrid.hits.filter((h) => h.rank_bm25 && h.rank_knn).length;
+                if (st.bm25.in === 0) return `「${q.q}」은 BM25 가 <strong>0건</strong>입니다. 상품 이름에는 헤드폰만 있고 이 말은 동의어 사전에도 없습니다. kNN 은 뜻이 가까운 헤드폰을 찾아 100개를 다 채웁니다.`;
+                if (st.rrf.in === st.rrf.out) return `「${q.q}」은 BM25 가 사전으로 운동화를 찾아 ${st.bm25.in}건입니다. kNN 은 운동화를 하나도 못 찾았고 1위가 선글라스입니다. 두 목록이 <strong>하나도 안 겹쳐</strong> RRF 1위 자리를 kNN 1위와 BM25 1위가 같은 점수로 나눕니다.`;
+                return `「${q.q}」은 BM25 가 ${fmtN(st.bm25.in)}건을 맞췄고, 합친 위 10개 가운데 <strong>${both}개</strong>가 두 목록에 다 있습니다. 글자가 맞는 질의에서는 두 목록이 거의 같아 RRF 가 할 일이 적습니다.`;
+                function fmtN(n) { return Number(n).toLocaleString('ko-KR'); }
+            },
+            '#sr-go': () => '100배 느리게 다시 그립니다. 다섯 칸의 걸린 시간을 더하면 API 안에서 쓴 시간이고, 가장 긴 칸은 <strong>kNN 질의 왕복</strong>입니다.',
+            '.sr-shard': ({ el }) => el.dataset.prirep === 'p'
+                ? `샤드 ${el.dataset.shard} 의 <strong>primary</strong> 입니다. 쓰기는 여기가 먼저 받고 replica 로 복사합니다. 읽기는 primary 와 replica 가운데 아무 쪽이나 받습니다.`
+                : `샤드 ${el.dataset.shard} 의 <strong>replica</strong> 입니다. primary 와 같은 문서를 다른 노드에 둡니다. 그 노드가 꺼져도 검색이 계속되고, 읽기를 나눠 받아 처리량이 늡니다.`,
+            '#sr-swap-range': ({ value }) => {
+                const W = window.SEARCH_REPLAY && window.SEARCH_REPLAY.swap;
+                const p = W && W.series[Number(value)];
+                if (!p) return '';
+                const t = Math.round(p.t);
+                if (p.t >= W.a_window[0] && p.t <= W.a_window[1]) return `${t}초. (가) 지금 읽는 인덱스에 바로 bulk 하는 중입니다. 같은 id 로 다시 넣는 것은 지우고 새로 넣는 일이라 검색과 같은 세그먼트에서 다툽니다. p99 <strong>${p.p99.toFixed(1)}ms</strong>.`;
+                if (p.t >= W.b_window[0] && p.t <= W.b_window[1]) return `${t}초. (나) 새 인덱스를 만드는 중입니다. 검색은 아직 옛 인덱스를 읽습니다. 이 실습 환경은 같은 노드 둘이 만들기도 해서 p99 가 <strong>${p.p99.toFixed(1)}ms</strong> 입니다.`;
+                if (p.t > W.b_window[1]) return `${t}초. 별칭이 새 인덱스로 옮겨졌습니다. p99 가 평소 값으로 돌아와 <strong>${p.p99.toFixed(1)}ms</strong> 입니다. 옛 인덱스는 남아 있어 별칭만 되돌리면 롤백입니다.`;
+                return `${t}초. 아무것도 바꾸지 않는 평소입니다. p99 <strong>${p.p99.toFixed(1)}ms</strong>. 부하를 막 켠 첫 몇 초는 연결을 맺느라 높습니다.`;
+            },
+            '#sr-swap-fast': ({ el }) => el.getAttribute('aria-pressed') === 'true'
+                ? '4배 빠르게 넘깁니다. 기록은 1초마다 하나입니다.'
+                : '기록한 속도로 넘깁니다. 82초가 걸립니다.',
+            '.sr-tbl tr[data-ph]': ({ el }) => {
+                switch (el.dataset.ph) {
+                    case 'a': return '(가)는 문서를 바꾸는 동안 검색이 같은 인덱스를 읽습니다. 바꾼 문서를 1초마다 refresh 해 새 세그먼트를 만들고, 그 색인 일이 검색과 같은 노드의 CPU 와 디스크를 나눠 씁니다. 그래서 <strong>p99 가 가장 높습니다</strong>.';
+                    case 'create': return '새 인덱스를 replica 0, refresh 끔으로 만듭니다. 만드는 것은 0.2초인데, 그래프의 표시선은 1초마다 찍어서 이 줄의 p99 에는 bulk 의 첫 1초가 섞여 있습니다.';
+                    case 'bulk': return 'refresh 를 끄고 replica 없이 넣어서 <strong>3만 건을 4.2초</strong>에 넣었습니다. (가)가 1만 5천 건에 8.8초 걸린 것과 비교합니다. 이 동안 검색은 옛 인덱스를 읽습니다.';
+                    case 'refresh': return 'replica 를 켜면 다른 노드로 샤드를 복사하고, refresh 로 넣어 둔 문서를 검색할 수 있게 만듭니다. 복사가 끝나 green 이 될 때까지 기다려 <strong>6.4초</strong>입니다.';
+                    case 'forcemerge': return '세그먼트를 하나로 합칩니다. 질의가 볼 세그먼트가 줄고, 지운 표시가 붙은 문서도 이때 정리됩니다. 쓰기가 계속되는 운영 인덱스에는 하지 않고, 쓰기가 끝난 새 인덱스에만 합니다.';
+                    case 'swap': return '읽기 별칭을 옛 인덱스에서 새 인덱스로 옮기는 요청 하나입니다. 빼기와 더하기가 한 요청 안에서 같이 일어나 <strong>22ms</strong> 에 끝나고, 그 사이 검색이 비는 순간이 없습니다.';
+                    case 'after': return '교체 뒤 30초의 p99 평균입니다. 세그먼트가 하나인 새 인덱스를 읽습니다. 이 값이 <strong>평소 p99</strong> 입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '#sr-tabs', title: '질의 고르기', body: '셋을 차례로 눌러 봅니다. 「헤드셋」은 BM25 가 0건, 「스니커즈」는 두 목록이 하나도 안 겹칩니다.', waitFor: 'click' },
+            { el: '#sr-stages', title: '시간이 어디서 드나', body: '다섯 칸이 차례로 찹니다. 가장 긴 칸은 kNN 질의 왕복이고, RRF 와 거르기는 1ms 도 안 됩니다.' },
+            { el: '#sr-nodes', title: '샤드 지도', body: '샤드 둘이 노드 둘에 primary 와 replica 로 나뉘어 있습니다. 노드 하나가 꺼져도 샤드 0 과 1 이 다 남습니다.' },
+            { el: '#sr-swap-chart', title: '두 방법의 p99', body: '붉은 띠가 바로 bulk, 파란 띠가 새 인덱스 만들기와 교체입니다. 교체가 끝나면 p99 가 바로 평소 값으로 돌아옵니다.' }
+        ]
     }
 };

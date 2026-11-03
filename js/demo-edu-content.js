@@ -3608,5 +3608,31 @@ window.DEMO_EDU = {
             { el: '[data-card="logs"]', title: '가장 먼저 볼 것', body: '칸 하나가 하루이고 네모 하나가 사건 하나입니다. 줄마다 더하면 30일 합계입니다.', waitFor: 'click' },
             { el: '[data-card="agg"]', title: '날짜가 값을 바꿉니다', body: '같은 9편이라도 이번 주면 7.21, 모두 2주 전이면 1.80 입니다. 7일마다 절반입니다.' }
         ]
+    },
+
+    // ==========================================
+    // 관심사 분류 카드 네 장 (입문)
+    // ==========================================
+    'interest-cards': {
+        analogy: '같은 글 200건에 키워드 규칙, 단어 가방 분류 모델, LLM 이 라벨을 붙인다. 규칙은 사전의 낱말만 잡고, 모델은 학습 160건에 나온 낱말만 알고, LLM 은 글마다 토큰 값과 시간이 든다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'rule': return '헷갈리는 것은 <strong>키워드가 낱말 안에 들어 있을 때</strong>입니다. 「키즈카페」에는 「카페」가 들어 있어서, 육아 글이 사전에서 더 위에 있는 cafe 에 먼저 걸립니다.';
+                    case 'model': return '헷갈리는 것은 <strong>점수 8개를 더하면 1 인가</strong>입니다. 관심사마다 모델을 따로 배워서 합이 1 이 아니고, 처음 보는 낱말로 쓴 글은 8개가 모두 낮게 나옵니다.';
+                    case 'llm': return '헷갈리는 것은 <strong>같은 답이 나오면 맞는 답인가</strong>입니다. 종아리 마사지 글은 네 번 물어 네 번 모두 beauty 였고, 제목을 따른 사람 라벨은 running 입니다.';
+                    case 'compare': return '헷갈리는 것은 <strong>맞힌 수가 같으면 같은 방법인가</strong>입니다. 모델은 처음 보는 낱말의 글에서, LLM 은 헷갈리는 글에서 틀려서 틀린 글이 서로 다릅니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 셋과 점선', body: '회색은 규칙, 파랑은 분류 모델, 벽돌색은 LLM 입니다. 점선 상자는 사람이 미리 적어 둔 키워드 사전과 시스템 메시지입니다.' },
+            { el: '[data-card="rule"]', title: '가장 먼저 볼 것', body: '사전을 위에서부터 훑어 처음 맞는 관심사를 붙입니다. 맞는 낱말이 없으면 라벨이 비어 있습니다.', waitFor: 'click' },
+            { el: '[data-card="compare"]', title: '같은 40건에 셋', body: '모델과 LLM 은 둘 다 38건을 맞힙니다. 비용이 드는 쪽은 LLM 하나입니다.' }
+        ]
     }
 };

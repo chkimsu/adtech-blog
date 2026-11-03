@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관심사 분류 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="같은 글 200건에 관심사 라벨을 붙이는 세 방법을 카드 한 장씩으로. 키워드 사전에서 처음 맞는 관심사를 고르는 규칙, 단어 가방이 가중치를 지나 점수 8개가 되는 분류 모델, 프롬프트 한 장에 JSON 한 줄로 답하는 LLM, 평가 40건의 precision, recall, 건당 비용. 글과 비용은 설명용 가상 값이고 LLM 의 답은 기록한 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>관심사 분류 카드 네 장</h1>
+      <p>글 한 편에 관심사 하나를 붙이는 방법 하나가 카드 한 장입니다. 사람이 적어 둔 키워드로 붙이고, 라벨이 붙은 글로 배운 모델로 붙이고, LLM 에 물어 붙인 뒤, 같은 평가용 40건에서 셋을 나란히 놓습니다. 글과 단가는 설명용 가상 값이고 LLM 의 답은 한 번 기록한 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="c"></i>회색 = 규칙</span>
+        <span class="tg-chip"><i class="a"></i>파랑 = 분류 모델</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = LLM</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 사람이 미리 적어 둔 글 (키워드 사전, 시스템 메시지)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="rule"><h2>KEYWORD RULE</h2><p class="tg-k">사전의 낱말이 보이면 붙이고, 처음 맞는 관심사에서 멈춘다</p><p class="tg-easy"><b>쉽게 말하면</b> 관심사마다 사람이 낱말 3~4개를 적어 둡니다. 글에 그 낱말이 보이면 그 관심사이고, 둘 이상이 맞으면 사전의 위쪽이 이깁니다. 사전에 없는 낱말로만 쓴 글은 라벨 없이 남습니다.</p><div class="tg-fig" id="ic-rule"></div>
+        <p class="tg-cap">라벨을 붙인 <b>121건</b> 가운데 <b>114건</b>이 맞습니다. 사전의 낱말이 하나도 없는 <b>79건</b>은 라벨이 비어 있습니다.</p></section>
+      <section class="tg-card" data-card="model"><h2>BAG OF WORDS</h2><p class="tg-k">낱말 11개의 가중치를 더해 관심사마다 점수 하나</p><p class="tg-easy"><b>쉽게 말하면</b> 글을 낱말로 잘라 어떤 낱말이 들어 있는지만 남깁니다. 낱말마다 가중치를 학습 160건에서 관심사별로 배워 두고, 글에 든 낱말의 가중치를 더해 0~1 점수로 바꿉니다. 점수가 가장 높은 관심사를 고릅니다.</p><div class="tg-fig" id="ic-model"></div>
+        <p class="tg-cap">규칙이 비워 둔 심박수 구간 글에 모델은 running <b>0.60</b> 을 줍니다. 평가 40건 중 <b>38건</b>을 맞히고, 틀린 2건은 학습 160건에 없던 낱말이 든 글입니다.</p></section>
+      <section class="tg-card" data-card="llm"><h2>LLM LABEL</h2><p class="tg-k">시스템 메시지 한 장과 글 한 건, 돌아오는 JSON 한 줄</p><p class="tg-easy"><b>쉽게 말하면</b> 할 일을 적은 시스템 메시지와 글의 제목과 첫 문장을 같이 보내고, 라벨 하나만 JSON 으로 받습니다. 배울 라벨이 없어도 되는 대신 글마다 토큰 값과 시간이 듭니다.</p><div class="tg-fig" id="ic-llm"></div>
+        <p class="tg-cap">모델이 cafe 로 틀린 그림책 글을 LLM 은 <b>parenting</b> 으로 맞힙니다. 한 건에 가상 단가로 <b>0.070원</b>이 들고, 이 맥에서 <b>0.86초</b>가 걸렸습니다.</p></section>
+      <section class="tg-card" data-card="compare"><h2>SIDE BY SIDE</h2><p class="tg-k">평가 40건의 precision, recall, 건당 비용</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 40건에 셋을 붙여 맞힌 정도와 값을 나란히 놓은 것입니다. 모델과 LLM 은 맞힌 수가 같고, 값과 먼저 있어야 하는 것이 다릅니다.</p><div class="tg-fig" id="ic-compare"></div>
+        <p class="tg-cap">규칙은 붙인 라벨이 다 맞지만 <b>17건</b>을 비워 둡니다. 모델과 LLM 은 둘 다 <b>38건</b>을 맞히고, 비용이 드는 쪽은 LLM 하나입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>관심사 라벨 이야기를 들으면</b> 세 가지를 묻습니다. 사람 라벨의 기준이 프롬프트에도 적혀 있나, 평가용 글을 따로 떼어 두었나, 같은 글을 다시 물어 답이 바뀌는지 쟀나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=interest-classification">관심사 분류</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 이 라벨로 「러닝 글」을 세는 자리는 <a href="post.html?id=user-profile-features">유저 프로파일 피처</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/interest-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

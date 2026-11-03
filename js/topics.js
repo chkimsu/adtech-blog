@@ -19,7 +19,7 @@
 
   // 한 주제 안에서 트랙이 놓이는 순서 — 입문, 기초, 심화, 응용(카카오) 순. 여기 없는 트랙은 정의 순서대로 뒤에 붙는다.
   const TRACK_ORDER = ['getting-started', 'advanced-bidding-track', 'modeling-track', 'ml-infra-track', 'mlops-track', 'bandits-track',
-    'targeting-track', 'causal-inference-track', 'judgment-track', 'engineering-foundations', 'interview-track', 'algorithm-track', 'kakao-adtech'];
+    'targeting-track', 'targeting-model-track', 'causal-inference-track', 'judgment-track', 'engineering-foundations', 'interview-track', 'algorithm-track', 'kakao-adtech'];
 
   // 순수 함수 — 브라우저와 node(시험) 둘 다에서 쓴다.
   function buildTopicsModel(allPosts, allSeries, order) {

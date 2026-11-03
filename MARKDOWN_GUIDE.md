@@ -304,9 +304,39 @@ print(f'CTR {clicks / imps:.1%}')
 
 **7. 분량은 KB 가 아니라 산문으로 잽니다.** `check-content-standard.js` 의 KB 는 SVG 마크업을 같이 세서, 그림이 있는 글은 부풀어 보입니다. 8편의 산문은 21.0~25.9KB 로 기준자 3편(21.8~25.7KB)과 같은 폭입니다.
 
+### LLM 글의 기록 재생과 가짜 LLM
+
+LLM 을 부르는 글의 형식입니다. 타겟팅 모델 트랙의 `interest-classification`, `contextual-targeting`, `natural-language-audience` 세 편과 LLM 트랙 셋의 글이 씁니다. 설계는 `docs/superpowers/specs/2026-11-03-llm-tracks-design.md` 5절에 있습니다. 글의 파이썬은 표준 라이브러리만으로 돌아야 하는데 LLM 호출에는 네트워크와 모델이 있어야 합니다. 그래서 진짜 답이 필요한 자리와 구조를 보이는 자리를 나눠 씁니다.
+
+**진짜 답이 필요한 자리는 기록을 재생합니다.** 글을 쓰는 맥의 Ollama 에서 `qwen3.5:27b` 를 한 번 돌려 출력을 기록하고, 글은 그 출력을 그대로 다시 보입니다. `elasticsearch-hybrid-retrieval` 글이 기록한 검색 응답을 다시 보이는 것과 같은 방식입니다.
+
+- `scripts/llm-record.py` 가 Ollama 의 `/api/chat` 을 불러 `data/llm-records/<slug>.json` 을 씁니다. 파일에는 모델, 기록한 날짜, 파라미터와, 항목마다 시스템 메시지, 사용자 메시지, 출력, thinking 글자 수, 출력 토큰 수, 걸린 시간이 들어 있습니다. 보낼 프롬프트는 `data/llm-records/prompts/<slug>.json` 에 씁니다. 두 형식은 `data/llm-records/README.md` 에 있습니다.
+- 출력을 손으로 옮겨 적지 않습니다. 기록을 쓰는 블록은 `--export-constant` 가 찍은 `RECORD = {...}` 를 그대로 붙이고, 글의 숫자(정답률, 바뀐 비율, 일치도)는 블록이 그 상수에서 셉니다.
+- 그 블록은 `# 하는 일:` 바로 다음 줄, 곧 몸통의 첫 줄에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 을 둡니다. 하는 일 줄 앞에 주석이 있으면 형식 검사가 막아서 블록의 맨 첫 줄에는 둘 수 없습니다. 상태 표시가 있으면 상태 표시, 하는 일, 기록 주석 순서입니다.
+- 기록 출력은 JSON, 영어 enum 라벨, 숫자로만 받습니다. 말투 검사는 코드 블록 안도 세고 새 파일은 0건이어야 하기 때문입니다. 한국어 문장(카피 후보, 키워드의 이유, 거절 메시지)은 코드 블록이 아니라 산문의 「」 안에 대사로 보입니다.
+- 다시 기록하면 파일 전체가 바뀌므로 글의 숫자를 다시 맞춥니다. 모델은 바꾸지 않고, 글마다 모델 이름과 기록한 날짜를 한 번 적습니다.
+
+```bash
+python3 scripts/llm-record.py --slug <slug>                    # 기록한다 (있으면 덮어쓴다)
+python3 scripts/llm-record.py --slug <slug> --export-constant  # 기록을 RECORD 상수로 찍는다
+python3 scripts/llm-record.py --selftest                       # 서버와 기록 형식을 점검한다
+```
+
+Ollama 는 `ollama serve` 로 먼저 띄웁니다. 기록하기 전에 자체 점검이 `selftest ok:` 로 시작하는 한 줄을 찍는지 봅니다. 기록이 끝나면 마지막 줄의 error 수가 0 인지 봅니다. error 가 남은 기록에서는 상수를 뽑지 않습니다.
+
+**구조를 보이는 코드는 가짜 LLM 이 답합니다.** 에이전트 루프, 워크플로, RAG 조립처럼 흐름을 보이는 자리입니다.
+
+- 가짜 LLM 은 진짜 SDK 와 같은 모양의 응답을 돌려줍니다(`stop_reason`, 내용 블록 목록, 도구 호출 블록). 다음 행동은 대화 기록을 읽어 정해 둔 규칙으로 고릅니다.
+- 글마다 블록 안에 들어 있어 혼자 돕니다. 공용 모듈을 만들지 않습니다. 같은 글의 뒤 블록은 `# (앞 블록에 이어서 돌린다.)` 로 잇습니다.
+- 글에서 「진짜 모델은 이 자리에서 시스템 메시지와 대화를 읽고 스스로 고른다」고 한 번 말합니다.
+
+**상용 API 를 부르는 코드는 한 글에 한 번, 발췌로만 보입니다.** 상태 표시 `# (발췌 — 그대로 실행되지 않습니다.)` 를 달고, 모델 이름은 문서 링크와 함께 적고 가격은 적지 않습니다. API 키는 쓰지 않습니다.
+
+**세션 발췌는 코딩 에이전트 글 한 편만 씁니다.** 그 글은 기록 대신 Claude Code 세션의 발췌를 보입니다. 이 저장소나 공개 랩에서 돌린 세션만 쓰고, 경로와 계정 이름은 지웁니다. 기록 모델 하나와 API 키 없음 규칙의 유일한 예외이고, 글에 그렇게 적습니다.
+
 ### 타겟팅 기초 7편도 같은 형식입니다
 
-위 일곱 항목은 처음에 API, Kafka 8편에만 적용했는데, **타겟팅 트랙의 기초 7편**(`targeting-basics`, `audience-and-segments`, `lookalike-basics`, `retargeting-frequency-cap`, `candidate-pool-questions`, `candidate-pool-basics`, `campaign-setup-flow`)도 같은 형식입니다. 존댓말, 파이썬 없음, 절마다 그림 한 장(앞 네 편은 카드 `demo-targeting-cards.html?embed=1&card=키`, 다섯째와 여섯째는 넓은 그림 `demo-candidate-pool.html?embed=1&fig=N`, 일곱째는 `demo-pool-map.html?embed=1&fig=N` 을 나눠 씁니다), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 다섯째 글만은 절마다 예시 표가 주인공이라 그림을 둘만 씁니다. 카드마다 「쉽게 말하면」 띠가 있고 글 본문이 같은 문장을 갖습니다. `check-content-standard.js` 의 `NO_PYTHON_BY_DESIGN` 에 일곱 편이 등록돼 있습니다. 가운뎃점은 쓰지 않고 쉼표로 나열합니다.
+위 「엔지니어링 기초 트랙」 절의 일곱 항목은 처음에 API, Kafka 8편에만 적용했는데, **타겟팅 트랙의 기초 7편**(`targeting-basics`, `audience-and-segments`, `lookalike-basics`, `retargeting-frequency-cap`, `candidate-pool-questions`, `candidate-pool-basics`, `campaign-setup-flow`)도 같은 형식입니다. 존댓말, 파이썬 없음, 절마다 그림 한 장(앞 네 편은 카드 `demo-targeting-cards.html?embed=1&card=키`, 다섯째와 여섯째는 넓은 그림 `demo-candidate-pool.html?embed=1&fig=N`, 일곱째는 `demo-pool-map.html?embed=1&fig=N` 을 나눠 씁니다), 계산은 표 위에 가정 한 줄과 계산식 한 줄. 다섯째 글만은 절마다 예시 표가 주인공이라 그림을 둘만 씁니다. 카드마다 「쉽게 말하면」 띠가 있고 글 본문이 같은 문장을 갖습니다. `check-content-standard.js` 의 `NO_PYTHON_BY_DESIGN` 에 일곱 편이 등록돼 있습니다. 가운뎃점은 쓰지 않고 쉼표로 나열합니다.
 
 **한 사람이 순서대로 겪습니다.** 운동화 브랜드의 마케터 서연 씨가 첫 캠페인을 걸고 8주까지 겪는 순서입니다. 다섯째와 일곱째 글은 묻는 사람이 모델 팀의 지훈 씨(모델 운영 트랙 다음, 열째 주와 열한째 주)이고, 예시 캠페인 셋 중 하나가 서연 씨 러닝화입니다. 트랙의 심화 두 편(`audience-segmentation`, `lookalike-modeling`)은 그 뒤에 옵니다.
 

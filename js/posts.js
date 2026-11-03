@@ -1438,6 +1438,11 @@ const series = {
     posts: ['targeting-basics', 'audience-and-segments', 'lookalike-basics', 'retargeting-frequency-cap', 'candidate-pool-questions', 'candidate-pool-basics', 'campaign-setup-flow',
       'audience-segmentation', 'lookalike-modeling'],
   },
+  'targeting-model-track': {
+    title: '타겟팅 모델 트랙',
+    desc: '마케터 서연 씨가 화면에서 본 타겟팅의 뒤에서 모델이 하는 일. 지훈 씨가 13주째부터 유저 프로파일 피처, 관심사 분류, Lookalike 계산, 전환 예측 타겟, 컨텍스추얼, 자연어 오디언스를 한 주에 하나씩 엽니다',
+    posts: ['user-profile-features', 'interest-classification', 'lookalike-computation', 'pcvr-based-targeting', 'contextual-targeting', 'natural-language-audience'],
+  },
   'advanced-bidding-track': {
     title: '입찰, 생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰, 페이싱 → 입찰 셰이딩',
@@ -1492,11 +1497,12 @@ const mlTrack = {
     {
       id: 'stage-3',
       title: '3단계, 심화 — 탐색과 확장',
-      goal: '이 단계를 마치면: 탐색-활용부터 피처 실전, 지표 운영, 실험 설계까지 실무 전체가 이어집니다. 앞 두 단계가 “무엇을 어떻게 만드나”였다면, 여기는 “만든 것을 어떻게 굴리고 판단하나”입니다.',
+      goal: '이 단계를 마치면: 탐색-활용부터 피처 실전, 지표 운영, 실험 설계까지 실무 전체가 이어집니다. 앞 두 단계가 “무엇을 어떻게 만드나”였다면, 여기는 “만든 것을 어떻게 굴리고 판단하나”입니다. 타겟팅 모델 두 편도 여기서 읽습니다.',
       posts: ['exploration-exploitation', 'cold-start-pctr', 'ctr-feature-engineering',
         'embedding-table-ops', 'model-monitoring',
         'model-ab-testing', 'conversion-definition',
-        'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking'],
+        'bid-shading-censored', 'auto-bidding-pacing', 'ltv-ad-ranking',
+        'lookalike-computation', 'pcvr-based-targeting'],
     },    {
       id: 'stage-4',
       title: '4단계, 판단 — 무엇을 믿고 무엇을 배포하나',

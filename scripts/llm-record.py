@@ -1,0 +1,291 @@
+#!/usr/bin/env python3
+"""LLM 글에 붙일 출력을 Ollama 로 한 번 기록하고, 글의 파이썬 블록에 옮길 상수로 뽑는다. 설계: docs/superpowers/specs/2026-11-03-llm-tracks-design.md 5절
+
+  python3 scripts/llm-record.py --slug <slug>                    기록: prompts/<slug>.json 을 보내 <slug>.json 을 쓴다 (있으면 덮어쓴다)
+  python3 scripts/llm-record.py --slug <slug> --export-constant  상수 뽑기: 기록의 출력을 RECORD = {...} 한 줄로 찍는다
+  python3 scripts/llm-record.py --selftest                       자체 점검: 서버 버전을 묻고 한 줄짜리 요청 하나로 기록 형식을 본다
+
+Ollama 는 `ollama serve` 로 먼저 띄운다.
+기록할 때 --model(기본 qwen3.5:27b), --host(기본 http://localhost:11434), --limit N(프롬프트 항목 앞 N개만, 시험용)을 줄 수 있다.
+두 파일은 data/llm-records/ 에 있고 형식은 그 폴더의 README.md 에 있다. 표준 라이브러리만 쓴다.
+"""
+import argparse
+import datetime
+import json
+import os
+import time
+import urllib.error
+import urllib.request
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RECORDS = os.path.join(ROOT, 'data', 'llm-records')
+MODEL = 'qwen3.5:27b'
+HOST = 'http://localhost:11434'
+OPTIONS = {'temperature': 0, 'seed': 7}
+TIMEOUT = 600        # thinking 을 켠 항목은 몇 분이 걸리기도 한다
+ATTEMPTS = 3         # 한 항목을 보내 보는 횟수. 다 실패하면 그 항목에 error 를 남기고 다음 항목으로 간다
+RETRY_SLEEP = 2
+THINK = {'off': [False], 'on': [True], 'both': [False, True]}
+PROMPT_KEYS = {'system', 'items', 'think', 'repeat', 'repeat_subset', 'think_subset'}
+# 기록 항목의 필드와 자료형. 자체 점검이 이 목록으로 응답을 본다.
+ITEM_FIELDS = [('id', str), ('think', bool), ('run', int), ('system', str), ('user', str), ('output', str),
+               ('thinking_chars', int), ('prompt_tokens', int), ('output_tokens', int), ('elapsed_ms', int)]
+SELFTEST = {'system': 'Reply with JSON only.', 'user': 'Return {"ok": true}.'}
+
+
+def fail(msg):
+    """알릴 말을 stderr 에 쓰고 1 로 끝낸다."""
+    raise SystemExit('✗ ' + msg)
+
+
+def rel(path):
+    return os.path.relpath(path, ROOT)
+
+
+def read_json(path, hint):
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        fail('%s 가 없습니다. %s' % (rel(path), hint))
+    except ValueError as e:
+        fail('%s 를 JSON 으로 읽지 못했습니다: %s' % (rel(path), e))
+
+
+def is_type(value, kind):
+    """자료형을 본다. bool 은 int 의 하위형이라 int 자리에서는 따로 막는다."""
+    return isinstance(value, kind) and (kind is bool or not isinstance(value, bool))
+
+
+def is_count(value):
+    return is_type(value, int) and value >= 1
+
+
+def is_think(value):
+    return is_type(value, str) and value in THINK
+
+
+def think_name(think):
+    return 'on' if think else 'off'
+
+
+def subset_problems(spec, key, field, ok, rule, ids):
+    """repeat_subset, think_subset 하나를 본다."""
+    sub = spec[key]
+    if not (isinstance(sub, dict) and set(sub) == {'ids', field} and isinstance(sub['ids'], list)):
+        return ['%s 필드가 {"ids": [...], "%s": ...} 꼴이 아닙니다' % (key, field)]
+    out = [] if ok(sub[field]) else ['%s 의 %s 값이 %s 가 아닙니다' % (key, field, rule)]
+    stray = [str(i) for i in sub['ids'] if i not in ids]
+    if stray:
+        out.append('%s 의 ids 에 items 에 없는 id 가 있습니다: %s' % (key, ', '.join(stray)))
+    return out
+
+
+def prompt_problems(spec):
+    """프롬프트 파일에서 형식이 틀린 곳을 모은다. 맞으면 빈 목록이다."""
+    if not isinstance(spec, dict):
+        return ['맨 위가 객체가 아닙니다']
+    out = ['모르는 필드가 있습니다: %s' % k for k in sorted(set(spec) - PROMPT_KEYS)]
+    if not is_type(spec.get('system'), str):
+        out.append('system 필드가 문자열이 아닙니다')
+    items = spec.get('items')
+    if not (isinstance(items, list) and items):
+        out.append('items 필드가 비어 있거나 목록이 아닙니다')
+        items = []
+    ids = []
+    for n, it in enumerate(items, 1):
+        if isinstance(it, dict) and set(it) == {'id', 'user'} and is_type(it['id'], str) and is_type(it['user'], str):
+            ids.append(it['id'])
+        else:
+            out.append('items 의 %d번째가 {"id": 문자열, "user": 문자열} 꼴이 아닙니다' % n)
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    if dup:
+        out.append('id 가 겹칩니다: ' + ', '.join(dup))
+    if not is_think(spec.get('think')):
+        out.append('think 필드가 "off", "on", "both" 가운데 하나가 아닙니다')
+    if not is_count(spec.get('repeat')):
+        out.append('repeat 필드가 1 이상의 정수가 아닙니다')
+    if 'repeat_subset' in spec:
+        out += subset_problems(spec, 'repeat_subset', 'repeat', is_count, '1 이상의 정수', ids)
+    if 'think_subset' in spec:
+        out += subset_problems(spec, 'think_subset', 'think', is_think, '"off", "on", "both" 가운데 하나', ids)
+    return out
+
+
+def load_prompts(slug):
+    """프롬프트 파일을 읽는다. 형식이 틀리면 틀린 곳을 모두 알리고 멈춘다."""
+    path = os.path.join(RECORDS, 'prompts', slug + '.json')
+    spec = read_json(path, '형식은 data/llm-records/README.md 에 있습니다')
+    problems = prompt_problems(spec)
+    if problems:
+        fail('%s 의 형식이 틀렸습니다\n  %s' % (rel(path), '\n  '.join(problems)))
+    return spec
+
+
+def plan_requests(spec, limit):
+    """보낼 요청을 차례대로 늘어놓는다. run 은 같은 id 와 think 로 보내는 몇 번째인지다."""
+    users = {it['id']: it['user'] for it in spec['items'][:limit]}
+    sent, plan = {}, []
+
+    def send(ids, thinks, times):
+        for i in ids:
+            if i not in users:        # --limit 밖의 id 다
+                continue
+            for think in thinks:
+                for _ in range(times):
+                    sent[i, think] = sent.get((i, think), 0) + 1
+                    plan.append({'id': i, 'think': think, 'run': sent[i, think],
+                                 'system': spec['system'], 'user': users[i]})
+
+    # 모든 항목을 repeat 번 보낸 뒤, repeat_subset 은 run 을 이어 붙이고 think_subset 은 그 think 로 한 번 더 보낸다
+    send(list(users), THINK[spec['think']], spec['repeat'])
+    if 'repeat_subset' in spec:
+        send(spec['repeat_subset']['ids'], THINK[spec['think']], spec['repeat_subset']['repeat'])
+    if 'think_subset' in spec:
+        send(spec['think_subset']['ids'], THINK[spec['think_subset']['think']], 1)
+    return plan
+
+
+def api(host, path):
+    return host.rstrip('/') + '/api/' + path
+
+
+def server_version(host):
+    """서버 버전을 묻는다. 닿지 않으면 띄우는 법을 알리고 멈춘다."""
+    try:
+        with urllib.request.urlopen(api(host, 'version'), timeout=10) as r:
+            return json.load(r)['version']
+    except Exception as e:
+        fail('Ollama 서버 %s 에 닿지 않습니다 (%s: %s). `ollama serve` 로 먼저 띄웁니다' % (host, type(e).__name__, e))
+
+
+def chat_once(host, model, system, user, think):
+    """/api/chat 에 한 번 보내고 기록할 다섯 값을 돌려준다. 응답에 필드가 빠지면 KeyError 가 난다."""
+    body = {'model': model,
+            'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
+            'stream': False, 'think': think, 'options': OPTIONS}
+    req = urllib.request.Request(api(host, 'chat'), data=json.dumps(body).encode('utf-8'),
+                                 headers={'Content-Type': 'application/json'}, method='POST')
+    try:
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+            resp = json.load(r)
+    except urllib.error.HTTPError as e:
+        # 서버가 돌려준 오류 문장을 남긴다. 모델이 없으면 404 와 model '...' not found 가 온다.
+        raise RuntimeError('HTTP %d %s' % (e.code, e.read().decode('utf-8', 'replace').strip())) from None
+    msg = resp['message']
+    return {'output': msg['content'],
+            'thinking_chars': len(msg.get('thinking') or ''),
+            'prompt_tokens': resp['prompt_eval_count'],
+            'output_tokens': resp['eval_count'],
+            'elapsed_ms': round(resp['total_duration'] / 1e6)}
+
+
+def chat_with_retry(host, model, item):
+    """한 항목을 ATTEMPTS 번까지 보낸다. 다 실패하면 마지막 오류를 error 필드로 돌려준다."""
+    for attempt in range(ATTEMPTS):
+        if attempt:
+            time.sleep(RETRY_SLEEP)
+        try:
+            return chat_once(host, model, item['system'], item['user'], item['think'])
+        except Exception as e:        # 시간 초과, 끊긴 연결, HTTP 오류, 응답에 빠진 필드를 모두 다시 보낸다
+            error = '%s: %s' % (type(e).__name__, e)
+    return {'error': error}
+
+
+def record(slug, model, host, limit):
+    """프롬프트 파일의 요청을 차례로 보내 기록 파일을 통째로 새로 쓴다. error 가 남으면 1 을 돌려준다."""
+    spec = load_prompts(slug)
+    version = server_version(host)    # 서버가 없으면 요청을 하나도 보내지 않고 멈춘다
+    plan = plan_requests(spec, limit)
+    recorded_at = datetime.date.today().isoformat()
+    # 진행 줄은 바로 내보낸다. 파일로 받아 지켜볼 때도 끝날 때까지 비어 있지 않다
+    print('Ollama %s 의 %s 에 요청 %d개를 보냅니다' % (version, model, len(plan)), flush=True)
+    start = shown = time.time()
+    items, errors = [], 0
+    for n, job in enumerate(plan, 1):
+        item = dict(job)
+        item.update(chat_with_retry(host, model, item))
+        items.append(item)
+        if 'error' in item:
+            errors += 1
+            print('  %s think %s run %d 실패: %s' % (item['id'], think_name(item['think']), item['run'], item['error']),
+                  flush=True)
+        # 빠른 항목은 20개마다, 느린 항목(thinking)은 1분마다 한 줄씩 알린다
+        if n == len(plan) or n % 20 == 0 or time.time() - shown >= 60:
+            print('  %d/%d 보냄, %d초, error %d개' % (n, len(plan), time.time() - start, errors), flush=True)
+            shown = time.time()
+    path = os.path.join(RECORDS, slug + '.json')
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump({'model': model, 'recorded_at': recorded_at, 'host': host, 'options': OPTIONS, 'items': items},
+                  f, ensure_ascii=False, indent=2)
+        f.write('\n')
+    print('%s %s 에 항목 %d개를 썼습니다. error %d개, %d초' % (
+        '✗' if errors else '✓', rel(path), len(items), errors, time.time() - start))
+    return 1 if errors else 0
+
+
+def key_of(item):
+    """상수의 키. think 를 끈 첫 회차는 id 그대로, 그 밖은 a001|on|1, a001|off|2 꼴이다."""
+    if not item['think'] and item['run'] == 1:
+        return item['id']
+    return '%s|%s|%d' % (item['id'], think_name(item['think']), item['run'])
+
+
+def export_constant(slug):
+    """기록의 출력을 id 순서로 RECORD = {...} 한 줄로 찍는다. error 가 남은 기록에서는 뽑지 않는다."""
+    path = os.path.join(RECORDS, slug + '.json')
+    items = read_json(path, '먼저 python3 scripts/llm-record.py --slug %s 로 기록합니다' % slug)['items']
+    broken = [key_of(it) for it in items if 'error' in it]
+    if broken:
+        fail('error 가 남은 항목이 %d개 있어 상수를 뽑지 않습니다 (%s). 다시 기록합니다' % (
+            len(broken), ', '.join(broken[:5]) + (', …' if len(broken) > 5 else '')))
+    # id 는 기록에 처음 나온 차례로, 같은 id 안에서는 think 끈 것부터 run 차례로 둔다
+    first = {}
+    for it in items:
+        first.setdefault(it['id'], len(first))
+    items = sorted(items, key=lambda it: (first[it['id']], it['think'], it['run']))
+    print('RECORD = ' + json.dumps({key_of(it): it['output'] for it in items}, ensure_ascii=False))
+    return 0
+
+
+def selftest(model, host):
+    """서버 버전을 묻고 한 줄짜리 요청 하나를 보내, 기록 항목의 필드가 다 있고 자료형이 맞는지 본다."""
+    server_version(host)
+    item = {'id': 'selftest', 'think': False, 'run': 1, 'system': SELFTEST['system'], 'user': SELFTEST['user']}
+    try:
+        item.update(chat_once(host, model, item['system'], item['user'], item['think']))
+    except Exception as e:
+        fail('요청 하나가 실패했습니다 — %s: %s' % (type(e).__name__, e))
+    bad = [name for name, kind in ITEM_FIELDS if not is_type(item.get(name), kind)]
+    if not bad and not item['output'].strip():
+        bad = ['output']
+    if bad:
+        fail('응답으로 만든 기록 항목에서 필드가 빠지거나 자료형이 틀렸습니다: ' + ', '.join(bad))
+    print('selftest ok: model=%s prompt_tokens=%d output_tokens=%d elapsed_ms=%d' % (
+        model, item['prompt_tokens'], item['output_tokens'], item['elapsed_ms']))
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser(description='Ollama 로 LLM 출력을 기록하고 글의 파이썬 블록에 옮길 상수로 뽑는다')
+    ap.add_argument('--slug', help='글 id. data/llm-records/prompts/<slug>.json 을 보내 data/llm-records/<slug>.json 을 쓴다')
+    ap.add_argument('--model', default=MODEL, help='모델 (기본 %(default)s, 설계가 고정한 값이다)')
+    ap.add_argument('--host', default=HOST, help='Ollama 주소 (기본 %(default)s)')
+    ap.add_argument('--limit', type=int, metavar='N', help='프롬프트 항목 앞 N개만 보낸다 (시험용. 기록 파일은 이때도 덮어쓴다)')
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument('--export-constant', action='store_true', help='기록의 출력을 RECORD = {...} 파이썬 상수로 찍는다')
+    mode.add_argument('--selftest', action='store_true', help='서버 버전과 한 줄짜리 요청 하나로 기록 형식을 확인한다')
+    args = ap.parse_args()
+    if args.selftest:
+        raise SystemExit(selftest(args.model, args.host))
+    if not args.slug:
+        ap.error('--selftest 가 아니면 --slug 가 필요합니다')
+    if args.limit is not None and args.limit < 1:
+        ap.error('--limit 은 1 이상입니다')
+    if args.export_constant:
+        raise SystemExit(export_constant(args.slug))
+    raise SystemExit(record(args.slug, args.model, args.host, args.limit))
+
+
+if __name__ == '__main__':
+    main()

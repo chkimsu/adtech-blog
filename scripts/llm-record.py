@@ -21,15 +21,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RECORDS = os.path.join(ROOT, 'data', 'llm-records')
 MODEL = 'qwen3.5:27b'
 HOST = 'http://localhost:11434'
-OPTIONS = {'temperature': 0, 'seed': 7}
+OPTIONS = {'temperature': 0, 'seed': 7}   # 기본값. 프롬프트 파일의 options 가 그 위에 얹힌다
 TIMEOUT = 600        # thinking 을 켠 항목은 몇 분이 걸리기도 한다
 ATTEMPTS = 3         # 한 항목을 보내 보는 횟수. 다 실패하면 그 항목에 error 를 남기고 다음 항목으로 간다
 RETRY_SLEEP = 2
 THINK = {'off': [False], 'on': [True], 'both': [False, True]}
-PROMPT_KEYS = {'system', 'items', 'think', 'repeat', 'repeat_subset', 'think_subset'}
+PROMPT_KEYS = {'system', 'items', 'think', 'repeat', 'repeat_subset', 'think_subset', 'options'}
 # 기록 항목의 필드와 자료형. 자체 점검이 이 목록으로 응답을 본다.
 ITEM_FIELDS = [('id', str), ('think', bool), ('run', int), ('system', str), ('user', str), ('output', str),
-               ('thinking_chars', int), ('prompt_tokens', int), ('output_tokens', int), ('elapsed_ms', int)]
+               ('thinking_chars', int), ('prompt_tokens', int), ('output_tokens', int), ('elapsed_ms', int),
+               ('options', dict)]
 SELFTEST = {'system': 'Reply with JSON only.', 'user': 'Return {"ok": true}.'}
 
 
@@ -69,12 +70,26 @@ def think_name(think):
     return 'on' if think else 'off'
 
 
+def options_problems(where, opts):
+    """options 하나를 본다. temperature 와 seed 만 보고 나머지 키는 Ollama 에 그대로 넘긴다."""
+    if not isinstance(opts, dict):
+        return ['%s 가 객체가 아닙니다' % where]
+    out = []
+    if 'temperature' in opts and not (is_type(opts['temperature'], (int, float)) and opts['temperature'] >= 0):
+        out.append('%s 의 temperature 가 0 이상의 수가 아닙니다' % where)
+    if 'seed' in opts and not is_type(opts['seed'], int):
+        out.append('%s 의 seed 가 정수가 아닙니다' % where)
+    return out
+
+
 def subset_problems(spec, key, field, ok, rule, ids):
-    """repeat_subset, think_subset 하나를 본다."""
+    """repeat_subset, think_subset 하나를 본다. 그 안의 options 는 있어도 되고 없어도 된다."""
     sub = spec[key]
-    if not (isinstance(sub, dict) and set(sub) == {'ids', field} and isinstance(sub['ids'], list)):
-        return ['%s 필드가 {"ids": [...], "%s": ...} 꼴이 아닙니다' % (key, field)]
+    if not (isinstance(sub, dict) and set(sub) - {'options'} == {'ids', field} and isinstance(sub['ids'], list)):
+        return ['%s 필드가 {"ids": [...], "%s": ...} 꼴이 아닙니다 (options 는 더해도 됩니다)' % (key, field)]
     out = [] if ok(sub[field]) else ['%s 의 %s 값이 %s 가 아닙니다' % (key, field, rule)]
+    if 'options' in sub:
+        out += options_problems('%s 의 options' % key, sub['options'])
     stray = [str(i) for i in sub['ids'] if i not in ids]
     if stray:
         out.append('%s 의 ids 에 items 에 없는 id 가 있습니다: %s' % (key, ', '.join(stray)))
@@ -105,6 +120,8 @@ def prompt_problems(spec):
         out.append('think 필드가 "off", "on", "both" 가운데 하나가 아닙니다')
     if not is_count(spec.get('repeat')):
         out.append('repeat 필드가 1 이상의 정수가 아닙니다')
+    if 'options' in spec:
+        out += options_problems('맨 위의 options', spec['options'])
     if 'repeat_subset' in spec:
         out += subset_problems(spec, 'repeat_subset', 'repeat', is_count, '1 이상의 정수', ids)
     if 'think_subset' in spec:
@@ -122,27 +139,43 @@ def load_prompts(slug):
     return spec
 
 
+def request_options(given, run):
+    """한 요청에 보낼 options. 기본값 위에 프롬프트 파일이 적은 값을 얹는다.
+    seed 를 적지 않았는데 temperature 가 0 보다 크면 seed 를 7 + run 으로 둔다.
+    그러면 run 마다 다른 seed 로 뽑고, 다시 기록하면 같은 답이 나온다."""
+    opts = dict(OPTIONS)
+    opts.update(given)
+    if 'seed' not in given and opts['temperature'] > 0:
+        opts['seed'] = OPTIONS['seed'] + run
+    return opts
+
+
 def plan_requests(spec, limit):
     """보낼 요청을 차례대로 늘어놓는다. run 은 같은 id 와 think 로 보내는 몇 번째인지다."""
     users = {it['id']: it['user'] for it in spec['items'][:limit]}
+    top = spec.get('options', {})
     sent, plan = {}, []
 
-    def send(ids, thinks, times):
+    def send(ids, thinks, times, given):
         for i in ids:
             if i not in users:        # --limit 밖의 id 다
                 continue
             for think in thinks:
                 for _ in range(times):
                     sent[i, think] = sent.get((i, think), 0) + 1
-                    plan.append({'id': i, 'think': think, 'run': sent[i, think],
-                                 'system': spec['system'], 'user': users[i]})
+                    run = sent[i, think]
+                    plan.append({'id': i, 'think': think, 'run': run, 'system': spec['system'],
+                                 'user': users[i], 'options': request_options(given, run)})
 
-    # 모든 항목을 repeat 번 보낸 뒤, repeat_subset 은 run 을 이어 붙이고 think_subset 은 그 think 로 한 번 더 보낸다
-    send(list(users), THINK[spec['think']], spec['repeat'])
+    # 모든 항목을 repeat 번 보낸 뒤, repeat_subset 은 run 을 이어 붙이고 think_subset 은 그 think 로 한 번 더 보낸다.
+    # 묶음 안의 options 는 맨 위 options 위에 얹혀 그 묶음에만 쓰인다.
+    send(list(users), THINK[spec['think']], spec['repeat'], top)
     if 'repeat_subset' in spec:
-        send(spec['repeat_subset']['ids'], THINK[spec['think']], spec['repeat_subset']['repeat'])
+        sub = spec['repeat_subset']
+        send(sub['ids'], THINK[spec['think']], sub['repeat'], {**top, **sub.get('options', {})})
     if 'think_subset' in spec:
-        send(spec['think_subset']['ids'], THINK[spec['think_subset']['think']], 1)
+        sub = spec['think_subset']
+        send(sub['ids'], THINK[sub['think']], 1, {**top, **sub.get('options', {})})
     return plan
 
 
@@ -159,11 +192,11 @@ def server_version(host):
         fail('Ollama 서버 %s 에 닿지 않습니다 (%s: %s). `ollama serve` 로 먼저 띄웁니다' % (host, type(e).__name__, e))
 
 
-def chat_once(host, model, system, user, think):
+def chat_once(host, model, system, user, think, options):
     """/api/chat 에 한 번 보내고 기록할 다섯 값을 돌려준다. 응답에 필드가 빠지면 KeyError 가 난다."""
     body = {'model': model,
             'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
-            'stream': False, 'think': think, 'options': OPTIONS}
+            'stream': False, 'think': think, 'options': options}
     req = urllib.request.Request(api(host, 'chat'), data=json.dumps(body).encode('utf-8'),
                                  headers={'Content-Type': 'application/json'}, method='POST')
     try:
@@ -180,16 +213,25 @@ def chat_once(host, model, system, user, think):
             'elapsed_ms': round(resp['total_duration'] / 1e6)}
 
 
-def chat_with_retry(host, model, item):
-    """한 항목을 ATTEMPTS 번까지 보낸다. 다 실패하면 마지막 오류를 error 필드로 돌려준다."""
+def chat_with_retry(host, model, job):
+    """한 요청을 ATTEMPTS 번까지 보낸다. 다 실패하면 마지막 오류를 error 필드로 돌려준다."""
     for attempt in range(ATTEMPTS):
         if attempt:
             time.sleep(RETRY_SLEEP)
         try:
-            return chat_once(host, model, item['system'], item['user'], item['think'])
+            return chat_once(host, model, job['system'], job['user'], job['think'], job['options'])
         except Exception as e:        # 시간 초과, 끊긴 연결, HTTP 오류, 응답에 빠진 필드를 모두 다시 보낸다
             error = '%s: %s' % (type(e).__name__, e)
     return {'error': error}
+
+
+def make_item(job, result):
+    """기록 항목 하나. 필드 차례는 README 의 형식과 같고 실제로 보낸 options 가 맨 끝에 온다.
+    실패한 항목은 output 부터 elapsed_ms 까지 대신 error 를 갖는다."""
+    item = {k: job[k] for k in ('id', 'think', 'run', 'system', 'user')}
+    item.update(result)
+    item['options'] = job['options']
+    return item
 
 
 def record(slug, model, host, limit):
@@ -203,8 +245,7 @@ def record(slug, model, host, limit):
     start = shown = time.time()
     items, errors = [], 0
     for n, job in enumerate(plan, 1):
-        item = dict(job)
-        item.update(chat_with_retry(host, model, item))
+        item = make_item(job, chat_with_retry(host, model, job))
         items.append(item)
         if 'error' in item:
             errors += 1
@@ -215,8 +256,10 @@ def record(slug, model, host, limit):
             print('  %d/%d 보냄, %d초, error %d개' % (n, len(plan), time.time() - start, errors), flush=True)
             shown = time.time()
     path = os.path.join(RECORDS, slug + '.json')
+    # 맨 위 options 는 파일의 기본값이다. 요청마다 실제로 보낸 값은 항목의 options 에 있다
+    top = {**OPTIONS, **spec.get('options', {})}
     with open(path, 'w', encoding='utf-8') as f:
-        json.dump({'model': model, 'recorded_at': recorded_at, 'host': host, 'options': OPTIONS, 'items': items},
+        json.dump({'model': model, 'recorded_at': recorded_at, 'host': host, 'options': top, 'items': items},
                   f, ensure_ascii=False, indent=2)
         f.write('\n')
     print('%s %s 에 항목 %d개를 썼습니다. error %d개, %d초' % (
@@ -251,9 +294,10 @@ def export_constant(slug):
 def selftest(model, host):
     """서버 버전을 묻고 한 줄짜리 요청 하나를 보내, 기록 항목의 필드가 다 있고 자료형이 맞는지 본다."""
     server_version(host)
-    item = {'id': 'selftest', 'think': False, 'run': 1, 'system': SELFTEST['system'], 'user': SELFTEST['user']}
+    job = {'id': 'selftest', 'think': False, 'run': 1, 'system': SELFTEST['system'], 'user': SELFTEST['user'],
+           'options': request_options({}, 1)}
     try:
-        item.update(chat_once(host, model, item['system'], item['user'], item['think']))
+        item = make_item(job, chat_once(host, model, job['system'], job['user'], job['think'], job['options']))
     except Exception as e:
         fail('요청 하나가 실패했습니다 — %s: %s' % (type(e).__name__, e))
     bad = [name for name, kind in ITEM_FIELDS if not is_type(item.get(name), kind)]

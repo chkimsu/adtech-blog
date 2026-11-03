@@ -293,14 +293,25 @@
   // data-ln 은 그 조각이 나온 원문 줄 번호(src.split('\n') 의 0부터)다. 손으로 고른 글을 복사할 때 쓴다.
   const lnSpans = parts => parts.map(p => `<span data-ln="${p.line}">${esc(p.text)}</span>`).join(' ');
 
+  // 기록 상수처럼 한 줄 데이터가 수천 px 로 늘어나는 것을 막는다.
+  const LONG_LINE = 400;
+  const thousands = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const moreLabel = (open, n) => (open ? '줄 접기' : `줄 전체 보기 (${thousands(n)}자)`);
+  // 긴 줄 아래의 단추. 접힌 동안은 css 가 글자 칸(.cb-t)을 세 줄 높이로 자른다. 복사는 늘 원문(data-src)이다.
+  const moreHtml = n => `<button class="cb-more" type="button" aria-expanded="false">${moreLabel(false, n)}</button>`;
+
   function lineHtml(it) {
     if (it.kind === 'blank') return `<div class="cb-ln cb-blank" data-ln="${it.line}"><span class="cb-src"> </span></div>`;
     if (it.kind === 'note') return `<div class="cb-ln cb-ln-note" style="--ind:${it.ind}"><span class="cb-note">${lnSpans(it.parts)}</span></div>`;
     const toks = dropIndent(it.toks, it.ind);
     const w = widthCounts(toks.map(t => t.v).join(''));
     const note = it.note ? `<span class="cb-note">${esc(it.note)}</span>` : '';
-    return `<div class="cb-ln${it.note ? ' has-note' : ''}" data-ln="${it.line}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
-      `${it.note ? ' data-note="1"' : ''}><span class="cb-src"><span class="cb-t">${codeHtml(toks) || ' '}</span></span>${note}</div>`;
+    // 들여쓰기를 넣은 코드 글자 수. 줄 끝 주석은 메모로 따로 그리니 세지 않는다.
+    const chars = [...it.toks.map(t => t.v).join('')].length;
+    const long = chars >= LONG_LINE;
+    return `<div class="cb-ln${it.note ? ' has-note' : ''}${long ? ' is-long' : ''}" data-ln="${it.line}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
+      `${it.note ? ' data-note="1"' : ''}${long ? ` data-chars="${chars}"` : ''}><span class="cb-src"><span class="cb-t">${codeHtml(toks) || ' '}</span></span>` +
+      `${note}${long ? moreHtml(chars) : ''}</div>`;
   }
 
   function outLineHtml(t, line) {
@@ -383,7 +394,12 @@
       const ind = r.length - r.replace(/^ +/, '').length;
       // 여러 줄에 걸친 span 안의 빈 줄은 닫고 다시 연 빈 span 만 남는다. 글자가 없으면 공백 하나를 둬야 줄 높이가 산다.
       const body = stripIndent(h, ind);
-      return `<span class="cb-ln" data-ln="${i}" style="--ind:${ind}"><span class="cb-src">${body.replace(/<[^>]*>/g, '') ? body : ' '}</span></span>`;
+      const text = body.replace(/<[^>]*>/g, '') ? body : ' ';
+      const chars = [...r].length;
+      if (chars < LONG_LINE) return `<span class="cb-ln" data-ln="${i}" style="--ind:${ind}"><span class="cb-src">${text}</span></span>`;
+      // 긴 줄은 파이썬 블록처럼 글자를 .cb-t 로 한 번 더 감싸 접고, 아래에 단추를 둔다
+      return `<span class="cb-ln is-long" data-ln="${i}" style="--ind:${ind}" data-chars="${chars}"><span class="cb-src"><span class="cb-t">${text}</span></span>` +
+        `${moreHtml(chars)}</span>`;
     }).join('');
   }
 
@@ -504,6 +520,26 @@
     e.preventDefault();
   }
 
+  // 긴 줄 단추를 누르면 그 줄을 펴고 접는다. 블록마다 한 번만 단다.
+  const bound = new WeakSet();
+  function longLines(block) {
+    if (bound.has(block) || !block.querySelector('.cb-more')) return;
+    bound.add(block);
+    block.addEventListener('click', e => {
+      const btn = e.target.closest('.cb-more');
+      if (!btn || !block.contains(btn)) return;
+      const ln = btn.closest('.cb-ln');
+      const open = ln.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = moreLabel(open, Number(ln.dataset.chars));
+      // 편 줄 끝에서 접으면 줄 머리가 수천 px 위에 남는다. 접은 줄이 화면에 보이게 되돌린다.
+      if (!open) {
+        const r = ln.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > window.innerHeight) ln.scrollIntoView({ block: 'center' });
+      }
+    });
+  }
+
   let copyOn = false;
   // 배치는 창 크기와 글꼴이 바뀔 때마다 다시 돈다. 실패한 블록은 처음 한 번만 알린다.
   const warned = new WeakSet();
@@ -519,6 +555,7 @@
     });
     const redo = () => { each(blocks, layout); each(wraps, markWrapped); };
     each(blocks, hover);
+    each(blocks.concat(wraps), longLines);
     redo();
     if (typeof ResizeObserver !== 'undefined') {
       let raf = 0;

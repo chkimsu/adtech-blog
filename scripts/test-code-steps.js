@@ -227,5 +227,41 @@ eq('textarea 와 input 에 포커스가 있으면 복사 처리가 비켜선다'
   }
 }
 
+console.log('\n긴 줄 — 400자 이상은 세 줄로 접고 단추로 편다');
+const pyLine = n => 'X = "' + 'a'.repeat(n - 6) + '"';     // 글자 n 개짜리 코드 줄
+const pyHtml = n => C.render(C.parse(block('# 하는 일: 긴 줄.', pyLine(n))));
+eq('400자 줄은 is-long 과 글자 수', [pyHtml(400).includes('class="cb-ln is-long"'), pyHtml(400).includes('data-chars="400"')], [true, true]);
+eq('399자 줄은 그대로', [pyHtml(399).includes('is-long'), pyHtml(399).includes('cb-more')], [false, false]);
+eq('단추 글은 천 단위 쉼표로 글자 수', pyHtml(12092).includes('aria-expanded="false">줄 전체 보기 (12,092자)</button>'), true);
+eq('복사할 원문은 그대로', pyHtml(400).includes(`data-src="# 하는 일: 긴 줄.\n${pyLine(400).replace(/"/g, '&quot;')}"`), true);
+eq('파이썬이 아닌 400자 줄', C.wrapLines('b'.repeat(400), 'b'.repeat(400)),
+  '<span class="cb-ln is-long" data-ln="0" style="--ind:0" data-chars="400"><span class="cb-src"><span class="cb-t">' + 'b'.repeat(400) +
+  '</span></span><button class="cb-more" type="button" aria-expanded="false">줄 전체 보기 (400자)</button></span>');
+eq('파이썬이 아닌 399자 줄은 그대로', C.wrapLines('b'.repeat(399), 'b'.repeat(399)),
+  '<span class="cb-ln" data-ln="0" style="--ind:0"><span class="cb-src">' + 'b'.repeat(399) + '</span></span>');
+{
+  // 단추를 누르면 펴고, 다시 누르면 접는다. DOM 없이 단추와 줄을 흉내 낸 pre.cb-wrap 블록 하나를 배치한다.
+  let onClick = null;
+  const cls = new Set(['cb-ln', 'is-long']);
+  const ln = { dataset: { chars: '12092' }, classList: { toggle: c => (cls.has(c) ? (cls.delete(c), false) : (cls.add(c), true)) },
+    getBoundingClientRect: () => ({ top: 10, bottom: 100 }) };
+  const btn = { attrs: {}, textContent: '', setAttribute(k, v) { this.attrs[k] = v; }, closest: sel => (sel === '.cb-more' ? btn : ln) };
+  const wrap = { querySelector: () => btn, querySelectorAll: () => [], contains: () => true,
+    addEventListener(type, fn) { if (type === 'click') onClick = fn; } };
+  global.window = { innerHeight: 800 };
+  global.document = { addEventListener() {} };
+  try {
+    C.mount({ querySelectorAll: sel => (sel === 'pre.cb-wrap' ? [wrap] : []) });
+    onClick({ target: btn });
+    const opened = [cls.has('is-open'), btn.attrs['aria-expanded'], btn.textContent];
+    onClick({ target: btn });
+    eq('누르면 펴고 다시 누르면 접는다', [opened, [cls.has('is-open'), btn.attrs['aria-expanded'], btn.textContent]],
+      [[true, 'true', '줄 접기'], [false, 'false', '줄 전체 보기 (12,092자)']]);
+  } finally {
+    delete global.window;
+    delete global.document;
+  }
+}
+
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

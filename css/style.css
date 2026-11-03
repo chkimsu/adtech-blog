@@ -6585,6 +6585,18 @@ pre.cb-wrap code.hljs { overflow: visible; }
    메모의 ch 는 본문 글꼴의 폭이라 코드 줄과 몇 px 어긋난다(390 화면의 깊은 들여쓰기에서 14px 쯤). */
 .cb-ln.is-drop .cb-note,
 .cb-ln-note .cb-note { --note-at: max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)); display: block; width: fit-content; max-width: calc(100% - var(--note-at)); margin: 1px 0 4px var(--note-at); }
+/* 400자 이상인 줄(js 의 LONG_LINE)은 세 줄 높이로 접고 아래 단추로 편다. 기록 상수 한 줄이 블록을 수천 px 로 늘리던 것을 막는다.
+   자르는 것은 글자 칸(.cb-t)이라 .cb-src 의 접힌 줄 막대는 그대로 보이고, 가로 스크롤은 여전히 쓰지 않는다.
+   lh 를 모르는 브라우저는 앞의 3 × 1.75em 을 쓴다. 아래 끝은 짧게 흐려서 줄이 이어진다는 것을 보인다.
+   .cb-t 는 내어쓰기(text-indent: -4ch)를 물려받아 첫 줄이 상자 왼쪽 4ch 밖에서 시작한다. 그대로 자르면 첫 4자가 잘리니
+   상자를 4ch 왼쪽으로 넓히고 그만큼 안쪽 여백을 둔다. */
+.cb-ln.is-long:not(.is-open) > .cb-src > .cb-t { display: block; margin-left: -4ch; padding-left: 4ch; max-height: calc(3 * 1.75em); max-height: 3lh; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, var(--ink) calc(100% - 1.2em), transparent);
+  mask-image: linear-gradient(to bottom, var(--ink) calc(100% - 1.2em), transparent); }
+.cb-more { display: block; max-width: 100%; margin: 4px 0 8px max(0ch, min(var(--ind, 0) * 1ch, 100% - 24ch)); padding: 2px 8px;
+  font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.5; white-space: normal; text-align: left; color: var(--ink2);
+  background: transparent; border: 1px solid var(--rule); border-radius: 0; cursor: pointer; -webkit-user-select: none; user-select: none; }
+.cb-more:hover { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--bg-primary); }
 .cb-k, .cb-fn { color: var(--ink); font-weight: 600; }
 .cb-bi { color: var(--ink2); }
 .cb-s { color: var(--series-6); }

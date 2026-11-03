@@ -18,7 +18,7 @@
 - 구조: 도입 장면(400~500자, 문단 4개, 표 0개, 개념어 없이) → `> 한 줄 요약:` → 본문 절 → 끝에서 두 번째 절은 「두 무대」(### 소제목에 `[무대: 닫힌 생태계]`, `[무대: 열린 RTB]`) → `## 한눈 정리`(표 하나) → `## 헷갈리기 쉬운 점` → `## 더 깊이 보기`(`:::deep` 3개 이하) → `## 참고문헌`(공개 출처만).
 - 절마다 굵은 요약 한 줄 + 문단 4~6개 + 표 1개 또는 파이썬 1개. 표 총 5~7개. 데이터는 글에 1~2벌. 문장 80자 상한, 목표 평균 44~56자. 산문 15KB 이상.
 - 파이썬은 표준 라이브러리만, 3.9 문법, 모든 난수는 `random.seed(7)`. 블록은 `# 하는 일:` 한 줄, `# N단계:` 제목과 풀이, `# 출력:` 아래 `# N단계 뜻:` 과 찍힌 줄(`python3 scripts/check-python-outputs.py --post <slug> --show` 가 뽑은 것을 그대로 붙인다). 꼬리표는 `python` 하나. 상용 API 코드는 `# (발췌 — 그대로 실행되지 않습니다.)`.
-- 기록을 쓰는 블록은 기록 파일의 값을 문자열 상수로 담고 첫 줄에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 주석을 단다. 기록 출력은 JSON, 영어 enum 라벨, 숫자만. 한국어 문장은 산문의 「」 안에만.
+- 기록을 쓰는 블록은 기록 파일의 값을 문자열 상수로 담고 `# 하는 일:` 바로 다음 줄에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 주석을 단다(블록 첫 줄은 상태 표시나 하는 일이어야 형식 검사를 지난다). 기록 출력은 JSON, 영어 enum 라벨, 숫자만. 한국어 문장은 산문의 「」 안에만.
 - 가상 값은 글에서 한 번 「가상 데이터」라고 밝힌다. 다른 글의 숫자(회원 1,400만, 세그먼트 317 160만, 맞춤타겟 8만, Lookalike 140만, 타겟 방식별 전환율 표, 후보풀 캠페인 셋)와 어긋나지 않는다. 설계 4절의 값을 그대로 쓴다.
 - 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 올리기 전에 `grep -rnE "$(grep -v '^#' ~/Downloads/job-search/공통/사내-이름-목록.txt | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html` 이 0건이어야 한다.
 - 커밋은 `chkimsu` 계정(GitHub no-reply 메일)으로, 파일을 하나씩 명시한다. `git add -A` 금지. push 전에 `git fetch origin && git merge origin/main`. 커밋 메시지는 한국어 conventional commit, 끝에 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
@@ -55,10 +55,11 @@
  "options": {"temperature": 0, "seed": 7},
  "items": [{"id": "a001", "think": false, "run": 1, "system": "…", "user": "…",
             "output": "{\"label\":\"running\"}", "thinking_chars": 0,
-            "prompt_tokens": 412, "output_tokens": 9, "elapsed_ms": 1830}]}
+            "prompt_tokens": 412, "output_tokens": 9, "elapsed_ms": 1830,
+            "options": {"temperature": 0, "seed": 7}}]}
 ```
 
-프롬프트 파일 형식 `data/llm-records/prompts/<slug>.json`: `{"system": "…", "items": [{"id": "a001", "user": "…"}], "think": "off" | "on" | "both", "repeat": 1, "repeat_subset": {"ids": ["a001"], "repeat": 3}, "think_subset": {"ids": ["a001"], "think": "on"}}`. 뒤의 두 필드는 선택이다. `repeat_subset` 은 그 id 들만 지정한 횟수만큼 더 보내고(`run` 2, 3…), `think_subset` 은 그 id 들만 지정한 think 로 한 번 더 보낸다.
+프롬프트 파일 형식 `data/llm-records/prompts/<slug>.json`: `{"system": "…", "items": [{"id": "a001", "user": "…"}], "think": "off" | "on" | "both", "repeat": 1, "repeat_subset": {"ids": ["a001"], "repeat": 3}, "think_subset": {"ids": ["a001"], "think": "on"}}`. 뒤의 두 필드는 선택이다. `repeat_subset` 은 그 id 들만 지정한 횟수만큼 더 보내고(`run` 2, 3…), `think_subset` 은 그 id 들만 지정한 think 로 한 번 더 보낸다. `options` 도 선택이다. 파일 맨 위에 두면 기본값 `{"temperature": 0, "seed": 7}` 을 덮고, `repeat_subset` 과 `think_subset` 안에 두면 그 묶음에만 적용된다. 반복 묶음에서 `temperature` 가 0 보다 크고 `seed` 가 없으면 run 마다 `seed = 7 + run` 을 써서 돌릴 때마다 다르되 다시 기록해도 같게 한다. 기록 항목마다 실제로 쓴 `options` 를 적는다. 그래서 흔들림은 temperature 0(같은 답)과 0.7(바뀌는 답)을 견주어 잰다. Ollama 에 temperature 0 과 고정 seed 로 보내면 같은 답이 돌아오므로, 설계 4절의 「같은 입력 10회」 측정은 이 두 설정을 나란히 두는 것으로 읽는다.
 
 CLI: `python3 scripts/llm-record.py --slug <slug> [--model qwen3.5:27b] [--host http://localhost:11434] [--limit N]` 은 프롬프트 파일을 읽어 기록 파일을 쓴다(있으면 덮어쓴다). `--export-constant` 는 기록의 `items[].output` 을 `id` 순서로 `RECORD = {...}` 파이썬 상수 문자열로 찍는다(`id → output` 딕셔너리, `think` 와 `run` 이 여럿이면 키를 `id|on|2` 꼴로). `--selftest` 는 서버 버전을 묻고 한 줄짜리 요청 하나를 보내 형식 필드가 다 있는지 확인하고 0 으로 끝난다. 표준 라이브러리 `urllib.request`, `json`, `time`, `argparse`, `datetime` 만 쓴다. 요청은 `POST /api/chat`, 본문 `{"model", "messages": [{"role":"system"},{"role":"user"}], "stream": false, "think": bool, "options": {"temperature": 0, "seed": 7}}`. 응답의 `message.content`, `message.thinking`(없으면 빈 문자열), `prompt_eval_count`, `eval_count`, `total_duration`(ns → ms) 을 옮긴다. 한 항목이 실패하면 3번까지 다시 보내고 그래도 실패면 그 항목만 `"error"` 필드로 남기고 계속한다.
 
@@ -198,7 +199,7 @@ Expected: stub 과 엔트리. `series: 'targeting-model-track'` 추가.
 
 - [ ] **Step 2: 프롬프트 파일을 쓰고 기록한다**
 
-`data/llm-records/prompts/interest-classification.json` 에 시스템 메시지, 200건(`id` 는 `a001`~`a200`, `user` 는 제목과 첫 문장), `"think": "off"`, `"repeat": 1`. 글 200건은 글의 파이썬 1 블록과 같은 생성기로 만들어 두 곳이 같아야 한다(생성기 코드를 `scripts/gen-interest-articles.py` 로 두고 블록은 그 코드를 그대로 담는다). 흔들림용으로 같은 파일에 `"repeat_subset": {"ids": ["a001"…"a040"], "repeat": 3}` 을 둔다(`llm-record.py` 가 이 필드를 지원하도록 Task 0 에서 만들었어야 한다. 없으면 여기서 더한다).
+`data/llm-records/prompts/interest-classification.json` 에 시스템 메시지, 200건(`id` 는 `a001`~`a200`, `user` 는 제목과 첫 문장), `"think": "off"`, `"repeat": 1`. 글 200건은 글의 파이썬 1 블록과 같은 생성기로 만들어 두 곳이 같아야 한다(생성기 코드를 `scripts/gen-interest-articles.py` 로 두고 블록은 그 코드를 그대로 담는다). 흔들림용으로 같은 파일에 `"repeat_subset": {"ids": ["a001"…"a040"], "repeat": 3, "options": {"temperature": 0.7}}` 을 둔다. 반복 묶음은 run 마다 seed 가 7+run 으로 달라진다. 글은 「temperature 0 에서는 세 번 다 같은 답, 0.7 에서는 40건 중 N건이 바뀜」으로 쓰고 N 은 기록에서 센다.
 
 Run: `python3 scripts/llm-record.py --slug interest-classification`
 Expected: `data/llm-records/interest-classification.json` 에 항목 200 + 120 = 320개, `error` 0개. 걸린 시간을 적어 둔다.
@@ -212,7 +213,7 @@ Expected: `RECORD = {"a001": "{\"label\":\"running\"}", …` 로 시작하는 �
 
 - [ ] **Step 5: 글 본문을 쓴다**
 
-파이썬 1 은 생성기 + 규칙 분류 + precision/recall. 파이썬 2 는 `# (앞 블록에 이어서 돌린다.)` 로 로지스틱 회귀 학습과 평가. 파이썬 3 은 `# (앞 블록에 이어서 돌린다.)` + `# 기록 data/llm-records/interest-classification.json 에서 옮김` 으로 RECORD 상수를 담고 사람 라벨과의 precision/recall, 40건 3회 중 답이 바뀐 글 수, 토큰 합 × 단가 = 건당 비용을 찍는다.
+파이썬 1 은 생성기 + 규칙 분류 + precision/recall. 파이썬 2 는 `# (앞 블록에 이어서 돌린다.)` 로 로지스틱 회귀 학습과 평가. 파이썬 3 은 첫 줄 `# (앞 블록에 이어서 돌린다.)`, 둘째 줄 `# 하는 일: …`, 셋째 줄 `# 기록 data/llm-records/interest-classification.json 에서 옮김` 순서로 RECORD 상수를 담고 사람 라벨과의 precision/recall, 40건 3회 중 답이 바뀐 글 수, 토큰 합 × 단가 = 건당 비용을 찍는다.
 
 - [ ] **Step 6: 출력을 뽑아 붙인다**
 
@@ -335,16 +336,16 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Consumes: Task 1 의 표본 2,000명 생성기와 행동 8종, Task 0 의 기록 도구.
 - Produces: 조건 JSON 스키마(아래). 묶음 3 의 `nl-to-targeting-query` 가 같은 스키마를 넓혀 쓴다.
 
-조건 JSON 스키마(기록의 출력 형식): `{"verdict": "supported" | "partial" | "unsupported", "conditions": [{"field": "search_running_shoes" | "sports_app_days" | "running_posts" | "sports_goods_buy" | "travel_posts" | "cafe_posts" | "camping_posts" | "camping_search" | "age" | "region", "op": ">=" | "<=" | "==", "value": 숫자 또는 문자열}], "unsupported_parts": ["…"], "reason_code": "none" | "sensitive_attribute" | "unknown_field" | "exposure_history_unavailable"}`. 시스템 메시지는 이 스키마와 「지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다」를 담는다. 요청 셋은 설계 4절 그대로(지원, 일부 지원, 불가). 기록은 셋 × think off × 5회(흔들림), 「일부 지원」 요청만 think on 1회 더.
+조건 JSON 스키마(기록의 출력 형식): `{"verdict": "supported" | "partial" | "unsupported", "conditions": [{"field": "search_running_shoes" | "sports_app_days" | "running_posts" | "sports_goods_buy" | "travel_posts" | "cafe_posts" | "camping_posts" | "camping_search" | "age" | "region", "op": ">=" | "<=" | "==", "value": 숫자 또는 문자열}], "unsupported_parts": ["…"], "reason_code": "none" | "sensitive_attribute" | "unknown_field" | "exposure_history_unavailable"}`. 시스템 메시지는 이 스키마와 「지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다」를 담는다. 요청 셋은 설계 4절 그대로(지원, 일부 지원, 불가). 기록은 셋 × think off × 1회(temperature 0, 기준) + 셋을 `repeat_subset` 으로 5회 반복(temperature 0.7, run 마다 seed 7+run) + 「일부 지원」 요청만 think on 1회 더. 항목 3 + 15 + 1 = 19개.
 
 거절 응답은 코드가 고른 고정 템플릿 한 문장: 「요청에 건강 상태처럼 민감한 정보로 고르는 조건이 있어 만들 수 없습니다. 관심사나 행동 조건으로 바꿔 주시면 다시 만들겠습니다.」 LLM 이 쓴 문장은 광고주에게 가지 않는다.
 
 데크(`na-`, 4장): `intent` 세 요청과 판정 셋 / `slots` 「러닝화 살 사람」이 조건 둘(`search_running_shoes >= 2`, `sports_goods_buy == 0` 같은 식, 값은 기록에서)로 나뉘는 그림 / `query` 조건이 코드 필터가 되어 표본에서 몇 명이 남는지 / `bridge` 어디가 LLM(판정, 조건 추출)이고 어디가 코드(필터, 크기, 응답 템플릿)인가.
 
-절: 1 새 과제의 첫 화면은 문장 하나입니다(도입 뒤 첫 절, 표) / 2 첫 단계는 판정: 지원, 일부 지원, 불가(표, 카드 intent) / 3 조건 추출: 문장이 JSON 이 됩니다(기록, 카드 slots) / 4 조건이 쿼리가 되고 명단 크기가 나옵니다(파이썬 1 기록 상수 + 필터, 카드 query) / 5 같은 문장을 다섯 번 보내면(표: 조건이 바뀐 횟수, think 켠 것과의 차이) / 6 거절은 LLM 이 아니라 템플릿이 말합니다(표) / 7 어디까지 LLM 이고 어디부터 코드인가(표, 카드 bridge. LLM 기초 트랙 예고) / 8 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(「살 사람」은 조건이 아니라 예측이라 pCVR 글로, 노출 이력 조건은 데이터가 없어 불가가 아니라 일부 지원, 판정과 추출을 한 번에 시키지 않는 이유) / 더 깊이 보기(스키마 전문, 흔들림 측정 방법) / 참고문헌(Amazon Ads AMC SQL generator 보도자료 2025-01, Zeotap NL Audience Builder 문서, Anthropic Structured outputs 문서).
+절: 1 새 과제의 첫 화면은 문장 하나입니다(도입 뒤 첫 절, 표) / 2 첫 단계는 판정: 지원, 일부 지원, 불가(표, 카드 intent) / 3 조건 추출: 문장이 JSON 이 됩니다(기록, 카드 slots) / 4 조건이 쿼리가 되고 명단 크기가 나옵니다(파이썬 1 기록 상수 + 필터, 카드 query) / 5 같은 문장을 다섯 번 보내면(표: temperature 0 은 같은 답, 0.7 에서 조건이 바뀐 횟수, think 켠 것과의 차이) / 6 거절은 LLM 이 아니라 템플릿이 말합니다(표) / 7 어디까지 LLM 이고 어디부터 코드인가(표, 카드 bridge. LLM 기초 트랙 예고) / 8 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(「살 사람」은 조건이 아니라 예측이라 pCVR 글로, 노출 이력 조건은 데이터가 없어 불가가 아니라 일부 지원, 판정과 추출을 한 번에 시키지 않는 이유) / 더 깊이 보기(스키마 전문, 흔들림 측정 방법) / 참고문헌(Amazon Ads AMC SQL generator 보도자료 2025-01, Zeotap NL Audience Builder 문서, Anthropic Structured outputs 문서).
 
 - [ ] **Step 1: 스캐폴드** — `node scripts/new-post.js natural-language-audience "자연어 오디언스: 「러닝화 살 사람」 한 문장이 조건과 명단이 되기까지" "Targeting & Audience" "Targeting,LLM,Segmentation" both`, series 추가.
-- [ ] **Step 2: 프롬프트 파일과 기록** — 항목 3 × 5 + 1 = 16개. `python3 scripts/llm-record.py --slug natural-language-audience`. 출력이 스키마대로 파싱되는지 `python3 -c` 로 16개 전부 `json.loads` 해 본다. 파싱이 안 되는 항목이 있으면 시스템 메시지를 고쳐 다시 기록한다(기록 파일은 통째로 바뀐다).
+- [ ] **Step 2: 프롬프트 파일과 기록** — 항목 19개. `python3 scripts/llm-record.py --slug natural-language-audience`. 출력이 스키마대로 파싱되는지 `python3 -c` 로 16개 전부 `json.loads` 해 본다. 파싱이 안 되는 항목이 있으면 시스템 메시지를 고쳐 다시 기록한다(기록 파일은 통째로 바뀐다).
 - [ ] **Step 3: 데크 4장** (`na-`, `'nl-audience-cards'` 엔트리).
 - [ ] **Step 4: 글 본문** — 거절 템플릿은 위 문장 하나만. 파이썬 1 은 기록 상수(요청 셋의 1회차 출력) → `json.loads` → 필드별 필터 함수 → 표본 2,000명에서 남는 수와 전체 환산(× 7,000). 「일부 지원」은 unsupported_parts 를 빼고 센다.
 - [ ] **Step 5: 출력을 뽑아 붙인다** — 두 번 통과.

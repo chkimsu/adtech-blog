@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>유저 프로파일 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="회원 한 명의 30일 행동이 숫자가 되는 자리를 카드 한 장씩으로. 날짜별로 쌓인 행동 로그, 7일마다 절반으로 덜 세는 최근성 가중, 표본 2,000명으로 표준화한 8차원 벡터, 세그먼트 317 의 조건 셋. 숫자는 설명용 가상 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>유저 프로파일 카드 네 장</h1>
+      <p>회원 한 명의 30일 행동이 숫자가 되는 자리 하나가 카드 한 장입니다. 행동 로그가 날짜별로 쌓이고, 날짜에 따라 덜 세고, 표본과 견주어 벡터가 되고, 같은 기록에 규칙을 대 보면 번호가 붙습니다. 숫자는 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 회원 A</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 회원 B</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 날짜만 옮겨 본 가정</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 적어 둔 조건</span>
+        <span class="tg-chip"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" style="fill:var(--text-primary)"/></svg>점 = 지금 쌓이는 사건</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="logs"><h2>BEHAVIOR LOG</h2><p class="tg-k">회원 A 의 30일이 날짜별로 쌓인 표</p><p class="tg-easy"><b>쉽게 말하면</b> 회원이 앱에서 한 일은 한 줄씩 날짜와 함께 남습니다. 회원 A 의 30일을 행동 8종으로 나눠 늘어놓으면 표 한 장이 되고, 줄마다 더하면 30일 합계입니다.</p><div class="tg-fig" id="pf-logs"></div>
+        <p class="tg-cap">러닝 쪽 넷은 <b>이번 주에</b> 몰려 있고 여행 글 4편은 <b>2주 넘게 전</b>입니다. 합계 칸만 남기면 이 차이가 지워집니다.</p></section>
+      <section class="tg-card" data-card="agg"><h2>RECENCY WEIGHT</h2><p class="tg-k">같은 9편이 언제 읽혔나에 따라 7.21 과 1.80</p><p class="tg-easy"><b>쉽게 말하면</b> 사건 하나를 늘 1 로 세지 않고, 7일이 지날 때마다 절반으로 덜 쳐서 더합니다. 그러면 같은 9편이라도 이번 주에 읽은 쪽이 큰 값을 받습니다.</p><div class="tg-fig" id="pf-agg"></div>
+        <p class="tg-cap">합계는 둘 다 <b>9</b> 입니다. 가중합은 7일마다 절반이라, 같은 9편을 2주 앞으로 옮기면 <b>4분의 1</b> 이 됩니다.</p></section>
+      <section class="tg-card" data-card="vector"><h2>PROFILE VECTOR</h2><p class="tg-k">회원 A 와 B 의 8차원 벡터</p><p class="tg-easy"><b>쉽게 말하면</b> 가중합 8개를 정해 둔 순서로 놓고, 행동마다 표본 2,000명의 평균을 빼고 표준편차로 나눈 것입니다. 0 이 평균이고, 1 은 평균보다 표준편차 하나만큼 많다는 뜻입니다.</p><div class="tg-fig" id="pf-vector"></div>
+        <p class="tg-cap">A 는 <b>러닝 쪽 넷</b>이, B 는 <b>캠핑 둘</b>이 큽니다. 운동 용품을 한 번 산 것이 카페 글 3편보다 큰 값을 받는 것은 산 사람이 드물기 때문입니다.</p></section>
+      <section class="tg-card" data-card="rule"><h2>SEGMENT 317</h2><p class="tg-k">조건 셋 중 하나라도 맞으면 번호가 붙는다</p><p class="tg-easy"><b>쉽게 말하면</b> 세그먼트 317 은 30일 합계 세 줄에 문턱을 대 보는 규칙입니다. 셋 중 하나라도 넘으면 번호가 붙고, 얼마나 넘었는지는 남지 않습니다.</p><div class="tg-fig" id="pf-rule"></div>
+        <p class="tg-cap">회원 A 는 <b>셋 다</b> 맞고 회원 B 는 <b>하나도</b> 맞지 않습니다. 표본 2,000명 중에서는 <b>229명 (11.4%)</b> 이 맞습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>유저 프로파일 피처 이야기를 들으면</b> 세 가지를 묻습니다. 며칠을 모으나(집계 창), 얼마나 빨리 덜 세나(반감기), 평균과 표준편차를 어느 표본에서 셌나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=user-profile-features">유저 프로파일 피처</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 세그먼트 317 의 조건이 처음 나온 곳은 <a href="post.html?id=audience-and-segments">오디언스와 세그먼트</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/profile-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

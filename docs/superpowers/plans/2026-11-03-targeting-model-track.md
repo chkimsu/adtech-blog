@@ -199,7 +199,7 @@ Expected: stub 과 엔트리. `series: 'targeting-model-track'` 추가.
 
 - [ ] **Step 2: 프롬프트 파일을 쓰고 기록한다**
 
-`data/llm-records/prompts/interest-classification.json` 에 시스템 메시지, 200건(`id` 는 `a001`~`a200`, `user` 는 제목과 첫 문장), `"think": "off"`, `"repeat": 1`. 글 200건은 글의 파이썬 1 블록과 같은 생성기로 만들어 두 곳이 같아야 한다(생성기 코드를 `scripts/gen-interest-articles.py` 로 두고 블록은 그 코드를 그대로 담는다). 흔들림용으로 같은 파일에 `"repeat_subset": {"ids": ["a001"…"a040"], "repeat": 3, "options": {"temperature": 0.7}}` 을 둔다. 반복 묶음은 run 마다 seed 가 7+run 으로 달라진다. 글은 「temperature 0 에서는 세 번 다 같은 답, 0.7 에서는 40건 중 N건이 바뀜」으로 쓰고 N 은 기록에서 센다.
+`data/llm-records/prompts/interest-classification.json` 에 시스템 메시지, 200건(`id` 는 `a001`~`a200`, `user` 는 제목과 첫 문장), `"think": "off"`, `"repeat": 1`. 글 200건은 글의 파이썬 1 블록과 같은 생성기로 만들어 두 곳이 같아야 한다(생성기 코드를 `scripts/gen-interest-articles.py` 로 두고 블록은 그 코드를 그대로 담는다). 흔들림용으로 같은 파일에 `"repeat_subset": {"ids": ["a001"…"a040"], "repeat": 3, "options": {"temperature": 0.7}}` 을 둔다. 반복 묶음은 run 마다 seed 가 7+run 으로 달라진다. 글은 「temperature 0 과 고정 seed 는 다시 기록해도 같은 파일이 나오고(재기록 diff 0), 0.7 에서는 40건 중 N건이 바뀜」으로 쓰고 N 은 기록에서 센다. N 이 0 이면 0 이라고 쓰고, 라벨 하나짜리 답은 자유 문장보다 안 바뀐다는 점을 그대로 적는다.
 
 Run: `python3 scripts/llm-record.py --slug interest-classification`
 Expected: `data/llm-records/interest-classification.json` 에 항목 200 + 120 = 320개, `error` 0개. 걸린 시간을 적어 둔다.

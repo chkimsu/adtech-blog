@@ -3624,7 +3624,7 @@ window.DEMO_EDU = {
                     case 'rule': return '헷갈리는 것은 <strong>키워드가 낱말 안에 들어 있을 때</strong>입니다. 「키즈카페」에는 「카페」가 들어 있어서, 육아 글이 사전에서 더 위에 있는 cafe 에 먼저 걸립니다.';
                     case 'model': return '헷갈리는 것은 <strong>점수 8개를 더하면 1 인가</strong>입니다. 관심사마다 모델을 따로 배워서 합이 1 이 아니고, 처음 보는 낱말로 쓴 글은 8개가 모두 낮게 나옵니다.';
                     case 'llm': return '헷갈리는 것은 <strong>같은 답이 나오면 맞는 답인가</strong>입니다. 종아리 마사지 글은 네 번 물어 네 번 모두 beauty 였고, 제목을 따른 사람 라벨은 running 입니다.';
-                    case 'compare': return '헷갈리는 것은 <strong>맞힌 수가 같으면 같은 방법인가</strong>입니다. 모델은 처음 보는 낱말의 글에서, LLM 은 헷갈리는 글에서 틀려서 틀린 글이 서로 다릅니다.';
+                    case 'compare': return '헷갈리는 것은 <strong>맞힌 수가 같으면 같은 방법인가</strong>입니다. 모델은 처음 보는 낱말의 글에서 틀리고, LLM 은 제목을 따른다는 사람 기준을 프롬프트에 적지 않아 헷갈리는 글에서 틀립니다. 그래서 틀린 글이 서로 다릅니다.';
                     default: return '';
                 }
             }

@@ -72,7 +72,7 @@
         s += arrow('icm1', 'M194,100 L218,100', 'a', { svg: S });
         s += `<rect class="f-a" x="220" y="66" width="104" height="68"/>`;
         [['running 모델', 82], ['절편 + 가중치 11개', 98], ['= 0.41', 112], ['시그모이드 → 0.60', 126]].forEach(t => {
-            s += `<text class="on" x="272" y="${t[1]}" text-anchor="middle" style="font-size:10px">${esc(t[0])}</text>`;
+            s += `<text class="on ic-sm" x="272" y="${t[1]}" text-anchor="middle">${esc(t[0])}</text>`;
         });
         s += T(272, 150, '관심사마다 이런 모델이 8개', 'lbl sm', 'middle');
         s += arrow('icm2', 'M326,100 L338,100', 'a', { svg: S });
@@ -125,7 +125,7 @@
         const who = [['규칙', 'c'], ['분류 모델', 'a'], ['LLM', 'b']];
         const groups = [
             ['precision', [1, 0.95, 0.96], ['1.00', '0.95', '0.96']],
-            ['recall', [0.575, 0.95, 0.95], ['0.57', '0.95', '0.95']],
+            ['recall', [0.575, 0.95, 0.95], ['0.57 (23/40)', '0.95', '0.95']],
             ['건당 비용', [0, 0, 1], ['거의 0원', '거의 0원', '0.070원']],
         ];
         groups.forEach((g, gi) => {

@@ -62,3 +62,5 @@ jobs:
         run: python scripts/test-python-outputs.py
       - name: 파이썬 블록 실행 (표준 라이브러리, 찍힌 줄과 단계)
         run: python scripts/check-python-outputs.py
+      - name: 관심사 분류 글의 생성기, 프롬프트 파일, 파이썬 1 블록이 같은가
+        run: python scripts/gen-interest-articles.py --check

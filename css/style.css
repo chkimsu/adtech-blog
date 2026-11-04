@@ -741,7 +741,7 @@ nav {
 .post-card-category[data-category="Bidding & Auction"]         { background: var(--series-1); }
 .post-card-category[data-category="ML Infrastructure"]         { background: var(--series-5); }
 .post-card-category[data-category="Measurement & Modeling"]    { background: var(--series-6); }
-/* 테두리형 — 카테고리 7개인데 계열색이 6개다. 색을 늘리지 않고 채움/테두리로 가른다
+/* 테두리형 — 카테고리 8개인데 계열색이 6개다. 색을 늘리지 않고 채움/테두리로 가른다
    (html-wiki-style 4번). 채움 기본값(.post-card-category)을 셋 다 덮어써야 한다. */
 .post-card-category[data-category="Interview & Algorithms"] {
   background: transparent; color: var(--navy); border: 1px solid var(--navy-bd);

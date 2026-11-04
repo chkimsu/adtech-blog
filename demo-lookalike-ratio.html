@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지를 슬라이더로 정합니다. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀌고, 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.">
+    content="회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지를 슬라이더로 정합니다. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀝니다. 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.">
   <title>Lookalike 확장 비율 놀이터 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -122,7 +122,6 @@
       <div class="demo-prereq">
         <span class="demo-prereq-label">먼저 보면 좋습니다</span>
         <a href="post.html?id=lookalike-basics">Lookalike 기초</a>
-        <a href="demo-lookalike-batch-cards.html">Lookalike 배치 카드 네 장</a>
       </div>
 
       <div class="demo-tldr-analogy">
@@ -147,7 +146,7 @@
         <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
         <li><span class="step-text">기본값 10% 에서 <strong>140만 명, 0.709, 0.90%, 12,600건</strong>을 봅니다. 두 글의 표와 같은 값입니다.</span></li>
         <li><span class="step-text"><strong>시드 크기</strong>를 1만 명까지 내립니다. 도달은 그대로이고 판정의 비율이 앞으로 옵니다.</span></li>
-        <li><span class="step-text"><strong>감쇠 계수</strong>를 0.5 로 내렸다가 1.5 로 올려, 판정이 어디로 가는지 봅니다.</span></li>
+        <li><span class="step-text"><strong>감쇠 계수</strong>를 0.5 로 내렸다가 1.3 으로 올려, 판정이 어디로 가는지 봅니다.</span></li>
       </ol>
 
       <div class="lr-intro">
@@ -163,9 +162,11 @@
           $k = 1$, $n$ = 8만이면 $s = 1$ 이고, 두 곡선은 1, 5, 10% 에서 두 글의 값을 지납니다.
           전환율은 <a href="post.html?id=lookalike-basics">Lookalike 기초</a> 편의 3.20, 1.50, 0.90% 이고,
           정밀도는 <a href="post.html?id=lookalike-computation">Lookalike 계산</a> 편의 0.985, 0.793, 0.709 입니다.
-          닮은 회원은 러닝 성향 160만 명이고 시드는 줄에서 빠지므로, 정밀도는 <code>(160만 − n) ÷ 도달</code> 을 넘지 못합니다.</p>
+          닮은 회원은 러닝 성향 160만 명이고 시드는 줄에서 빠지므로, 정밀도는 <code>(160만 − n) ÷ 도달</code> 을 넘지 못합니다.
+          이 상한은 정밀도 칸에만 걸리고 전환 수는 바꾸지 않습니다.</p>
         <p>예상 전환 수는 <code>도달 × c(r)</code> 이고, 판정은 1~20% 가운데 이 값이 가장 큰 비율입니다.
           10% 를 넘는 쪽은 어느 글에도 없는 값입니다.
+          세 점 사이와 10% 밖의 모양은 이 놀이터의 가정이라, Lookalike 계산 편의 표본 코드로 센 값과 다를 수 있습니다.
           이 놀이터는 하루 예산을 그대로 둔다고 보고, 넓힐수록 한 사람에게 가는 노출이 줄어 전환율이 정밀도보다 빨리 내려가게 했습니다.
           그래서 어느 비율을 넘으면 넓혀도 전환 수가 줄어듭니다. 숫자는 전부 설명을 위한 가상 값입니다.</p>
       </div>
@@ -174,26 +175,26 @@
       <div class="lr-controls">
         <div class="lr-slider-row">
           <div class="lr-slider-label">확장 비율 (r)<small>줄의 앞 몇 % 까지 가져오나</small></div>
-          <input type="range" class="lr-slider" id="lr-ratio" min="1" max="20" step="1" value="10">
+          <input type="range" class="lr-slider" id="lr-ratio" min="1" max="20" step="1" value="10" aria-label="확장 비율">
           <div class="lr-slider-value" id="lr-ratio-val">10%</div>
         </div>
         <div class="lr-slider-row">
           <div class="lr-slider-label">시드 크기 (n)<small>줄을 세우는 기준이 되는 회원 수</small></div>
-          <input type="range" class="lr-slider" id="lr-seed" min="10000" max="200000" step="10000" value="80000">
+          <input type="range" class="lr-slider" id="lr-seed" min="10000" max="200000" step="10000" value="80000" aria-label="시드 크기">
           <div class="lr-slider-value" id="lr-seed-val">8만 명</div>
         </div>
         <div class="lr-slider-row">
           <div class="lr-slider-label">정밀도 감쇠 계수 (k)<small>1.0 이 두 글의 값, 클수록 빨리 옅어짐</small></div>
-          <input type="range" class="lr-slider" id="lr-k" min="0.5" max="1.5" step="0.1" value="1.0">
+          <input type="range" class="lr-slider" id="lr-k" min="0.5" max="1.3" step="0.1" value="1.0" aria-label="정밀도 감쇠 계수">
           <div class="lr-slider-value" id="lr-k-val">1.0</div>
         </div>
-        <div class="lr-speed">닮음이 옅어지는 빠르기 s = <b id="lr-s">1.00</b>, 감쇠 계수 × 시드 배수 <span id="lr-s-seed">1.00</span></div>
+        <div class="lr-speed">닮음이 옅어지는 빠르기 s = <b id="lr-s">1.00</b> = 감쇠 계수 <span id="lr-s-k">1.0</span> × 시드 배수 <span id="lr-s-seed">1.00</span></div>
         <div class="lr-presets">
           <span class="lr-presets-label">프리셋</span>
           <button class="lr-preset-btn" data-preset="10,80000,1.0">기본</button>
           <button class="lr-preset-btn" data-preset="10,10000,1.0">시드 1만 명</button>
           <button class="lr-preset-btn" data-preset="10,200000,1.0">시드 20만 명</button>
-          <button class="lr-preset-btn" data-preset="10,80000,1.5">빨리 옅어지면</button>
+          <button class="lr-preset-btn" data-preset="10,80000,1.3">빨리 옅어지면</button>
           <button class="lr-preset-btn" data-preset="10,80000,0.5">천천히 옅어지면</button>
         </div>
       </div>

@@ -182,6 +182,7 @@
     $('lr-seed-val').textContent = man(st.seed);
     $('lr-k-val').textContent = st.k.toFixed(1);
     $('lr-s').textContent = cur.s.toFixed(2);
+    $('lr-s-k').textContent = st.k.toFixed(1);
     $('lr-s-seed').textContent = (cur.s / st.k).toFixed(2);
 
     // 지표 넷
@@ -251,11 +252,15 @@
     if (!$('lr-rate-chart') || typeof Chart === 'undefined') return;
     initCharts();
     IDS.forEach(id => $(id).addEventListener('input', render));
+    // 프리셋은 값을 바꾼 뒤 슬라이더마다 input 을 보낸다. 그래야 해설 패널이 기억하는 이전 값도 프리셋 값으로 바뀐다.
+    // render 는 그 input 에서 돈다. 해설 패널은 바뀐 슬라이더마다 300ms 뒤에 한 줄씩 쓰는데, 둘이 함께 바뀌면
+    // 마지막 줄은 한 슬라이더만 보고 쓴 말이 된다. 그래서 그 뒤에 프리셋 해설을 한 번 더 써서 맨 위에 둔다.
     document.querySelectorAll('[data-preset]').forEach(btn => {
       btn.addEventListener('click', () => {
         const v = btn.dataset.preset.split(',').map(Number);
         IDS.forEach((id, i) => { $(id).value = v[i]; });
-        render();
+        IDS.forEach(id => $(id).dispatchEvent(new Event('input', { bubbles: true })));
+        setTimeout(() => { if (window.demoEdu) window.demoEdu.explain('.lr-preset-btn', { el: btn }); }, 360);
       });
     });
     new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

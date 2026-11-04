@@ -6490,6 +6490,8 @@ html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
 /* Lookalike 배치 카드(js/lookalike-batch-cards-demo.js) — 막대 위의 점선, 앞 글에 적힌 8만 명 평균 */
 .lb-mark { stroke: var(--text-primary); stroke-width: 1.6; stroke-dasharray: 3 2.5; }
 .tg-chip i.lb-n { border-color: var(--text-primary); }
+/* pCVR 타겟 카드(js/pcvr-target-cards-demo.js) — 크기 대 전환율, 크기 대 전환 수를 잇는 먹색 선 */
+.pt-line { fill: none; stroke: var(--text-primary); stroke-width: 1.6; }
 
 /* ---- 표지: 지도가 주인공 (2026-09-18) — 칸마다 그 자리의 글로 간다 ---- */
 .cover-map { padding: 1.5rem 1.6rem 2.3rem; border-width: 2px; }

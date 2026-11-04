@@ -6,11 +6,11 @@
 
 언어 모델에 글을 보내 답을 받는 일을 LLM 호출이라고 부릅니다. LLM 은 글을 읽고 이어 쓰도록 학습한 큰 언어 모델이고, 모델에 보내는 글 전체를 프롬프트라고 부릅니다. 모델은 글을 토큰이라는 조각으로 읽고 씁니다. 상용 서비스는 이 토큰 수로 요청 값을 매기니, 한 번에 오가는 토큰 수가 하루 비용을 정합니다.
 
-> **한 줄 요약:** LLM 호출 한 번은 JSON 한 덩이를 보내고 JSON 한 덩이를 받는 일입니다. JSON 은 이름과 값의 짝인 필드를 중괄호로 묶어 적는 꼴입니다. 요청의 맨 위 필드는 다섯이고, 그중 messages 에 메시지 둘이 들어갑니다. 할 일을 적어 요청마다 같이 보내는 시스템 메시지와, 이번에 물을 사용자 메시지입니다. 서버는 두 메시지를 글 한 줄로 이었고, 모델은 그 글을 토큰 78개로 읽었습니다. 답은 `{"objective": "conversion"}` 한 줄이었습니다. objective 의 값은 정해 둔 낱말 넷 가운데 하나만 쓰는 enum 이고, 답은 그 안이었습니다. 응답에는 답과 함께 출력 토큰 6개와 걸린 시간 1,114ms 가 실려 옵니다. 답 앞에 풀이를 먼저 쓰게 하는 thinking 을 켜도 답은 같았습니다. 대신 출력 토큰이 505개로 84.2배, 시간이 28.7배가 되었습니다.
+> **한 줄 요약:** LLM 호출 한 번은 JSON 한 덩이를 보내고 JSON 한 덩이를 받는 일입니다. JSON 은 이름과 값의 짝인 필드를 중괄호로 묶어 적는 꼴입니다. 이 요청의 맨 위 필드는 다섯이고, 그중 messages 에 메시지 둘이 들어갑니다. 할 일을 적어 요청마다 같이 보내는 시스템 메시지와, 이번에 물을 사용자 메시지입니다. 서버는 두 메시지를 글 하나로 이었고, 모델은 그 글을 토큰 78개로 읽었습니다. 답은 `{"objective": "conversion"}` 한 줄이었습니다. objective 의 값은 정해 둔 낱말 넷 가운데 하나만 쓰는 enum 이고, 답은 그 안이었습니다. 응답에는 답과 함께 출력 토큰 6개와 걸린 시간 1,114ms 가 실려 옵니다. 답 앞에 풀이를 먼저 쓰게 하는 thinking 을 켜도 답은 같았습니다. 대신 출력 토큰이 505개로 84.2배, 시간이 28.7배가 되었습니다.
 
 > **골라 읽는 법** — 절이 6개입니다. 절마다 표나 코드나 카드가 들어 있어 그것만 보고 넘어가도 됩니다.
 >
-> - 요청 JSON 의 필드 다섯 → 1절
+> - 이 요청 JSON 의 필드 다섯 → 1절
 > - 두 메시지가 토큰이 되는 자리 → 2절
 > - 요청을 보내는 파이썬 코드 → 3절
 > - 응답 JSON 의 필드와 기록에서 읽은 두 답 → 4절
@@ -23,13 +23,13 @@
 
 ## 1. 지훈 씨가 보내는 첫 요청은 JSON 한 덩이입니다
 
-**요청은 노트북 안의 서버에 보내는 JSON 한 덩이이고, 맨 위 필드는 다섯입니다. 답할 모델, 메시지 둘, 답을 한 번에 받을지, thinking 을 켤지, 토큰을 뽑는 방식입니다. 이 글의 두 요청은 think 필드 하나만 다르고 나머지 넷은 같습니다.**
+**요청은 노트북 안의 서버에 보내는 JSON 한 덩이이고, 이 요청의 맨 위 필드는 다섯입니다. 답할 모델, 메시지 둘, 답을 한 번에 받을지, thinking 을 켤지, 토큰을 뽑는 방식입니다. 이 글의 두 요청은 think 필드 하나만 다르고 나머지 넷은 같습니다.**
 
 Ollama 를 띄우면 노트북 안에 서버가 하나 열립니다. 서버는 다른 프로그램이 맡긴 일을 하고 결과를 돌려주는 프로그램입니다. 일을 맡기며 보내는 글을 요청, 서버가 돌려주는 글을 응답이라고 부릅니다. 지훈 씨의 코드는 `http://localhost:11434/api/chat` 주소로 요청을 보냅니다. localhost 는 지금 쓰는 그 컴퓨터를 가리키는 이름이라, 요청이 노트북 밖으로 나가지 않습니다.
 
-요청에 실어 보내는 내용을 본문이라고 부르고, 이 요청의 본문이 JSON 한 덩이입니다. 맨 위 필드는 model, messages, stream, think, options 다섯입니다. model 에는 Ollama 에 받아 둔 모델의 이름 qwen3.5:27b 를 그대로 적습니다. 이름이 틀리면 서버는 답 대신 그 모델을 찾지 못했다는 오류를 돌려줍니다.
+요청에 실어 보내는 내용을 본문이라고 부르고, 이 요청의 본문이 JSON 한 덩이입니다. 맨 위 필드는 model, messages, stream, think, options 다섯입니다. `/api/chat` 은 tools, format, keep_alive 같은 필드도 받지만 이 요청은 쓰지 않습니다. model 에는 Ollama 에 받아 둔 모델의 이름 qwen3.5:27b 를 그대로 적습니다. 이름이 틀리면 서버는 답 대신 그 모델을 찾지 못했다는 오류를 돌려줍니다.
 
-messages 는 메시지의 목록이고, 메시지마다 role 과 content 두 필드가 있습니다. role 은 누가 쓴 글인지, content 는 글 자체입니다. 첫째 메시지는 role 이 system 인 시스템 메시지입니다. 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON 으로만 답하라는 두 문장입니다. 둘째는 role 이 user 인 사용자 메시지이고, 서연 씨 캠페인 한 줄 「러닝화 신상품 출시. 첫 구매를 늘리고 싶다. 하루 300만 원」입니다.
+messages 는 메시지의 목록이고, 메시지마다 role 과 content 두 필드가 있습니다. role 은 누가 쓴 글인지, content 는 글 자체입니다. 첫째 메시지는 role 이 system 인 시스템 메시지입니다. 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON 으로만 답하라는 두 문장입니다. 둘째는 role 이 user 인 사용자 메시지입니다. 그 content 는 서연 씨 캠페인 한 줄 「러닝화 신상품 출시. 첫 구매를 늘리고 싶다. 하루 300만 원」입니다.
 
 enum 의 낱말 넷은 광고 캠페인이 흔히 고르는 목표입니다. awareness 는 많은 사람에게 알리기, traffic 은 사이트로 데려오기입니다. conversion 은 구매 같은 전환 늘리기, retention 은 이미 산 사람을 다시 오게 하기입니다. 전환은 광고를 본 사람이 구매처럼 광고주가 바라는 행동을 한 것입니다. 목표가 정해지면 광고 시스템은 그 목표의 수를 늘리는 쪽으로 입찰합니다.
 
@@ -46,15 +46,15 @@ options 에는 다음 토큰을 뽑는 방식을 적습니다. temperature 는 �
 | options | temperature 0, seed 7 | 다음 토큰을 뽑는 방식 |
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-first-call-cards.html?embed=1&card=request" height="480" loading="lazy" title="요청 JSON 의 필드 다섯과 필드마다 하는 일"></iframe>
+<iframe class="demo-embed" src="demo-first-call-cards.html?embed=1&card=request" height="480" loading="lazy" title="이 요청 JSON 의 필드 다섯과 필드마다 하는 일"></iframe>
 <a class="demo-embed-open" href="demo-first-call-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
 </div>
 
 ## 2. 프롬프트는 토큰이 되어 들어갑니다
 
-**모델은 요청 JSON 을 그대로 읽지 않습니다. 서버가 두 메시지를 역할 표시와 함께 글 한 줄로 잇고, 모델은 그 글을 토큰으로 읽습니다. 이 요청의 프롬프트는 thinking 을 끄면 78토큰, 켜면 76토큰이었습니다.**
+**모델은 요청 JSON 을 그대로 읽지 않습니다. 서버가 두 메시지를 역할 표시와 함께 글 하나로 잇고, 모델은 그 글을 토큰으로 읽습니다. 이 요청의 프롬프트는 thinking 을 끄면 78토큰, 켜면 76토큰이었습니다.**
 
-모델이 받는 것은 요청 JSON 이 아니라 메시지를 이어 붙인 글 한 줄입니다. Ollama 는 qwen3.5 모델에 보낼 때 메시지마다 앞에 역할 표시를 붙입니다. 시스템 메시지 앞에는 `<|im_start|>system` 이, 끝에는 `<|im_end|>` 가 붙습니다. 맨 끝에는 `<|im_start|>assistant` 를 붙여, 모델이 그 뒤에 답을 이어 쓰게 합니다. 이렇게 이은 글이 모델이 실제로 읽는 프롬프트입니다. 이 꼴은 Ollama 소스의 qwen3.5 용 코드에 적혀 있습니다.
+모델이 받는 것은 요청 JSON 이 아니라 메시지를 이어 붙인 글 하나입니다. Ollama 는 qwen3.5 모델에 보낼 때 메시지마다 앞에 역할 표시를 붙입니다. 시스템 메시지 앞에는 `<|im_start|>system` 이, 끝에는 `<|im_end|>` 가 붙습니다. 맨 끝에는 `<|im_start|>assistant` 를 붙여, 모델이 그 뒤에 답을 이어 쓰게 합니다. 이렇게 이은 글이 모델이 실제로 읽는 프롬프트입니다. 이 꼴은 Ollama 소스의 qwen3.5 용 코드에 적혀 있습니다.
 
 모델은 이런 표시가 붙은 대화로 학습되어, 표시를 보고 두 글을 나눠 읽습니다. 그래서 시스템 메시지에는 요청마다 같은 할 일과 답의 꼴을 적고, 사용자 메시지에는 요청마다 바뀌는 내용을 적습니다. 다음 캠페인의 목표를 물을 때는 사용자 메시지만 바꿉니다.
 
@@ -93,7 +93,7 @@ import json
 import urllib.request
 
 # 1단계: 요청 본문을 만든다
-# 맨 위 필드 다섯이다. messages 의 첫째가 시스템 메시지, 둘째가 사용자 메시지다.
+# 이 요청의 맨 위 필드 다섯이다. messages 의 첫째가 시스템 메시지, 둘째가 사용자 메시지다.
 # think 를 True 로 바꾸면 thinking 을 켠 요청이 된다. 이 모델은 think 를 빼면 thinking 을 켠다.
 SYSTEM = ('광고 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON {"objective": "<목표>"} 으로만 답한다. '
           'enum 은 awareness, traffic, conversion, retention 넷이다.')
@@ -132,15 +132,15 @@ print('thinking_chars', len(msg.get('thinking') or ''))
 
 3단계가 꺼내는 이름은 Ollama 의 응답 필드 이름입니다. 답은 message 필드 안의 content 에, 풀이는 같은 자리의 thinking 에 옵니다. 프롬프트의 토큰 수는 prompt_eval_count, 출력 토큰 수는 eval_count 입니다. 걸린 시간 total_duration 은 나노초 단위입니다. 나노초는 10억분의 1초라서 100만으로 나누면 ms 가 됩니다.
 
-이 블로그의 기록 도구 `scripts/llm-record.py` 도 같은 본문을 같은 주소로 보냅니다. 응답의 다섯 값은 이름을 바꿔 적어서, 답은 output, 풀이의 글자 수는 thinking_chars 입니다. 토큰 수 둘은 prompt_tokens 와 output_tokens, 시간은 elapsed_ms 입니다. 다른 점은 둘인데, 한 요청을 세 번까지 보내 보고 응답의 done_reason 이 stop 이 아니면 답을 적지 않습니다. stop 이 아니면 답이 끝까지 오지 않은 것이기 때문입니다.
+이 블로그의 기록 도구 `scripts/llm-record.py` 도 같은 본문을 같은 주소로 보냅니다. 응답의 다섯 값은 이름을 바꿔 적어서, 답은 output, 풀이의 글자 수는 thinking_chars 입니다. 토큰 수 둘은 prompt_tokens 와 output_tokens, 시간은 elapsed_ms 입니다. 다른 점은 둘인데, 실패하면 두 번까지 다시 보내고 응답의 done_reason 이 stop 이 아니면 답을 적지 않습니다. stop 이 아니면 답이 끝까지 오지 않은 것이기 때문입니다.
 
-상용 API 도 요청의 꼴은 같아서, 주소와 인증 헤더만 다르고 본문에 model 과 messages 를 적습니다. 인증 헤더는 본문 앞에 붙여 누가 보낸 요청인지 밝히는 줄입니다. Anthropic 의 Messages API 문서는 시스템 메시지를 messages 밖의 system 필드에 넣을 수 있다고 적었습니다. 응답의 토큰 수는 usage 필드 안의 input_tokens 와 output_tokens 로 옵니다.
+상용 API 는 주소와 인증 헤더가 다르고, model 과 messages 는 같은 꼴입니다. 인증 헤더는 본문 앞에 붙여 누가 보낸 요청인지 밝히는 줄입니다. 나머지 필드는 API 마다 다르고, Anthropic 의 Messages API 에는 출력 토큰의 상한 max_tokens 를 꼭 적습니다. thinking 을 켜는 필드도 think 가 아니라 thinking 객체이고, seed 필드는 없습니다. Anthropic 의 Messages API 문서는 시스템 메시지를 messages 밖의 system 필드에 넣을 수 있다고 적었습니다. 응답의 토큰 수는 usage 필드 안의 input_tokens 와 output_tokens 로 옵니다.
 
 ## 4. 답은 JSON 한 줄과 필드 몇 개로 돌아옵니다
 
 **thinking 을 끈 답은 `{"objective": "conversion"}` 한 줄이었습니다. JSON 으로 읽혔고 objective 는 enum 넷 가운데 하나였습니다. 답과 함께 프롬프트 토큰 78개, 출력 토큰 6개, 걸린 시간 1,114ms 가 실려 왔습니다.**
 
-응답도 JSON 한 덩이이고, Ollama 0.40.11 의 응답에는 맨 위 필드가 12개 있습니다. 답은 그 가운데 message 필드 안의 content 에 들어 있습니다. 기록 도구가 그중 다섯 값을 옮겨 적었고, 아래 블록은 그 기록에서 뽑은 RECORD 와 USAGE 두 줄을 붙여 읽습니다. 두 줄은 `--export-constant --with-usage` 가 찍은 것이고, 검사기가 기록과 글자까지 같은지 봅니다.
+응답도 JSON 한 덩이이고, 답은 message 필드 안의 content 에 들어 있습니다. 기록 도구는 Ollama 0.40.11 이 돌려준 필드 가운데 다섯 값을 옮겨 적었습니다. 아래 블록은 그 기록에서 뽑은 RECORD 와 USAGE 두 줄을 붙여 읽습니다. 두 줄은 `--export-constant --with-usage` 가 찍은 것이고, 검사기가 기록과 글자까지 같은지 봅니다.
 
 ```python
 # 하는 일: 기록한 두 답을 JSON 으로 읽어 objective 가 enum 안인지 보고, 응답의 네 값으로 thinking 을 끈 답과 켠 답을 견준다.
@@ -168,7 +168,7 @@ def read(text):
 
 for key, text in RECORD.items():
     got = read(text)
-    print(f'{key}: {text} ({len(text)}자) -> objective {got}, enum 안 {got is not None}')
+    print(f'{key}: {text} ({len(text)}자) -> objective {got}, 읽힘 {got is not None}')
 
 # 2단계: 응답의 네 값에 이름을 붙여 찍는다
 # USAGE 의 값은 차례대로 prompt_tokens, output_tokens, elapsed_ms, thinking_chars 다.
@@ -181,7 +181,8 @@ for key, values in USAGE.items():
 # 3단계: thinking 을 켜면 무엇이 달라지나 본다
 # 두 요청은 think 필드 하나만 다르다. 켠 답의 출력 토큰에는 풀이의 토큰도 들어 있다.
 off, on = USAGE['c001'], USAGE['c001|on|1']
-print(f'답이 같은가 {read(RECORD["c001"]) == read(RECORD["c001|on|1"])}')
+ans_off, ans_on = read(RECORD['c001']), read(RECORD['c001|on|1'])
+print(f'답이 같은가 {ans_off is not None and ans_off == ans_on}')
 print(f'prompt_tokens {off[0]} -> {on[0]}, 차이 {off[0] - on[0]}개')
 print(f'output_tokens {off[1]} -> {on[1]}, {on[1] / off[1]:.1f}배')
 print(f'elapsed_ms {off[2]:,} -> {on[2]:,}, {on[2] / off[2]:.1f}배')
@@ -189,8 +190,8 @@ print(f'thinking_chars {off[3]} -> {on[3]:,}')
 
 # 출력:
 # 1단계 뜻: 두 답 모두 JSON 으로 읽히고, objective 는 enum 안의 conversion 이다.
-# c001: {"objective": "conversion"} (27자) -> objective conversion, enum 안 True
-# c001|on|1: {"objective": "conversion"} (27자) -> objective conversion, enum 안 True
+# c001: {"objective": "conversion"} (27자) -> objective conversion, 읽힘 True
+# c001|on|1: {"objective": "conversion"} (27자) -> objective conversion, 읽힘 True
 # 2단계 뜻: 끈 답은 78토큰을 읽고 6토큰을 썼다. 켠 답은 풀이까지 505토큰을 썼다.
 # c001: prompt_tokens 78, output_tokens 6, elapsed_ms 1,114, thinking_chars 0 (1.1초)
 # c001|on|1: prompt_tokens 76, output_tokens 505, elapsed_ms 31,979, thinking_chars 1,905 (32.0초)
@@ -221,7 +222,7 @@ print(f'thinking_chars {off[3]} -> {on[3]:,}')
 
 Qwen3 기술 보고서는 thinking 모드와 non-thinking 모드를 한 모델에 함께 두었다고 적었습니다. 앞은 여러 단계를 따지는 답에, 뒤는 빠른 답에 쓰는 모드입니다. qwen3.5:27b 도 think 필드 하나로 두 모드를 오갑니다. thinking 을 켠 요청에서 모델은 2절의 `<think>` 뒤에 풀이를 쓰고, `</think>` 다음에 답을 씁니다. 서버는 둘을 나눠 풀이는 message 의 thinking 에, 답은 content 에 담습니다.
 
-기록 도구는 풀이 글을 적지 않고 글자 수만 thinking_chars 로 적습니다. 그래서 풀이에서 무엇을 따졌는지는 이 기록으로 알 수 없습니다. 아래 표는 4절 블록의 2단계와 3단계가 찍은 값을 두 답으로 나란히 놓은 것입니다.
+기록 도구는 풀이 글을 적지 않고 글자 수만 thinking_chars 로 적습니다. 그래서 풀이에서 무엇을 따졌는지는 이 기록으로 알 수 없습니다. 아래 표는 4절 블록의 1단계와 2단계가 찍은 값을 두 답으로 나란히 놓은 것입니다.
 
 | 필드 | thinking 끔 | thinking 켬 |
 |---|---|---|
@@ -231,11 +232,11 @@ Qwen3 기술 보고서는 thinking 모드와 non-thinking 모드를 한 모델�
 | elapsed_ms | 1,114 | 31,979 |
 | thinking_chars | 0 | 1,905 |
 
-답과 enum 은 같고, 달라진 것은 출력 토큰, 시간, 풀이 글자 수입니다. 프롬프트의 토큰이 2개 준 것은 2절에서 본 풀이 자리 표시의 차이입니다. 출력 토큰은 84.2배인데 시간은 28.7배입니다. total_duration 은 응답 하나를 만드는 데 든 전체 시간입니다. 그래서 프롬프트를 읽는 시간처럼 출력 토큰 수와 상관없는 시간도 들어 있습니다. 출력 토큰이 6개뿐인 끈 답은 그 몫이 커서, 토큰이 는 만큼 시간이 늘지 않았습니다.
+답은 같고, 달라진 것은 프롬프트 토큰, 출력 토큰, 시간, 풀이 글자 수입니다. 프롬프트 토큰이 2개 준 것은 2절에서 본 풀이 자리 표시의 차이입니다. 출력 토큰은 84.2배인데 시간은 28.7배입니다. total_duration 은 응답 하나를 만드는 데 든 전체 시간입니다. 그래서 프롬프트를 읽는 시간처럼 출력 토큰 수와 상관없는 시간도 들어 있습니다. 출력 토큰이 6개뿐인 끈 답은 그 몫이 커서, 토큰이 는 만큼 시간이 늘지 않았습니다.
 
 풀이는 답이 아니지만 값은 냅니다. 상용 API 에서도 풀이로 쓴 토큰은 출력 토큰에 들어갑니다. Anthropic 의 Messages API 문서는 usage 의 output_tokens 가 값을 매기는 합계라고 적었습니다. 그 가운데 풀이로 쓴 토큰 수를 따로 적어 준다고도 설명합니다. 이 요청이라면 같은 답을 받으려고 출력 토큰을 84.2배 낸 셈입니다.
 
-이 기록에서는 thinking 을 꺼도 답이 같았으니, 캠페인 목표를 고르는 일에는 끈 쪽이 맞습니다. 다만 캠페인 한 줄을 한 번 물은 기록이라, 다른 문장에서도 답이 같을지는 말할 수 없습니다. [컨텍스추얼 타겟팅](post.html?id=contextual-targeting) 편에서는 thinking 을 켠 답이 시스템 메시지에 적은 기준을 더 잘 따랐습니다. 그때도 출력 토큰이 크게 늘어서, thinking 은 켤 자리를 골라 켭니다.
+이 기록에서는 thinking 을 꺼도 답이 같았으니, 이 캠페인 한 줄에는 끈 쪽으로 충분했습니다. 다만 캠페인 한 줄을 한 번 물은 기록이라, 다른 문장에서도 답이 같을지는 말할 수 없습니다. [컨텍스추얼 타겟팅](post.html?id=contextual-targeting) 편에서는 thinking 을 켠 답이 시스템 메시지에 적은 기준을 더 잘 따랐습니다. 그때도 출력 토큰이 크게 늘어서, thinking 은 켤 자리를 골라 켭니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-first-call-cards.html?embed=1&card=think" height="480" loading="lazy" title="thinking 을 끈 답과 켠 답의 출력 토큰과 시간"></iframe>
@@ -258,7 +259,7 @@ Qwen3 기술 보고서는 thinking 모드와 non-thinking 모드를 한 모델�
 
 | 자리 | 무엇 | 이 기록의 값 |
 |---|---|---|
-| 요청 | JSON 한 덩이, 맨 위 필드 다섯 | model, messages, stream, think, options |
+| 요청 | JSON 한 덩이, 이 요청은 맨 위 필드 다섯 | model, messages, stream, think, options |
 | 프롬프트 | 두 메시지를 역할 표시로 이은 글 | thinking 끔 78토큰, 켬 76토큰 |
 | 답 | message 의 content, JSON 한 줄 | `{"objective": "conversion"}`, enum 안 |
 | 출력 토큰 | 응답의 eval_count | 끔 6개, 켬 505개, 84.2배 |
@@ -275,7 +276,7 @@ Qwen3 기술 보고서는 thinking 모드와 non-thinking 모드를 한 모델�
 ## 더 깊이 보기
 
 :::deep Ollama 응답 필드 전문
-Ollama 0.40.11 의 `/api/chat` 이 thinking 을 켠 요청에 돌려주는 응답의 필드 전부입니다. 맨 위 필드가 12개이고, message 필드 안에 셋이 있습니다. 필드 목록은 이 버전에 요청을 보내 받은 응답에서, 뜻은 Ollama 의 API 문서에서 옮겼습니다.
+Ollama 0.40.11 의 `/api/chat` 이 thinking 을 켠 요청에 돌려준 응답의 필드입니다. 필드 목록은 이 버전이 돌려준 응답에서 옮겼습니다. 시간과 토큰 수 필드, message 안의 필드는 Ollama 의 API 문서가 적은 뜻을 옮겼습니다. done_reason 의 뜻은 기록 도구의 주석에서 옮겼고, 나머지는 이름 그대로입니다. 캐시는 앞 요청에서 이미 읽은 같은 앞부분을 다시 읽지 않으려고 남겨 둔 계산 결과입니다.
 
 | 응답 필드 | 뜻 | 기록 도구가 적는 이름 |
 |---|---|---|
@@ -294,7 +295,7 @@ Ollama 0.40.11 의 `/api/chat` 이 thinking 을 켠 요청에 돌려주는 응�
 | eval_count | 응답의 토큰 수 | output_tokens |
 | eval_duration | 응답을 쓴 시간 | 옮기지 않음 |
 
-시간 필드 넷은 모두 나노초입니다. 문서는 eval_count 를 eval_duration 으로 나눠 초당 출력 토큰 수를 셀 수 있다고 적었습니다. 기록 도구는 eval_duration 을 적지 않아서, 이 글은 그 수를 세지 않았습니다. 캐시는 앞 요청에서 이미 읽은 같은 앞부분을 다시 읽지 않으려고 남겨 둔 계산 결과입니다. prompt_eval_count 는 캐시에서 읽은 토큰까지 셉니다.
+시간 필드는 모두 나노초입니다. 문서는 eval_count 를 eval_duration 으로 나눠 초당 출력 토큰 수를 셀 수 있다고 적었습니다. 기록 도구는 eval_duration 을 적지 않아서, 이 글은 그 수를 세지 않았습니다. prompt_eval_count 는 캐시에서 읽은 토큰까지 셉니다.
 :::
 
 :::deep 기록 도구가 보내고 옮기는 것

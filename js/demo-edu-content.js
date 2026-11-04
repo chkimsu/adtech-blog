@@ -3826,7 +3826,7 @@ window.DEMO_EDU = {
         },
         tour: [
             { el: '.tg-legend', title: '색 넷과 점선', body: '벽돌색은 이번 요청과 답, 먹색은 모델과 서버가 붙이는 표시, 파랑은 기록에 남은 값입니다. 회색은 기록에 옮기지 않는 응답 필드, 점선 상자는 시스템 메시지입니다.' },
-            { el: '[data-card="request"]', title: '가장 먼저 볼 것', body: '요청은 JSON 한 덩이이고 맨 위 필드는 다섯입니다. 두 요청은 think 하나만 다릅니다.', waitFor: 'click' },
+            { el: '[data-card="request"]', title: '가장 먼저 볼 것', body: '요청은 JSON 한 덩이이고, 이 요청의 맨 위 필드는 다섯입니다. 두 요청은 think 하나만 다릅니다.', waitFor: 'click' },
             { el: '[data-card="think"]', title: 'thinking 을 켜면', body: '답은 같고, 출력 토큰이 6개에서 505개로, 시간이 1.1초에서 32.0초로 늡니다.' }
         ]
     }

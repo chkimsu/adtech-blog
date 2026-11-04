@@ -23,7 +23,7 @@
     // ---------- 1. 세 요청과 판정 ----------
     (function () {
         const S = 'na-intent'; if (!has(S)) return; let s = '';
-        s += T(40, 22, '세 요청을 thinking 을 끄고 temperature 0 으로 한 번씩 물은 기준 답입니다', 'lbl sm');
+        s += T(40, 22, '세 요청의 기준 답(thinking 끔, temperature 0)과, 캠핑 요청을 thinking 을 켜고 한 번 더 물은 답입니다', 'lbl sm');
         const rows = [
             { y: 32, h: 54, text: ['러닝화 살 사람'], expect: '지원', tags: [['', 'supported']], reason: ['reason_code none, 조건 1개'] },
             { y: 94, h: 90, text: ['최근 한 달 캠핑 용품 본 30대 중', '우리 광고 안 본 사람'], expect: '일부 지원',

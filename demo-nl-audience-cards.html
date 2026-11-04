@@ -42,12 +42,12 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="intent"><h2>INTENT</h2><p class="tg-k">세 요청과 판정. LLM 이 JSON 의 verdict 필드에 적는다</p><p class="tg-easy"><b>쉽게 말하면</b> 판정은 받을 수 있는 요청인지 정하는 일입니다. 전부 조건으로 옮길 수 있으면 지원, 일부만 옮길 수 있으면 일부 지원, 옮길 수 없거나 옮기면 안 되면 불가입니다.</p><div class="tg-fig" id="na-intent"></div>
+      <section class="tg-card" data-card="intent"><h2>VERDICT</h2><p class="tg-k">세 요청과 판정. LLM 이 JSON 의 verdict 필드에 적는다</p><p class="tg-easy"><b>쉽게 말하면</b> 판정은 받을 수 있는 요청인지 정하는 일입니다. 전부 조건으로 옮길 수 있으면 지원, 일부만 옮길 수 있으면 일부 지원, 옮길 수 없거나 옮기면 안 되면 불가입니다.</p><div class="tg-fig" id="na-intent"></div>
         <p class="tg-cap">러닝화 요청은 <b>supported</b>, 건강 상태 요청은 <b>unsupported</b> 입니다. 캠핑 요청은 일부 지원이어야 했지만 기준 답은 <b>unsupported</b> 였고, thinking 을 켠 답이 <b>partial</b> 입니다.</p></section>
       <section class="tg-card" data-card="slots"><h2>SLOTS</h2><p class="tg-k">문장 조각이 필드, 비교, 값의 조건이 된다</p><p class="tg-easy"><b>쉽게 말하면</b> 조건 하나는 필드 이름, 비교, 값 셋입니다. 조건이 여럿이면 모두 맞는 회원을 고르고, 필드로 옮기지 못한 조각은 조건에 넣지 않고 따로 적습니다.</p><div class="tg-fig" id="na-slots"></div>
-        <p class="tg-cap">「러닝화 살 사람」은 <b>search_running_shoes &gt;= 1</b> 하나가 됩니다. 캠핑 요청의 「30대」는 나이 조건 <b>둘</b>, 「캠핑 용품 본」은 검색 조건 <b>하나</b>가 됩니다.</p></section>
+        <p class="tg-cap">러닝화 요청의 기준 답은 <b>search_running_shoes &gt;= 1</b> 하나입니다. thinking 을 켠 캠핑 요청의 답은 「30대」를 나이 조건 <b>둘</b>, 「캠핑 용품 본」을 검색 조건 <b>하나</b>로 옮깁니다.</p></section>
       <section class="tg-card" data-card="query"><h2>QUERY</h2><p class="tg-k">조건 JSON 이 쿼리가 되고 표본에서 남는 회원을 센다</p><p class="tg-easy"><b>쉽게 말하면</b> 코드가 조건마다 「필드 비교 값」을 쓰고 AND 로 이어 쿼리를 만듭니다. 표본 2,000명에서 맞는 회원을 세고 7,000을 곱하면 전체 회원으로 옮겨집니다.</p><div class="tg-fig" id="na-query"></div>
-        <p class="tg-cap">러닝화 요청은 표본 <b>63명</b>, 캠핑 요청의 조건 셋은 <b>59명</b>입니다. 59명은 「우리 광고 안 본」을 빼고 센 수입니다.</p></section>
+        <p class="tg-cap">러닝화 요청의 기준 답은 표본 <b>63명</b>, thinking 을 켠 캠핑 요청의 조건 셋은 <b>59명</b>입니다. 59명은 「우리 광고 안 본」을 빼고 센 수입니다.</p></section>
       <section class="tg-card" data-card="bridge"><h2>LLM AND CODE</h2><p class="tg-k">LLM 이 맡는 두 일과 코드가 맡는 네 일</p><p class="tg-easy"><b>쉽게 말하면</b> 문장을 읽어야 하는 판정과 조건 추출은 LLM 이 합니다. 같은 입력에 늘 같은 답이 나와야 하는 검사, 쿼리, 명단 크기, 응답은 코드가 합니다.</p><div class="tg-fig" id="na-bridge"></div>
         <p class="tg-cap">답 19개에 코드가 고른 응답은 명단 <b>8개</b>, 검토 <b>5개</b>, 템플릿 <b>6개</b>입니다. 거절 문장은 LLM 이 쓰지 않고 템플릿 한 문장에서 나옵니다.</p></section>
     </div>

@@ -3722,7 +3722,7 @@ window.DEMO_EDU = {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
                     case 'intent': return '헷갈리는 것은 <strong>이유가 맞으면 판정도 맞는가</strong>입니다. 캠핑 요청의 기준 답은 노출 기록이 없다는 이유를 맞게 적었습니다. 그래도 판정은 일부 지원이 아니라 불가였습니다.';
-                    case 'slots': return '헷갈리는 것은 <strong>조건이 문장을 그대로 옮겼나</strong>입니다. 「살 사람」은 「검색 1회 이상」이 되었고, 「캠핑 용품 본」은 검색 횟수가 되었습니다. 둘 다 필드 10개 안에서 고른 가장 가까운 것입니다.';
+                    case 'slots': return '헷갈리는 것은 <strong>조건이 문장을 그대로 옮겼나</strong>입니다. 「살 사람」은 기준 답에서 「검색 1회 이상」이 되었고, 「캠핑 용품 본」은 thinking 을 켠 답에서 검색 횟수가 되었습니다. 둘 다 필드 10개 안에서 고른 가장 가까운 것입니다.';
                     case 'query': return '헷갈리는 것은 <strong>59명이 원하는 사람 수인가</strong>입니다. 「우리 광고 안 본」을 빼고 센 수라서, 그 조건을 더해도 이 수보다 늘지는 않습니다.';
                     case 'bridge': return '헷갈리는 것은 <strong>꼴을 맞추면 판정도 맞는가</strong>입니다. 답 19개는 모두 꼴을 지켰지만, 캠핑 요청의 기준 답은 그 꼴 안에서 판정이 틀렸습니다.';
                     default: return '';

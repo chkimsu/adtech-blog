@@ -6,7 +6,7 @@
 
 문장으로 광고를 보여 줄 사람을 고르는 일을 자연어 오디언스(natural language audience)라고 부릅니다. 자연어는 사람이 평소에 쓰는 말이고, 오디언스는 광고를 보여 줄 사람의 무리입니다. 문장을 읽는 언어 모델은 LLM 이라고 부릅니다. 문장을 잘못 옮기면 하루 300만 원이 다른 사람에게 가고, 받아서는 안 되는 요청이 명단이 됩니다.
 
-> **한 줄 요약:** 광고주가 쓴 문장 하나는 네 단계를 지나 명단이 됩니다. 받을 수 있는 요청인지 정하는 판정, 문장을 조건으로 바꾸는 조건 추출, 조건에 맞는 회원만 남기는 필터, 남은 수를 세는 명단 크기입니다. LLM 은 앞의 둘을 JSON(이름과 값을 정해진 꼴로 적은 글) 한 줄로 답하고, 뒤의 둘과 응답은 코드가 맡습니다. 「러닝화 살 사람」은 「러닝화 검색 1회 이상」이 되어 가상 표본 2,000명 중 63명이 남습니다. 「살 사람」은 원래 예측인데, LLM 에게 할 일을 적은 시스템 메시지가 그런 말을 행동 조건으로 옮기라고 했고 답이 그대로 따랐습니다. 「우리 광고 안 본」이 붙은 요청은 그 부분만 빼면 되는데, 기본 설정으로 받은 답은 요청 전체를 불가로 판정했습니다. 답 앞에 풀이를 쓰게 하는 thinking 을 켜고 한 번 더 물으면 조건 셋이 나왔지만, 모델이 써 낸 글 조각(토큰)이 114배였습니다. 답이 흔들리게 뽑는 설정으로 다섯 번 더 보내면 러닝화 요청의 명단이 12명에서 163명까지 바뀝니다. 그래서 코드가 JSON 의 꼴과 필드끼리 맞는지를 검사하고, 거절 문장은 정해 둔 템플릿으로 보냅니다.
+> **한 줄 요약:** 광고주가 쓴 문장 하나는 네 단계를 지나 명단이 됩니다. 받을 수 있는 요청인지 정하는 판정, 문장을 조건으로 바꾸는 조건 추출, 조건에 맞는 회원만 남기는 필터, 남은 수를 세는 명단 크기입니다. LLM 은 앞의 둘을 JSON(이름과 값을 정해진 꼴로 적은 글) 한 줄로 답하고, 뒤의 둘과 응답은 코드가 맡습니다. 「러닝화 살 사람」은 「러닝화 검색 1회 이상」이 되어 가상 표본 2,000명 중 63명이 남습니다. 「살 사람」은 원래 예측인데, LLM 에게 할 일을 적은 시스템 메시지가 그런 말을 행동 조건으로 옮기라고 했고 답이 그대로 따랐습니다. 「우리 광고 안 본」이 붙은 요청은 그 부분만 빼면 되는데, 기본 설정으로 받은 답은 요청 전체를 불가로 판정했습니다. 답 앞에 풀이를 쓰게 하는 thinking 을 켜고 한 번 더 물으면 조건 셋이 나왔지만, 모델이 써 낸 글 조각(토큰)이 114배였습니다. 답이 흔들리게 뽑는 설정으로 다섯 번 더 보내면, 캠핑 요청은 그중 두 번 같은 조건 셋을 냈습니다. 러닝화 요청의 명단은 12명에서 163명까지 바뀌었습니다. 그래서 코드가 JSON 의 꼴과 필드끼리 맞는지를 검사하고, 거절 문장은 정해 둔 템플릿으로 보냅니다.
 
 > **골라 읽는 법** — 절이 8개인 긴 글입니다. 절마다 표나 코드나 카드가 들어 있어 그것만 보고 넘어가도 됩니다.
 >
@@ -60,7 +60,7 @@
 
 판정의 이유는 reason_code 필드에 enum 으로 적습니다. none 은 옮기지 못한 부분이 없다는 뜻입니다. sensitive_attribute 는 건강, 종교처럼 민감한 정보로 사람을 고르는 요청입니다. unknown_field 는 필드 10개에 없는 정보가 필요한 요청입니다. exposure_history_unavailable 은 노출 기록이 있어야 하는 요청입니다. 옮기지 못한 부분은 unsupported_parts 필드에 영어 짧은 구로 적게 했습니다. 광고주에게 보일 글이 아니라 담당자가 읽을 메모이기 때문입니다.
 
-기본 설정은 thinking 을 끄고 temperature 0 으로 한 번씩 묻는 것이고, 이렇게 받은 답을 기준 답이라고 부릅니다. thinking 은 답 앞에 풀이를 길게 쓰게 하는 모드입니다. temperature 는 다음 토큰을 얼마나 흔들리게 뽑을지 정하는 값이고, 0 이면 늘 점수가 가장 높은 토큰을 고릅니다. 아래 표의 판정은 4절 코드의 2단계가 기록에서 읽어 찍은 값입니다. 「기대한 판정」은 이 과제를 정할 때 세 요청에 붙여 둔 값입니다.
+기본 설정은 thinking 을 끄고 temperature 0 으로 한 번씩 묻는 것이고, 이렇게 받은 답을 기준 답이라고 부릅니다. thinking 은 답 앞에 풀이를 길게 쓰게 하는 모드입니다. LLM 은 답을 토큰이라는 글 조각으로 하나씩 이어 씁니다. temperature 는 다음 토큰을 얼마나 흔들리게 뽑을지 정하는 값이고, 0 이면 늘 점수가 가장 높은 토큰을 고릅니다. 아래 표의 판정은 4절 코드의 2단계가 기록에서 읽어 찍은 값입니다. 「기대한 판정」은 이 과제를 정할 때 세 요청에 붙여 둔 값입니다.
 
 | 요청 | 기대한 판정 | 기준 답의 판정 | reason_code | unsupported_parts |
 |---|---|---|---|---|
@@ -127,6 +127,7 @@ from collections import Counter
 
 # 1단계: 표본 2,000명과 필드 10개를 만든다
 # 행동 8종은 유저 프로파일 피처 편의 생성기, 나이는 Lookalike 계산 편의 ages() 를 글자 그대로 옮긴다. 지역은 따로 뽑는 가상 값이다.
+# 행동마다 사건의 경과일을 적는다. 0 은 오늘, 29 는 29일 전이고, 같은 날 두 번이면 두 번 적는다.
 KEYS = ['search_running_shoes', 'sports_app_days', 'running_posts', 'sports_goods_buy',
         'travel_posts', 'cafe_posts', 'camping_posts', 'camping_search']
 MEMBER_A = {
@@ -242,7 +243,7 @@ def good_condition(c):
     if not (isinstance(c, dict) and set(c) == {'field', 'op', 'value'} and c['field'] in FIELDS and c['op'] in OPS):
         return False
     if c['field'] == 'region':
-        return c['value'] in REGIONS
+        return c['op'] == '==' and c['value'] in REGIONS   # 지역은 같은지만 본다
     return isinstance(c['value'], (int, float)) and not isinstance(c['value'], bool)
 
 
@@ -272,6 +273,9 @@ print(f'기록 {len(RECORD)}개, USAGE {len(USAGE)}개, 두 상수의 키와 차
 print(f'읽지 못한 답 {sum(a is None for a in answers.values())}개')
 for k in ('r1', 'r2', 'r3', 'r2|on|1'):
     a = answers[k]
+    if a is None:
+        print(f'{k} 읽지 못한 답')
+        continue
     print(f'{k} {a["verdict"]}, {a["reason_code"]}, 조건 {len(a["conditions"])}개 [{show(a["conditions"])}], '
           f'빠진 부분 {a["unsupported_parts"]}')
 
@@ -290,16 +294,25 @@ def size(conditions):
     return sum(all(OPS[c['op']](r[c['field']], c['value']) for c in conditions) for r in rows)
 
 
+def countable(a):
+    """명단 크기를 셀 답인가. 불가인 답과 조건이 빈 답은 세지 않는다. 조건이 빈 지원과 일부 지원은 6단계가 review 로 보낸다."""
+    return a['verdict'] != 'unsupported' and bool(a['conditions'])
+
+
 for k in ('r1', 'r2', 'r2|on|1', 'r3'):
     a = answers[k]
-    if a['verdict'] == 'unsupported':
-        print(f'{k}: {a["verdict"]} 이라 쿼리를 만들지 않는다')
+    if a is None:
+        print(f'{k}: 읽지 못한 답이라 쿼리를 만들지 않는다')
+        continue
+    if not countable(a):
+        why = '이라' if a['verdict'] == 'unsupported' else '인데 조건이 없어'
+        print(f'{k}: {a["verdict"]} {why} 쿼리를 만들지 않는다')
         continue
     n = size(a['conditions'])
     print(f'{k}: {sql(a["conditions"])}')
     print(f'    표본 {n:,}명 ({n * 1000 // len(rows) / 10}%), 전체로 옮기면 {n * SCALE:,}명')
     steps = [size(a['conditions'][:j + 1]) for j in range(len(a['conditions']))]
-    print(f'    조건을 하나씩 더하면 {len(rows):,}명 → ' + ' → '.join(f'{n:,}명' for n in steps))
+    print(f'    조건을 하나씩 더하면 {len(rows):,}명 → ' + ' → '.join(f'{x:,}명' for x in steps))
 
 # 4단계: temperature 0.7 로 다섯 번 더 보낸 답을 기준 답과 견준다
 # 조건은 (field, op, value) 묶음의 집합으로 견주어 차례는 보지 않는다. 판정이 바뀐 답과 명단 크기도 센다.
@@ -311,18 +324,25 @@ for k in REQUESTS:
     base = answers[k]
     runs = {run: answers[f'{k}|off|{run}'] for run in range(2, 7)}
     readable = {run: a for run, a in runs.items() if a is not None}
+    if base is None:
+        print(f'{k}: 기준 답을 읽지 못해 견주지 않는다')
+        continue
     changed = sum(cond_set(a) != cond_set(base) for a in readable.values())
     flipped = sum(a['verdict'] != base['verdict'] for a in readable.values())
     print(f'{k}: 다섯 번 중 조건이 바뀐 답 {changed}개, 판정이 바뀐 답 {flipped}개, 읽지 못한 답 {len(runs) - len(readable)}개')
     for run, a in readable.items():
-        n = '명단 없음' if a['verdict'] == 'unsupported' else f'{size(a["conditions"]):,}명'
+        n = f'{size(a["conditions"]):,}명' if countable(a) else '명단 없음'
         print(f'    run {run}: {a["verdict"]}, {a["reason_code"]}, [{show(a["conditions"])}], 빠진 부분 {a["unsupported_parts"]}, {n}')
 
 # 5단계: r2 를 thinking 을 켜고 물은 답과 견준다
 # thinking 으로 쓴 풀이의 토큰은 출력 토큰에 들어 있다. 둘 다 한 번 기록한 값이다.
 off, on = answers['r2'], answers['r2|on|1']
-same = [cond_set(on) == cond_set(answers[f'r2|off|{run}']) for run in range(2, 7) if answers[f'r2|off|{run}']['verdict'] == 'partial']
-print(f'thinking 끔 {off["verdict"]}, 켬 {on["verdict"]}. 켠 답의 조건 묶음이 0.7 의 일부 지원 답 {len(same)}개와 같은가 {same}')
+partial = [a for a in (answers[f'r2|off|{run}'] for run in range(2, 7)) if a is not None and a['verdict'] == 'partial']
+if off is None or on is None:
+    print('r2 의 기준 답이나 thinking 을 켠 답을 읽지 못해 판정을 견주지 않는다')
+else:
+    same = [cond_set(on) == cond_set(a) for a in partial]
+    print(f'thinking 끔 {off["verdict"]}, 켬 {on["verdict"]}. 켠 답의 조건 묶음이 0.7 의 일부 지원 답 {len(same)}개와 같은가 {same}')
 for name, k in (('끔', 'r2'), ('켬', 'r2|on|1')):
     tin, tout, ms, chars = USAGE[k]
     print(f'thinking {name}: 입력 {tin:,} 토큰, 출력 {tout:,} 토큰, {ms / 1000:.1f}초, 풀이 {chars:,}자')
@@ -442,7 +462,7 @@ temperature 를 0 보다 크게 두면 점수가 조금 낮은 토큰도 뽑힐 
 
 캠핑 요청은 다섯 번 가운데 두 번 일부 지원으로 바뀌었고, 두 답의 조건 묶음은 차례만 다르고 같습니다. thinking 을 켜고 temperature 0 으로 한 번 물은 답도 같은 조건 셋입니다. 대신 출력 토큰이 35개에서 3,974개로 114배, 걸린 시간이 2.6초에서 305.0초로 118배입니다. 출력 토큰에는 답 앞에 쓴 풀이 14,536자가 들어 있습니다.
 
-이 표의 수는 한 번 기록한 19개의 값입니다. thinking 을 끈 18개를 같은 설정으로 다시 기록해 보았습니다. 기준 답 셋은 같았고, temperature 0.7 의 답에는 달라진 것이 있었습니다. 그래서 다섯 번의 결과도 이 기록 한 벌로 읽습니다. thinking 은 캠핑 요청 하나에만 켜 보았고, 다른 두 요청에서는 재지 않았습니다. 서비스는 temperature 0 으로 돌리더라도, 흔들릴 수 있는 판정을 코드와 사람이 다시 보는 자리를 둡니다.
+이 표의 수는 한 번 기록한 19개의 값입니다. thinking 을 끈 18개를 같은 설정으로 다시 기록해 보았습니다. 기준 답 셋은 같았고, temperature 0.7 의 답에는 달라진 것이 있었습니다. seed 를 같게 두어도 temperature 0.7 에서는 다시 돌릴 때마다 같은 답이 나온다고 보장되지 않았습니다. 그래서 다섯 번의 결과도 이 기록 한 벌로 읽습니다. thinking 은 캠핑 요청 하나에만 켜 보았고, 다른 두 요청에서는 재지 않았습니다. 서비스는 temperature 0 으로 돌리더라도, 흔들릴 수 있는 판정을 코드와 사람이 다시 보는 자리를 둡니다.
 
 ## 6. 거절은 LLM 이 아니라 템플릿이 말합니다
 
@@ -452,7 +472,7 @@ temperature 를 0 보다 크게 두면 점수가 조금 낮은 토큰도 뽑힐 
 
 거절 문장은 정책을 말하는 자리라서 LLM 에게 쓰게 하지 않았습니다. 같은 요청에는 같은 글이 가야 하고, 무엇을 받지 않는지는 사람이 정해 검토한 말이어야 합니다. 5절에서 temperature 를 올리자 판정과 조건부터 바뀌었고, LLM 이 쓴 글이 늘 같으리라고 볼 근거는 이 기록에 없습니다. 그래서 LLM 은 enum 과 숫자와 영어 짧은 구만 돌려주고, 광고주가 읽는 글은 템플릿에서만 나옵니다.
 
-코드가 고르는 응답은 셋입니다. list 는 명단 크기를 보이고, review 는 담당자에게 넘기고, reject_template 은 템플릿 문장을 보냅니다. 아래 표는 4절 코드의 6단계가 답 19개에 고른 응답을 답의 꼴마다 모은 것입니다.
+코드가 고르는 응답은 넷이고, 이 기록에서 쓰인 것은 셋입니다. list 는 명단 크기를 보이고, review 는 담당자에게 넘기고, reject_template 은 템플릿 문장을 보냅니다. 넷째 retry 는 읽지 못한 답을 다시 묻는 것인데, 읽지 못한 답이 0개라 쓰이지 않았습니다. 아래 표는 4절 코드의 6단계가 답 19개에 고른 응답을 답의 꼴마다 모은 것입니다.
 
 | 답의 꼴 | 이 기록의 답 | 코드가 고른 응답 | 광고주에게 가는 것 |
 |---|---|---|---|
@@ -484,9 +504,9 @@ temperature 를 0 보다 크게 두면 점수가 조금 낮은 토큰도 뽑힐 
 
 나머지 넷은 같은 입력에 늘 같은 답이 나와야 하는 일입니다. 같은 조건으로 명단을 두 번 셌는데 수가 다르면, 서연 씨는 어느 쪽에 돈을 걸지 정할 수 없습니다. Amazon Ads 는 2025년 1월 보도자료에서, 광고주가 원하는 오디언스를 말로 적으면 SQL 쿼리를 돌려주는 생성기를 소개했습니다. 그 생성기는 쿼리와 함께 쿼리를 만든 단계도 돌려줍니다. 이 글은 한 걸음 더 좁혀, LLM 은 조건 JSON 만 쓰고 SQL 은 코드가 씁니다.
 
-LLM 이 맡은 두 일에도 사람이 보는 자리를 둡니다. Zeotap 의 자연어 오디언스 빌더 문서는 에이전트가 조건과 그 까닭, 대략의 회원 수를 제안하는 순서를 적었습니다. 사람은 그 제안을 빌더에 적용한 뒤 손으로 고칠 수 있습니다. 이 기록에서도 틀린 판정은 꼴로는 멀쩡했습니다. 조건을 광고주 화면에 그대로 보이면, 「본」이 「검색」으로 바뀐 자리도 광고주가 봅니다.
+LLM 이 맡은 두 일에도 사람이 보는 자리를 둡니다. Zeotap 의 자연어 오디언스 빌더 문서에는 에이전트가 나옵니다. 에이전트는 LLM 을 불러 사람 대신 일을 처리하는 프로그램입니다. 문서는 에이전트가 조건과 그 까닭, 대략의 회원 수를 제안하는 순서를 적었습니다. 사람은 그 제안을 빌더에 적용한 뒤 손으로 고칠 수 있습니다. 이 기록에서도 틀린 판정은 꼴로는 멀쩡했습니다. 조건을 광고주 화면에 그대로 보이면, 「본」이 「검색」으로 바뀐 자리도 광고주가 봅니다.
 
-JSON 의 꼴은 LLM 쪽에서 강제할 수도 있습니다. Anthropic 의 Structured outputs 문서는 JSON 스키마를 문법으로 바꿔, 모델이 그 꼴로만 쓰게 하는 방식을 설명합니다. 그래도 강제되는 것은 꼴이고, 캠핑 요청을 불가로 본 판단은 꼴 안에서 일어납니다. LLM 에 보내는 글 전체를 프롬프트라고 부릅니다. 프롬프트가 토큰이 되어 오가는 길과 thinking, temperature 가 바꾸는 것은 다음 묶음인 LLM 기초 트랙이 한 편씩 다룹니다.
+JSON 의 꼴은 LLM 쪽에서 강제할 수도 있습니다. Anthropic 의 Structured outputs 문서는 JSON 스키마를 문법으로 바꿔 쓰는 방식을 설명합니다. 여기서 문법은 다음에 올 수 있는 토큰을 정해 두는 규칙이라, 모델이 그 꼴로만 쓰게 됩니다. 그래도 강제되는 것은 꼴이고, 캠핑 요청을 불가로 본 판단은 꼴 안에서 일어납니다. LLM 에 보내는 글 전체를 프롬프트라고 부릅니다. 프롬프트가 토큰이 되어 오가는 길과 thinking, temperature 가 바꾸는 것은 다음 묶음인 LLM 기초 트랙이 한 편씩 다룹니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-nl-audience-cards.html?embed=1&card=bridge" height="480" loading="lazy" title="LLM 이 맡는 두 일과 코드가 맡는 네 일"></iframe>
@@ -507,9 +527,9 @@ JSON 의 꼴은 LLM 쪽에서 강제할 수도 있습니다. Anthropic 의 Struc
 
 ### 열린 RTB 에서는 광고를 사는 쪽이 아는 노출이 일부입니다 [무대: 열린 RTB]
 
-열린 RTB 에서 광고를 사는 쪽의 시스템을 DSP 라고 부릅니다. DSP 는 자기가 이긴 경매에서 보인 노출만 기록하고, 다른 DSP 가 같은 광고주의 광고를 보인 기록은 모릅니다. 사람도 회원 번호 대신 쿠키, 곧 브라우저에 남겨 두는 작은 식별 값으로 알아봅니다. 그래서 「우리 광고 안 본」을 필드로 만들어도 그 DSP 가 그 쿠키에 보인 적이 없다는 뜻에 그칩니다.
+열린 RTB 에서 광고를 사는 쪽의 시스템을 DSP 라고 부릅니다. DSP 는 자기가 이긴 경매에서 보인 노출만 기록하고, 다른 DSP 가 같은 광고주의 광고를 보인 기록은 모릅니다. 사람도 회원 번호 대신 쿠키, 곧 브라우저에 남겨 두는 작은 식별 값으로 알아봅니다. 앱에서는 휴대폰 운영체제가 광고에 쓰라고 주는 식별 값인 기기의 광고 ID 를 씁니다. 그래서 「우리 광고 안 본」을 필드로 만들어도, 그 DSP 가 그 쿠키나 광고 ID 에 보인 적이 없다는 뜻에 그칩니다.
 
-문장으로 오디언스를 만드는 도구는 고객 데이터 플랫폼(CDP)에도 있습니다. CDP 는 회사가 가진 고객 데이터를 모아 오디언스를 만드는 도구입니다. Zeotap 의 문서는 에이전트가 회사의 데이터 모델에 실제로 있는 컬럼만 쓴다고 적었습니다. 어느 무대든 LLM 이 옮길 수 있는 것은 필드 목록에 적힌 것까지입니다. 그래서 목록을 넓히기 전에, 새 필드로 민감한 무리를 고를 수 있게 되지 않는지 먼저 봅니다.
+문장으로 오디언스를 만드는 도구는 고객 데이터 플랫폼(CDP)에도 있습니다. CDP 는 회사가 가진 고객 데이터를 모아 오디언스를 만드는 도구입니다. Zeotap 의 문서는 에이전트가 회사의 데이터 모델에 실제로 있는 컬럼만 쓴다고 적었습니다. 데이터 모델은 고객 데이터를 어떤 표로 둘지 정한 설계이고, 컬럼은 그 표의 세로 칸 하나입니다. 어느 무대든 LLM 이 옮길 수 있는 것은 필드 목록에 적힌 것까지입니다. 그래서 목록을 넓히기 전에, 새 필드로 민감한 무리를 고를 수 있게 되지 않는지 먼저 봅니다.
 
 아래 표는 가상 데이터가 아니라 두 무대의 설계 차이를 적은 것입니다.
 
@@ -518,7 +538,7 @@ JSON 의 꼴은 LLM 쪽에서 강제할 수도 있습니다. Anthropic 의 Struc
 | 필드 목록 | 플랫폼의 회원 데이터. 노출 기록도 더할 수 있다 | DSP 의 쿠키 기록과 사 온 데이터 |
 | 「우리 광고 안 본」 | 노출 횟수 필드가 0 인 조건 | 그 DSP 가 보인 노출만 안다 |
 | 사람을 알아보는 값 | 로그인한 회원 번호 | 쿠키나 기기의 광고 ID |
-| 민감한 정보 | 시스템 메시지와 코드가 막는다 | 같다 |
+| 민감한 정보 | 시스템 메시지가 막고, 코드는 reason_code 와 필드 목록으로 거른다 | 같다 |
 
 ## 한눈 정리
 

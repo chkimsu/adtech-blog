@@ -390,3 +390,22 @@ git fetch origin && git merge origin/main && git push origin main
 ```
 
 Expected: push 뒤 GitHub Actions 의 validate 와 sitemap 이 초록. 몇 분 뒤 `https://chkimsu.github.io/adtech-blog/post.html?id=user-profile-features` 가 열린다.
+
+## 묶음 뒤 후속 작업 (2026-11-04, 묶음 1 병합 때 남긴 것)
+
+실행 중 검토에서 나왔지만 이 묶음의 범위 밖이라 미룬 것이다. 다음 묶음을 시작하기 전이나 사이에 하나씩 닫는다.
+
+1. `scripts/check-content-standard.js` 가 `-` 로 시작하는 줄(글머리표, 참고문헌)을 문장 길이에서 뺀다. 글머리표 열을 더하되 기존 글에서 새로 걸리는 자리를 먼저 센다.
+2. `demos.html` 의 난이도 로드맵이 옛 데모 5장을 빼고 있어 「난이도별 72개」와 「주제별 77개」가 다르다.
+3. `js/card-kit.js` 의 `box()` 인라인 글자 크기(옛 데크 21장이 같이 쓴다).
+4. 옛 데크의 메타 설명 문장 가운데 80자를 넘는 것이 있는지 본다(이 묶음에서는 셋만 고쳤다).
+5. `demo-frequency-capping.html` 의 프리셋이 `input` 이벤트를 내지 않아 해설의 이전 값이 남는다(놀이터는 고쳤다).
+6. `scripts/test-llm-record.py` 가 `think_subset` 의 맨 위 options 상속을 못 잡는다.
+7. 새 글의 giscus 「Discussion not found」 404 는 첫 댓글 때 생기는 기존 동작이다. 확인만 한다.
+8. 기존 글의 「내 컴퓨터」 류 1인칭 표현을 점검한다(새 글 여섯은 고쳤다).
+9. `js/demo-edu.js` 에 프리셋 표시를 더해, 프리셋이 보낸 `input` 은 해설을 쓰지 않고 이전 값만 갱신하게 한다(놀이터 프리셋 뒤 「이전」 칸 잔상과 깜박임).
+10. 놀이터의 「s = 감쇠 계수 × 시드 배수」 표시가 둘째 자리 반올림 때문에 곱과 0.01 어긋나는 조합이 있다.
+11. `index.html` 표지의 편수 아홉(전체 1, 태그별 8)을 `js/posts.js` 와 맞춰 보는 검사가 없다. `validate-posts.js` 나 `check-map` 에 한 줄 더한다.
+12. 사내 이름 목록을 대소문자 무시로 돌리면 이 묶음이 손대지 않은 옛 파일 14곳이 걸린다. 우연한 일치인지 한 번 눈으로 본다.
+13. 관심사 분류 데크의 카드 라벨 precision, recall 을 글과 같이 정밀도, 재현율로 바꿀지 정한다.
+14. `scripts/check-llm-constants.py` 가 기록 주석이 있는 글을 0개 찾으면 빈 통과가 된다. 그때 종료 1 로 하거나 주석 밖의 `RECORD = ` 줄을 알린다.

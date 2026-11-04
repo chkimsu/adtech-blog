@@ -310,7 +310,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 데크(`cx-`, 4장): `page` 지면 글 한 편과 뽑힌 낱말 / `keyword` 사전 매칭 / `embedding` 벡터와 중심의 각도 / `llm` 프롬프트와 JSON 라벨, think 켰을 때의 토큰.
 
-절: 1 비로그인 C 에게는 번호가 없고 지면 글만 있습니다(표) / 2 지면 50개와 카테고리 10개(표, 카드 page) / 3 키워드 사전(파이썬 1, 카드 keyword) / 4 TF-IDF 벡터와 중심의 코사인(파이썬 2, 카드 embedding) / 5 LLM 분류: 50개를 한 프롬프트로, thinking 을 켜면 무엇이 달라지나(파이썬 3 기록 상수, 카드 llm) / 6 세 방법 비교와 광고 셋이 붙는 지면(표) / 7 두 무대(열린 RTB 는 쿠키 없이 지면만으로, 담장 안은 회원 번호와 지면을 같이) / 한눈 정리 / 헷갈리기 쉬운 점(컨텍스추얼은 사람이 아니라 자리를 고른다, 분류 정확도와 광고 성과는 다르다, thinking 은 정확도보다 비용을 먼저 바꾼다) / 더 깊이 보기(TF-IDF 식, IAB 분류 체계 소개) / 참고문헌(Amazon Ads 문맥 타겟팅 기고 4A's 2025-03, IAB Content Taxonomy 문서, LLM 분류 벤치마크 arXiv 2510.13885).
+절: 1 비로그인 C 에게는 번호가 없고 지면 글만 있습니다(표) / 2 지면 50개와 카테고리 10개(표, 카드 page) / 3 키워드 사전(파이썬 1, 카드 keyword) / 4 TF-IDF 벡터와 중심의 코사인(파이썬 2, 카드 embedding) / 5 LLM 분류: 50개를 한 프롬프트로, thinking 을 켜면 무엇이 달라지나(파이썬 3 기록 상수, 카드 llm) / 6 세 방법 비교와 광고 셋이 붙는 지면(표) / 7 두 무대(열린 RTB 는 쿠키 없이 지면만으로, 담장 안은 회원 번호와 지면을 같이) / 한눈 정리 / 헷갈리기 쉬운 점(컨텍스추얼은 사람이 아니라 자리를 고른다, 분류 정확도와 광고 성과는 다르다, thinking 은 비용을 크게 바꾸고 헷갈리는 지면의 정확도도 바꾼다) / 더 깊이 보기(TF-IDF 식, IAB 분류 체계 소개) / 참고문헌(Amazon Ads 문맥 타겟팅 기고 4A's 2025-03, IAB Content Taxonomy 문서, LLM 분류 벤치마크 arXiv 2510.13885).
 
 - [ ] **Step 1: 스캐폴드** — `node scripts/new-post.js contextual-targeting "컨텍스추얼 타겟팅: 지면 글만으로 광고를 고르는 세 방법" "Targeting & Audience" "Targeting,LLM,입문" both`, series 추가.
 - [ ] **Step 2: 지면 50개 생성기 `scripts/gen-context-pages.py` 와 프롬프트 파일** — `"think": "off"`, `"repeat": 1`, `"think_subset": {"ids": [처음 10개], "think": "on"}`.

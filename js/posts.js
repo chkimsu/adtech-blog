@@ -1602,7 +1602,7 @@ const mlTrack = {
     {
       id: 'stage-6',
       title: '6단계, LLM — 호출 한 번부터 판정과 비용까지',
-      goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하고, 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다. 묶음 4 의 학습 네 편이 뒤에 붙습니다.',
+      goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하게 할 수 있습니다. 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다.',
       posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
     },
 

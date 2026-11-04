@@ -1521,6 +1521,11 @@ const series = {
     desc: '마케터 서연 씨가 화면에서 본 타겟팅의 뒤에서 모델이 하는 일. 지훈 씨가 13주째부터 유저 프로파일 피처, 관심사 분류, Lookalike 계산, 전환 예측 타겟, 컨텍스추얼, 자연어 오디언스를 한 주에 하나씩 엽니다',
     posts: ['user-profile-features', 'interest-classification', 'lookalike-computation', 'pcvr-based-targeting', 'contextual-targeting', 'natural-language-audience'],
   },
+  'llm-basics-track': {
+    title: 'LLM 기초 트랙',
+    desc: '지훈 씨가 19주째부터 LLM 을 처음 만집니다. 호출 한 번, 모델 고르기, 프롬프트, 구조화 출력, 임베딩, RAG, 에이전트 루프, 판정, 비용을 한 주에 하나씩 엽니다',
+    posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
+  },
   'advanced-bidding-track': {
     title: '입찰, 생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰, 페이싱 → 입찰 셰이딩',
@@ -1593,6 +1598,12 @@ const mlTrack = {
       title: '5단계, 운영 — 만든 모델을 매일 굴린다',
       goal: '이 단계를 마치면: 새벽에 도는 학습 파이프라인을 읽고, 지난주 모델을 다시 만들고, CI 검사를 지나 이미지를 올리고, 1% 로 배포해 게이트가 닫히면 되돌리고, 실시간 피처의 윈도우를 정하고, 무엇을 미리 계산해 둘지와 GPU 를 몇 장 쓸지를 정하고, 새 모델을 도구로 띄울지 직접 짤지를 예산 숫자로 고를 수 있습니다. 앞 네 단계가 “무엇을 만들고 무엇을 믿나”였다면 여기는 “그것을 매일 어떻게 굴리나”입니다.',
       posts: ['training-pipeline-dag', 'model-versioning-reproducibility', 'container-ci-pipeline', 'inference-server', 'model-deployment-rollback', 'stream-window-aggregation', 'batch-vs-realtime-inference', 'distributed-training', 'bentoml-model-serving', 'model-api-from-training-script'],
+    },
+    {
+      id: 'stage-6',
+      title: '6단계, LLM — 호출 한 번부터 판정과 비용까지',
+      goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하고, 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다. 묶음 4 의 학습 네 편이 뒤에 붙습니다.',
+      posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
     },
 
   ],

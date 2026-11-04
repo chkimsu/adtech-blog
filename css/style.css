@@ -746,6 +746,11 @@ nav {
 .post-card-category[data-category="Interview & Algorithms"] {
   background: transparent; color: var(--navy); border: 1px solid var(--navy-bd);
 }
+/* 여덟째 카테고리도 테두리형이다. 면접 규칙과 같은 꼴이고 색만 --oxide 다.
+   카드 왼쪽 테두리, 레일 점, 레일 글자도 면접 규칙 바로 아래에 같은 꼴로 둔다. */
+.post-card-category[data-category="LLM & Agents"] {
+  background: transparent; color: var(--oxide); border: 1px solid var(--oxide-bd);
+}
 .post-card-category[data-category="Targeting & Audience"]      { background: var(--series-3); }
 
 /* Subtle left border accent on card itself (matches category) */
@@ -754,6 +759,7 @@ nav {
 .post-card[data-category="ML Infrastructure"]          { border-left: 3px solid var(--series-5); }
 .post-card[data-category="Measurement & Modeling"]    { border-left: 3px solid var(--series-6); }
 .post-card[data-category="Interview & Algorithms"]    { border-left: 3px solid var(--navy-bd); }
+.post-card[data-category="LLM & Agents"]              { border-left: 3px solid var(--oxide-bd); }
 .post-card[data-category="Targeting & Audience"]      { border-left: 3px solid var(--series-3); }
 
 .post-card-excerpt {
@@ -5725,6 +5731,7 @@ html.is-embed .demo-container { margin-top: 0.5rem; }
 .rail-dot[data-category="ML Infrastructure"]         { background: var(--series-5); }
 .rail-dot[data-category="Measurement & Modeling"]    { background: var(--series-6); }
 .rail-dot[data-category="Interview & Algorithms"]    { background: transparent; border: 1px solid var(--navy); }
+.rail-dot[data-category="LLM & Agents"]              { background: transparent; border: 1px solid var(--oxide); }
 .rail-dot[data-category="Targeting & Audience"]      { background: var(--series-3); }
 .rail-dot[data-category="Software Engineering"]      { background: var(--series-4); }
 .rail-count { margin-left: auto; font-size: 0.74rem; color: var(--text-muted); }
@@ -6250,6 +6257,7 @@ header { background: var(--paper); border-bottom: 1px solid var(--ink); padding:
 .rail-dot[data-category="ML Infrastructure"]::before         { content: "I"; }
 .rail-dot[data-category="Software Engineering"]::before      { content: "S"; }
 .rail-dot[data-category="Interview & Algorithms"]::before    { content: "A"; }
+.rail-dot[data-category="LLM & Agents"]::before              { content: "L"; }
 .rail-count { font-family: var(--font-mono); font-size: 0.7rem; }
 .rail-ml { background: transparent; border: 1px solid var(--navy); color: var(--ink); }
 .rail-ml:hover { filter: none; background: var(--navy-bg); }

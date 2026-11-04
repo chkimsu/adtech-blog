@@ -70,5 +70,7 @@ jobs:
         run: python scripts/gen-interest-articles.py --check
       - name: 컨텍스추얼 타겟팅 글의 생성기, 프롬프트 파일, 파이썬 1 블록이 같은가
         run: python scripts/gen-context-pages.py --check
+      - name: LLM 문제 20개의 생성기, 프롬프트 파일, 파이썬 블록이 같은가
+        run: python scripts/gen-llm-problems.py --check
       - name: LLM 기록 상수 (글의 RECORD, USAGE 줄이 기록 파일에서 뽑은 줄과 같은가)
         run: python scripts/check-llm-constants.py

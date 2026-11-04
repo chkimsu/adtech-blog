@@ -3682,5 +3682,31 @@ window.DEMO_EDU = {
             { el: '[data-card="topn"]', title: '가장 먼저 볼 것', body: '317 과 같은 2,290명을 pCVR 순서로 자르면 1,390명이 바뀝니다. 빠진 317 회원은 모두 경계 pCVR 0.392% 아래입니다.', waitFor: 'click' },
             { el: '[data-card="lift"]', title: '어차피 살 사람을 빼면', body: '기저를 어떻게 두느냐에 따라 증분이 달라지고, 상위 5% 와 세그먼트의 순서도 바뀝니다. 어느 쪽인지는 대조군으로 잽니다.' }
         ]
+    },
+
+    // ==========================================
+    // 컨텍스추얼 타겟팅 카드 네 장 (입문)
+    // ==========================================
+    'contextual-cards': {
+        analogy: '회원 번호가 없는 요청에는 지면의 글만 남는다. 가상 지면 50개에 낱말 사전, TF-IDF 코사인, LLM 을 대면 33개, 34개, 43개를 맞힌다. 제목과 첫 문단이 다른 지면 10개는 thinking 을 켠 LLM 만 모두 제목을 따르고, 출력 토큰은 106배가 된다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'page': return '헷갈리는 것은 <strong>사람 라벨이 무엇을 따르나</strong>입니다. 이 글은 제목이 지면의 주제라고 정했습니다. 그래서 첫 문단이 운동 이야기인 여권 사진 지면의 사람 라벨은 travel 입니다.';
+                    case 'keyword': return '헷갈리는 것은 <strong>낱말이 맞으면 맞는 카테고리인가</strong>입니다. 「부모 교육」에는 family 의 「부모」와 education 의 「교육」이 다 있습니다. 사전에서 위에 있는 education 이 먼저 맞습니다.';
+                    case 'embedding': return '헷갈리는 것은 <strong>코사인이 크면 주제가 같은가</strong>입니다. 자동차 지면 p031 은 「오늘은」, 「이야기까지」 같은 틀의 낱말이 health 지면과 겹쳐서, health 쪽 코사인이 더 컸습니다.';
+                    case 'llm': return '헷갈리는 것은 <strong>프롬프트에 적으면 따르나</strong>입니다. 「제목을 따른다」는 줄이 있어도 thinking 을 끈 답은 헷갈리는 10개 중 6개가 첫 문단을 따랐습니다. thinking 을 켜면 10개 모두 제목을 따랐습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '회색은 낱말 사전과 틀의 낱말, 파랑은 TF-IDF 와 지면의 명사, 먹색은 지면 하나, 벽돌색은 LLM 입니다. 점선 상자는 사람이 미리 적어 둔 사전과 시스템 메시지입니다.' },
+            { el: '[data-card="page"]', title: '가장 먼저 볼 것', body: '비로그인 C 가 읽던 지면 한 편이 낱말 23개로 잘립니다. 사전과 TF-IDF 는 이 낱말을 쓰고, LLM 은 글 그대로를 받습니다.', waitFor: 'click' },
+            { el: '[data-card="llm"]', title: 'thinking 을 켜면', body: '헷갈리는 10개가 모두 제목을 따르는 대신, 출력 토큰이 61개에서 6,476개로 늡니다.' }
+        ]
     }
 };

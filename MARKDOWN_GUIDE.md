@@ -311,7 +311,7 @@ LLM 을 부르는 글의 형식입니다. 타겟팅 모델 트랙의 `interest-c
 **진짜 답이 필요한 자리는 기록을 재생합니다.** 글을 쓰는 맥의 Ollama 에서 `qwen3.5:27b` 를 한 번 돌려 출력을 기록하고, 글은 그 출력을 그대로 다시 보입니다. `elasticsearch-hybrid-retrieval` 글이 기록한 검색 응답을 다시 보이는 것과 같은 방식입니다.
 
 - `scripts/llm-record.py` 가 Ollama 의 `/api/chat` 을 불러 `data/llm-records/<slug>.json` 을 씁니다. 파일에는 모델, 기록한 날짜, 파라미터와, 항목마다 시스템 메시지, 사용자 메시지, 출력, thinking 글자 수, 출력 토큰 수, 걸린 시간, 실제로 보낸 options 가 들어 있습니다. 보낼 프롬프트는 `data/llm-records/prompts/<slug>.json` 에 씁니다. 두 형식은 `data/llm-records/README.md` 에 있습니다.
-- 출력을 손으로 옮겨 적지 않습니다. 기록을 쓰는 블록은 `--export-constant` 가 찍은 `RECORD = {...}` 를 그대로 붙이고, 글의 숫자(정답률, 바뀐 비율, 일치도)는 블록이 그 상수에서 셉니다.
+- 출력을 손으로 옮겨 적지 않습니다. 기록을 쓰는 블록은 `--export-constant` 가 찍은 `RECORD = {...}` 를 그대로 붙이고, 글의 숫자(정답률, 바뀐 비율, 일치도)는 블록이 그 상수에서 셉니다. 토큰 수와 걸린 시간을 세는 블록은 `--with-usage` 를 더해 찍은 `USAGE = {...}` 줄도 같이 붙입니다.
 - 그 블록은 `# 하는 일:` 바로 다음 줄, 곧 몸통의 첫 줄에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 을 둡니다. 하는 일 줄 앞에 주석이 있으면 형식 검사가 막아서 블록의 맨 첫 줄에는 둘 수 없습니다. 상태 표시가 있으면 상태 표시, 하는 일, 기록 주석 순서입니다.
 - 기록 출력은 JSON, 영어 enum 라벨, 숫자로만 받습니다. 말투 검사는 코드 블록 안도 세고 새 파일은 0건이어야 하기 때문입니다. 한국어 문장(카피 후보, 키워드의 이유, 거절 메시지)은 코드 블록이 아니라 산문의 「」 안에 대사로 보입니다.
 - 다시 기록하면 파일 전체가 바뀌므로 글의 숫자를 다시 맞춥니다. 모델은 바꾸지 않고, 글마다 모델 이름과 기록한 날짜를 한 번 적습니다.
@@ -320,6 +320,7 @@ LLM 을 부르는 글의 형식입니다. 타겟팅 모델 트랙의 `interest-c
 ```bash
 python3 scripts/llm-record.py --slug <slug>                    # 기록한다 (있으면 덮어쓴다)
 python3 scripts/llm-record.py --slug <slug> --export-constant  # 기록을 RECORD 상수로 찍는다
+python3 scripts/llm-record.py --slug <slug> --export-constant --with-usage   # USAGE 상수(토큰, 시간)도 찍는다
 python3 scripts/llm-record.py --selftest                       # 서버와 기록 형식을 점검한다
 ```
 

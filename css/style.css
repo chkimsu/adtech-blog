@@ -6492,6 +6492,8 @@ html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
 .tg-chip i.lb-n { border-color: var(--text-primary); }
 /* pCVR 타겟 카드(js/pcvr-target-cards-demo.js) — 크기 대 전환율, 크기 대 전환 수를 잇는 먹색 선 */
 .pt-line { fill: none; stroke: var(--text-primary); stroke-width: 1.6; }
+/* 컨텍스추얼 카드(js/contextual-cards-demo.js) — 지면 벡터와 카테고리 중심 사이의 각도를 표시하는 점선 호 */
+.cx-arc { fill: none; stroke: var(--grey2); stroke-width: 1.2; stroke-dasharray: 3 2.5; }
 
 /* ---- 표지: 지도가 주인공 (2026-09-18) — 칸마다 그 자리의 글로 간다 ---- */
 .cover-map { padding: 1.5rem 1.6rem 2.3rem; border-width: 2px; }

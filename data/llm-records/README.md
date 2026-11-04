@@ -57,3 +57,5 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 | `error` | 3번 보내도 실패한 항목에만 있다. 그 항목에는 `output` 부터 `elapsed_ms` 까지 다섯 필드가 없다. 글에 쓰기 전에 0개여야 한다 |
 
 `--export-constant` 는 `output` 을 id 순서로 `RECORD = {...}` 한 줄로 찍는다. 키는 think 를 끈 첫 회차면 `a001`, 그 밖은 `a001|off|2`, `a001|on|1` 꼴이다. `error` 가 남은 기록에서는 뽑지 않는다.
+
+`--with-usage` 를 더하면 그 아래에 `USAGE = {...}` 한 줄을 더 찍는다. 키는 RECORD 와 같은 차례이고, 값은 항목마다 `[prompt_tokens, output_tokens, elapsed_ms, thinking_chars]` 다. 토큰과 시간을 세는 블록은 두 줄을 다 붙이고 그 상수에서 센다.

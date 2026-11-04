@@ -3,6 +3,9 @@
 
   python3 scripts/llm-record.py --slug <slug>                    기록: prompts/<slug>.json 을 보내 <slug>.json 을 쓴다 (있으면 덮어쓴다)
   python3 scripts/llm-record.py --slug <slug> --export-constant  상수 뽑기: 기록의 출력을 RECORD = {...} 한 줄로 찍는다
+  python3 scripts/llm-record.py --slug <slug> --export-constant --with-usage
+                                                                 RECORD 줄 아래에 USAGE = {...} 한 줄을 더 찍는다.
+                                                                 키는 RECORD 와 같은 차례이고 값은 [prompt_tokens, output_tokens, elapsed_ms, thinking_chars] 다
   python3 scripts/llm-record.py --selftest                       자체 점검: 서버 버전을 묻고 한 줄짜리 요청 하나로 기록 형식을 본다
 
 Ollama 는 `ollama serve` 로 먼저 띄운다.
@@ -32,6 +35,8 @@ ITEM_FIELDS = [('id', str), ('think', bool), ('run', int), ('system', str), ('us
                ('thinking_chars', int), ('prompt_tokens', int), ('output_tokens', int), ('elapsed_ms', int),
                ('options', dict)]
 SELFTEST = {'system': 'Reply with JSON only.', 'user': 'Return {"ok": true}.'}
+# --with-usage 가 키마다 찍는 네 값의 차례
+USAGE_FIELDS = ('prompt_tokens', 'output_tokens', 'elapsed_ms', 'thinking_chars')
 
 
 def fail(msg):
@@ -274,7 +279,20 @@ def key_of(item):
     return '%s|%s|%d' % (item['id'], think_name(item['think']), item['run'])
 
 
-def export_constant(slug):
+def constant_lines(items, with_usage=False):
+    """상수 줄. RECORD = {...} 한 줄이고, with_usage 면 같은 키 차례의 USAGE = {...} 한 줄이 뒤에 붙는다.
+    id 는 기록에 처음 나온 차례로, 같은 id 안에서는 think 끈 것부터 run 차례로 둔다."""
+    first = {}
+    for it in items:
+        first.setdefault(it['id'], len(first))
+    items = sorted(items, key=lambda it: (first[it['id']], it['think'], it['run']))
+    lines = ['RECORD = ' + json.dumps({key_of(it): it['output'] for it in items}, ensure_ascii=False)]
+    if with_usage:
+        lines.append('USAGE = ' + json.dumps({key_of(it): [it[f] for f in USAGE_FIELDS] for it in items}))
+    return lines
+
+
+def export_constant(slug, with_usage=False):
     """기록의 출력을 id 순서로 RECORD = {...} 한 줄로 찍는다. error 가 남은 기록에서는 뽑지 않는다."""
     path = os.path.join(RECORDS, slug + '.json')
     items = read_json(path, '먼저 python3 scripts/llm-record.py --slug %s 로 기록합니다' % slug)['items']
@@ -282,13 +300,26 @@ def export_constant(slug):
     if broken:
         fail('error 가 남은 항목이 %d개 있어 상수를 뽑지 않습니다 (%s). 다시 기록합니다' % (
             len(broken), ', '.join(broken[:5]) + (', …' if len(broken) > 5 else '')))
-    # id 는 기록에 처음 나온 차례로, 같은 id 안에서는 think 끈 것부터 run 차례로 둔다
-    first = {}
-    for it in items:
-        first.setdefault(it['id'], len(first))
-    items = sorted(items, key=lambda it: (first[it['id']], it['think'], it['run']))
-    print('RECORD = ' + json.dumps({key_of(it): it['output'] for it in items}, ensure_ascii=False))
+    for line in constant_lines(items, with_usage):
+        print(line)
     return 0
+
+
+def usage_problems(item):
+    """--with-usage 시험. 기록 항목 하나로 think 켠 짝을 만들어 차례를 뒤집어 넘기고, USAGE 줄이
+    RECORD 와 같은 키 차례이고 값이 항목의 네 필드와 같은지 본다. 맞으면 빈 목록이다."""
+    on = dict(item, think=True, thinking_chars=item['thinking_chars'] + 1)
+    lines = constant_lines([on, item], with_usage=True)
+    if len(lines) != 2 or not lines[0].startswith('RECORD = ') or not lines[1].startswith('USAGE = '):
+        return ['RECORD 줄과 USAGE 줄 두 줄이 아닙니다']
+    record = json.loads(lines[0][len('RECORD = '):])
+    usage = json.loads(lines[1][len('USAGE = '):])
+    out = []
+    if list(record) != [key_of(item), key_of(on)] or list(usage) != list(record):
+        out.append('USAGE 의 키 차례가 RECORD 와 다릅니다: %s 대 %s' % (list(usage), list(record)))
+    elif [usage[key_of(it)] for it in (item, on)] != [[it[f] for f in USAGE_FIELDS] for it in (item, on)]:
+        out.append('USAGE 의 값이 항목의 %s 와 다릅니다' % ', '.join(USAGE_FIELDS))
+    return out
 
 
 def selftest(model, host):
@@ -305,7 +336,10 @@ def selftest(model, host):
         bad = ['output']
     if bad:
         fail('응답으로 만든 기록 항목에서 필드가 빠지거나 자료형이 틀렸습니다: ' + ', '.join(bad))
-    print('selftest ok: model=%s prompt_tokens=%d output_tokens=%d elapsed_ms=%d' % (
+    usage = usage_problems(item)      # 요청을 더 보내지 않고 이 항목으로 --with-usage 의 두 줄을 본다
+    if usage:
+        fail('--with-usage 시험이 틀렸습니다: ' + '; '.join(usage))
+    print('selftest ok: model=%s prompt_tokens=%d output_tokens=%d elapsed_ms=%d with_usage=ok' % (
         model, item['prompt_tokens'], item['output_tokens'], item['elapsed_ms']))
     return 0
 
@@ -319,7 +353,11 @@ def main():
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument('--export-constant', action='store_true', help='기록의 출력을 RECORD = {...} 파이썬 상수로 찍는다')
     mode.add_argument('--selftest', action='store_true', help='서버 버전과 한 줄짜리 요청 하나로 기록 형식을 확인한다')
+    ap.add_argument('--with-usage', action='store_true',
+                    help='--export-constant 와 같이 쓴다. RECORD 아래에 USAGE = {키: [%s]} 한 줄을 더 찍는다' % ', '.join(USAGE_FIELDS))
     args = ap.parse_args()
+    if args.with_usage and not args.export_constant:
+        ap.error('--with-usage 는 --export-constant 와 같이 씁니다')
     if args.selftest:
         raise SystemExit(selftest(args.model, args.host))
     if not args.slug:
@@ -327,7 +365,7 @@ def main():
     if args.limit is not None and args.limit < 1:
         ap.error('--limit 은 1 이상입니다')
     if args.export_constant:
-        raise SystemExit(export_constant(args.slug))
+        raise SystemExit(export_constant(args.slug, args.with_usage))
     raise SystemExit(record(args.slug, args.model, args.host, args.limit))
 
 

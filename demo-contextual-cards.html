@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨텍스추얼 타겟팅 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="회원 번호가 없는 요청에 지면의 글만으로 카테고리를 붙이는 세 방법을 카드 한 장씩으로. 지면 글 한 편과 뽑힌 낱말, 카테고리마다 낱말 4개를 적은 키워드 사전, TF-IDF 벡터와 카테고리 중심 벡터의 각도, 시스템 메시지와 JSON 라벨과 thinking 을 켰을 때의 토큰. 지면은 설명용 가상 값이고 LLM 의 답은 기록한 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>컨텍스추얼 타겟팅 카드 네 장</h1>
+      <p>회원 번호가 없는 비로그인 C 에게는 지면의 글이 남습니다. 지면 글 한 편이 낱말로 잘리는 자리를 보고, 그 글에 카테고리를 붙이는 세 방법을 한 장씩 봅니다. 키워드 사전, TF-IDF 벡터와 중심 벡터의 각도, LLM 의 JSON 라벨입니다. 지면은 설명용 가상 값이고 LLM 의 답은 한 번 기록한 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="c"></i>회색 = 키워드 사전, 틀의 낱말</span>
+        <span class="tg-chip"><i class="a"></i>파랑 = TF-IDF 와 카테고리 중심, 지면의 명사</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 지면 하나의 벡터</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = LLM 의 답</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 사람이 미리 적어 둔 글 (키워드 사전, 시스템 메시지)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="page"><h2>PAGE TEXT</h2><p class="tg-k">지면 글 한 편이 낱말 23개로 잘린다</p><p class="tg-easy"><b>쉽게 말하면</b> 지면은 제목 한 줄과 첫 문단 두 문장입니다. 띄어쓰기로 자르면 낱말 23개가 나오고, 그중 명사에서 온 낱말이 이 지면의 주제를 말합니다. 나머지는 다른 지면에도 똑같이 나오는 틀의 낱말입니다.</p><div class="tg-fig" id="cx-page"></div>
+        <p class="tg-cap">사람 라벨은 제목의 카테고리 <b>sports</b> 입니다. 사전과 TF-IDF 는 이 낱말 <b>23개</b>를 쓰고, LLM 은 같은 글을 자르지 않고 받습니다.</p></section>
+      <section class="tg-card" data-card="keyword"><h2>KEYWORD DICTIONARY</h2><p class="tg-k">사전의 낱말이 보이면 붙이고, 처음 맞는 카테고리에서 멈춘다</p><p class="tg-easy"><b>쉽게 말하면</b> 카테고리마다 사람이 낱말 4개를 적어 둡니다. 지면에 그 낱말이 보이면 그 카테고리이고, 둘 이상이 맞으면 사전의 위쪽이 이깁니다. 사전의 낱말이 하나도 없는 지면은 라벨 없이 남습니다.</p><div class="tg-fig" id="cx-keyword"></div>
+        <p class="tg-cap">지면 50개 중 <b>33개</b>를 맞히고 <b>10개</b>를 비워 둡니다. 비워 둔 지면에는 C 가 읽던 러닝 지면 p014 도 있습니다.</p></section>
+      <section class="tg-card" data-card="embedding"><h2>TF-IDF COSINE</h2><p class="tg-k">지면의 벡터와 카테고리 중심 사이의 각도</p><p class="tg-easy"><b>쉽게 말하면</b> 낱말마다 지면 안의 횟수에 얼마나 드문지를 곱해 숫자 목록을 만듭니다. 카테고리마다 그 목록을 평균한 중심을 두고, 방향이 가장 가까운 중심의 카테고리를 붙입니다.</p><div class="tg-fig" id="cx-embedding"></div>
+        <p class="tg-cap">사전이 비워 둔 p014 는 sports 중심과의 코사인 <b>0.373</b>(68도)으로 맞습니다. 50개 중 <b>34개</b>를 맞히지만, 틀의 낱말이 겹친 다른 카테고리로 끌린 지면도 있습니다.</p></section>
+      <section class="tg-card" data-card="llm"><h2>LLM LABEL</h2><p class="tg-k">시스템 메시지 한 장과 지면 한 개, 돌아오는 JSON 한 줄</p><p class="tg-easy"><b>쉽게 말하면</b> 할 일을 적은 시스템 메시지와 지면의 제목과 첫 문단을 같이 보내고, 카테고리 하나만 JSON 으로 받습니다. thinking 을 켜면 답 앞에 풀이를 길게 쓴 뒤 답합니다.</p><div class="tg-fig" id="cx-llm"></div>
+        <p class="tg-cap">thinking 을 끄면 헷갈리는 10개 중 <b>6개</b>가 첫 문단을 따릅니다. 켜면 <b>10개</b> 모두 제목을 따르고, 출력 토큰은 <b>106배</b>, 시간은 <b>46배</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>컨텍스추얼 타겟팅 이야기를 들으면</b> 세 가지를 묻습니다. 본문만 읽었나 틀의 문구까지 읽었나, 카테고리는 지면마다 한 번 붙여 두나, 붙인 카테고리가 광고 성과와 맞는지 따로 쟀나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=contextual-targeting">컨텍스추얼 타겟팅</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 같은 세 방법을 회원이 읽은 글에 붙인 자리는 <a href="post.html?id=interest-classification">관심사 분류</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/contextual-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

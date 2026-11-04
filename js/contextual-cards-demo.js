@@ -89,24 +89,24 @@
     // ---------- 3. TF-IDF 벡터와 중심 벡터의 각도 ----------
     (function () {
         const S = 'cx-embedding'; if (!has(S)) return; let s = '';
-        s += T(40, 22, '지면 p014 의 벡터와 카테고리 중심 둘. 그림은 각도만 맞춰 그렸습니다', 'lbl sm');
-        // 원점에서 지면 벡터는 45도, sports 중심은 지면에서 68도 위, style 중심은 77도 아래로 둔다
-        const ox = 112, oy = 186, len = 112, rad = d => d * Math.PI / 180;
-        const tip = d => [ox + len * Math.cos(rad(d)), oy - len * Math.sin(rad(d))];
+        s += T(40, 22, '지면 p014 의 벡터와 카테고리 중심 둘. 지면과 각 중심 사이의 각도만 맞춰 그렸습니다', 'lbl sm');
+        // 원점에서 지면 벡터는 10도에 두고, 두 중심은 같은 쪽으로 지면에서 68도와 77도에 둔다.
+        // TF-IDF 벡터는 값이 모두 0 이상이라 어느 둘도 90도를 넘지 않는다. 두 중심 사이의 각도는 재지 않았다
+        const ox = 92, oy = 250, len = 170, rad = d => d * Math.PI / 180;
+        const at = (d, r) => [ox + r * Math.cos(rad(d)), oy - r * Math.sin(rad(d))];
         const ray = (id, d, cls) => {
-            const [x, y] = tip(d);
+            const [x, y] = at(d, len);
             return arrow(id, `M${ox},${oy} L${x.toFixed(1)},${y.toFixed(1)}`, cls, { svg: S });
         };
         const arc = (d0, d1, r) => {
-            const [x0, y0] = [ox + r * Math.cos(rad(d0)), oy - r * Math.sin(rad(d0))];
-            const [x1, y1] = [ox + r * Math.cos(rad(d1)), oy - r * Math.sin(rad(d1))];
-            return `<path class="cx-arc" d="M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 ${d1 > d0 ? 0 : 1} ${x1.toFixed(1)},${y1.toFixed(1)}"/>`;
+            const [x0, y0] = at(d0, r), [x1, y1] = at(d1, r);
+            return `<path class="cx-arc" d="M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 0 ${x1.toFixed(1)},${y1.toFixed(1)}"/>`;
         };
-        s += arc(45, 113, 40) + arc(45, -32, 54);
-        s += ray('cxe1', 113, 'a') + ray('cxe2', -32, 'a') + ray('cxe3', 45, 'k');
-        s += T(52, 70, 'sports 중심', 'lbl k') + T(52, 84, '코사인 0.373, 68도', 'lbl');
-        s += T(210, 104, '지면 p014', 'lbl k');
-        s += T(186, 262, 'style 중심', 'lbl k') + T(186, 276, '코사인 0.231, 77도', 'lbl');
+        s += arc(10, 78, 46) + arc(10, 87, 66);
+        s += ray('cxe1', 78, 'a') + ray('cxe2', 87, 'a') + ray('cxe3', 10, 'k');
+        s += T(136, 82, 'sports 중심', 'lbl k') + T(136, 96, '코사인 0.373, 68도', 'lbl');
+        s += T(40, 48, 'style 중심', 'lbl k') + T(40, 62, '코사인 0.231, 77도', 'lbl');
+        s += T(204, 206, '지면 p014', 'lbl k');
         // 오른쪽: 결과
         s += T(300, 52, '코사인은 방향이 같으면 1,', 'lbl sm');
         s += T(300, 66, '겹치는 낱말이 없으면 0 입니다', 'lbl sm');

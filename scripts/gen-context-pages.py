@@ -97,7 +97,6 @@ SYSTEM = ('너는 지면 분류기다. 사용자가 보낸 웹 지면의 제목�
           'style: 패션, 뷰티, 화장품\n'
           'travel: 여행, 숙소, 항공\n'
           '답은 {"label": "<카테고리>"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.')
-THINK_IDS = ['p%03d' % i for i in range(1, 11)]   # 헷갈리는 지면 10개. thinking 을 켜고 한 번 더 보낸다
 
 
 def user_message(page):
@@ -105,13 +104,14 @@ def user_message(page):
 
 
 def prompts_text():
-    """프롬프트 파일 한 벌. 항목은 한 줄에 하나씩 둔다."""
+    """프롬프트 파일 한 벌. 항목은 한 줄에 하나씩 둔다. thinking 을 켜고 한 번 더 보내는 것은 헷갈리는 지면이다."""
+    pages = make_pages()
     head = {'system': SYSTEM, 'think': 'off', 'repeat': 1,
-            'think_subset': {'ids': THINK_IDS, 'think': 'on'},
+            'think_subset': {'ids': [p['id'] for p in pages if p['mixed']], 'think': 'on'},
             'options': {'temperature': 0, 'seed': 7}}
     lines = ['{' + ',\n '.join('%s: %s' % (json.dumps(k), json.dumps(v, ensure_ascii=False)) for k, v in head.items())
              + ',\n "items": [']
-    items = [json.dumps({'id': p['id'], 'user': user_message(p)}, ensure_ascii=False) for p in make_pages()]
+    items = [json.dumps({'id': p['id'], 'user': user_message(p)}, ensure_ascii=False) for p in pages]
     lines.append(',\n'.join('  ' + it for it in items))
     lines.append(' ]}')
     return '\n'.join(lines) + '\n'

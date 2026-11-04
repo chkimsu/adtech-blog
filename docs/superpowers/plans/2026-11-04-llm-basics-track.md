@@ -149,7 +149,7 @@
 - Test: Task 2 와 같은 검사
 
 **Interfaces:**
-- Consumes: Task 0 의 `PROBLEMS`, Task 2 의 정답률 세는 방식(같은 코드 꼴).
+- Consumes: Task 0 의 `PROBLEMS`(20개 리터럴 전체를 블록 1 에 글자 그대로 둔다. `gen-llm-problems.py --check` 가 글에서 리터럴 전체를 찾는다), Task 2 의 정답률 세는 방식(같은 코드 꼴).
 - Produces: 프롬프트 세 벌의 이름 `plain`, `fewshot`, `steps` 와 `steps` 출력 꼴 `{"steps": [...], "answer": 정수}`. Task 9 가 `steps` 꼴을 쓴다.
 
 기록: 문제 20개 × 프롬프트 세 벌 = 60개, think 끔, temperature 0. 도구가 파일 하나에 시스템 메시지 하나만 받으므로 슬러그 셋으로 나눈다: `prompting-chain-of-thought-plain`(시스템 메시지는 Task 2 와 같음), `prompting-chain-of-thought-fewshot`(`plain` 에 「예시 셋」, 곧 PROBLEMS 밖의 문제 셋과 답을 같은 JSON 꼴로 더한 것), `prompting-chain-of-thought-steps`(「먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON `{"steps": [...], "answer": 정수}` 로만 답한다」). 각 20개. 글의 블록 셋이 각각 `# 기록 data/llm-records/<슬러그>.json 에서 옮김` 과 `RECORD = `, `USAGE = `(`--export-constant --with-usage --slug <슬러그>`)를 둔다(블록 1 plain, 블록 2 fewshot 이어서, 블록 3 steps 이어서 + 세 벌 비교 표). 비교는 정답률 셋, 출력 토큰 합 셋, 읽지 못한 답 수 셋. 기록이 어느 쪽이든 그대로 적는다.
@@ -284,7 +284,7 @@
 - Test: 검사 여섯 + 기록 + `gen-llm-problems.py --check`
 
 **Interfaces:**
-- Consumes: Task 2 의 `cost_won`, Task 0 의 `PROBLEMS`(hard 5개 `p16`~`p20`), Task 3 의 `steps` 시스템 메시지.
+- Consumes: Task 2 의 `cost_won`, Task 0 의 `PROBLEMS`(20개 리터럴 전체를 블록에 글자 그대로 두고 그중 hard 5개 `p16`~`p20` 만 쓴다. `gen-llm-problems.py --check` 가 글에서 리터럴 전체를 찾는다), Task 3 의 `steps` 시스템 메시지.
 - Produces: 캐시 몫 계산(시스템 1,000 토큰이 캐시에 맞을 때 입력 비용이 어떻게 깎이나), 흔들림 지표(문제마다 서로 다른 답의 수, answer 가 바뀐 비율, steps 가 바뀐 비율). 놀이터가 같은 식을 쓴다.
 
 기록: hard 5개 × temperature 0 반복 10회(맨 위 `"repeat": 10`, `"options": {"temperature": 0}`, seed 는 적지 않는다 → 기본 7) + 같은 5개를 `repeat_subset` 으로 temperature 0.7 10회(seed 7 + run) = 100개. 시스템 메시지는 Task 3 의 `steps` 꼴(steps 는 영어 짧은 구). 블록은 문제마다 (1) temperature 0 의 10개 답이 모두 같은지, (2) 0.7 의 10개에서 answer 가 서로 다른 수와 steps 가 서로 다른 수를 찍는다. 관심사 분류 편이 약속한 「긴 답의 흔들림」이 여기다(steps 의 흔들림). 기록이 0 이면 0 으로 적는다.

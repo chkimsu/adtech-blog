@@ -19,7 +19,7 @@
 > - LLM 과 코드가 맡는 일의 경계 → 7절
 > - 담장 안과 열린 RTB 에서 달라지는 것 → 8절
 
-이 글의 회원 표본과 지역 가중치는 전부 설명을 위해 만든 가상 데이터입니다. LLM 의 답만은 지어낸 값이 아닙니다. 2026-11-04 에 이 블로그를 쓰는 맥에서 Ollama 로 qwen3.5:27b 를 띄워 한 번에 기록했습니다. 글은 그 기록을 그대로 다시 씁니다. Ollama 는 공개된 모델을 내 컴퓨터에서 돌리는 도구입니다. 기록 파일은 `data/llm-records/natural-language-audience.json` 입니다. 회원 A 와 B 의 30일 행동, 세그먼트 317 의 조건 셋은 [유저 프로파일 피처](post.html?id=user-profile-features) 편 그대로입니다. 카드 속 벽돌색은 LLM 이 쓴 답, 파랑은 코드가 하는 일과 표본 회원, 회색은 명단을 만들지 않는 답입니다. 점선 상자는 사람이 미리 적어 둔 글입니다.
+이 글의 회원 표본과 지역 가중치는 전부 설명을 위해 만든 가상 데이터입니다. LLM 의 답만은 지어낸 값이 아닙니다. 2026-11-04 에 이 블로그를 쓰는 맥에서 Ollama 로 qwen3.5:27b 를 띄워 한 번에 기록했습니다. 글은 그 기록을 그대로 다시 씁니다. Ollama 는 공개된 모델을 개인 컴퓨터에서 돌리는 도구입니다. 기록 파일은 `data/llm-records/natural-language-audience.json` 입니다. 회원 A 와 B 의 30일 행동, 세그먼트 317 의 조건 셋은 [유저 프로파일 피처](post.html?id=user-profile-features) 편 그대로입니다. 카드 속 벽돌색은 LLM 이 쓴 답, 파랑은 코드가 하는 일과 표본 회원, 회색은 명단을 만들지 않는 답입니다. 점선 상자는 사람이 미리 적어 둔 글입니다.
 
 ---
 
@@ -240,7 +240,8 @@ OPS = {'>=': lambda x, v: x >= v, '<=': lambda x, v: x <= v, '==': lambda x, v: 
 
 
 def good_condition(c):
-    if not (isinstance(c, dict) and set(c) == {'field', 'op', 'value'} and c['field'] in FIELDS and c['op'] in OPS):
+    if not (isinstance(c, dict) and set(c) == {'field', 'op', 'value'} and c['field'] in FIELDS
+            and isinstance(c['op'], str) and c['op'] in OPS):   # op 가 목록이나 객체면 in OPS 가 TypeError 를 내서 먼저 본다
         return False
     if c['field'] == 'region':
         return c['op'] == '==' and c['value'] in REGIONS   # 지역은 같은지만 본다
@@ -594,7 +595,7 @@ exposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노�
 {"verdict": "<판정>", "conditions": [{"field": "<필드>", "op": "<비교>", "value": <값>}], "unsupported_parts": ["<영어 짧은 구>"], "reason_code": "<이유>"}
 ```
 
-4절 코드의 read() 가 이 꼴을 그대로 검사합니다. 맨 위 필드는 verdict, conditions, unsupported_parts, reason_code 넷입니다. 이름이 정확히 같아야 합니다. verdict 와 reason_code 는 위의 enum 가운데 하나이고, unsupported_parts 는 문자열 목록입니다. 조건의 field 는 필드 10개, op 는 비교 셋 가운데 하나입니다. value 는 region 이면 지역 이름 9개 가운데 하나이고, 나머지는 숫자입니다.
+4절 코드의 read() 가 이 꼴을 그대로 검사합니다. 맨 위 필드는 verdict, conditions, unsupported_parts, reason_code 넷입니다. 이름이 정확히 같아야 합니다. verdict 와 reason_code 는 위의 enum 가운데 하나이고, unsupported_parts 는 문자열 목록입니다. 조건의 field 는 필드 10개, op 는 비교 셋 가운데 하나입니다. field 가 region 이면 op 는 == 하나만 받고, value 는 지역 이름 9개 가운데 하나입니다. 나머지 조건의 value 는 숫자입니다.
 
 Structured outputs 처럼 모델이 토큰을 고르는 단계에서 꼴을 강제하려면, 같은 내용을 JSON Schema 로 적어 넘깁니다. Anthropic 의 문서는 객체마다 additionalProperties 를 false 로 두라고 적었습니다. 스키마에 없는 필드를 받지 않는다는 뜻입니다. 최솟값 같은 숫자 제약은 쓸 수 없다고도 적었습니다. 이 글은 Ollama 에 꼴을 강제하지 않고 시스템 메시지로만 요청했고, 답 19개가 모두 꼴을 지켰습니다.
 :::

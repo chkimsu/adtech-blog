@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lookalike 배치 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="번호 6001 을 만드는 밤 배치를 카드 한 장씩으로. 시드 114명의 평균과 앞 글의 8만 명 평균, 시드를 평균한 중심 벡터와 코사인 유사도, 전수 검색과 해시 근사 검색의 거리 계산 횟수와 재현율, 1, 5, 10% 에서 자른 정밀도. 숫자는 표본 20,000명으로 센 설명용 가상 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>Lookalike 배치 카드 네 장</h1>
+      <p>시드 목록 한 장이 번호 6001 이 되기까지 배치가 하는 일 하나가 카드 한 장입니다. 시드의 평균을 보고, 중심 벡터 하나로 줄을 세우고, 전수와 해시로 찾는 수를 견준 뒤, 줄의 앞에서 자릅니다. 숫자는 회원 1,400만 명 대신 표본 20,000명으로 센 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 러닝 성향 (시드와 중심 벡터도 여기서 나옵니다)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 러닝 성향이 아닌 회원</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 거리를 잰 횟수</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 앞 글에 적힌 8만 명 평균</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="seed"><h2>SEED LIST</h2><p class="tg-k">시드 114명의 평균 넷을 앞 글의 8만 명 평균 옆에</p><p class="tg-easy"><b>쉽게 말하면</b> 서연 씨가 건넨 「우수 고객」 목록을 표본에 옮긴 것이 시드 114명입니다. 30일 동안 러닝 글과 운동 앱 기록이 많은 구매자를 골랐습니다. 줄을 세울 기준은 이 사람들의 평균에서 나옵니다.</p><div class="tg-fig" id="lb-seed"></div>
+        <p class="tg-cap">러닝 글은 <b>8.98회</b>로 8만 명 평균 12회보다 4분의 1 가량 적고, 운동 앱은 <b>7.84일</b>로 8일과 거의 같습니다. 둘 다 가상 값입니다.</p></section>
+      <section class="tg-card" data-card="centroid"><h2>CENTROID</h2><p class="tg-k">중심 벡터 하나와 회원마다 코사인 하나</p><p class="tg-easy"><b>쉽게 말하면</b> 시드 114명의 벡터를 평균해 화살표 하나로 만듭니다. 회원마다 그 화살표와 방향이 얼마나 같은지를 재서, 같은 쪽을 보는 회원부터 줄을 세웁니다.</p><div class="tg-fig" id="lb-centroid"></div>
+        <p class="tg-cap">중심 벡터는 러닝 글 <b>3.53</b>, 운동 앱 <b>3.18</b>, 운동 용품 <b>3.09</b> 가 비슷하게 큽니다. 회원 A 의 코사인은 <b>0.744</b> 로 162번째입니다.</p></section>
+      <section class="tg-card" data-card="search"><h2>SEARCH</h2><p class="tg-k">모두와 잴지, 중심 근처의 버킷만 잴지</p><p class="tg-easy"><b>쉽게 말하면</b> 회원 벡터를 비트 6개짜리 버킷 번호로 미리 나눠 두고, 중심 벡터와 번호가 같은 버킷만 잽니다. 재는 수가 줄어드는 대신 가까운 사람을 놓칠 수 있습니다.</p><div class="tg-fig" id="lb-search"></div>
+        <p class="tg-cap">버킷 하나만 재면 거리 계산이 <b>2,678번</b>이고 전수 상위 2,000명 중 <b>0.383</b> 을 찾습니다. 이웃 버킷까지 보면 <b>9,955번</b>에 <b>0.782</b> 입니다.</p></section>
+      <section class="tg-card" data-card="cut"><h2>CUT</h2><p class="tg-k">줄의 앞 1, 5, 10% 와 그 안의 러닝 성향</p><p class="tg-easy"><b>쉽게 말하면</b> 줄의 앞에서 몇 명까지 가져올지가 확장 비율입니다. 넓게 자를수록 도달은 늘고, 시드와 덜 닮은 사람이 섞입니다.</p><div class="tg-fig" id="lb-cut"></div>
+        <p class="tg-cap">정밀도는 1% 에서 <b>0.985</b>, 5% 에서 <b>0.793</b>, 10% 에서 <b>0.709</b> 입니다. 10% 는 1,400만 명이면 <b>140만 명</b>이고 번호 6001 이 붙습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>Lookalike 목록 이야기를 들으면</b> 세 가지를 묻습니다. 시드를 누구로 채웠나, 중심 하나로 시드를 대표할 수 있나, 근사 검색이 전수 검색의 앞쪽을 얼마나 찾나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=lookalike-computation">Lookalike 계산</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 슬라이더와 8만 명 평균은 <a href="post.html?id=lookalike-basics">Lookalike 기초</a> 편, 8차원 벡터는 <a href="post.html?id=user-profile-features">유저 프로파일 피처</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/lookalike-batch-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 모델 고르기 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="LLM 을 고를 때 보는 네 가지를 카드 네 장으로 봅니다. 상용 API 와 공개 가중치, 크기와 활성 파라미터, thinking 을 켠 답, 요청 한 건의 값입니다. 문제 20개와 단가는 가상 값이고, 맞힘과 토큰 수는 기록한 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>LLM 모델 고르기 카드 네 장</h1>
+      <p>지훈 씨가 모델을 고르며 본 네 가지를 카드 네 장으로 봅니다. 상용 API 와 공개 가중치, 크기와 활성 파라미터, thinking 을 켠 답, 요청 한 건의 값입니다. 문제 20개와 단가는 설명용 가상 값이고, 맞힘과 토큰과 시간은 한 번 기록한 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버, 모델 계열 이름</span>
+        <span class="tg-chip"><i class="a"></i>파랑 = thinking 을 끈 답, 입력 토큰, 활성 파라미터</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = thinking 을 켠 답, 출력 토큰</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 문서에 없는 값</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (단가와 요청 크기)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="landscape"><h2>LANDSCAPE</h2><p class="tg-k">상용 API 세 계열과 공개 가중치 네 계열</p><p class="tg-easy"><b>쉽게 말하면</b> 모델은 만든 회사의 서버로만 부르는 쪽과, 가중치를 받아 내 서버에서 돌리는 쪽으로 나뉩니다. 가중치를 받으면 요청이 회사 밖으로 나가지 않습니다.</p><div class="tg-fig" id="ms-landscape"></div>
+        <p class="tg-cap">같은 회사가 둘 다 내기도 합니다. <b>Gemini</b> 는 API 로 열고, <b>Gemma</b> 는 가중치를 공개했습니다.</p></section>
+      <section class="tg-card" data-card="size"><h2>SIZE</h2><p class="tg-k">전체 파라미터, 활성 파라미터, 메모리, 컨텍스트 길이</p><p class="tg-easy"><b>쉽게 말하면</b> 전체 크기는 메모리를, 활성 파라미터는 토큰 하나의 계산을 정합니다. 토큰마다 일부만 계산하는 MoE 모델도 메모리는 전체만큼 듭니다.</p><div class="tg-fig" id="ms-size"></div>
+        <p class="tg-cap">26B A4B 는 <b>25.2B 중 3.8B</b> 만 계산합니다. 그래도 4비트 메모리는 <b>14.4GB</b> 로 31B 의 <b>17.5GB</b> 와 가깝습니다.</p></section>
+      <section class="tg-card" data-card="thinking"><h2>THINKING</h2><p class="tg-k">hard 10개의 맞힘, 출력 토큰, 시간</p><p class="tg-easy"><b>쉽게 말하면</b> thinking 을 켜면 모델이 답 앞에 풀이를 씁니다. 이 기록에서는 맞힘이 늘었고, 풀이도 출력 토큰이라 토큰과 시간이 크게 늘었습니다.</p><div class="tg-fig" id="ms-thinking"></div>
+        <p class="tg-cap">맞힘은 <b>4개에서 10개</b>, 출력 토큰은 <b>83개에서 7,713개</b>, 시간은 <b>11.3초에서 493.4초</b>가 되었습니다.</p></section>
+      <section class="tg-card" data-card="cost"><h2>COST</h2><p class="tg-k">요청 한 건과 하루 100만 요청의 값, 가상 단가</p><p class="tg-easy"><b>쉽게 말하면</b> 값은 입력 토큰과 출력 토큰에 각자의 단가를 곱해 더한 것입니다. 출력 단가가 비싸서 출력 토큰이 값을 크게 움직입니다.</p><div class="tg-fig" id="ms-cost"></div>
+        <p class="tg-cap">하루 100만 요청이면 작은 모델 <b>720,000원</b>, 큰 모델 <b>7,800,000원</b>입니다. 캐시를 쓴 큰 모델은 <b>4,200,000원</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>모델을 고를 때는</b> 이름보다 네 칸을 먼저 봅니다. 어디서 도는지, 크기, 컨텍스트 길이, thinking 입니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=llm-model-selection">LLM 모델 고르기</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=llm-first-call">LLM 호출 한 번</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/model-selection-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

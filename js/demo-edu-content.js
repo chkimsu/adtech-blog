@@ -3829,5 +3829,31 @@ window.DEMO_EDU = {
             { el: '[data-card="request"]', title: '가장 먼저 볼 것', body: '요청은 JSON 한 덩이이고, 이 요청의 맨 위 필드는 다섯입니다. 두 요청은 think 하나만 다릅니다.', waitFor: 'click' },
             { el: '[data-card="think"]', title: 'thinking 을 켜면', body: '답은 같고, 출력 토큰이 6개에서 505개로, 시간이 1.1초에서 32.0초로 늡니다.' }
         ]
+    },
+
+    // ==========================================
+    // LLM 모델 고르기 카드 네 장 (입문)
+    // ==========================================
+    'model-selection-cards': {
+        analogy: '모델은 어디서 도는지, 크기와 활성 파라미터, 컨텍스트 길이, thinking 넷으로 고른다. hard 10개는 thinking 을 켜면 맞힘이 4개에서 10개가 되고 출력 토큰은 92.9배가 된다. 하루 100만 요청은 가상 단가로 720,000원, 7,800,000원, 캐시를 쓰면 4,200,000원이다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'landscape': return '헷갈리는 것은 <strong>공개 가중치 모델은 API 로 못 부르나</strong>입니다. Qwen 과 DeepSeek 은 가중치를 공개하면서 만든 회사의 API 로도 엽니다. 두 갈래를 나누는 것은 가중치 파일을 받을 수 있느냐입니다.';
+                    case 'size': return '헷갈리는 것은 <strong>활성 파라미터가 작으면 메모리도 작나</strong>입니다. 26B A4B 는 3.8B 만 계산하지만 메모리에는 25.2B 를 다 올립니다. 4비트로 14.4GB 라 31B 의 17.5GB 와 가깝습니다.';
+                    case 'thinking': return '헷갈리는 것은 <strong>풀이 토큰도 값을 내나</strong>입니다. 풀이도 출력 토큰이라 hard 10개의 출력 토큰이 83개에서 7,713개가 되었습니다. 상용 API 는 이 토큰을 출력 단가로 셉니다.';
+                    case 'cost': return '헷갈리는 것은 <strong>출력이 150 토큰뿐이니 값도 작나</strong>입니다. 큰 모델에서 출력은 토큰 수의 11% 인데 값의 38% 입니다. 출력 단가가 입력 단가의 5배이기 때문입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '먹색은 모델과 서버, 파랑은 thinking 을 끈 답과 입력 토큰과 활성 파라미터입니다. 벽돌색은 thinking 을 켠 답과 출력 토큰, 회색은 문서에 없는 값, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="landscape"]', title: '가장 먼저 볼 것', body: '모델은 상용 API 와 공개 가중치 두 갈래로 나뉩니다. 가중치를 받아 내 서버에서 돌리면 요청이 밖으로 나가지 않습니다.', waitFor: 'click' },
+            { el: '[data-card="thinking"]', title: 'thinking 을 켜면', body: 'hard 10개의 맞힘이 4개에서 10개가 되고, 출력 토큰은 92.9배, 시간은 43.6배가 됩니다.' }
+        ]
     }
 };

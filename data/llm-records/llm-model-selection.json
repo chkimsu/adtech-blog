@@ -1,0 +1,491 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-05",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "p01",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 120,000건에서 클릭이 3,600건이면 클릭률은 몇 %인가?",
+      "output": "{\"answer\": 3}",
+      "thinking_chars": 0,
+      "prompt_tokens": 72,
+      "output_tokens": 6,
+      "elapsed_ms": 1103,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p02",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 120,000건에서 클릭률이 1.2%이면 클릭은 몇 건인가?",
+      "output": "{\"answer\": 1440}",
+      "thinking_chars": 0,
+      "prompt_tokens": 70,
+      "output_tokens": 9,
+      "elapsed_ms": 1289,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p03",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 클릭 2,500건에서 전환이 100건이면 전환율은 몇 %인가?",
+      "output": "{\"answer\": 4}",
+      "thinking_chars": 0,
+      "prompt_tokens": 68,
+      "output_tokens": 6,
+      "elapsed_ms": 921,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p04",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 광고비 600,000원으로 클릭 2,400건을 얻었다면 클릭당 비용은 몇 원인가?",
+      "output": "{\"answer\": 250}",
+      "thinking_chars": 0,
+      "prompt_tokens": 75,
+      "output_tokens": 8,
+      "elapsed_ms": 1037,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p05",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 클릭 4,000건에서 전환율이 2.5%이면 전환은 몇 건인가?",
+      "output": "{\"answer\": 100}",
+      "thinking_chars": 0,
+      "prompt_tokens": 68,
+      "output_tokens": 8,
+      "elapsed_ms": 863,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p06",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 1,000건당 비용(CPM)이 4,000원이면 노출 50,000건의 광고비는 몇 원인가?",
+      "output": "{\"answer\": 200000}",
+      "thinking_chars": 0,
+      "prompt_tokens": 82,
+      "output_tokens": 11,
+      "elapsed_ms": 1233,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p07",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원 중 120만 원을 썼다면 소진율은 몇 %인가?",
+      "output": "{\"answer\": 40}",
+      "thinking_chars": 0,
+      "prompt_tokens": 69,
+      "output_tokens": 7,
+      "elapsed_ms": 794,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p08",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산이 300만 원이고 구매 건당 2만 원을 쓴다면 하루 구매는 최대 몇 건인가?",
+      "output": "{\"answer\": 150}",
+      "thinking_chars": 0,
+      "prompt_tokens": 72,
+      "output_tokens": 8,
+      "elapsed_ms": 1056,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p09",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 광고비 500,000원으로 매출 2,000,000원이 났다면 ROAS(광고비 대비 매출 비율)는 몇 %인가?",
+      "output": "{\"answer\": 400}",
+      "thinking_chars": 0,
+      "prompt_tokens": 85,
+      "output_tokens": 8,
+      "elapsed_ms": 1049,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p10",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 1,000건당 클릭이 12건이고 클릭당 입찰가가 250원이면 노출 1,000건당 기대 수익은 몇 원인가?",
+      "output": "{\"answer\": 3000}",
+      "thinking_chars": 0,
+      "prompt_tokens": 88,
+      "output_tokens": 9,
+      "elapsed_ms": 1115,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p11",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원을 클릭당 250원으로 모두 쓰고 전환율이 2%이면 하루 전환은 몇 건인가?",
+      "output": "{\"answer\": 240}",
+      "thinking_chars": 0,
+      "prompt_tokens": 75,
+      "output_tokens": 8,
+      "elapsed_ms": 1441,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p12",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 384,000건에서 클릭률이 0.75%이고 클릭당 비용이 320원이면 광고비는 몇 원인가?",
+      "output": "{\"answer\": 9216}",
+      "thinking_chars": 0,
+      "prompt_tokens": 81,
+      "output_tokens": 9,
+      "elapsed_ms": 1113,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p13",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 광고비 1,260,000원으로 클릭 4,200건을 얻었고 전환율이 2.5%이면 전환 건당 비용은 몇 원인가?",
+      "output": "{\"answer\": 120}",
+      "thinking_chars": 0,
+      "prompt_tokens": 85,
+      "output_tokens": 8,
+      "elapsed_ms": 1054,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p14",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원 중 오전에 1,375,000원을 썼다. 남은 예산을 클릭당 325원에 모두 쓰면 클릭을 몇 건 더 얻는가?",
+      "output": "{\"answer\": 4687}",
+      "thinking_chars": 0,
+      "prompt_tokens": 91,
+      "output_tokens": 9,
+      "elapsed_ms": 1119,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p15",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 1,000,000건이 있고 pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 예상 전환은 몇 건인가?",
+      "output": "{\"answer\": 36}",
+      "thinking_chars": 0,
+      "prompt_tokens": 101,
+      "output_tokens": 7,
+      "elapsed_ms": 997,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p16",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원을 CPM(노출 1,000건당 비용) 6,250원으로 모두 쓴다. 클릭률이 1.2%, 전환율이 2.5%이면 하루 전환은 몇 건인가?",
+      "output": "{\"answer\": 144}",
+      "thinking_chars": 0,
+      "prompt_tokens": 101,
+      "output_tokens": 8,
+      "elapsed_ms": 1056,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p17",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원 중 62%를 오후에 쓴다. 오후 클릭당 비용이 310원, 전환율이 1.5%이면 오후 전환은 몇 건인가?",
+      "output": "{\"answer\": 90}",
+      "thinking_chars": 0,
+      "prompt_tokens": 96,
+      "output_tokens": 7,
+      "elapsed_ms": 989,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p18",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 구매 건당 입찰가가 2만 원이면 노출 1,000건당 기대 수익(eCPM)은 몇 원인가?",
+      "output": "{\"answer\": 720}",
+      "thinking_chars": 0,
+      "prompt_tokens": 111,
+      "output_tokens": 8,
+      "elapsed_ms": 1235,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p19",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 회원 72,000명에게 평균 4.5건씩 노출했다. 클릭률이 0.8%, 클릭당 비용이 210원이면 광고비는 몇 원인가?",
+      "output": "{\"answer\": 529200}",
+      "thinking_chars": 0,
+      "prompt_tokens": 88,
+      "output_tokens": 11,
+      "elapsed_ms": 1244,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p20",
+      "think": false,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 구매 건당 매출이 12만 원이고 전환율이 3.0%이다. 목표 ROAS(광고비 대비 매출 비율)가 400%이면 클릭당 비용의 상한은 몇 원인가?",
+      "output": "{\"answer\": 900}",
+      "thinking_chars": 0,
+      "prompt_tokens": 93,
+      "output_tokens": 8,
+      "elapsed_ms": 1057,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p11",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원을 클릭당 250원으로 모두 쓰고 전환율이 2%이면 하루 전환은 몇 건인가?",
+      "output": "{\"answer\": 240}",
+      "thinking_chars": 1459,
+      "prompt_tokens": 73,
+      "output_tokens": 583,
+      "elapsed_ms": 37408,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p12",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 384,000건에서 클릭률이 0.75%이고 클릭당 비용이 320원이면 광고비는 몇 원인가?",
+      "output": "{\"answer\": 921600}",
+      "thinking_chars": 1770,
+      "prompt_tokens": 79,
+      "output_tokens": 820,
+      "elapsed_ms": 52498,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p13",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 광고비 1,260,000원으로 클릭 4,200건을 얻었고 전환율이 2.5%이면 전환 건당 비용은 몇 원인가?",
+      "output": "{\"answer\": 12000}",
+      "thinking_chars": 1858,
+      "prompt_tokens": 83,
+      "output_tokens": 827,
+      "elapsed_ms": 52832,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p14",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원 중 오전에 1,375,000원을 썼다. 남은 예산을 클릭당 325원에 모두 쓰면 클릭을 몇 건 더 얻는가?",
+      "output": "{\"answer\": 5000}",
+      "thinking_chars": 1441,
+      "prompt_tokens": 89,
+      "output_tokens": 633,
+      "elapsed_ms": 40501,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p15",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 노출 1,000,000건이 있고 pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 예상 전환은 몇 건인가?",
+      "output": "{\"answer\": 360}",
+      "thinking_chars": 1205,
+      "prompt_tokens": 99,
+      "output_tokens": 509,
+      "elapsed_ms": 32916,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p16",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원을 CPM(노출 1,000건당 비용) 6,250원으로 모두 쓴다. 클릭률이 1.2%, 전환율이 2.5%이면 하루 전환은 몇 건인가?",
+      "output": "{\"answer\": 144}",
+      "thinking_chars": 2528,
+      "prompt_tokens": 99,
+      "output_tokens": 1085,
+      "elapsed_ms": 69584,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p17",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 하루 예산 300만 원 중 62%를 오후에 쓴다. 오후 클릭당 비용이 310원, 전환율이 1.5%이면 오후 전환은 몇 건인가?",
+      "output": "{\"answer\": 90}",
+      "thinking_chars": 2079,
+      "prompt_tokens": 94,
+      "output_tokens": 806,
+      "elapsed_ms": 51349,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p18",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 구매 건당 입찰가가 2만 원이면 노출 1,000건당 기대 수익(eCPM)은 몇 원인가?",
+      "output": "{\"answer\": 7200}",
+      "thinking_chars": 2460,
+      "prompt_tokens": 109,
+      "output_tokens": 980,
+      "elapsed_ms": 62347,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p19",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 회원 72,000명에게 평균 4.5건씩 노출했다. 클릭률이 0.8%, 클릭당 비용이 210원이면 광고비는 몇 원인가?",
+      "output": "{\"answer\": 544320}",
+      "thinking_chars": 1824,
+      "prompt_tokens": 86,
+      "output_tokens": 746,
+      "elapsed_ms": 47692,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p20",
+      "think": true,
+      "run": 1,
+      "system": "문제를 읽고 정수 답 하나를 JSON {\"answer\": 정수} 로만 답한다. 설명을 쓰지 않는다.",
+      "user": "문제: 구매 건당 매출이 12만 원이고 전환율이 3.0%이다. 목표 ROAS(광고비 대비 매출 비율)가 400%이면 클릭당 비용의 상한은 몇 원인가?",
+      "output": "{\"answer\": 900}",
+      "thinking_chars": 2020,
+      "prompt_tokens": 91,
+      "output_tokens": 724,
+      "elapsed_ms": 46248,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

@@ -30,7 +30,7 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 
 요청 수는 항목 수 × think 수 × repeat 에 두 선택 필드가 더하는 만큼이다. 200건에 `"repeat_subset": {"ids": [40개], "repeat": 3}` 이면 200 + 120 = 320 이다. 50건에 `"think_subset": {"ids": [10개], "think": "on"}` 이면 50 + 10 = 60 이다.
 
-묶음의 `options` 는 맨 위 `options` 위에 얹히고, 그 묶음에 없는 키는 맨 위 값을 물려받는다. `seed` 를 적지 않았는데 `temperature` 가 0 보다 크면 run 마다 seed 를 7 + run 으로 보낸다(run 2 는 9, run 3 은 10). `think_subset` 의 요청도 같은 규칙을 따른다. 그래서 run 마다 뽑는 seed 가 다르고, 다시 기록하면 같은 답이 나온다. 흔들림은 temperature 0 만 되풀이해 재지 않고, temperature 0(같은 답)과 run 마다 seed 가 다른 temperature 0.7(바뀔 수 있는 답)을 나란히 두고 견준다.
+묶음의 `options` 는 맨 위 `options` 위에 얹히고, 그 묶음에 없는 키는 맨 위 값을 물려받는다. `seed` 를 적지 않았는데 `temperature` 가 0 보다 크면 run 마다 seed 를 7 + run 으로 보낸다(run 2 는 9, run 3 은 10). `think_subset` 의 요청도 같은 규칙을 따른다. 그래서 run 마다 뽑는 seed 가 다르다. temperature 0 은 다시 기록해도 같은 답이 나왔다. temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 흔들림은 temperature 0 만 되풀이해 재지 않고, temperature 0(같은 답)과 run 마다 seed 가 다른 temperature 0.7(바뀔 수 있는 답)을 나란히 두고 견준다.
 
 ## 기록 파일 `<slug>.json`
 
@@ -61,3 +61,5 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 `--export-constant` 는 `output` 을 `RECORD = {...}` 한 줄로 찍는다. 차례는 id 정렬이 아니라 id 가 기록에 처음 나온 차례이고, 같은 id 안에서는 think 를 끈 것부터 run 차례다. 프롬프트의 items 를 id 차례로 적었으면 두 차례가 같다. 키는 think 를 끈 첫 회차면 `a001`, 그 밖은 `a001|off|2`, `a001|on|1` 꼴이다. 모양이 틀리거나 `error` 가 남은 기록에서는 뽑지 않는다.
 
 `--with-usage` 를 더하면 그 아래에 `USAGE = {...}` 한 줄을 더 찍는다. 키는 RECORD 와 같은 차례이고, 값은 항목마다 `[prompt_tokens, output_tokens, elapsed_ms, thinking_chars]` 다. 토큰과 시간을 세는 블록은 두 줄을 다 붙이고 그 상수에서 센다.
+
+글에 붙인 줄은 `python3 scripts/check-llm-constants.py` 가 본다. 글의 `RECORD`, `USAGE` 줄을 이 기록에서 다시 뽑은 줄과 글자까지 견주고, CI 도 이 검사를 돌린다.

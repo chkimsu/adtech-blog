@@ -159,7 +159,7 @@
 
 ## 8. 검증
 
-`node scripts/validate-posts.js`, `node scripts/check-content-standard.js <글>`, `node scripts/check-wording.js`(새 파일 0건), `node scripts/check-code-blocks.js`, `python3 scripts/check-python-outputs.py --post <slug>`(블록 전부 실행, 기록 상수 블록 포함), `node scripts/test-long-sentences.js`, `node scripts/check-design.js`, `node scripts/build-search-index.js`. 기록 파일은 `scripts/llm-record.py` 로 다시 만들 수 있어야 한다. 기록 출력이 코드 블록에 들어갈 때는 라벨과 숫자뿐인지 본다. 회사 안 이름은 저장소 밖 로컬 목록으로 `grep -rinE` 한다. 데크와 놀이터는 브라우저로 열어 1440 과 390 폭에서 본다. 커밋은 `chkimsu` 계정으로, 파일을 하나씩 명시해 올린다.
+`node scripts/validate-posts.js`, `node scripts/check-content-standard.js <글>`, `node scripts/check-wording.js`(새 파일 0건), `node scripts/check-code-blocks.js`, `python3 scripts/check-python-outputs.py --post <slug>`(블록 전부 실행, 기록 상수 블록 포함), `node scripts/test-long-sentences.js`, `node scripts/check-design.js`, `node scripts/build-search-index.js`. 기록 파일은 `scripts/llm-record.py` 로 다시 만들 수 있어야 한다. 기록 출력이 코드 블록에 들어갈 때는 라벨과 숫자뿐인지 본다. 회사 안 이름은 저장소 밖 로컬 목록으로 `grep -rnE` 한다. 데크와 놀이터는 브라우저로 열어 1440 과 390 폭에서 본다. 커밋은 `chkimsu` 계정으로, 파일을 하나씩 명시해 올린다.
 
 ## 9. 남긴 것 (만드는 사람이 정한다)
 

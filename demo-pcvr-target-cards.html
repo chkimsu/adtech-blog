@@ -30,7 +30,7 @@
   <main>
     <section class="tg-hero">
       <h1>pCVR 타겟 카드 네 장</h1>
-      <p>세그먼트 317 로 고른 사람과 pCVR 이 높은 순서로 고른 사람을 카드 한 장씩으로 견줍니다. 317 안팎의 pCVR 을 보고, 같은 수를 pCVR 순서로 자르고, 더 작게 자를 때의 전환율과 전환 수를 본 뒤, 광고 없이도 일어났을 전환을 빼고 남는 증분을 봅니다. 숫자는 회원 1,400만 명 대신 표본 20,000명으로 센 설명용 가상 값입니다.</p>
+      <p>세그먼트 317 로 고른 사람과 pCVR 이 높은 순서로 고른 사람을 카드 한 장씩으로 견줍니다. 317 안팎의 pCVR 을 보고, 같은 수를 pCVR 순서로 자르고, 더 작게 자를 때의 전환율과 전환 수를 봅니다. 마지막 카드는 광고 없이도 일어났을 전환을 빼고 남는 증분입니다. 숫자는 회원 1,400만 명 대신 표본 20,000명으로 센 설명용 가상 값입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 세그먼트 317 (그 안의 회원)</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 317 밖의 회원</span>
@@ -42,14 +42,14 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="segment"><h2>SEGMENT 317</h2><p class="tg-k">pCVR 구간마다 317 안과 밖의 회원</p><p class="tg-easy"><b>쉽게 말하면</b> 317 은 조건이 맞나만 보는 번호라서, 그 안에도 살 확률이 낮은 회원과 높은 회원이 섞여 있습니다. 317 밖에도 317 의 많은 회원보다 살 확률이 높은 사람이 있습니다.</p><div class="tg-fig" id="pt-segment"></div>
+      <section class="tg-card" data-card="segment"><h2>SEGMENT 317</h2><p class="tg-k">pCVR 구간마다 317 안과 밖의 기대 전환</p><p class="tg-easy"><b>쉽게 말하면</b> 317 은 조건이 맞나만 보는 번호라서, 그 안에도 살 확률이 낮은 회원과 높은 회원이 섞여 있습니다. 317 밖에도 317 의 많은 회원보다 살 확률이 높은 사람이 있습니다.</p><div class="tg-fig" id="pt-segment"></div>
         <p class="tg-cap">317 안 2,290명의 평균은 <b>0.60%</b> 이고, 1% 넘는 <b>341명</b>이 기대 전환의 절반 넘게를 냅니다. 317 밖에도 1% 넘는 사람이 <b>191명</b> 있습니다.</p></section>
       <section class="tg-card" data-card="topn"><h2>TOP N</h2><p class="tg-k">pCVR 이 큰 순서로 세워 317 과 같은 수를 자르면</p><p class="tg-easy"><b>쉽게 말하면</b> 표본 20,000명을 pCVR 이 큰 순서로 세우고 앞에서 2,290명을 자릅니다. 317 회원 가운데 살 확률이 낮은 쪽이 빠지고, 317 밖에서 그보다 높은 사람이 들어옵니다.</p><div class="tg-fig" id="pt-topn"></div>
         <p class="tg-cap">같은 2,290명 가운데 <b>1,390명</b>이 317 밖 사람으로 바뀌고, 전환율은 <b>0.60%</b> 에서 <b>0.93%</b> 가 됩니다. 경계 pCVR 은 <b>0.392%</b> 입니다.</p></section>
       <section class="tg-card" data-card="tradeoff"><h2>TRADE-OFF</h2><p class="tg-k">작게 자를수록 오르는 전환율과 줄어드는 전환 수</p><p class="tg-easy"><b>쉽게 말하면</b> 줄의 앞쪽만 남길수록 살 확률이 높은 사람만 남아 전환율이 오릅니다. 대신 사람이 줄어 전환 수도 줄고, 쓰는 돈은 그보다 더 많이 줄어듭니다.</p><div class="tg-fig" id="pt-tradeoff"></div>
-        <p class="tg-cap">상위 5% 는 사람이 세그먼트의 절반이 안 되는데 기대 전환이 <b>약 10,300건</b>으로 더 많고, 전환당 비용은 <b>127원</b>입니다. 세그먼트는 <b>312원</b>입니다.</p></section>
+        <p class="tg-cap">상위 5% 는 사람이 세그먼트의 절반이 안 되는데 기대 전환이 <b>약 10,300건</b>으로 더 많습니다. 세그먼트를 <b>1.00</b> 으로 둔 전환당 비용은 <b>0.41</b> 입니다.</p></section>
       <section class="tg-card" data-card="lift"><h2>LIFT</h2><p class="tg-k">기대 전환을 기저 전환과 증분으로 나누면</p><p class="tg-easy"><b>쉽게 말하면</b> 광고를 본 뒤 산 사람 가운데 광고가 없어도 샀을 사람을 빼면, 광고가 늘린 몫만 남습니다. 그 사람이 얼마나 되는지는 가정에 따라 다르고, 대조군이 있어야 잽니다.</p><div class="tg-fig" id="pt-lift"></div>
-        <p class="tg-cap">기저를 pCVR 의 60% 로 두면 증분 몫은 어디서나 <b>0.400</b> 입니다. 위쪽에 몰렸다고 두면 상위 5% 의 증분 <b>3.042</b> 가 세그먼트의 <b>3.117</b> 아래로 내려갑니다.</p></section>
+        <p class="tg-cap">어느 가정에서도 같은 크기의 pCVR 상위가 세그먼트보다 증분이 많습니다. 뒤집히는 것은 위쪽일수록 기저 비율이 크다고 둘 때의 상위 5% 뿐이라, 증분 <b>3.042</b> 가 세그먼트의 <b>3.117</b> 아래입니다.</p></section>
     </div>
 
     <section class="tg-real">

@@ -3734,5 +3734,70 @@ window.DEMO_EDU = {
             { el: '[data-card="intent"]', title: '가장 먼저 볼 것', body: '세 요청의 판정입니다. 캠핑 요청은 일부 지원이어야 했지만, thinking 을 끈 기준 답은 불가로 판정했습니다.', waitFor: 'click' },
             { el: '[data-card="bridge"]', title: 'LLM 과 코드의 경계', body: '판정과 조건 추출만 LLM 이 하고, 검사와 쿼리와 응답은 코드가 합니다. 거절 문장은 템플릿 한 문장입니다.' }
         ]
+    },
+
+    // ==========================================
+    // Lookalike 확장 비율 놀이터 (입문)
+    // ==========================================
+    // 해설은 렌더가 끝난 지표 칸의 글자를 읽어 쓴다. 슬라이더 해설은 300ms 뒤에, 프리셋 해설은 데모의 클릭 처리 뒤에 돈다.
+    'lookalike-ratio': {
+        analogy: '줄을 넓게 자를수록 도달은 늘고 정밀도와 전환율은 내려간다. 도달에 전환율을 곱한 전환 수는 기본값에서 10% 가 12,600건으로 가장 많다. 시드가 작거나 닮음이 빨리 옅어지면 그 자리가 앞으로 온다',
+        anchor: '.lr-controls',
+        embedKeep: ['.lr-controls'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.lr-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '#lr-ratio': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `확장 비율을 ${value > prev ? '넓혔' : '좁혔'}습니다 (<strong>${prev}% → ${value}%</strong>). ` +
+                    `도달은 ${t('lr-reach')}, 정밀도는 ${t('lr-prec')}, 전환율은 ${t('lr-cvr')} 입니다. ` +
+                    (value > prev ? '줄의 뒤쪽에서 덜 닮은 회원이 들어와 두 값이 내려갑니다. ' : '줄의 앞쪽만 남아 두 값이 오릅니다. ') +
+                    `예상 전환은 ${t('lr-conv')}입니다.`;
+            },
+            '#lr-seed': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                const man = v => (v / 10000) + '만 명';
+                return `시드 크기를 ${value > prev ? '늘렸' : '줄였'}습니다 (<strong>${man(prev)} → ${man(value)}</strong>). ` +
+                    `도달은 ${t('lr-reach')} 그대로입니다. 확장 비율의 분모는 시드가 아니라 회원 1,400만 명이기 때문입니다. ` +
+                    (value < prev ? '시드가 작으면 중심 벡터가 흔들려 닮음이 빨리 옅어집니다. ' : '시드가 크면 중심 벡터가 덜 흔들려 닮음이 천천히 옅어집니다. ') +
+                    t('lr-verdict').split('.')[0] + '.';
+            },
+            '#lr-k': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `정밀도 감쇠 계수를 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    `빠르기 s 는 ${t('lr-s')} 입니다. ` +
+                    (value > prev
+                        ? '1% 에서 멀수록 정밀도와 전환율이 더 빨리 내려가, 전환 수가 가장 많은 자리가 앞으로 옵니다. '
+                        : '1% 에서 멀어도 정밀도와 전환율이 덜 내려가, 전환 수가 가장 많은 자리가 뒤로 갑니다. ') +
+                    t('lr-verdict').split('.')[0] + '.';
+            },
+            '.lr-preset-btn': ({ el }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했습니다. ` +
+                    `도달은 ${t('lr-reach')}, 빠르기 s 는 ${t('lr-s')} 입니다. ` + t('lr-verdict').split('.')[0] + '.';
+            }
+        },
+        tour: [
+            {
+                el: '.lr-metrics',
+                title: '숫자 넷',
+                body: '도달, 정밀도, 전환율, 전환 수입니다. 기본값 10% 는 두 글의 표와 같은 <strong>140만 명, 0.709, 0.90%, 12,600건</strong>입니다.'
+            },
+            {
+                el: '#lr-seed',
+                title: '시드를 바꿔 봅니다',
+                body: '<strong>시드 크기</strong>를 움직여 봅니다. 도달은 그대로이고 판정의 비율이 바뀝니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.lr-chart-card:last-child',
+                title: '전환 수가 가장 많은 자리',
+                body: '붉은 점이 1~20% 가운데 전환 수가 가장 많은 비율이고, 파란 고리가 지금 고른 비율입니다.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더와 프리셋을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
+            }
+        ]
     }
 };

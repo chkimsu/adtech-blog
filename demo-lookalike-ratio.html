@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지를 슬라이더로 정합니다. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀌고, 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.">
+  <title>Lookalike 확장 비율 놀이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .lr-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .lr-hero { text-align: center; padding: 2rem 0 1rem; }
+    .lr-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .lr-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .lr-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .lr-intro p { margin: 0 0 0.6rem; }
+    .lr-intro p:last-child { margin-bottom: 0; }
+    .lr-intro strong { color: var(--accent-primary); }
+    .lr-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
+    /* 식이 화면보다 넓으면 페이지가 아니라 식 칸 안에서만 밀리게 한다. */
+    .lr-formula { overflow-x: auto; overflow-y: hidden; margin: 0.2rem 0 0.7rem; color: var(--text-primary); }
+
+    .lr-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .lr-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 250px 1fr 96px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .lr-slider-row { grid-template-columns: 1fr; } }
+    .lr-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .lr-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .lr-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .lr-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .lr-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
+    .lr-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
+    @media (max-width: 700px) { .lr-slider-value { text-align: left; } }
+
+    .lr-speed { font-size: 0.8rem; color: var(--text-muted); margin: 0.1rem 0 0.4rem; }
+    .lr-speed b { font-family: var(--font-mono); color: var(--text-primary); }
+    .lr-speed span { font-family: var(--font-mono); }
+
+    .lr-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .lr-presets-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); margin-right: 0.2rem; }
+    .lr-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .lr-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    .lr-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+    @media (max-width: 900px) { .lr-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .lr-metrics { grid-template-columns: minmax(0, 1fr); } }
+    .lr-metric { min-width: 0; padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
+    .lr-metric-label { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .lr-metric-value { font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+    .lr-metric-value.good { color: var(--state-good); }
+    .lr-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.45; }
+
+    .lr-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* 1fr 의 자동 최솟값은 min-content 라, 안에 든 캔버스가 안 줄면 트랙째 늘어난다.
+       minmax(0, …) 와 카드의 min-width:0 이 있어야 좁은 화면에서 컨테이너 안에 들어온다. */
+    .lr-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .lr-charts { grid-template-columns: minmax(0, 1fr); } }
+    .lr-chart-card { min-width: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
+    .lr-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .lr-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .lr-chart-wrap { position: relative; height: 300px; }
+
+    @media (max-width: 520px) { .lr-container { padding: 1.25rem 1rem 0; } }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="lr-hero">
+      <div class="lr-container">
+        <h1>Lookalike 확장 비율 놀이터</h1>
+        <p>회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지가 확장 비율입니다.
+          넓히면 도달은 늘고 정밀도와 전환율은 내려갑니다. 도달에 전환율을 곱한 전환 수가 가장 많은 비율을 슬라이더로 찾습니다.</p>
+      </div>
+    </section>
+
+    <div class="lr-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
+        <a href="post.html?id=lookalike-basics">Lookalike 기초</a>
+        <a href="demo-lookalike-batch-cards.html">Lookalike 배치 카드 네 장</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">%</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 요약</div>
+          <div class="demo-tldr-analogy-text">
+            줄을 넓게 자를수록 시드와 덜 닮은 회원이 섞여 정밀도와 전환율이 내려갑니다. 도달에 전환율을 곱하면 기본값에서는 10% 가 <strong>12,600건으로 가장 많습니다</strong>. 시드가 작거나 닮음이 빨리 옅어지면 그 자리가 앞으로 옵니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>서연 씨가 고른 유사타겟 10% 는 140만 명이고, 전환율 0.90% 로 12,600건입니다.
+          1% 는 전환율이 3.20% 로 높아도 14만 명뿐이라 4,480건입니다.
+          비율과 시드 크기와 감쇠 계수를 움직여, 전환 수가 가장 많은 자리가 어떻게 옮겨 가는지 봅니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>광고 화면의 유사타겟 슬라이더에서 <strong>1% 는 시드의 1% 가 아니라 회원 전체의 1%</strong> 입니다.
+          어디에 놓을지는 도달과 전환율을 곱해 정하고, 그 답은 닮음이 얼마나 빨리 옅어지느냐에 달려 있습니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
+        <li><span class="step-text">기본값 10% 에서 <strong>140만 명, 0.709, 0.90%, 12,600건</strong>을 봅니다. 두 글의 표와 같은 값입니다.</span></li>
+        <li><span class="step-text"><strong>시드 크기</strong>를 1만 명까지 내립니다. 도달은 그대로이고 판정의 비율이 앞으로 옵니다.</span></li>
+        <li><span class="step-text"><strong>감쇠 계수</strong>를 0.5 로 내렸다가 1.5 로 올려, 판정이 어디로 가는지 봅니다.</span></li>
+      </ol>
+
+      <div class="lr-intro">
+        <p><strong>식</strong> — 확장 비율 $r$ 은 줄의 앞 몇 % 까지 가져오나입니다.
+          도달은 <code>1,400만 × r ÷ 100</code> 이라 시드 크기와 상관없습니다.
+          정밀도 $p(r)$ 는 가져온 회원 가운데 시드와 닮은 회원의 몫이고, 전환율 $c(r)$ 는 광고를 보고 사는 회원의 몫입니다.</p>
+        <div class="lr-formula">$$p(r) = 0.985 \times \left(r^{-0.1315}\, e^{-0.00032\,(r-1)^2}\right)^{s}$$</div>
+        <div class="lr-formula">$$c(r) = 3.20\% \times \left(r^{-0.439}\, e^{-0.00318\,(r-1)^2}\right)^{s}$$</div>
+        <p>괄호 안은 1% 의 값에서 몇 배가 남나이고, $s$ 는 닮음이 옅어지는 빠르기입니다.</p>
+        <div class="lr-formula">$$s = k \times 1.1^{\log_2 (80{,}000 \,\div\, n)}$$</div>
+        <p>$k$ 는 정밀도 감쇠 계수, $n$ 은 시드 크기입니다.
+          시드가 작을수록 시드를 평균한 중심 벡터가 흔들리므로, 시드가 절반이 될 때마다 $s$ 가 1.1배가 되게 두었습니다.
+          $k = 1$, $n$ = 8만이면 $s = 1$ 이고, 두 곡선은 1, 5, 10% 에서 두 글의 값을 지납니다.
+          전환율은 <a href="post.html?id=lookalike-basics">Lookalike 기초</a> 편의 3.20, 1.50, 0.90% 이고,
+          정밀도는 <a href="post.html?id=lookalike-computation">Lookalike 계산</a> 편의 0.985, 0.793, 0.709 입니다.
+          닮은 회원은 러닝 성향 160만 명이고 시드는 줄에서 빠지므로, 정밀도는 <code>(160만 − n) ÷ 도달</code> 을 넘지 못합니다.</p>
+        <p>예상 전환 수는 <code>도달 × c(r)</code> 이고, 판정은 1~20% 가운데 이 값이 가장 큰 비율입니다.
+          10% 를 넘는 쪽은 어느 글에도 없는 값입니다.
+          이 놀이터는 하루 예산을 그대로 둔다고 보고, 넓힐수록 한 사람에게 가는 노출이 줄어 전환율이 정밀도보다 빨리 내려가게 했습니다.
+          그래서 어느 비율을 넘으면 넓혀도 전환 수가 줄어듭니다. 숫자는 전부 설명을 위한 가상 값입니다.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="lr-controls">
+        <div class="lr-slider-row">
+          <div class="lr-slider-label">확장 비율 (r)<small>줄의 앞 몇 % 까지 가져오나</small></div>
+          <input type="range" class="lr-slider" id="lr-ratio" min="1" max="20" step="1" value="10">
+          <div class="lr-slider-value" id="lr-ratio-val">10%</div>
+        </div>
+        <div class="lr-slider-row">
+          <div class="lr-slider-label">시드 크기 (n)<small>줄을 세우는 기준이 되는 회원 수</small></div>
+          <input type="range" class="lr-slider" id="lr-seed" min="10000" max="200000" step="10000" value="80000">
+          <div class="lr-slider-value" id="lr-seed-val">8만 명</div>
+        </div>
+        <div class="lr-slider-row">
+          <div class="lr-slider-label">정밀도 감쇠 계수 (k)<small>1.0 이 두 글의 값, 클수록 빨리 옅어짐</small></div>
+          <input type="range" class="lr-slider" id="lr-k" min="0.5" max="1.5" step="0.1" value="1.0">
+          <div class="lr-slider-value" id="lr-k-val">1.0</div>
+        </div>
+        <div class="lr-speed">닮음이 옅어지는 빠르기 s = <b id="lr-s">1.00</b>, 감쇠 계수 × 시드 배수 <span id="lr-s-seed">1.00</span></div>
+        <div class="lr-presets">
+          <span class="lr-presets-label">프리셋</span>
+          <button class="lr-preset-btn" data-preset="10,80000,1.0">기본</button>
+          <button class="lr-preset-btn" data-preset="10,10000,1.0">시드 1만 명</button>
+          <button class="lr-preset-btn" data-preset="10,200000,1.0">시드 20만 명</button>
+          <button class="lr-preset-btn" data-preset="10,80000,1.5">빨리 옅어지면</button>
+          <button class="lr-preset-btn" data-preset="10,80000,0.5">천천히 옅어지면</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="lr-metrics">
+        <div class="lr-metric">
+          <div class="lr-metric-label">도달</div>
+          <div class="lr-metric-value" id="lr-reach">—</div>
+          <div class="lr-metric-sub" id="lr-reach-sub">회원 1,400만 명의 r%</div>
+        </div>
+        <div class="lr-metric">
+          <div class="lr-metric-label">정밀도</div>
+          <div class="lr-metric-value" id="lr-prec">—</div>
+          <div class="lr-metric-sub" id="lr-prec-sub">시드와 닮은 회원의 몫</div>
+        </div>
+        <div class="lr-metric">
+          <div class="lr-metric-label">예상 전환율</div>
+          <div class="lr-metric-value" id="lr-cvr">—</div>
+          <div class="lr-metric-sub" id="lr-cvr-sub">전환 하나에 필요한 사람</div>
+        </div>
+        <div class="lr-metric">
+          <div class="lr-metric-label">예상 전환 수</div>
+          <div class="lr-metric-value" id="lr-conv">—</div>
+          <div class="lr-metric-sub" id="lr-conv-sub">도달 × 전환율</div>
+        </div>
+      </div>
+
+      <div class="lr-verdict" id="lr-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="lr-charts">
+        <div class="lr-chart-card">
+          <h3>1% 의 몇 배가 남나</h3>
+          <p class="note">정밀도와 전환율을 각자 1% 의 값으로 나눈 선입니다. 두 값은 다른 양이라 이렇게 놓고 내려가는 빠르기를 견줍니다. 속이 빈 점은 두 글의 1, 5, 10% 값입니다.</p>
+          <div class="lr-chart-wrap"><canvas id="lr-rate-chart" aria-label="확장 비율에 따른 정밀도와 전환율"></canvas></div>
+        </div>
+        <div class="lr-chart-card">
+          <h3>비율별 예상 전환 수</h3>
+          <p class="note">도달에 전환율을 곱한 값입니다. 붉은 점이 1~20% 가운데 가장 많은 비율이고, 파란 고리가 지금 고른 비율입니다.</p>
+          <div class="lr-chart-wrap"><canvas id="lr-conv-chart" aria-label="확장 비율에 따른 예상 전환 수"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>1% 는 회원 전체의 1% 입니다</strong> — 시드를 1만 명으로 줄여도 20만 명으로 늘려도 1% 는 14만 명입니다. 시드는 줄을 세우는 기준으로만 쓰입니다.</li>
+            <li><strong>전환율이 높은 비율이 전환 수도 많지는 않습니다</strong> — 1% 는 3.20% 에 4,480건, 10% 는 0.90% 에 12,600건입니다.</li>
+            <li><strong>어디서 자를지는 닮음이 옅어지는 빠르기가 정합니다</strong> — 빠르기 s 가 크면 앞에서, 작으면 뒤에서 자르는 쪽이 전환이 많습니다. 시드가 작거나 감쇠 계수가 크면 s 가 커집니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          광고 화면의 유사타겟 슬라이더가 이 놀이터의 확장 비율입니다.
+          실제 회원에게는 정밀도의 정답이 없고, 곡선의 모양도 미리 알 수 없습니다.
+          그래서 비율은 이 식이 아니라 재 본 값에서 정합니다.
+        </p>
+        <ul>
+          <li><strong>비율 몇 개를 작게 걸어 봅니다:</strong> 1%, 5%, 10% 목록에 같은 소재와 작은 예산을 걸고 전환율을 견줍니다. 그 세 점이 이 놀이터의 곡선 자리에 들어갑니다.</li>
+          <li><strong>시드는 산 사람으로 채웁니다:</strong> 시드의 크기보다 누구로 채웠나가 줄을 더 크게 바꿉니다. <a href="post.html?id=lookalike-computation">Lookalike 계산</a> 편에서 구매자를 무작위로 고른 시드는 5% 의 정밀도가 0.459 였습니다.</li>
+          <li><strong>전환 수는 대조군으로 다시 셉니다:</strong> 닮은 회원에는 광고가 없어도 살 사람이 많습니다. 광고를 일부러 안 보인 무리와 견주는 셈은 <a href="post.html?id=uplift-incrementality">Uplift 와 증분 전환</a> 편에 있습니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=lookalike-basics" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Lookalike 기초: 시드 8만 명에서 닮은 사람 140만 명을 찾는 법</span>
+              <span class="demo-next-excerpt">전환율 세 점과 「1% 는 무엇의 1% 인가」가 나온 글입니다</span>
+            </a>
+            <a href="post.html?id=lookalike-computation" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">Lookalike 계산: 시드 8만 명에서 140만 명을 뽑는 실제 순서</span>
+              <span class="demo-next-excerpt">정밀도 0.985, 0.793, 0.709 를 표본 20,000명으로 센 글입니다</span>
+            </a>
+            <a href="demo-lookalike-batch-cards.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">Lookalike 배치 카드 네 장</span>
+              <span class="demo-next-excerpt">시드, 중심 벡터, 검색, 자르기를 카드 한 장씩으로</span>
+              <span class="demo-next-meta">⏱ 5분, 중급</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/lookalike-ratio-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

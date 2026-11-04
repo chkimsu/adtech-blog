@@ -367,6 +367,36 @@ const GLOSSARY = [
     term: 'GAM',
     abbr: 'Google Ad Manager',
     body: '구글이 만든 <strong>매체 쪽 광고 서버이자 SSP</strong>. 매체가 자기 지면의 광고 자리를 등록해 두고, 직접 판 광고와 경매로 파는 광고를 한 화면에서 굴린다. 안에 광고 거래소 AdX 가 붙어 있다. 개념 이름이 아니라 제품 이름이라 SSP 를 하는 회사의 예로 든다. 옛 이름은 DFP 다.'
+  },
+  {
+    term: '관심사 분류',
+    abbr: 'Interest Classification',
+    body: '글 한 편에 <strong>관심사 라벨 하나를 붙이는 일</strong>. 키워드 규칙, 라벨이 붙은 글로 배운 분류 모델, LLM 이 같은 일을 하고, 평가 40건에서는 뒤의 둘이 똑같이 38건을 맞혔다.'
+  },
+  {
+    term: '컨텍스추얼 타겟팅',
+    abbr: 'Contextual Targeting',
+    body: '사람 대신 <strong>지금 읽는 지면의 글로 광고를 고르는</strong> 방식. 회원 번호가 없는 요청에 남는 근거가 지면뿐이라, 다른 회사의 쿠키가 막힐수록 쓰임이 커진다.'
+  },
+  {
+    term: 'IAB 콘텐츠 분류',
+    abbr: 'IAB Content Taxonomy',
+    body: 'IAB Tech Lab 이 정한 <strong>지면 주제의 표준 목록</strong>. 3.1 버전은 4단계에 카테고리가 704개이고, 입찰 요청은 그 ID 를 <code>site.cat</code> 에, 버전을 <code>cattax</code> 에 적는다.'
+  },
+  {
+    term: '최근성 가중(반감기)',
+    abbr: 'Recency Weighting, Half-life',
+    body: '사건마다 <strong>지난 날짜만큼 덜 쳐서 더하는</strong> 집계. 반감기 7일이면 7일마다 가중치가 절반이 되어, 러닝 글 9편이 이번 주면 7.21, 모두 2주 전이면 1.80 이다.'
+  },
+  {
+    term: 'pCVR 타겟팅',
+    abbr: 'pCVR-based Targeting',
+    body: '세그먼트 번호 대신 <strong>모델이 매긴 전환 확률이 높은 순서로</strong> 보여 줄 사람을 고르는 방식. 표본에서 317 과 같은 2,290명을 이렇게 고르면 기대 전환이 1.55배가 되지만, 증분은 대조군으로 따로 잰다.'
+  },
+  {
+    term: '의도 판정과 조건 추출',
+    abbr: 'Intent Classification, Slot Filling',
+    body: '문장으로 받은 요청이 <strong>받을 수 있는 것인지 정하고 「무엇이 몇 이상」 꼴의 조건으로 옮기는</strong> 두 단계. 자연어 오디언스에서는 이 둘만 LLM 이 JSON 으로 답하고, 필터와 명단 크기는 코드가 맡는다.'
   }
 ];
 

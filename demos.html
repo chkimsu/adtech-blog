@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 65개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 72개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -512,6 +512,10 @@
               <a href="demo-cluster-roles.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Hadoop, Hive, Spark 자리 카드</a>
               <a href="demo-de-first-months.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 데이터 엔지니어 첫 6개월 카드</a>
               <a href="demo-targeting-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 타겟팅 카드 아홉 장</a>
+              <a href="demo-profile-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 유저 프로파일 카드 네 장</a>
+              <a href="demo-interest-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 관심사 분류 카드 네 장</a>
+              <a href="demo-lookalike-ratio.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Lookalike 확장 비율 놀이터</a>
+              <a href="demo-contextual-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 컨텍스추얼 타겟팅 카드 네 장</a>
               <a href="demo-pipeline-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 학습 파이프라인 카드 다섯 장</a>
               <a href="demo-version-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 모델 버전 카드 네 장</a>
               <a href="demo-ci-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Docker 와 CI 카드 네 장</a>
@@ -557,6 +561,9 @@
               <a href="demo-pipeline-replay.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 이벤트 한 건 따라가기 기록</a>
               <a href="demo-search-replay.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 질의 하나 따라가기 기록</a>
               <a href="demo-sql-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ SQL 실무 6회</a>
+              <a href="demo-lookalike-batch-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Lookalike 배치 카드 네 장</a>
+              <a href="demo-pcvr-target-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ pCVR 타겟 카드 네 장</a>
+              <a href="demo-nl-audience-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 자연어 오디언스 카드 네 장</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -658,7 +665,7 @@
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">61개, 주제 9개</span>
+          <span class="count">77개, 주제 10개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
@@ -666,9 +673,10 @@
           <a class="demos-jump-item" href="#demo-topic-measure">측정과 모델링<b>14</b></a>
           <a class="demos-jump-item" href="#demo-topic-bandit">탐색과 밴딧<b>8</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>4</b></a>
-          <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>8</b></a>
+          <a class="demos-jump-item" href="#demo-topic-targeting-model">타겟팅 모델<b>7</b></a>
+          <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>9</b></a>
           <a class="demos-jump-item" href="#demo-topic-ops">모델 운영<b>12</b></a>
-          <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>9</b></a>
+          <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>11</b></a>
           <a class="demos-jump-item" href="#demo-topic-api">요청이 오는 길과 API<b>4</b></a>
           <a class="demos-jump-item" href="#demo-topic-algo">알고리즘 기초<b>2</b></a>
         </div>
@@ -1136,6 +1144,107 @@
                 <span class="demo-card-meta-item">선수지식 거의 없음</span>
               </div>
               <a href="demo-frequency-capping.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-targeting-model">
+          <div class="demo-topic-head">
+            <h3>타겟팅 모델</h3>
+            <span class="demo-topic-count">7개</span>
+          </div>
+          <p class="demo-topic-desc">타겟팅 화면의 칸 뒤에서 모델이 하는 일입니다. 행동 로그를 숫자로 세기, 글에 관심사 붙이기, 닮은 회원 찾기, 전환 확률로 고르기, 지면의 글로 고르기, 문장을 조건으로 옮기기. 카드 여섯 데크와 놀이터 하나입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>유저 프로파일 카드 네 장</h3>
+              <p>회원 한 명의 30일 행동이 숫자가 되는 자리를 카드 한 장씩으로. 날짜별 행동 로그, 7일마다 절반으로 덜 세는 최근성 가중, 표본 2,000명으로 표준화한 8차원 벡터, 세그먼트 317 의 조건 셋.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">타겟팅 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-profile-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>관심사 분류 카드 네 장</h3>
+              <p>같은 글 200건에 관심사 라벨을 붙이는 세 방법을 카드 한 장씩으로. 키워드 사전 규칙, 단어 가방 분류 모델, JSON 한 줄로 답하는 LLM, 평가 40건의 precision 과 recall 과 건당 비용.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">유저 프로파일 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-interest-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Lookalike 배치 카드 네 장</h3>
+              <p>번호 6001 을 만드는 밤 배치를 카드 한 장씩으로. 시드 114명의 평균, 중심 벡터와 코사인 유사도, 전수 검색과 해시 근사 검색, 1, 5, 10% 에서 자른 정밀도.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Lookalike 기초 글 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-lookalike-batch-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>Lookalike 확장 비율 놀이터</h3>
+              <p>줄의 앞 몇 % 까지 가져올지를 슬라이더로. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀝니다. 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">Lookalike 기초 글 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-lookalike-ratio.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>pCVR 타겟 카드 네 장</h3>
+              <p>세그먼트 317 대신 pCVR 이 높은 순서로 고르면 무엇이 달라지는지 카드 한 장씩으로. 317 안팎의 pCVR 분포, 같은 수를 pCVR 순서로 자르기, 상위 5% 와 1%, 기저 전환과 증분.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Lookalike 배치 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-pcvr-target-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>컨텍스추얼 타겟팅 카드 네 장</h3>
+              <p>회원 번호가 없는 요청에 지면의 글만으로 카테고리를 붙이는 세 방법을 카드 한 장씩으로. 지면 글 한 편과 뽑힌 낱말, 카테고리마다 낱말 4개를 적은 사전, TF-IDF 와 카테고리 중심의 각도. LLM 의 JSON 라벨과 thinking 을 켰을 때의 토큰.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">관심사 분류 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-contextual-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>자연어 오디언스 카드 네 장</h3>
+              <p>광고주가 쓴 문장 하나가 판정, 조건, 쿼리, 명단 크기가 되는 자리를 카드 한 장씩으로. 세 요청의 판정, 문장 조각과 조건, 표본에서 남는 회원, LLM 과 코드가 맡는 일.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">컨텍스추얼 타겟팅 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-nl-audience-cards.html" class="btn-try">체험하기</a>
             </div>
           </div>
         </section>

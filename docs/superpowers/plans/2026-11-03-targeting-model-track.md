@@ -20,7 +20,7 @@
 - 파이썬은 표준 라이브러리만, 3.9 문법, 모든 난수는 `random.seed(7)`. 블록은 `# 하는 일:` 한 줄, `# N단계:` 제목과 풀이, `# 출력:` 아래 `# N단계 뜻:` 과 찍힌 줄(`python3 scripts/check-python-outputs.py --post <slug> --show` 가 뽑은 것을 그대로 붙인다). 꼬리표는 `python` 하나. 상용 API 코드는 `# (발췌 — 그대로 실행되지 않습니다.)`.
 - 기록을 쓰는 블록은 기록 파일의 값을 문자열 상수로 담고 `# 하는 일:` 바로 다음 줄에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 주석을 단다(블록 첫 줄은 상태 표시나 하는 일이어야 형식 검사를 지난다). 기록 출력은 JSON, 영어 enum 라벨, 숫자만. 한국어 문장은 산문의 「」 안에만.
 - 가상 값은 글에서 한 번 「가상 데이터」라고 밝힌다. 다른 글의 숫자(회원 1,400만, 세그먼트 317 160만, 맞춤타겟 8만, Lookalike 140만, 타겟 방식별 전환율 표, 후보풀 캠페인 셋)와 어긋나지 않는다. 설계 4절의 값을 그대로 쓴다.
-- 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 올리기 전에 `grep -rnE "$(grep -v '^#' ~/Downloads/job-search/공통/사내-이름-목록.txt | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html` 이 0건이어야 한다.
+- 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 올리기 전에 `grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html` 이 0건이어야 한다. `NAMES_FILE` 은 저장소 밖에 둔 사내 이름 목록 파일이다(위치는 실행 장부에 적는다).
 - 커밋은 `chkimsu` 계정(GitHub no-reply 메일)으로, 파일을 하나씩 명시한다. `git add -A` 금지. push 전에 `git fetch origin && git merge origin/main`. 커밋 메시지는 한국어 conventional commit, 끝에 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
 - 새 파일은 `node scripts/check-wording.js` 에서 0건. 기준표(`scripts/wording-baseline.json`)를 늘리지 않는다.
 
@@ -374,7 +374,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - [ ] **Step 4: 표지와 README** — `index.html` 의 글 편수 108 → 114. `README.md` Content 절의 95 posts 를 114 로, Targeting 줄에 「유저 프로파일 피처, 관심사 분류, Lookalike 계산, 전환 예측 타겟, 컨텍스추얼, 자연어 오디언스」를 더한다.
 - [ ] **Step 5: 검사 전부**
 
-Run: `node scripts/validate-posts.js && node scripts/check-content-standard.js user-profile-features interest-classification lookalike-computation pcvr-based-targeting contextual-targeting natural-language-audience && node scripts/check-wording.js && node scripts/check-code-blocks.js && for s in user-profile-features interest-classification lookalike-computation pcvr-based-targeting contextual-targeting natural-language-audience; do python3 scripts/check-python-outputs.py --post $s || exit 1; done && node scripts/test-long-sentences.js && node scripts/check-design.js && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' ~/Downloads/job-search/공통/사내-이름-목록.txt | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html; echo "names grep exit=$?"`
+Run: `node scripts/validate-posts.js && node scripts/check-content-standard.js user-profile-features interest-classification lookalike-computation pcvr-based-targeting contextual-targeting natural-language-audience && node scripts/check-wording.js && node scripts/check-code-blocks.js && for s in user-profile-features interest-classification lookalike-computation pcvr-based-targeting contextual-targeting natural-language-audience; do python3 scripts/check-python-outputs.py --post $s || exit 1; done && node scripts/test-long-sentences.js && node scripts/check-design.js && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html; echo "names grep exit=$?"`
 Expected: 전부 통과, 마지막 grep 은 출력 없이 `exit=1`.
 
 - [ ] **Step 6: 화면 확인** — 헤드리스 크롬으로 글 6편(`post.html?id=<slug>`)을 1440 폭, 390 폭으로 찍어 카드 iframe 이 다 뜨고 가로 스크롤이 없는지(`document.scrollWidth == clientWidth`), 데크 6장과 놀이터를 라이트와 다크로 찍어 겹침이 없는지 본다. `topics.html` 에 트랙이 타겟팅 주제 안에 보이고, `ml-track.html` 3단계에 두 편이 있는지 본다.

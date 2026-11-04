@@ -25,6 +25,10 @@ RECORDS = os.path.join(ROOT, 'data', 'llm-records')
 SLUGS = ('interest-classification', 'contextual-targeting', 'natural-language-audience')
 
 sys.dont_write_bytecode = True   # 도구를 불러도 scripts/__pycache__ 가 생기지 않게 한다
+# 가짜 서버는 127.0.0.1 에 있다. 셸에 http_proxy 가 있어도 요청이 프록시로 새지 않게 한다(하위 프로세스도 물려받는다).
+for _k in ('no_proxy', 'NO_PROXY'):
+    _v = os.environ.get(_k, '')
+    os.environ[_k] = ','.join(x for x in ('127.0.0.1', 'localhost', _v) if x)
 spec = importlib.util.spec_from_file_location('llm_record', TOOL)
 L = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(L)

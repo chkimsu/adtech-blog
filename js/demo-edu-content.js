@@ -3803,5 +3803,31 @@ window.DEMO_EDU = {
                 body: '슬라이더와 프리셋을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
             }
         ]
+    },
+
+    // ==========================================
+    // LLM 호출 한 번 카드 네 장 (입문)
+    // ==========================================
+    'first-call-cards': {
+        analogy: '요청 JSON 한 덩이의 메시지 둘이 역할 표시와 이어져 프롬프트 78토큰이 된다. 답 {"objective": "conversion"} 은 출력 토큰 6개와 1,114ms 로 돌아온다. thinking 을 켜면 답은 같고 출력 토큰이 505개로 84.2배가 된다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'request': return '헷갈리는 것은 <strong>think 를 빼면 thinking 이 꺼지나</strong>입니다. qwen3.5:27b 는 think 를 빼면 thinking 을 켠 채로 답합니다. 끄려면 false 를 적어 보냅니다.';
+                    case 'tokens': return '헷갈리는 것은 <strong>78토큰이 두 메시지의 글만 센 수인가</strong>입니다. 역할 표시와 풀이 자리 표시까지 센 수입니다. 그래서 같은 두 메시지도 thinking 을 켜면 76토큰입니다.';
+                    case 'response': return '헷갈리는 것은 <strong>시간 필드의 단위</strong>입니다. Ollama 의 시간 필드는 모두 나노초입니다. 기록 도구가 total_duration 을 100만으로 나눠 ms 로 적습니다.';
+                    case 'think': return '헷갈리는 것은 <strong>풀이 글자가 답에 섞이나</strong>입니다. 풀이 1,905자는 message 의 thinking 에 따로 옵니다. content 는 끈 답과 같은 JSON 한 줄입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '벽돌색은 이번 요청과 답, 먹색은 모델과 서버가 붙이는 표시, 파랑은 기록에 남은 값입니다. 회색은 기록에 옮기지 않는 응답 필드, 점선 상자는 시스템 메시지입니다.' },
+            { el: '[data-card="request"]', title: '가장 먼저 볼 것', body: '요청은 JSON 한 덩이이고 맨 위 필드는 다섯입니다. 두 요청은 think 하나만 다릅니다.', waitFor: 'click' },
+            { el: '[data-card="think"]', title: 'thinking 을 켜면', body: '답은 같고, 출력 토큰이 6개에서 505개로, 시간이 1.1초에서 32.0초로 늡니다.' }
+        ]
     }
 };

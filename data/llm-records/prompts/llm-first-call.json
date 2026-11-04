@@ -1,0 +1,11 @@
+{
+  "system": "광고 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON {\"objective\": \"<목표>\"} 으로만 답한다. enum 은 awareness, traffic, conversion, retention 넷이다.",
+  "items": [
+    {
+      "id": "c001",
+      "user": "러닝화 신상품 출시. 첫 구매를 늘리고 싶다. 하루 300만 원"
+    }
+  ],
+  "think": "both",
+  "repeat": 1
+}

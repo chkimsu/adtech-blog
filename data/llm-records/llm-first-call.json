@@ -1,0 +1,43 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-04",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "c001",
+      "think": false,
+      "run": 1,
+      "system": "광고 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON {\"objective\": \"<목표>\"} 으로만 답한다. enum 은 awareness, traffic, conversion, retention 넷이다.",
+      "user": "러닝화 신상품 출시. 첫 구매를 늘리고 싶다. 하루 300만 원",
+      "output": "{\"objective\": \"conversion\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 78,
+      "output_tokens": 6,
+      "elapsed_ms": 1114,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c001",
+      "think": true,
+      "run": 1,
+      "system": "광고 캠페인 설명을 읽고 목표를 enum 에서 하나 골라 JSON {\"objective\": \"<목표>\"} 으로만 답한다. enum 은 awareness, traffic, conversion, retention 넷이다.",
+      "user": "러닝화 신상품 출시. 첫 구매를 늘리고 싶다. 하루 300만 원",
+      "output": "{\"objective\": \"conversion\"}",
+      "thinking_chars": 1905,
+      "prompt_tokens": 76,
+      "output_tokens": 505,
+      "elapsed_ms": 31979,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

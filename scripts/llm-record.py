@@ -425,14 +425,14 @@ def main():
     args = ap.parse_args()
     if args.with_usage and not args.export_constant:
         ap.error('--with-usage 는 --export-constant 와 같이 씁니다')
+    if args.force and (args.export_constant or args.selftest):
+        ap.error('--force 는 기록할 때만 씁니다')
     if args.selftest:
         raise SystemExit(selftest(args.model, args.host))
     if not args.slug:
         ap.error('--selftest 가 아니면 --slug 가 필요합니다')
     if args.limit is not None and args.limit < 1:
         ap.error('--limit 은 1 이상입니다')
-    if args.force and args.export_constant:
-        ap.error('--force 는 기록할 때만 씁니다')
     if args.export_constant:
         raise SystemExit(export_constant(args.slug, args.with_usage))
     raise SystemExit(record(args.slug, args.model, args.host, args.limit, args.force))

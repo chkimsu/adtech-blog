@@ -60,6 +60,8 @@ jobs:
           python-version: '3.9'
       - name: 파이썬 블록 실행 검사 시험
         run: python scripts/test-python-outputs.py
+      - name: LLM 기록 도구 시험 (가짜 Ollama 서버, 덮어쓰기 가드, 프롬프트와 기록의 꼴)
+        run: python scripts/test-llm-record.py
       - name: 파이썬 블록 실행 (표준 라이브러리, 찍힌 줄과 단계)
         run: python scripts/check-python-outputs.py
       - name: 관심사 분류 글의 생성기, 프롬프트 파일, 파이썬 1 블록이 같은가

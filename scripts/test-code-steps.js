@@ -163,6 +163,15 @@ console.log('\n배치 계산');
 eq('메모 자리 = 가장 긴 줄 + 2', C.noteColumn(40, 86), 42);
 eq('메모 자리는 cap - 22 를 넘지 않는다', C.noteColumn(80, 86), 64);
 eq('메모가 들어가나', [C.fitsNote(40, 42), C.fitsNote(41, 42)], [true, false]);
+{
+  // layout() 이 쓰는 메모 칸 계산. 400자 넘는 줄(long)은 메모 칸 폭을 정하는 데 넣지 않고 늘 줄 아래(drop)에 둔다.
+  const lines = [{ w: 5, long: false }, { w: 446, long: true }, { w: 30, long: false }];
+  eq('긴 줄은 메모 칸 폭 계산에서 빼고, 짧은 줄 중 가장 긴 30 + 2 로 정한다', C.noteLayout(lines, 79, false), { nc: 32, drop: [false, true, false] });
+  eq('긴 줄이 없으면 가장 긴 메모 줄이 정하고 cap - 22 에서 멈춘다',
+    C.noteLayout([{ w: 5, long: false }, { w: 80, long: false }], 86, false), { nc: 64, drop: [false, true] });
+  eq('좁은 블록은 모두 줄 아래', C.noteLayout(lines, 79, true).drop, [true, true, true]);
+  eq('메모 줄이 없으면 칸 폭 2', C.noteLayout([], 79, false), { nc: 2, drop: [] });
+}
 eq('출력 세 열', C.outputLayout(50, 120, false), 'three');
 eq('출력이 넓으면 뜻을 아래로', C.outputLayout(80, 120, false), 'stack');
 eq('좁은 블록은 늘 아래로', C.outputLayout(10, 120, true), 'stack');

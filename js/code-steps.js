@@ -433,6 +433,13 @@
   // ---------- 배치(브라우저) ----------
   const noteColumn = (maxw, cap) => Math.max(0, Math.min(Math.ceil(maxw) + 2, cap - 22));
   const fitsNote = (w, nc) => w + 2 <= nc;
+  // 메모가 붙은 줄들의 배치. lines 는 줄마다 { w: 글자 폭(ch), long: 400자 이상인가 }, cap 은 코드 칸에 드는 글자 수다.
+  // 긴 줄은 메모를 늘 줄 아래(drop)에 두니 메모 칸의 폭 nc 를 정하는 데 넣지 않는다. 넣으면 다른 메모가 모두 오른쪽 끝으로 밀린다.
+  function noteLayout(lines, cap, narrow) {
+    const maxw = lines.reduce((m, l) => (l.long ? m : Math.max(m, l.w)), 0);
+    const nc = noteColumn(maxw, cap);
+    return { nc, drop: lines.map(l => narrow || l.long || !fitsNote(l.w, nc)) };
+  }
   const outputLayout = (maxw, availCh, narrow) => (!narrow && Math.ceil(maxw) + 2 <= 0.6 * availCh ? 'three' : 'stack');
 
   function layout(cb) {
@@ -446,13 +453,11 @@
     cb.querySelectorAll('.cb-code').forEach(code => {
       const cs = getComputedStyle(code);
       const avail = code.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      const noted = code.querySelectorAll('.cb-ln[data-note]');
-      let maxw = 0;
-      // 긴 줄(is-long)은 메모를 늘 줄 아래에 두니 메모 칸의 폭을 정하는 데 넣지 않는다. 넣으면 다른 메모가 모두 오른쪽 끝으로 밀린다
-      noted.forEach(l => { if (!l.classList.contains('is-long')) maxw = Math.max(maxw, width(l)); });
-      const nc = noteColumn(maxw, Math.floor(avail / ch));
+      const noted = [...code.querySelectorAll('.cb-ln[data-note]')];
+      const lines = noted.map(l => ({ w: width(l), long: l.classList.contains('is-long') }));
+      const { nc, drop } = noteLayout(lines, Math.floor(avail / ch), narrow);
       code.style.setProperty('--nc', nc);
-      noted.forEach(l => l.classList.toggle('is-drop', narrow || l.classList.contains('is-long') || !fitsNote(width(l), nc)));
+      noted.forEach((l, i) => l.classList.toggle('is-drop', drop[i]));
     });
     const out = cb.querySelector('.cb-out');
     if (out) {
@@ -567,5 +572,5 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(redo);
   }
 
-  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, outputLayout, copySource, inTextField, mount };
+  return { scan, parse, render, splitLines, wrapLines, hasDrawing, widthCounts, noteColumn, fitsNote, noteLayout, outputLayout, copySource, inTextField, mount };
 });

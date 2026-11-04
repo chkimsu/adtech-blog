@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """LLM 글에 붙일 출력을 Ollama 로 한 번 기록하고, 글의 파이썬 블록에 옮길 상수로 뽑는다. 설계: docs/superpowers/specs/2026-11-03-llm-tracks-design.md 5절
 
-  python3 scripts/llm-record.py --slug <slug>                    기록: prompts/<slug>.json 을 보내 <slug>.json 을 쓴다 (있으면 덮어쓴다)
+  python3 scripts/llm-record.py --slug <slug>                    기록: prompts/<slug>.json 을 보내 <slug>.json 을 쓴다 (있으면 덮어쓴다.
+                                                                 다만 --limit 이거나 error 가 남은 새 기록은 임시 폴더에 쓰고, --force 면 덮어쓴다)
   python3 scripts/llm-record.py --slug <slug> --export-constant  상수 뽑기: 기록의 출력을 RECORD = {...} 한 줄로 찍는다
   python3 scripts/llm-record.py --slug <slug> --export-constant --with-usage
                                                                  RECORD 줄 아래에 USAGE = {...} 한 줄을 더 찍는다.
@@ -9,13 +10,15 @@
   python3 scripts/llm-record.py --selftest                       자체 점검: 서버 버전을 묻고 한 줄짜리 요청 하나로 기록 형식을 본다
 
 Ollama 는 `ollama serve` 로 먼저 띄운다.
-기록할 때 --model(기본 qwen3.5:27b), --host(기본 http://localhost:11434), --limit N(프롬프트 항목 앞 N개만, 시험용)을 줄 수 있다.
+기록할 때 --model(기본 qwen3.5:27b), --host(기본 http://localhost:11434), --limit N(프롬프트 항목 앞 N개만, 시험용), --force 를 줄 수 있다.
+기록을 시작하기 전에 서버 버전과 모델이 있는지를 묻고, 답이 잘려 온 항목(done_reason 이 stop 이 아님)은 다시 보내지 않고 error 로 남긴다.
 두 파일은 data/llm-records/ 에 있고 형식은 그 폴더의 README.md 에 있다. 표준 라이브러리만 쓴다.
 """
 import argparse
 import datetime
 import json
 import os
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -197,8 +200,28 @@ def server_version(host):
         fail('Ollama 서버 %s 에 닿지 않습니다 (%s: %s). `ollama serve` 로 먼저 띄웁니다' % (host, type(e).__name__, e))
 
 
+def check_model(host, model):
+    """모델이 서버에 있는지 /api/show 로 묻는다. 없으면 항목마다 다시 보내며 늦게 실패하지 않게 첫 요청 전에 멈춘다."""
+    req = urllib.request.Request(api(host, 'show'), data=json.dumps({'model': model, 'name': model}).encode('utf-8'),
+                                 headers={'Content-Type': 'application/json'}, method='POST')
+    try:
+        with urllib.request.urlopen(req, timeout=30):
+            return
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            fail('Ollama 서버에 모델 %s 가 없습니다. `ollama pull %s` 로 먼저 받습니다' % (model, model))
+        fail('모델 %s 를 확인하지 못했습니다 (HTTP %d %s)' % (model, e.code, e.read().decode('utf-8', 'replace').strip()))
+    except Exception as e:
+        fail('모델 %s 를 확인하지 못했습니다 (%s: %s)' % (model, type(e).__name__, e))
+
+
+class NoRetry(RuntimeError):
+    """다시 보내도 같은 결과가 나오는 실패. 기록은 temperature 와 seed 를 고정해 보내서 잘린 답은 다시 보내도 잘린다."""
+
+
 def chat_once(host, model, system, user, think, options):
-    """/api/chat 에 한 번 보내고 기록할 다섯 값을 돌려준다. 응답에 필드가 빠지면 KeyError 가 난다."""
+    """/api/chat 에 한 번 보내고 기록할 다섯 값을 돌려준다. 응답에 필드가 빠지면 KeyError 가 난다.
+    done_reason 이 stop 이 아니면(length 는 출력 길이 한도에 닿아 잘린 것이다) 잘린 답을 남기지 않고 NoRetry 를 낸다."""
     body = {'model': model,
             'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
             'stream': False, 'think': think, 'options': options}
@@ -210,6 +233,9 @@ def chat_once(host, model, system, user, think, options):
     except urllib.error.HTTPError as e:
         # 서버가 돌려준 오류 문장을 남긴다. 모델이 없으면 404 와 model '...' not found 가 온다.
         raise RuntimeError('HTTP %d %s' % (e.code, e.read().decode('utf-8', 'replace').strip())) from None
+    reason = resp.get('done_reason')   # 이 필드가 없는 옛 서버는 보지 않는다
+    if reason not in (None, 'stop'):
+        raise NoRetry('done_reason %s: 답이 끝까지 오지 않았습니다' % reason)
     msg = resp['message']
     return {'output': msg['content'],
             'thinking_chars': len(msg.get('thinking') or ''),
@@ -225,6 +251,8 @@ def chat_with_retry(host, model, job):
             time.sleep(RETRY_SLEEP)
         try:
             return chat_once(host, model, job['system'], job['user'], job['think'], job['options'])
+        except NoRetry as e:          # 잘린 답은 다시 보내도 같아서 바로 error 로 남긴다
+            return {'error': '%s: %s' % (type(e).__name__, e)}
         except Exception as e:        # 시간 초과, 끊긴 연결, HTTP 오류, 응답에 빠진 필드를 모두 다시 보낸다
             error = '%s: %s' % (type(e).__name__, e)
     return {'error': error}
@@ -239,10 +267,12 @@ def make_item(job, result):
     return item
 
 
-def record(slug, model, host, limit):
-    """프롬프트 파일의 요청을 차례로 보내 기록 파일을 통째로 새로 쓴다. error 가 남으면 1 을 돌려준다."""
+def record(slug, model, host, limit, force=False):
+    """프롬프트 파일의 요청을 차례로 보내 기록 파일을 통째로 새로 쓴다. error 가 남으면 1 을 돌려준다.
+    기록 파일이 이미 있으면 --limit 으로 시험한 기록이나 error 가 남은 기록으로는 덮어쓰지 않고 임시 폴더에 쓴다."""
     spec = load_prompts(slug)
     version = server_version(host)    # 서버가 없으면 요청을 하나도 보내지 않고 멈춘다
+    check_model(host, model)          # 모델이 없어도 요청을 하나도 보내지 않고 멈춘다
     plan = plan_requests(spec, limit)
     recorded_at = datetime.date.today().isoformat()
     # 진행 줄은 바로 내보낸다. 파일로 받아 지켜볼 때도 끝날 때까지 비어 있지 않다
@@ -261,14 +291,25 @@ def record(slug, model, host, limit):
             print('  %d/%d 보냄, %d초, error %d개' % (n, len(plan), time.time() - start, errors), flush=True)
             shown = time.time()
     path = os.path.join(RECORDS, slug + '.json')
-    # 맨 위 options 는 파일의 기본값이다. 요청마다 실제로 보낸 값은 항목의 options 에 있다
-    top = {**OPTIONS, **spec.get('options', {})}
-    with open(path, 'w', encoding='utf-8') as f:
+    # 맨 위 options 는 파일의 기본값이다. 요청마다 실제로 보낸 값은 항목의 options 에 있다.
+    # seed 를 적지 않았는데 temperature 가 0 보다 크면 요청마다 7 + run 을 보냈으니, 맨 위에는 seed 를 적지 않는다
+    given = spec.get('options', {})
+    top = {**OPTIONS, **given}
+    if 'seed' not in given and top['temperature'] > 0:
+        del top['seed']
+    out = path
+    if os.path.exists(path) and not force and (limit is not None or errors):
+        fd, out = tempfile.mkstemp(prefix='llm-record-%s-' % slug, suffix='.json')
+        os.close(fd)
+        print('  이미 있는 %s 는 그대로 둡니다. %s 기록이라 임시 폴더에 쓰고, 덮어쓰려면 --force 를 더합니다' % (
+            rel(path), '--limit 으로 시험한' if limit is not None else 'error 가 남은'))
+    with open(out, 'w', encoding='utf-8') as f:
         json.dump({'model': model, 'recorded_at': recorded_at, 'host': host, 'options': top, 'items': items},
                   f, ensure_ascii=False, indent=2)
         f.write('\n')
+    # 끝 줄은 늘 이 줄이다. 가이드가 기록 뒤에 이 줄의 error 수를 보라고 적었다
     print('%s %s 에 항목 %d개를 썼습니다. error %d개, %d초' % (
-        '✗' if errors else '✓', rel(path), len(items), errors, time.time() - start))
+        '✗' if errors else '✓', rel(out) if out == path else out, len(items), errors, time.time() - start))
     return 1 if errors else 0
 
 
@@ -292,10 +333,33 @@ def constant_lines(items, with_usage=False):
     return lines
 
 
+def record_problems(data, with_usage=False):
+    """기록 파일에서 상수를 뽑는 데 쓰는 필드의 모양을 본다. 맞으면 빈 목록이다.
+    error 항목은 키를 만들 id, think, run 만 보고, 나머지 항목은 output 과 --with-usage 의 네 값까지 본다."""
+    if not (isinstance(data, dict) and isinstance(data.get('items'), list)):
+        return ['맨 위가 {"items": [...]} 꼴이 아닙니다']
+    out = []
+    for n, it in enumerate(data['items'], 1):
+        if not isinstance(it, dict):
+            out.append('items 의 %d번째가 객체가 아닙니다' % n)
+            continue
+        fields = [('id', str), ('think', bool), ('run', int)]
+        if 'error' not in it:
+            fields += [('output', str)] + ([(f, int) for f in USAGE_FIELDS] if with_usage else [])
+        bad = [name for name, kind in fields if not is_type(it.get(name), kind)]
+        if bad:
+            out.append('items 의 %d번째에 %s 가 없거나 자료형이 틀렸습니다' % (n, ', '.join(bad)))
+    return out
+
+
 def export_constant(slug, with_usage=False):
-    """기록의 출력을 id 순서로 RECORD = {...} 한 줄로 찍는다. error 가 남은 기록에서는 뽑지 않는다."""
+    """기록의 출력을 RECORD = {...} 한 줄로 찍는다. id 는 기록에 처음 나온 차례다. 모양이 틀리거나 error 가 남은 기록에서는 뽑지 않는다."""
     path = os.path.join(RECORDS, slug + '.json')
-    items = read_json(path, '먼저 python3 scripts/llm-record.py --slug %s 로 기록합니다' % slug)['items']
+    data = read_json(path, '먼저 python3 scripts/llm-record.py --slug %s 로 기록합니다' % slug)
+    problems = record_problems(data, with_usage)
+    if problems:
+        fail('%s 의 모양이 틀렸습니다\n  %s' % (rel(path), '\n  '.join(problems[:10] + (['…'] if len(problems) > 10 else []))))
+    items = data['items']
     broken = [key_of(it) for it in items if 'error' in it]
     if broken:
         fail('error 가 남은 항목이 %d개 있어 상수를 뽑지 않습니다 (%s). 다시 기록합니다' % (
@@ -349,7 +413,10 @@ def main():
     ap.add_argument('--slug', help='글 id. data/llm-records/prompts/<slug>.json 을 보내 data/llm-records/<slug>.json 을 쓴다')
     ap.add_argument('--model', default=MODEL, help='모델 (기본 %(default)s, 설계가 고정한 값이다)')
     ap.add_argument('--host', default=HOST, help='Ollama 주소 (기본 %(default)s)')
-    ap.add_argument('--limit', type=int, metavar='N', help='프롬프트 항목 앞 N개만 보낸다 (시험용. 기록 파일은 이때도 덮어쓴다)')
+    ap.add_argument('--limit', type=int, metavar='N',
+                    help='프롬프트 항목 앞 N개만 보낸다 (시험용. 기록 파일이 이미 있으면 덮어쓰지 않고 임시 폴더에 쓴다)')
+    ap.add_argument('--force', action='store_true',
+                    help='이미 있는 기록 파일을 --limit 이나 error 가 남은 새 기록으로도 덮어쓴다')
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument('--export-constant', action='store_true', help='기록의 출력을 RECORD = {...} 파이썬 상수로 찍는다')
     mode.add_argument('--selftest', action='store_true', help='서버 버전과 한 줄짜리 요청 하나로 기록 형식을 확인한다')
@@ -364,9 +431,11 @@ def main():
         ap.error('--selftest 가 아니면 --slug 가 필요합니다')
     if args.limit is not None and args.limit < 1:
         ap.error('--limit 은 1 이상입니다')
+    if args.force and args.export_constant:
+        ap.error('--force 는 기록할 때만 씁니다')
     if args.export_constant:
         raise SystemExit(export_constant(args.slug, args.with_usage))
-    raise SystemExit(record(args.slug, args.model, args.host, args.limit))
+    raise SystemExit(record(args.slug, args.model, args.host, args.limit, args.force))
 
 
 if __name__ == '__main__':

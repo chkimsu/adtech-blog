@@ -309,9 +309,10 @@
     // 들여쓰기를 넣은 코드 글자 수. 줄 끝 주석은 메모로 따로 그리니 세지 않는다.
     const chars = [...it.toks.map(t => t.v).join('')].length;
     const long = chars >= LONG_LINE;
-    return `<div class="cb-ln${it.note ? ' has-note' : ''}${long ? ' is-long' : ''}" data-ln="${it.line}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
+    // 긴 줄에 메모가 붙으면 메모는 늘 줄 아래(is-drop)에 두고, 펴는 단추는 접힌 줄 바로 아래, 메모 앞에 둔다.
+    return `<div class="cb-ln${it.note ? ' has-note' : ''}${long ? ' is-long' : ''}${long && it.note ? ' is-drop' : ''}" data-ln="${it.line}" style="--ind:${it.ind}" data-wl="${it.ind + w.wl}" data-ww="${w.ww}"` +
       `${it.note ? ' data-note="1"' : ''}${long ? ` data-chars="${chars}"` : ''}><span class="cb-src"><span class="cb-t">${codeHtml(toks) || ' '}</span></span>` +
-      `${note}${long ? moreHtml(chars) : ''}</div>`;
+      `${long ? moreHtml(chars) : ''}${note}</div>`;
   }
 
   function outLineHtml(t, line) {
@@ -447,10 +448,11 @@
       const avail = code.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
       const noted = code.querySelectorAll('.cb-ln[data-note]');
       let maxw = 0;
-      noted.forEach(l => { maxw = Math.max(maxw, width(l)); });
+      // 긴 줄(is-long)은 메모를 늘 줄 아래에 두니 메모 칸의 폭을 정하는 데 넣지 않는다. 넣으면 다른 메모가 모두 오른쪽 끝으로 밀린다
+      noted.forEach(l => { if (!l.classList.contains('is-long')) maxw = Math.max(maxw, width(l)); });
       const nc = noteColumn(maxw, Math.floor(avail / ch));
       code.style.setProperty('--nc', nc);
-      noted.forEach(l => l.classList.toggle('is-drop', narrow || !fitsNote(width(l), nc)));
+      noted.forEach(l => l.classList.toggle('is-drop', narrow || l.classList.contains('is-long') || !fitsNote(width(l), nc)));
     });
     const out = cb.querySelector('.cb-out');
     if (out) {

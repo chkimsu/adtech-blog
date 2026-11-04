@@ -240,6 +240,12 @@ eq('파이썬이 아닌 400자 줄', C.wrapLines('b'.repeat(400), 'b'.repeat(400
 eq('파이썬이 아닌 399자 줄은 그대로', C.wrapLines('b'.repeat(399), 'b'.repeat(399)),
   '<span class="cb-ln" data-ln="0" style="--ind:0"><span class="cb-src">' + 'b'.repeat(399) + '</span></span>');
 {
+  // 메모가 붙은 긴 줄은 메모 칸에 넣지 않고 줄 아래에 둔다. 단추는 접힌 줄 바로 아래, 메모 앞이다.
+  const h = C.render(C.parse(block('# 하는 일: 긴 줄.', pyLine(400) + '   # 메모')));
+  eq('메모가 붙은 긴 줄은 처음부터 메모를 줄 아래에 두고 단추를 메모 앞에 둔다',
+    [h.includes('class="cb-ln has-note is-long is-drop"'), h.includes('줄 전체 보기 (400자)</button><span class="cb-note">메모</span>')], [true, true]);
+}
+{
   // 단추를 누르면 펴고, 다시 누르면 접는다. DOM 없이 단추와 줄을 흉내 낸 pre.cb-wrap 블록 하나를 배치한다.
   let onClick = null;
   const cls = new Set(['cb-ln', 'is-long']);

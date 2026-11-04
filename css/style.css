@@ -6424,7 +6424,8 @@ footer { background: var(--paper); border-top: 2px solid var(--ink); padding: 1.
 .tg-host:empty { display: none; }
 
 .tg-grid { max-width: 1240px; margin: 1.5rem auto 0; padding: 0 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-@media (max-width: 1000px) { .tg-grid { grid-template-columns: 1fr; } }
+/* 한 칸도 minmax(0, 1fr) 다. 1fr 은 그림의 min-width 460px 를 칸의 바닥 폭으로 삼아 375 화면에서 페이지가 옆으로 밀린다. 넘치는 그림은 .tg-fig 안에서 민다 */
+@media (max-width: 1000px) { .tg-grid { grid-template-columns: minmax(0, 1fr); } }
 .tg-card { border: 1px solid var(--border-color); background: var(--bg-primary); padding: 1.1rem 1.25rem 1rem; display: flex; flex-direction: column; cursor: default; }
 .tg-card h2 { font-size: 1.3rem; font-weight: 800; font-style: italic; letter-spacing: 0.01em; margin: 0; line-height: 1.2; }
 .tg-card .tg-k { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; margin: 0.1rem 0 0.6rem; }
@@ -6436,7 +6437,7 @@ html.is-embed .tg-easy { display: none; }
 .tg-cap { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); margin: 0.6rem 0 0; }
 .tg-cap b { color: var(--text-primary); }
 /* 임베드는 카드 하나만 남는다 — 폭이 1000px 를 넘어도 두 칸으로 나누지 않는다. 그림은 860px 에서 멈추고 가운데에 둔다 */
-html.is-embed .tg-grid { margin-top: 0.5rem; padding: 0 0.5rem; grid-template-columns: 1fr; }
+html.is-embed .tg-grid { margin-top: 0.5rem; padding: 0 0.5rem; grid-template-columns: minmax(0, 1fr); }
 html.is-embed .tg-fig svg { max-width: 860px; margin: 0 auto; }
 html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
 

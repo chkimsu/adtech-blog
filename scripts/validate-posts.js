@@ -37,6 +37,10 @@ const { mlTrack } = require(path.join(root, 'js', 'posts.js'));
 const postIds = new Set(posts.map(p => p.id));
 (mlTrack && mlTrack.stages ? mlTrack.stages : []).forEach(s =>
   (s.posts || []).forEach(id => { if (!postIds.has(id)) errors.push(`mlTrack "${s.id}": 존재하지 않는 글 id "${id}"`); }));
+// series(트랙)가 가리키는 글 id 도 본다. 없는 id 는 트랙 화면이 조용히 빼서 글이 트랙에서 빠져도 알 수 없다
+const { series } = require(path.join(root, 'js', 'posts.js'));
+Object.entries(series || {}).forEach(([sid, s]) => (s.posts || []).forEach(id => {
+  if (!postIds.has(id)) errors.push(`series "${sid}": 존재하지 않는 글 id "${id}"`); }));
 
 // 비치명 경고: posts/ 안에 contentUrl로 참조되지 않는 고아 .md
 const referenced = new Set(posts.map(p => p.contentUrl && path.basename(p.contentUrl)));

@@ -17,7 +17,7 @@
 
     function box(x, y, w, h, txt, cls, fs = 10.5) {
         return `<rect class="f-${cls}" x="${x}" y="${y}" width="${w}" height="${h}"/>` +
-            `<text class="on" x="${x + w / 2}" y="${y + h / 2 + fs * 0.36}" text-anchor="middle" style="font-size:${fs}px">${esc(txt)}</text>`;
+            `<text class="on" x="${x + w / 2}" y="${y + h / 2 + fs * 0.36}" text-anchor="middle" font-size="${fs}">${esc(txt)}</text>`;
     }
     function labelUnder(cx, y, label, cls) {
         const w = Math.max(40, tw(label) + 12);

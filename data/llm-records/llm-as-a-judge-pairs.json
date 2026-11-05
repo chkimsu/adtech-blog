@@ -1,0 +1,651 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-05",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "c01-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.\nB: 상품 하이라이프 라이트 화이트 캠핑의자 TT316 의 분류는 캠핑 이다. TT316 의 색은 white 이고, 소재는 nylon 이다. TT316 의 무게는 3120g 이고, 가격은 111800원이다. TT316 의 포장에는 설명서가 들어 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 2294,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c01-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 하이라이프 라이트 화이트 캠핑의자 TT316 의 분류는 캠핑 이다. TT316 의 색은 white 이고, 소재는 nylon 이다. TT316 의 무게는 3120g 이고, 가격은 111800원이다. TT316 의 포장에는 설명서가 들어 있다.\nB: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 2528,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c02-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 접이식 네이비 캠핑테이블 EB247 의 분류는 캠핑 이다. EB247 의 색은 navy 이고, 소재는 nylon 이다. EB247 의 무게는 1350g 이고, 가격은 217000원이다.\nB: 상품 윤라이프 베이직 브라운 백팩 HG662 의 분류는 가방 이다. HG662 의 색은 brown 이고, 소재는 cotton 이다. HG662 의 무게는 710g 이고, 가격은 156800원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 234,
+      "output_tokens": 6,
+      "elapsed_ms": 1736,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c02-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 윤라이프 베이직 브라운 백팩 HG662 의 분류는 가방 이다. HG662 의 색은 brown 이고, 소재는 cotton 이다. HG662 의 무게는 710g 이고, 가격은 156800원이다.\nB: 상품 온팩토리 접이식 네이비 캠핑테이블 EB247 의 분류는 캠핑 이다. EB247 의 색은 navy 이고, 소재는 nylon 이다. EB247 의 무게는 1350g 이고, 가격은 217000원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 234,
+      "output_tokens": 6,
+      "elapsed_ms": 1737,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c03-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 하이라이프 라이트 화이트 캠핑의자 TT316 의 분류는 캠핑 이다. TT316 의 색은 white 이고, 소재는 nylon 이다. TT316 의 무게는 3120g 이고, 가격은 111800원이다. TT316 의 포장에는 설명서가 들어 있다.\nB: 상품 다온 베이직 카키 백팩 KK119 의 분류는 가방 이다. KK119 의 색은 khaki 이고, 소재는 nylon 이다. KK119 의 무게는 1400g 이고, 가격은 168300원이다. KK119 의 포장에는 설명서가 들어 있다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 255,
+      "output_tokens": 6,
+      "elapsed_ms": 2168,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c03-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 다온 베이직 카키 백팩 KK119 의 분류는 가방 이다. KK119 의 색은 khaki 이고, 소재는 nylon 이다. KK119 의 무게는 1400g 이고, 가격은 168300원이다. KK119 의 포장에는 설명서가 들어 있다.\nB: 상품 하이라이프 라이트 화이트 캠핑의자 TT316 의 분류는 캠핑 이다. TT316 의 색은 white 이고, 소재는 nylon 이다. TT316 의 무게는 3120g 이고, 가격은 111800원이다. TT316 의 포장에는 설명서가 들어 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 255,
+      "output_tokens": 6,
+      "elapsed_ms": 1917,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c04-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 베이직 화이트 여행가방 GH511 의 분류는 가방 이다. GH511 의 색은 white 이고, 소재는 cotton 이다. GH511 의 무게는 3100g 이고, 가격은 152000원이다.\nB: 상품 숲결 베이직 네이비 캠핑의자 GK478 의 분류는 캠핑 이다. GK478 의 색은 navy 이고, 소재는 steel 이다. GK478 의 무게는 2120g 이고, 가격은 131400원이다. GK478 의 색이 다른 같은 모델도 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 246,
+      "output_tokens": 6,
+      "elapsed_ms": 1833,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c04-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 숲결 베이직 네이비 캠핑의자 GK478 의 분류는 캠핑 이다. GK478 의 색은 navy 이고, 소재는 steel 이다. GK478 의 무게는 2120g 이고, 가격은 131400원이다. GK478 의 색이 다른 같은 모델도 있다.\nB: 상품 온팩토리 베이직 화이트 여행가방 GH511 의 분류는 가방 이다. GH511 의 색은 white 이고, 소재는 cotton 이다. GH511 의 무게는 3100g 이고, 가격은 152000원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 246,
+      "output_tokens": 6,
+      "elapsed_ms": 1991,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c05-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 베이직 화이트 여행가방 GH511 의 분류는 가방 이다. GH511 의 색은 white 이고, 소재는 cotton 이다. GH511 의 무게는 3100g 이고, 가격은 152000원이다.\nB: 상품 온팩토리 방수 브라운 캠핑의자 CM469 의 분류는 캠핑 이다. CM469 의 색은 brown 이고, 소재는 steel 이다. CM469 의 무게는 5440g 이고, 가격은 34700원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 232,
+      "output_tokens": 6,
+      "elapsed_ms": 2084,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c05-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 방수 브라운 캠핑의자 CM469 의 분류는 캠핑 이다. CM469 의 색은 brown 이고, 소재는 steel 이다. CM469 의 무게는 5440g 이고, 가격은 34700원이다.\nB: 상품 온팩토리 베이직 화이트 여행가방 GH511 의 분류는 가방 이다. GH511 의 색은 white 이고, 소재는 cotton 이다. GH511 의 무게는 3100g 이고, 가격은 152000원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 232,
+      "output_tokens": 6,
+      "elapsed_ms": 2122,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c06-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 아틀라이프 라이트 브라운 백팩 AK979 의 분류는 가방 이다. AK979 의 색은 brown 이고, 소재는 nylon 이다. AK979 의 무게는 700g 이고, 가격은 80700원이다.\nB: 상품 온팩토리 방수 브라운 캠핑의자 CM469 의 분류는 캠핑 이다. CM469 의 색은 brown 이고, 소재는 steel 이다. CM469 의 무게는 5440g 이고, 가격은 34700원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 230,
+      "output_tokens": 6,
+      "elapsed_ms": 1956,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c06-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 방수 브라운 캠핑의자 CM469 의 분류는 캠핑 이다. CM469 의 색은 brown 이고, 소재는 steel 이다. CM469 의 무게는 5440g 이고, 가격은 34700원이다.\nB: 상품 아틀라이프 라이트 브라운 백팩 AK979 의 분류는 가방 이다. AK979 의 색은 brown 이고, 소재는 nylon 이다. AK979 의 무게는 700g 이고, 가격은 80700원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 230,
+      "output_tokens": 6,
+      "elapsed_ms": 1922,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c07-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 아틀라이프 라이트 브라운 백팩 AK979 의 분류는 가방 이다. AK979 의 색은 brown 이고, 소재는 nylon 이다. AK979 의 무게는 700g 이고, 가격은 80700원이다.\nB: 상품 온팩토리 베이직 네이비 선크림 ME902 의 분류는 뷰티 이다. ME902 의 색은 navy 이고, 소재는 plastic 이다. ME902 의 무게는 80g 이고, 가격은 6400원이다. ME902 의 배송은 주문 다음 날 시작한다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 242,
+      "output_tokens": 6,
+      "elapsed_ms": 2603,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c07-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 캠핑 의자\nA: 상품 온팩토리 베이직 네이비 선크림 ME902 의 분류는 뷰티 이다. ME902 의 색은 navy 이고, 소재는 plastic 이다. ME902 의 무게는 80g 이고, 가격은 6400원이다. ME902 의 배송은 주문 다음 날 시작한다.\nB: 상품 아틀라이프 라이트 브라운 백팩 AK979 의 분류는 가방 이다. AK979 의 색은 brown 이고, 소재는 nylon 이다. AK979 의 무게는 700g 이고, 가격은 80700원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 242,
+      "output_tokens": 6,
+      "elapsed_ms": 2035,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c08-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 온팩토리 베이직 네이비 손목시계 EM338 의 분류는 잡화 이다. EM338 의 색은 navy 이고, 소재는 steel 이다. EM338 의 무게는 240g 이고, 가격은 115900원이다. EM338 의 색이 다른 같은 모델도 있다.\nB: 상품 숲결 방수 화이트 텀블러 ER525 의 분류는 주방 이다. ER525 의 색은 white 이고, 소재는 aluminum 이다. ER525 의 무게는 1340g 이고, 가격은 68200원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 2807,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c08-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 숲결 방수 화이트 텀블러 ER525 의 분류는 주방 이다. ER525 의 색은 white 이고, 소재는 aluminum 이다. ER525 의 무게는 1340g 이고, 가격은 68200원이다.\nB: 상품 온팩토리 베이직 네이비 손목시계 EM338 의 분류는 잡화 이다. EM338 의 색은 navy 이고, 소재는 steel 이다. EM338 의 무게는 240g 이고, 가격은 115900원이다. EM338 의 색이 다른 같은 모델도 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 2119,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c09-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 온팩토리 프로 브라운 캠핑테이블 FB325 의 분류는 캠핑 이다. FB325 의 색은 brown 이고, 소재는 steel 이다. FB325 의 무게는 5570g 이고, 가격은 226700원이다. FB325 의 배송은 주문 다음 날 시작한다.\nB: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 241,
+      "output_tokens": 6,
+      "elapsed_ms": 1881,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c09-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.\nB: 상품 온팩토리 프로 브라운 캠핑테이블 FB325 의 분류는 캠핑 이다. FB325 의 색은 brown 이고, 소재는 steel 이다. FB325 의 무게는 5570g 이고, 가격은 226700원이다. FB325 의 배송은 주문 다음 날 시작한다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 241,
+      "output_tokens": 6,
+      "elapsed_ms": 1937,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c10-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 다온 접이식 카키 헤드폰 SX164 의 분류는 음향 이다. SX164 의 색은 khaki 이고, 소재는 plastic 이다. SX164 의 무게는 230g 이고, 가격은 89600원이다. SX164 의 색이 다른 같은 모델도 있다.\nB: 상품 모노웍스 베이직 그레이 모자 BB624 의 분류는 잡화 이다. BB624 의 색은 gray 이고, 소재는 steel 이다. BB624 의 무게는 270g 이고, 가격은 138600원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 242,
+      "output_tokens": 6,
+      "elapsed_ms": 2000,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c10-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 모노웍스 베이직 그레이 모자 BB624 의 분류는 잡화 이다. BB624 의 색은 gray 이고, 소재는 steel 이다. BB624 의 무게는 270g 이고, 가격은 138600원이다.\nB: 상품 다온 접이식 카키 헤드폰 SX164 의 분류는 음향 이다. SX164 의 색은 khaki 이고, 소재는 plastic 이다. SX164 의 무게는 230g 이고, 가격은 89600원이다. SX164 의 색이 다른 같은 모델도 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 242,
+      "output_tokens": 6,
+      "elapsed_ms": 1974,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c11-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 하이라이프 심플 네이비 헤드폰 FD594 의 분류는 음향 이다. FD594 의 색은 navy 이고, 소재는 aluminum 이다. FD594 의 무게는 160g 이고, 가격은 327000원이다.\nB: 상품 온팩토리 베이직 네이비 손목시계 EM338 의 분류는 잡화 이다. EM338 의 색은 navy 이고, 소재는 steel 이다. EM338 의 무게는 240g 이고, 가격은 115900원이다. EM338 의 색이 다른 같은 모델도 있다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 245,
+      "output_tokens": 6,
+      "elapsed_ms": 1973,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c11-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 온팩토리 베이직 네이비 손목시계 EM338 의 분류는 잡화 이다. EM338 의 색은 navy 이고, 소재는 steel 이다. EM338 의 무게는 240g 이고, 가격은 115900원이다. EM338 의 색이 다른 같은 모델도 있다.\nB: 상품 하이라이프 심플 네이비 헤드폰 FD594 의 분류는 음향 이다. FD594 의 색은 navy 이고, 소재는 aluminum 이다. FD594 의 무게는 160g 이고, 가격은 327000원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 245,
+      "output_tokens": 6,
+      "elapsed_ms": 1911,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c12-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 온팩토리 슬림 네이비 아기띠 HR780 의 분류는 육아 이다. HR780 의 색은 navy 이고, 소재는 aluminum 이다. HR780 의 무게는 840g 이고, 가격은 106700원이다. HR780 의 교환은 받은 날부터 일주일 안에 할 수 있다.\nB: 상품 별랩 슬림 블랙 헤드폰 FL159 의 분류는 음향 이다. FL159 의 색은 black 이고, 소재는 plastic 이다. FL159 의 무게는 120g 이고, 가격은 356300원이다. FL159 의 포장에는 설명서가 들어 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 256,
+      "output_tokens": 6,
+      "elapsed_ms": 2234,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c12-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 별랩 슬림 블랙 헤드폰 FL159 의 분류는 음향 이다. FL159 의 색은 black 이고, 소재는 plastic 이다. FL159 의 무게는 120g 이고, 가격은 356300원이다. FL159 의 포장에는 설명서가 들어 있다.\nB: 상품 온팩토리 슬림 네이비 아기띠 HR780 의 분류는 육아 이다. HR780 의 색은 navy 이고, 소재는 aluminum 이다. HR780 의 무게는 840g 이고, 가격은 106700원이다. HR780 의 교환은 받은 날부터 일주일 안에 할 수 있다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 256,
+      "output_tokens": 6,
+      "elapsed_ms": 2066,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c13-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 모노웍스 접이식 브라운 헤드폰 CR541 의 분류는 음향 이다. CR541 의 색은 brown 이고, 소재는 aluminum 이다. CR541 의 무게는 870g 이고, 가격은 258900원이다.\nB: 상품 아틀라이프 방수 블랙 캠핑테이블 AS804 의 분류는 캠핑 이다. AS804 의 색은 black 이고, 소재는 nylon 이다. AS804 의 무게는 1230g 이고, 가격은 70000원이다. AS804 의 포장에는 설명서가 들어 있다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 245,
+      "output_tokens": 6,
+      "elapsed_ms": 2051,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c13-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 아틀라이프 방수 블랙 캠핑테이블 AS804 의 분류는 캠핑 이다. AS804 의 색은 black 이고, 소재는 nylon 이다. AS804 의 무게는 1230g 이고, 가격은 70000원이다. AS804 의 포장에는 설명서가 들어 있다.\nB: 상품 모노웍스 접이식 브라운 헤드폰 CR541 의 분류는 음향 이다. CR541 의 색은 brown 이고, 소재는 aluminum 이다. CR541 의 무게는 870g 이고, 가격은 258900원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 245,
+      "output_tokens": 6,
+      "elapsed_ms": 1904,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c14-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 모노웍스 베이직 그레이 모자 BB624 의 분류는 잡화 이다. BB624 의 색은 gray 이고, 소재는 steel 이다. BB624 의 무게는 270g 이고, 가격은 138600원이다.\nB: 상품 모노웍스 접이식 브라운 헤드폰 CR541 의 분류는 음향 이다. CR541 의 색은 brown 이고, 소재는 aluminum 이다. CR541 의 무게는 870g 이고, 가격은 258900원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 232,
+      "output_tokens": 6,
+      "elapsed_ms": 1929,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c14-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 헤드셋\nA: 상품 모노웍스 접이식 브라운 헤드폰 CR541 의 분류는 음향 이다. CR541 의 색은 brown 이고, 소재는 aluminum 이다. CR541 의 무게는 870g 이고, 가격은 258900원이다.\nB: 상품 모노웍스 베이직 그레이 모자 BB624 의 분류는 잡화 이다. BB624 의 색은 gray 이고, 소재는 steel 이다. BB624 의 무게는 270g 이고, 가격은 138600원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 232,
+      "output_tokens": 6,
+      "elapsed_ms": 1968,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c15-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 숲결 심플 네이비 스니커즈 TC162 의 분류는 신발 이다. TC162 의 색은 navy 이고, 소재는 cotton 이다. TC162 의 무게는 640g 이고, 가격은 131500원이다.\nB: 상품 온팩토리 와이드 화이트 여행가방 LE624 의 분류는 가방 이다. LE624 의 색은 white 이고, 소재는 leather 이다. LE624 의 무게는 1280g 이고, 가격은 87900원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 231,
+      "output_tokens": 6,
+      "elapsed_ms": 2159,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c15-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 온팩토리 와이드 화이트 여행가방 LE624 의 분류는 가방 이다. LE624 의 색은 white 이고, 소재는 leather 이다. LE624 의 무게는 1280g 이고, 가격은 87900원이다.\nB: 상품 숲결 심플 네이비 스니커즈 TC162 의 분류는 신발 이다. TC162 의 색은 navy 이고, 소재는 cotton 이다. TC162 의 무게는 640g 이고, 가격은 131500원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 231,
+      "output_tokens": 6,
+      "elapsed_ms": 2199,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c16-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 별랩 심플 그레이 블루투스스피커 AM119 의 분류는 음향 이다. AM119 의 색은 gray 이고, 소재는 aluminum 이다. AM119 의 무게는 560g 이고, 가격은 399500원이다.\nB: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 231,
+      "output_tokens": 6,
+      "elapsed_ms": 2049,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c16-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.\nB: 상품 별랩 심플 그레이 블루투스스피커 AM119 의 분류는 음향 이다. AM119 의 색은 gray 이고, 소재는 aluminum 이다. AM119 의 무게는 560g 이고, 가격은 399500원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 231,
+      "output_tokens": 6,
+      "elapsed_ms": 2115,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c17-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 별랩 심플 네이비 젖병 BL161 의 분류는 육아 이다. BL161 의 색은 navy 이고, 소재는 aluminum 이다. BL161 의 무게는 5630g 이고, 가격은 106400원이다. BL161 의 배송은 주문 다음 날 시작한다.\nB: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 1878,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c17-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.\nB: 상품 별랩 심플 네이비 젖병 BL161 의 분류는 육아 이다. BL161 의 색은 navy 이고, 소재는 aluminum 이다. BL161 의 무게는 5630g 이고, 가격은 106400원이다. BL161 의 배송은 주문 다음 날 시작한다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 2198,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c18-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 온팩토리 라이트 브라운 선글라스 TC114 의 분류는 잡화 이다. TC114 의 색은 brown 이고, 소재는 plastic 이다. TC114 의 무게는 150g 이고, 가격은 209500원이다.\nB: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 230,
+      "output_tokens": 6,
+      "elapsed_ms": 2208,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c18-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 숲결 심플 그레이 스니커즈 KH996 의 분류는 신발 이다. KH996 의 색은 gray 이고, 소재는 cotton 이다. KH996 의 무게는 460g 이고, 가격은 141600원이다.\nB: 상품 온팩토리 라이트 브라운 선글라스 TC114 의 분류는 잡화 이다. TC114 의 색은 brown 이고, 소재는 plastic 이다. TC114 의 무게는 150g 이고, 가격은 209500원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 230,
+      "output_tokens": 6,
+      "elapsed_ms": 2660,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c19-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.\nB: 상품 다온 심플 그레이 텐트 GS421 의 분류는 캠핑 이다. GS421 의 색은 gray 이고, 소재는 nylon 이다. GS421 의 무게는 1850g 이고, 가격은 268200원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 227,
+      "output_tokens": 6,
+      "elapsed_ms": 2239,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c19-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 다온 심플 그레이 텐트 GS421 의 분류는 캠핑 이다. GS421 의 색은 gray 이고, 소재는 nylon 이다. GS421 의 무게는 1850g 이고, 가격은 268200원이다.\nB: 상품 하이라이프 방수 블랙 모자 BD745 의 분류는 잡화 이다. BD745 의 색은 black 이고, 소재는 plastic 이다. BD745 의 무게는 50g 이고, 가격은 108500원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 227,
+      "output_tokens": 6,
+      "elapsed_ms": 1998,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c20-ab",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 온팩토리 방수 블랙 스니커즈 GB346 의 분류는 신발 이다. GB346 의 색은 black 이고, 소재는 leather 이다. GB346 의 무게는 840g 이고, 가격은 83900원이다. GB346 의 색이 다른 같은 모델도 있다.\nB: 상품 온팩토리 라이트 브라운 선글라스 TC114 의 분류는 잡화 이다. TC114 의 색은 brown 이고, 소재는 plastic 이다. TC114 의 무게는 150g 이고, 가격은 209500원이다.",
+      "output": "{\"winner\": \"A\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 1996,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "c20-ba",
+      "think": false,
+      "run": 1,
+      "system": "너는 쇼핑 검색 결과를 비교하는 평가자다. 사용자가 보낸 질의와 상품 문서 A, B 를 읽고, 질의에 더 관련 있는 상품을 고른다.\n답은 {\"winner\": \"A\"} 또는 {\"winner\": \"B\"} 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.",
+      "user": "질의: 스니커즈\nA: 상품 온팩토리 라이트 브라운 선글라스 TC114 의 분류는 잡화 이다. TC114 의 색은 brown 이고, 소재는 plastic 이다. TC114 의 무게는 150g 이고, 가격은 209500원이다.\nB: 상품 온팩토리 방수 블랙 스니커즈 GB346 의 분류는 신발 이다. GB346 의 색은 black 이고, 소재는 leather 이다. GB346 의 무게는 840g 이고, 가격은 83900원이다. GB346 의 색이 다른 같은 모델도 있다.",
+      "output": "{\"winner\": \"B\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 243,
+      "output_tokens": 6,
+      "elapsed_ms": 1959,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

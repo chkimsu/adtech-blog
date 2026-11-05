@@ -74,5 +74,7 @@ jobs:
         run: python scripts/gen-llm-problems.py --check
       - name: RAG 글의 생성기, 프롬프트 파일, 파이썬 블록이 같은가
         run: python scripts/gen-rag-docs.py --check
+      - name: LLM-as-a-Judge 글의 생성기, 프롬프트 파일 둘, 파이썬 블록이 같은가
+        run: python scripts/gen-judge-pairs.py --check
       - name: LLM 기록 상수 (글의 RECORD, USAGE 줄이 기록 파일에서 뽑은 줄과 같은가)
         run: python scripts/check-llm-constants.py

@@ -3969,5 +3969,27 @@ window.DEMO_EDU = {
             { el: '[data-card="loop"]', title: '가장 먼저 볼 것', body: '모델이 tool_use 블록을 적고, 코드가 실행해 tool_result 로 다시 넣습니다.', waitFor: 'click' },
             { el: '[data-card="guard"]', title: '끝에 남는 것', body: '20% 상한은 코드가 지킵니다. 거부도 결과로 돌아가 모델이 다시 고릅니다.' }
         ]
+    },
+    'judge-cards': {
+        analogy: '채점표를 준 모델의 점수를 사람 라벨 세 칸과 견줬다. 일치율은 0.64, 우연 일치를 덜어 낸 kappa 는 0.45 였다. 사람의 중 15쌍은 모두 하로 판정되었고, 짝비교 20쌍 가운데 2쌍은 자리를 바꾸자 승자가 바뀌었다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'rubric': return '헷갈리는 것은 <strong>채점표에 적으면 모델이 사람의 기준을 아는가</strong>입니다. 3점에 「가까운 분류」라고 적었지만 이웃 분류의 목록은 주지 않았습니다. 모델은 그 문장만 읽습니다.';
+                    case 'score': return '헷갈리는 것은 <strong>0.64 면 꽤 맞은 것인가</strong>입니다. 상과 하는 거의 맞았지만 중은 15쌍 모두 하였습니다. 칸마다 센 표를 봐야 어디서 어긋났는지 보입니다.';
+                    case 'swap': return '헷갈리는 것은 <strong>한 번 물은 답이 그 쌍의 승자인가</strong>입니다. c07 은 처음 순서와 바꾼 순서 모두 A 자리가 이겼습니다. 두 번 물어야 이런 쌍이 드러납니다.';
+                    case 'kappa': return '헷갈리는 것은 <strong>일치율이 높을수록 좋은 판정인가</strong>입니다. 모두 상이라 답하는 판정은 일치율 0.90 이지만 kappa 는 0.00 입니다. 상품을 읽지 않아도 얻는 몫이기 때문입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 하는 일, 벽돌색은 모델의 판정, 먹색은 질의와 상품입니다. 회색은 사람과 다른 판정, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="score"]', title: '가장 먼저 볼 것', body: '점수 50개를 세 칸으로 옮겨 사람 라벨과 같은 칸인지 셉니다.', waitFor: 'click' },
+            { el: '[data-card="kappa"]', title: '끝에 남는 것', body: '일치율에서 우연히 맞을 몫을 덜어 낸 값이 kappa 입니다. 이 글의 판정은 0.45 였습니다.' }
+        ]
     }
 };

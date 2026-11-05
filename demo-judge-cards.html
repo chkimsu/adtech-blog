@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM-as-a-Judge 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="채점표를 준 모델의 점수를 사람 라벨과 견주는 길을 카드 네 장으로 봅니다. 일치율과 kappa 의 차이, 자리를 바꿔 다시 묻는 짝비교도 봅니다. 사람 라벨과 상품 문서는 가상 데이터입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>LLM-as-a-Judge 카드 네 장</h1>
+      <p>지훈 씨가 질의와 상품 쌍 50개의 채점을 모델에게 맡긴 길을 카드 네 장으로 봅니다. 채점표 다섯 줄을 주고, 점수를 사람 라벨 세 칸과 견줍니다. 일치율과 kappa 를 나란히 두고, 짝비교는 자리를 바꿔 다시 묻습니다. 사람 라벨과 상품 문서는 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 모델의 판정</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 질의와 상품</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 사람과 다른 판정</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (사람 라벨)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="rubric"><h2>RUBRIC</h2><p class="tg-k">채점표 다섯 줄과 사람 라벨 세 칸</p><p class="tg-easy"><b>쉽게 말하면</b> 점수마다 뜻을 한 줄씩 적어 모델에게 줍니다. 받은 점수는 사람 라벨 세 칸으로 옮겨 견줍니다.</p><div class="tg-fig" id="jd-rubric"></div>
+        <p class="tg-cap">4~5점은 <b>상</b>, 3점은 <b>중</b>, 1~2점은 <b>하</b>로 옮깁니다.</p></section>
+      <section class="tg-card" data-card="score"><h2>SCORE</h2><p class="tg-k">LLM 점수 대 사람 라벨</p><p class="tg-easy"><b>쉽게 말하면</b> 50쌍의 점수를 세 칸으로 옮겨, 사람 라벨과 같은 칸인지 셉니다.</p><div class="tg-fig" id="jd-score"></div>
+        <p class="tg-cap">일치율은 <b>32/50 = 0.64</b>, 사람의 중 <b>15쌍</b>은 모두 하로 판정되었습니다.</p></section>
+      <section class="tg-card" data-card="swap"><h2>SWAP</h2><p class="tg-k">좌우를 바꿔 다시 묻기</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 두 상품을 A, B 자리를 바꿔 두 번 묻고, 같은 상품을 골랐는지 봅니다.</p><div class="tg-fig" id="jd-swap"></div>
+        <p class="tg-cap">20쌍 가운데 <b>18쌍</b>은 두 번 다 사람과 같은 쪽, <b>2쌍</b>은 두 번 다 A 자리가 이겼습니다.</p></section>
+      <section class="tg-card" data-card="kappa"><h2>KAPPA</h2><p class="tg-k">일치율과 kappa 의 차이</p><p class="tg-easy"><b>쉽게 말하면</b> 우연히 맞을 몫을 먼저 덜어 내고, 남은 일치만 셉니다.</p><div class="tg-fig" id="jd-kappa"></div>
+        <p class="tg-cap">이 글의 판정은 kappa <b>0.45</b>, 모두 상이라 답하는 판정은 <b>0.00</b> 입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>판정을 들이기 전에</b> 사람이 라벨을 단 쌍 일부로 kappa 와 위치 편향부터 잽니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=llm-as-a-judge">LLM-as-a-Judge</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=tool-use-agent-loop">Tool use 와 에이전트 루프</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/judge-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

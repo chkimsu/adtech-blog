@@ -163,7 +163,7 @@ function longBullets(md) {
     if (!m) continue;
     // 글머리표가 다음 줄로 이어지면(들여쓴 줄, 새 글머리표가 아님) 한 항목으로 이어 붙여 잰다.
     let text = m[1];
-    while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1]) && !BULLET.test(lines[i + 1])) {
+    while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1]) && !BULLET.test(lines[i + 1]) && !/^\s*\|/.test(lines[i + 1])) {
       text += ' ' + lines[++i].trim();
     }
     if (/http/.test(text)) continue;

@@ -98,6 +98,11 @@ const CASES = [
 const URL_ONLY = 'post.html?id=' + 'x'.repeat(60);
 const BULLET_CASES = [
   {
+    name: '글머리표 — 바로 아래 들여쓴 표 줄은 이어 붙이지 않는다',
+    md: '- ' + '파'.repeat(40) + '\n  | ' + '하'.repeat(50) + ' |',
+    flagged: false,
+  },
+  {
     name: '글머리표 — 다음 줄로 이어진 항목은 이어 붙여 잰다',
     md: '- ' + '카'.repeat(50) + '\n  ' + '타'.repeat(40) + '.',
     flagged: true,

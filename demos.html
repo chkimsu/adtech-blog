@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 72개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 82개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -527,6 +527,12 @@
               <a href="demo-bento-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ BentoML 카드 다섯 장</a>
               <a href="demo-stats-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 통계 카드 여섯 장</a>
               <a href="demo-pipeline-course.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 학습 데이터까지</a>
+              <a href="demo-first-call-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 호출 한 번 카드 네 장</a>
+              <a href="demo-model-selection-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 모델 고르기 카드 네 장</a>
+              <a href="demo-structured-output-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 구조화 출력 카드 네 장</a>
+              <a href="demo-embedding-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 임베딩 카드 네 장</a>
+              <a href="demo-llm-cost-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 비용, 캐시, 비결정성 카드 네 장</a>
+              <a href="demo-llm-cost.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 비용 놀이터</a>
             </div>
           </div>
           <!-- 중급 -->
@@ -564,6 +570,10 @@
               <a href="demo-lookalike-batch-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Lookalike 배치 카드 네 장</a>
               <a href="demo-pcvr-target-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ pCVR 타겟 카드 네 장</a>
               <a href="demo-nl-audience-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 자연어 오디언스 카드 네 장</a>
+              <a href="demo-prompting-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 프롬프트 카드 네 장</a>
+              <a href="demo-rag-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ RAG 카드 네 장</a>
+              <a href="demo-tool-loop-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Tool use 카드 네 장</a>
+              <a href="demo-judge-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM-as-a-Judge 카드 네 장</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -660,12 +670,12 @@
       </div>
     </section>
 
-    <!-- 주제별 데모 77개 -->
+    <!-- 주제별 데모 87개 -->
     <section class="section">
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">77개, 주제 10개</span>
+          <span class="count">87개, 주제 11개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
@@ -674,6 +684,7 @@
           <a class="demos-jump-item" href="#demo-topic-bandit">탐색과 밴딧<b>8</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>4</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting-model">타겟팅 모델<b>7</b></a>
+          <a class="demos-jump-item" href="#demo-topic-llm">LLM 기초<b>10</b></a>
           <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>9</b></a>
           <a class="demos-jump-item" href="#demo-topic-ops">모델 운영<b>12</b></a>
           <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>11</b></a>
@@ -1245,6 +1256,146 @@
                 <span class="demo-card-meta-item">컨텍스추얼 타겟팅 카드 먼저 보면 좋음</span>
               </div>
               <a href="demo-nl-audience-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-llm">
+          <div class="demo-topic-head">
+            <h3>LLM 기초</h3>
+            <span class="demo-topic-count">10개</span>
+          </div>
+          <p class="demo-topic-desc">LLM 을 서비스에 붙일 때 먼저 알아야 할 것들입니다. 요청과 토큰, 모델 고르기, 프롬프트, 구조화 출력, 임베딩을 봅니다. 이어서 RAG, tool use, 채점, 비용을 차례로 봅니다. 답과 토큰 수는 공개 모델을 개인 컴퓨터에서 돌려 기록한 값입니다. 카드 아홉 데크와 놀이터 하나입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>LLM 호출 한 번 카드 네 장</h3>
+              <p>요청 하나가 토큰이 되어 들어가고 답이 돌아오는 길을 카드 한 장씩으로. 요청의 필드 다섯, 역할 표시와 이어진 프롬프트의 토큰, 응답 JSON 의 필드, thinking 을 켠 답의 출력 토큰과 시간.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-first-call-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>LLM 모델 고르기 카드 네 장</h3>
+              <p>LLM 을 고를 때 보는 네 가지를 카드 한 장씩으로. 상용 API 와 공개 가중치, 파라미터와 컨텍스트 길이, thinking 을 켠 hard 10개, 가상 단가의 하루 값.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM 호출 한 번 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-model-selection-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>LLM 비용 놀이터</h3>
+              <p>요청 한 건의 토큰 셋과 하루 요청 수, 캐시 적중 비율을 슬라이더로. 작은 모델과 큰 모델을 바꾸면 한 건, 하루, 한 달의 값과 캐시가 깎은 몫이 함께 바뀝니다. 단가는 가상 값입니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">LLM 모델 고르기 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-llm-cost.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>프롬프트 카드 네 장</h3>
+              <p>같은 문제에 답이 달라지는 프롬프트의 세 자리를 카드 한 장씩으로. 시스템 메시지, 예시 셋과 늘어난 입력 토큰, 단계를 먼저 쓰게 한 답, 세 벌의 맞힘과 출력 토큰과 시간.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM 모델 고르기 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-prompting-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>구조화 출력 카드 네 장</h3>
+              <p>모델의 답을 JSON 으로 받아 코드가 검증하는 길을 카드 한 장씩으로. 자유 문장의 네 가지 꼴, 필드 넷의 스키마와 enum, 검증 세 단계에서 남는 건수, 빠진 필드만 다시 묻기.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">프롬프트 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-structured-output-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>임베딩 카드 네 장</h3>
+              <p>상품 이름 한 줄이 숫자 384개가 되고 가까운 상품을 찾기까지를 카드 한 장씩으로. 장난감 임베딩, 두 벡터의 코사인, 3,000건 전수 검색, 해시 묶음만 보는 근사 검색과 재현율.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">구조화 출력 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-embedding-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>RAG 카드 네 장</h3>
+              <p>상품 문서를 조각내고 질문과 가까운 조각 셋을 찾아 답하게 하기까지를 카드 한 장씩으로. 조각 나누기, 가까운 조각 셋, 조각을 넣은 프롬프트, 답과 조각의 대조.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">임베딩 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-rag-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Tool use 카드 네 장</h3>
+              <p>LLM 이 도구를 고르고 코드가 실행하는 루프를 카드 한 장씩으로. 도구 셋의 정의, 한 바퀴의 차례, 멈춤 조건 셋, 코드에 둔 가드레일.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">RAG 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-tool-loop-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>LLM-as-a-Judge 카드 네 장</h3>
+              <p>채점표를 준 모델의 점수를 사람 라벨과 견주는 길을 카드 한 장씩으로. 채점표 다섯 줄, LLM 점수 대 사람 라벨, 좌우를 바꿔 다시 묻는 짝비교, 일치율과 kappa 의 차이.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Tool use 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-judge-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>비용, 캐시, 비결정성 카드 네 장</h3>
+              <p>요청 한 건의 값과 같은 입력의 답을 카드 한 장씩으로. 토큰 셋, 캐시가 깎는 몫, 하루 100만 요청의 값 셋, 같은 입력을 10번 물은 답.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM 비용 놀이터 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-llm-cost-cards.html" class="btn-try">체험하기</a>
             </div>
           </div>
         </section>

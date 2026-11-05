@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="LLM 요청 한 건의 토큰 셋과 하루 요청 수로 하루 값을 셉니다. 시스템 메시지를 캐시에서 읽는 비율을 바꾸면 하루 값이 얼마나 주는지 봅니다. 단가는 가상 값입니다.">
+  <title>LLM 비용 놀이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .lc-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .lc-hero { text-align: center; padding: 2rem 0 1rem; }
+    .lc-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .lc-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .lc-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .lc-intro p { margin: 0 0 0.6rem; }
+    .lc-intro p:last-child { margin-bottom: 0; }
+    .lc-intro strong { color: var(--accent-primary); }
+    .lc-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
+    /* 식이 화면보다 넓으면 페이지가 아니라 식 칸 안에서만 밀리게 한다. */
+    .lc-formula { overflow-x: auto; overflow-y: hidden; margin: 0.2rem 0 0.7rem; color: var(--text-primary); }
+
+    .lc-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .lc-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 250px 1fr 96px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .lc-slider-row { grid-template-columns: 1fr; } }
+    .lc-slider-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .lc-slider-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .lc-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .lc-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .lc-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
+    .lc-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
+    @media (max-width: 700px) { .lc-slider-value { text-align: left; } }
+
+    .lc-speed { font-size: 0.8rem; color: var(--text-muted); margin: 0.1rem 0 0.4rem; }
+    .lc-speed b { font-family: var(--font-mono); color: var(--text-primary); }
+    .lc-speed span { font-family: var(--font-mono); }
+
+    .lc-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .lc-presets-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); margin-right: 0.2rem; }
+    .lc-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .lc-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    .lc-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+    @media (max-width: 900px) { .lc-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .lc-metrics { grid-template-columns: minmax(0, 1fr); } }
+    .lc-metric { min-width: 0; padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
+    .lc-metric-label { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .lc-metric-value { font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+    .lc-metric-value.good { color: var(--state-good); }
+    .lc-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.45; }
+
+    .lc-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* 1fr 의 자동 최솟값은 min-content 라, 안에 든 캔버스가 안 줄면 트랙째 늘어난다.
+       minmax(0, …) 와 카드의 min-width:0 이 있어야 좁은 화면에서 컨테이너 안에 들어온다. */
+    .lc-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .lc-charts { grid-template-columns: minmax(0, 1fr); } }
+    .lc-chart-card { min-width: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
+    .lc-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .lc-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .lc-chart-wrap { position: relative; height: 300px; }
+
+    @media (max-width: 520px) { .lc-container { padding: 1.25rem 1rem 0; } }
+  
+    .lc-models { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+    .lc-models-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; margin-right: 0.4rem; }
+    .lc-model-btn {
+      font-family: var(--font-sans); font-size: 0.85rem; padding: 0.4rem 0.9rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .lc-model-btn small { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-left: 0.35rem; }
+    .lc-model-btn[aria-pressed="true"] { border-color: var(--accent-primary); color: var(--accent-primary); background: var(--bg-secondary); font-weight: 700; }
+    .lc-model-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="lc-hero">
+      <div class="lc-container">
+        <h1>LLM 비용 놀이터</h1>
+        <p>LLM 요청 한 건의 값은 입력 토큰과 출력 토큰에 단가를 곱해 셉니다.
+          하루 값은 거기에 하루 요청 수를 곱한 값입니다. 시스템 메시지를 캐시에서 읽는 몫이 하루 값을 얼마나 깎는지 슬라이더로 봅니다.</p>
+      </div>
+    </section>
+
+    <div class="lc-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
+        <a href="post.html?id=llm-model-selection">LLM 모델 고르기</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">원</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 요약</div>
+          <div class="demo-tldr-analogy-text">
+            큰 모델로 하루 100만 요청을 보내면 캐시 없이 <strong>7,800,000원</strong>입니다. 시스템 메시지 1,000 토큰을 모두 캐시에서 읽으면 4,200,000원입니다. 출력 3,000,000원은 캐시와 상관없이 남습니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>요청 한 건은 시스템 메시지 1,000 토큰과 사용자 메시지 200 토큰을 읽고 150 토큰을 씁니다.
+          작은 모델은 하루 720,000원, 큰 모델은 7,800,000원입니다.
+          토큰 셋, 캐시 적중 비율, 하루 요청 수, 모델을 바꾸며 네 숫자가 어떻게 움직이는지 봅니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>단가표만으로는 하루 값이 나오지 않습니다.
+          요청 한 건의 토큰과 하루 요청 수를 곱해야 나오고, <strong>캐시는 입력 쪽만 깎습니다</strong>.
+          출력이 큰 서비스는 캐시를 다 맞혀도 값이 크게 줄지 않습니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
+        <li><span class="step-text">기본값에서 큰 모델의 하루 <strong>4,200,000원</strong>을 봅니다. 캐시를 다 맞힌 값입니다.</span></li>
+        <li><span class="step-text"><strong>캐시 적중 비율</strong>을 0% 까지 내립니다. 하루 값이 7,800,000원이 됩니다.</span></li>
+        <li><span class="step-text"><strong>출력 토큰</strong>을 늘려 봅니다. 캐시를 다 맞혀도 하루 값이 크게 오릅니다.</span></li>
+      </ol>
+
+      <div class="lc-intro">
+        <p><strong>식</strong> — 요청 한 건의 값은 <a href="post.html?id=llm-model-selection">LLM 모델 고르기</a> 편의 <code>cost_won</code> 과 같은 식으로 셉니다.
+          $p_{in}$ 과 $p_{out}$ 은 100만 토큰당 단가이고, $N_{in}$ 은 시스템과 사용자 메시지를 더한 입력 토큰입니다.</p>
+        <div class="lc-formula">$$\mathrm{cost} = \frac{(N_{in} - N_{cache})\,p_{in} + 0.1\,N_{cache}\,p_{in} + N_{out}\,p_{out}}{10^6}$$</div>
+        <p>$N_{cache}$ 는 시스템 메시지 토큰에 캐시 적중 비율을 곱한 값입니다.
+          캐시에서 읽은 토큰은 입력 단가의 0.1배로 셉니다. 사용자 메시지와 출력은 캐시와 상관없이 단가 그대로입니다.
+          하루 값은 한 건의 값에 하루 요청 수를 곱하고, 한 달 값은 하루 값에 30을 곱합니다.</p>
+        <p>단가는 설명을 위해 정한 가상 값이고, 실제 단가는 회사마다 가격 문서에 있습니다.
+          작은 모델은 100만 토큰당 입력 400원과 출력 1,600원, 큰 모델은 4,000원과 20,000원으로 둡니다.
+          실제 API 는 캐시에 처음 쓸 때의 값과 캐시가 남는 시간을 따로 정하는데, 이 놀이터는 그 둘을 세지 않습니다.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="lc-controls">
+        <div class="lc-models" role="group" aria-label="모델 고르기">
+          <span class="lc-models-label">모델 (가상 단가)</span>
+          <button type="button" class="lc-model-btn" data-model="small" aria-pressed="false">작은 모델<small>400 / 1,600원</small></button>
+          <button type="button" class="lc-model-btn" data-model="large" aria-pressed="true">큰 모델<small>4,000 / 20,000원</small></button>
+        </div>
+        <div class="lc-slider-row">
+          <div class="lc-slider-label">시스템 토큰<small>요청마다 같이 보내는 할 일 설명</small></div>
+          <input type="range" class="lc-slider" id="lc-system" min="0" max="4000" step="100" value="1000" aria-label="시스템 토큰">
+          <div class="lc-slider-value" id="lc-system-val">1,000</div>
+        </div>
+        <div class="lc-slider-row">
+          <div class="lc-slider-label">사용자 토큰<small>요청마다 바뀌는 질문</small></div>
+          <input type="range" class="lc-slider" id="lc-user" min="0" max="2000" step="50" value="200" aria-label="사용자 토큰">
+          <div class="lc-slider-value" id="lc-user-val">200</div>
+        </div>
+        <div class="lc-slider-row">
+          <div class="lc-slider-label">출력 토큰<small>모델이 쓰는 답</small></div>
+          <input type="range" class="lc-slider" id="lc-out" min="0" max="1000" step="10" value="150" aria-label="출력 토큰">
+          <div class="lc-slider-value" id="lc-out-val">150</div>
+        </div>
+        <div class="lc-slider-row">
+          <div class="lc-slider-label">캐시 적중 비율<small>시스템 토큰 가운데 캐시에서 읽는 몫</small></div>
+          <input type="range" class="lc-slider" id="lc-cache" min="0" max="100" step="5" value="100" aria-label="캐시 적중 비율">
+          <div class="lc-slider-value" id="lc-cache-val">100%</div>
+        </div>
+        <div class="lc-slider-row">
+          <div class="lc-slider-label">하루 요청 수<small>1만에서 1,000만까지 열 칸</small></div>
+          <input type="range" class="lc-slider" id="lc-daily" min="0" max="9" step="1" value="6" aria-label="하루 요청 수">
+          <div class="lc-slider-value" id="lc-daily-val">100만</div>
+        </div>
+        <div class="lc-presets">
+          <span class="lc-presets-label">프리셋</span>
+          <button class="lc-preset-btn" data-preset="large,1000,200,150,100,6">기본</button>
+          <button class="lc-preset-btn" data-preset="large,1000,200,150,0,6">캐시 없음</button>
+          <button class="lc-preset-btn" data-preset="small,1000,200,150,0,6">작은 모델</button>
+          <button class="lc-preset-btn" data-preset="large,1000,200,150,100,9">요청 10배</button>
+          <button class="lc-preset-btn" data-preset="large,1000,200,1000,100,6">긴 답</button>
+          <button class="lc-preset-btn" data-preset="large,4000,200,150,100,6">긴 시스템 메시지</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="lc-metrics">
+        <div class="lc-metric">
+          <div class="lc-metric-label">요청 한 건</div>
+          <div class="lc-metric-value" id="lc-one">—</div>
+          <div class="lc-metric-sub" id="lc-one-sub">입력과 출력</div>
+        </div>
+        <div class="lc-metric">
+          <div class="lc-metric-label">하루</div>
+          <div class="lc-metric-value" id="lc-day">—</div>
+          <div class="lc-metric-sub" id="lc-day-sub">한 건 × 하루 요청 수</div>
+        </div>
+        <div class="lc-metric">
+          <div class="lc-metric-label">한 달</div>
+          <div class="lc-metric-value" id="lc-month">—</div>
+          <div class="lc-metric-sub" id="lc-month-sub">하루 × 30</div>
+        </div>
+        <div class="lc-metric">
+          <div class="lc-metric-label">캐시가 깎은 몫</div>
+          <div class="lc-metric-value" id="lc-saved">—</div>
+          <div class="lc-metric-sub" id="lc-saved-sub">캐시 0% 와 견준 하루 값</div>
+        </div>
+      </div>
+
+      <div class="lc-verdict" id="lc-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="lc-charts">
+        <div class="lc-chart-card">
+          <h3>캐시 적중 비율과 하루 값</h3>
+          <p class="note">지금 토큰과 하루 요청 수에서 캐시 적중 비율만 바꾼 선입니다. 점선은 출력의 하루 값이고, 캐시를 다 맞혀도 그 아래로 내려가지 않습니다.</p>
+          <div class="lc-chart-wrap"><canvas id="lc-cache-chart" aria-label="캐시 적중 비율에 따른 하루 값"></canvas></div>
+        </div>
+        <div class="lc-chart-card">
+          <h3>요청 한 건의 값은 어디서 나오나</h3>
+          <p class="note">한 건의 값을 넷으로 나눈 막대입니다. 캐시가 깎는 것은 시스템 메시지 몫뿐이고, 사용자 메시지와 출력은 그대로입니다.</p>
+          <div class="lc-chart-wrap"><canvas id="lc-part-chart" aria-label="요청 한 건의 값을 넷으로 나눈 막대"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>하루 값은 토큰과 요청 수의 곱입니다</strong> — 같은 요청을 10배 보내면 하루 값도 10배입니다. 단가표만 보면 이 값이 나오지 않습니다.</li>
+            <li><strong>캐시는 입력 쪽만 깎습니다</strong> — 큰 모델 기본값에서 캐시를 다 맞히면 7,800,000원이 4,200,000원이 되고, 원래의 54% 에서 멈춥니다.</li>
+            <li><strong>출력은 토큰 수보다 값이 큽니다</strong> — 출력 단가가 입력의 4~5배라, 캐시를 다 맞힌 큰 모델에서 출력이 하루 값의 71% 입니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          서비스에 LLM 을 붙이기 전에 이 셈을 먼저 해 봅니다.
+          단가는 가격 문서에서, 토큰 수는 기록한 응답의 usage 에서 가져옵니다.
+          그 둘이 있으면 하루 요청 수만 바꿔 가며 값의 크기를 봅니다.
+        </p>
+        <ul>
+          <li><strong>바뀌지 않는 글을 앞에 둡니다:</strong> 캐시는 프롬프트의 앞부분이 같을 때만 맞습니다. 시스템 메시지와 예시를 앞에, 바뀌는 질문을 뒤에 둡니다.</li>
+          <li><strong>캐시 적중은 usage 로 확인합니다:</strong> 응답의 usage 에 캐시에서 읽은 토큰 수가 나옵니다. 적중 비율은 가정하지 않고 그 수로 셉니다.</li>
+          <li><strong>출력을 줄이는 것도 셈에 넣습니다:</strong> 풀이를 먼저 쓰게 하면 출력 토큰이 늘어납니다. <a href="post.html?id=llm-cost-cache-nondeterminism">비용, 캐시, 비결정성</a> 편에서 그 몫을 셉니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=llm-model-selection" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">LLM 모델 고르기: 자주 쓰는 모델, reasoning 과 thinking 이 뜻하는 것</span>
+              <span class="demo-next-excerpt">cost_won 과 가상 단가 둘이 처음 나온 글입니다</span>
+            </a>
+            <a href="post.html?id=llm-cost-cache-nondeterminism" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">비용, 캐시, 비결정성: 하루 100만 요청의 값과 같은 입력에 다른 답</span>
+              <span class="demo-next-excerpt">캐시 비율 0, 50, 90, 100% 의 하루 값을 센 글입니다</span>
+            </a>
+            <a href="demo-llm-cost-cards.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">비용, 캐시, 비결정성 카드 네 장</span>
+              <span class="demo-next-excerpt">토큰 셋, 캐시, 하루 값, 같은 입력의 답을 카드 한 장씩으로</span>
+              <span class="demo-next-meta">⏱ 5분, 입문</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/llm-cost-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

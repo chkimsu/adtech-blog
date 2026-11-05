@@ -150,7 +150,10 @@ def load_prompts(slug):
 def request_options(given, run):
     """한 요청에 보낼 options. 기본값 위에 프롬프트 파일이 적은 값을 얹는다.
     seed 를 적지 않았는데 temperature 가 0 보다 크면 seed 를 7 + run 으로 둔다.
-    그러면 run 마다 다른 seed 로 뽑는다. temperature 0 은 다시 기록해도 같은 답이 나왔다.
+    그러면 run 마다 다른 seed 로 뽑는다.
+    같은 기록 안에서는 temperature 0 의 10번이 글자까지 같았다.
+    같은 설정으로 다시 기록하면 답은 같아도 글자가 달라진 예가 하나 있다.
+    27주째 글의 p17 을 21주째 기록과 비교한 경우다.
     temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인)."""
     opts = dict(OPTIONS)
     opts.update(given)

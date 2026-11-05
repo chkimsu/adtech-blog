@@ -397,6 +397,56 @@ const GLOSSARY = [
     term: '의도 판정과 조건 추출',
     abbr: 'Intent Classification, Slot Filling',
     body: '문장으로 받은 요청이 <strong>받을 수 있는 것인지 정하고 「무엇이 몇 이상」 꼴의 조건으로 옮기는</strong> 두 단계. 자연어 오디언스에서는 이 둘만 LLM 이 JSON 으로 답하고, 필터와 명단 크기는 코드가 맡는다.'
+  },
+  {
+    term: '토큰',
+    abbr: 'Token',
+    body: '모델이 글을 읽고 쓰는 <strong>조각 하나</strong>. 입력과 출력을 토큰 수로 세고, 단가도 100만 토큰당 값으로 매긴다.'
+  },
+  {
+    term: '컨텍스트 윈도',
+    abbr: 'Context Window',
+    body: '모델이 다음 토큰을 고를 때 <strong>한꺼번에 볼 수 있는 토큰의 상한</strong>. 이 블로그의 글은 컨텍스트 길이라고 부르고, 모델 카드마다 다른 값이 적혀 있다.'
+  },
+  {
+    term: 'thinking(reasoning)',
+    abbr: 'Thinking, Reasoning Tokens',
+    body: '모델이 <strong>답 앞에 쓰는 풀이</strong>. 풀이 토큰도 출력 토큰이라 값을 내고, 같은 요청에서 출력 토큰이 6개에서 505개로 늘어난 기록이 있다.'
+  },
+  {
+    term: '임베딩',
+    abbr: 'Embedding',
+    body: '글 한 줄을 <strong>정해진 길이의 숫자 목록으로 바꾼 것</strong>. 뜻이 가까운 글은 숫자도 가깝게 놓이게 만들고, 코사인으로 가까움을 잰다.'
+  },
+  {
+    term: 'RAG',
+    abbr: 'Retrieval-Augmented Generation',
+    body: '질문과 가까운 <strong>문서 조각을 찾아 프롬프트에 넣고 답하게 하는</strong> 방식. 답의 문장이 넣어 준 조각에 근거가 있는지는 따로 센다.'
+  },
+  {
+    term: 'Context Recall 과 Precision',
+    abbr: 'Context Recall, Context Precision',
+    body: 'RAG 의 <strong>검색이 정답 문서를 얼마나 가져왔나</strong>를 재는 두 값. Recall 은 정답 조각이 상위 k 에 든 질문의 몫이고, Precision 은 상위 k 가운데 정답 조각의 몫이다.'
+  },
+  {
+    term: 'tool use',
+    abbr: 'Tool Use, Function Calling',
+    body: 'LLM 이 답 대신 <strong>부를 함수와 인자를 고르게 하는</strong> 방식. 함수는 코드가 실행하고, 결과를 다시 넘겨 멈춤 조건이 올 때까지 되풀이하는 것을 에이전트 루프라고 부른다.'
+  },
+  {
+    term: 'MCP',
+    abbr: 'Model Context Protocol',
+    body: '도구를 서버가 내놓고 <strong>여러 LLM 앱이 같은 꼴로 찾아 부르게 하는</strong> 공개 프로토콜. 도구의 이름, 설명, 인자 스키마를 주고받는 꼴을 명세가 정한다.'
+  },
+  {
+    term: 'LLM-as-a-Judge',
+    abbr: 'LLM-as-a-Judge',
+    body: '<strong>LLM 에게 채점을 맡기는</strong> 방법. 점수마다 뜻을 적은 채점표를 건네고, 그 점수가 사람 라벨과 얼마나 맞는지 재고 나서 쓴다.'
+  },
+  {
+    term: 'Cohen\'s kappa',
+    abbr: 'Cohen\'s Kappa',
+    body: '두 채점자의 일치에서 <strong>우연히 맞을 몫을 뺀 뒤에 남는</strong> 일치의 크기. 모두 상이라 답하는 판정은 일치율이 0.90 이어도 kappa 가 0.00 이 된다.'
   }
 ];
 

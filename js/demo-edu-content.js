@@ -4013,5 +4013,75 @@ window.DEMO_EDU = {
             { el: '[data-card="tokens"]', title: '가장 먼저 볼 것', body: '요청 한 건의 토큰 셋을 가상 단가로 셉니다.', waitFor: 'click' },
             { el: '[data-card="variance"]', title: '끝에 남는 것', body: '같은 입력을 10번 물어 answer 와 steps 가 몇 번 바뀌었는지 셉니다.' }
         ]
+    },
+    // ==========================================
+    // LLM 비용 놀이터 (입문)
+    // ==========================================
+    'llm-cost': {
+        analogy: '요청 한 건의 값은 입력과 출력 토큰에 단가를 곱한 값이고, 하루 값은 거기에 하루 요청 수를 곱한다. 큰 모델 하루 100만 요청은 캐시 없이 7,800,000원, 시스템 메시지를 모두 캐시에서 읽으면 4,200,000원이다. 캐시는 입력 쪽만 깎는다',
+        anchor: '.lc-controls',
+        embedKeep: ['.lc-controls'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.lc-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            '#lc-system': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `시스템 토큰을 ${value > prev ? '늘렸' : '줄였'}습니다 (<strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}</strong>). ` +
+                    `요청 한 건은 ${t('lc-one')}, 하루는 ${t('lc-day')}입니다. ` +
+                    '캐시에 맞는 몫은 입력 단가의 0.1배로 셉니다. ' + t('lc-verdict').split('.')[0] + '.';
+            },
+            '#lc-user': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `사용자 토큰을 ${value > prev ? '늘렸' : '줄였'}습니다 (<strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}</strong>). ` +
+                    `하루는 ${t('lc-day')}입니다. 사용자 메시지는 요청마다 바뀌어 캐시와 상관없이 단가 그대로 셉니다.`;
+            },
+            '#lc-out': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `출력 토큰을 ${value > prev ? '늘렸' : '줄였'}습니다 (<strong>${prev.toLocaleString('ko-KR')} → ${value.toLocaleString('ko-KR')}</strong>). ` +
+                    `하루는 ${t('lc-day')}입니다. 출력 단가는 입력의 4~5배이고, 캐시는 출력을 깎지 않습니다.`;
+            },
+            '#lc-cache': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `캐시 적중 비율을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev}% → ${value}%</strong>). ` +
+                    `하루는 ${t('lc-day')}입니다. ` + t('lc-verdict').split('.')[0] + '.';
+            },
+            '#lc-daily': () => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `하루 요청 수를 <strong>${t('lc-daily-val')}</strong>으로 바꿨습니다. ` +
+                    `한 건의 값 ${t('lc-one')}은 그대로이고, 하루는 ${t('lc-day')}, 한 달은 ${t('lc-month')}입니다.`;
+            },
+            '.lc-model-btn': ({ el }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `<strong>${el.firstChild.textContent.trim()}</strong>을 골랐습니다. ` +
+                    `요청 한 건은 ${t('lc-one')}, 하루는 ${t('lc-day')}입니다. 단가는 둘 다 가상 값입니다.`;
+            },
+            '.lc-preset-btn': ({ el }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했습니다. ` +
+                    `하루는 ${t('lc-day')}입니다. ` + t('lc-verdict').split('.')[0] + '.';
+            }
+        },
+        tour: [
+            {
+                el: '.lc-metrics',
+                title: '숫자 넷',
+                body: '요청 한 건, 하루, 한 달, 캐시가 깎은 몫입니다. 기본값은 큰 모델의 <strong>4.20원, 4,200,000원, 126,000,000원, 3,600,000원</strong>입니다.'
+            },
+            {
+                el: '#lc-cache',
+                title: '캐시를 내려 봅니다',
+                body: '<strong>캐시 적중 비율</strong>을 움직여 봅니다. 0% 에서 하루 값이 7,800,000원이 됩니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.lc-chart-card:last-child',
+                title: '한 건의 값은 어디서 나오나',
+                body: '캐시가 깎는 것은 시스템 메시지 몫뿐입니다. 출력 막대는 캐시와 상관없이 그대로입니다.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더와 버튼을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
+            }
+        ]
     }
 };

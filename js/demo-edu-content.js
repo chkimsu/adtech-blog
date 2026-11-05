@@ -3881,5 +3881,27 @@ window.DEMO_EDU = {
             { el: '[data-card="system"]', title: '가장 먼저 볼 것', body: '세 벌은 시스템 메시지만 다릅니다. 바꾼 자리는 할 일 설명, 예시, 지시 한 줄입니다.', waitFor: 'click' },
             { el: '[data-card="result"]', title: '세 벌을 견주면', body: '맞힘은 14개, 13개, 17개이고, 출력 토큰 합은 163개, 163개, 1,223개입니다.' }
         ]
+    },
+    'structured-output-cards': {
+        analogy: '모델의 답은 JSON 으로 받고 코드가 파싱과 검증을 거쳐 쓴다. 요청 12건 중 글 전체로는 10건, 중괄호 사이만 자르면 12건이 읽혔고 8건이 검증을 통과했다. 빠진 필드만 다시 묻자 9건이 통과하고 3건이 review 로 갔다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'freeform': return '헷갈리는 것은 <strong>JSON 으로 읽히면 쓸 수 있는 답인가</strong>입니다. 필드가 빠진 2건과 enum 밖 값 2건은 JSON 으로 읽혔습니다. 그래도 코드가 그대로 쓸 수 없는 답입니다.';
+                    case 'schema': return '헷갈리는 것은 <strong>스키마는 모델에게만 주는 것인가</strong>입니다. 시스템 메시지는 이 꼴로 답하라고 적고, validate 는 받은 답이 이 꼴과 맞는지 봅니다. 두 곳이 같은 스키마를 봅니다.';
+                    case 'validate': return '헷갈리는 것은 <strong>중괄호 사이만 자르면 늘 읽히나</strong>입니다. 설명 문장에 중괄호가 있으면 엉뚱한 자리부터 잘립니다. 그래서 잘라 읽은 답도 검증을 똑같이 거칩니다.';
+                    case 'retry': return '헷갈리는 것은 <strong>다시 묻기와 재시도가 같은가</strong>입니다. 다시 묻기는 빠진 필드 이름만 적어 그 필드만 받습니다. 재시도는 요청을 처음부터 다시 보내 답 전체를 새로 받습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 하는 일, 벽돌색은 모델의 답, 먹색은 스키마입니다. 회색은 review 로 가는 답, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="freeform"]', title: '가장 먼저 볼 것', body: '요청 12건의 답은 정상 6, 설명이 붙은 답 2, 필드가 빠진 답 2, enum 밖 값 2입니다.', waitFor: 'click' },
+            { el: '[data-card="retry"]', title: '끝에 남는 것', body: '빠진 필드만 다시 묻자 9건이 통과했고, 3건은 사람이 보는 review 로 갔습니다.' }
+        ]
     }
 };

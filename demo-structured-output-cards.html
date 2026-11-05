@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구조화 출력 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="모델의 답을 JSON 으로 받아 코드가 검증하는 길을 카드 네 장으로 봅니다. 자유 문장, 스키마와 enum, 검증 세 단계, 빠진 필드만 다시 묻기입니다. 요청 12건과 답은 규칙으로 만든 가상 데이터입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>구조화 출력 카드 네 장</h1>
+      <p>지훈 씨가 모델의 답을 받는 코드를 다시 짠 길을 카드 네 장으로 봅니다. 자유 문장으로 받은 답의 네 꼴, 필드 넷의 스키마, 검증 세 단계, 빠진 필드만 다시 묻기입니다. 요청 12건과 가짜 LLM 의 답은 규칙으로 만든 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 모델의 답</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 필드 이름과 스키마</span>
+        <span class="tg-chip"><i class="c"></i>회색 = review 로 가는 답</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (요청과 답)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="freeform"><h2>FREEFORM</h2><p class="tg-k">자유 문장으로 받은 답과 네 가지 꼴</p><p class="tg-easy"><b>쉽게 말하면</b> 답 앞뒤에 설명 문장이 붙으면 글 전체로는 JSON 이 아닙니다. 필드가 빠지거나 enum 밖 값이면 읽혀도 쓸 수 없습니다.</p><div class="tg-fig" id="so-freeform"></div>
+        <p class="tg-cap">요청 <b>12건</b>의 꼴은 정상 <b>6</b>, 설명이 붙은 답 <b>2</b>, 필드가 빠진 답 <b>2</b>, enum 밖 값 <b>2</b>입니다.</p></section>
+      <section class="tg-card" data-card="schema"><h2>SCHEMA</h2><p class="tg-k">필드 넷의 스키마와 enum</p><p class="tg-easy"><b>쉽게 말하면</b> 묻기 전에 받을 필드 이름과 자료형, 받는 낱말을 먼저 적습니다. 시스템 메시지와 검증 코드가 같은 스키마를 봅니다.</p><div class="tg-fig" id="so-schema"></div>
+        <p class="tg-cap">필드는 <b>넷</b>이고, verdict 와 reason_code 는 enum 입니다.</p></section>
+      <section class="tg-card" data-card="validate"><h2>VALIDATE</h2><p class="tg-k">파싱과 검증 세 단계에서 남는 건수</p><p class="tg-easy"><b>쉽게 말하면</b> 먼저 글에서 JSON 을 꺼내 읽고, 그다음 필수 필드와 자료형, enum 을 봅니다. 읽혔다고 통과한 것은 아닙니다.</p><div class="tg-fig" id="so-validate"></div>
+        <p class="tg-cap">글 전체로는 <b>10건</b>, 중괄호 사이만 자르면 <b>12건</b>이 읽히고, 검증은 <b>8건</b>이 통과합니다.</p></section>
+      <section class="tg-card" data-card="retry"><h2>RETRY</h2><p class="tg-k">빠진 필드만 다시 묻는 대화와 review</p><p class="tg-easy"><b>쉽게 말하면</b> 필드가 빠지기만 한 답에는 빠진 이름만 적어 다시 묻습니다. enum 밖 값은 다시 묻지 않고 사람에게 보냅니다.</p><div class="tg-fig" id="so-retry"></div>
+        <p class="tg-cap">다시 묻기 <b>2건</b> 뒤 최종 통과는 <b>9건</b>, review 는 <b>3건</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>스키마는 한 곳에 적고</b> 시스템 메시지와 검증 코드가 같이 씁니다. 두 곳의 꼴이 다르면 맞는 답도 틀렸다고 봅니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=structured-output">구조화 출력</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=prompting-chain-of-thought">프롬프트와 Chain-of-Thought</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/structured-output-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

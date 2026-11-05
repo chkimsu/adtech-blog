@@ -116,14 +116,14 @@ REQUESTS = [
     ('q09', '서울 사는 여행 글 독자', ['supported', [c('region', '==', 'seoul'), c('travel_posts', '>=', 1)], [], 'none']),
     ('q10', '대구 사는 캠핑 글 독자', ['supported', [c('region', '==', 'daegu'), c('camping_posts', '>=', 1)], [], 'none']),
     ('q11', '인천 사는 러닝화 검색자', ['supported', [c('region', '==', 'incheon'), c('search_running_shoes', '>=', 1)], [], 'none']),
-    ('q12', '연봉 높은 사람', ['unsupported', [], ['annual income'], 'unknown_field']),
+    ('q12', '자동차를 새로 산 사람', ['unsupported', [], ['car purchase'], 'unknown_field']),
 ]
 NAMES = list(SCHEMA)
 ANSWERS = {qid: dict(zip(NAMES, values)) for qid, _, values in REQUESTS}
 ID_OF = {'요청: ' + text: qid for qid, text, _ in REQUESTS}
 SHAPE = {'q07': 'wrapped', 'q08': 'wrapped', 'q09': 'missing', 'q10': 'missing', 'q11': 'enum', 'q12': 'enum'}
 DROP = {'q09': ['reason_code'], 'q10': ['unsupported_parts', 'reason_code']}
-BAD = {'q11': ('verdict', 'full_support'), 'q12': ('reason_code', 'income_unknown')}
+BAD = {'q11': ('verdict', 'full_support'), 'q12': ('reason_code', 'field_missing')}
 REASK_BAD = {'q10': ('reason_code', 'other')}   # 다시 물어도 enum 밖 값을 쓰는 답 하나
 
 
@@ -211,12 +211,12 @@ for qid, e in errs.items():
 #   틀림 q09 (missing): missing reason_code
 #   틀림 q10 (missing): missing unsupported_parts, missing reason_code
 #   틀림 q11 (enum): enum verdict=full_support
-#   틀림 q12 (enum): enum reason_code=income_unknown
+#   틀림 q12 (enum): enum reason_code=field_missing
 ```
 
 글 전체를 읽는 방법은 q07 과 q08 에서 막힙니다. 두 답은 JSON 앞에 영어 문장 한 줄이, 뒤에도 한 줄이 있습니다. 중괄호 사이만 자르자 두 답도 읽혀서, 12건이 모두 파싱되었습니다.
 
-파싱된 12건 가운데 검증을 통과한 것은 정상 6건과 잘라 읽은 2건, 모두 8건입니다. q09 는 reason_code 가 없고, q10 은 unsupported_parts 와 reason_code 가 없습니다. q11 은 verdict 에 full_support 를, q12 는 reason_code 에 income_unknown 을 적었습니다.
+파싱된 12건 가운데 검증을 통과한 것은 정상 6건과 잘라 읽은 2건, 모두 8건입니다. q09 는 reason_code 가 없고, q10 은 unsupported_parts 와 reason_code 가 없습니다. q11 은 verdict 에 full_support 를, q12 는 reason_code 에 field_missing 을 적었습니다.
 
 틀린 넷은 모두 JSON 으로는 멀쩡히 읽혔습니다. 파싱만 보는 코드는 이 넷을 그대로 다음 일로 넘깁니다. q09 처럼 reason_code 가 없는 답은, 뒤에서 이유를 꺼낼 때에야 코드가 멈춥니다. 도입에서 선배가 지나간 넷을 더 걱정한 까닭입니다.
 
@@ -289,7 +289,7 @@ for qid, e in review.items():
 # 요청 수: 첫 요청 12건, 다시 묻기 2건
 # 최종 통과 9건, review 3건
 #   review q11: enum verdict=full_support
-#   review q12: enum reason_code=income_unknown
+#   review q12: enum reason_code=field_missing
 #   review q10: enum reason_code=other
 ```
 
@@ -304,7 +304,7 @@ review 로 간 3건은 q10, q11, q12 입니다. review 로 간 답으로는 회�
 | q09 | missing reason_code | reason_code 만 물음, none 을 받음 | 통과 |
 | q10 | missing unsupported_parts, reason_code | 두 필드를 물음, reason_code 가 other | review |
 | q11 | enum verdict=full_support | 묻지 않음 | review |
-| q12 | enum reason_code=income_unknown | 묻지 않음 | review |
+| q12 | enum reason_code=field_missing | 묻지 않음 | review |
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-structured-output-cards.html?embed=1&card=retry" height="480" loading="lazy" title="빠진 필드만 다시 묻는 대화와 review"></iframe>

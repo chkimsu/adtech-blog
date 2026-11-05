@@ -3903,5 +3903,27 @@ window.DEMO_EDU = {
             { el: '[data-card="freeform"]', title: '가장 먼저 볼 것', body: '요청 12건의 답은 정상 6, 설명이 붙은 답 2, 필드가 빠진 답 2, enum 밖 값 2입니다.', waitFor: 'click' },
             { el: '[data-card="retry"]', title: '끝에 남는 것', body: '빠진 필드만 다시 묻자 9건이 통과했고, 3건은 사람이 보는 review 로 갔습니다.' }
         ]
+    },
+    'embedding-cards': {
+        analogy: '상품 이름은 글자 두 개 조각을 384칸에 더한 벡터가 되고, 가까움은 코사인으로 잰다. 3,000건 전수 검색은 검색어 하나에 곱셈 1,152,000번이었다. 해시 묶음의 이웃까지 보자 142~254번만 재고 재현율@10 은 0.7~0.9 였다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'vector': return '헷갈리는 것은 <strong>384차원이면 진짜 모델과 같은가</strong>입니다. 이 장난감은 문장 임베딩 모델과 길이만 같습니다. 학습이 없어 글자가 같아야만 같은 칸을 나눠 갖습니다.';
+                    case 'cosine': return '헷갈리는 것은 <strong>코사인과 내적은 늘 같은가</strong>입니다. 코사인은 내적을 두 길이로 나눈 값입니다. 길이를 1 로 맞춘 벡터끼리만 둘이 같습니다.';
+                    case 'bruteforce': return '헷갈리는 것은 <strong>전수 검색의 1위는 늘 맞는 상품인가</strong>입니다. 전수 검색은 임베딩이 정한 순서를 그대로 보입니다. 헤드셋의 2위는 해시 충돌로 올라온 텀블러였습니다.';
+                    case 'ann': return '헷갈리는 것은 <strong>재현율 1.0 이면 좋은 결과인가</strong>입니다. 재현율은 전수 검색의 답을 얼마나 찾았는지만 봅니다. 결과가 좋은지는 임베딩이 정합니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 하는 일, 벽돌색은 검색어, 먹색은 벡터와 칸입니다. 회색은 놓친 상품, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="vector"]', title: '가장 먼저 볼 것', body: '첫 상품 이름은 숫자 384개가 되고, 그 가운데 19칸만 0 이 아닙니다.', waitFor: 'click' },
+            { el: '[data-card="ann"]', title: '끝에 남는 것', body: '이웃 묶음까지 보면 142~254번만 재고, 재현율@10 은 0.7~0.9 입니다.' }
+        ]
     }
 };

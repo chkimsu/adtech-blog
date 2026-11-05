@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>임베딩 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="상품 이름 한 줄이 숫자 384개가 되고 가까운 상품을 찾기까지를 카드 네 장으로 봅니다. 장난감 임베딩, 코사인, 3,000건 전수 검색, 해시 묶음의 근사 검색입니다. 상품 이름은 가상 데이터입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>임베딩 카드 네 장</h1>
+      <p>지훈 씨가 상품 이름 한 줄이 숫자 384개가 되는 것을 처음 본 길을 카드 네 장으로 봅니다. 글자 두 개 조각을 384칸에 더하는 장난감 임베딩, 두 벡터의 각과 코사인, 3,000건 전수 검색, 해시 묶음만 보는 근사 검색입니다. 상품 3,000건은 이름 틀에 낱말을 끼운 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 검색어</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 벡터와 칸</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 놓친 상품</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (상품 이름)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="vector"><h2>VECTOR</h2><p class="tg-k">상품 이름 한 줄이 숫자 384개가 되는 길</p><p class="tg-easy"><b>쉽게 말하면</b> 이름을 글자 두 개씩 잘라 조각마다 384칸 가운데 한 칸에 1 을 더합니다. 마지막에 길이로 나눠 길이를 1 로 맞춥니다.</p><div class="tg-fig" id="ev-vector"></div>
+        <p class="tg-cap">첫 상품은 숫자 <b>384개</b> 가운데 <b>19칸</b>만 0 이 아니고, 길이는 <b>1.000</b> 입니다.</p></section>
+      <section class="tg-card" data-card="cosine"><h2>COSINE</h2><p class="tg-k">두 벡터의 각과 코사인</p><p class="tg-easy"><b>쉽게 말하면</b> 두 벡터가 같은 쪽을 가리킬수록 코사인이 1 에 가깝습니다. 길이를 1 로 맞춘 벡터끼리는 내적이 곧 코사인입니다.</p><div class="tg-fig" id="ev-cosine"></div>
+        <p class="tg-cap">코사인은 각이 0 이면 <b>1</b>, 직각이면 <b>0</b>, 정반대면 <b>-1</b> 입니다.</p></section>
+      <section class="tg-card" data-card="bruteforce"><h2>BRUTE FORCE</h2><p class="tg-k">상품 3,000건 전수 검색과 해시 충돌</p><p class="tg-easy"><b>쉽게 말하면</b> 상품마다 코사인을 한 번씩 다 재서 큰 순서로 세웁니다. 다른 조각이 같은 칸을 쓰면 엉뚱한 상품이 올라옵니다.</p><div class="tg-fig" id="ev-bruteforce"></div>
+        <p class="tg-cap">검색어 하나에 거리 계산 <b>3,000번</b>, 곱셈 <b>1,152,000번</b>입니다.</p></section>
+      <section class="tg-card" data-card="ann"><h2>ANN</h2><p class="tg-k">해시 묶음만 보는 근사 검색과 재현율</p><p class="tg-easy"><b>쉽게 말하면</b> 상품을 해시 묶음에 나눠 두고 검색어 근처의 묶음만 잽니다. 덜 재는 대신 가까운 상품을 조금 놓칩니다.</p><div class="tg-fig" id="ev-ann"></div>
+        <p class="tg-cap">이웃 묶음까지 보면 거리 계산 <b>142~254번</b>에 재현율@10 <b>0.7~0.9</b> 입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>상품 벡터는 미리 만들어</b> 색인에 넣고, 검색어 벡터만 요청 때 만듭니다. 길이를 1 로 맞춰 두면 내적만 계산해도 됩니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=embeddings-vector-search">임베딩과 벡터 검색</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=structured-output">구조화 출력</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/embedding-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

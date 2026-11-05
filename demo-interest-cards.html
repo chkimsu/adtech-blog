@@ -48,7 +48,7 @@
         <p class="tg-cap">규칙이 비워 둔 심박수 구간 글에 모델은 running <b>0.60</b> 을 줍니다. 평가 40건 중 <b>38건</b>을 맞히고, 틀린 2건은 학습 160건에 없던 낱말이 든 글입니다.</p></section>
       <section class="tg-card" data-card="llm"><h2>LLM LABEL</h2><p class="tg-k">시스템 메시지 한 장과 글 한 건, 돌아오는 JSON 한 줄</p><p class="tg-easy"><b>쉽게 말하면</b> 할 일을 적은 시스템 메시지와 글의 제목과 첫 문장을 같이 보내고, 라벨 하나만 JSON 으로 받습니다. 배울 라벨이 없어도 되는 대신 글마다 토큰 값과 시간이 듭니다.</p><div class="tg-fig" id="ic-llm"></div>
         <p class="tg-cap">모델이 cafe 로 틀린 그림책 글을 LLM 은 <b>parenting</b> 으로 맞힙니다. 한 건에 가상 단가로 <b>0.070원</b>이 들고, 이 맥에서 <b>0.86초</b>가 걸렸습니다.</p></section>
-      <section class="tg-card" data-card="compare"><h2>SIDE BY SIDE</h2><p class="tg-k">평가 40건의 precision, recall, 건당 비용</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 40건에 셋을 붙여 맞힌 정도와 값을 나란히 놓은 것입니다. 모델과 LLM 은 맞힌 수가 같고, 값과 먼저 있어야 하는 것이 다릅니다.</p><div class="tg-fig" id="ic-compare"></div>
+      <section class="tg-card" data-card="compare"><h2>SIDE BY SIDE</h2><p class="tg-k">평가 40건의 정밀도, 재현율, 건당 비용</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 40건에 셋을 붙여 맞힌 정도와 값을 나란히 놓은 것입니다. 모델과 LLM 은 맞힌 수가 같고, 값과 먼저 있어야 하는 것이 다릅니다.</p><div class="tg-fig" id="ic-compare"></div>
         <p class="tg-cap">규칙은 붙인 라벨이 다 맞지만 <b>17건</b>을 비워 둡니다. 모델과 LLM 은 둘 다 <b>38건</b>을 맞히고, 비용이 드는 쪽은 LLM 하나입니다.</p></section>
     </div>
 

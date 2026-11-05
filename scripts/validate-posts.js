@@ -42,6 +42,33 @@ const { series } = require(path.join(root, 'js', 'posts.js'));
 Object.entries(series || {}).forEach(([sid, s]) => (s.posts || []).forEach(id => {
   if (!postIds.has(id)) errors.push(`series "${sid}": 존재하지 않는 글 id "${id}"`); }));
 
+// index.html 표지에 적힌 편수를 posts.js 와 견준다. 글을 더하면 이 수가 낡는데 따로 잡는 곳이 없었다.
+//   - 태그 칸: <a href="posts-browse.html?tag=이름">…<b>N편</b></a>   → 그 태그를 가진 글 수(posts-browse 의 거름과 같은 셈)
+//   - 전체 버튼: <a href="posts-browse.html" …>글 N편 전체</a>         → 전체 글 수
+// 표지 마크업에서 수를 못 찾으면(칸이 사라졌거나 꼴이 바뀜) 그것도 오류다. 조용히 통과하면 검사가 죽은 채로 남는다.
+{
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf-8');
+  const coverBlock = (html.match(/<section class="cover-hero"[\s\S]*?<\/section>/) || [''])[0];
+  const tagCount = {};
+  posts.forEach(p => (p.tags || []).forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; }));
+  const diffs = [];
+  let seenTags = 0;
+  for (const m of coverBlock.matchAll(/<a\b[^>]*href="posts-browse\.html\?tag=([^"&]+)"[^>]*>([\s\S]*?)<\/a>/g)) {
+    const tag = decodeURIComponent(m[1]);
+    const n = m[2].match(/<b>\s*(\d+)\s*편\s*<\/b>/);
+    if (!n) { diffs.push(`표지 태그 칸 "${tag}": <b>N편</b> 을 못 찾음`); continue; }
+    seenTags++;
+    const want = tagCount[tag] || 0;
+    if (+n[1] !== want) diffs.push(`표지 태그 칸 "${tag}": 표지 ${n[1]}편, posts.js ${want}편 (${+n[1] - want > 0 ? '+' : ''}${+n[1] - want})`);
+  }
+  const all = coverBlock.match(/<a\b[^>]*href="posts-browse\.html"[^>]*>\s*글\s*(\d+)\s*편\s*전체/);
+  if (!all) diffs.push('표지 전체 버튼: "글 N편 전체" 를 못 찾음');
+  else if (+all[1] !== posts.length) diffs.push(`표지 전체 버튼: 표지 ${all[1]}편, posts.js ${posts.length}편 (${+all[1] - posts.length > 0 ? '+' : ''}${+all[1] - posts.length})`);
+  if (!seenTags) diffs.push('표지에서 태그 칸을 하나도 못 찾음');
+  diffs.forEach(d => errors.push('index.html ' + d));
+  if (!diffs.length) console.log(`✓ index.html 표지 편수 ${seenTags + 1}곳(전체 1, 태그별 ${seenTags})이 posts.js 와 같음`);
+}
+
 // 비치명 경고: posts/ 안에 contentUrl로 참조되지 않는 고아 .md
 const referenced = new Set(posts.map(p => p.contentUrl && path.basename(p.contentUrl)));
 fs.readdirSync(path.join(root, 'posts')).filter(f => f.endsWith('.md')).forEach(f => {

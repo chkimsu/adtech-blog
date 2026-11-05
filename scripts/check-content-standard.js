@@ -119,9 +119,21 @@ function longSentences(md) {
 
 // 글머리표 줄(`- `, `* `, `1. `)도 같은 분리기로 잰다. 참고문헌 줄(http 가 든 줄)은
 // 원제가 길 수 있어 건너뛴다. 줄마다 따로 잰다(글머리표 하나가 한 덩어리다).
+// 참고문헌 절(제목에 참고문헌, 참고 자료, References)의 글머리표는 재지 않는다.
+// 논문 원제와 학회 이름은 줄여 쓸 수 없고, 주소가 다음 줄에 있으면 http 규칙으로도 안 빠진다.
+const REF_HEADING = /^(#{1,6})\s+.*(참고문헌|참고 자료|References)/;
 function longBullets(md) {
   const out = [];
+  let refLevel = 0;   // 0 이면 참고문헌 절 밖
   for (const line of prose(md).split('\n')) {
+    const h = line.match(/^(#{1,6})\s/);
+    if (h) {
+      const level = h[1].length;
+      if (REF_HEADING.test(line)) refLevel = level;
+      else if (refLevel && level <= refLevel) refLevel = 0;
+      continue;
+    }
+    if (refLevel) continue;
     const m = line.match(/^\s*(?:[-*]|\d+\.)\s+(.*)$/);
     if (!m || /http/.test(m[1])) continue;
     out.push(...overLong(m[1]));

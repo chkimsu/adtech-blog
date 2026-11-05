@@ -110,6 +110,17 @@ const BULLET_CASES = [
     flagged: false,
   },
   {
+    name: '글머리표 — 참고문헌 절 안의 글머리표는 주소가 없어도 건너뛴다',
+    md: '### 참고문헌\n\n- ' + '아'.repeat(90) + '.\n  In Proceedings of a very long conference name.',
+    flagged: false,
+  },
+  {
+    name: '글머리표 — 참고문헌 절이 끝난 뒤의 글머리표는 다시 잰다',
+    md: '### 참고문헌\n\n- ' + '자'.repeat(90) + '.\n\n## 다음 절\n\n- ' + '차'.repeat(84) + '.',
+    flagged: true,
+    count: 1,
+  },
+  {
     name: '글머리표 — 마침표 뒤에 공백이 없으면 한 문장으로 센다(「」 안 포함)',
     md: '- 「' + '바'.repeat(40) + '.' + '사'.repeat(45) + '」',
     flagged: true,

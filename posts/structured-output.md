@@ -79,7 +79,7 @@ enum 으로 받는 값은 코드가 그 낱말만 보고 다음 일을 고릅니
 
 아래 블록의 가짜 LLM 은 규칙으로 답하는 함수입니다. 응답은 진짜 SDK 와 같은 꼴로, 답을 멈춘 까닭인 stop_reason 과 내용 블록 목록인 content 를 돌려줍니다. SDK 는 API 를 부르는 일을 함수로 묶어 둔 라이브러리입니다. 진짜 모델은 이 자리에서 시스템 메시지와 대화를 읽고 스스로 답합니다. 가짜 LLM 은 요청마다 미리 정해 둔 꼴로 답을 만듭니다.
 
-세 단계는 파싱, 필수 필드, 자료형과 enum 입니다. 파싱은 글 전체를 읽는 `parse_strict` 와, 중괄호 사이만 읽는 `parse_braces` 둘로 해 봅니다. `validate` 는 나머지 두 단계를 한 번에 봅니다. 틀린 자리를 글자 목록으로 돌려주고, 빈 목록이면 통과입니다.
+세 단계는 파싱, 필수 필드, 자료형과 enum 입니다. 파싱은 글 전체를 읽는 `parse_strict` 와, 중괄호 사이만 읽는 `parse_braces` 둘로 해 봅니다. `validate` 는 나머지 두 단계를 한 번에 보고, 스키마에 없는 남는 필드도 틀린 자리로 적습니다. 틀린 자리를 글자 목록으로 돌려주고, 빈 목록이면 통과입니다.
 
 ```python
 # 하는 일: 가짜 LLM 이 요청 12건에 돌려준 글을 JSON 으로 읽고 스키마로 검증해, 단계마다 남은 건수를 센다.
@@ -114,7 +114,7 @@ REQUESTS = [
     ('q07', '러닝 글 읽고 운동 용품 산 사람', ['supported', [c('running_posts', '>=', 1), c('sports_goods_buy', '>=', 1)], [], 'none']),
     ('q08', '캠핑 용품 검색한 20대', ['supported', [c('camping_search', '>=', 1), c('age', '>=', 20), c('age', '<=', 29)], [], 'none']),
     ('q09', '서울 사는 여행 글 독자', ['supported', [c('region', '==', 'seoul'), c('travel_posts', '>=', 1)], [], 'none']),
-    ('q10', '종교로 고른 사람', ['unsupported', [], ['religion'], 'sensitive_attribute']),
+    ('q10', '대구 사는 캠핑 글 독자', ['supported', [c('region', '==', 'daegu'), c('camping_posts', '>=', 1)], [], 'none']),
     ('q11', '인천 사는 러닝화 검색자', ['supported', [c('region', '==', 'incheon'), c('search_running_shoes', '>=', 1)], [], 'none']),
     ('q12', '연봉 높은 사람', ['unsupported', [], ['annual income'], 'unknown_field']),
 ]
@@ -124,11 +124,12 @@ ID_OF = {'요청: ' + text: qid for qid, text, _ in REQUESTS}
 SHAPE = {'q07': 'wrapped', 'q08': 'wrapped', 'q09': 'missing', 'q10': 'missing', 'q11': 'enum', 'q12': 'enum'}
 DROP = {'q09': ['reason_code'], 'q10': ['unsupported_parts', 'reason_code']}
 BAD = {'q11': ('verdict', 'full_support'), 'q12': ('reason_code', 'income_unknown')}
-REASK_BAD = {'q10': ('reason_code', 'religion')}   # 다시 물어도 enum 밖 값을 쓰는 답 하나
+REASK_BAD = {'q10': ('reason_code', 'other')}   # 다시 물어도 enum 밖 값을 쓰는 답 하나
 
 
 def fake_llm(system, messages):
     """진짜 SDK 와 같은 꼴의 응답을 돌려준다. 다음 답은 대화를 읽어 정해 둔 규칙으로 고른다."""
+    # system 은 SDK 의 호출 꼴을 맞추려고 받는다. 규칙은 쓰지 않는다.
     qid = ID_OF[messages[0]['content']]
     if len(messages) == 1:                                   # 첫 요청이면 SHAPE 의 꼴로 답한다
         obj = dict(ANSWERS[qid])
@@ -200,7 +201,7 @@ errs = {qid: validate(obj, SCHEMA) for qid, obj in parsed.items()}
 print(f'스키마 검증 통과: {sum(not e for e in errs.values())}건')
 for qid, e in errs.items():
     if e:
-        print(f'  틀림 {qid} ({SHAPE[qid]}): {", ".join(e)}')
+        print(f'  틀림 {qid} ({SHAPE.get(qid, "valid")}): {", ".join(e)}')
 # 출력:
 # 5단계 뜻: 글 전체로 읽으면 wrapped 2건이 막히고, 잘라 읽으면 12건이 읽힌다. 검증은 8건이 통과한다.
 # 꼴별 건수: valid 6, wrapped 2, missing 2, enum 2
@@ -282,17 +283,17 @@ for qid, e in review.items():
 # 2단계 뜻: q09 는 합치자 통과하고, q10 은 다시 받은 reason_code 가 enum 밖이다.
 #   다시 묻기 q09: 받은 글 {"reason_code": "none"}
 #   다시 묻기 q09: 다시 검증 통과
-#   다시 묻기 q10: 받은 글 {"unsupported_parts": ["religion"], "reason_code": "religion"}
-#   다시 묻기 q10: 다시 검증 enum reason_code=religion
+#   다시 묻기 q10: 받은 글 {"unsupported_parts": [], "reason_code": "other"}
+#   다시 묻기 q10: 다시 검증 enum reason_code=other
 # 3단계 뜻: 요청은 14건이 나갔고, 9건이 통과하고 3건이 review 로 간다.
 # 요청 수: 첫 요청 12건, 다시 묻기 2건
 # 최종 통과 9건, review 3건
 #   review q11: enum verdict=full_support
 #   review q12: enum reason_code=income_unknown
-#   review q10: enum reason_code=religion
+#   review q10: enum reason_code=other
 ```
 
-q09 는 {"reason_code": "none"} 을 받아 합치자 검증을 통과했습니다. q10 은 빠진 두 필드를 받았지만, reason_code 가 religion 이었습니다. religion 은 reason_code 의 enum 에 없는 낱말입니다. 규칙의 맞는 답은 sensitive_attribute 라서, q10 은 다시 물어도 쓸 수 없었습니다.
+q09 는 {"reason_code": "none"} 을 받아 합치자 검증을 통과했습니다. q10 은 빠진 두 필드를 받았지만, reason_code 가 other 였습니다. other 는 reason_code 의 enum 에 없는 낱말입니다. 규칙의 맞는 답은 none 이라서, q10 은 다시 물어도 쓸 수 없었습니다.
 
 요청은 첫 요청 12건에 다시 묻기 2건을 더해 14건이 나갔습니다. 다시 묻기는 빠진 필드만 받으니 답이 짧습니다. 틀린 답을 요청부터 통째로 다시 보내는 재시도와는 다릅니다. 재시도는 맞게 온 필드까지 다시 받고, 그 값이 처음과 달라질 수도 있습니다.
 
@@ -301,7 +302,7 @@ review 로 간 3건은 q10, q11, q12 입니다. review 로 간 답으로는 회�
 | 요청 | 첫 답의 틀린 자리 | 다시 묻기 | 끝 |
 |---|---|---|---|
 | q09 | missing reason_code | reason_code 만 물음, none 을 받음 | 통과 |
-| q10 | missing unsupported_parts, reason_code | 두 필드를 물음, reason_code 가 religion | review |
+| q10 | missing unsupported_parts, reason_code | 두 필드를 물음, reason_code 가 other | review |
 | q11 | enum verdict=full_support | 묻지 않음 | review |
 | q12 | enum reason_code=income_unknown | 묻지 않음 | review |
 
@@ -314,7 +315,7 @@ review 로 간 3건은 q10, q11, q12 입니다. review 로 간 답으로는 회�
 
 **상용 API 에는 JSON 스키마를 넘겨 답의 꼴을 강제하는 옵션이 있습니다. 꼴은 맞춰 주지만, 값의 뜻까지 맞춰 주지는 않습니다.**
 
-Anthropic 의 Claude API 는 이 기능을 structured outputs 라고 부릅니다. 문서는 요청의 output_config 안 format 에 스키마를 넘기는 예를 보입니다. format 의 type 은 json_schema 이고, schema 에 스키마를 적습니다. 스키마는 JSON Schema 라는 공개 명세의 꼴로 씁니다. OpenAI 의 API 에도 같은 이름의 Structured Outputs 가 있습니다.
+Anthropic 의 Claude API 는 이 기능을 [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) 라고 부릅니다. 발췌의 모델 이름 claude-opus-5-5 는 그 문서의 예시에 적힌 것입니다. 문서는 요청의 output_config 안 format 에 스키마를 넘기는 예를 보입니다. format 의 type 은 json_schema 이고, schema 에 스키마를 적습니다. 스키마는 JSON Schema 라는 공개 명세의 꼴로 씁니다. OpenAI 의 API 에도 같은 이름의 Structured Outputs 가 있습니다.
 
 ```python
 # (발췌 — 그대로 실행되지 않습니다.)
@@ -374,7 +375,7 @@ else:
 
 보장에는 예외가 있다고 문서는 적었습니다. stop_reason 이 refusal 이면 거절하는 글이 스키마보다 앞섭니다. max_tokens 이면 답이 길이 상한에서 잘려 스키마와 맞지 않을 수 있습니다. 그래서 발췌의 3단계는 stop_reason 부터 보고, 그 두 경우를 review 로 보냅니다.
 
-문서는 글자 enum 값의 대소문자도 보장하지 않는다고 적었습니다. supported 가 Supported 로 오면, 이 글의 `validate` 는 enum 밖 값으로 봅니다. 숫자의 최솟값 같은 제약은 스키마에 적을 수 없고, 적으면 오류가 난다고도 적었습니다. 그래서 「나이는 0 이상」 같은 규칙은 코드가 따로 봅니다.
+문서는 글자 enum 값의 대소문자도 보장하지 않는다고 적었습니다. supported 가 Supported 로 오면, 이 글의 `validate` 는 enum 밖 값으로 봅니다. 문서는 enum 값을 대소문자 없이 견주라고 권합니다. 숫자의 최솟값 같은 제약은 스키마에 적을 수 없고, 적으면 오류가 난다고도 적었습니다. 그래서 「나이는 0 이상」 같은 규칙은 코드가 따로 봅니다.
 
 꼴이 맞아도 값의 뜻은 틀릴 수 있습니다. 「건강 상태로 고른 사람」에 supported 와 none 을 적은 답도 스키마로는 맞습니다. 자연어 오디언스 편에도 일부 지원이라면서 reason_code 를 none 으로 적은 답이 스키마 검사를 지났습니다. OpenAI 문서도 Structured Outputs 의 답에 실수가 남을 수 있다고 적었습니다.
 
@@ -382,7 +383,7 @@ else:
 
 | 틀린 꼴 | 스키마 강제가 막나 | 그래도 코드가 볼 것 |
 |---|---|---|
-| 설명 문장이 붙은 답 (wrapped) | 막음 | 없음 |
+| 설명 문장이 붙은 답 (wrapped) | 막음 | validate 는 그대로 |
 | 필드가 빠진 답 (missing) | 막음, 길이 상한에서 잘리면 못 막음 | stop_reason 이 max_tokens 인지 |
 | enum 밖 값 (enum) | 막음, 대소문자는 보장하지 않음 | 대소문자가 다른 낱말 |
 | 거절한 답 | 못 막음 | stop_reason 이 refusal 인지 |
@@ -434,7 +435,7 @@ else:
 :::
 
 :::deep 가짜 LLM 이 답을 만드는 규칙
-요청 12건마다 맞는 답 하나를 `ANSWERS` 에 적어 두었습니다. 첫 요청이면 `SHAPE` 를 보고, wrapped 면 앞뒤에 영어 문장을 붙입니다. missing 이면 `DROP` 의 필드를 빼고, enum 이면 `BAD` 의 낱말로 바꿉니다. 다시 묻기면 마지막 메시지에 적힌 필드만 `ANSWERS` 에서 꺼내 답합니다. q10 만은 `REASK_BAD` 를 따라 reason_code 를 religion 으로 바꿉니다. 그래서 이 글의 건수는 규칙이 정한 값입니다.
+요청 12건마다 맞는 답 하나를 `ANSWERS` 에 적어 두었습니다. 첫 요청이면 `SHAPE` 를 보고, wrapped 면 앞뒤에 영어 문장을 붙입니다. missing 이면 `DROP` 의 필드를 빼고, enum 이면 `BAD` 의 낱말로 바꿉니다. 다시 묻기면 마지막 메시지에 적힌 필드만 `ANSWERS` 에서 꺼내 답합니다. q10 만은 `REASK_BAD` 를 따라 reason_code 를 other 로 바꿉니다. 그래서 이 글의 건수는 규칙이 정한 값입니다.
 :::
 
 - [LLM 호출 한 번](post.html?id=llm-first-call) — 응답의 content 와 목표 enum 하나를 받은 19주째 편입니다.

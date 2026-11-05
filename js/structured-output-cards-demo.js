@@ -101,7 +101,7 @@
         s += tag(40, 78, 'user', 'a') + T(130, 91, 'Return only these missing fields ...: reason_code', 'lbl sm');
         s += arrow('sor0', 'M60,104 L60,124', 'k', { svg: S });
         s += tag(40, 128, '답', 'b') + T(130, 141, '{"reason_code": "none"} 을 합쳐 다시 검증, 통과', 'lbl sm');
-        s += T(40, 172, 'q10 은 다시 받은 reason_code 가 religion 이라 review', 'lbl');
+        s += T(40, 172, 'q10 은 다시 받은 reason_code 가 other 라 review', 'lbl');
         s += T(40, 196, '최종 통과', 'lbl') + hbar(130, 186, 260, 9 / 12, 'a', 12) + T(398, 196, '9건', 'lbl k');
         s += T(40, 216, 'review', 'lbl') + hbar(130, 206, 260, 3 / 12, 'c', 12) + T(398, 216, '3건', 'lbl k');
         s += T(40, 242, 'review 는 q10, q11, q12 입니다', 'lbl sm');

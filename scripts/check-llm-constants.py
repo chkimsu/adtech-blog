@@ -6,7 +6,8 @@
 `# 기록 data/llm-records/<slug>.json 에서 옮김` 주석이 있는 코드 블록마다, 그 블록의 `RECORD = ` 줄을
 `python3 scripts/llm-record.py --export-constant --slug <slug>` 가 찍는 줄과 견준다. 블록에 `USAGE = ` 줄이 있으면
 `--export-constant --with-usage` 가 찍는 USAGE 줄과도 견준다. 다시 기록하고 글을 고치지 않은 줄과 손으로 고친 줄을 잡는다.
-다르면 글과 줄 번호를 알리고 1 로 끝난다. 상수 뽑기는 기록 파일만 읽어서 Ollama 없이 돈다. 표준 라이브러리만 쓴다.
+다르면 글과 줄 번호를 알리고 1 로 끝난다. 기록 주석이 있는 글을 하나도 못 찾아도 1 로 끝난다(주석 꼴이 바뀌었거나 글이 사라지면
+검사가 빈 채로 통과하기 때문이다). 기록 주석 없이 `RECORD = ` 줄만 있는 블록은 경고로 알린다(종료 코드는 그대로). 상수 뽑기는 기록 파일만 읽어서 Ollama 없이 돈다. 표준 라이브러리만 쓴다.
 """
 import argparse
 import os
@@ -94,18 +95,33 @@ def check_block(name, start, lines, cache):
     return out
 
 
+def unmarked(name, start, lines):
+    """기록 주석 없이 `RECORD = ` 줄이 있는 블록의 줄 번호들. 손으로 적은 기록이 검사 밖에 있을 수 있다는 경고에 쓴다."""
+    if any(l.startswith(MARK) for l in lines):
+        return []
+    return ['posts/%s:%d' % (name, start + k) for k, l in enumerate(lines) if l.startswith('RECORD = ')]
+
+
 def main():
     argparse.ArgumentParser(description='글에 붙인 LLM 기록 상수(RECORD, USAGE 줄)가 기록 파일에서 뽑은 줄과 같은지 본다').parse_args()
     if not os.path.isdir(POSTS):
         print('✗ posts/ 폴더가 없습니다: %s' % POSTS)
         return 2
-    cache, problems, posts = {}, [], 0
+    cache, problems, posts, warns = {}, [], 0, []
     for name in sorted(f for f in os.listdir(POSTS) if f.endswith('.md')):
+        for start, lines in blocks(name):
+            warns += unmarked(name, start, lines)
         mine = [check_block(name, start, lines, cache)
                 for start, lines in blocks(name) if any(l.startswith(MARK) for l in lines)]
         if mine:
             posts += 1
             problems += [p for found in mine for p in found]
+    for w in warns:
+        print('⚠ %s — `RECORD = ` 줄이 있는데 기록 주석(`# 기록 data/llm-records/<slug>.json 에서 옮김`)이 없어 기록과 견주지 않습니다' % w)
+    if not posts:
+        print('✗ 기록 주석이 있는 글을 하나도 찾지 못했습니다. 이 검사가 빈 채로 통과하지 않게 1 로 끝냅니다.\n'
+              '    글의 코드 블록에 `# 기록 data/llm-records/<slug>.json 에서 옮김` 주석이 있는지, 주석 꼴이 바뀌지 않았는지 봅니다.')
+        return 1
     for p in problems:
         print('✗ ' + p)
     if problems:

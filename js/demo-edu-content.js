@@ -3912,7 +3912,7 @@ window.DEMO_EDU = {
         explain: {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
-                    case 'vector': return '헷갈리는 것은 <strong>384차원이면 진짜 모델과 같은가</strong>입니다. 이 장난감은 문장 임베딩 모델과 길이만 같습니다. 학습이 없어 글자가 같아야만 같은 칸을 나눠 갖습니다.';
+                    case 'vector': return '헷갈리는 것은 <strong>384차원이면 진짜 모델과 같은가</strong>입니다. 이 장난감은 문장 임베딩 모델과 길이만 같습니다. 학습이 없어 가까움은 조각이 떨어진 칸으로만 정해집니다.';
                     case 'cosine': return '헷갈리는 것은 <strong>코사인과 내적은 늘 같은가</strong>입니다. 코사인은 내적을 두 길이로 나눈 값입니다. 길이를 1 로 맞춘 벡터끼리만 둘이 같습니다.';
                     case 'bruteforce': return '헷갈리는 것은 <strong>전수 검색의 1위는 늘 맞는 상품인가</strong>입니다. 전수 검색은 임베딩이 정한 순서를 그대로 보입니다. 헤드셋의 2위는 해시 충돌로 올라온 텀블러였습니다.';
                     case 'ann': return '헷갈리는 것은 <strong>재현율 1.0 이면 좋은 결과인가</strong>입니다. 재현율은 전수 검색의 답을 얼마나 찾았는지만 봅니다. 결과가 좋은지는 임베딩이 정합니다.';

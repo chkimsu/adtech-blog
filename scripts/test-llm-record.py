@@ -211,6 +211,34 @@ try:
         got = [(it['id'], it['think'], it['run'], it['options']) for it in read(os.path.join(RECORDS, slug + '.json'))['items']]
         eq('%s: 지금 기록의 항목이 계획과 같은 차례, 같은 options' % slug, got, sent)
 
+    print('\nplan_requests — 묶음의 options 는 맨 위 options 를 물려받고 그 위에 얹힌다 (README 의 규칙)')
+    def synth(**extra):
+        return dict({'system': 's', 'items': [{'id': 'a', 'user': 'u'}, {'id': 'b', 'user': 'v'}], 'think': 'off', 'repeat': 1}, **extra)
+    def opts_of(plan_, id_, think, run):
+        return [j['options'] for j in plan_ if j['id'] == id_ and j['think'] == think and j['run'] == run][0]
+    # think_subset 이 맨 위 options 를 물려받는다
+    p1 = L.plan_requests(synth(options={'temperature': 0.7, 'seed': 5}, think_subset={'ids': ['a'], 'think': 'on'}), None)
+    eq('think_subset 은 맨 위의 temperature 와 seed 를 그대로 물려받는다',
+       opts_of(p1, 'a', True, 1), {'temperature': 0.7, 'seed': 5})
+    p2 = L.plan_requests(synth(options={'temperature': 0.7}, think_subset={'ids': ['a'], 'think': 'on'}), None)
+    eq('맨 위에 temperature 만 있으면 think_subset 도 seed 는 7 + run (think 켠 첫 회차라 8)',
+       opts_of(p2, 'a', True, 1), {'temperature': 0.7, 'seed': 8})
+    p3 = L.plan_requests(synth(options={'num_ctx': 4096}, think_subset={'ids': ['a'], 'think': 'on'}), None)
+    eq('기본값에 없는 키(num_ctx)도 think_subset 이 물려받고 기본 temperature 0, seed 7 은 그대로',
+       opts_of(p3, 'a', True, 1), {'temperature': 0, 'seed': 7, 'num_ctx': 4096})
+    # 묶음의 options 가 맨 위 위에 얹힌다
+    p4 = L.plan_requests(synth(options={'temperature': 0.7}, think_subset={'ids': ['a'], 'think': 'on', 'options': {'temperature': 0.2}}), None)
+    eq('think_subset 의 options 가 맨 위의 temperature 를 덮고, seed 는 7 + run',
+       (opts_of(p4, 'a', True, 1), opts_of(p4, 'a', False, 1)), ({'temperature': 0.2, 'seed': 8}, {'temperature': 0.7, 'seed': 8}))
+    p5 = L.plan_requests(synth(options={'temperature': 0.3}, repeat_subset={'ids': ['a'], 'repeat': 2, 'options': {'seed': 11}}), None)
+    eq('묶음에 없는 키는 맨 위 값을 물려받는다 (temperature 0.3 + 묶음의 seed 11)',
+       (opts_of(p5, 'a', False, 2), opts_of(p5, 'a', False, 3)), ({'temperature': 0.3, 'seed': 11}, {'temperature': 0.3, 'seed': 11}))
+    eq('묶음의 options 는 그 묶음에만 쓰인다 (기준 답은 맨 위 값, 묶음에 안 든 b 도 마찬가지)',
+       (opts_of(p5, 'a', False, 1), opts_of(p5, 'b', False, 1)), ({'temperature': 0.3, 'seed': 8}, {'temperature': 0.3, 'seed': 8}))
+    p6 = L.plan_requests(synth(options={'seed': 3}, repeat_subset={'ids': ['a'], 'repeat': 1, 'options': {'temperature': 0.7}}), None)
+    eq('맨 위에 seed 가 있으면 묶음이 temperature 만 올려도 seed 는 맨 위의 3',
+       opts_of(p6, 'a', False, 2), {'temperature': 0.7, 'seed': 3})
+
     print('\nprompt_problems — 프롬프트 파일의 꼴')
     for slug in SLUGS:
         eq('%s 프롬프트는 문제 없음' % slug, L.prompt_problems(read(os.path.join(RECORDS, 'prompts', slug + '.json'))), [])

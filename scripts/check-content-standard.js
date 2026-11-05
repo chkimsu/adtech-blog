@@ -85,9 +85,28 @@ function shortSections(md) {
 const CODE_FILL = '';   // 코드 안쪽 글자 자리
 const CODE_END = '';    // 스팬 끝. 코드 스팬 둘이 붙어 있어도 안 뭉치게 한다
 // 한 덩어리 글을 문장으로 나눠 80자를 넘는 것만 돌려준다. 산문과 글머리표가 같이 쓴다.
+// HTML 엔티티는 화면에서 한 글자다. &rarr; 를 여섯 글자로 세면 도표 범례가 장문으로 잡힌다.
+const ENTITY = {
+  rarr: '→', larr: '←', harr: '↔', uarr: '↑', darr: '↓', nbsp: ' ', amp: '&', lt: '<', gt: '>',
+  quot: '"', apos: "'", middot: '·', hellip: '…', times: '×', le: '≤', ge: '≥', ne: '≠',
+  ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', minus: '−', deg: '°', plusmn: '±',
+};
+function decodeEntities(s) {
+  return s.replace(/&(#[xX][0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e) => {
+    if (e[0] === '#') {
+      const cp = /^#[xX]/.test(e) ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      try { return String.fromCodePoint(cp); } catch (_) { return '\uE003'; }
+    }
+    return ENTITY[e] ?? '\uE003';   // 모르는 이름도 한 글자로 센다
+  });
+}
+// 「」 안의 마침표, 물음표, 콜론 뒤 공백은 문장 경계가 아니다. 인용 안의 문장 셋이
+// 조각마다 짧게 세어져 112자 인용이 안 걸리던 것을 막는다. 공백을 자리표시자로 바꿔 두었다가 되돌린다.
+// 인용 하나는 여러 문장이어도 한 덩어리로 잰다(블로그 규칙: 「」 안에서 나누지 않는다).
+const QUOTE_GAP = '\uE004';
 function overLong(text0) {
   const spans = [];
-  const text = text0
+  const text = decodeEntities(text0)
     // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
     // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
     .replace(/\*\*/g, '')
@@ -99,7 +118,10 @@ function overLong(text0) {
     });
   let i = 0;
   return text
-    .split(/(?<=[.!?:])\s+/)
+    .replace(/「[^「」]*」/g, q => q.replace(/([.!?:])\s+/g, `$1${QUOTE_GAP}`))
+    // 마침표나 물음표로 끝난 인용(「…?」) 뒤의 공백은 문장 경계다. 「…」라고 처럼 붙으면 경계가 아니다.
+    .split(/(?<=[.!?:]|[.!?]」)\s+/)
+    .map(s => s.replace(new RegExp(QUOTE_GAP, 'g'), ' '))
     .map(s => s.replace(new RegExp(`${CODE_FILL}*${CODE_END}`, 'g'), () => spans[i++]))
     .map(s => s.replace(/\s+/g, ' ').trim())
     .filter(s => s.length > MAX_SENTENCE);
@@ -125,7 +147,10 @@ const REF_HEADING = /^(#{1,6})\s+.*(참고문헌|참고 자료|References)/;
 function longBullets(md) {
   const out = [];
   let refLevel = 0;   // 0 이면 참고문헌 절 밖
-  for (const line of prose(md).split('\n')) {
+  const BULLET = /^\s*(?:[-*]|\d+\.)\s+(.*)$/;
+  const lines = prose(md).split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const h = line.match(/^(#{1,6})\s/);
     if (h) {
       const level = h[1].length;
@@ -134,9 +159,15 @@ function longBullets(md) {
       continue;
     }
     if (refLevel) continue;
-    const m = line.match(/^\s*(?:[-*]|\d+\.)\s+(.*)$/);
-    if (!m || /http/.test(m[1])) continue;
-    out.push(...overLong(m[1]));
+    const m = line.match(BULLET);
+    if (!m) continue;
+    // 글머리표가 다음 줄로 이어지면(들여쓴 줄, 새 글머리표가 아님) 한 항목으로 이어 붙여 잰다.
+    let text = m[1];
+    while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1]) && !BULLET.test(lines[i + 1])) {
+      text += ' ' + lines[++i].trim();
+    }
+    if (/http/.test(text)) continue;
+    out.push(...overLong(text));
   }
   return out;
 }
@@ -191,7 +222,7 @@ function check(post) {
 }
 
 // 시험에서 함수만 꺼내 쓸 수 있게 열어 둔다. CLI는 아래 require.main 가드 안에서만 돈다.
-module.exports = { prose, shortSections, longSentences, longBullets, deadLinks, check, MAX_SENTENCE };
+module.exports = { prose, shortSections, longSentences, longBullets, overLong, decodeEntities, deadLinks, check, MAX_SENTENCE };
 
 if (require.main !== module) return;
 

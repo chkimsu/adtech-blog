@@ -22,6 +22,21 @@ function readerLength(s) {
 
 const CASES = [
   {
+    name: 'HTML 엔티티는 한 글자다 — &rarr; 넷을 여섯 글자씩 세면 78자 범례가 98자로 잡힌다',
+    md: '<span>' + '가'.repeat(18) + ' &rarr; ' + '나'.repeat(14) + ' &rarr; ' + '다'.repeat(14) + ' &rarr; ' + '라'.repeat(14) + ' &rarr; ' + '마'.repeat(6) + '</span>',
+    flagged: false,
+  },
+  {
+    name: '「」 안의 마침표에서 나누지 않는다 — 문장 셋짜리 인용이 조각마다 짧게 세어져 통과해 버린다',
+    md: '선배는 「' + '바'.repeat(30) + '. ' + '사'.repeat(30) + '. ' + '아'.repeat(20) + '」라고 했습니다.',
+    flagged: true,
+  },
+  {
+    name: '물음표로 끝난 인용 뒤의 공백은 문장 경계다 — 「질문?」 뒤의 새 문장까지 한 문장으로 세지 않는다',
+    md: '「' + '자'.repeat(40) + '?」 선배는 「' + '차'.repeat(40) + '」라고 했습니다.',
+    flagged: false,
+  },
+  {
     name: '코드 스팬이 든 91자 문장 — 접으면 46자로 세어져 통과해 버린다',
     md: '설정에 `access_log /var/log/collect.log collect buffer=32k;` 를 주면 nginx 는 32KB 를 모았다가 한 번에 쓴다.',
     flagged: true,
@@ -82,6 +97,12 @@ const CASES = [
 // 글머리표 줄 시험. 보이는 글자 수로 재고, http 가 든 참고문헌 줄은 건너뛴다.
 const URL_ONLY = 'post.html?id=' + 'x'.repeat(60);
 const BULLET_CASES = [
+  {
+    name: '글머리표 — 다음 줄로 이어진 항목은 이어 붙여 잰다',
+    md: '- ' + '카'.repeat(50) + '\n  ' + '타'.repeat(40) + '.',
+    flagged: true,
+    count: 1,
+  },
   {
     name: '글머리표 — 주소 때문에 길지만 보이는 글은 80자 이하면 안 걸린다',
     md: `- [조인 창을 넓히면 어떻게 되는지 보는 글](${URL_ONLY}) 에서 다룬다.`,

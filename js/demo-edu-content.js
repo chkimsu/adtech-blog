@@ -3979,7 +3979,7 @@ window.DEMO_EDU = {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
                     case 'rubric': return '헷갈리는 것은 <strong>채점표에 적으면 모델이 사람의 기준을 아는가</strong>입니다. 3점에 「가까운 분류」라고 적었지만 이웃 분류의 목록은 주지 않았습니다. 모델은 그 문장만 읽습니다.';
-                    case 'score': return '헷갈리는 것은 <strong>0.64 면 꽤 맞은 것인가</strong>입니다. 상과 하는 거의 맞았지만 중은 15쌍 모두 하였습니다. 칸마다 센 표를 봐야 어디서 어긋났는지 보입니다.';
+                    case 'score': return '헷갈리는 것은 <strong>0.64 면 꽤 맞은 것인가</strong>입니다. 상과 하는 거의 맞았지만 중은 15쌍 모두 하로 판정되었습니다. 칸마다 센 표를 봐야 어디서 어긋났는지 보입니다.';
                     case 'swap': return '헷갈리는 것은 <strong>한 번 물은 답이 그 쌍의 승자인가</strong>입니다. c07 은 처음 순서와 바꾼 순서 모두 A 자리가 이겼습니다. 두 번 물어야 이런 쌍이 드러납니다.';
                     case 'kappa': return '헷갈리는 것은 <strong>일치율이 높을수록 좋은 판정인가</strong>입니다. 모두 상이라 답하는 판정은 일치율 0.90 이지만 kappa 는 0.00 입니다. 상품을 읽지 않아도 얻는 몫이기 때문입니다.';
                     default: return '';

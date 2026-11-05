@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool use 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="LLM 이 도구를 고르고 코드가 실행하는 루프를 카드 네 장으로 봅니다. 멈춤 조건 셋과 코드의 가드레일도 봅니다. 캠페인 셋은 가상 데이터입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>Tool use 카드 네 장</h1>
+      <p>지훈 씨가 답 대신 도구를 불러 달라는 모델을 본 길을 카드 네 장으로 봅니다. 도구 셋을 정의하고, 가짜 LLM 이 고른 호출을 코드가 실행합니다. 끝나지 않는 과제는 멈춤 조건이 끊고, 20% 넘는 변경은 코드가 거부합니다. 캠페인 셋과 어제 통계는 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 모델이 고른 것</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 도구와 캠페인</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 거부되거나 멈춘 것</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (캠페인 셋)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="tools"><h2>TOOLS</h2><p class="tg-k">도구 셋의 정의</p><p class="tg-easy"><b>쉽게 말하면</b> 모델에게 부를 수 있는 함수의 이름, 설명, 입력 꼴을 건넵니다. 모델은 이 셋 가운데서 고릅니다.</p><div class="tg-fig" id="tl-tools"></div>
+        <p class="tg-cap">도구는 <b>3개</b>, 목표보다 낮은 캠페인은 ROAS <b>280%</b> 인 러닝화 하나입니다.</p></section>
+      <section class="tg-card" data-card="loop"><h2>LOOP</h2><p class="tg-k">LLM 이 고르고 코드가 실행하는 한 바퀴</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 tool_use 블록을 적으면 코드가 돌리고, 결과를 tool_result 로 다시 넣습니다.</p><div class="tg-fig" id="tl-loop"></div>
+        <p class="tg-cap">첫 과제는 <b>4단계</b>, 도구 호출 <b>5번</b>에 end_turn 으로 끝났습니다.</p></section>
+      <section class="tg-card" data-card="stop"><h2>STOP</h2><p class="tg-k">멈춤 조건 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 모델이 끝내지 않아도 코드가 루프를 끊습니다. 같은 호출 반복과 단계 상한입니다.</p><div class="tg-fig" id="tl-stop"></div>
+        <p class="tg-cap">반복 검사는 <b>5단계</b>, 단계 상한은 <b>6단계</b>에서 멈췄습니다.</p></section>
+      <section class="tg-card" data-card="guard"><h2>GUARD</h2><p class="tg-k">가드레일은 코드</p><p class="tg-easy"><b>쉽게 말하면</b> 20% 상한은 설명 글이 아니라 실행 코드가 지킵니다. 거부도 결과로 돌려줍니다.</p><div class="tg-fig" id="tl-guard"></div>
+        <p class="tg-cap">30% 변경은 <b>2번</b> 거부되었고, 20% 로 고친 호출은 통과했습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>입찰가를 바꾸는 도구에는</b> 한 번의 상한 말고도 하루 누적 한도나 사람의 확인을 함께 둡니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=tool-use-agent-loop">Tool use 와 에이전트 루프</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=rag-basics">RAG</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/tool-loop-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

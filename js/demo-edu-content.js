@@ -3947,5 +3947,27 @@ window.DEMO_EDU = {
             { el: '[data-card="chunk"]', title: '가장 먼저 볼 것', body: '문서 한 건은 문장 두 개씩 조각 둘이 되고, 조각마다 문서 id 가 붙습니다.', waitFor: 'click' },
             { el: '[data-card="grounding"]', title: '끝에 남는 것', body: '근거 대조는 코드가 합니다. 이 기록은 15개 모두 통과했고, 근거 없는 답은 0개였습니다.' }
         ]
+    },
+    'tool-loop-cards': {
+        analogy: '모델은 부를 도구와 입력을 적고, 코드가 실행해 결과를 다시 넣는다. 첫 과제는 4단계, 도구 호출 5번에 끝났다. 끝나지 않는 과제는 반복 검사가 5단계에서, 단계 상한이 6단계에서 멈췄고, 20% 넘는 변경은 코드가 거부했다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'tools': return '헷갈리는 것은 <strong>도구 정의가 곧 함수인가</strong>입니다. 정의는 이름, 설명, 입력 꼴을 적은 글입니다. 함수는 코드 쪽에 따로 있고, 모델은 정의만 읽습니다.';
+                    case 'loop': return '헷갈리는 것은 <strong>입찰가를 바꾼 것이 모델인가</strong>입니다. 모델은 set_bid 를 불러 달라고 적었을 뿐입니다. 18000원으로 바꾼 것은 run_tool 이었습니다.';
+                    case 'stop': return '헷갈리는 것은 <strong>모델이 언젠가 끝내 주는가</strong>입니다. 목표에 닿을 수 없는 과제에서는 끝내지 않았습니다. 반복 검사와 단계 상한은 코드가 정하는 멈춤입니다.';
+                    case 'guard': return '헷갈리는 것은 <strong>설명에 적으면 지켜지는가</strong>입니다. set_bid 설명에 20% 를 적었지만 30% 호출이 2번 왔습니다. 막은 것은 실행 코드의 비교였습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 하는 일, 벽돌색은 모델이 고른 것, 먹색은 도구와 캠페인입니다. 회색은 거부되거나 멈춘 것, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="loop"]', title: '가장 먼저 볼 것', body: '모델이 tool_use 블록을 적고, 코드가 실행해 tool_result 로 다시 넣습니다.', waitFor: 'click' },
+            { el: '[data-card="guard"]', title: '끝에 남는 것', body: '20% 상한은 코드가 지킵니다. 거부도 결과로 돌아가 모델이 다시 고릅니다.' }
+        ]
     }
 };

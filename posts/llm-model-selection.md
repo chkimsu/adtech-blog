@@ -44,9 +44,9 @@ LLM 은 글을 읽고 이어 쓰도록 학습한 큰 언어 모델입니다. 상
 | GPT | OpenAI API | 받지 않음 | 문서에 없음 | 대표 모델 넷 모두 1.05M 토큰 | 풀이 양을 단계로 정함, 끄는 단계는 GPT-6.1 Terra, GPT-6 Luna 만 |
 | Gemini | Gemini API | 받지 않음 | 문서에 없음 | Gemini 4 Argon 1,048,576 토큰 | 기본으로 켬, 양을 low 에서 high 로 정함 |
 | Qwen3.5 | 직접 운영하는 서버, Alibaba Cloud API | 받음, Apache 2.0 | 27B, 35B 중 3B, 397B 중 17B | 262,144 토큰, 늘리면 1,010,000 | 기본으로 켬, 끌 수 있음 |
-| Llama 4 | 직접 운영하는 서버 | 받음, Llama 4 Community License | Scout 109B 중 17B, Maverick 400B 중 17B | Scout 10M, Maverick 1M 토큰 | 문서에 없음 |
-| Gemma 4 | 직접 운영하는 서버, 노트북, 휴대폰 | 받음, Apache 2.0 | E2B, E4B, 12B, 31B, 26B A4B 다섯, 26B A4B 는 25.2B 중 3.8B | E2B, E4B 는 128K, 나머지 셋 256K 토큰 | 시스템 메시지 첫머리의 표시로 켬 |
-| DeepSeek-V4 | 직접 운영하는 서버, DeepSeek API | 받음, MIT | Flash 284B 중 13B, Pro 1.6T 중 49B | 1M 토큰 | Non-think, Think High, Think Max 셋 |
+| Llama 4 | 직접 운영 | 받음, Llama 4 Community License | Scout 109B 중 17B, Maverick 400B 중 17B | Scout 10M, Maverick 1M 토큰 | 문서에 없음 |
+| Gemma 4 | 직접 운영, 노트북, 휴대폰 | 받음, Apache 2.0 | E2B, E4B, 12B, 31B, 26B A4B 다섯, 26B A4B 는 25.2B 중 3.8B | E2B, E4B 는 128K, 나머지 셋 256K 토큰 | 시스템 메시지 첫머리의 표시로 켬 |
+| DeepSeek-V4 | 직접 운영, DeepSeek API | 받음, MIT | Flash 284B 중 13B, Pro 1.6T 중 49B | 1M 토큰 | Non-think, Think High, Think Max 셋 |
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-model-selection-cards.html?embed=1&card=landscape" height="480" loading="lazy" title="상용 API 세 계열과 공개 가중치 네 계열"></iframe>
@@ -109,7 +109,7 @@ reasoning 은 같은 풀이를 부르는 다른 이름입니다. OpenAI 문서�
 
 문제 20개는 광고 운영에서 자주 나오는 계산입니다. 노출 가운데 클릭의 비율인 클릭률처럼 한 단계로 푸는 문제가 easy 10개입니다. 클릭 가운데 구매 같은 전환이 일어난 비율은 전환율이라고 부릅니다. 예산을 클릭당 비용으로 나눈 뒤 전환율을 곱하는 것처럼 두세 단계로 푸는 문제가 hard 10개입니다. 답은 모두 단위 없는 정수이고, 블록의 PROBLEMS 에 문제와 정답이 같이 들어 있습니다.
 
-시스템 메시지는 「문제를 읽고 정수 답 하나를 JSON {"answer": 정수} 로만 답한다. 설명을 쓰지 않는다.」 두 문장입니다. JSON 은 이름과 값의 짝을 중괄호로 묶어 적는 꼴입니다. 사용자 메시지는 「문제: 」 뒤에 문제 한 줄을 붙인 글입니다. 20개 모두 thinking 을 끄고 temperature 0 과 seed 7 로 한 번씩 물었습니다. temperature 는 다음 토큰을 얼마나 흔들리게 뽑을지 정하는 값이고, seed 는 뽑을 때 쓰는 난수의 시작값입니다. [자연어 오디언스](post.html?id=natural-language-audience) 편과 [컨텍스추얼 타겟팅](post.html?id=contextual-targeting) 편에서 temperature 0 은 다시 기록해도 같은 답이 나왔습니다. hard 10개는 thinking 만 켜서 한 번 더 물었습니다.
+시스템 메시지는 「문제를 읽고 정수 답 하나를 JSON {"answer": 정수} 로만 답한다. 설명을 쓰지 않는다.」 두 문장입니다. JSON 은 이름과 값의 짝을 중괄호로 묶어 적는 꼴입니다. 사용자 메시지는 「문제: 」 뒤에 문제 한 줄을 붙인 글입니다. 20개 모두 thinking 을 끄고 temperature 0 과 seed 7 로 한 번씩 물었습니다. temperature 는 다음 토큰을 얼마나 흔들리게 뽑을지 정하는 값이고, seed 는 뽑을 때 쓰는 난수의 시작값입니다. [자연어 오디언스](post.html?id=natural-language-audience) 편과 [컨텍스추얼 타겟팅](post.html?id=contextual-targeting) 편에서 temperature 0 은 다시 기록해도 같은 답이 나왔습니다. 답이 같았다는 뜻이고, 글자까지 같았다는 뜻은 아닙니다. 그 차이는 [비용, 캐시, 비결정성](post.html?id=llm-cost-cache-nondeterminism) 편에서 봅니다. hard 10개는 thinking 만 켜서 한 번 더 물었습니다.
 
 아래 블록은 답을 JSON 으로 읽고, answer 가 정수일 때만 답으로 칩니다. 꼴이 틀린 답은 읽지 못한 답으로 세고 틀린 답으로 칩니다. 틀린 답은 정답과 자릿수만 다른지도 같이 찍습니다. 키 p11|on|1 은 p11 을 thinking 을 켜고 받은 답입니다. 두 상수는 `--export-constant --with-usage` 가 찍은 줄 그대로입니다.
 
@@ -191,7 +191,12 @@ for i in off:
         print(f'틀림 {i}: 정답 {ANSWER[i]:,}, 읽지 못한 답 {RECORD[i]}')
         continue
     k = digits_only(ANSWER[i], v)
-    note = '자릿수 말고도 다름' if not k else f'자릿수만 다름, 정답의 1/{k}' if v < ANSWER[i] else f'자릿수만 다름, 정답의 {k}배'
+    if not k:
+        note = '자릿수 말고도 다름'
+    elif v < ANSWER[i]:
+        note = f'자릿수만 다름, 정답의 1/{k}'
+    else:
+        note = f'자릿수만 다름, 정답의 {k}배'
     print(f'틀림 {i}: 정답 {ANSWER[i]:,}, 답 {v:,} ({note})')
 
 # 3단계: hard 10개를 thinking 을 켠 답과 견준다
@@ -292,11 +297,11 @@ print(f'요청 한 건: 입력 {SYSTEM + USER:,} 토큰 (시스템 {SYSTEM:,} + 
 # 셋째 경우는 요청마다 같은 시스템 메시지 1,000 토큰을 캐시에서 읽는다. 사용자 메시지와 출력은 그대로다.
 cases = [('작은 모델', '작은 모델', 0), ('큰 모델', '큰 모델', 0), ('큰 모델 + 시스템 캐시', '큰 모델', SYSTEM)]
 daily = {}
-for name, model, cached in cases:
+for name, model, cached_tokens in cases:
     price_in, price_out = PRICES[model]
-    one = cost_won(SYSTEM + USER, OUT, price_in, price_out, cached)
-    part_in = cost_won(SYSTEM + USER, 0, price_in, price_out, cached)
-    daily[name] = round(cost_won((SYSTEM + USER) * DAILY, OUT * DAILY, price_in, price_out, cached * DAILY))
+    one = cost_won(SYSTEM + USER, OUT, price_in, price_out, cached_tokens)
+    part_in = cost_won(SYSTEM + USER, 0, price_in, price_out, cached_tokens)
+    daily[name] = round(cost_won((SYSTEM + USER) * DAILY, OUT * DAILY, price_in, price_out, cached_tokens * DAILY))
     print(f'{name}: 한 건 {one:.2f}원 (입력 {part_in:.2f}원, 출력 {one - part_in:.2f}원), 하루 {daily[name]:,}원')
 
 # 4단계: 세 값을 견준다

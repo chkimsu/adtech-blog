@@ -68,6 +68,7 @@ import json
 # 값은 설명을 위해 만든 가상 데이터다. 러닝화와 여행사는 구매 1건(cpa)에, 카페는 클릭 1번(cpc)에 입찰한다.
 # 목표 ROAS 는 러닝화 400%, 여행사 300% 이고 카페에는 없다. aov 는 구매 1건의 매출, 곧 객단가다.
 # 통계는 어제 하루의 값이라 오늘 입찰가를 바꿔도 이 실행 안에서는 바뀌지 않는다.
+# pctr, pcvr, daily_budget 은 캠페인 셋의 값을 그대로 둔 것이고, 이 글의 도구와 루프는 쓰지 않는다.
 CAMPAIGNS = {
     'c1': {'name': 'running_shoes', 'pctr': 0.012, 'pcvr': 0.030, 'bid_type': 'cpa', 'bid': 20000,
            'daily_budget': 3000000, 'target_roas': 400, 'aov': 120000},
@@ -263,6 +264,7 @@ def run_agent(task, max_steps=6, detect_repeat=True):
         for block in response['content']:
             key = block['name'] + json.dumps(block['input'], sort_keys=True)
             if detect_repeat and key in seen:
+                # 여기서 멈추면 messages 끝의 assistant 메시지에 짝인 tool_result 가 없는 tool_use 가 남는다.
                 return finish('repeat', step)
             seen.add(key)
             content, is_error = run_tool(block['name'], block['input'])

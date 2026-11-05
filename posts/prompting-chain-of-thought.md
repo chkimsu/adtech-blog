@@ -31,7 +31,7 @@
 
 둘째 자리는 예시입니다. fewshot 은 plain 의 두 문장 뒤에 「예시 셋:」과 문제 셋, 그 답을 붙였습니다. 예시 문제는 20개 밖에서 새로 만들었고, 답은 300, 80, 2000 입니다. 답은 20개에 바라는 답과 같은 JSON 꼴로 적었습니다. 예시는 풀이를 보여 주지 않고, 문제와 답의 꼴만 보여 줍니다.
 
-셋째 자리는 답을 쓰는 순서를 정하는 지시 한 줄입니다. steps 의 시스템 메시지는 「먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다.」로 시작합니다. 답의 꼴도 {"steps": [...], "answer": 정수} 로 바꿨습니다. 이 블로그의 기록은 답에 영어와 숫자만 쓰게 해서, 단계도 영어로 적게 했습니다.
+셋째 자리는 답을 쓰는 순서를 정하는 지시 한 줄입니다. steps 의 시스템 메시지는 「먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다.」로 시작합니다. 답의 꼴도 {"steps": [...], "answer": 정수} 로 바꿨습니다. 곧 CoT 가 바꾸는 자리는 둘, 시스템 메시지의 지시와 JSON 의 steps 칸입니다. 이 블로그의 기록은 답에 영어와 숫자만 쓰게 해서, 단계도 영어로 적게 했습니다.
 
 Chain-of-Thought 라는 이름은 Wei 등의 2022년 논문에서 왔습니다. 논문은 풀이를 적은 예시 여덟 개를 파라미터 5,400억 개인 모델의 프롬프트 앞에 두었습니다. 논문은 이것으로 수학 문장 문제 GSM8K 에서 당시 가장 높은 정확도를 냈다고 적었습니다. Kojima 등은 예시 없이 답 앞에 「Let's think step by step」 한 줄만 붙였습니다. steps 는 예시 없이 지시 한 줄로 단계를 쓰게 하니 Kojima 쪽에 가깝습니다.
 
@@ -170,11 +170,17 @@ show('fewshot', few)
 extra = [U_FEW[i][0] - U_PLAIN[i][0] for i in IDS]
 span = f'{min(extra)}개' if min(extra) == max(extra) else f'{min(extra)}~{max(extra)}개'
 print(f'예시 셋이 늘린 입력 토큰: 문제마다 {span}, 20개 합 {sum(extra):,}개')
+
+
+def fmt(v):
+    return '읽지 못한 답' if v is None else f'{v:,}'   # None 은 쉼표를 찍지 않고 말로 적는다
+
+
+mark = {True: '맞음', False: '틀림'}
 for i in IDS:
     if few['got'][i] != plain['got'][i]:
-        mark = {True: '맞음', False: '틀림'}
-        print(f'바뀐 답 {i}: 정답 {ANSWER[i]:,}, plain {plain["got"][i]:,} ({mark[plain["right"][i]]}) '
-              f'-> fewshot {few["got"][i]:,} ({mark[few["right"][i]]})')
+        print(f'바뀐 답 {i}: 정답 {ANSWER[i]:,}, plain {fmt(plain["got"][i])} ({mark[plain["right"][i]]}) '
+              f'-> fewshot {fmt(few["got"][i])} ({mark[few["right"][i]]})')
 
 # 출력:
 # 2단계 뜻: 20개 모두 읽혔고 맞힘은 13개로 줄었다. 바뀐 답 5개 중 p16 만 맞던 답이 틀린 답이 되었다.
@@ -220,6 +226,7 @@ steps 의 답은 꼴이 다르니 읽는 함수를 새로 둡니다. 키가 step
 # (앞 블록에 이어서 돌린다.)
 # 하는 일: 단계를 먼저 적게 해 받은 답 20개를 채점하고, 프롬프트 세 벌의 맞힘과 토큰과 시간을 한 표로 견준다.
 # 기록 data/llm-records/prompting-chain-of-thought-steps.json 에서 옮김
+import re
 
 # 1단계: steps 기록을 둔다
 # 시스템 메시지는 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적으라고 한다.
@@ -245,23 +252,26 @@ def read_steps(text):
     return obj['answer']
 
 
+def steps_of(i):
+    return json.loads(R_STEPS[i])['steps'] if steps['got'][i] is not None else []   # 읽지 못한 답은 단계도 없다
+
+
 steps = score(R_STEPS, U_STEPS, read_steps)
 show('steps', steps)
-count = [len(json.loads(R_STEPS[i])['steps']) for i in IDS if steps['got'][i] is not None]
+count = [len(steps_of(i)) for i in IDS if steps['got'][i] is not None]
 print(f'steps 의 단계 수: 가장 적게 {min(count)}개, 가장 많이 {max(count)}개, 평균 {sum(count) / len(count):.2f}개')
 print(f'steps 의 출력 토큰: 문제마다 {min(U_STEPS[i][1] for i in IDS)}~{max(U_STEPS[i][1] for i in IDS)}개')
-print(f'p12 plain: 답 {plain["got"]["p12"]:,}, 출력 토큰 {U_PLAIN["p12"][1]}개 / '
-      f'steps: 답 {steps["got"]["p12"]:,}, 출력 토큰 {U_STEPS["p12"][1]}개')
+print(f'p12 plain: 답 {fmt(plain["got"]["p12"])}, 출력 토큰 {U_PLAIN["p12"][1]}개 / '
+      f'steps: 답 {fmt(steps["got"]["p12"])}, 출력 토큰 {U_STEPS["p12"][1]}개')
 for i in IDS:
     if not steps['right'][i]:
-        print(f'steps 틀림 {i}: 정답 {ANSWER[i]:,}, 답 {steps["got"][i]:,}, 단계 ' + ' / '.join(json.loads(R_STEPS[i])['steps']))
+        print(f'steps 틀림 {i}: 정답 {ANSWER[i]:,}, 답 {fmt(steps["got"][i])}, 단계 ' + ' / '.join(steps_of(i)))
 
 # 3단계: hard 10개를 단계에 숫자를 적은 답과 말로만 적은 답으로 나눈다
 # 두 자리 넘는 숫자가 한 단계라도 있으면 숫자를 적은 답으로 본다. 1. 같은 단계 번호는 세지 않는다.
-import re
 hard = [i for i in IDS if LEVEL[i] == 'hard']
 for name, keep in (('숫자를 적은 답', True), ('말로만 적은 답', False)):
-    ids = [i for i in hard if any(re.search(r'\d{2,}', t) for t in json.loads(R_STEPS[i])['steps']) == keep]
+    ids = [i for i in hard if any(re.search(r'\d{2,}', t) for t in steps_of(i)) == keep]
     print(f'hard 중 {name} {len(ids)}개, 맞힘 {sum(steps["right"][i] for i in ids)}개: {", ".join(ids)}')
 
 # 4단계: 세 벌을 한 표로 견준다

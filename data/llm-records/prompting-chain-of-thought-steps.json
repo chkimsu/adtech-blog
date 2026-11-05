@@ -1,0 +1,331 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-05",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "p01",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 120,000건에서 클릭이 3,600건이면 클릭률은 몇 %인가?",
+      "output": "{\n\"steps\": [\n\"Divide clicks by impressions\",\n\"3600 divided by 120000 equals 0.03\",\n\"Multiply the result by 100 to get percentage\",\n\"0.03 times 100 equals 3\"\n],\n\"answer\": 3\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 102,
+      "output_tokens": 75,
+      "elapsed_ms": 5903,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p02",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 120,000건에서 클릭률이 1.2%이면 클릭은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"1. Convert CTR to decimal\",\n\"2. Multiply impressions by CTR\",\n\"3. Calculate final clicks\"\n],\n\"answer\": 1440\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 100,
+      "output_tokens": 47,
+      "elapsed_ms": 4007,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p03",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 클릭 2,500건에서 전환이 100건이면 전환율은 몇 %인가?",
+      "output": "{\n\"steps\": [\n\"Divide conversions by clicks\",\n\"100 divided by 2500 is 0.04\",\n\"Multiply by 100 to get percent\",\n\"0.04 times 100 is 4\"\n],\n\"answer\": 4\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 98,
+      "output_tokens": 70,
+      "elapsed_ms": 5373,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p04",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 광고비 600,000원으로 클릭 2,400건을 얻었다면 클릭당 비용은 몇 원인가?",
+      "output": "{\"steps\": [\"Divide 600000 by 2400\", \"Calculate the result\"], \"answer\": 250}",
+      "thinking_chars": 0,
+      "prompt_tokens": 105,
+      "output_tokens": 33,
+      "elapsed_ms": 2781,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p05",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 클릭 4,000건에서 전환율이 2.5%이면 전환은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"1. Convert the conversion rate percentage to a decimal.\",\n\"2. Multiply the total clicks by the decimal conversion rate.\",\n\"3. Calculate the final number of conversions.\"\n],\n\"answer\": 100\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 98,
+      "output_tokens": 56,
+      "elapsed_ms": 4248,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p06",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 1,000건당 비용(CPM)이 4,000원이면 노출 50,000건의 광고비는 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"CPM is 4000 won per 1000 impressions\",\n\"Total impressions are 50000\",\n\"Divide total impressions by 1000 to get units\",\n\"Multiply units by CPM cost\",\n\"Calculate final cost\"\n],\n\"answer\": 200000\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 112,
+      "output_tokens": 83,
+      "elapsed_ms": 6135,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p07",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산 300만 원 중 120만 원을 썼다면 소진율은 몇 %인가?",
+      "output": "{\n\"steps\": [\n\"Divide 120 by 300\",\n\"Multiply the result by 100\"\n],\n\"answer\": 40\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 99,
+      "output_tokens": 42,
+      "elapsed_ms": 3288,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p08",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산이 300만 원이고 구매 건당 2만 원을 쓴다면 하루 구매는 최대 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"1. Divide total budget by cost per purchase.\",\n\"2. Calculate 3000000 divided by 20000.\"\n],\n\"answer\": 150\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 102,
+      "output_tokens": 52,
+      "elapsed_ms": 4161,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p09",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 광고비 500,000원으로 매출 2,000,000원이 났다면 ROAS(광고비 대비 매출 비율)는 몇 %인가?",
+      "output": "{\n\"steps\": [\n\"1. Divide sales by ad cost.\",\n\"2. Multiply the result by 100.\"\n],\n\"answer\": 400\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 115,
+      "output_tokens": 41,
+      "elapsed_ms": 3473,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p10",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 1,000건당 클릭이 12건이고 클릭당 입찰가가 250원이면 노출 1,000건당 기대 수익은 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate total clicks by multiplying impressions by click-through rate\",\n\"Calculate expected revenue by multiplying total clicks by cost per click\",\n\"Compute final value as 12 times 250\"\n],\n\"answer\": 3000\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 118,
+      "output_tokens": 61,
+      "elapsed_ms": 4575,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p11",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산 300만 원을 클릭당 250원으로 모두 쓰고 전환율이 2%이면 하루 전환은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"1. Divide daily budget by cost per click\",\n\"2. Multiply total clicks by conversion rate\",\n\"3. Calculate final conversions\"\n],\n\"answer\": 240\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 105,
+      "output_tokens": 49,
+      "elapsed_ms": 3802,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p12",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 384,000건에서 클릭률이 0.75%이고 클릭당 비용이 320원이면 광고비는 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate clicks by multiplying impressions 384000 by click-through rate 0.0075\",\n\"Calculate total cost by multiplying clicks by cost per click 320\"\n],\n\"answer\": 921600\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 111,
+      "output_tokens": 64,
+      "elapsed_ms": 4912,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p13",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 광고비 1,260,000원으로 클릭 4,200건을 얻었고 전환율이 2.5%이면 전환 건당 비용은 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate total conversions by multiplying clicks by conversion rate\",\n\"Divide total ad cost by total conversions to get cost per conversion\"\n],\n\"answer\": 120\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 115,
+      "output_tokens": 46,
+      "elapsed_ms": 3664,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p14",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산 300만 원 중 오전에 1,375,000원을 썼다. 남은 예산을 클릭당 325원에 모두 쓰면 클릭을 몇 건 더 얻는가?",
+      "output": "{\n\"steps\": [\n\"Calculate remaining budget: 3000000 - 1375000\",\n\"Divide remaining budget by cost per click: 1625000 / 325\"\n],\n\"answer\": 5000\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 121,
+      "output_tokens": 68,
+      "elapsed_ms": 5096,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p15",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 노출 1,000,000건이 있고 pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 예상 전환은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"Calculate clicks by multiplying impressions by pCTR\",\n\"Convert pCTR percentage to decimal\",\n\"Calculate conversions by multiplying clicks by pCVR\",\n\"Convert pCVR percentage to decimal\",\n\"Compute final expected conversions\"\n],\n\"answer\": 36\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 131,
+      "output_tokens": 66,
+      "elapsed_ms": 5281,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p16",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산 300만 원을 CPM(노출 1,000건당 비용) 6,250원으로 모두 쓴다. 클릭률이 1.2%, 전환율이 2.5%이면 하루 전환은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"Calculate total impressions by dividing budget by CPM\",\n\"Calculate total clicks by multiplying impressions by click-through rate\",\n\"Calculate total conversions by multiplying clicks by conversion rate\"\n],\n\"answer\": 144\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 131,
+      "output_tokens": 55,
+      "elapsed_ms": 4483,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p17",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 하루 예산 300만 원 중 62%를 오후에 쓴다. 오후 클릭당 비용이 310원, 전환율이 1.5%이면 오후 전환은 몇 건인가?",
+      "output": "{\n\"steps\": [\n\"Calculate afternoon budget: 3000000 * 0.62\",\n\"Calculate clicks: Afternoon budget / 310\",\n\"Calculate conversions: Clicks * 0.015\"\n],\n\"answer\": 90\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 126,
+      "output_tokens": 67,
+      "elapsed_ms": 5300,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p18",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: pCTR(노출 대비 클릭 확률)은 1.2%, pCVR(클릭 대비 전환 확률)은 3.0%이다. 구매 건당 입찰가가 2만 원이면 노출 1,000건당 기대 수익(eCPM)은 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate pCTR as 0.012\",\n\"Calculate pCVR as 0.03\",\n\"Calculate expected conversions per 1000 impressions: 1000 * 0.012 * 0.03 = 0.36\",\n\"Calculate total revenue: 0.36 * 20000 = 7200\",\n\"eCPM is the revenue per 1000 impressions which is 7200\"\n],\n\"answer\": 7200\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 141,
+      "output_tokens": 131,
+      "elapsed_ms": 9372,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p19",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 회원 72,000명에게 평균 4.5건씩 노출했다. 클릭률이 0.8%, 클릭당 비용이 210원이면 광고비는 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate total impressions by multiplying members by average exposures\",\n\"Calculate total clicks by multiplying total impressions by click-through rate\",\n\"Calculate total cost by multiplying total clicks by cost per click\"\n],\n\"answer\": 5443200\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 118,
+      "output_tokens": 62,
+      "elapsed_ms": 5283,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "p20",
+      "think": false,
+      "run": 1,
+      "system": "먼저 steps 에 영어 짧은 구로 단계를 적고(최대 5개) 마지막에 answer 를 적는다. JSON {\"steps\": [...], \"answer\": 정수} 로만 답한다. steps 의 문자열은 영어와 숫자만 쓴다.",
+      "user": "문제: 구매 건당 매출이 12만 원이고 전환율이 3.0%이다. 목표 ROAS(광고비 대비 매출 비율)가 400%이면 클릭당 비용의 상한은 몇 원인가?",
+      "output": "{\n\"steps\": [\n\"Calculate revenue per click by multiplying revenue per purchase by conversion rate.\",\n\"Divide the calculated revenue per click by the target ROAS to find the maximum cost per click.\"\n],\n\"answer\": 900\n}",
+      "thinking_chars": 0,
+      "prompt_tokens": 123,
+      "output_tokens": 55,
+      "elapsed_ms": 4453,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

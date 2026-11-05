@@ -3855,5 +3855,31 @@ window.DEMO_EDU = {
             { el: '[data-card="landscape"]', title: '가장 먼저 볼 것', body: '모델은 상용 API 와 공개 가중치 두 갈래로 나뉩니다. 가중치를 받아 회사 안 서버에서 돌리면 요청이 밖으로 나가지 않습니다.', waitFor: 'click' },
             { el: '[data-card="thinking"]', title: 'thinking 을 켜면', body: 'hard 10개의 맞힘이 4개에서 10개가 되고, 출력 토큰은 92.9배, 시간은 43.6배가 됩니다.' }
         ]
+    },
+
+    // ==========================================
+    // 프롬프트 카드 네 장 (입문)
+    // ==========================================
+    'prompting-cards': {
+        analogy: '같은 문제에 답이 달라지는 자리는 시스템 메시지의 할 일 설명, 예시, 지시 한 줄 셋이다. 문제 20개에서 맞힘은 plain 14개, fewshot 13개, steps 17개였고, 출력 토큰 합은 163개, 163개, 1,223개였다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'system': return '헷갈리는 것은 <strong>사용자 메시지를 바꿔야 답이 바뀌나</strong>입니다. 세 벌은 사용자 메시지가 모두 같고 시스템 메시지만 다릅니다. 그래도 맞힘이 14개, 13개, 17개로 달랐습니다.';
+                    case 'fewshot': return '헷갈리는 것은 <strong>예시가 답을 알려 주나</strong>입니다. 예시 셋은 20개 밖의 문제이고, 보여 주는 것은 답의 꼴입니다. 이 기록에서는 맞힘이 14개에서 13개가 되었습니다.';
+                    case 'cot': return '헷갈리는 것은 <strong>단계를 쓰면 thinking 을 켠 것인가</strong>입니다. 단계는 답 안의 steps 칸에 적은 글이고, thinking 은 끈 채로 기록했습니다. 단계도 출력 토큰이라 p12 는 9개에서 64개가 되었습니다.';
+                    case 'result': return '헷갈리는 것은 <strong>17개와 14개의 차이가 큰가</strong>입니다. 20개에서는 한 문제 차이도 커 보이고, 이 차이는 hard 3개에서 났습니다. 다른 문제로 다시 재야 같은 차이인지 압니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 plain, 먹색은 fewshot 과 모델, 벽돌색은 steps 입니다. 회색은 틀린 답, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="system"]', title: '가장 먼저 볼 것', body: '세 벌은 시스템 메시지만 다릅니다. 바꾼 자리는 할 일 설명, 예시, 지시 한 줄입니다.', waitFor: 'click' },
+            { el: '[data-card="result"]', title: '세 벌을 견주면', body: '맞힘은 14개, 13개, 17개이고, 출력 토큰 합은 163개, 163개, 1,223개입니다.' }
+        ]
     }
 };

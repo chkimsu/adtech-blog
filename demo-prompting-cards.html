@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프롬프트 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="같은 문제에 답이 달라지는 프롬프트의 세 자리를 카드 네 장으로 봅니다. 시스템 메시지, 예시 셋, 단계를 먼저 쓰게 하는 지시입니다. 문제 20개와 예시는 가상 값이고, 맞힘과 토큰 수는 기록한 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>프롬프트 카드 네 장</h1>
+      <p>지훈 씨가 같은 문제를 세 벌의 프롬프트로 물어 본 것을 카드 네 장으로 봅니다. 시스템 메시지의 자리, 예시 셋, 단계를 먼저 쓰게 한 답, 세 벌의 맞힘과 토큰입니다. 문제 20개와 예시 셋은 설명용 가상 값이고, 맞힘과 토큰과 시간은 한 번 기록한 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = plain, 문제만 보낸 답</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = fewshot, 예시 셋을 더한 답과 모델</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = steps, 단계를 먼저 쓴 답</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 틀린 답</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (문제와 예시)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="system"><h2>SYSTEM</h2><p class="tg-k">시스템 메시지와 사용자 메시지, 답이 달라지는 세 자리</p><p class="tg-easy"><b>쉽게 말하면</b> 세 벌은 사용자 메시지가 같고 시스템 메시지만 다릅니다. 바꾼 자리는 할 일 설명, 예시, 답을 쓰는 순서를 정하는 지시 한 줄입니다.</p><div class="tg-fig" id="pc-system"></div>
+        <p class="tg-cap">모델은 <b>qwen3.5:27b</b> 하나이고, thinking 은 끄고 temperature 는 <b>0</b> 으로 두었습니다.</p></section>
+      <section class="tg-card" data-card="fewshot"><h2>FEWSHOT</h2><p class="tg-k">예시 셋이 들어간 시스템 메시지와 늘어난 입력 토큰</p><p class="tg-easy"><b>쉽게 말하면</b> 예시는 답의 꼴을 보여 줍니다. 이 기록에서는 문제만 보내도 꼴을 지켜서, 예시를 더해도 맞힘이 늘지 않았습니다.</p><div class="tg-fig" id="pc-fewshot"></div>
+        <p class="tg-cap">입력 토큰은 문제마다 <b>139개</b> 늘었고, 맞힘은 <b>14개에서 13개</b>가 되었습니다.</p></section>
+      <section class="tg-card" data-card="cot"><h2>COT</h2><p class="tg-k">단계를 먼저 쓰게 한 답과 문제만 보낸 답</p><p class="tg-easy"><b>쉽게 말하면</b> 「단계를 먼저」라는 지시는 답 앞에 계산 순서를 글로 쓰게 합니다. 그 글도 출력 토큰이라 답이 길어집니다.</p><div class="tg-fig" id="pc-cot"></div>
+        <p class="tg-cap">p12 는 출력 토큰 <b>9개</b>로 틀렸고, 단계를 쓰자 <b>64개</b>로 맞혔습니다.</p></section>
+      <section class="tg-card" data-card="result"><h2>RESULT</h2><p class="tg-k">세 벌의 맞힘과 출력 토큰과 시간</p><p class="tg-easy"><b>쉽게 말하면</b> 세 벌 모두 한 단계 문제는 다 맞혔습니다. 차이는 두세 단계 문제에서 났고, 단계를 쓴 답이 가장 많이 맞히고 가장 길었습니다.</p><div class="tg-fig" id="pc-result"></div>
+        <p class="tg-cap">맞힘은 <b>14개, 13개, 17개</b>, 출력 토큰 합은 <b>163개, 163개, 1,223개</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>프롬프트를 고칠 때는</b> 한 자리만 바꾸고 같은 문제로 다시 잽니다. 두 자리를 같이 바꾸면 무엇이 답을 바꿨는지 모릅니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=prompting-chain-of-thought">프롬프트와 Chain-of-Thought</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=llm-model-selection">LLM 모델 고르기</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/prompting-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

@@ -5,8 +5,9 @@
   python3 scripts/gen-llm-problems.py --json      문제 20개를 JSON 목록으로 찍는다. 프롬프트 파일 항목의 user 는 「문제: 」 뒤에 question 을 붙여 만든다
   python3 scripts/gen-llm-problems.py --selftest  문제마다 문제 글에 나온 수로 답을 다시 계산해 answer 와 견준다
   python3 scripts/gen-llm-problems.py --check     먼저 --selftest 와 같은 점검을 하고, 아래 두 가지를 본다. 없는 파일은 건너뛰고 몇 건을 대조했는지 찍는다
-                                                  1) 프롬프트 파일 다섯의 items 에서 user 가 그 id 의 question 으로 끝나는가
-                                                     (llm-model-selection, prompting-chain-of-thought-plain, -fewshot, -steps, llm-cost-cache-nondeterminism)
+                                                  1) 프롬프트 파일 여섯의 items 에서 user 가 그 id 의 question 으로 끝나는가
+                                                     (llm-model-selection, prompting-chain-of-thought-plain, -fewshot, -steps,
+                                                      llm-cost-cache-nondeterminism-t0, -t7)
                                                   2) 글 셋의 파이썬 블록에 아래 PROBLEMS 리터럴이 글자까지 그대로 들어 있는가
                                                      (llm-model-selection, prompting-chain-of-thought, llm-cost-cache-nondeterminism)
 
@@ -26,7 +27,7 @@ PROMPTS_DIR = os.path.join(ROOT, 'data', 'llm-records', 'prompts')
 POSTS_DIR = os.path.join(ROOT, 'posts')
 # 대조 목록. 파일이 없으면 건너뛴다.
 PROMPT_SLUGS = ['llm-model-selection', 'prompting-chain-of-thought-plain', 'prompting-chain-of-thought-fewshot',
-                'prompting-chain-of-thought-steps', 'llm-cost-cache-nondeterminism']
+                'prompting-chain-of-thought-steps', 'llm-cost-cache-nondeterminism-t0', 'llm-cost-cache-nondeterminism-t7']
 POST_SLUGS = ['llm-model-selection', 'prompting-chain-of-thought', 'llm-cost-cache-nondeterminism']
 
 # 문제 20개. 이 리터럴이 글의 파이썬 블록에 글자까지 그대로 들어간다.

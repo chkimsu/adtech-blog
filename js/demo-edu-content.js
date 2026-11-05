@@ -3991,5 +3991,27 @@ window.DEMO_EDU = {
             { el: '[data-card="score"]', title: '가장 먼저 볼 것', body: '점수 50개를 세 칸으로 옮겨 사람 라벨과 같은 칸인지 셉니다.', waitFor: 'click' },
             { el: '[data-card="kappa"]', title: '끝에 남는 것', body: '일치율에서 우연히 맞을 몫을 덜어 낸 값이 kappa 입니다. 이 글의 판정은 0.45 였습니다.' }
         ]
+    },
+    'llm-cost-cards': {
+        analogy: '요청 한 건은 시스템 1,000, 사용자 200, 출력 150 토큰으로 값을 낸다. 가상 단가로 하루 100만 요청은 720,000원, 7,800,000원, 캐시로 4,200,000원이다. 같은 입력을 10번 물으면 temperature 0 은 같았고, 0.7 은 steps 가 42/45 회차 바뀌었다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'tokens': return '헷갈리는 것은 <strong>토큰이 많은 쪽이 값도 많이 내는가</strong>입니다. 출력은 150 토큰뿐인데 3.00원입니다. 출력 단가가 입력 단가의 5배이기 때문입니다.';
+                    case 'cache': return '헷갈리는 것은 <strong>캐시를 다 맞히면 값이 얼마까지 주는가</strong>입니다. 깎이는 것은 시스템 메시지 몫뿐이라 54% 에서 멈춥니다. 출력 3,000,000원은 그대로입니다.';
+                    case 'daily': return '헷갈리는 것은 <strong>단가표만 보면 하루 값이 나오는가</strong>입니다. 토큰 셋과 하루 요청 수를 곱해야 나옵니다. 요청 수가 열 배면 하루 값도 열 배입니다.';
+                    case 'variance': return '헷갈리는 것은 <strong>같은 답이 열 번 나오면 맞는 답인가</strong>입니다. temperature 0 의 p19 는 10번 모두 같은 답으로 틀렸습니다. 같은지와 맞는지는 따로 잽니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 입력 토큰과 temperature 0, 벽돌색은 출력 토큰과 temperature 0.7 입니다. 회색은 캐시에서 읽은 몫, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="tokens"]', title: '가장 먼저 볼 것', body: '요청 한 건의 토큰 셋을 가상 단가로 셉니다.', waitFor: 'click' },
+            { el: '[data-card="variance"]', title: '끝에 남는 것', body: '같은 입력을 10번 물어 answer 와 steps 가 몇 번 바뀌었는지 셉니다.' }
+        ]
     }
 };

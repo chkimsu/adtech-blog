@@ -3925,5 +3925,27 @@ window.DEMO_EDU = {
             { el: '[data-card="vector"]', title: '가장 먼저 볼 것', body: '첫 상품 이름은 숫자 384개가 되고, 그 가운데 19칸만 0 이 아닙니다.', waitFor: 'click' },
             { el: '[data-card="ann"]', title: '끝에 남는 것', body: '이웃 묶음까지 보면 142~254번만 재고, 재현율@10 은 0.7~0.9 입니다.' }
         ]
+    },
+    'rag-cards': {
+        analogy: '상품 문서 100건은 문장 두 개씩 조각 200개가 되고, 질문과 코사인이 큰 조각 셋을 모델에 넣는다. 정답 문서가 상위 3 에 든 질문은 15/20 이었다. 기록한 답은 20/20 을 맞혔고, 근거 없는 답은 0개였다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'chunk': return '헷갈리는 것은 <strong>조각은 클수록 좋은가</strong>입니다. 조각이 크면 값이 함께 들어오기 쉽지만 다른 글도 같이 들어옵니다. 이 글은 문장 두 개씩 잘랐습니다.';
+                    case 'retrieve': return '헷갈리는 것은 <strong>검색이 놓치면 모델 탓인가</strong>입니다. 놓친 5개는 정답 문서의 조각이 프롬프트에 없었습니다. 모델이 볼 수 없는 값은 답할 수 없습니다.';
+                    case 'prompt': return '헷갈리는 것은 <strong>조각을 넣으면 모델이 그 값만 쓰는가</strong>입니다. 시스템 메시지는 그렇게 하라고 적을 뿐입니다. 정말 그랬는지는 답을 받은 뒤 코드가 봅니다.';
+                    case 'grounding': return '헷갈리는 것은 <strong>Context Recall 과 답 정확도는 같은 값인가</strong>입니다. Recall 은 0.75 였고 맞힌 답은 20/20 이었습니다. 놓친 5개는 not_found 가 맞는 답이기 때문입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 하는 일, 벽돌색은 질문과 모델의 답, 먹색은 문서와 조각입니다. 회색은 정답 문서가 아닌 조각, 점선 상자는 가상 값입니다.' },
+            { el: '[data-card="chunk"]', title: '가장 먼저 볼 것', body: '문서 한 건은 문장 두 개씩 조각 둘이 되고, 조각마다 문서 id 가 붙습니다.', waitFor: 'click' },
+            { el: '[data-card="grounding"]', title: '끝에 남는 것', body: '근거 대조는 코드가 합니다. 이 기록은 15개 모두 통과했고, 근거 없는 답은 0개였습니다.' }
+        ]
     }
 };

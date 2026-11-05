@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="상품 문서를 조각내고 질문과 가까운 조각 셋을 찾아 답하게 하기까지를 카드 네 장으로 봅니다. 답은 조각과 코드로 대조합니다. 상품 문서는 가상 데이터입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>RAG 카드 네 장</h1>
+      <p>지훈 씨가 모델이 모르는 상품 질문에 답을 붙인 길을 카드 네 장으로 봅니다. 문서를 문장 두 개씩 조각내고, 질문과 가까운 조각 셋을 찾습니다. 조각을 넣어 답하게 한 뒤, 답의 값이 조각에 있는지 코드로 대조합니다. 상품 문서 100건과 질문 20개는 가상 데이터입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 질문과 모델의 답</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 문서와 조각</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 정답 문서가 아닌 조각</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (상품 문서)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="chunk"><h2>CHUNK</h2><p class="tg-k">문서 한 건이 조각 둘이 되는 길</p><p class="tg-easy"><b>쉽게 말하면</b> 문서를 문장 두 개씩 잘라 조각으로 만듭니다. 조각마다 문서 id 와 벡터를 붙여 둡니다.</p><div class="tg-fig" id="rg-chunk"></div>
+        <p class="tg-cap">문서 <b>100건</b>, 문장 <b>348개</b>가 조각 <b>200개</b>가 되었습니다.</p></section>
+      <section class="tg-card" data-card="retrieve"><h2>RETRIEVE</h2><p class="tg-k">질문 벡터와 가까운 조각 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 질문도 같은 함수로 벡터로 바꿉니다. 조각 200개와 코사인을 재서 큰 셋을 고릅니다.</p><div class="tg-fig" id="rg-retrieve"></div>
+        <p class="tg-cap">정답 문서가 상위 3 에 든 질문은 <b>15/20</b>, Context Precision 은 <b>0.47</b> 입니다.</p></section>
+      <section class="tg-card" data-card="prompt"><h2>PROMPT</h2><p class="tg-k">조각 셋을 넣은 프롬프트</p><p class="tg-easy"><b>쉽게 말하면</b> 찾은 조각 셋을 질문 앞에 붙여 보냅니다. 답은 값과 문서 id 를 담은 JSON 한 줄입니다.</p><div class="tg-fig" id="rg-prompt"></div>
+        <p class="tg-cap">입력은 <b>262~304</b> 토큰, 출력은 <b>13~21</b> 토큰이었습니다.</p></section>
+      <section class="tg-card" data-card="grounding"><h2>GROUNDING</h2><p class="tg-k">답과 조각의 대조, recall 과 precision</p><p class="tg-easy"><b>쉽게 말하면</b> 답의 값이 그 답이 가리킨 조각에 정말 있는지 코드가 봅니다. 검색 값과 답 값은 따로 셉니다.</p><div class="tg-fig" id="rg-grounding"></div>
+        <p class="tg-cap">근거 대조 통과 <b>15개</b>, 근거 없는 답 <b>0개</b>, 맞힌 답 <b>20/20</b> 입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>문서 조각과 벡터는 미리 만들어</b> 색인에 넣고, 질문 벡터만 요청 때 만듭니다. 문서가 바뀌면 그 문서의 조각만 다시 만듭니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=rag-basics">RAG</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 바로 앞 이야기는 <a href="post.html?id=embeddings-vector-search">임베딩과 벡터 검색</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/rag-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

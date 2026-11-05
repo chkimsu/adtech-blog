@@ -216,16 +216,15 @@
     document.querySelectorAll('.lc-model-btn').forEach(btn => {
       btn.addEventListener('click', () => { setModel(btn.dataset.model); render(); });
     });
-    // 프리셋은 값을 바꾼 뒤 슬라이더마다 input 을 보낸다. 그래야 해설 패널이 기억하는 이전 값도 프리셋 값으로 바뀐다.
-    // 해설 패널은 바뀐 슬라이더마다 300ms 뒤에 한 줄씩 쓰므로, 그 뒤에 프리셋 해설을 한 번 더 써서 맨 위에 둔다.
+    // 프리셋은 값을 바꾼 뒤 슬라이더마다 input 을 보낸다.
+    // detail.preset 은 해설 패널이 설명을 쓰지 않고 이전 값만 갱신하라는 표시다. 프리셋 해설은 버튼 클릭 규칙이 한 번 쓴다.
     document.querySelectorAll('[data-preset]').forEach(btn => {
       btn.addEventListener('click', () => {
         const v = btn.dataset.preset.split(',');
         setModel(v[0]);
         IDS.forEach((id, i) => { $(id).value = Number(v[i + 1]); });
-        IDS.forEach(id => $(id).dispatchEvent(new Event('input', { bubbles: true })));
+        IDS.forEach(id => $(id).dispatchEvent(new CustomEvent('input', { bubbles: true, detail: { preset: true } })));
         render();
-        setTimeout(() => { if (window.demoEdu) window.demoEdu.explain('.lc-preset-btn', { el: btn }); }, 360);
       });
     });
     new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

@@ -50,6 +50,18 @@
     return b;
   }
 
+  // 화면의 「s = 감쇠 계수 × 시드 배수」 셋. 곱이 늘 맞게, 시드 배수를 먼저 둘째 자리로 반올림하고
+  // s 는 표시되는 두 값의 곱으로 보여 준다. 감쇠 계수 한 자리 × 시드 배수 두 자리 = 세 자리라 반올림이 없다.
+  function speedParts(s, k) {
+    const kTenth = Math.round(k * 10);
+    const multHundredth = Math.round(s / k * 100);
+    return {
+      k: (kTenth / 10).toFixed(1),
+      mult: (multHundredth / 100).toFixed(2),
+      s: (kTenth * multHundredth / 1000).toFixed(3),
+    };
+  }
+
   const num = v => Math.round(v).toLocaleString('ko-KR');
   const man = v => (v / 10000).toLocaleString('ko-KR') + '만 명';
 
@@ -181,9 +193,10 @@
     $('lr-ratio-val').textContent = st.r + '%';
     $('lr-seed-val').textContent = man(st.seed);
     $('lr-k-val').textContent = st.k.toFixed(1);
-    $('lr-s').textContent = cur.s.toFixed(2);
-    $('lr-s-k').textContent = st.k.toFixed(1);
-    $('lr-s-seed').textContent = (cur.s / st.k).toFixed(2);
+    const sp = speedParts(cur.s, st.k);
+    $('lr-s').textContent = sp.s;
+    $('lr-s-k').textContent = sp.k;
+    $('lr-s-seed').textContent = sp.mult;
 
     // 지표 넷
     $('lr-reach').textContent = man(cur.reach);
@@ -248,19 +261,23 @@
     convChart.update('none');
   }
 
+  // node 에서 슬라이더 전 조합을 돌려 볼 수 있게 셈만 내놓는다.
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { model, speedParts, SEED0 };
+    return;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     if (!$('lr-rate-chart') || typeof Chart === 'undefined') return;
     initCharts();
     IDS.forEach(id => $(id).addEventListener('input', render));
-    // 프리셋은 값을 바꾼 뒤 슬라이더마다 input 을 보낸다. 그래야 해설 패널이 기억하는 이전 값도 프리셋 값으로 바뀐다.
-    // render 는 그 input 에서 돈다. 해설 패널은 바뀐 슬라이더마다 300ms 뒤에 한 줄씩 쓰는데, 둘이 함께 바뀌면
-    // 마지막 줄은 한 슬라이더만 보고 쓴 말이 된다. 그래서 그 뒤에 프리셋 해설을 한 번 더 써서 맨 위에 둔다.
+    // 프리셋은 값을 바꾼 뒤 슬라이더마다 input 을 보낸다. render 는 그 input 에서 돈다.
+    // detail.preset 은 해설 패널이 설명을 쓰지 않고 이전 값만 갱신하라는 표시다. 프리셋 해설은 버튼 클릭 규칙이 한 번 쓴다.
     document.querySelectorAll('[data-preset]').forEach(btn => {
       btn.addEventListener('click', () => {
         const v = btn.dataset.preset.split(',').map(Number);
         IDS.forEach((id, i) => { $(id).value = v[i]; });
-        IDS.forEach(id => $(id).dispatchEvent(new Event('input', { bubbles: true })));
-        setTimeout(() => { if (window.demoEdu) window.demoEdu.explain('.lr-preset-btn', { el: btn }); }, 360);
+        IDS.forEach(id => $(id).dispatchEvent(new CustomEvent('input', { bubbles: true, detail: { preset: true } })));
       });
     });
     new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

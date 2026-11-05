@@ -135,6 +135,13 @@
             st = { last: initialVal(m.hit), timer: null, burstStart: null };
             sliderState.set(m.hit, st);
         }
+        // 프리셋이 보낸 input(detail.preset)은 설명을 쓰지 않고 이전 값만 갱신한다.
+        // 프리셋 버튼의 해설은 클릭 규칙이 한 번 쓴다. 슬라이더마다 한 줄씩 또 쓰면 이전 칸에 잔상이 남고 깜박인다.
+        if (e.detail && e.detail.preset) {
+            if (st.timer) { clearTimeout(st.timer); st.timer = null; }
+            st.last = readVal(m.hit);
+            return;
+        }
         if (st.timer) {
             clearTimeout(st.timer);
         } else {

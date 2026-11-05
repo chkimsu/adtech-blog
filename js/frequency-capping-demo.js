@@ -135,7 +135,8 @@
       btn.addEventListener('click', () => {
         const [p0, r, value, cost] = btn.dataset.preset.split(',').map(Number);
         $('fc-p0').value = p0; $('fc-r').value = r; $('fc-value').value = value; $('fc-cost').value = cost;
-        render();
+        // 슬라이더마다 input 을 보낸다. render 는 그 input 에서 돈다. detail.preset 은 해설 패널이 설명을 쓰지 않고 이전 값만 갱신하라는 표시다.
+        ['fc-p0', 'fc-r', 'fc-value', 'fc-cost'].forEach(id => $(id).dispatchEvent(new CustomEvent('input', { bubbles: true, detail: { preset: true } })));
       });
     });
     new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

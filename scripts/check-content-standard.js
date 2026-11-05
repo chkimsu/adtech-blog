@@ -84,29 +84,47 @@ function shortSections(md) {
 //     문장을 가른 뒤 되돌린다. 자리표시자는 본문에 안 나오는 사용자 정의 영역 문자다.
 const CODE_FILL = '';   // 코드 안쪽 글자 자리
 const CODE_END = '';    // 스팬 끝. 코드 스팬 둘이 붙어 있어도 안 뭉치게 한다
+// 한 덩어리 글을 문장으로 나눠 80자를 넘는 것만 돌려준다. 산문과 글머리표가 같이 쓴다.
+function overLong(text0) {
+  const spans = [];
+  const text = text0
+    // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
+    // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
+    .replace(/\*\*/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')   // 링크 → 표시 텍스트만
+    .replace(/`([^`]*)`/g, (_, s) => {
+      if (!s) return '';
+      spans.push(s);
+      return CODE_FILL.repeat(s.length - 1) + CODE_END;   // 글자 수는 그대로
+    });
+  let i = 0;
+  return text
+    .split(/(?<=[.!?:])\s+/)
+    .map(s => s.replace(new RegExp(`${CODE_FILL}*${CODE_END}`, 'g'), () => spans[i++]))
+    .map(s => s.replace(/\s+/g, ' ').trim())
+    .filter(s => s.length > MAX_SENTENCE);
+}
+
 function longSentences(md) {
   const out = [];
   for (const para of prose(md).split(/\n\s*\n/)) {
-    const spans = [];
     const text = para
       .split('\n')
       .filter(l => !/^\s*(#|-|\d+\.|\*(?!\*))/.test(l))
-      .join(' ')
-      // 강조 표시를 먼저 걷어낸다. '…이다.**' 처럼 마침표가 ** 안에 있으면
-      // 문장 경계를 못 찾아 두세 문장이 하나로 합쳐져 오탐이 난다.
-      .replace(/\*\*/g, '')
-      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')   // 링크 → 표시 텍스트만
-      .replace(/`([^`]*)`/g, (_, s) => {
-        if (!s) return '';
-        spans.push(s);
-        return CODE_FILL.repeat(s.length - 1) + CODE_END;   // 글자 수는 그대로
-      });
-    let i = 0;
-    out.push(...text
-      .split(/(?<=[.!?:])\s+/)
-      .map(s => s.replace(new RegExp(`${CODE_FILL}*${CODE_END}`, 'g'), () => spans[i++]))
-      .map(s => s.replace(/\s+/g, ' ').trim())
-      .filter(s => s.length > MAX_SENTENCE));
+      .join(' ');
+    out.push(...overLong(text));
+  }
+  return out;
+}
+
+// 글머리표 줄(`- `, `* `, `1. `)도 같은 분리기로 잰다. 참고문헌 줄(http 가 든 줄)은
+// 원제가 길 수 있어 건너뛴다. 줄마다 따로 잰다(글머리표 하나가 한 덩어리다).
+function longBullets(md) {
+  const out = [];
+  for (const line of prose(md).split('\n')) {
+    const m = line.match(/^\s*(?:[-*]|\d+\.)\s+(.*)$/);
+    if (!m || /http/.test(m[1])) continue;
+    out.push(...overLong(m[1]));
   }
   return out;
 }
@@ -152,6 +170,7 @@ function check(post) {
     hasPractical: !!post.worldPractical,
     short: shortSections(md),
     long: longSentences(md),
+    bullets: longBullets(md),
     badBadge,
     tildeTrap,
     mathKorean,
@@ -160,7 +179,7 @@ function check(post) {
 }
 
 // 시험에서 함수만 꺼내 쓸 수 있게 열어 둔다. CLI는 아래 require.main 가드 안에서만 돈다.
-module.exports = { prose, shortSections, longSentences, deadLinks, check, MAX_SENTENCE };
+module.exports = { prose, shortSections, longSentences, longBullets, deadLinks, check, MAX_SENTENCE };
 
 if (require.main !== module) return;
 
@@ -174,6 +193,7 @@ if (args.length) {
     console.log(`   h2 ${r.h2} · python ${r.python} · 표 ${r.tables} · deep ${r.deep} · 데모 ${r.demo} · 무대배지 ${r.badges} · worldPractical ${r.hasPractical ? 'O' : 'X'}`);
     if (r.short.length) console.log(`   ⚠ 짧은 섹션 ${r.short.length}개: ${r.short.map(s => `${s.title}(${s.len}자)`).join(', ')}`);
     if (r.long.length) console.log(`   ⚠ ${MAX_SENTENCE}자 초과 문장 ${r.long.length}개:\n${r.long.map(s => `      ${s.length}자 · ${s.slice(0, 60)}…`).join('\n')}`);
+    if (r.bullets.length) console.log(`   ⚠ 글머리표 ${MAX_SENTENCE}자 초과 ${r.bullets.length}개:\n${r.bullets.map(s => `      ${s.length}자 · ${s.slice(0, 60)}…`).join('\n')}`);
     if (r.badBadge.length) console.log(`   ✗ 잘못된 무대 마커: ${r.badBadge.join(', ')}`);
     if (r.tildeTrap.length) console.log(`   ✗ 물결표 2개 문장(취소선 오파싱): ${r.tildeTrap.length}개`);
     if (r.mathKorean.length) console.log(`   ✗ 수식 안 한글: ${r.mathKorean.length}개`);
@@ -184,6 +204,7 @@ if (args.length) {
     r.bytes < MIN_BYTES ? '분량' : '',
     r.short.length ? `짧은섹션${r.short.length}` : '',
     r.long.length > 6 ? `장문${r.long.length}` : '',
+    r.bullets.length ? `글머리표${r.bullets.length}` : '',
     r.python === 0 && !NO_PYTHON_BY_DESIGN.has(r.id) ? '코드없음' : '',
     r.tables === 0 ? '표없음' : '',
     r.world !== 'na' && !r.hasPractical ? 'practical없음' : '',

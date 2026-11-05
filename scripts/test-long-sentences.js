@@ -7,7 +7,7 @@
 // 그래서 회귀 시험을 박아 둔다. 필터·치환 순서를 건드리면 여기서 걸린다.
 //
 //   node scripts/test-long-sentences.js
-const { longSentences, MAX_SENTENCE } = require('./check-content-standard.js');
+const { longSentences, longBullets, MAX_SENTENCE } = require('./check-content-standard.js');
 
 // 실제 글자 수를 세는 기준값. 코드 스팬은 백틱을 뺀 안쪽, 링크는 표시 텍스트만,
 // 굵게 표시는 별표를 뺀 안쪽을 센다 — 독자가 화면에서 읽는 글자다.
@@ -79,6 +79,53 @@ const CASES = [
   },
 ];
 
+// 글머리표 줄 시험. 보이는 글자 수로 재고, http 가 든 참고문헌 줄은 건너뛴다.
+const URL_ONLY = 'post.html?id=' + 'x'.repeat(60);
+const BULLET_CASES = [
+  {
+    name: '글머리표 — 주소 때문에 길지만 보이는 글은 80자 이하면 안 걸린다',
+    md: `- [조인 창을 넓히면 어떻게 되는지 보는 글](${URL_ONLY}) 에서 다룬다.`,
+    flagged: false,
+  },
+  {
+    name: '글머리표 — 보이는 글이 85자면 걸린다',
+    md: '- ' + '가'.repeat(84) + '.',
+    flagged: true,
+    want: 85,
+  },
+  {
+    name: '글머리표 — 별표 글머리와 번호 글머리도 잰다',
+    md: '* ' + '나'.repeat(84) + '.\n\n1. ' + '다'.repeat(84) + '.',
+    flagged: true,
+    count: 2,
+  },
+  {
+    name: '글머리표 — 굵게 표시는 벗기고 잰다',
+    md: '- **' + '라'.repeat(78) + '.**',
+    flagged: false,
+  },
+  {
+    name: '글머리표 — http 가 든 참고문헌 줄은 건너뛴다',
+    md: '- ' + '마'.repeat(90) + ' https://example.com/paper.pdf',
+    flagged: false,
+  },
+  {
+    name: '글머리표 — 마침표 뒤에 공백이 없으면 한 문장으로 센다(「」 안 포함)',
+    md: '- 「' + '바'.repeat(40) + '.' + '사'.repeat(45) + '」',
+    flagged: true,
+  },
+];
+let bulletPass = 0;
+const bulletFails = [];
+for (const c of BULLET_CASES) {
+  const got = longBullets(c.md);
+  const ok = (got.length > 0) === c.flagged
+    && (!c.want || got[0].length === c.want)
+    && (!c.count || got.length === c.count);
+  if (ok) bulletPass++;
+  else bulletFails.push({ c, got });
+}
+
 let pass = 0;
 const fails = [];
 for (const c of CASES) {
@@ -103,6 +150,12 @@ for (const f of fails) {
   console.log(`   읽는 글자 수 ${readerLength(f.c.md)}자 (기준 ${MAX_SENTENCE}자)\n`);
 }
 
+console.log(`\n글머리표 시험 — ${bulletPass}/${BULLET_CASES.length} 통과`);
+for (const f of bulletFails) {
+  console.log(`✗ ${f.c.name}`);
+  console.log(`   기대: ${f.c.flagged ? '걸림' : '안 걸림'} · 실제: ${f.got.length ? `걸림(${f.got.map(g => g.length + '자').join(', ')})` : '안 걸림'}`);
+}
+
 let lenPass = 0;
 console.log('걸린 문장의 길이가 독자가 읽는 글자 수와 맞나');
 for (const l of LEN) {
@@ -111,6 +164,6 @@ for (const l of LEN) {
   console.log(`   ${ok ? '✓' : '✗'} 기대 ${l.want}자 · 실제 ${l.got}자 — ${l.name.split(' — ')[0]}`);
 }
 
-const allPass = pass === CASES.length && lenPass === LEN.length;
+const allPass = pass === CASES.length && lenPass === LEN.length && bulletPass === BULLET_CASES.length;
 console.log(`\n${allPass ? '✓ 전부 통과' : '✗ 실패 있음'}`);
 process.exit(allPass ? 0 : 1);

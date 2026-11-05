@@ -3852,7 +3852,7 @@ window.DEMO_EDU = {
         },
         tour: [
             { el: '.tg-legend', title: '색 넷과 점선', body: '먹색은 모델과 서버, 파랑은 thinking 을 끈 답과 입력 토큰과 활성 파라미터입니다. 벽돌색은 thinking 을 켠 답과 출력 토큰, 회색은 문서에 없는 값, 점선 상자는 가상 값입니다.' },
-            { el: '[data-card="landscape"]', title: '가장 먼저 볼 것', body: '모델은 상용 API 와 공개 가중치 두 갈래로 나뉩니다. 가중치를 받아 내 서버에서 돌리면 요청이 밖으로 나가지 않습니다.', waitFor: 'click' },
+            { el: '[data-card="landscape"]', title: '가장 먼저 볼 것', body: '모델은 상용 API 와 공개 가중치 두 갈래로 나뉩니다. 가중치를 받아 회사 안 서버에서 돌리면 요청이 밖으로 나가지 않습니다.', waitFor: 'click' },
             { el: '[data-card="thinking"]', title: 'thinking 을 켜면', body: 'hard 10개의 맞힘이 4개에서 10개가 되고, 출력 토큰은 92.9배, 시간은 43.6배가 됩니다.' }
         ]
     }

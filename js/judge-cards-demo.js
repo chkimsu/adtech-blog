@@ -56,7 +56,7 @@
             s += T(40, y + 20, h, 'lbl');
             row.forEach((n, j) => {
                 const cls = i === j ? 'b' : (n ? 'c' : 'k');
-                s += box(120 + j * 100, y, 80, 30, String(n), n || i === j ? cls : 'k', 11);
+                s += box(120 + j * 100, y, 80, 30, String(n), cls, 11);
             });
         });
         s += T(40, 196, '일치율 32/50 = 0.64', 'lbl k');

@@ -4018,7 +4018,7 @@ window.DEMO_EDU = {
     // LLM 비용 놀이터 (입문)
     // ==========================================
     'llm-cost': {
-        analogy: '요청 한 건의 값은 입력과 출력 토큰에 단가를 곱한 값이고, 하루 값은 거기에 하루 요청 수를 곱한다. 큰 모델 하루 100만 요청은 캐시 없이 7,800,000원, 시스템 메시지를 모두 캐시에서 읽으면 4,200,000원이다. 캐시는 입력 쪽만 깎는다',
+        analogy: '요청 한 건의 값은 입력과 출력 토큰에 단가를 곱한 값이고, 하루 값은 거기에 하루 요청 수를 곱한다. 큰 모델 하루 100만 요청은 캐시 없이 7,800,000원, 시스템 메시지를 모두 캐시에서 읽으면 4,200,000원이다. 캐시는 시스템 메시지 몫만 깎는다',
         anchor: '.lc-controls',
         embedKeep: ['.lc-controls'],
         embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.lc-intro', '.demo-tldr', '.demo-practice', '.demo-next'],

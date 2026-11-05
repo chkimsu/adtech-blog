@@ -29,8 +29,6 @@
         });
         return out;
     };
-    // 값이 0 이면 채운 몫 없이 눈금 상자만 그린다 (hbar 는 0 도 3px 로 채운다)
-    const bar = (x, y, w, frac, cls) => (frac > 0 ? hbar(x, y, w, frac, cls, 12) : `<rect class="track" x="${x}" y="${y}" width="${w}" height="12"/>`);
 
     // ---------- 1. 상용 API 와 공개 가중치 ----------
     (function () {
@@ -107,8 +105,8 @@
         // 지표마다 켠 답의 값을 눈금 끝으로 둔다
         const group = (y, title, offVal, onVal, offText, onText) =>
             T(40, y, title, 'lbl k') +
-            T(40, y + 18, 'thinking 끔', 'lbl') + bar(128, y + 8, 240, offVal / onVal, 'a') + T(376, y + 18, offText, 'lbl k') +
-            T(40, y + 36, 'thinking 켬', 'lbl') + bar(128, y + 26, 240, 1, 'b') + T(376, y + 36, onText, 'lbl k');
+            T(40, y + 18, 'thinking 끔', 'lbl') + hbar(128, y + 8, 240, offVal / onVal, 'a', 12) + T(376, y + 18, offText, 'lbl k') +
+            T(40, y + 36, 'thinking 켬', 'lbl') + hbar(128, y + 26, 240, 1, 'b', 12) + T(376, y + 36, onText, 'lbl k');
         s += group(138, '출력 토큰 합, 풀이 토큰이 들어 있음', 83, 7713, '83개', '7,713개');
         s += group(196, '걸린 시간 합', 11.3, 493.4, '11.3초', '493.4초');
         s += T(40, 266, '켜면 출력 토큰 92.9배, 시간 43.6배가 되었습니다', 'lbl');

@@ -149,6 +149,7 @@
     $('lc-out-val').textContent = num(st.out);
     $('lc-cache-val').textContent = st.cache + '%';
     $('lc-daily-val').textContent = count(st.daily);
+    $('lc-daily').setAttribute('aria-valuetext', count(st.daily));   // 화면 읽기가 위치 번호 대신 표시 글자를 읽게 한다
 
     // 지표 넷
     const inPart = r.parts.sysFresh + r.parts.sysCached + r.parts.user;

@@ -228,8 +228,6 @@ def check():
         if on_disk != want:
             problems.append('프롬프트 파일이 지금 생성기의 출력과 다릅니다: %s. 다시 뽑고 다시 기록합니다'
                             % os.path.relpath(path, ROOT))
-        elif [it['user'] for it in on_disk['items']] != [it['user'] for it in items(kind)]:
-            problems.append('프롬프트 파일의 user 가 생성기와 다릅니다: ' + os.path.relpath(path, ROOT))
     try:
         with open(POST, encoding='utf-8') as f:
             post = f.read()

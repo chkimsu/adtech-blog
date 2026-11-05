@@ -504,7 +504,7 @@ print("→ 타입 변경은 오류 없이 틀린 값을 흘려보낸다. 새 필
 ### Google (DV360 / Google Ads)
 
 - **Mesa + Dremel**: near-realtime 웨어하우스 **Mesa**에 적재, **Dremel(BigQuery)**로 PB 스케일 분석
-- **로그가 더 세분화됨**: `AdRequest → BidRequest → BidResponse → Impression → Click → Conversion` — 입찰 과정 자체를 별도 로그로 분리
+- **로그가 더 세분화됨**: `AdRequest → BidRequest → BidResponse → Impression → Click → Conversion`. 입찰 과정 자체를 별도 로그로 분리
 - **ColumnIO 포맷**: 자체 컬럼형 포맷으로 압축률, 쿼리 성능 최적화
 - **Data Transfer**: 광고주에게도 impression-level 로그 제공
 

@@ -2,8 +2,8 @@
 
 이 글에서는 두 편의 논문을 중심으로 Bid Shading의 이론과 실무를 해부합니다:
 
-- **Ghosh et al. (Adobe Research, 2020)** — "Scalable Bid Landscape Forecasting in Real-time Bidding"
-- **Zhou et al. (Yahoo/Verizon Media, KDD 2021)** — "An Efficient Deep Distribution Network for Bid Shading in First-Price Auctions"
+- **Ghosh et al. (Adobe Research, 2020)**. "Scalable Bid Landscape Forecasting in Real-time Bidding"
+- **Zhou et al. (Yahoo/Verizon Media, KDD 2021)**. "An Efficient Deep Distribution Network for Bid Shading in First-Price Auctions"
 
 > 먼저 직관으로 체험하고 싶다면 [Bid Shading Visualizer 데모](demo-bid-shading.html)의 슬라이더를 움직여 봅니다. 이 글의 수식이 실제로 어떻게 움직이는지 볼 수 있습니다.
 
@@ -583,7 +583,7 @@ sequenceDiagram
 
 공개 데이터셋 iPinYou (53M 샘플, win rate 22.87%)에서의 실험:
 
-- **MCNet**(혼합 밀도 네트워크)이 Standard Censored Regression, Kaplan-Meier 추정 대비 **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
+- **MCNet**(혼합 밀도 네트워크)을 Standard Censored Regression, Kaplan-Meier 추정과 비교. **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
 - 특히 **다봉 분포 구간**에서 MCNet의 강점이 두드러짐: 단일 가우시안으로는 포착할 수 없는 복수 피크를 정확히 모델링
 - Adobe Adcloud(Adobe 자사 DSP) 데이터에서도 동일한 경향 확인
 
@@ -591,7 +591,7 @@ sequenceDiagram
 
 VerizonMedia DSP의 실제 입찰 데이터에서:
 
-- 12개 Feature (exchange_id, device_type, sub_domain, ad layout, hour, day_of_week 등) 사용
+- 12개 Feature 사용: exchange_id, device_type, sub_domain, ad layout, hour, day_of_week 등
 - 7일 학습 → 1일 테스트
 - **Non-censored**(open auction, winning price 제공): Log-normal이 **+9.65% surplus lift**
 - **Censored**(closed auction, winning price 비제공): Log-normal이 **+5.32% surplus lift**
@@ -685,7 +685,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 **실시간 보정 (Online Calibration)**:
 - 오프라인 모델의 예측을 실시간 낙찰률(Win Rate) 관측으로 보정
-- 예: 모델이 예측한 낙찰률 = 30%인데 실제 최근 1시간 낙찰률 = 20%이면, 시장 가격이 올랐다는 신호 → Shading 비율을 줄여 입찰가를 높임
+- 예: 모델이 예측한 낙찰률 = 30%인데 실제 최근 1시간 낙찰률 = 20%이면, 시장 가격이 올랐다는 신호. 그래서 Shading 비율을 줄여 입찰가를 높임
 
 **Distribution Shift 모니터링**:
 - 시간대별 예측 낙찰률 vs 실제 낙찰률의 괴리(calibration gap) 추적

@@ -153,7 +153,7 @@
 ## 더 깊이 보기
 
 - 카드 아홉 장을 한 페이지에서 보려면 [타겟팅 카드 아홉 장](demo-targeting-cards.html)이 있습니다.
-- 닮음을 재는 세 가지 방법(벡터의 거리, 시드인가를 맞히는 모델, 친구 관계로 넓히기)과 어느 것을 언제 쓰나는 심화 편 [Lookalike Modeling](post.html?id=lookalike-modeling)에 있습니다.
+- 닮음을 재는 세 가지 방법은 벡터의 거리, 시드인가를 맞히는 모델, 친구 관계로 넓히기입니다. 세 방법과 어느 것을 언제 쓰나는 심화 편 [Lookalike Modeling](post.html?id=lookalike-modeling)에 있습니다.
 - 회원마다 붙는 벡터를 모델이 어떻게 만드는지는 [Two-Tower Retrieval](post.html?id=two-tower-retrieval) 편이 다룹니다.
 - 광고가 진짜 늘린 전환만 세는 법은 [Uplift 와 증분 전환](post.html?id=uplift-incrementality) 편입니다.
 - 시드가 되는 맞춤타겟이 어떻게 만들어지는지는 앞 편 [오디언스와 세그먼트](post.html?id=audience-and-segments)의 여섯째 절입니다.

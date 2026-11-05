@@ -994,19 +994,19 @@ $$\log L = \sum_{i \in \text{도착}} \log \left( \lambda e^{-\lambda d_i} \righ
 
 ## 마무리
 
-1. **광고 모델은 태생적으로 빠르게 낡는다** — Concept Drift(Sudden, Gradual, Recurring)가 끊임없이 발생합니다. "모델 배포 후 잊어버리기"는 광고 ML에서 불가능합니다.
+1. **광고 모델은 태생적으로 빠르게 낡는다.** Concept Drift(Sudden, Gradual, Recurring)가 끊임없이 발생합니다. "모델 배포 후 잊어버리기"는 광고 ML에서 불가능합니다.
 
-2. **Batch + Online Calibration 하이브리드가 프로덕션 주류** — Base Model은 일 1회 전체 재학습, Calibration Layer만 수 분 단위로 Online 업데이트합니다. 안정성과 적응력의 균형입니다.
+2. **Batch + Online Calibration 하이브리드가 프로덕션 주류입니다.** Base Model은 일 1회 전체 재학습, Calibration Layer만 수 분 단위로 Online 업데이트합니다. 안정성과 적응력의 균형입니다.
 
-3. **Delayed Feedback은 Online Learning의 최대 장애물** — 전환 지연으로 인한 Fake Negative가 pCVR을 과소추정시킵니다. Attribution Window(단순), FSIW(범용), Delay Model(정교) 중 선택합니다.
+3. **Delayed Feedback은 Online Learning의 최대 장애물입니다.** 전환 지연으로 인한 Fake Negative가 pCVR을 과소추정시킵니다. Attribution Window(단순), FSIW(범용), Delay Model(정교) 중 선택합니다.
 
-4. **모니터링이 재학습보다 중요하다** — Calibration Gap, AUC 추이, PSI를 자동 추적하고, 임계치 초과 시 자동 재학습을 트리거합니다. 사람이 매일 확인하는 것은 확장 불가능합니다.
+4. **모니터링이 재학습보다 중요하다.** Calibration Gap, AUC 추이, PSI를 자동 추적하고, 임계치 초과 시 자동 재학습을 트리거합니다. 사람이 매일 확인하는 것은 확장 불가능합니다.
 
-5. **되풀이되는 패턴은 학습률이 아니라 피처로 푼다** — 2절 코드에서 요일 피처를 가진 학습기만 주말 첫 시간부터 3.03%로 출발했습니다. 나머지 넷은 주말을 세 번 겪고도 매번 1.9% 부근에서 다시 배웠습니다. 학습률을 올려 얻는 건 적응 속도뿐이고 기억은 아닙니다.
+5. **되풀이되는 패턴은 학습률이 아니라 피처로 푼다.** 2절 코드에서 요일 피처를 가진 학습기만 주말 첫 시간부터 3.03%로 출발했습니다. 나머지 넷은 주말을 세 번 겪고도 매번 1.9% 부근에서 다시 배웠습니다. 학습률을 올려 얻는 건 적응 속도뿐이고 기억은 아닙니다.
 
-6. **무대에 따라 처방이 다르다** — 담장 안은 전환이 자사 결제 로그로 들어와 유실이 없습니다. 짧은 윈도우와 역수 가중이 잘 먹습니다. 열린 RTB는 포스트백이 외부에서 오고 일부는 영원히 안 옵니다. 유실을 지연으로 착각하면 보정이 반대로 틀어집니다.
+6. **무대에 따라 처방이 다르다.** 담장 안은 전환이 자사 결제 로그로 들어와 유실이 없습니다. 짧은 윈도우와 역수 가중이 잘 먹습니다. 열린 RTB는 포스트백이 외부에서 오고 일부는 영원히 안 옵니다. 유실을 지연으로 착각하면 보정이 반대로 틀어집니다.
 
-7. **pCTR 정확도의 체인은 여기서도 이어진다** — 모델이 낡아지면 pCTR이 부정확해지고, True Value가 틀어지고, 입찰가가 비효율적이 되고, 결국 광고주 ROI가 하락합니다. [Feature Store](post.html?id=feature-store-serving) → Online Learning → [Auto-Bidding](post.html?id=auto-bidding-pacing)의 체인이 하나라도 끊어지면 전체가 제대로 동작하지 않습니다.
+7. **pCTR 정확도의 체인은 여기서도 이어진다.** 모델이 낡아지면 pCTR이 부정확해지고, True Value가 틀어지고, 입찰가가 비효율적이 되고, 결국 광고주 ROI가 하락합니다. [Feature Store](post.html?id=feature-store-serving) → Online Learning → [Auto-Bidding](post.html?id=auto-bidding-pacing)의 체인이 하나라도 끊어지면 전체가 제대로 동작하지 않습니다.
 
 ---
 

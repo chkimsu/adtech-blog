@@ -250,7 +250,7 @@ WHERE last_active_date BETWEEN date_sub(current_date, 90)
 규칙 기반 세그먼트는 사람이 조건을 손으로 적는 방식입니다. 간단해 보이지만 프로덕션에서는 **규칙 폭증(Rule Proliferation)** 문제를 만납니다. 광고주와 마케터의 요청이 쌓이면서 수백 개의 세그먼트 규칙이 생성되고, 이들 사이의 중복, 의존성, 상충 관계를 파악하기 어려워집니다.
 
 **규칙 폭증의 증상**:
-- 비슷하지만 미세하게 다른 세그먼트가 20개 이상 존재 (`cart_abandon_7d`, `cart_abandon_3d`, `cart_abandon_24h`, `cart_abandon_7d_high_value`, ...)
+- 비슷하지만 미세하게 다른 세그먼트가 20개 이상 존재: `cart_abandon_7d`, `cart_abandon_3d`, `cart_abandon_24h`, `cart_abandon_7d_high_value` 등
 - 어떤 세그먼트가 어떤 캠페인에 연결되어 있는지 아무도 모름
 - 세그먼트 정의를 변경했을 때 downstream 영향 범위를 파악할 수 없음
 - 사용되지 않는 세그먼트가 여전히 매일 계산되어 컴퓨팅 자원을 낭비
@@ -578,7 +578,7 @@ $$e_{\text{segment}} = W_{\text{seg}} \cdot \text{one\_hot}(\text{segment\_id})$
 
 여기서 $W_{\text{seg}} \in \mathbb{R}^{d \times M}$은 세그먼트 embedding table입니다. $d$는 embedding 차원이며 보통 8-32를 씁니다.
 
-- **장점**: 세그먼트 간 의미적 유사성 학습 ("high_value"와 "repeat_buyer"가 벡터 공간에서 가까이 위치), 새로운 세그먼트 추가 시 학습 가능
+- **장점**: 세그먼트 간 의미적 유사성 학습 ("high_value"와 "repeat_buyer"가 벡터 공간에서 가까이 위치). 새로운 세그먼트 추가 시 학습 가능
 - **단점**: 해석이 어려움, 학습 데이터가 충분해야 함
 - **적용 시점**: 세그먼트 수가 50개 이상이거나, 세그먼트 간 interaction 포착이 중요할 때
 
@@ -587,7 +587,7 @@ $$e_{\text{segment}} = W_{\text{seg}} \cdot \text{one\_hot}(\text{segment\_id})$
 [Deep CTR Models](post.html?id=deep-ctr-models)에서 다룬 DeepFM이나 DCN을 떠올려 봅니다. 여기서 세그먼트 embedding은 다른 피처 embedding과 **Cross Feature Interaction**을 형성합니다. 다른 피처란 광고 카테고리, 크리에이티브 타입, 유저 임베딩 등입니다.
 
 예를 들어:
-- `seg_high_value × ad_category_luxury` → 강한 양의 interaction (고가치 유저 × 럭셔리 광고 → 높은 pCTR)
+- `seg_high_value × ad_category_luxury` → 강한 양의 interaction. 고가치 유저 × 럭셔리 광고 → 높은 pCTR
 - `seg_new_user × ad_category_luxury` → 약한 interaction (신규 유저 × 럭셔리 광고 → 낮은 pCTR)
 
 이러한 interaction을 학습하면, 세그먼트 정보가 pCTR 예측에 가장 효과적으로 반영됩니다. 단순히 `seg_high_value=1`을 feature로 넣는 방법도 있습니다. 하지만 embedding으로 다른 feature와의 interaction을 학습하면 AUC에서 유의미한 개선이 나옵니다.
@@ -911,7 +911,7 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 
 **시드 추출 요구사항**:
 1. **효율적 Export**: "Champions" 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 합니다. 정방향 색인(세그먼트 → Users)가 필수인 이유입니다.
-2. **적절한 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 과적합되고, 너무 크면(> 100만) 시드 자체가 너무 일반적이어서 유사 유저를 찾는 의미가 희석됩니다. 일반적으로 1만 ~ 10만이 최적 범위입니다.
+2. **적절한 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 과적합됩니다. 반대로 너무 크면(> 100만) 시드 자체가 너무 일반적이어서 유사 유저를 찾는 의미가 희석됩니다. 일반적으로 1만 ~ 10만이 최적 범위입니다.
 3. **시드 품질**: 전환 데이터가 풍부하고, 명확한 행동 패턴을 가진 세그먼트가 좋은 시드입니다. "Champions (R5-F5-M5)" 또는 "최근 30일 3회+ 구매자"가 대표적입니다.
 4. **시드 신선도**: 오래된 시드로 만든 Lookalike는 현재 유저 행동 패턴을 반영하지 못합니다. 시드 세그먼트의 갱신 주기와 Lookalike 모델 재학습 주기를 동기화해야 합니다.
 

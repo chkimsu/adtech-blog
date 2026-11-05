@@ -179,7 +179,7 @@
 ## 더 깊이 보기
 
 - 카드 아홉 장을 한 페이지에서 보려면 [타겟팅 카드 아홉 장](demo-targeting-cards.html)이 있습니다.
-- 조건을 규칙 대신 학습으로 만드는 법, 목록을 몇 초 안에 갱신하는 법, 세그먼트를 pCTR 모델의 입력으로 쓰는 법은 심화 편 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에 있습니다.
+- 조건을 규칙 대신 학습으로 만드는 법, 목록을 몇 초 안에 갱신하는 법은 심화 편 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에 있습니다. 세그먼트를 pCTR 모델의 입력으로 쓰는 법도 같은 편에 있습니다.
 - 웨어하우스에서 만든 결과를 광고 서버 옆으로 옮기는 방법은 [데이터 건네기](post.html?id=data-handoff-methods) 편의 마지막 카드입니다.
 - 학습 때 쓴 값과 서빙 때 읽는 값이 어긋나면 무슨 일이 나는지는 [Feature Store](post.html?id=feature-store-serving) 편이 다룹니다.
 - 맞춤타겟 8만 명에서 닮은 사람을 넓히는 것이 다음 편 [Lookalike 기초](post.html?id=lookalike-basics)입니다.

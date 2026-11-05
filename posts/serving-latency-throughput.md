@@ -479,7 +479,7 @@ histogram_quantile(0.99, sum by (le) (rate(pctr_infer_duration_seconds_bucket[5m
 
 ## 더 깊이 보기
 
-- [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 배치 크기를 키울 때 처리량과 p99 가 맞붙는 지점, 그리고 조회 한 번의 1% 꼬리가 요청의 63.4% 를 물들이는 계산
+- [광고 모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 배치 크기를 키울 때 처리량과 p99 가 맞붙는 지점을 본다. 조회 한 번의 1% 꼬리가 요청의 63.4% 를 물들이는 계산도 거기 있다
 - [모델 성능 모니터링](post.html?id=model-monitoring) — 이 글이 시스템 지연을 봤다면 그쪽은 모델 품질이 조용히 나빠지는 것을 본다. 알람 설정 네 개도 거기 있다
 - [피처 서빙과 Feature Store](post.html?id=feature-store-serving) — 4절에서 "피처 조회와 후처리"로 묶은 1.73ms 안쪽
 - [로드밸런서, Ingress, API Gateway](post.html?id=gateway-ingress-router) — 12ms 예산이 정해지는 자리와 요청이 모델 서버까지 오는 길

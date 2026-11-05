@@ -139,7 +139,7 @@ graph TB
 
 눌러 보고 재생할 수 있는 버전이 [살아있는 생태계 지도](ecosystem.html)입니다. 23개 모듈을 **두 층**으로 놓았습니다.
 
-- **위층 = 두뇌 층.** 피처 스토어(Feature Store) 에서 Training 을 거쳐, 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 입찰가를 정하는 Bid Optimizer, 그리고 Monitoring 입니다.
+- **위층 = 두뇌 층.** 피처 스토어(Feature Store) 에서 출발해 Training 을 거칩니다. 이어서 후보 추출(Candidate Retrieval) 과 모델 서빙(Model Serving) 을 지나 **pCTR/pCVR** 이 나옵니다. 그다음이 Calibration 과 입찰가를 정하는 Bid Optimizer, 그리고 Monitoring 입니다.
 - **아래층 = 거래 층.** 사용자 → 매체, SSP → 광고 거래소(Ad Exchange) → DSP → 광고주.
 
 두 층은 **DSP와 pCTR/pCVR을 잇는 세로선**에서 만납니다. 이 한 줄만 붙잡으면 나머지는 따라옵니다. 처음이면 [모델러의 눈으로 보는 0.1초](ecosystem.html?flow=modeler) 칩, 거래 층만 보려면 [100ms RTB](ecosystem.html?flow=rtb) 칩입니다. DSP 안에서 일이 일어나는 순서는 [DSP 안의 순서](ecosystem.html?flow=dspinside) 칩으로 봅니다. 지도 위의 무대 바꾸기로 열린 RTB 와 닫힌 생태계를 바꿔 볼 수도 있습니다.
@@ -184,7 +184,7 @@ graph TB
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.7);"></div>
-<span>5. DSP: Feature 추출 &rarr; pCTR=0.032 &rarr; pCVR=0.15 &rarr; V=$0.24 (ROAS 기준, 4절) &rarr; b*=$0.17</span>
+<span>5. DSP: Feature 추출 → pCTR=0.032 → pCVR=0.15 → V=$0.24 (ROAS 기준, 4절) → b*=$0.17</span>
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(176,38,255,0.5);"></div>
@@ -719,15 +719,15 @@ for n in (1, 4, 24):
 
 ## 마무리
 
-1. **pCTR 모델은 광고 시스템의 심장** — 참 가치 계산의 핵심 입력이며, 정확도가 입찰가 → 낙찰률 → 비용 효율 → 광고주 ROI로 직결됩니다.
+1. **pCTR 모델은 광고 시스템의 심장입니다.** 참 가치 계산의 핵심 입력이며, 정확도가 입찰가 → 낙찰률 → 비용 효율 → 광고주 ROI로 직결됩니다.
 
-2. **모델링은 입찰의 시작일 뿐** — pCTR → 참 가치 → Bid Shading → 예산 페이싱까지 end-to-end 파이프라인을 이해해야 모델 개선의 방향을 잡을 수 있습니다.
+2. **모델링은 입찰의 시작일 뿐입니다.** pCTR → 참 가치 → Bid Shading → 예산 페이싱까지 end-to-end 파이프라인을 이해해야 합니다. 그래야 모델 개선의 방향을 잡을 수 있습니다.
 
-3. **피드백 루프의 함정에 주의** — 고른 것만 보이는 편향, 지연 피드백, 가려진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
+3. **피드백 루프의 함정에 주의해야 합니다.** 고른 것만 보이는 편향, 지연 피드백, 가려진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
 
-4. **캘리브레이션이 AUC보다 중요할 수 있다** — 입찰 시스템에서는 "얼마나 정확한 확률인가"(calibration)가 "순서를 잘 맞추는가"(AUC)보다 직접적으로 비용에 영향을 미칩니다.
+4. **캘리브레이션이 AUC보다 중요할 수 있습니다.** 입찰 시스템에서는 "얼마나 정확한 확률인가"(calibration)가 "순서를 잘 맞추는가"(AUC)보다 직접적으로 비용에 영향을 미칩니다.
 
-5. **시장은 살아있다** — 경쟁 DSP의 전략 변화, 시즌 효과, SSP의 floor price 조정 등 외부 요인이 끊임없이 변합니다. 모델 재학습 주기와 모니터링이 필수입니다.
+5. **시장은 살아있다.** 경쟁 DSP의 전략 변화, 시즌 효과, SSP의 floor price 조정 등 외부 요인이 끊임없이 변합니다. 모델 재학습 주기와 모니터링이 필수입니다.
 
 ---
 

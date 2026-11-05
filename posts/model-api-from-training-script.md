@@ -333,4 +333,4 @@ readiness probe 가 왜 서빙에서 꼭 필요한지는 [추론 서버](post.ht
 - 후보 묶기를 도구가 대신 해 주는 방식은 [BentoML 의 adaptive batching 문서](https://docs.bentoml.com/en/latest/get-started/adaptive-batching.html)에 있습니다. 요청 하나에 후보 800건이 이미 실려 있을 때 이 기능이 얼마나 덜 이득인지는 [BentoML](post.html?id=bentoml-model-serving) 편 5절입니다.
 - 7절의 readiness probe 와 HPA 설정은 [쿠버네티스 공식 문서의 probe 설정](https://kubernetes.io/ko/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)과 [HorizontalPodAutoscaler 문서](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)에 있습니다.
 - 추천과 검색 서빙의 큰 그림은 Eugene Yan 의 [System Design for Recommendations and Search](https://eugeneyan.com/writing/system-design-for-discovery/)가 오프라인과 온라인, 후보 추출과 랭킹의 2×2 로 정리했습니다. 6절의 세 층을 그 그림에 겹쳐 보면 모델 서버가 어느 칸인지 보입니다.
-- 서버 2대가 빠진 배포 중 몇 분 동안 지연이 어떻게 변하는지는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편 8절이고, 새 모델을 1% 로 열어 되돌리는 순서는 [모델 배포와 롤백](post.html?id=model-deployment-rollback) 편입니다.
+- 서버 2대가 빠진 배포 중 몇 분 동안 지연이 어떻게 변하는지는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편 8절입니다. 새 모델을 1% 로 열어 되돌리는 순서는 [모델 배포와 롤백](post.html?id=model-deployment-rollback) 편입니다.

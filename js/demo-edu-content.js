@@ -4222,6 +4222,28 @@ window.DEMO_EDU = {
             { el: '[data-card="cascade"]', title: '끝에 남는 것', body: '모두를 싼 판정자가 먼저 보고, 흔들린 13건만 비싼 판정자에게 넘깁니다. 시간은 3,054.6초로, 다 볼 때를 평균 × 75개로 어림한 16,444.1초보다 짧습니다.' }
         ]
     },
+    'advertiser-agent-cards': {
+        analogy: '서연 씨의 MCP 서버는 JSON-RPC 요청 셋에 답하고, 쓰기를 끄면 도구 목록에서 set_bid 가 빠진다. 서연 씨가 승인한 set_bid 하나로 입찰가가 20,000원에서 18,000원이 되었다. 승인 기록이 없는 쓰기, 승인한 35% 인하, 쓰기를 끈 서버의 set_bid 는 서로 다른 자리에서 막혔다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'mcp': return '헷갈리는 것은 <strong>MCP 서버가 모델을 부르는가</strong>입니다. 이 글의 서버는 도구 목록과 도구의 결과만 돌려줍니다. 모델을 부르는 것은 호스트이고, 서버와는 JSON-RPC 메시지로만 주고받습니다.';
+                    case 'tools': return '헷갈리는 것은 <strong>annotations 를 믿고 승인을 건너뛰어도 되는가</strong>입니다. 명세는 힌트가 도구를 그대로 설명한다는 보장이 없다고 적었습니다. 그래서 승인은 호스트가 따로 가진 데이터로 정합니다.';
+                    case 'approval': return '헷갈리는 것은 <strong>한 번 승인한 변경은 다시 묻지 않는가</strong>입니다. 승인은 호출의 id 하나에 붙습니다. toolu_03 과 내용이 같아도 id 가 다른 toolu_06 은 승인 기록에 없어 막혔습니다.';
+                    case 'guard': return '헷갈리는 것은 <strong>막힌 호출은 모두 오류인가</strong>입니다. 가드레일의 거부는 isError 가 참인 result 이고, 쓰기를 끈 서버의 답은 JSON-RPC error 입니다. 앞의 것은 모델이 읽고 고칠 수 있게 돌려준 결과입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 호스트와 클라이언트의 코드, 벽돌색은 모델이 고른 것, 먹색은 MCP 서버입니다. 회색은 막힌 호출, 점선은 가상 값과 승인 기록입니다.' },
+            { el: '[data-card="mcp"]', title: '가장 먼저 볼 것', body: '모델은 호스트 안에 있고, 도구는 서버가 내놓습니다. 요청마다 _meta 에 버전 2026-07-28 을 적습니다.', waitFor: 'click' },
+            { el: '[data-card="guard"]', title: '끝에 남는 것', body: '막힌 길 셋은 호스트의 approve, 서버의 가드레일, 서버의 도구 목록이 막았습니다. 세 길 모두 입찰가는 20,000원 그대로입니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

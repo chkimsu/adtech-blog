@@ -1643,6 +1643,11 @@ const series = {
     desc: '지훈 씨가 19주째부터 LLM 을 처음 만집니다. 호출 한 번, 모델 고르기, 프롬프트, 구조화 출력, 임베딩, RAG, 에이전트 루프, 판정, 비용을 한 주에 하나씩 엽니다',
     posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
   },
+  'llm-ads-track': {
+    title: 'LLM 광고 응용 트랙',
+    desc: '지훈 씨가 28주째부터 서연 씨 캠페인에 LLM 을 붙입니다. 타겟 조건, 유저 검색, 키워드, 라벨과 랭커, 카피와 판정, 에이전트를 한 주에 하나씩 엽니다',
+    posts: ['nl-to-targeting-query', 'users-as-documents', 'keyword-expansion-strategies', 'interest-audience-library', 'llm-labels-code-ranker', 'llm-labeling-distillation', 'llm-user-embedding-features', 'grounded-ad-copy-generation', 'generated-copy-judging-system', 'advertiser-agent-mcp', 'workflow-vs-autonomous-loop', 'generative-retrieval-semantic-id', 'coding-agent-experiments'],
+  },
   'advanced-bidding-track': {
     title: '입찰, 생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰, 페이싱 → 입찰 셰이딩',
@@ -1721,6 +1726,12 @@ const mlTrack = {
       title: '6단계, LLM — 호출 한 번부터 판정과 비용까지',
       goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하게 할 수 있습니다. 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다.',
       posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
+    },
+    {
+      id: 'stage-7',
+      title: '7단계, LLM 광고 응용 — 자연어 타겟부터 에이전트까지',
+      goal: '이 단계를 마치면: 자연어 요청을 조건과 명단으로 바꾸고, 키워드와 오디언스를 LLM 으로 넓힐 수 있습니다. LLM 라벨로 랭커와 학생 모델을 만들고, 카피를 쓰고 판정할 수 있습니다.',
+      posts: ['nl-to-targeting-query', 'users-as-documents', 'keyword-expansion-strategies', 'interest-audience-library', 'llm-labels-code-ranker', 'llm-labeling-distillation', 'llm-user-embedding-features', 'grounded-ad-copy-generation', 'generated-copy-judging-system', 'advertiser-agent-mcp', 'workflow-vs-autonomous-loop', 'generative-retrieval-semantic-id', 'coding-agent-experiments'],
     },
 
   ],

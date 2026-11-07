@@ -165,6 +165,36 @@ def raw(path):
         return f.read()
 
 
+CUT_ITEMS = [{'id': 'a1', 'user': 'hello'}, {'id': 'a2', 'user': 'trunc me'}]   # a2 는 done_reason length 로 온다
+
+
+def test_allow_length_keeps_cut_answer():
+    """allow_length 가 참이면 잘려 온 답을 error 없이 기록하고 그 항목에만 done_reason 을 둔다. 상수 뽑기도 그 항목을 넣는다."""
+    prompt('cut', {'system': 's', 'items': CUT_ITEMS, 'think': 'off', 'repeat': 1, 'allow_length': True})
+    r = run_tool('--slug', 'cut', '--host', HOST, '--model', 'good')
+    path = os.path.join(recs, 'cut.json')
+    items = read(path)['items'] if os.path.exists(path) else []
+    const = run_tool('--slug', 'cut', '--export-constant')
+    eq('allow_length 가 참이면 잘린 답도 error 없이 쓰고 그 항목에만 done_reason length, output 은 받은 글자 그대로, 상수에도 든다',
+       (r.returncode, [('error' in it, it.get('done_reason'), it.get('output')) for it in items], const.stdout.strip()),
+       (0, [(False, None, '{"ok": true}'), (False, 'length', '{"ok": true}')],
+        'RECORD = {"a1": "{\\"ok\\": true}", "a2": "{\\"ok\\": true}"}'))
+
+
+def test_cut_answer_is_error_without_allow_length():
+    """같은 응답이라도 allow_length 가 없거나 false 면 지금처럼 error 로 남긴다. 참 거짓이 아닌 값은 프롬프트 검사가 막는다."""
+    got = []
+    for slug, extra in (('cut-none', {}), ('cut-false', {'allow_length': False})):
+        prompt(slug, dict({'system': 's', 'items': CUT_ITEMS, 'think': 'off', 'repeat': 1}, **extra))
+        r = run_tool('--slug', slug, '--host', HOST, '--model', 'good')
+        path = os.path.join(recs, slug + '.json')
+        cut = read(path)['items'][1] if os.path.exists(path) else {}
+        got.append((r.returncode, cut.get('error', '')[:len('NoRetry: done_reason length')], 'done_reason' in cut, 'output' in cut))
+    bad = L.prompt_problems({'system': 's', 'items': CUT_ITEMS, 'think': 'off', 'repeat': 1, 'allow_length': 'yes'})
+    eq('allow_length 가 없거나 false 면 잘린 답은 error(output, done_reason 없음, 종료 코드 1), "yes" 같은 값은 프롬프트 검사가 막는다',
+       (got, bad), ([(1, 'NoRetry: done_reason length', False, False)] * 2, ['allow_length 필드가 true 나 false 가 아닙니다']))
+
+
 try:
     print('key_of — 상수의 키')
     eq('기준 키', L.key_of({'id': 'a001', 'think': False, 'run': 1}), 'a001')
@@ -358,6 +388,10 @@ try:
     r = run_tool('--slug', 'new', '--host', HOST, '--model', 'missing')
     eq('없는 모델로 기록하면 /api/chat 0건으로 멈춘다(종료 코드 1)',
        (r.returncode, '모델 missing 가 없습니다' in r.stderr, CALLS['chat'] - before['chat']), (1, True, 0))
+
+    print('\nallow_length — 잘려 온 답을 기록으로 남기는 프롬프트 (임시 폴더의 사본)')
+    test_allow_length_keeps_cut_answer()
+    test_cut_answer_is_error_without_allow_length()
 
     print('\n인자 — --force 는 기록할 때만')
     r = run_tool('--slug', 't', '--export-constant', '--force')

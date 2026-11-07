@@ -12,6 +12,7 @@
 Ollama 는 `ollama serve` 로 먼저 띄운다.
 기록할 때 --model(기본 qwen3.5:27b), --host(기본 http://localhost:11434), --limit N(프롬프트 항목 앞 N개만, 시험용), --force 를 줄 수 있다.
 기록을 시작하기 전에 서버 버전과 모델이 있는지를 묻고, 답이 잘려 온 항목(done_reason 이 stop 이 아님)은 다시 보내지 않고 error 로 남긴다.
+다만 프롬프트 파일의 allow_length 가 true 면 done_reason 이 length 인 답은 받은 그대로 기록하고 그 항목에 "done_reason": "length" 를 둔다.
 두 파일은 data/llm-records/ 에 있고 형식은 그 폴더의 README.md 에 있다. 표준 라이브러리만 쓴다.
 """
 import argparse
@@ -32,7 +33,7 @@ TIMEOUT = 600        # thinking 을 켠 항목은 몇 분이 걸리기도 한다
 ATTEMPTS = 3         # 한 항목을 보내 보는 횟수. 다 실패하면 그 항목에 error 를 남기고 다음 항목으로 간다
 RETRY_SLEEP = 2
 THINK = {'off': [False], 'on': [True], 'both': [False, True]}
-PROMPT_KEYS = {'system', 'items', 'think', 'repeat', 'repeat_subset', 'think_subset', 'options'}
+PROMPT_KEYS = {'system', 'items', 'think', 'repeat', 'repeat_subset', 'think_subset', 'options', 'allow_length'}
 # 기록 항목의 필드와 자료형. 자체 점검이 이 목록으로 응답을 본다.
 ITEM_FIELDS = [('id', str), ('think', bool), ('run', int), ('system', str), ('user', str), ('output', str),
                ('thinking_chars', int), ('prompt_tokens', int), ('output_tokens', int), ('elapsed_ms', int),
@@ -126,6 +127,8 @@ def prompt_problems(spec):
         out.append('id 가 겹칩니다: ' + ', '.join(dup))
     if not is_think(spec.get('think')):
         out.append('think 필드가 "off", "on", "both" 가운데 하나가 아닙니다')
+    if 'allow_length' in spec and not is_type(spec['allow_length'], bool):
+        out.append('allow_length 필드가 true 나 false 가 아닙니다')
     if not is_count(spec.get('repeat')):
         out.append('repeat 필드가 1 이상의 정수가 아닙니다')
     if 'options' in spec:
@@ -223,9 +226,10 @@ class NoRetry(RuntimeError):
     """다시 보내도 같은 결과가 나오는 실패. 기록은 temperature 와 seed 를 고정해 보내서 잘린 답은 다시 보내도 잘린다."""
 
 
-def chat_once(host, model, system, user, think, options):
+def chat_once(host, model, system, user, think, options, allow_length=False):
     """/api/chat 에 한 번 보내고 기록할 다섯 값을 돌려준다. 응답에 필드가 빠지면 KeyError 가 난다.
-    done_reason 이 stop 이 아니면(length 는 출력 길이 한도에 닿아 잘린 것이다) 잘린 답을 남기지 않고 NoRetry 를 낸다."""
+    done_reason 이 stop 이 아니면(length 는 출력 길이 한도에 닿아 잘린 것이다) 잘린 답을 남기지 않고 NoRetry 를 낸다.
+    allow_length 가 참이면 length 인 답은 받은 그대로 돌려주고 done_reason 값을 하나 더 붙인다."""
     body = {'model': model,
             'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
             'stream': False, 'think': think, 'options': options}
@@ -238,23 +242,27 @@ def chat_once(host, model, system, user, think, options):
         # 서버가 돌려준 오류 문장을 남긴다. 모델이 없으면 404 와 model '...' not found 가 온다.
         raise RuntimeError('HTTP %d %s' % (e.code, e.read().decode('utf-8', 'replace').strip())) from None
     reason = resp.get('done_reason')   # 이 필드가 없는 옛 서버는 보지 않는다
-    if reason not in (None, 'stop'):
+    cut = allow_length and reason == 'length'
+    if reason not in (None, 'stop') and not cut:
         raise NoRetry('done_reason %s: 답이 끝까지 오지 않았습니다' % reason)
     msg = resp['message']
-    return {'output': msg['content'],
-            'thinking_chars': len(msg.get('thinking') or ''),
-            'prompt_tokens': resp['prompt_eval_count'],
-            'output_tokens': resp['eval_count'],
-            'elapsed_ms': round(resp['total_duration'] / 1e6)}
+    out = {'output': msg['content'],
+           'thinking_chars': len(msg.get('thinking') or ''),
+           'prompt_tokens': resp['prompt_eval_count'],
+           'output_tokens': resp['eval_count'],
+           'elapsed_ms': round(resp['total_duration'] / 1e6)}
+    if cut:
+        out['done_reason'] = 'length'  # 잘려 온 답이라는 표시. 이 항목에만 있다
+    return out
 
 
-def chat_with_retry(host, model, job):
+def chat_with_retry(host, model, job, allow_length=False):
     """한 요청을 ATTEMPTS 번까지 보낸다. 다 실패하면 마지막 오류를 error 필드로 돌려준다."""
     for attempt in range(ATTEMPTS):
         if attempt:
             time.sleep(RETRY_SLEEP)
         try:
-            return chat_once(host, model, job['system'], job['user'], job['think'], job['options'])
+            return chat_once(host, model, job['system'], job['user'], job['think'], job['options'], allow_length)
         except NoRetry as e:          # 잘린 답은 다시 보내도 같아서 바로 error 로 남긴다
             return {'error': '%s: %s' % (type(e).__name__, e)}
         except Exception as e:        # 시간 초과, 끊긴 연결, HTTP 오류, 응답에 빠진 필드를 모두 다시 보낸다
@@ -264,7 +272,7 @@ def chat_with_retry(host, model, job):
 
 def make_item(job, result):
     """기록 항목 하나. 필드 차례는 README 의 형식과 같고 실제로 보낸 options 가 맨 끝에 온다.
-    실패한 항목은 output 부터 elapsed_ms 까지 대신 error 를 갖는다."""
+    실패한 항목은 output 부터 elapsed_ms 까지 대신 error 를 갖는다. allow_length 로 남긴 잘린 답은 options 앞에 done_reason 을 갖는다."""
     item = {k: job[k] for k in ('id', 'think', 'run', 'system', 'user')}
     item.update(result)
     item['options'] = job['options']
@@ -283,8 +291,9 @@ def record(slug, model, host, limit, force=False):
     print('Ollama %s 의 %s 에 요청 %d개를 보냅니다' % (version, model, len(plan)), flush=True)
     start = shown = time.time()
     items, errors = [], 0
+    allow_length = spec.get('allow_length', False)
     for n, job in enumerate(plan, 1):
-        item = make_item(job, chat_with_retry(host, model, job))
+        item = make_item(job, chat_with_retry(host, model, job, allow_length))
         items.append(item)
         if 'error' in item:
             errors += 1

@@ -27,6 +27,7 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 | `options` | 선택. 파일 전체의 기본값 `{"temperature": 0, "seed": 7}` 을 덮는다 |
 | `repeat_subset` | 선택. 그 id 들만 `repeat` 번 더 보낸다. `run` 은 2, 3… 으로 이어진다. 안에 둔 `options` 는 이 묶음에만 얹힌다 |
 | `think_subset` | 선택. 그 id 들만 지정한 think 로 한 번 더 보낸다. 안에 둔 `options` 는 이 묶음에만 얹힌다 |
+| `allow_length` | 선택. `true` 면 잘려 온 답(`done_reason` 이 `length`)을 error 로 두지 않고 받은 글자 그대로 기록하고, 그 항목에만 `"done_reason": "length"` 를 둔다. 출력 길이 한도에 닿은 답을 글에서 보여 줄 때 쓴다 |
 
 요청 수는 항목 수 × think 수 × repeat 에 두 선택 필드가 더하는 만큼이다. 200건에 `"repeat_subset": {"ids": [40개], "repeat": 3}` 이면 200 + 120 = 320 이다. 50건에 `"think_subset": {"ids": [10개], "think": "on"}` 이면 50 + 10 = 60 이다.
 
@@ -56,7 +57,8 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 | `output_tokens` | 응답의 `eval_count`. thinking 을 켜면 thinking 토큰이 여기에 같이 든다 |
 | `elapsed_ms` | 응답의 `total_duration` 을 ms 로 바꾼 값 |
 | `options` (항목) | 그 요청에 실제로 보낸 값. 묶음의 `options` 와 run 별 seed 가 여기 보인다 |
-| `error` | 3번 보내도 실패한 항목과, 답이 잘려 온 항목(`done_reason` 이 `stop` 이 아님, 다시 보내지 않는다)에만 있다. 그 항목에는 `output` 부터 `elapsed_ms` 까지 다섯 필드가 없다. 글에 쓰기 전에 0개여야 한다 |
+| `done_reason` | 프롬프트의 `allow_length` 가 `true` 일 때 잘려 온 답에만 있고 값은 `length` 다. `options` 앞에 온다. 그 항목은 error 가 없고 `--export-constant` 의 RECORD 에도 든다 |
+| `error` | 3번 보내도 실패한 항목과, 답이 잘려 온 항목(`done_reason` 이 `stop` 이 아님, 다시 보내지 않는다. `allow_length` 로 남긴 `length` 는 빼고)에만 있다. 그 항목에는 `output` 부터 `elapsed_ms` 까지 다섯 필드가 없다. 글에 쓰기 전에 0개여야 한다 |
 
 `--export-constant` 는 `output` 을 `RECORD = {...}` 한 줄로 찍는다. 차례는 id 정렬이 아니라 id 가 기록에 처음 나온 차례이고, 같은 id 안에서는 think 를 끈 것부터 run 차례다. 프롬프트의 items 를 id 차례로 적었으면 두 차례가 같다. 키는 think 를 끈 첫 회차면 `a001`, 그 밖은 `a001|off|2`, `a001|on|1` 꼴이다. 모양이 틀리거나 `error` 가 남은 기록에서는 뽑지 않는다.
 

@@ -44,7 +44,7 @@
     <div class="tg-grid">
       <section class="tg-card" data-card="doc"><h2>DOC</h2><p class="tg-k">회원 A 의 30일 행동이 글 한 편이 되는 자리</p><p class="tg-easy"><b>쉽게 말하면</b> 검색어는 그 말을, 행동은 「러닝글」 같은 낱말 하나를 횟수만큼 공백으로 잇습니다. 사람이 쓴 글이 아니라 행동을 이은 낱말의 목록입니다.</p><div class="tg-fig" id="ud-doc"></div>
         <p class="tg-cap">회원 A 의 문서는 <b>37낱말</b>로, 문서 길이의 평균 <b>15.7낱말</b>의 두 배가 넘습니다. 그 가운데 광고 키워드와 맞을 수 있는 낱말은 러닝화 하나입니다.</p></section>
-      <section class="tg-card" data-card="bm25"><h2>BM25</h2><p class="tg-k">질의 낱말마다 드문 정도와 횟수 몫을 곱해 더한다</p><p class="tg-easy"><b>쉽게 말하면</b> 드문 낱말이 맞으면 점수가 크고, 같은 낱말을 여러 번 검색해도 점수는 조금씩만 늘어납니다. 문서가 평균보다 길면 같은 횟수라도 점수가 줄어듭니다.</p><div class="tg-fig" id="ud-bm25"></div>
+      <section class="tg-card" data-card="bm25"><h2>BM25</h2><p class="tg-k">질의 낱말마다 idf 와 TF 항을 곱해 더한다</p><p class="tg-easy"><b>쉽게 말하면</b> 드문 낱말이 맞으면 점수가 크고, 같은 낱말을 여러 번 검색해도 점수는 조금씩만 늘어납니다. 문서가 평균보다 길면 같은 횟수라도 점수가 줄어듭니다.</p><div class="tg-fig" id="ud-bm25"></div>
         <p class="tg-cap">러닝화를 <b>12번</b> 검색한 회원 A 는 direct 목록 <b>142명</b> 가운데 <b>49위</b>입니다. 행동 낱말이 문서를 길게 만들어 7번 검색한 회원보다 점수가 낮습니다.</p></section>
       <section class="tg-card" data-card="rrf"><h2>RRF</h2><p class="tg-k">점수 대신 순위로 세 목록을 하나로 합친다</p><p class="tg-easy"><b>쉽게 말하면</b> 목록마다 점수의 크기가 달라 그대로 더하지 않습니다. 순위만 보고, 여러 목록에 고루 든 회원을 앞에 둡니다.</p><div class="tg-fig" id="ud-rrf"></div>
         <p class="tg-cap">direct 에서 <b>142위</b>였던 회원이 세 목록에 다 들어 합친 <b>1위</b>입니다. 회원 A 는 direct 49위 하나라 <b>171위</b>로 앞 200명 안에 듭니다.</p></section>

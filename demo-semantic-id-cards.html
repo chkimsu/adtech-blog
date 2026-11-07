@@ -44,9 +44,9 @@
 
     <div class="tg-grid">
       <section class="tg-card" data-card="codebook"><h2>CODEBOOK</h2><p class="tg-k">3단 코드북</p><p class="tg-easy"><b>쉽게 말하면</b> 상품 벡터에 가장 가까운 중심의 번호를 고르고, 그 중심을 뺀 나머지로 다음 단의 번호를 고릅니다.</p><div class="tg-fig" id="si-codebook"></div>
-        <p class="tg-cap">상품 0 은 코드 셋 <b>(8, 6, 9)</b> 를 받았습니다. 잔차 길이 평균은 <b>1.000</b> 에서 <b>0.748</b> 로 줄었고, 3단은 코드 9 에 <b>284</b>건이 몰렸습니다.</p></section>
+        <p class="tg-cap">상품 0 은 코드 셋 <b>(8, 6, 9)</b> 를 받았습니다. 잔차 길이 평균은 <b>1.000</b> 에서 <b>0.748</b> 로 줄었습니다. 단마다 같은 상품에서 출발하는 이 글의 규칙 탓에, 3단은 길이 0 인 초기 중심의 코드 9 에 <b>284</b>건이 몰렸습니다.</p></section>
       <section class="tg-card" data-card="tree"><h2>CODE TREE</h2><p class="tg-k">코드 트리</p><p class="tg-easy"><b>쉽게 말하면</b> 앞자리가 같은 코드 셋을 한 가지에 모으고, 맨 아래 리프에 상품을 넷째 자리 차례로 답니다.</p><div class="tg-fig" id="si-tree"></div>
-        <p class="tg-cap">코드 셋 <b>147</b>가지 가운데 <b>73</b>개를 상품 둘 이상이 함께 씁니다. 넷째 자리를 붙이면 id <b>300</b>개가 모두 다릅니다.</p></section>
+        <p class="tg-cap">코드 셋 <b>147</b>가지 가운데 <b>73</b>개를 상품 둘 이상이 함께 씁니다. 대부분은 3단이 앞 두 코드의 조합 <b>138</b>가지를 거의 나누지 못한 탓입니다. 넷째 자리를 붙이면 id <b>300</b>개가 모두 다릅니다.</p></section>
       <section class="tg-card" data-card="beam"><h2>BEAM SEARCH</h2><p class="tg-k">단마다 고르기</p><p class="tg-easy"><b>쉽게 말하면</b> 단마다 점수가 좋은 코드 셋 3개만 남기고 다음 단으로 내려가, 마지막 리프에서 상품을 꺼냅니다.</p><div class="tg-fig" id="si-beam"></div>
         <p class="tg-cap">빔은 상품 <b>10</b>건을 꺼냈습니다. 전수 코사인 상위 10건과 겹친 상품은 <b>1</b>건이고, <b>6</b>건은 빔의 1단에서 빠졌습니다.</p></section>
       <section class="tg-card" data-card="cold"><h2>COLD START</h2><p class="tg-k">새 상품</p><p class="tg-easy"><b>쉽게 말하면</b> 새 상품은 이름의 벡터만 있으면 학습해 둔 코드북으로 바로 코드를 받습니다.</p><div class="tg-fig" id="si-cold"></div>

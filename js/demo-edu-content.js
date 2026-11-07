@@ -4112,6 +4112,28 @@ window.DEMO_EDU = {
             { el: '[data-card="size"]', title: '끝에 남는 것', body: '오디언스 9개가 모두 20명 이상이라 그대로 사전이 됩니다. 가장 큰 office_supplies 는 번역기 때문에 커졌습니다.' }
         ]
     },
+    'label-ranker-cards': {
+        analogy: '러닝화 질의의 광고 후보 30개를 모델이 하나씩 판정했다. 정답과 맞은 라벨은 17/30, kappa 는 0.45 였고, low 는 한 번도 나오지 않았다. 근거 없는 주장 3개는 모두 policy_risk 로 걸렀다. 코드가 라벨 가중치 × pCTR × 입찰가로 정한 상위 5개는 모두 high 였다. 30개를 한 번에 맡긴 목록은 400 토큰 상한에서 잘려 읽지 못했다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'label': return '헷갈리는 것은 <strong>라벨이 넷이면 모델도 넷을 다 쓰는가</strong>입니다. 이 기록에서 모델은 low 를 한 번도 고르지 않았습니다. 조금만 이어지는 후보를 모두 exclude 로 보아, 라벨 넷이 셋처럼 쓰였습니다.';
+                    case 'rank': return '헷갈리는 것은 <strong>라벨이 high 면 늘 위에 오는가</strong>입니다. 점수는 가중치에 pCTR 과 입찰가를 곱한 값이라, high 끼리는 상업 가치가 순서를 정합니다. 와이드 러닝화(a26)는 high 지만 점수 3.50 으로 5위였습니다.';
+                    case 'evidence': return '헷갈리는 것은 <strong>근거도 모델이 문장으로 써야 하는가</strong>입니다. 모델은 문장 id 만 적고, 코드가 그 후보의 문장을 붙입니다. 그래서 그 id 가 그 후보의 문장인지 코드가 바로 확인합니다.';
+                    case 'listwise': return '헷갈리는 것은 <strong>잘린 답도 앞부분은 쓸 수 있는가</strong>입니다. 닫는 괄호가 없으면 JSON 으로 읽히지 않아 30개 모두 틀린 답으로 셉니다. 이 기록의 run 2 는 앞 14개 항목만 run 1 과 같았습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 셋과 점선', body: '파랑은 코드와 정답, 벽돌색은 모델의 답, 회색은 노출되지 않거나 읽지 못한 자리입니다. 점선은 시스템 메시지의 정의입니다.' },
+            { el: '[data-card="label"]', title: '가장 먼저 볼 것', body: '후보 하나를 보여 주고 라벨, 이유 코드, 근거 id 를 받습니다. 30개를 하나씩 30번 물었습니다.', waitFor: 'click' },
+            { el: '[data-card="listwise"]', title: '끝에 남는 것', body: '30개를 한 번에 맡기면 답이 길어지고, 출력 상한 400 토큰에서 잘린 답은 읽지 못한 답이 됩니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

@@ -43,11 +43,11 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="mcp"><h2>MCP</h2><p class="tg-k">클라이언트와 서버</p><p class="tg-easy"><b>쉽게 말하면</b> 모델은 호스트 안에 있고, 캠페인 도구는 서버가 내놓습니다. 둘은 JSON-RPC 메시지로만 주고받습니다.</p><div class="tg-fig" id="aa-mcp"></div>
+      <section class="tg-card" data-card="mcp"><h2>MCP</h2><p class="tg-k">클라이언트와 서버</p><p class="tg-easy"><b>쉽게 말하면</b> 모델은 호스트 안에 있고, 캠페인 도구는 서버가 내놓습니다. 호스트의 클라이언트와 서버는 JSON-RPC 메시지로만 주고받습니다.</p><div class="tg-fig" id="aa-mcp"></div>
         <p class="tg-cap">요청은 <b>셋</b>입니다. 요청마다 <b>_meta</b> 에 버전 <b>2026-07-28</b> 과 클라이언트 기능을 적습니다.</p></section>
       <section class="tg-card" data-card="tools"><h2>TOOLS</h2><p class="tg-k">읽기와 쓰기</p><p class="tg-easy"><b>쉽게 말하면</b> 서버가 목록에 올린 도구만 모델이 고를 수 있고, 서버가 보여 주는 캠페인만 읽힙니다.</p><div class="tg-fig" id="aa-tools"></div>
         <p class="tg-cap">쓰기를 켠 서버는 도구 <b>3개</b>, 끈 서버는 읽기 도구 <b>2개</b>를 내놓습니다. 서연 씨의 서버는 <b>c1</b> 만 보여 줍니다.</p></section>
-      <section class="tg-card" data-card="approval"><h2>APPROVAL</h2><p class="tg-k">승인 단계</p><p class="tg-easy"><b>쉽게 말하면</b> 읽기는 연결할 때 받은 허락으로 바로 돌고, 입찰가 변경은 서연 씨가 그 호출을 승인해야 서버로 갑니다.</p><div class="tg-fig" id="aa-approval"></div>
+      <section class="tg-card" data-card="approval"><h2>APPROVAL</h2><p class="tg-k">승인 단계</p><p class="tg-easy"><b>쉽게 말하면</b> 읽기는 서버를 붙일 때 받은 허락으로 바로 돌고, 입찰가 변경은 서연 씨가 그 호출을 승인해야 서버로 갑니다.</p><div class="tg-fig" id="aa-approval"></div>
         <p class="tg-cap">서연 씨의 요청은 <b>4단계</b>에 끝났고, 입찰가는 <b>20,000원</b>에서 <b>18,000원</b>이 되었습니다.</p></section>
       <section class="tg-card" data-card="guard"><h2>GUARD</h2><p class="tg-k">서버의 가드레일</p><p class="tg-easy"><b>쉽게 말하면</b> 승인을 받아도 서버는 20% 상한을 다시 봅니다. 막힌 호출도 결과나 오류로 돌아옵니다.</p><div class="tg-fig" id="aa-guard"></div>
         <p class="tg-cap">막힌 길 <b>셋</b>은 막은 자리가 다릅니다. 호스트의 approve, 서버의 가드레일, 서버의 도구 목록입니다.</p></section>

@@ -4232,7 +4232,7 @@ window.DEMO_EDU = {
                 switch (el.dataset.card) {
                     case 'mcp': return '헷갈리는 것은 <strong>MCP 서버가 모델을 부르는가</strong>입니다. 이 글의 서버는 도구 목록과 도구의 결과만 돌려줍니다. 모델을 부르는 것은 호스트이고, 서버와는 JSON-RPC 메시지로만 주고받습니다.';
                     case 'tools': return '헷갈리는 것은 <strong>annotations 를 믿고 승인을 건너뛰어도 되는가</strong>입니다. 명세는 힌트가 도구를 그대로 설명한다는 보장이 없다고 적었습니다. 그래서 승인은 호스트가 따로 가진 데이터로 정합니다.';
-                    case 'approval': return '헷갈리는 것은 <strong>한 번 승인한 변경은 다시 묻지 않는가</strong>입니다. 승인은 호출의 id 하나에 붙습니다. toolu_03 과 내용이 같아도 id 가 다른 toolu_06 은 승인 기록에 없어 막혔습니다.';
+                    case 'approval': return '헷갈리는 것은 <strong>한 번 승인한 변경은 다시 묻지 않는가</strong>입니다. 승인은 호출의 id 와 그때 본 이름과 입력에 함께 붙습니다. 내용이 같아도 id 가 다른 toolu_06 도, id 가 같아도 입력을 바꾼 toolu_03 도 막혔습니다.';
                     case 'guard': return '헷갈리는 것은 <strong>막힌 호출은 모두 오류인가</strong>입니다. 가드레일의 거부는 isError 가 참인 result 이고, 쓰기를 끈 서버의 답은 JSON-RPC error 입니다. 앞의 것은 모델이 읽고 고칠 수 있게 돌려준 결과입니다.';
                     default: return '';
                 }

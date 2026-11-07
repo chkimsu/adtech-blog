@@ -6,7 +6,7 @@
  * 색은 css/style.css 의 카드 부품 블록이 토큰으로 정한다. 파랑은 호스트와 클라이언트의 코드, 벽돌색은 모델이 고른 것,
  * 먹색은 MCP 서버, 회색은 막힌 호출이고, 점선 상자는 가상 값과 승인 기록이다.
  *
- * 숫자와 이름(버전 2026-07-28, 도구 3개와 2개, c1, toolu_03, toolu_06, 단계 4, 입찰가 20000, 18000, 13000, -35, 20, -32602)은
+ * 숫자와 이름(버전 2026-07-28, 도구 3개와 2개, c1, toolu_03, toolu_06, 단계 4, 입찰가 20000, 18000, 13000, 16200, -35, -19, 20, -32602)은
  * advertiser-agent-mcp 글의 파이썬 블록 셋이 찍은 출력에서 옮겼다. 글의 블록을 고치면 여기도 고친다.
  *
  * ?card=key 가 붙으면 그 카드만 남긴다 (글 안에 iframe 으로 넣을 때 쓴다).
@@ -85,11 +85,11 @@
         });
         s += list(40, 166, 446, 66, [
             { t: 'APPROVALS (승인 기록)', cls: 'h' },
-            'tools: get_campaigns, get_stats (연결할 때 허락)',
-            'call_ids: toolu_03 (서연 씨가 화면에서 승인)',
+            'tools: get_campaigns, get_stats (서버를 붙일 때 허락)',
+            'call_ids: toolu_03 → set_bid, c1 18000 (화면에서 승인)',
             'rules: 비움 (범위를 정한 미리 승인)',
         ]);
-        s += T(40, 256, '승인은 호출의 id 하나에 붙습니다', 'lbl k');
+        s += T(40, 256, '승인은 id, 이름, 입력이 모두 같은 호출에만 맞습니다', 'lbl k');
         s += T(40, 278, '대화의 글은 이 기록을 바꾸지 못합니다', 'lbl sm');
         svg(S, s);
     })();
@@ -99,7 +99,7 @@
         const S = 'aa-guard'; if (!has(S)) return; let s = '';
         // [막힌 길, 막은 자리, 돌아온 것, 막은 자리의 상자 색]
         const rows = [
-            ['승인 기록이 없는 쓰기 (toolu_06)', '호스트의 approve', '서버에 안 감, approval_required', 'a'],
+            ['승인 기록과 맞지 않는 쓰기 (toolu_06, 입력을 바꾼 toolu_03)', '호스트의 approve', '서버에 안 감, approval_required', 'a'],
             ['승인한 35% 인하 (13000)', '서버의 가드레일', 'result isError 참, change_too_large', 'k'],
             ['쓰기를 끈 서버의 set_bid', '서버의 도구 목록', 'error -32602, Unknown tool', 'k'],
         ];

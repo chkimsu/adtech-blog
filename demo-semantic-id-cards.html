@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic ID 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="상품 벡터를 세 단의 코드북으로 양자화해 코드 셋을 붙이고, 코드 트리에서 빔 탐색으로 상품을 꺼내는 자리를 카드 한 장씩으로 봅니다. 3단 코드북, 코드 트리, 단마다 고르기, 새 상품입니다. 상품과 회원 A 가 본 상품 셋, 새 상품 10건은 가상 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>Semantic ID 카드 네 장</h1>
+      <p>상품 300건의 벡터를 세 단의 코드북으로 양자화해 코드 셋을 붙이고, 코드 트리에서 빔 탐색으로 상품을 꺼내는 자리를 한 장씩 봅니다. 3단 코드북, 코드 트리, 단마다 고르기, 새 상품입니다. 상품과 회원 A 가 본 상품 셋, 새 상품 10건은 설명용 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 상품과 코드북</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 회원 A 의 질의와 빔이 고른 것</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 트리의 노드와 상품이 받은 코드</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 빔에서 빠진 것과 비교할 기준값</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가상 값 (회원 A 가 본 상품, 새 상품)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="codebook"><h2>CODEBOOK</h2><p class="tg-k">3단 코드북</p><p class="tg-easy"><b>쉽게 말하면</b> 상품 벡터에 가장 가까운 중심의 번호를 고르고, 그 중심을 뺀 나머지로 다음 단의 번호를 고릅니다.</p><div class="tg-fig" id="si-codebook"></div>
+        <p class="tg-cap">상품 0 은 코드 셋 <b>(8, 6, 9)</b> 를 받았습니다. 잔차 길이 평균은 <b>1.000</b> 에서 <b>0.748</b> 로 줄었고, 3단은 코드 9 에 <b>284</b>건이 몰렸습니다.</p></section>
+      <section class="tg-card" data-card="tree"><h2>CODE TREE</h2><p class="tg-k">코드 트리</p><p class="tg-easy"><b>쉽게 말하면</b> 앞자리가 같은 코드 셋을 한 가지에 모으고, 맨 아래 리프에 상품을 넷째 자리 차례로 답니다.</p><div class="tg-fig" id="si-tree"></div>
+        <p class="tg-cap">코드 셋 <b>147</b>가지 가운데 <b>73</b>개를 상품 둘 이상이 함께 씁니다. 넷째 자리를 붙이면 id <b>300</b>개가 모두 다릅니다.</p></section>
+      <section class="tg-card" data-card="beam"><h2>BEAM SEARCH</h2><p class="tg-k">단마다 고르기</p><p class="tg-easy"><b>쉽게 말하면</b> 단마다 점수가 좋은 코드 셋 3개만 남기고 다음 단으로 내려가, 마지막 리프에서 상품을 꺼냅니다.</p><div class="tg-fig" id="si-beam"></div>
+        <p class="tg-cap">빔은 상품 <b>10</b>건을 꺼냈습니다. 전수 코사인 상위 10건과 겹친 상품은 <b>1</b>건이고, <b>6</b>건은 빔의 1단에서 빠졌습니다.</p></section>
+      <section class="tg-card" data-card="cold"><h2>COLD START</h2><p class="tg-k">새 상품</p><p class="tg-easy"><b>쉽게 말하면</b> 새 상품은 이름의 벡터만 있으면 학습해 둔 코드북으로 바로 코드를 받습니다.</p><div class="tg-fig" id="si-cold"></div>
+        <p class="tg-cap">새 상품 <b>10</b>건이 모두 코드를 받았고, <b>8</b>건은 있던 리프에 들어갔습니다. 회원 A 의 빔은 그 가운데 <b>2</b>건을 바로 꺼냈습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>Semantic ID 를 쓸 때는</b> 세 가지를 묻습니다. 코드가 무엇을 묶는가, 한 코드에 상품이 몰리지 않는가, 코드북을 바꾸면 생성 모델도 다시 학습하는가.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=generative-retrieval-semantic-id">생성형 검색과 Semantic ID</a> 편에 이 카드들이 절마다 들어 있습니다. 상품과 장난감 임베딩은 <a href="post.html?id=embeddings-vector-search">임베딩과 벡터 검색</a> 편에서 왔습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/semantic-id-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

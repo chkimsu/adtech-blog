@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 라벨링과 증류 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="LLM 교사의 관련성 라벨로 작은 학생 랭커를 학습하는 자리를 카드 한 장씩으로 봅니다. 교사 라벨로 학생 학습, 일치율과 kappa, 라벨 100만 건의 값과 시간, 관련성 라벨과 클릭의 차이입니다. 1만 쌍과 가짜 교사, 클릭은 가상 값이고 교사의 토큰과 시간은 기록입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>LLM 라벨링과 증류 카드 네 장</h1>
+      <p>질의와 광고 1만 쌍에 교사가 라벨을 붙이고, 작은 학생 모델이 그 라벨을 배우는 자리를 한 장씩 봅니다. 교사 라벨로 학생 학습, 일치율과 kappa, 라벨 100만 건의 값과 시간, 관련성 라벨과 클릭의 차이입니다. 1만 쌍과 가짜 교사, 가짜 클릭은 설명용 가상 값이고, 진짜 교사의 토큰과 시간은 qwen3.5:27b 의 기록입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 교사의 라벨과 교사의 값</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 학생의 답과 학생의 값</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 클릭</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 학생이 볼 수 없는 자리</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 가짜 교사의 규칙</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="teacher_student"><h2>TEACHER TO STUDENT</h2><p class="tg-k">교사 라벨로 학생 학습</p><p class="tg-easy"><b>쉽게 말하면</b> 큰 모델이 붙인 라벨을 정답으로 삼아, 숫자 여섯만 보는 작은 모델을 학습합니다.</p><div class="tg-fig" id="ds-teacher"></div>
+        <p class="tg-cap">가짜 교사는 1만 쌍 가운데 <b>4,212</b>쌍을 관련으로 봤습니다. 학생은 학습 <b>8,000</b>쌍으로 <b>200</b>번 고쳐 배웠습니다.</p></section>
+      <section class="tg-card" data-card="agreement"><h2>AGREEMENT</h2><p class="tg-k">일치율과 kappa</p><p class="tg-easy"><b>쉽게 말하면</b> 학생의 답이 교사의 라벨과 같은 비율을 재고, 우연히 맞을 몫을 덜어 kappa 로 봅니다.</p><div class="tg-fig" id="ds-agreement"></div>
+        <p class="tg-cap">시험 2,000쌍에서 같은 답은 <b>1,839</b>쌍(<b>92.0%</b>), kappa 는 <b>0.84</b> 입니다. 다른 <b>161</b>쌍 가운데 <b>102</b>쌍은 뒤집은 라벨입니다.</p></section>
+      <section class="tg-card" data-card="cost"><h2>COST PER MILLION</h2><p class="tg-k">라벨 100만 건의 값과 시간</p><p class="tg-easy"><b>쉽게 말하면</b> 교사는 학습 데이터만 붙이고, 날마다 들어오는 쌍은 학생이 붙입니다.</p><div class="tg-fig" id="ds-cost"></div>
+        <p class="tg-cap">100만 건에 작은 상용 모델은 <b>213,800원</b>, 학생은 <b>465원</b>입니다. 로컬 교사는 <b>758.2시간</b>, 학생은 <b>0.97시간</b>이 걸립니다.</p></section>
+      <section class="tg-card" data-card="click_gap"><h2>CLICK GAP</h2><p class="tg-k">관련성 라벨과 클릭의 차이</p><p class="tg-easy"><b>쉽게 말하면</b> 검색어에 맞는 광고와 사람들이 누른 광고는 같지 않습니다. 클릭은 가격과 브랜드에도 기댑니다.</p><div class="tg-fig" id="ds-click"></div>
+        <p class="tg-cap">교사와 클릭이 다른 쌍은 <b>723</b>쌍(<b>36.1%</b>)입니다. 클릭은 가격대 1~2 에서 <b>44.6%</b>, 4~5 에서 <b>26.3%</b> 였습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>LLM 라벨로 작은 랭커를 학습할 때는</b> 세 가지를 묻습니다. 학생이 교사와 얼마나 맞나, 다른 쌍은 왜 다른가, 그 라벨이 클릭과 얼마나 다른가.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=llm-labeling-distillation">LLM 라벨링과 증류</a> 편에 이 카드들이 절마다 들어 있습니다. 교사의 기록은 <a href="post.html?id=llm-labels-code-ranker">LLM 라벨과 코드 랭커</a> 편에서 왔습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/distillation-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

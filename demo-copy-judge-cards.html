@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>생성 문구 판정 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="게이트를 지난 광고 카피를 모델이 판정하는 자리를 카드 한 장씩으로 봅니다. 판정 세 겹, 같은 카피의 점수 다섯, 좌우 바꾸기, 싼 판정자 먼저입니다. 사람 라벨은 가상 값이고 판정자의 답은 기록입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>생성 문구 판정 카드 네 장</h1>
+      <p>게이트를 지난 광고 카피 35개를 모델이 판정하는 자리를 한 장씩 봅니다. 판정 세 겹, 같은 카피의 점수 다섯, 좌우 바꾸기, 싼 판정자 먼저입니다. 사람 라벨은 설명용 가상 값이고, 판정자의 답은 qwen3.5:27b 의 기록입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 코드와 사람 라벨</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 싼 판정자의 답(thinking 끔)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 비싼 판정자의 답(thinking 켬)</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 점수가 흔들리거나 승자가 바뀐 자리</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 채점표와 고르는 규칙</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="layers"><h2>LAYERS</h2><p class="tg-k">판정 세 겹</p><p class="tg-easy"><b>쉽게 말하면</b> 카피를 판정하는 자리는 노출 전, 버전을 고를 때, 노출 뒤 셋입니다. 자리마다 정하는 것과 틀렸을 때의 값이 다릅니다.</p><div class="tg-fig" id="cj-layers"></div>
+        <p class="tg-cap">이 글의 기록 셋은 노출 전에 카피 <b>35개</b>를 판정한 것입니다. 같은 판정자를 오프라인 비교에 쓰고, 그 기록이 사후 원인 귀속의 재료가 됩니다.</p></section>
+      <section class="tg-card" data-card="spread"><h2>SPREAD</h2><p class="tg-k">같은 카피의 점수 다섯</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 카피를 같은 채점표로 다섯 번 채점하면, 점수가 다르게 나오는 카피가 있습니다.</p><div class="tg-fig" id="cj-spread"></div>
+        <p class="tg-cap">카피 <b>35개</b> 가운데 <b>28개</b>는 다섯 번 모두 같은 점수였고 <b>7개</b>가 흔들렸습니다. 가운데값은 사람 라벨과 <b>16/35</b> 가 같았지만 kappa 는 <b>-0.00</b> 입니다.</p></section>
+      <section class="tg-card" data-card="swap"><h2>SWAP</h2><p class="tg-k">좌우 바꾸기</p><p class="tg-easy"><b>쉽게 말하면</b> 카피 둘을 나란히 놓고 나은 쪽을 고르게 한 뒤, 자리를 바꿔 한 번 더 묻습니다.</p><div class="tg-fig" id="cj-swap"></div>
+        <p class="tg-cap">20쌍 가운데 <b>14쌍</b>은 두 번 다 같은 카피를 골랐고, <b>6쌍</b>은 두 번 다 A 자리가 이겨 승자가 바뀌었습니다.</p></section>
+      <section class="tg-card" data-card="cascade"><h2>CASCADE</h2><p class="tg-k">싼 판정자 먼저</p><p class="tg-easy"><b>쉽게 말하면</b> 모두를 싼 판정자가 먼저 보고, 답이 흔들린 것만 오래 생각하는 비싼 판정자에게 넘깁니다.</p><div class="tg-fig" id="cj-cascade"></div>
+        <p class="tg-cap">흔들린 카피 <b>1개</b>와 바뀐 쌍 <b>6개</b>, 항목 <b>13/75</b> 만 비싼 판정자에게 넘겼습니다. 바뀐 쌍 가운데 <b>4쌍</b>의 승자가 정해졌고, 시간은 <b>3,054.6초</b>로 다 볼 때의 어림 <b>16,444.1초</b>보다 짧습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>모델에게 카피를 판정하게 할 때는</b> 세 가지를 묻습니다. 같은 카피에 점수가 같게 나오나, 자리를 바꿔도 승자가 같나, 흔들린 것만 비싼 판정에 넘기나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=generated-copy-judging-system">생성 문구 판정 체계</a> 편에 이 카드들이 절마다 들어 있습니다. 채점표와 kappa 를 처음 다룬 글은 <a href="post.html?id=llm-as-a-judge">LLM-as-a-Judge</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/copy-judge-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

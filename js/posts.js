@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'keyword-expansion-strategies',
+    world: 'both',
+    worldNote: '사전에서 고르고 코드가 거르는 순서는 두 무대가 같습니다. 다른 것은 사전이 어디서 오고, 고른 키워드로 무엇을 고르느냐입니다. 담장 안은 검색 기록으로 사전을 만들고, 열린 RTB 의 DSP 는 키워드를 지면의 글과 맞춥니다.',
+    worldPractical: '담장 안의 플랫폼은 회원이 쓴 검색어를 자기 서버에 남겨, 키워드 사전과 하루 검색 수를 직접 만듭니다. 고른 키워드는 검색 광고로 사고, 그 말을 검색한 회원을 찾는 질의로도 씁니다. 회원을 찾는 데 쓰기 전에 health 키워드는 코드가 뺍니다. 열린 RTB 의 DSP 에는 검색창이 없어서, 키워드는 입찰 요청이 가리키는 지면의 글과 맞출 낱말이 됩니다. 그래서 사전에는 검색 수 대신 그 낱말이 든 지면의 요청 수를 적게 됩니다. 거르는 함수는 두 무대가 같이 씁니다.',
+    title: '키워드 확장 전략: 광고 하나에서 전략 일곱으로 키워드를 넓히기',
+    excerpt: '지훈 씨가 모델 팀 30주째에 서연 씨 러닝화의 상품 설명과 키워드 120개를 qwen3.5:27b 에 줍니다. 모델은 전략 일곱의 키워드를 지어내지 않고 사전의 id 로 고릅니다. 한 번에 일곱을 맡기면 direct 를 런솔 라이트라는 그 상품으로 읽어, 러닝화 같은 정답 direct 를 하나도 맞히지 못했습니다. thinking 을 끄고 전략마다 따로 부르면 맞은 수의 합이 27개에서 30개로 늘었지만, 전략끼리 id 14개가 겹쳤습니다. problem_goal 은 네 설정 모두 무릎통증 같은 health 키워드를 끌어왔습니다. 코드가 겹침을 하나로 남기고 health 와 noise 를 뺀 최종 목록은 34, 15, 30, 26개였습니다.',
+    date: '2026-11-21',
+    categories: ['LLM & Agents', 'Targeting & Audience'],
+    tags: ['LLM', 'Prompting', 'Targeting'],
+    contentUrl: 'posts/keyword-expansion-strategies.md',
+    series: 'llm-ads-track'
+  },
+  {
     id: 'users-as-documents',
     world: 'both',
     worldNote: '문서를 쓰고 키워드로 검색해 순위로 합치는 셈은 두 무대가 같습니다. 다른 것은 회원의 검색어와 행동을 누가 같은 번호로 갖고 있느냐입니다. 담장 안은 검색창과 피드를 한 회사가 갖고, 열린 RTB 의 DSP 는 자기가 받은 입찰 요청만 압니다.',

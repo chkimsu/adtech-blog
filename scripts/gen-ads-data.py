@@ -283,6 +283,63 @@ DATA_HEAD = ('// 가상 회원 2,000명과 키워드 120개입니다. scripts/ge
 # 만들 항목이 없으면 None 을 돌려주고, 그때는 파일도 없어야 한다. 키워드 확장 편과 관심사 사전 편이 자기 빌더를 여기에 더한다.
 PROMPTS = {}
 
+# 키워드 확장 편(posts/keyword-expansion-strategies.md)의 프롬프트 두 벌. 시스템 메시지는 전략 일곱의 정의를 같은 줄로 적고,
+# 한 번에 일곱을 맡기는 벌(-all)과 전략마다 따로 부르는 벌(-each)은 할 일을 적은 줄만 다르다.
+# 사용자 메시지는 자산 텍스트와 키워드 120개를 「k001 러닝화」 꼴로 한 줄씩 적은 목록이다. -each 는 맨 끝에 「전략: <이름>」 줄을 더한다.
+# 키워드의 주제, 전략 정답, 하루 검색 수는 보내지 않는다. 고른 id 로 코드가 센다.
+KE_STRATEGY_LINES = [
+    'direct: 광고하는 상품을 바로 가리키는 검색어다. 표기만 다르거나 뜻이 같은 말도 여기에 든다.',
+    'category: 상품이 속한 더 넓은 상품군이나, 같은 매장에서 함께 파는 옆 상품군의 검색어다.',
+    'co_purchase: 이 상품을 사는 사람이 함께 사는 다른 상품의 검색어다.',
+    'problem_goal: 사는 사람이 풀려는 문제나 이루려는 목표를 담은 검색어다.',
+    'persona: 사는 사람이 어떤 사람인지를 가리키는 검색어다. 경력, 습관, 모임을 나타내는 말도 여기에 든다.',
+    'brand: 광고주의 브랜드와, 같은 상품군에서 경쟁하는 다른 브랜드의 검색어다.',
+    'product_line: 같은 상품군을 기능, 용도, 소재, 모양으로 나눈 세부 제품의 검색어다.',
+]
+KE_FORMAT = '{"picks": [{"strategy": "<전략>", "ids": ["<id>", "<id>"], "reason": "<영어 짧은 구>"}]}'
+KE_SYSTEM_ALL = '\n'.join(
+    ['너는 검색 광고의 키워드 플래너다. 광고주의 상품 설명과 키워드 사전을 읽고, 전략 일곱마다 그 전략에 맞는 키워드를 사전에서 고른다.',
+     '키워드는 사전에 있는 것만 고르고 사전의 id 로 적는다. 사전에 없는 키워드를 새로 만들지 않는다.',
+     '전략은 아래 일곱이다.']
+    + KE_STRATEGY_LINES
+    + ['한 전략에 맞는 키워드가 사전에 없으면 ids 를 빈 목록으로 둔다. 한 키워드가 두 전략에 다 맞으면 두 전략에 모두 넣어도 된다.',
+       'reason 에는 그 전략으로 고른 까닭을 영어 6낱말 이하의 짧은 구로 적는다.',
+       '답은 아래 꼴의 JSON 한 줄로만 쓴다. picks 에는 전략 일곱을 위 차례대로 하나씩 모두 적는다. 설명이나 다른 글은 붙이지 않는다.',
+       KE_FORMAT])
+KE_SYSTEM_EACH = '\n'.join(
+    ['너는 검색 광고의 키워드 플래너다. 광고주의 상품 설명과 키워드 사전을 읽고, 사용자 메시지 끝의 「전략:」 줄에 적은 전략 하나에 맞는 키워드를 사전에서 고른다.',
+     '키워드는 사전에 있는 것만 고르고 사전의 id 로 적는다. 사전에 없는 키워드를 새로 만들지 않는다.',
+     '전략은 아래 일곱이다. 이번에 고르는 것은 「전략:」 줄의 전략 하나뿐이다.']
+    + KE_STRATEGY_LINES
+    + ['그 전략에 맞는 키워드가 사전에 없으면 ids 를 빈 목록으로 둔다. 다른 전략에도 맞는 키워드라도 이 전략에 맞으면 넣어도 된다.',
+       'reason 에는 그 전략으로 고른 까닭을 영어 6낱말 이하의 짧은 구로 적는다.',
+       '답은 아래 꼴의 JSON 한 줄로만 쓴다. picks 에는 「전략:」 줄의 전략 하나만 적는다. 설명이나 다른 글은 붙이지 않는다.',
+       KE_FORMAT])
+
+
+def keyword_user(strategy=None):
+    """키워드 확장 편의 사용자 메시지. strategy 를 주면 맨 끝에 「전략: <이름>」 줄을 더한다."""
+    lines = ['상품 설명:', ASSET_RUNNING, '', '키워드 사전, %d개:' % len(KEYWORDS)]
+    lines += ['%s %s' % (kid, text) for kid, text, topic, gold, daily in KEYWORDS]
+    if strategy:
+        lines += ['', '전략: ' + strategy]
+    return '\n'.join(lines)
+
+
+def keyword_prompts_all():
+    """전략 일곱을 한 번에 맡기는 항목 하나. thinking 을 끈 것과 켠 것을 둘 다 보낸다."""
+    return {'system': KE_SYSTEM_ALL, 'think': 'both', 'repeat': 1, 'items': [{'id': 'all', 'user': keyword_user()}]}
+
+
+def keyword_prompts_each():
+    """전략마다 따로 부르는 항목 일곱. 항목 id 는 전략 이름이고, thinking 을 끈 것과 켠 것을 둘 다 보낸다."""
+    return {'system': KE_SYSTEM_EACH, 'think': 'both', 'repeat': 1,
+            'items': [{'id': s, 'user': keyword_user(s)} for s in STRATEGIES]}
+
+
+PROMPTS['keyword-expansion-strategies-all'] = keyword_prompts_all
+PROMPTS['keyword-expansion-strategies-each'] = keyword_prompts_each
+
 # 글에 옮기는 이름. 회원, 나이와 지역, 키워드, 검색 기록, 문서를 다시 만드는 맨 위 함수와 상수다.
 # 생성기를 옮긴 글의 python 블록이 이 이름을 정의하면, 그 정의의 줄 전체(끝 줄의 주석까지)가 이 파일의 것과 같아야 한다.
 SHARED = ['KEYS', 'MEMBER_A', 'MEMBER_B', 'counts', 'SEGMENT_317', 'in_segment_317', 'runner_count', 'TENDENCY',

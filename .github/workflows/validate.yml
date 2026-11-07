@@ -80,5 +80,7 @@ jobs:
         run: python scripts/gen-judge-pairs.py --check
       - name: LLM 광고 응용 트랙의 공용 회원과 키워드 생성기, 놀이터 데이터, 글의 KEYWORDS 리터럴, 프롬프트 파일이 같은가
         run: python scripts/gen-ads-data.py --check
+      - name: 자연어 → 타겟 조건 글의 요청 30개 생성기, 프롬프트 파일 셋, 파이썬 1 블록의 REQUESTS 리터럴이 같은가
+        run: python scripts/gen-nl-requests.py --check
       - name: LLM 기록 상수 (글의 RECORD, USAGE 줄이 기록 파일에서 뽑은 줄과 같은가)
         run: python scripts/check-llm-constants.py

@@ -1,0 +1,491 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-07",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "n01",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 러닝화 살 사람",
+      "output": "{\"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}, {\"field\": \"sports_goods_buy\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 444,
+      "output_tokens": 48,
+      "elapsed_ms": 6471,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n02",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 최근 한 달 캠핑 용품 본 30대 중 우리 광고 안 본 사람",
+      "output": "{\"conditions\": [{\"field\": \"camping_search\", \"op\": \">=\", \"value\": 1}, {\"field\": \"age\", \"op\": \">=\", \"value\": 30}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 39}], \"unsupported_parts\": [\"users who have not seen our ad\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 457,
+      "output_tokens": 71,
+      "elapsed_ms": 8206,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n03",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 건강 상태로 골라 달라",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"health status\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 444,
+      "output_tokens": 12,
+      "elapsed_ms": 1610,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n04",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 부산에 사는 캠핑 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"region\", \"op\": \"==\", \"value\": \"busan\"}, {\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 446,
+      "output_tokens": 46,
+      "elapsed_ms": 3921,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n05",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 반려견을 키우는 캠핑 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"dog owner\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 448,
+      "output_tokens": 30,
+      "elapsed_ms": 2859,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n06",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 20대 중에 러닝 글을 5편 이상 읽은 사람",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 20}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 29}, {\"field\": \"running_posts\", \"op\": \">=\", \"value\": 5}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 454,
+      "output_tokens": 63,
+      "elapsed_ms": 5278,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n07",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 골프 치는 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"golf players\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 443,
+      "output_tokens": 13,
+      "elapsed_ms": 1560,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n08",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 서울 사는 러닝 글 독자 중 우리 광고를 아직 못 본 사람",
+      "output": "{\"conditions\": [{\"field\": \"region\", \"op\": \"==\", \"value\": \"seoul\"}, {\"field\": \"running_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"users who have not seen our ad yet\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 453,
+      "output_tokens": 53,
+      "elapsed_ms": 4604,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n09",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 운동 앱을 10일 이상 켠 40세 이상",
+      "output": "{\"conditions\": [{\"field\": \"sports_app_days\", \"op\": \">=\", \"value\": 10}, {\"field\": \"age\", \"op\": \">=\", \"value\": 40}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 454,
+      "output_tokens": 47,
+      "elapsed_ms": 4242,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n10",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 여행 좋아하는 30대",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 30}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 39}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 445,
+      "output_tokens": 63,
+      "elapsed_ms": 5159,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n11",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 우리 광고를 본 적 있는 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"people who have seen our ad\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 446,
+      "output_tokens": 16,
+      "elapsed_ms": 2007,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n12",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 태블릿으로 접속하는 여행 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"tablet access\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 448,
+      "output_tokens": 29,
+      "elapsed_ms": 3042,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n13",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 서울에 사는 카페 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"region\", \"op\": \"==\", \"value\": \"seoul\"}, {\"field\": \"cafe_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 445,
+      "output_tokens": 46,
+      "elapsed_ms": 4177,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n14",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 우리 광고를 이미 본 20대 여행 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 20}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 29}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"already seen the ad\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 451,
+      "output_tokens": 67,
+      "elapsed_ms": 6065,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n15",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 캠핑 용품을 3번 이상 검색한 사람",
+      "output": "{\"conditions\": [{\"field\": \"camping_search\", \"op\": \">=\", \"value\": 3}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 450,
+      "output_tokens": 28,
+      "elapsed_ms": 2939,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n16",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 무릎 통증이 있는 러닝 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"running_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"knee pain\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 449,
+      "output_tokens": 30,
+      "elapsed_ms": 3320,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n17",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 마라톤 대회에 나간 적 있는 러닝화 검색자",
+      "output": "{\"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"has participated in marathon races\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 453,
+      "output_tokens": 34,
+      "elapsed_ms": 3606,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n18",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 운동 용품을 산 적 있는 경기도 회원",
+      "output": "{\"conditions\": [{\"field\": \"sports_goods_buy\", \"op\": \">=\", \"value\": 1}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"gyeonggi\"}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 447,
+      "output_tokens": 49,
+      "elapsed_ms": 4691,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n19",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 전기차를 타는 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"electric car owners\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 444,
+      "output_tokens": 13,
+      "elapsed_ms": 1703,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n20",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 우리 광고를 세 번 넘게 본 러닝화 검색자",
+      "output": "{\"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 3}], \"unsupported_parts\": [\"ad viewed more than three times\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 452,
+      "output_tokens": 35,
+      "elapsed_ms": 3412,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n21",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 러닝화를 검색하고 러닝 글도 읽은 사람",
+      "output": "{\"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}, {\"field\": \"running_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 451,
+      "output_tokens": 47,
+      "elapsed_ms": 4754,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n22",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 자동차가 있는 40대 여행 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 40}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 49}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"has car\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 449,
+      "output_tokens": 65,
+      "elapsed_ms": 5329,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n23",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 50대 여행 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 50}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 59}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 446,
+      "output_tokens": 63,
+      "elapsed_ms": 5150,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n24",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 지난달 우리 광고를 다섯 번 넘게 본 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"viewed our ad more than 5 times last month\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 449,
+      "output_tokens": 21,
+      "elapsed_ms": 2166,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n25",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 등산 글도 읽는 대구의 캠핑 글 독자",
+      "output": "{\"conditions\": [{\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"daegu\"}], \"unsupported_parts\": [\"reading hiking posts\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 451,
+      "output_tokens": 50,
+      "elapsed_ms": 4503,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n26",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 카페 글을 3편 이상 읽은 인천 사람",
+      "output": "{\"conditions\": [{\"field\": \"cafe_posts\", \"op\": \">=\", \"value\": 3}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"incheon\"}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 449,
+      "output_tokens": 47,
+      "elapsed_ms": 4389,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n27",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 낚시를 좋아하는 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"fishing interest\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 444,
+      "output_tokens": 13,
+      "elapsed_ms": 1288,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n28",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 지난주에 우리 광고를 본 카페 글 독자",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"readers of cafe posts who saw our ad last week\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 449,
+      "output_tokens": 21,
+      "elapsed_ms": 2056,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n29",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 25세 이하 운동 앱 사용자",
+      "output": "{\"conditions\": [{\"field\": \"age\", \"op\": \"<=\", \"value\": 25}, {\"field\": \"sports_app_days\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": []}",
+      "thinking_chars": 0,
+      "prompt_tokens": 447,
+      "output_tokens": 46,
+      "elapsed_ms": 4182,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n30",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 추출기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\n위 필드로 옮길 수 없는 부분은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 판정은 쓰지 않는다. 설명이나 다른 글은 붙이지 않는다.\n{\"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"]}",
+      "user": "요청: 우리 광고를 한 번도 안 본 사람",
+      "output": "{\"conditions\": [], \"unsupported_parts\": [\"users who have never seen our ad\"]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 448,
+      "output_tokens": 17,
+      "elapsed_ms": 1752,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

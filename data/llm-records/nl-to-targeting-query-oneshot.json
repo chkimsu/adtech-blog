@@ -1,0 +1,491 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-07",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "n01",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 러닝화 살 사람",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 630,
+      "output_tokens": 42,
+      "elapsed_ms": 14906,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n02",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 최근 한 달 캠핑 용품 본 30대 중 우리 광고 안 본 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"users who have not seen our ad\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 643,
+      "output_tokens": 35,
+      "elapsed_ms": 6352,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n03",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 건강 상태로 골라 달라",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"health status\"], \"reason_code\": \"sensitive_attribute\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 630,
+      "output_tokens": 28,
+      "elapsed_ms": 2179,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n04",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 부산에 사는 캠핑 글 독자",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"region\", \"op\": \"==\", \"value\": \"busan\"}, {\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 632,
+      "output_tokens": 59,
+      "elapsed_ms": 4212,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n05",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 반려견을 키우는 캠핑 글 독자",
+      "output": "{\"verdict\": \"partial\", \"conditions\": [{\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"pet dog owner\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 634,
+      "output_tokens": 46,
+      "elapsed_ms": 3351,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n06",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 20대 중에 러닝 글을 5편 이상 읽은 사람",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 20}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 29}, {\"field\": \"running_posts\", \"op\": \">=\", \"value\": 5}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 640,
+      "output_tokens": 76,
+      "elapsed_ms": 5275,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n07",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 골프 치는 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"golf players\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 629,
+      "output_tokens": 28,
+      "elapsed_ms": 2278,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n08",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 서울 사는 러닝 글 독자 중 우리 광고를 아직 못 본 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"users who have not seen our ad yet\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 639,
+      "output_tokens": 36,
+      "elapsed_ms": 2721,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n09",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 운동 앱을 10일 이상 켠 40세 이상",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"sports_app_days\", \"op\": \">=\", \"value\": 10}, {\"field\": \"age\", \"op\": \">=\", \"value\": 40}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 640,
+      "output_tokens": 60,
+      "elapsed_ms": 4222,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n10",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 여행 좋아하는 30대",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}, {\"field\": \"age\", \"op\": \">=\", \"value\": 30}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 39}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 631,
+      "output_tokens": 76,
+      "elapsed_ms": 5233,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n11",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 우리 광고를 본 적 있는 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"ad exposure history\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 632,
+      "output_tokens": 31,
+      "elapsed_ms": 2362,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n12",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 태블릿으로 접속하는 여행 글 독자",
+      "output": "{\"verdict\": \"partial\", \"conditions\": [{\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"tablet access\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 634,
+      "output_tokens": 44,
+      "elapsed_ms": 3203,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n13",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 서울에 사는 카페 글 독자",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"region\", \"op\": \"==\", \"value\": \"seoul\"}, {\"field\": \"cafe_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 631,
+      "output_tokens": 59,
+      "elapsed_ms": 4182,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n14",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 우리 광고를 이미 본 20대 여행 글 독자",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"users who have already seen our ad\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 637,
+      "output_tokens": 35,
+      "elapsed_ms": 2640,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n15",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 캠핑 용품을 3번 이상 검색한 사람",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"camping_search\", \"op\": \">=\", \"value\": 3}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 636,
+      "output_tokens": 41,
+      "elapsed_ms": 2998,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n16",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 무릎 통증이 있는 러닝 글 독자",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"knee pain\"], \"reason_code\": \"sensitive_attribute\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 635,
+      "output_tokens": 29,
+      "elapsed_ms": 2237,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n17",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 마라톤 대회에 나간 적 있는 러닝화 검색자",
+      "output": "{\"verdict\": \"partial\", \"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"participated in marathon\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 639,
+      "output_tokens": 49,
+      "elapsed_ms": 3551,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n18",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 운동 용품을 산 적 있는 경기도 회원",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"sports_goods_buy\", \"op\": \">=\", \"value\": 1}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"gyeonggi\"}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 633,
+      "output_tokens": 62,
+      "elapsed_ms": 4342,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n19",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 전기차를 타는 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"electric car owner\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 630,
+      "output_tokens": 28,
+      "elapsed_ms": 2153,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n20",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 우리 광고를 세 번 넘게 본 러닝화 검색자",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"ad exposure history\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 638,
+      "output_tokens": 31,
+      "elapsed_ms": 2357,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n21",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 러닝화를 검색하고 러닝 글도 읽은 사람",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"search_running_shoes\", \"op\": \">=\", \"value\": 1}, {\"field\": \"running_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 637,
+      "output_tokens": 60,
+      "elapsed_ms": 4281,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n22",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 자동차가 있는 40대 여행 글 독자",
+      "output": "{\"verdict\": \"partial\", \"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 40}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 49}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [\"car ownership\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 635,
+      "output_tokens": 80,
+      "elapsed_ms": 5534,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n23",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 50대 여행 글 독자",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"age\", \"op\": \">=\", \"value\": 50}, {\"field\": \"age\", \"op\": \"<=\", \"value\": 59}, {\"field\": \"travel_posts\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 632,
+      "output_tokens": 76,
+      "elapsed_ms": 5347,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n24",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 지난달 우리 광고를 다섯 번 넘게 본 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"ad exposure history\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 635,
+      "output_tokens": 31,
+      "elapsed_ms": 2426,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n25",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 등산 글도 읽는 대구의 캠핑 글 독자",
+      "output": "{\"verdict\": \"partial\", \"conditions\": [{\"field\": \"camping_posts\", \"op\": \">=\", \"value\": 1}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"daegu\"}], \"unsupported_parts\": [\"reading hiking posts\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 637,
+      "output_tokens": 65,
+      "elapsed_ms": 4913,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n26",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 카페 글을 3편 이상 읽은 인천 사람",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"cafe_posts\", \"op\": \">=\", \"value\": 3}, {\"field\": \"region\", \"op\": \"==\", \"value\": \"incheon\"}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 635,
+      "output_tokens": 60,
+      "elapsed_ms": 4573,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n27",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 낚시를 좋아하는 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"fishing interest\"], \"reason_code\": \"unknown_field\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 630,
+      "output_tokens": 28,
+      "elapsed_ms": 2418,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n28",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 지난주에 우리 광고를 본 카페 글 독자",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"ad exposure history\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 635,
+      "output_tokens": 31,
+      "elapsed_ms": 2748,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n29",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 25세 이하 운동 앱 사용자",
+      "output": "{\"verdict\": \"supported\", \"conditions\": [{\"field\": \"age\", \"op\": \"<=\", \"value\": 25}, {\"field\": \"sports_app_days\", \"op\": \">=\", \"value\": 1}], \"unsupported_parts\": [], \"reason_code\": \"none\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 633,
+      "output_tokens": 59,
+      "elapsed_ms": 4719,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "n30",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 오디언스 조건 변환기다. 광고주가 쓴 요청 한 문장을 읽고, 회원을 고를 조건과 판정을 JSON 으로 돌려준다.\n쓸 수 있는 필드는 아래 10개뿐이다. 앞의 8개는 모두 최근 30일 동안 센 횟수다.\nsearch_running_shoes: 검색어 「러닝화」를 검색한 횟수\nsports_app_days: 운동 앱을 켠 날의 수\nrunning_posts: 러닝 글을 읽은 수\nsports_goods_buy: 운동 용품을 산 횟수\ntravel_posts: 여행 글을 읽은 수\ncafe_posts: 카페 글을 읽은 수\ncamping_posts: 캠핑 글을 읽은 수\ncamping_search: 캠핑 용품을 검색한 횟수\nage: 나이, 정수\nregion: 사는 지역. seoul, gyeonggi, incheon, busan, daegu, gwangju, daejeon, ulsan, other 가운데 하나\n조건 하나는 {\"field\": 필드 이름, \"op\": \">=\" 또는 \"<=\" 또는 \"==\", \"value\": 값} 꼴이다. value 는 숫자이고, region 일 때만 위의 지역 이름 하나다. 조건이 여럿이면 모두 맞는 회원을 고른다.\n나이대는 age 조건 둘로 옮긴다. 20대는 age >= 20 과 age <= 29 이다.\n구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다.\nverdict 는 셋 가운데 하나다.\nsupported: 요청 전부를 위 필드의 조건으로 옮길 수 있다.\npartial: 요청의 일부만 옮길 수 있다. 옮길 수 있는 부분만 conditions 에 넣는다.\nunsupported: 요청을 조건으로 옮길 수 없거나 옮기면 안 된다. conditions 는 빈 목록이다.\n지원하지 않는 조건은 conditions 에 넣지 말고 unsupported_parts 에 영어 짧은 구로 적는다. 옮기지 못한 부분이 없으면 빈 목록이다.\nreason_code 는 넷 가운데 하나다.\nnone: 옮기지 못한 부분이 없다.\nsensitive_attribute: 건강, 질병, 종교, 정치 성향, 성적 지향처럼 민감한 정보로 사람을 고르는 요청이다. 판정은 unsupported 이고, 비슷한 행동 필드로 바꿔 옮기지도 않는다.\nunknown_field: 위 10개 필드에 없는 정보가 필요하다.\nexposure_history_unavailable: 광고를 본 적이 있는지 같은 광고 노출 이력이 필요하다. 노출 이력은 필드에 없다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"verdict\": \"<판정>\", \"conditions\": [{\"field\": \"<필드>\", \"op\": \"<비교>\", \"value\": <값>}], \"unsupported_parts\": [\"<영어 짧은 구>\"], \"reason_code\": \"<이유>\"}",
+      "user": "요청: 우리 광고를 한 번도 안 본 사람",
+      "output": "{\"verdict\": \"unsupported\", \"conditions\": [], \"unsupported_parts\": [\"users who have never seen our ad\"], \"reason_code\": \"exposure_history_unavailable\"}",
+      "thinking_chars": 0,
+      "prompt_tokens": 634,
+      "output_tokens": 35,
+      "elapsed_ms": 3233,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

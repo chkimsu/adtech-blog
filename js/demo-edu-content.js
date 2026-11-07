@@ -4178,6 +4178,28 @@ window.DEMO_EDU = {
             { el: '[data-card="budget"]', title: '끝에 남는 것', body: 'LLM 호출 한 번은 예산 8ms 의 139배입니다. 그래서 랭커는 요청 때 미리 만든 벡터를 읽습니다.' }
         ]
     },
+    'copy-gen-cards': {
+        analogy: '광고주 자산 10개를 모델에게 주고 카피를 5개까지, 카피마다 자산에서 옮긴 구절(quote)을 받았다. 얇은 자산 둘은 no_generation 이었다. 카피 40개를 근거, 길이, 중복, 최상급 게이트에 넣자 35개가 남았고, 걸린 5개는 모두 quote 의 숫자 뒤 공백이 자산과 달랐다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'quote': return '헷갈리는 것은 <strong>quote 가 있으면 카피의 사실이 맞는가</strong>입니다. 근거 게이트는 quote 가 자산 안에 글자 그대로 있는지만 봅니다. 카피가 quote 에 없는 말을 더해도, 숫자가 없으면 게이트를 지납니다.';
+                    case 'generate': return '헷갈리는 것은 <strong>5개까지라고 했는데 왜 모두 5개인가</strong>입니다. 시스템 메시지는 상한만 정했고, 사실을 적은 자산 8개는 모두 상한을 채웠습니다. 그 가운데 여럿은 자산의 문장을 그대로 옮긴 카피입니다.';
+                    case 'gates': return '헷갈리는 것은 <strong>0개인 게이트는 없어도 되는가</strong>입니다. 길이, 중복, 최상급은 이 기록에서 하나도 걸지 않았지만, 손으로 만든 카피에는 각각 걸렸습니다. 자산과 기록이 바뀌면 걸리는 수도 바뀝니다.';
+                    case 'none': return '헷갈리는 것은 <strong>no_generation 은 실패인가</strong>입니다. 쓸 사실이 없는 글에 카피를 쓰면 사실을 지어내거나 인사말을 옮기게 됩니다. 코드는 no_generation 을 게이트 실패와 따로 세고, 광고주에게 안내 문장을 보입니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 자산 텍스트와 게이트를 지난 카피, 벽돌색은 모델의 답입니다. 회색은 게이트에 걸리거나 카피를 쓰지 않은 자리, 점선은 시스템 메시지와 게이트의 조건입니다.' },
+            { el: '[data-card="quote"]', title: '가장 먼저 볼 것', body: '카피마다 자산에서 옮긴 구절을 같이 받습니다. 코드는 그 구절이 자산 안에 있는지 글자로 봅니다.', waitFor: 'click' },
+            { el: '[data-card="none"]', title: '끝에 남는 것', body: '쓸 사실이 없는 자산에는 카피 대신 no_generation 을 받습니다. 이것도 정상인 답입니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

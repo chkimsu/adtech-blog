@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>광고 카피 생성 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="광고주 자산 텍스트로 카피를 쓰고, 카피마다 근거 구절을 옮겨 적게 한 뒤 코드 게이트 넷이 거르는 자리를 카드 한 장씩으로 봅니다. 자산에서 인용, 카피 후보 다섯, 게이트 넷, 생성 없음도 정상 답입니다. 자산은 가상 값이고 모델의 답은 기록입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>광고 카피 생성 카드 네 장</h1>
+      <p>광고주 자산 텍스트로 카피를 쓰고, 카피마다 기댄 구절을 옮겨 적게 한 뒤 코드 게이트 넷이 거르는 자리를 한 장씩 봅니다. 자산에서 인용, 카피 후보 다섯, 게이트 넷, 생성 없음도 정상 답입니다. 자산 텍스트는 설명용 가상 값이고, 모델의 답은 qwen3.5:27b 의 기록입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 자산 텍스트와 게이트를 지난 카피</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 모델의 답</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 게이트에 걸리거나 카피를 쓰지 않은 자리</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 시스템 메시지와 게이트의 조건</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="quote"><h2>QUOTE</h2><p class="tg-k">자산에서 인용</p><p class="tg-easy"><b>쉽게 말하면</b> 카피를 쓸 때 기댄 구절을 상품 설명에서 그대로 옮겨 적게 합니다. 코드는 그 구절이 설명 안에 있는지 글자로 봅니다.</p><div class="tg-fig" id="cg-quote"></div>
+        <p class="tg-cap">x01 의 카피 <b>5개</b>는 quote 를 자산의 네 문장에서 옮겼고, 넷째 문장은 두 카피가 앞뒤로 나눴습니다. 셋은 quote 와 글자까지 같습니다.</p></section>
+      <section class="tg-card" data-card="generate"><h2>GENERATE</h2><p class="tg-k">카피 후보 다섯</p><p class="tg-easy"><b>쉽게 말하면</b> 자산 하나를 주면 모델이 카피를 5개까지 쓰고, 카피마다 기댄 구절을 붙여 JSON 한 줄로 돌려줍니다.</p><div class="tg-fig" id="cg-generate"></div>
+        <p class="tg-cap">답 <b>10개</b>가 모두 읽혔고, 사실을 적은 자산 <b>8개</b>가 카피를 5개씩, 모두 <b>40개</b> 냈습니다.</p></section>
+      <section class="tg-card" data-card="gates"><h2>GATES</h2><p class="tg-k">게이트 넷</p><p class="tg-easy"><b>쉽게 말하면</b> 카피를 정해 둔 규칙 넷에 차례로 넣고, 처음 걸린 규칙에서 뺍니다. 규칙은 모두 코드입니다.</p><div class="tg-fig" id="cg-gates"></div>
+        <p class="tg-cap">카피 <b>40개</b> 가운데 <b>35개</b>가 남았습니다. 걸린 <b>5개</b>는 모두 근거 게이트였고, quote 의 숫자 뒤 공백이 자산과 달랐습니다.</p></section>
+      <section class="tg-card" data-card="none"><h2>NONE</h2><p class="tg-k">생성 없음도 정상 답</p><p class="tg-easy"><b>쉽게 말하면</b> 쓸 사실이 없는 글에는 카피를 지어내지 않고, 생성 없음으로 답하게 합니다.</p><div class="tg-fig" id="cg-none"></div>
+        <p class="tg-cap">얇은 자산 <b>2개</b>는 no_generation 으로 왔고, 답은 <b>12 토큰</b>이었습니다. 사실을 적은 <b>8개</b>는 모두 ok 였습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>모델에게 광고 카피를 쓰게 할 때는</b> 세 가지를 묻습니다. 카피마다 근거 구절을 받았나, 구절과 숫자를 코드가 자산과 대조하나, 생성 없음을 정상 답으로 받나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=grounded-ad-copy-generation">광고 카피 생성</a> 편에 이 카드들이 절마다 들어 있습니다. 답의 값을 검색한 조각과 대조한 글은 <a href="post.html?id=rag-basics">RAG</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/copy-gen-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

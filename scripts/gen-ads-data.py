@@ -6,18 +6,22 @@
   python3 scripts/gen-ads-data.py --write           놀이터 데이터 js/ads-users-data.js 를 다시 쓴다
   python3 scripts/gen-ads-data.py --prompts <슬러그>  PROMPTS 에 등록한 프롬프트 파일 한 벌을 찍는다. 아래처럼 받아 쓴다
       python3 scripts/gen-ads-data.py --prompts <슬러그> > data/llm-records/prompts/<슬러그>.json
-  python3 scripts/gen-ads-data.py --check           키워드와 자산 텍스트의 꼴을 본 뒤 아래 셋을 대조하고 몇 건 대조했는지 찍는다
+  python3 scripts/gen-ads-data.py --check           키워드와 자산 텍스트의 꼴을 본 뒤 아래 넷을 대조하고 몇 건 대조했는지 찍는다
                                                     1) js/ads-users-data.js 가 지금 생성 결과와 같은가 (파일이 없으면 실패)
                                                     2) posts/ 에서 「KEYWORDS = [」 줄이 있는 글마다 그 리터럴이 이 파일의 것과 글자까지 같은가
                                                     3) PROMPTS 에 등록한 프롬프트 파일이 있으면 그 items 의 id 와 user 가 빌더의 것과 같은가
-                                                    2) 와 3) 은 아직 없는 글과 프롬프트 파일을 건너뛴다
+                                                    4) 생성기를 옮긴 글(ANCHORS 의 함수나 「KEYWORDS = [」 리터럴이 있는 글)의 python 블록이
+                                                       SHARED 의 이름을 정의하면 그 정의가 이 파일의 것과 글자까지 같은가
+                                                    2) ~ 4) 는 아직 없는 글과 프롬프트 파일, 정의하지 않은 이름을 건너뛴다
 
 회원은 유저 프로파일 피처 편(posts/user-profile-features.md)의 make_members 와 그 도우미, 자연어 오디언스 편의 ages, regions 를
 글자 그대로 옮겼다. 그래서 같은 2,000명이고 세그먼트 317 은 229명이다. extend 는 그 뒤에 따로 만든 random.Random(7) 로
 검색 기록과 다음 30일 러닝화 구매(가상 정답)를 붙인다. 회원 A 와 B 에게는 정해 둔 행동만 옮기고 검색을 더하지 않는다.
-KEYWORDS 리터럴은 「KEYWORDS = [」 줄부터 닫는 「]」 줄까지이고 글의 파이썬 블록에 글자 그대로 들어간다. 그 사이를 고치면
-글의 블록도 똑같이 고치고, --write 로 데이터 파일을 다시 쓰고, 프롬프트 파일을 다시 뽑아 다시 기록한다. 표준 라이브러리만 쓴다.
+KEYWORDS 리터럴(「KEYWORDS = [」 줄부터 닫는 「]」 줄까지)과 SHARED 의 정의는 글의 파이썬 블록에 글자 그대로 들어간다.
+그 가운데 하나를 고치면 글의 블록도 똑같이 고치고, --write 로 데이터 파일을 다시 쓰고, 프롬프트 파일을 다시 뽑아 다시 기록한다.
+표준 라이브러리만 쓴다.
 """
+import ast
 import json
 import os
 import random
@@ -171,13 +175,24 @@ ASSET_RUNNING = ('런솔 라이트는 달리기를 처음 시작하는 사람을
                  '한 짝 무게 240g 으로 가볍고, 발볼이 넓은 사람도 편하게 신도록 앞코를 넉넉하게 만들었습니다. '
                  '사이즈는 230mm 부터 290mm 까지 5mm 단위로 있고, 받은 날부터 30일 안에 한 번 교환할 수 있습니다.')
 
-# 검색 기록을 만드는 표. 키워드는 주제 안에서 하루 검색 수에 비례해 뽑는다.
-# k001 의 횟수는 검색어 러닝화 사건 수 그대로라 뽑는 후보에서 뺀다.
+# 검색 기록을 만드는 표. 키워드는 후보 안에서 하루 검색 수에 비례해 뽑는다.
 TEXT = {kid: text for kid, text, topic, strategy, daily in KEYWORDS}
-POOL = {}
-for kid, text, topic, strategy, daily in KEYWORDS:
-    if kid != 'k001':
-        POOL.setdefault(topic, []).append((kid, daily))
+# 캠핑 용품 검색이 뽑는 후보. 캠핑 키워드 10개 가운데 용품 일곱이고, 글램핑, 캠핑장예약, 차박은 뺀다.
+CAMPING_GOODS = ['버너', '텐트', '캠핑테이블', '침낭', '캠핑랜턴', '캠핑의자', '타프']
+
+
+def make_pool():
+    """뽑는 후보. 주제마다 (키워드 id, 하루 검색 수) 목록이고, camping_goods 는 캠핑 용품 검색의 후보다.
+    k001 의 횟수는 검색어 러닝화 사건 수 그대로라 후보에서 뺀다."""
+    pool = {}
+    for kid, text, topic, strategy, daily in KEYWORDS:
+        if kid != 'k001':
+            pool.setdefault(topic, []).append((kid, daily))
+    pool['camping_goods'] = [(kid, daily) for kid, daily in pool['camping'] if TEXT[kid] in CAMPING_GOODS]
+    return pool
+
+
+POOL = make_pool()
 RUNNING = KEYS[:4]                                       # 러닝 사건. 검색어 러닝화, 운동 앱, 러닝 글, 운동 용품 구매
 # 행동 사건 하나에 그 주제의 검색이 한 번 따라올 확률. 앞은 러닝 성향, 뒤는 나머지다.
 FOLLOW = {
@@ -221,8 +236,8 @@ def extend(members, seed=7):
     for i, m in enumerate(members):
         runner = in_segment_317(m)
         found = Counter({'k001': len(m['search_running_shoes'])})    # 검색어 러닝화의 사건 수가 k001 의 횟수다
-        for _ in m['camping_search']:                                # 캠핑 용품 검색의 사건은 캠핑 키워드에 나눈다
-            found[pick('camping')] += 1
+        for _ in m['camping_search']:                                # 캠핑 용품 검색의 사건은 용품 일곱에 나눈다
+            found[pick('camping_goods')] += 1
         if i >= 2:
             for k, (topic, p_runner, p_other) in FOLLOW.items():
                 for _ in m[k]:
@@ -267,6 +282,17 @@ DATA_HEAD = ('// 가상 회원 2,000명과 키워드 120개입니다. scripts/ge
 # 함수는 인자 없이 {"system": ..., "think": ..., "repeat": ..., "items": [{"id": ..., "user": ...}, ...]} 를 돌려준다.
 # 만들 항목이 없으면 None 을 돌려주고, 그때는 파일도 없어야 한다. 키워드 확장 편과 관심사 사전 편이 자기 빌더를 여기에 더한다.
 PROMPTS = {}
+
+# 글에 옮기는 이름. 회원, 나이와 지역, 키워드, 검색 기록, 문서를 다시 만드는 맨 위 함수와 상수다.
+# 생성기를 옮긴 글의 python 블록이 이 이름을 정의하면, 그 정의의 줄 전체(끝 줄의 주석까지)가 이 파일의 것과 같아야 한다.
+SHARED = ['KEYS', 'MEMBER_A', 'MEMBER_B', 'counts', 'SEGMENT_317', 'in_segment_317', 'runner_count', 'TENDENCY',
+          'make_members', 'ages', 'REGIONS', 'REGION_WEIGHTS', 'regions',
+          'KEYWORDS', 'TEXT', 'CAMPING_GOODS', 'make_pool', 'POOL', 'RUNNING', 'FOLLOW', 'OTHER_TOPICS',
+          'buy_chance', 'extend', 'WORDS', 'user_doc']
+# 생성기를 옮긴 글의 표시. 이 함수 가운데 하나를 정의했거나 「KEYWORDS = [」 리터럴이 있는 글만 SHARED 를 대조한다.
+# counts, WORDS, KEYWORDS 같은 이름은 광고 서빙 흐름, 해시와 정렬, 컨텍스추얼 타겟팅, 관심사 분류 편이 다른 뜻으로 쓴다.
+ANCHORS = ['make_members', 'make_pool', 'extend', 'buy_chance', 'user_doc']
+FENCE = re.compile(r'^```([^\n`]*)\n(.*?)^```[ \t]*$', re.M | re.S)    # scripts/check-code-blocks.js 의 FENCE 와 같은 꼴
 
 
 def corpus():
@@ -316,6 +342,10 @@ def keyword_errors():
             out.append('러닝 키워드의 %s 전략이 %d개입니다. 4~8개여야 합니다' % (s, plan[s]))
     if not any(k[2] == 'health' and k[3] == 'problem_goal' for k in KEYWORDS):
         out.append('problem_goal 에 health 키워드(증상)가 없습니다')
+    camping = {k[1] for k in KEYWORDS if k[2] == 'camping'}
+    stray = [w for w in CAMPING_GOODS if w not in camping]
+    if stray:
+        out.append('CAMPING_GOODS 에 캠핑 키워드가 아닌 말이 있습니다: %s' % ', '.join(stray))
     return out
 
 
@@ -385,14 +415,71 @@ def prompt_text(spec):
     return '\n'.join(lines) + '\n'
 
 
+def own_source():
+    with open(os.path.abspath(__file__), encoding='utf-8') as f:
+        return f.read()
+
+
 def literal_source():
     """이 파일에서 「KEYWORDS = [」 줄부터 닫는 「]」 줄까지의 글."""
-    with open(os.path.abspath(__file__), encoding='utf-8') as f:
-        src = f.read()
-    found = re.search(r'^KEYWORDS = \[\n.*?^\]$', src, re.M | re.S)
+    found = re.search(r'^KEYWORDS = \[\n.*?^\]$', own_source(), re.M | re.S)
     if not found:
         raise SystemExit('✗ 이 파일에서 「KEYWORDS = [」 줄부터 닫는 「]」 줄까지의 리터럴을 찾지 못했습니다')
     return found.group(0)
+
+
+def definitions(src):
+    """맨 위 수준에서 정의한 이름마다 그 정의의 글. 문장의 줄 전체(끝 줄의 주석까지)이고, 한 이름을 여러 문장이 정의하면
+    (MEMBER_B 와 그 아래 두 줄처럼) 나온 차례로 잇는다. 파이썬으로 읽지 못하면 SyntaxError 가 난다."""
+    lines = src.split('\n')
+    out = {}
+    for node in ast.parse(src).body:
+        name = None
+        if isinstance(node, ast.FunctionDef):
+            name = node.name
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target = node.targets[0]
+            target = target.value if isinstance(target, ast.Subscript) else target
+            name = target.id if isinstance(target, ast.Name) else None
+        if name:
+            out.setdefault(name, []).append('\n'.join(lines[node.lineno - 1:node.end_lineno]))
+    return {name: '\n'.join(parts) for name, parts in out.items()}
+
+
+def first_diff(a, b):
+    """두 글에서 처음 다른 줄. (줄 번호, a 의 그 줄, b 의 그 줄). 한쪽에 그 줄이 없으면 (없음)."""
+    la, lb = a.split('\n'), b.split('\n')
+    i = next((j for j, (x, y) in enumerate(zip(la, lb)) if x != y), min(len(la), len(lb)))
+    return i + 1, la[i].strip()[:60] if i < len(la) else '(없음)', lb[i].strip()[:60] if i < len(lb) else '(없음)'
+
+
+def shared_errors(name, text, mine):
+    """글 하나의 python 블록에서 SHARED 이름의 정의를 이 파일의 것과 대조한다. (틀린 곳 목록, 대조한 정의 수).
+    생성기를 옮긴 글이 아니면 ([], 0) 이다."""
+    blocks = []
+    for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
+        try:
+            blocks.append((i, m.group(2), definitions(m.group(2))))
+        except SyntaxError:
+            blocks.append((i, m.group(2), None))
+    if not (re.search(r'^KEYWORDS = \[', text, re.M) or any(defs and set(defs) & set(ANCHORS) for _, _, defs in blocks)):
+        return [], 0
+    out, done = [], 0
+    names = '|'.join(SHARED)
+    for i, code, defs in blocks:
+        if defs is None:                                     # 읽지 못한 블록은 정의처럼 보이는 줄이 있으면 실패로 둔다
+            if re.search(r'^\s*(?:def (?:%s)\(|(?:%s) = )' % (names, names), code, re.M):
+                out.append('posts/%s: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 생성기 이름의 정의를 대조하지 못했습니다' % (name, i))
+            continue
+        for key in SHARED:
+            if key not in defs:
+                continue
+            done += 1
+            if defs[key] != mine[key]:
+                line, got, want = first_diff(defs[key], mine[key])
+                out.append('posts/%s: 파이썬 %d번째 블록의 %s 정의가 생성기의 것과 다릅니다 (%d번째 줄, 글 「%s」, 생성기 「%s」). '
+                           '생성기의 정의를 글자 그대로 옮기고, 다른 뜻이면 이름을 바꿉니다' % (name, i, key, line, got, want))
+    return out, done
 
 
 def rel(path):
@@ -413,20 +500,28 @@ def check():
         done['데이터 파일'] += 1
         if on_disk != data_text(members):
             errors.append('%s 가 지금 생성 결과와 다릅니다. python3 scripts/gen-ads-data.py --write 로 다시 씁니다' % rel(DATA))
-    # 2) KEYWORDS 리터럴을 가진 글
+    # 2) KEYWORDS 리터럴을 가진 글, 4) 생성기를 옮긴 글의 SHARED 정의
     literal = literal_source()
+    mine = definitions(own_source())
+    missing = [n for n in SHARED if n not in mine]
+    if missing:
+        errors.append('SHARED 의 이름이 이 파일에 정의돼 있지 않습니다: %s' % ', '.join(missing))
     for name in sorted(os.listdir(POSTS_DIR)):
         if not name.endswith('.md'):
             continue
         with open(os.path.join(POSTS_DIR, name), encoding='utf-8') as f:
             text = f.read()
         starts = len(re.findall(r'^KEYWORDS = \[', text, re.M))
-        if not starts:
-            continue
-        done['글'] += 1
-        found = re.findall(r'^KEYWORDS = \[\n.*?^\]$', text, re.M | re.S)
-        if len(found) != starts or any(f != literal for f in found):
-            errors.append('posts/%s: KEYWORDS 리터럴이 이 파일의 것과 글자까지 같지 않습니다' % name)
+        if starts:
+            done['KEYWORDS 리터럴'] += 1
+            found = re.findall(r'^KEYWORDS = \[\n.*?^\]$', text, re.M | re.S)
+            if len(found) != starts or any(f != literal for f in found):
+                errors.append('posts/%s: KEYWORDS 리터럴이 이 파일의 것과 글자까지 같지 않습니다' % name)
+        if not missing:
+            wrong, compared = shared_errors(name, text, mine)
+            errors += wrong
+            done['공용 정의'] += compared
+            done['공용 정의를 옮긴 글'] += 1 if compared else 0
     # 3) 등록한 프롬프트 파일
     for slug, build in PROMPTS.items():
         path = os.path.join(PROMPTS_DIR, slug + '.json')
@@ -451,9 +546,11 @@ def check():
         print('✗ ' + e)
     if errors:
         return 1
-    kinds = ('데이터 파일', '글', '프롬프트 파일')
-    print('✓ 대조 %d건(%s)이 지금 생성 결과와 같습니다. 키워드 %d개와 자산 텍스트 %d자의 꼴도 맞습니다'
-          % (sum(done.values()), ', '.join('%s %d' % (k, done[k]) for k in kinds), len(KEYWORDS), len(ASSET_RUNNING)))
+    total = done['데이터 파일'] + done['KEYWORDS 리터럴'] + done['공용 정의'] + done['프롬프트 파일']
+    print('✓ 대조 %d건(데이터 파일 %d, 글의 KEYWORDS 리터럴 %d, 글 %d편의 공용 정의 %d, 프롬프트 파일 %d)이 지금 생성 결과와 같습니다. '
+          '키워드 %d개와 자산 텍스트 %d자의 꼴도 맞습니다'
+          % (total, done['데이터 파일'], done['KEYWORDS 리터럴'], done['공용 정의를 옮긴 글'], done['공용 정의'],
+             done['프롬프트 파일'], len(KEYWORDS), len(ASSET_RUNNING)))
     return 0
 
 

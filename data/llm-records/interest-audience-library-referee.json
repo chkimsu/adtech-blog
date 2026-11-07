@@ -1,0 +1,27 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-07",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "r1",
+      "think": true,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 4개:\nk038 마라토너\nk063 새벽러닝\nk069 번역기\nk101 러닝크루",
+      "output": "{\"decisions\": [{\"id\": \"k038\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k063\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k069\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k101\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}",
+      "thinking_chars": 14067,
+      "prompt_tokens": 353,
+      "output_tokens": 3792,
+      "elapsed_ms": 248426,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    }
+  ]
+}

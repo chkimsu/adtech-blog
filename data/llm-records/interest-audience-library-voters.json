@@ -1,0 +1,203 @@
+{
+  "model": "qwen3.5:27b",
+  "recorded_at": "2026-11-07",
+  "host": "http://localhost:11434",
+  "options": {
+    "temperature": 0,
+    "seed": 7
+  },
+  "items": [
+    {
+      "id": "b1",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk001 러닝화\nk002 감성카페\nk003 유모차\nk004 맞춤법검사기\nk005 게임패드\nk006 조깅화\nk007 버스시간표\nk008 숙소추천\nk009 무릎통증\nk010 발목보호대\nk011 런닝화\nk012 발목염좌\nk013 러닝반바지\nk014 택배조회\nk015 캐리어\nk016 게임모니터\nk017 트레이닝화\nk018 디저트카페\nk019 트레일러닝화\nk020 런솔",
+      "output": "{\"decisions\": [{\"id\": \"k001\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k002\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k003\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k004\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k005\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k006\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k007\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k008\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k009\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k010\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k011\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k012\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k013\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k014\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k015\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k016\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k017\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k018\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k019\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k020\", \"keep\": false, \"reason_code\": \"too_broad\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 489,
+      "output_tokens": 454,
+      "elapsed_ms": 32257,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b2",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk021 버너\nk022 글램핑\nk023 호텔예약\nk024 향수\nk025 원두\nk026 텐트\nk027 콘솔게임\nk028 주식계좌\nk029 런닝슈즈\nk030 카페추천\nk031 러닝슈즈\nk032 아이섀도\nk033 핸드드립\nk034 지도\nk035 캠핑테이블\nk036 카본러닝화\nk037 뉴스\nk038 마라토너\nk039 베이커리\nk040 불면증",
+      "output": "{\"decisions\": [{\"id\": \"k021\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k022\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k023\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k024\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k025\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k026\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k027\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k028\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k029\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k030\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k031\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k032\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k033\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k034\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k035\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k036\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k037\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k038\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k039\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k040\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 481,
+      "output_tokens": 451,
+      "elapsed_ms": 31823,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b3",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk041 모노웍스러닝화\nk042 신용카드추천\nk043 공휴일\nk044 스포츠선글라스\nk045 초보러너\nk046 주말러너\nk047 예금이자\nk048 런솔러닝화\nk049 청약통장\nk050 여행자보험\nk051 캠핑장예약\nk052 네일아트\nk053 게이밍마우스\nk054 적금금리\nk055 우편번호\nk056 토너\nk057 패키지여행\nk058 펀드추천\nk059 10km완주\nk060 러닝모자",
+      "output": "{\"decisions\": [{\"id\": \"k041\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k042\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k043\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k044\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k045\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k046\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k047\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k048\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k049\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k050\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k051\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k052\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k053\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k054\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k055\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k056\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k057\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k058\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k059\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k060\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 499,
+      "output_tokens": 451,
+      "elapsed_ms": 30321,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b4",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk061 제주여행\nk062 계산기\nk063 새벽러닝\nk064 침낭\nk065 커피머신\nk066 아치깔창\nk067 보드게임\nk068 족저근막염\nk069 번역기\nk070 캠핑랜턴\nk071 무릎보호대\nk072 워킹화\nk073 스포츠워치\nk074 가계부앱\nk075 캠핑의자\nk076 기계식키보드\nk077 쿠션팩트\nk078 기저귀\nk079 러닝양말\nk080 정강이통증",
+      "output": "{\"decisions\": [{\"id\": \"k061\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k062\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k063\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k064\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k065\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k066\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k067\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k068\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k069\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k070\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k071\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k072\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k073\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k074\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k075\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k076\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k077\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k078\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k079\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k080\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 498,
+      "output_tokens": 453,
+      "elapsed_ms": 30594,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b5",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk081 숲결러닝화\nk082 스포츠웨어\nk083 이유식\nk084 달리기신발\nk085 핸드크림\nk086 달력\nk087 편성표\nk088 게임쿠폰\nk089 젖병\nk090 마스크팩\nk091 지하철노선도\nk092 립밤\nk093 ETF\nk094 마라톤완주\nk095 스포츠신발\nk096 카시트\nk097 미세먼지\nk098 해외여행\nk099 분유\nk100 고혈압",
+      "output": "{\"decisions\": [{\"id\": \"k081\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k082\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k083\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k084\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k085\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k086\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k087\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k088\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k089\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k090\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k091\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k092\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k093\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k094\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k095\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k096\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k097\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k098\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k099\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k100\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 488,
+      "output_tokens": 456,
+      "elapsed_ms": 30425,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b6",
+      "think": false,
+      "run": 1,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk101 러닝크루\nk102 입문용러닝화\nk103 렌터카\nk104 항공권\nk105 데일리러닝화\nk106 마라톤화\nk107 종아리압박슬리브\nk108 브런치\nk109 경량러닝화\nk110 아기욕조\nk111 차박\nk112 운동화\nk113 아기띠\nk114 날씨\nk115 와이드러닝화\nk116 쿠션러닝화\nk117 모바일게임\nk118 오사카여행\nk119 러닝벨트\nk120 타프",
+      "output": "{\"decisions\": [{\"id\": \"k101\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k102\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k103\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k104\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k105\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k106\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k107\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k108\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k109\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k110\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k111\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k112\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k113\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k114\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k115\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k116\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k117\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k118\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k119\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k120\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 494,
+      "output_tokens": 450,
+      "elapsed_ms": 32284,
+      "options": {
+        "temperature": 0,
+        "seed": 7
+      }
+    },
+    {
+      "id": "b1",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk001 러닝화\nk002 감성카페\nk003 유모차\nk004 맞춤법검사기\nk005 게임패드\nk006 조깅화\nk007 버스시간표\nk008 숙소추천\nk009 무릎통증\nk010 발목보호대\nk011 런닝화\nk012 발목염좌\nk013 러닝반바지\nk014 택배조회\nk015 캐리어\nk016 게임모니터\nk017 트레이닝화\nk018 디저트카페\nk019 트레일러닝화\nk020 런솔",
+      "output": "{\"decisions\": [{\"id\": \"k001\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k002\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k003\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k004\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k005\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k006\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k007\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k008\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k009\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k010\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k011\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k012\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k013\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k014\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k015\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k016\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k017\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k018\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k019\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k020\", \"keep\": false, \"reason_code\": \"too_broad\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 489,
+      "output_tokens": 454,
+      "elapsed_ms": 30165,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    },
+    {
+      "id": "b2",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk021 버너\nk022 글램핑\nk023 호텔예약\nk024 향수\nk025 원두\nk026 텐트\nk027 콘솔게임\nk028 주식계좌\nk029 런닝슈즈\nk030 카페추천\nk031 러닝슈즈\nk032 아이섀도\nk033 핸드드립\nk034 지도\nk035 캠핑테이블\nk036 카본러닝화\nk037 뉴스\nk038 마라토너\nk039 베이커리\nk040 불면증",
+      "output": "{\"decisions\": [{\"id\": \"k021\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k022\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k023\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k024\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k025\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k026\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k027\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k028\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k029\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k030\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k031\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k032\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k033\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k034\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k035\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k036\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k037\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k038\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k039\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k040\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 481,
+      "output_tokens": 452,
+      "elapsed_ms": 29850,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    },
+    {
+      "id": "b3",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk041 모노웍스러닝화\nk042 신용카드추천\nk043 공휴일\nk044 스포츠선글라스\nk045 초보러너\nk046 주말러너\nk047 예금이자\nk048 런솔러닝화\nk049 청약통장\nk050 여행자보험\nk051 캠핑장예약\nk052 네일아트\nk053 게이밍마우스\nk054 적금금리\nk055 우편번호\nk056 토너\nk057 패키지여행\nk058 펀드추천\nk059 10km완주\nk060 러닝모자",
+      "output": "{\"decisions\": [{\"id\": \"k041\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k042\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k043\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k044\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k045\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k046\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k047\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k048\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k049\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k050\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k051\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k052\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k053\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k054\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k055\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k056\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k057\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k058\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k059\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k060\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 499,
+      "output_tokens": 451,
+      "elapsed_ms": 29913,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    },
+    {
+      "id": "b4",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk061 제주여행\nk062 계산기\nk063 새벽러닝\nk064 침낭\nk065 커피머신\nk066 아치깔창\nk067 보드게임\nk068 족저근막염\nk069 번역기\nk070 캠핑랜턴\nk071 무릎보호대\nk072 워킹화\nk073 스포츠워치\nk074 가계부앱\nk075 캠핑의자\nk076 기계식키보드\nk077 쿠션팩트\nk078 기저귀\nk079 러닝양말\nk080 정강이통증",
+      "output": "{\"decisions\": [{\"id\": \"k061\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k062\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k063\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k064\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k065\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k066\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k067\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k068\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k069\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k070\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k071\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k072\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k073\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k074\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k075\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k076\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k077\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k078\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k079\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k080\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 498,
+      "output_tokens": 457,
+      "elapsed_ms": 30246,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    },
+    {
+      "id": "b5",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk081 숲결러닝화\nk082 스포츠웨어\nk083 이유식\nk084 달리기신발\nk085 핸드크림\nk086 달력\nk087 편성표\nk088 게임쿠폰\nk089 젖병\nk090 마스크팩\nk091 지하철노선도\nk092 립밤\nk093 ETF\nk094 마라톤완주\nk095 스포츠신발\nk096 카시트\nk097 미세먼지\nk098 해외여행\nk099 분유\nk100 고혈압",
+      "output": "{\"decisions\": [{\"id\": \"k081\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k082\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k083\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k084\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k085\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k086\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k087\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k088\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k089\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k090\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k091\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k092\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k093\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k094\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k095\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k096\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k097\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k098\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k099\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k100\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 488,
+      "output_tokens": 455,
+      "elapsed_ms": 29758,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    },
+    {
+      "id": "b6",
+      "think": false,
+      "run": 2,
+      "system": "너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.\n관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.\n키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.\ncommercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.\nsensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.\nno_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.\ntoo_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.\n사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.\n답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.\n{\"decisions\": [{\"id\": \"<id>\", \"keep\": true, \"reason_code\": \"<commercial_interest|sensitive_health|no_commercial_intent|too_broad>\"}]}",
+      "user": "키워드 20개:\nk101 러닝크루\nk102 입문용러닝화\nk103 렌터카\nk104 항공권\nk105 데일리러닝화\nk106 마라톤화\nk107 종아리압박슬리브\nk108 브런치\nk109 경량러닝화\nk110 아기욕조\nk111 차박\nk112 운동화\nk113 아기띠\nk114 날씨\nk115 와이드러닝화\nk116 쿠션러닝화\nk117 모바일게임\nk118 오사카여행\nk119 러닝벨트\nk120 타프",
+      "output": "{\"decisions\": [{\"id\": \"k101\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k102\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k103\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k104\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k105\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k106\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k107\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k108\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k109\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k110\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k111\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k112\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k113\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k114\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k115\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k116\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k117\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k118\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k119\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k120\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}",
+      "thinking_chars": 0,
+      "prompt_tokens": 494,
+      "output_tokens": 448,
+      "elapsed_ms": 29199,
+      "options": {
+        "temperature": 0.7,
+        "seed": 9
+      }
+    }
+  ]
+}

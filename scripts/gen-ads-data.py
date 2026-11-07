@@ -6,10 +6,14 @@
   python3 scripts/gen-ads-data.py --write           놀이터 데이터 js/ads-users-data.js 를 다시 쓴다
   python3 scripts/gen-ads-data.py --prompts <슬러그>  PROMPTS 에 등록한 프롬프트 파일 한 벌을 찍는다. 아래처럼 받아 쓴다
       python3 scripts/gen-ads-data.py --prompts <슬러그> > data/llm-records/prompts/<슬러그>.json
+                                                    앞 기록을 읽는 빌더(관심사 사전 편의 -referee, -groups)는 그 기록이 없거나 쓸 수 없으면
+                                                    한 줄로 알리고 1 로 끝난다
   python3 scripts/gen-ads-data.py --check           키워드와 자산 텍스트의 꼴을 본 뒤 아래 넷을 대조하고 몇 건 대조했는지 찍는다
                                                     1) js/ads-users-data.js 가 지금 생성 결과와 같은가 (파일이 없으면 실패)
                                                     2) posts/ 에서 「KEYWORDS = [」 줄이 있는 글마다 그 리터럴이 이 파일의 것과 글자까지 같은가
-                                                    3) PROMPTS 에 등록한 프롬프트 파일이 있으면 그 items 의 id 와 user 가 빌더의 것과 같은가
+                                                    3) PROMPTS 에 등록한 프롬프트 파일이 있으면 그 파일 전체(system, think, repeat, repeat_subset,
+                                                       think_subset, options, allow_length, items)가 빌더로 다시 만든 글과 글자까지 같은가.
+                                                       앞 기록을 읽는 빌더는 지금 있는 앞 기록에서 다시 만든다
                                                     4) 생성기를 옮긴 글(ANCHORS 의 함수나 「KEYWORDS = [」 리터럴이 있는 글)의 python 블록이
                                                        SHARED 의 이름을 정의하면 그 정의가 이 파일의 것과 글자까지 같은가
                                                     2) ~ 4) 는 아직 없는 글과 프롬프트 파일, 정의하지 않은 이름을 건너뛴다
@@ -32,7 +36,8 @@ from collections import Counter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'js', 'ads-users-data.js')
 POSTS_DIR = os.path.join(ROOT, 'posts')
-PROMPTS_DIR = os.path.join(ROOT, 'data', 'llm-records', 'prompts')
+RECORDS_DIR = os.path.join(ROOT, 'data', 'llm-records')
+PROMPTS_DIR = os.path.join(RECORDS_DIR, 'prompts')
 N_MEMBERS = 2000
 
 # 행동마다 사건의 경과일을 적는다. 0 은 오늘, 29 는 29일 전이고, 같은 날 두 번이면 두 번 적는다.
@@ -281,7 +286,13 @@ DATA_HEAD = ('// 가상 회원 2,000명과 키워드 120개입니다. scripts/ge
 # 프롬프트 파일 목록. 키는 data/llm-records/prompts/<슬러그>.json 의 슬러그이고, 값은 그 파일 한 벌을 만드는 함수다.
 # 함수는 인자 없이 {"system": ..., "think": ..., "repeat": ..., "items": [{"id": ..., "user": ...}, ...]} 를 돌려준다.
 # 만들 항목이 없으면 None 을 돌려주고, 그때는 파일도 없어야 한다. 키워드 확장 편과 관심사 사전 편이 자기 빌더를 여기에 더한다.
+# 앞 기록을 읽어 뒤 프롬프트를 만드는 빌더는 그 기록을 쓸 수 없으면 NeedRecord 를 낸다. --check 는 파일 전체를 prompt_text 와 대조한다.
 PROMPTS = {}
+
+
+class NeedRecord(Exception):
+    """뒤 프롬프트를 만들 앞 기록이 없거나 쓸 수 없다. --prompts 와 --check 가 그 까닭을 한 줄로 알린다."""
+
 
 # 키워드 확장 편(posts/keyword-expansion-strategies.md)의 프롬프트 두 벌. 시스템 메시지는 전략 일곱의 정의를 같은 줄로 적고,
 # 한 번에 일곱을 맡기는 벌(-all)과 전략마다 따로 부르는 벌(-each)은 할 일을 적은 줄만 다르다.
@@ -340,12 +351,160 @@ def keyword_prompts_each():
 PROMPTS['keyword-expansion-strategies-all'] = keyword_prompts_all
 PROMPTS['keyword-expansion-strategies-each'] = keyword_prompts_each
 
-# 글에 옮기는 이름. 회원, 나이와 지역, 키워드, 검색 기록, 문서를 다시 만드는 맨 위 함수와 상수다.
+# 관심사 사전 편(posts/interest-audience-library.md)의 프롬프트 세 벌. 거르기는 투표 둘(-voters)과 심판(-referee), 묶기는 한 번(-groups)이다.
+# 투표와 심판은 같은 시스템 메시지를 쓴다. 투표는 thinking 을 끄고 temperature 0(투표자 A, run 1)과 0.7(투표자 B, run 2)로
+# 한 번씩, 심판은 thinking 을 켜고 temperature 0 으로 받는다. 사용자 메시지는 「k001 러닝화」 꼴의 줄 목록이고 주제는 보내지 않는다.
+# -referee 는 -voters 기록에서 두 답의 keep 이 다르거나 읽지 못한 키워드만 모아 쓰고, -groups 는 두 기록으로 정한 남긴 키워드를 쓴다.
+# 그래서 두 빌더는 앞 기록을 읽는다. 앞 기록이 없거나, error 가 남았거나, 지금 프롬프트로 받은 기록이 아니면 NeedRecord 를 낸다.
+LIBRARY_BATCH = 20
+LIBRARY_VOTERS = 'interest-audience-library-voters'
+LIBRARY_REFEREE = 'interest-audience-library-referee'
+LIBRARY_GROUPS = 'interest-audience-library-groups'
+LIBRARY_SYSTEM_FILTER = '\n'.join([
+    '너는 광고 플랫폼의 관심사 사전을 만드는 검수자다. 검색 로그에서 뽑은 키워드를 읽고, 키워드마다 관심사 오디언스를 만드는 데 남길지 거를지 정한다.',
+    '관심사 오디언스는 같은 관심사의 키워드를 검색한 회원의 묶음이고, 광고주가 광고를 보일 사람으로 고른다.',
+    '키워드마다 keep 과 reason_code 를 적는다. 남기면 keep 은 true, 거르면 false 다. reason_code 는 아래 넷 가운데 하나다.',
+    'commercial_interest: 상품이나 서비스를 사거나 쓰려는 관심이 드러나는 검색어다. 남긴다.',
+    'sensitive_health: 건강 상태, 증상, 질병을 드러내는 검색어다. 민감한 정보라 사람을 고르는 데 쓰지 않으므로 거른다.',
+    'no_commercial_intent: 사거나 쓰려는 뜻 없이 생활 정보나 도구를 찾는 검색어다. 거른다.',
+    'too_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어다. 거른다.',
+    '사용자 메시지의 키워드를 하나도 빠뜨리지 말고, 받은 차례대로 하나씩 적는다.',
+    '답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.',
+    '{"decisions": [{"id": "<id>", "keep": true, "reason_code": "<commercial_interest|sensitive_health|no_commercial_intent|too_broad>"}]}'])
+LIBRARY_SYSTEM_GROUPS = '\n'.join([
+    '너는 광고 플랫폼의 관심사 사전을 만든다. 거르기를 통과한 키워드를 관심사 오디언스로 묶고, 묶음마다 이름을 붙인다.',
+    '한 묶음은 광고주가 광고를 보일 사람으로 고르는 관심사 하나다. 같은 관심사를 가진 사람이 검색할 키워드를 한 묶음에 넣는다.',
+    '이름은 그 관심사를 가리키는 영어 snake_case 로 적는다. 소문자와 숫자와 밑줄만 쓴다.',
+    '사용자 메시지의 키워드는 모두 어느 한 묶음에 넣는다. 한 키워드를 두 묶음에 넣지 않는다.',
+    '답은 아래 꼴의 JSON 한 줄로만 쓴다. 설명이나 다른 글은 붙이지 않는다.',
+    '{"groups": [{"name": "<영어 snake_case>", "ids": ["<id>", "<id>"]}]}'])
+
+# 거르기 답의 이유 코드 넷과 답을 읽는 법. 심판에 보낼 키워드를 이 함수로 정하고, 관심사 사전 편의 첫 블록이 글자 그대로 옮긴다.
+REASON_CODES = ['commercial_interest', 'sensitive_health', 'no_commercial_intent', 'too_broad']
+
+
+def read_decisions(text, ids):
+    """거르기 답 하나를 {id: (keep, reason_code)} 로 읽는다. 답의 꼴이 스키마와 다르면 None 이다.
+    ids 가운데 결정이 꼭 하나인 id 만 담는다. 빠진 id 와 두 번 이상 적은 id 는 읽지 못한 키워드라 담지 않는다."""
+    try:
+        answer = json.loads(text)
+    except ValueError:
+        return None
+    if not (isinstance(answer, dict) and set(answer) == {'decisions'} and isinstance(answer['decisions'], list)):
+        return None
+    found = {}
+    for d in answer['decisions']:
+        if not (isinstance(d, dict) and set(d) == {'id', 'keep', 'reason_code'} and isinstance(d['id'], str)
+                and isinstance(d['keep'], bool) and d['reason_code'] in REASON_CODES):
+            return None
+        found.setdefault(d['id'], []).append((d['keep'], d['reason_code']))
+    return {i: found[i][0] for i in ids if len(found.get(i, [])) == 1}
+
+
+def library_user(ids, head):
+    """관심사 사전 편의 사용자 메시지. 첫 줄 「<head> N개:」 아래에 키워드를 「k001 러닝화」 꼴로 한 줄씩 적는다."""
+    text = {k[0]: k[1] for k in KEYWORDS}
+    return '\n'.join(['%s %d개:' % (head, len(ids))] + ['%s %s' % (i, text[i]) for i in ids])
+
+
+def library_batches(ids):
+    """id 목록을 차례대로 LIBRARY_BATCH 개씩 나눈다. 마지막 묶음은 더 적을 수 있다."""
+    return [ids[i:i + LIBRARY_BATCH] for i in range(0, len(ids), LIBRARY_BATCH)]
+
+
+def library_prompts_voters():
+    """키워드 120개를 id 차례로 20개씩 6묶음. 맨 위 temperature 0 이 투표자 A(run 1), repeat_subset 의 0.7 이 투표자 B(run 2)다."""
+    items = [{'id': 'b%d' % n, 'user': library_user(ids, '키워드')}
+             for n, ids in enumerate(library_batches([k[0] for k in KEYWORDS]), 1)]
+    return {'system': LIBRARY_SYSTEM_FILTER, 'think': 'off', 'repeat': 1,
+            'repeat_subset': {'ids': [it['id'] for it in items], 'repeat': 1, 'options': {'temperature': 0.7}},
+            'items': items}
+
+
+def library_record(slug, spec, runs):
+    """앞 기록 하나를 {(항목 id, run): 답} 으로 읽는다. 기록이 없거나, 읽지 못하거나, error 가 남았거나,
+    spec 의 시스템 메시지와 사용자 메시지로 받은 기록이 아니거나, 항목마다 runs 의 회차가 다 있지 않으면 NeedRecord 를 낸다."""
+    path = os.path.join(RECORDS_DIR, slug + '.json')
+    if not os.path.exists(path):
+        raise NeedRecord('%s 가 없습니다. 먼저 python3 scripts/llm-record.py --slug %s 로 기록합니다' % (rel(path), slug))
+    try:
+        with open(path, encoding='utf-8') as f:
+            items = json.load(f)['items']
+        users = {it['id']: it['user'] for it in spec['items']}
+        if any('error' in it for it in items):
+            raise NeedRecord('%s 에 error 가 남은 항목이 있습니다. 다시 기록한 뒤 뒤 프롬프트를 만듭니다' % rel(path))
+        if any(it['system'] != spec['system'] or users.get(it['id']) != it['user'] for it in items):
+            raise NeedRecord('%s 는 지금 프롬프트로 받은 기록이 아닙니다. --prompts %s 로 다시 뽑고 다시 기록합니다' % (rel(path), slug))
+        out = {(it['id'], it['run']): it['output'] for it in items}
+    except (ValueError, KeyError, TypeError) as e:
+        raise NeedRecord('%s 를 읽지 못했습니다 (%s: %s)' % (rel(path), type(e).__name__, e))
+    lack = ['%s run %d' % (i, r) for i in users for r in runs if (i, r) not in out]
+    if lack:
+        raise NeedRecord('%s 에 항목이 모자랍니다 (%s). 다시 기록합니다' % (rel(path), ', '.join(lack[:5])))
+    return out
+
+
+def library_votes():
+    """-voters 기록에서 묶음마다 (id 목록, 투표자 A 의 읽은 답, 투표자 B 의 읽은 답). 답 전체를 읽지 못하면 None 이다."""
+    spec = library_prompts_voters()
+    out = library_record(LIBRARY_VOTERS, spec, (1, 2))
+    return [(ids, read_decisions(out[it['id'], 1], ids), read_decisions(out[it['id'], 2], ids))
+            for it, ids in zip(spec['items'], library_batches([k[0] for k in KEYWORDS]))]
+
+
+def library_contested():
+    """심판에 보낼 키워드 id. 두 투표의 keep 이 다르거나 어느 한쪽이라도 읽지 못한 키워드이고, id 차례다.
+    keep 이 같고 reason_code 만 다르면 보내지 않는다."""
+    return [i for ids, a, b in library_votes() for i in ids
+            if a is None or b is None or i not in a or i not in b or a[i][0] != b[i][0]]
+
+
+def library_prompts_referee():
+    """두 답의 keep 이 다르거나 읽지 못한 키워드를 id 차례로 20개씩 묶는다. 투표와 같은 시스템 메시지에 thinking 을 켠다.
+    그런 키워드가 없으면 None 이다. 그때는 심판 프롬프트 파일과 기록을 만들지 않는다."""
+    contested = library_contested()
+    if not contested:
+        return None
+    return {'system': LIBRARY_SYSTEM_FILTER, 'think': 'on', 'repeat': 1,
+            'items': [{'id': 'r%d' % n, 'user': library_user(ids, '키워드')}
+                      for n, ids in enumerate(library_batches(contested), 1)]}
+
+
+def library_kept():
+    """투표와 심판을 거쳐 남긴 키워드 id, id 차례. 두 투표의 keep 이 같으면 그 값이고, 아니면 심판의 keep 이다.
+    심판의 답에서도 읽지 못한 키워드는 남기지 않는다."""
+    keep = {}
+    contested = library_contested()
+    if contested:
+        spec = library_prompts_referee()
+        out = library_record(LIBRARY_REFEREE, spec, (1,))
+        for it, ids in zip(spec['items'], library_batches(contested)):
+            got = read_decisions(out[it['id'], 1], ids) or {}
+            keep.update({i: i in got and got[i][0] for i in ids})
+    for ids, a, b in library_votes():
+        for i in ids:
+            if i not in keep:
+                keep[i] = a[i][0]
+    return [k[0] for k in KEYWORDS if keep[k[0]]]
+
+
+def library_prompts_groups():
+    """투표와 심판을 거쳐 남긴 키워드를 한 번에 주고 묶음과 이름을 받는다. thinking 은 끈다."""
+    return {'system': LIBRARY_SYSTEM_GROUPS, 'think': 'off', 'repeat': 1,
+            'items': [{'id': 'groups', 'user': library_user(library_kept(), '남은 키워드')}]}
+
+
+PROMPTS[LIBRARY_VOTERS] = library_prompts_voters
+PROMPTS[LIBRARY_REFEREE] = library_prompts_referee
+PROMPTS[LIBRARY_GROUPS] = library_prompts_groups
+
+# 글에 옮기는 이름. 회원, 나이와 지역, 키워드, 검색 기록, 문서를 다시 만드는 맨 위 함수와 상수,
+# 그리고 심판에 보낼 키워드를 정하는 거르기 답 읽기(관심사 사전 편)다.
 # 생성기를 옮긴 글의 python 블록이 이 이름을 정의하면, 그 정의의 줄 전체(끝 줄의 주석까지)가 이 파일의 것과 같아야 한다.
 SHARED = ['KEYS', 'MEMBER_A', 'MEMBER_B', 'counts', 'SEGMENT_317', 'in_segment_317', 'runner_count', 'TENDENCY',
           'make_members', 'ages', 'REGIONS', 'REGION_WEIGHTS', 'regions',
           'KEYWORDS', 'TEXT', 'CAMPING_GOODS', 'make_pool', 'POOL', 'RUNNING', 'FOLLOW', 'OTHER_TOPICS',
-          'buy_chance', 'extend', 'WORDS', 'user_doc']
+          'buy_chance', 'extend', 'WORDS', 'user_doc', 'REASON_CODES', 'read_decisions']
 # 생성기를 옮긴 글의 표시. 이 함수 가운데 하나를 정의했거나 「KEYWORDS = [」 리터럴이 있는 글만 SHARED 를 대조한다.
 # counts, WORDS, KEYWORDS 같은 이름은 광고 서빙 흐름, 해시와 정렬, 컨텍스추얼 타겟팅, 관심사 분류 편이 다른 뜻으로 쓴다.
 ANCHORS = ['make_members', 'make_pool', 'extend', 'buy_chance', 'user_doc']
@@ -510,6 +669,18 @@ def first_diff(a, b):
     return i + 1, la[i].strip()[:60] if i < len(la) else '(없음)', lb[i].strip()[:60] if i < len(lb) else '(없음)'
 
 
+def first_char_diff(a, b):
+    """두 글에서 처음 다른 글자의 자리. (줄 번호, a 의 그 자리 앞뒤, b 의 그 자리 앞뒤). 프롬프트 파일은 시스템 메시지가
+    한 줄이라 줄만 보여서는 어디가 다른지 모른다. 줄바꿈은 \\n 으로 보인다."""
+    i = next((j for j, (x, y) in enumerate(zip(a, b)) if x != y), min(len(a), len(b)))
+
+    def show(s):
+        part = ('…' if i > 20 else '') + s[max(0, i - 20):i + 30] + ('…' if i + 30 < len(s) else '')
+        return part.replace('\n', '\\n') or '(끝)'
+
+    return a.count('\n', 0, i) + 1, show(a), show(b)
+
+
 def shared_errors(name, text, mine):
     """글 하나의 python 블록에서 SHARED 이름의 정의를 이 파일의 것과 대조한다. (틀린 곳 목록, 대조한 정의 수).
     생성기를 옮긴 글이 아니면 ([], 0) 이다."""
@@ -579,26 +750,29 @@ def check():
             errors += wrong
             done['공용 정의'] += compared
             done['공용 정의를 옮긴 글'] += 1 if compared else 0
-    # 3) 등록한 프롬프트 파일
+    # 3) 등록한 프롬프트 파일. 파일 전체가 빌더로 다시 만든 글(prompt_text)과 글자까지 같아야 한다.
+    # 그래서 system, think, repeat, repeat_subset, think_subset, options, allow_length, items 가 모두 대조된다.
+    # 앞 기록을 읽는 빌더는 지금 있는 앞 기록에서 다시 만들고, 그 기록을 쓸 수 없으면 그 까닭이 오류가 된다.
     for slug, build in PROMPTS.items():
         path = os.path.join(PROMPTS_DIR, slug + '.json')
         if not os.path.exists(path):
             continue
         done['프롬프트 파일'] += 1
-        spec = build()
+        with open(path, encoding='utf-8') as f:
+            on_disk = f.read()
         try:
-            with open(path, encoding='utf-8') as f:
-                items = json.load(f).get('items')
-        except (ValueError, AttributeError) as e:
-            errors.append('%s 를 읽지 못했습니다 (%s)' % (rel(path), e))
+            spec = build()
+        except NeedRecord as e:
+            errors.append('%s 를 다시 만들 수 없습니다. %s' % (rel(path), e))
             continue
         if spec is None:
             errors.append('%s: 빌더가 만들 항목이 없다고 하는데 파일이 있습니다' % rel(path))
             continue
-        got = [(it.get('id'), it.get('user')) if isinstance(it, dict) else it for it in items or []]
-        if got != [(it['id'], it['user']) for it in spec['items']]:
-            errors.append('%s: items 의 id 와 user 가 지금 생성 결과와 다릅니다. --prompts %s 로 다시 뽑고 다시 기록합니다'
-                          % (rel(path), slug))
+        want = prompt_text(spec)
+        if on_disk != want:
+            line, got, exp = first_char_diff(on_disk, want)
+            errors.append('%s: 빌더로 다시 만든 글과 %d번째 줄부터 다릅니다 (파일 「%s」, 빌더 「%s」). '
+                          '--prompts %s 로 다시 뽑고 다시 기록합니다' % (rel(path), line, got, exp, slug))
     for e in errors:
         print('✗ ' + e)
     if errors:
@@ -626,12 +800,17 @@ def main():
         print('✓ %s 에 회원 %d명, 키워드 %d개를 썼습니다 (%d바이트)' % (rel(DATA), N_MEMBERS, len(KEYWORDS), len(text.encode('utf-8'))))
         return 0
     if len(args) == 2 and args[0] == '--prompts':
+        # 알림은 stderr 에 쓴다. stdout 은 프롬프트 파일로 받아 쓰는 자리라, 알림이 파일 안에 들어가지 않게 한다
         if args[1] not in PROMPTS:
-            print('✗ PROMPTS 에 슬러그 %s 가 없습니다. 있는 것: %s' % (args[1], ', '.join(PROMPTS) or '없음'))
+            print('✗ PROMPTS 에 슬러그 %s 가 없습니다. 있는 것: %s' % (args[1], ', '.join(PROMPTS) or '없음'), file=sys.stderr)
             return 2
-        spec = PROMPTS[args[1]]()
+        try:
+            spec = PROMPTS[args[1]]()
+        except NeedRecord as e:
+            print('✗ %s 를 만들 수 없습니다. %s' % (args[1], e), file=sys.stderr)
+            return 1
         if spec is None:
-            print('✗ %s 는 만들 항목이 없습니다. 프롬프트 파일을 만들지 않습니다' % args[1])
+            print('✗ %s 는 만들 항목이 없습니다. 프롬프트 파일을 만들지 않습니다' % args[1], file=sys.stderr)
             return 1
         sys.stdout.write(prompt_text(spec))
         return 0

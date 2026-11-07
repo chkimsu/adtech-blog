@@ -8,6 +8,19 @@
 
 const posts = [
   {
+    id: 'interest-audience-library',
+    world: 'both',
+    worldNote: '거르고 묶고 회원 수로 자르는 순서는 두 무대가 같습니다. 다른 것은 키워드가 어디서 오고, 최소 크기를 무엇의 수로 세느냐입니다. 담장 안은 회원의 검색어를 회원 번호로 세고, 열린 RTB 의 DSP 는 지면과 데이터 회사의 세그먼트를 쿠키나 광고 ID 로 셉니다.',
+    worldPractical: '담장 안의 플랫폼은 회원이 쓴 검색어를 회원 번호와 함께 남겨, 키워드 사전과 오디언스 크기를 직접 셉니다. 새 검색어가 쌓일 때마다 사전을 다시 만들고, 두 투표의 답이 다른 키워드만 심판에게 보내면 비용이 다른 답의 수만큼만 듭니다. 건강 키워드는 묶기 전에 빠져야 해서, 모델의 거르기 뒤에도 코드 거르기를 둡니다. 열린 RTB 의 DSP 는 검색창이 없어 지면의 글과 데이터 회사의 세그먼트로 사전을 채웁니다. 세그먼트 이름은 IAB Audience Taxonomy 같은 표준 분류에 맞춥니다. 크기는 사람이 아니라 쿠키나 광고 ID 의 수라는 것도 함께 적습니다.',
+    title: '관심사 사전 만들기: 로그 키워드가 이름 붙은 오디언스가 되기까지',
+    excerpt: '지훈 씨가 모델 팀 31주째에 검색 키워드 120개로 관심사 사전을 만듭니다. qwen3.5:27b 에게 남길지 거를지를 temperature 0 과 0.7 로 두 번 물었습니다. keep 이 다른 4개만 thinking 을 켠 심판에게 보냈습니다. 최종 결정은 정답과 112개가 맞았습니다. 틀린 8개 가운데 7개는 두 투표가 같은 답을 내서 심판에게 가지 않은 키워드였습니다. 남은 94개는 모델이 묶음 9개로 나누고 영어 이름을 붙였고, 코드의 나누기와 최소 크기 규칙은 아무것도 바꾸지 않았습니다. 가장 큰 office_supplies 795명 가운데 713명은 noise 인 번역기를 검색한 회원이었습니다.',
+    date: '2026-11-22',
+    categories: ['LLM & Agents', 'Targeting & Audience'],
+    tags: ['LLM', 'Segmentation', 'LLM Evaluation'],
+    contentUrl: 'posts/interest-audience-library.md',
+    series: 'llm-ads-track'
+  },
+  {
     id: 'keyword-expansion-strategies',
     world: 'both',
     worldNote: '사전에서 고르고 코드가 거르는 순서는 두 무대가 같습니다. 다른 것은 사전이 어디서 오고, 고른 키워드로 무엇을 고르느냐입니다. 담장 안은 검색 기록으로 사전을 만들고, 열린 RTB 의 DSP 는 키워드를 지면의 글과 맞춥니다.',

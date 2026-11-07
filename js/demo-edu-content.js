@@ -4089,6 +4089,29 @@ window.DEMO_EDU = {
             { el: '[data-card="filter"]', title: '끝에 남는 것', body: '겹침을 하나로 남기고 health 와 noise 를 빼면 최종 목록은 34, 15, 30, 26개입니다.' }
         ]
     },
+    'interest-library-cards': {
+        analogy: '검색 키워드 120개를 temperature 0 과 0.7 의 두 투표로 걸렀다. keep 이 다른 4개만 thinking 을 켠 심판에게 보냈다. 최종 결정은 정답과 112개가 맞았고, 틀린 8개 가운데 7개는 두 답이 같아 심판에게 가지 않았다. 남은 94개를 모델이 묶음 9개로 묶고 이름을 붙였고, 코드의 나누기와 최소 크기 규칙은 바꾼 것이 없었다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'filter': return '헷갈리는 것은 <strong>모델이 답하는 단계는 모델이 다 하는가</strong>입니다. 답을 스키마대로 읽고, 정답과 비교하고, 다음 단계에 보낼 키워드를 정하는 일은 코드가 합니다. 모델은 keep 과 이름만 냅니다.';
+                    case 'vote': return '헷갈리는 것은 <strong>두 답이 같으면 맞은 답인가</strong>입니다. 두 투표자는 같은 모델이라 운동화와 런솔을 둘 다 too_broad 로 걸렀습니다. 두 답이 같다는 것은 이 설정에서 흔들리지 않았다는 뜻일 뿐입니다.';
+                    case 'referee': return '헷갈리는 것은 <strong>심판이 다 맞히면 거르기가 완벽해지는가</strong>입니다. 심판은 두 답이 다른 4개만 봅니다. 두 답이 같은데 틀린 7개는 심판이 보지 못하므로, 심판이 4개를 다 맞혀도 그 7개는 틀린 채로 남습니다.';
+                    case 'group': return '헷갈리는 것은 <strong>나누기 규칙이 뜻이 섞인 묶음도 고치는가</strong>입니다. 규칙은 키워드 수만 봅니다. 버너, 토너, 번역기가 섞인 office_supplies 는 3개라 규칙에 걸리지 않습니다.';
+                    case 'size': return '헷갈리는 것은 <strong>가장 큰 오디언스가 가장 쓸 만한가</strong>입니다. office_supplies 는 795명으로 가장 크지만, 713명이 noise 인 번역기를 검색한 회원입니다. 크기는 코드가 세고, 이름과 키워드는 사람이 읽습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 셋과 점선', body: '파랑은 코드와 정답, 벽돌색은 모델의 답과 정답과 다른 자리, 회색은 두 답이 같은데 틀린 키워드와 어림한 값입니다. 점선은 다섯 단계의 이름입니다.' },
+            { el: '[data-card="filter"]', title: '가장 먼저 볼 것', body: '키워드 120개가 다섯 단계를 지나 오디언스 9개가 됩니다. 앞의 셋은 모델이, 뒤의 둘은 코드가 맡습니다.', waitFor: 'click' },
+            { el: '[data-card="size"]', title: '끝에 남는 것', body: '오디언스 9개가 모두 20명 이상이라 그대로 사전이 됩니다. 가장 큰 office_supplies 는 번역기 때문에 커졌습니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

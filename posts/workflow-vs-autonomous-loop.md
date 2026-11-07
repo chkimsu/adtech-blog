@@ -49,11 +49,11 @@ Anthropic 의 글 「Building effective agents」는 두 방식을 이렇게 나
 <a class="demo-embed-open" href="demo-workflow-loop-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
 </div>
 
-## 2. 자율 루프는 LLM 을 더 자주 부르고 더 오래 걸립니다
+## 2. 자율 루프는 LLM 을 더 자주 부르고, 시간의 중앙값도 더 깁니다
 
-**10번씩 돌리자 자율 루프는 run 마다 LLM 을 3~5번 불렀고, 워크플로는 늘 1번 불렀습니다. 호출 한 번의 시간을 28주째 기록에서 빌려 세면, run 하나의 시간은 중앙값으로 7,236.5ms 와 1,712.5ms 입니다.**
+**10번씩 돌리자 자율 루프는 run 마다 LLM 을 3~5번 불렀고, 워크플로는 늘 1번 불렀습니다. 28주째 기록의 호출 시간 30개를 호출 차례대로 돌려 쓰고, 도구 시간은 0 으로 칩니다. 그렇게 센 run 하나의 시간은 중앙값으로 7,236.5ms 와 1,712.5ms 입니다.**
 
-아래 블록의 1~5단계는 37주째 편의 서버와 승인 코드를 글자 그대로 옮긴 것입니다. 37주째 서연 씨의 서버는 c1 만 보여 줬지만, 이 글의 서버는 캠페인 셋을 모두 보여 줍니다. 6단계는 미리 승인한 범위를 rules 에 적고, 7, 8단계가 자율 루프, 9단계가 워크플로입니다. 10단계는 두 방식을 10번씩 돌립니다. 자율 루프의 run 은 시드가 저마다 다르고, run 마다 서버를 새로 만들어 입찰가가 처음 값에서 시작합니다.
+아래 블록의 1~5단계의 정의는 37주째 편의 서버와 승인 코드를 글자 그대로 옮긴 것입니다. 37주째 서연 씨의 서버는 c1 만 보여 줬지만, 이 글의 서버는 캠페인 셋을 모두 보여 줍니다. 6단계는 미리 승인한 범위를 rules 에 적고, 7, 8단계가 자율 루프, 9단계가 워크플로입니다. 10단계는 두 방식을 10번씩 돌립니다. 자율 루프의 run 은 시드가 저마다 다르고, run 마다 서버를 새로 만들어 입찰가가 처음 값에서 시작합니다.
 
 ```python
 # 하는 일: 37주째의 MCP 서버와 승인을 그대로 두고, 같은 일을 자율 루프와 워크플로로 10번씩 돌려 LLM 호출 수와 단계 수를 센다.
@@ -301,6 +301,7 @@ for cid, bid in (('c1', 18000), ('c2', 45000)):
 # 응답 꼴은 37주째와 같다. stop_reason 과 content 블록 목록이고, 도구를 부를 때는 tool_use 블록(id, name, input)이 든다.
 # 다음 행동은 대화에서 읽은 지금 자리(where)에 따라 PROBS 의 확률로 뽑는다. 확률은 잰 값이 아니라 이 글이 정한 가상 값이다.
 # read 는 아직 읽지 않은 것을, reread 는 이미 읽은 통계 하나를 다시 읽는다. change 는 목표 아래 캠페인을, change_other 는 다른 캠페인을 내린다.
+# reread 는 이미 부른 get_stats 를 같은 입력으로 다시 부르므로, 뽑히면 8단계의 같은 호출 반복 검사가 그 단계에서 멈춘다.
 # 내릴 폭은 CUTS 에서 같은 확률로 뽑는다. 25 와 30 은 가드레일 20% 를 넘는다. end 는 바뀐 것을 글로 적고 끝낸다.
 PROBS = {
     'start': {'read': 1.0},
@@ -352,8 +353,10 @@ def loop_llm(system, messages, tools, rng):
                 'content': [use('get_stats', {'campaign_id': cid}) for cid in campaigns if cid not in stats]}
     if act == 'reread':
         return {'stop_reason': 'tool_use', 'content': [use('get_stats', {'campaign_id': rng.choice(sorted(stats))})]}
-    below = [cid for cid, c in campaigns.items() if c['target_roas'] is not None and stats[cid]['roas'] < c['target_roas']]
     if act in ('change', 'change_other'):
+        # 목표 아래 캠페인은 통계를 다 읽은 뒤에만 셀 수 있다. listed 에서 end 를 뽑은 run 은 여기 오지 않는다.
+        below = [cid for cid, c in campaigns.items()
+                 if c['target_roas'] is not None and stats[cid]['roas'] < c['target_roas']]
         cid = below[0] if act == 'change' else rng.choice([c for c in campaigns if c not in below])
         new_bid = round(campaigns[cid]['bid'] * (100 - rng.choice(CUTS)) / 100)
         return {'stop_reason': 'tool_use', 'content': [use('set_bid', {'campaign_id': cid, 'new_bid': new_bid})]}
@@ -547,7 +550,7 @@ print('loop stop:', ', '.join(f'{name} {stops[name]}' for name in ('end_turn', '
 
 6단계는 러닝화만 목표 아래임을 확인하고, rules 에 c1 의 상한 20,000원을 적었습니다. 시험으로 넣은 두 호출 가운데 c1 을 18,000원으로 내리는 호출은 승인되었습니다. 목표를 넘는 c2 를 45,000원으로 내리는 호출은 승인되지 않았습니다. 자율 루프의 첫 run 은 목록과 통계를 읽은 뒤 러닝화를 30% 내린 14,000원을 적었습니다. 서버의 가드레일이 거부해 모델은 is_error 가 참인 tool_result 를 받았고, 다음 단계에서 아무것도 바꾸지 않은 채 끝냈습니다. 워크플로의 첫 run 은 네 단계 만에 18,000원으로 바꾸고 요약을 받았습니다.
 
-이 글에서 단계는 앞의 일이 끝나야 시작하는 차례 하나입니다. 자율 루프는 LLM 호출 하나와 그 호출이 고른 도구의 실행이 한 단계이고, 워크플로는 코드 경로의 네 차례가 단계입니다. 그래서 자율 루프는 LLM 호출 수와 단계 수가 같고, 워크플로는 단계가 넷이어도 LLM 호출은 하나입니다. 자율 루프 10번 가운데 7번은 같은 호출 반복 검사가, 3번은 모델의 end_turn 이 멈췄습니다. 단계 상한 6까지 간 run 은 없었고, 가장 긴 run 은 5단계였습니다.
+이 글에서 단계는 앞의 일이 끝나야 시작하는 차례 하나입니다. 자율 루프는 LLM 호출 하나와 그 호출이 고른 도구의 실행이 한 단계이고, 워크플로는 코드 경로의 네 차례가 단계입니다. 그래서 자율 루프는 LLM 호출 수와 단계 수가 같고, 워크플로는 단계가 넷이어도 LLM 호출은 하나입니다. 자율 루프 10번 가운데 7번은 같은 호출 반복 검사가, 3번은 모델의 end_turn 이 멈췄습니다. 이 글의 확률표에서 reread 는 이미 읽은 통계를 같은 입력으로 다시 부르는 행동이라, 뽑히면 그 단계에서 같은 호출 반복 검사에 걸립니다. 이 10번의 반복 7번이 모두 그런 다시 읽기였고, 단계 상한 6까지 간 run 은 없었습니다. 가장 긴 run 은 5단계였습니다.
 
 시간은 진짜 모델의 기록에서 빌립니다. 28주째 판정 기록 30건의 걸린 시간(elapsed_ms)을 LLM 호출 차례대로 하나씩 대응시킵니다. 30번째 뒤에는 첫 값으로 돌아가고, 두 방식은 각자 첫 값부터 셉니다. 도구 호출은 한 프로세스 안에서 돌아 시간을 0 으로 칩니다. 그 기록은 짧은 JSON 하나를 받는 판정 호출이라, 실제 에이전트의 호출 시간과 다를 수 있습니다.
 
@@ -636,7 +639,7 @@ for way in ('loop', 'workflow'):
 #   c1 c2 c3 = 18000 50000 300 (c1 -10%): 10 runs [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], stop {'code path': 10}
 ```
 
-빌린 30개 가운데 처음 두 값은 5,201ms 와 5,494ms 이고, 나머지 28개는 1,566ms 에서 2,490ms 사이입니다. 워크플로는 run 1, 2 가 그 두 값을 받았습니다. 자율 루프는 run 1 이 받았고, 차례가 한 바퀴 돈 run 8 이 다시 받았습니다. 두 방식의 가장 긴 run 도 이 두 값을 받은 run 입니다. 중앙값은 10개 값을 크기 차례로 놓았을 때 5번째와 6번째 값의 평균이라, 7,236.5ms 와 1,712.5ms 처럼 0.5 가 붙습니다. 도구 시간을 0 으로 쳤기 때문에, run 의 시간은 LLM 호출 수와 그 호출이 받은 값으로만 정해집니다.
+빌린 30개 가운데 처음 두 값은 5,201ms 와 5,494ms 이고, 나머지 28개는 1,566ms 에서 2,490ms 사이입니다. 워크플로는 run 1, 2 가 그 두 값을 받았습니다. 자율 루프는 run 1 이 받았고, 30개를 다 쓴 뒤 첫 값부터 다시 쓰면서 run 8 이 또 받았습니다. 두 방식의 가장 긴 run 도 이 두 값을 받은 run 입니다. run 마다 보면 자율 루프의 run 9 는 4,917ms 로, 워크플로의 run 1, 2 보다 짧습니다. 그래서 두 방식은 중앙값으로 비교합니다. 중앙값은 10개 값을 크기 차례로 놓았을 때 5번째와 6번째 값의 평균입니다. 도구 시간을 0 으로 쳤기 때문에, run 의 시간은 LLM 호출 수와 그 호출이 받은 값으로만 정해집니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-workflow-loop-cards.html?embed=1&card=calls" height="480" loading="lazy" title="호출 수와 시간"></iframe>
@@ -671,24 +674,24 @@ for way in ('loop', 'workflow'):
 
 ## 4. 비용, 지연, 예측 가능성으로 고릅니다
 
-**이 일에서는 세 기준 모두 워크플로가 앞섰습니다. 순서를 코드에 적을 수 있는 일이었고, 워크플로는 그 순서로 10번 모두 같은 입찰가를 냈습니다. 자율 루프는 필요한 단계 수를 미리 알기 어려운 일에 둡니다.**
+**이 일에서는 비용, 중앙값으로 본 지연, 예측 가능성 모두 워크플로가 앞섰습니다. 순서를 코드에 적을 수 있는 일이었고, 워크플로는 그 순서로 10번 모두 같은 입찰가를 냈습니다. 자율 루프는 필요한 단계 수를 미리 알기 어렵고, 정해진 길을 코드에 적을 수 없는 일에 둡니다.**
 
 이 글에서 비용은 LLM 호출 수로 셉니다. 자율 루프는 run 마다 3~5번, 워크플로는 1번이었습니다. 25주째 편에서 본 것처럼 루프의 모델은 단계마다 대화 전체를 다시 받아서, 단계가 늘수록 보내는 글이 길어집니다. 빌린 기록은 대화가 길어지는 루프의 호출이 아니라서, 이 글은 토큰을 세지 않고 호출 수만 셉니다.
 
-지연은 run 하나를 끝까지 기다린 시간입니다. 중앙값으로 자율 루프 7,236.5ms, 워크플로 1,712.5ms 였습니다. 도구 시간을 0 으로 쳤으므로 이 차이는 차례대로 기다린 LLM 호출 수와, 그 호출들이 받은 값에서 나옵니다. 자율 루프는 다음 할 일을 정하려고 단계마다 모델의 답을 기다리고, 워크플로는 코드가 순서를 알아서 끝에 한 번만 기다립니다.
+지연은 run 하나를 끝까지 기다린 시간입니다. 2절처럼 28주째 기록의 호출 시간 30개를 호출 차례대로 돌려 쓰고, 도구 시간은 0 으로 칩니다. 그렇게 센 중앙값은 자율 루프 7,236.5ms, 워크플로 1,712.5ms 였습니다. 이 차이는 차례대로 기다린 LLM 호출 수와, 그 호출들이 받은 값에서 나옵니다. run 마다 보면 자율 루프가 더 짧은 run 도 있어서, 비교는 중앙값으로 합니다. 자율 루프는 다음 할 일을 정하려고 단계마다 모델의 답을 기다리고, 워크플로는 코드가 순서를 알아서 끝에 한 번만 기다립니다.
 
 예측 가능성은 같은 일을 다시 돌렸을 때 같은 결과가 나오는지입니다. 최종 입찰가는 워크플로가 한 가지, 자율 루프가 세 가지였습니다. 러닝화 입찰가를 내리는 일을 마친 run 은 워크플로 10번, 자율 루프 5번이었습니다. 자율 루프는 멈춘 까닭도 end_turn 3번, 같은 호출 반복 7번으로 run 마다 달랐습니다.
 
-Anthropic 의 글은 가장 단순한 방법을 찾고, 필요할 때만 복잡도를 늘리라고 권합니다. 이 글은 워크플로와 에이전트를 모두 에이전트 시스템(agentic systems)이라 부릅니다. 에이전트 시스템은 흔히 지연과 비용을 내주고 더 나은 성과를 얻으니, 그 맞바꿈이 맞는 때를 따지라고 했습니다. 복잡도가 더 필요할 때 워크플로는 잘 정의된 일에 예측 가능성과 일관성을 줍니다. 유연성과 모델이 내리는 판단이 대규모로 필요하면 에이전트가 낫다고 했습니다. 에이전트는 필요한 단계 수를 예측하기 어렵거나 불가능하고, 정해진 길을 코드에 적을 수 없는 열린 문제에 쓸 수 있습니다. 대신 자율적인 만큼 비용이 크고 오류가 쌓일 수 있다고 적었습니다.
+Anthropic 의 글은 가장 단순한 방법을 찾고, 필요할 때만 복잡도를 늘리라고 권합니다. 그 글은 워크플로와 에이전트를 모두 에이전트 시스템(agentic systems)이라 부릅니다. 에이전트 시스템은 흔히 지연과 비용을 내주고 더 나은 성과를 얻으니, 그 맞바꿈이 맞는 때를 따지라고 했습니다. 복잡도가 더 필요할 때 워크플로는 잘 정의된 일에 예측 가능성과 일관성을 줍니다. 유연성과 모델이 내리는 판단이 대규모로 필요하면 에이전트가 낫다고 했습니다.
 
-LangGraph 문서도 같은 구분을 씁니다. 워크플로는 미리 정한 코드 경로가 있고 정해진 차례로 돌도록 설계하며, 에이전트는 동적이고 자기 과정과 도구 사용을 스스로 정한다고 적었습니다. 에이전트는 계속 도는 피드백 루프로 움직이고, 문제와 해법을 예측할 수 없는 자리에 쓴다고 했습니다.
+같은 글은 에이전트를 필요한 단계 수를 예측하기 어렵거나 불가능하고, 정해진 길을 코드에 적을 수 없는 열린 문제에 쓸 수 있다고 했습니다. 그런 일에서 LLM 은 여러 차례 돌 수 있어서, 그 판단을 어느 정도 믿을 수 있어야 한다고 적었습니다. 대신 자율적인 만큼 비용이 크고 오류가 쌓일 수 있다고 했습니다. LangGraph 문서도 같은 구분을 씁니다. 워크플로는 미리 정한 코드 경로로 정해진 차례에 따라 돌고, 에이전트는 동적이며 자기 과정과 도구 사용을 스스로 정한다고 적었습니다. 에이전트는 계속 도는 피드백 루프로 움직이고, 문제와 해법을 예측할 수 없는 자리에 쓴다고 했습니다.
 
 이 글의 밤 작업은 순서가 늘 목록, 통계, 변경이라 워크플로로 둡니다. 서연 씨의 대화 창처럼 다음에 무엇을 물을지 모르는 일은 자율 루프로 둡니다. 그때도 37주째 편처럼 쓰기는 승인과 가드레일을 지나게 합니다. 아래 표의 값은 모두 2, 3절의 블록이 찍은 것입니다.
 
 | 기준 | 무엇으로 쟀나 | 자율 루프 | 워크플로 |
 |---|---|---|---|
 | 비용 | run 하나의 LLM 호출 수 (최소, 중앙값, 최대) | 3, 4, 5 | 1, 1, 1 |
-| 지연 | run 하나의 시간, 빌린 기록 (중앙값) | 7,236.5ms | 1,712.5ms |
+| 지연 | run 하나의 시간의 중앙값 (빌린 호출 시간을 차례대로 돌려 씀, 도구 0ms) | 7,236.5ms | 1,712.5ms |
 | 예측 가능성 | 10번의 최종 입찰가 가짓수 | 3 | 1 |
 | 일을 마친 run | 러닝화 입찰가를 내린 run | 5 | 10 |
 | 멈춘 까닭 | 10번의 멈춤 조건 | end_turn 3, 같은 호출 반복 7 | 코드 경로의 끝 10 |
@@ -699,9 +702,9 @@ LangGraph 문서도 같은 구분을 씁니다. 워크플로는 미리 정한 �
 
 1~4절의 일은 에이전트 하나가 도구를 부르는 일이었습니다. 새 캠페인을 여는 일은 다릅니다. 이 절에서는 보여 줄 사람을 타겟 팀의 에이전트가, 카피를 카피 팀의 에이전트가 만든다고 둡니다. 이 둘에게 일을 나눠 맡기고 결과를 모으는 쪽을 오케스트레이터라고 부릅니다. 오케스트레이터가 다른 에이전트와 주고받는 꼴을 정한 공개 명세가 A2A(Agent2Agent)이고, 이 글은 1.0.0 버전을 따릅니다. MCP 가 에이전트와 도구를 잇는 약속이라면, A2A 는 에이전트와 에이전트를 잇는 약속입니다.
 
-A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)를 내놓습니다. 명세가 적은 찾기 방법 하나는 에이전트 도메인의 /.well-known/agent-card.json 에서 카드를 읽는 것입니다. 명세가 꼭 넣으라는 칸은 name, description, supportedInterfaces, version, capabilities 입니다. 기본 입출력 형식인 defaultInputModes, defaultOutputModes 와 스킬 목록 skills 도 꼭 넣습니다. 오케스트레이터는 카드의 스킬을 보고 일을 맡길 에이전트를 고릅니다.
+A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)를 내놓습니다. 명세는 클라이언트가 카드를 찾는 디스커버리(discovery) 방법으로 셋을 적었습니다. 하나는 에이전트 도메인의 /.well-known/agent-card.json 을 읽는 것입니다. 나머지 둘은 에이전트를 모은 카탈로그에 묻기와, 카드의 주소나 내용을 미리 설정해 두기입니다. 명세가 꼭 넣으라는 칸은 name, description, supportedInterfaces, version, capabilities 입니다. 기본 입출력 형식인 defaultInputModes, defaultOutputModes 와 스킬 목록 skills 도 꼭 넣습니다. 오케스트레이터는 카드의 스킬을 보고 일을 맡길 에이전트를 고릅니다.
 
-일을 맡기는 메서드는 SendMessage 입니다. 메시지에는 messageId, role, parts 가 꼭 들고, 받은 에이전트는 작업(Task)을 만들어 돌려주거나 메시지로 바로 답합니다. 작업에는 id 와 상태(status)가 있고, 결과물은 artifacts 에 담깁니다. 작업의 지금 상태는 GetTask 로 다시 물을 수 있습니다. 상태 이름은 TASK_STATE_COMPLETED 처럼 TASK_STATE_ 로 시작하는 아홉 값이고, 이 글은 앞부분을 빼고 적기도 합니다. 그 가운데 COMPLETED, FAILED, CANCELED, REJECTED 넷이 끝 상태입니다.
+일을 맡기는 메서드는 SendMessage 입니다. 메시지에는 messageId, role, parts 가 꼭 들고, 받은 에이전트는 작업(Task)을 만들어 돌려주거나 메시지로 바로 답합니다. 작업에는 id 와 상태(status)가 있고, 결과물은 artifacts 에 담깁니다. 작업의 지금 상태는 GetTask 로 다시 물을 수 있습니다. 상태 이름은 TASK_STATE_COMPLETED 처럼 TASK_STATE_ 로 시작하는 아홉 값이고, 이 글은 앞부분을 빼고 적기도 합니다. 그 가운데 COMPLETED, FAILED, CANCELED, REJECTED 넷은 종료 상태(terminal state)입니다. INPUT_REQUIRED 와 AUTH_REQUIRED 둘은 중단 상태(interrupted state)입니다. 작업이 입력이나 인증을 기다리다가, 받으면 이어 가는 상태입니다.
 
 ```python
 # (앞 블록에 이어서 돌린다.)
@@ -710,7 +713,7 @@ A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)�
 # 1단계: 에이전트 카드 둘을 둔다
 # A2A 명세 1.0.0 의 AgentCard 필수 칸만 채운다. name, description, supportedInterfaces, version, capabilities,
 # defaultInputModes, defaultOutputModes, skills 다. 스킬의 필수 칸은 id, name, description, tags 다.
-# 명세가 적은 찾기 방법 하나는 에이전트 도메인의 /.well-known/agent-card.json 에서 카드를 읽는 것이다.
+# 명세의 디스커버리 방법 하나는 에이전트 도메인의 /.well-known/agent-card.json 에서 카드를 읽는 것이다.
 # 두 에이전트는 이 블록 안의 가짜라 example 주소는 열리지 않는다.
 def agent_card(name, description, url, skill):
     return {'name': name, 'description': description,
@@ -731,8 +734,10 @@ COPY_CARD = agent_card('copy-agent', 'Writes ad copy from the advertiser asset.'
 # 2단계: 에이전트 쪽을 둔다
 # 요청은 JSON-RPC 2.0 이고, 메서드 이름은 명세의 JSON-RPC 바인딩 그대로 SendMessage 와 GetTask 다.
 # SendMessage 는 Task 를 만들어 result 의 task 에 담고, GetTask 는 Task 를 result 에 그대로 담는다.
-# 상태는 TASK_STATE_SUBMITTED, TASK_STATE_WORKING 을 지나 끝 상태로 간다. 끝 상태는 COMPLETED, FAILED, CANCELED, REJECTED 넷이다.
-# 끝난 작업에 보낸 메시지는 UnsupportedOperationError(-32004)로, 없는 작업 id 는 TaskNotFoundError(-32001)로 답한다.
+# 이 가짜는 작업을 만들 때 TASK_STATE_SUBMITTED, TASK_STATE_WORKING 을 적고, 일을 마치면 종료 상태 하나를 적는다.
+# 종료 상태는 COMPLETED, FAILED, CANCELED, REJECTED 넷이다. 명세가 SUBMITTED 와 WORKING 을 꼭 지나라고 정한 것은 아니다.
+# 종료 상태의 작업에 보낸 메시지는 UnsupportedOperationError(-32004)로, 없는 작업 id 는 TaskNotFoundError(-32001)로 답한다.
+# 서버가 보내는 메시지에는 contextId 를 꼭 넣고, 작업을 만들었으면 taskId 도 넣는다. 명세의 Message 설명이 그렇게 정한다.
 # 오류의 data 는 명세의 예처럼 @type 이 google.rpc.ErrorInfo 인 객체이고, reason 은 오류 이름에서 Error 를 떼고 대문자와 밑줄로 쓴다.
 TERMINAL = {'TASK_STATE_COMPLETED', 'TASK_STATE_FAILED', 'TASK_STATE_CANCELED', 'TASK_STATE_REJECTED'}
 
@@ -744,7 +749,7 @@ def a2a_error(req, code, message, reason, task_id):
 
 
 class Agent:
-    """A2A 서버 쪽의 가짜 에이전트. work 가 받은 part 를 보고 끝 상태와 결과를 정한다. slow 면 WORKING 으로 먼저 답한다."""
+    """A2A 서버 쪽의 가짜 에이전트. work 가 받은 part 를 보고 종료 상태와 결과를 정한다. slow 면 WORKING 으로 먼저 답한다."""
 
     def __init__(self, card, prefix, work, slow=False):
         self.card, self.prefix, self.work, self.slow = card, prefix, work, slow
@@ -761,7 +766,8 @@ class Agent:
         if state == 'TASK_STATE_COMPLETED':
             task['artifacts'] = [{'artifactId': task['id'] + '-a1', 'parts': [{'data': out}]}]
         else:
-            task['status']['message'] = {'messageId': task['id'] + '-m1', 'role': 'ROLE_AGENT', 'parts': [{'text': out}]}
+            task['status']['message'] = {'messageId': task['id'] + '-m1', 'contextId': task['contextId'], 'taskId': task['id'],
+                                         'role': 'ROLE_AGENT', 'parts': [{'text': out}]}
         self.states[task['id']].append(state)
 
     def handle(self, req):
@@ -776,8 +782,9 @@ class Agent:
                     return a2a_error(req, -32004, 'Unsupported operation', 'UNSUPPORTED_OPERATION', task['id'])
                 # 끝나지 않은 작업에 이어 보낸 메시지는 이 가짜가 읽지 않고, 작업을 그대로 돌려준다.
                 return self.reply(req, {'task': task})
-            task = {'id': f'{self.prefix}-{next(self.ids)}', 'contextId': msg.get('contextId'),
-                    'status': {'state': 'TASK_STATE_WORKING'}}
+            task_id = f'{self.prefix}-{next(self.ids)}'
+            # 클라이언트가 contextId 를 주지 않으면 서버가 정한다. 서버의 메시지에는 contextId 가 꼭 있어야 하기 때문이다.
+            task = {'id': task_id, 'contextId': msg.get('contextId') or task_id + '-ctx', 'status': {'state': 'TASK_STATE_WORKING'}}
             self.tasks[task['id']], self.inbox[task['id']] = task, msg['parts'][0]
             self.states[task['id']] = ['TASK_STATE_SUBMITTED', 'TASK_STATE_WORKING']
             if not self.slow:
@@ -867,8 +874,8 @@ for card in (TARGETING_CARD, COPY_CARD):
 orchestrate('ctx-1', '러닝화 살 사람', 'x01')
 rejected = orchestrate('ctx-2', '건강 상태로 골라 달라', 'x01')
 
-# 5단계: 끝난 작업에 메시지를 더 보낸다
-# 같은 taskId 로 다른 요청을 보내면, 끝 상태의 작업이라 받지 않는다. 마지막 줄들은 에이전트 쪽이 적어 둔 상태의 차례다.
+# 5단계: 종료 상태의 작업에 메시지를 더 보낸다
+# 같은 taskId 로 다른 요청을 보내면, 종료 상태의 작업이라 받지 않는다. 마지막 줄들은 이 가짜 에이전트가 적어 둔 상태의 차례다.
 send(AGENTS['audience-segment'], 'SendMessage', message('ctx-2', {'text': '러닝화 살 사람'}, task_id=rejected['id']))
 for agent in AGENTS.values():
     for task_id, states in agent.states.items():
@@ -888,7 +895,7 @@ for agent in AGENTS.values():
 # -> targeting-agent SendMessage {"text": "건강 상태로 골라 달라"}
 # <- task tgt-2 TASK_STATE_REJECTED message sensitive_attribute
 # orchestrator: copy-agent not called, job ends with TASK_STATE_REJECTED
-# 5단계 뜻: 끝 상태의 작업에 보낸 메시지는 -32004 UnsupportedOperationError 로 거절된다. 세 작업은 모두 SUBMITTED 와 WORKING 을 지났다.
+# 5단계 뜻: 종료 상태의 작업에 보낸 메시지는 -32004 UnsupportedOperationError 로 거절된다. 이 가짜는 세 작업 모두 SUBMITTED 와 WORKING 을 적었다.
 # -> targeting-agent SendMessage taskId tgt-2 {"text": "러닝화 살 사람"}
 # <- error {"code": -32004, "message": "Unsupported operation", "data": [{"@type": "type.googleapis.com/google.rpc.ErrorInfo", "reason": "UNSUPPORTED_OPERATION", "domain": "a2a-protocol.org", "metadata": {"taskId": "tgt-2"}}]}
 # tgt-1 SUBMITTED -> WORKING -> COMPLETED
@@ -900,7 +907,7 @@ for agent in AGENTS.values():
 
 실패 길에서 타겟 에이전트는 「건강 상태로 골라 달라」를 하지 않기로 하고 REJECTED 로 끝냈습니다. 명세는 REJECTED 를 에이전트가 그 작업을 하지 않기로 정한 상태라고 적었습니다. 처음 작업을 만들 때 정할 수도 있고, 진행할 수 없거나 진행하지 않겠다고 판단한 뒤에 정할 수도 있습니다.
 
-끝 상태의 작업은 메시지를 더 받지 않습니다. 오케스트레이터가 같은 작업 id 로 다른 요청을 보내자, 타겟 에이전트는 JSON-RPC 오류 -32004 로 답했습니다. 명세가 끝 상태의 작업에 보낸 메시지에 쓰라고 적은 UnsupportedOperationError 입니다. 오류의 data 에는 @type 이 google.rpc.ErrorInfo 인 객체를 담았습니다. reason 은 명세가 gRPC 와 HTTP+JSON 바인딩에 정한 꼴을 따라, 오류 이름에서 Error 를 떼고 대문자와 밑줄로 썼습니다. JSON-RPC 바인딩은 ErrorInfo 같은 알려진 꼴을 쓰라고 권하고, 명세의 예도 같은 꼴의 TASK_NOT_FOUND 입니다.
+종료 상태의 작업은 메시지를 더 받지 않습니다. 오케스트레이터가 같은 작업 id 로 다른 요청을 보내자, 타겟 에이전트는 JSON-RPC 오류 -32004 로 답했습니다. 명세가 종료 상태의 작업에 보낸 메시지에 쓰라고 적은 UnsupportedOperationError 입니다. 오류의 data 에는 @type 이 google.rpc.ErrorInfo 인 객체를 담았습니다. reason 은 명세가 gRPC 와 HTTP+JSON 바인딩에 정한 꼴을 따라, 오류 이름에서 Error 를 떼고 대문자와 밑줄로 썼습니다. JSON-RPC 바인딩은 ErrorInfo 같은 알려진 꼴을 쓰라고 권하고, 명세의 예도 같은 꼴의 TASK_NOT_FOUND 입니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-workflow-loop-cards.html?embed=1&card=a2a" height="480" loading="lazy" title="오케스트레이터와 상태"></iframe>
@@ -941,7 +948,7 @@ for agent in AGENTS.values():
 ## 헷갈리기 쉬운 점
 
 - **워크플로에도 LLM 이 있습니다.** 이 글의 워크플로도 마지막에 LLM 을 한 번 불러 요약을 받았습니다. 두 방식의 차이는 LLM 이 있느냐가 아니라, 다음에 할 일을 누가 정하느냐입니다. 4절에서 본 것처럼 Anthropic 의 글도 둘을 모두 에이전트 시스템이라 부르고, 그 안에서 구조를 나눴습니다. 순서를 코드에 적어도 글을 읽고 쓰는 자리에는 LLM 을 둘 수 있습니다.
-- **자율 루프의 흔들림은 모델 탓만이 아닙니다.** 가짜 LLM 의 확률표는 무엇을 고를지만 흔들었고, run 이 어디서 끝났는지는 코드의 규칙도 정했습니다. 같은 호출 반복 검사가 7번을 멈췄고, 그 가운데 3번은 쓰기 전이었습니다. 가드레일은 쓰기 셋을 거부했습니다. 내릴 폭을 모델에게 맡긴 설계도 흔들림을 만들었고, 워크플로는 그 폭을 코드에 적어 같은 값을 냈습니다.
+- **자율 루프의 흔들림은 모델 탓만이 아닙니다.** 이 10번에서 run 을 끝낸 것은 모두 확률표가 뽑은 end 와 reread 였습니다. 다만 reread 를 멈춤으로 바꾼 것은 코드의 같은 호출 반복 검사이고, 7번이 그렇게 멈췄으며 그 가운데 3번은 쓰기 전이었습니다. 가드레일도 run 1 과 6 의 쓰기 셋을 거부해 길을 바꿨습니다. 내릴 폭을 모델에게 맡긴 설계도 흔들림을 만들었고, 워크플로는 그 폭을 코드에 적어 같은 값을 냈습니다.
 - **A2A 와 MCP 는 맡는 자리가 다릅니다.** A2A 명세의 부록은 MCP 를 AI 모델과 에이전트가 도구, API, 데이터 원천 같은 바깥 자원에 붙는 방법의 표준으로 적었습니다. A2A 는 독립된 에이전트끼리 대등하게 주고받고 협업하는 방법의 표준으로 적었습니다. 1~4절의 루프와 워크플로는 MCP 서버의 도구를 불렀고, 5절의 오케스트레이터는 A2A 메시지로 에이전트 둘에게 일을 맡겼습니다. 같은 부록은 A2A 의 서버 에이전트가 맡은 일을 하려고 안에서 MCP 로 도구를 부를 수 있다고 적었습니다.
 
 ## 더 깊이 보기
@@ -961,27 +968,27 @@ for agent in AGENTS.values():
 
 read 는 아직 읽지 않은 것을 읽습니다. 목록 전이면 get_campaigns 를, 목록 뒤면 아직 읽지 않은 캠페인의 get_stats 를 한 응답에 담습니다. reread 는 이미 읽은 캠페인 하나의 get_stats 를 다시 부르는 것이라, 같은 호출 반복 검사가 그 단계에서 멈춥니다. change 는 목표 아래 캠페인을, change_other 는 그 밖의 캠페인을 CUTS 의 폭만큼 내립니다. CUTS 는 5, 10, 15, 25, 30 이고 같은 확률로 뽑습니다. end 는 처음 입찰가와 다른 캠페인을 글로 적고 end_turn 으로 끝냅니다.
 
-25주째 편의 더 깊이 보기에서 본 ReAct 는 LLM 이 추론하는 글과 행동을 번갈아 내게 했습니다. 이 글의 가짜 LLM 은 추론하는 글 없이 행동만 고릅니다. LangGraph 문서는 한 번의 실행이 도는 super-step 수의 상한을 recursion limit 이라 부릅니다. 상한을 넘으면 GraphRecursionError 를 낸다고 적었습니다. 이 글의 max_steps 처럼, 루프가 끝없이 돌지 않게 막는 장치입니다.
+25주째 편의 더 깊이 보기에서 본 ReAct 는 LLM 이 추론하는 글과 행동을 번갈아 내게 했습니다. 이 글의 가짜 LLM 은 추론하는 글 없이 행동만 고릅니다. LangGraph 는 실행을 super-step 이라는 차례로 나눠 진행합니다. 나란히 도는 노드는 한 super-step 을 함께 쓰고, 차례로 도는 노드는 따로 씁니다. 문서는 한 번의 실행이 도는 super-step 수의 상한을 recursion limit 이라 부릅니다. 상한을 넘으면 GraphRecursionError 를 낸다고 적었습니다. 이 글의 max_steps 처럼, 루프가 끝없이 돌지 않게 막는 장치입니다.
 :::
 
 :::deep A2A 작업 상태와 메시지 전문
-명세의 작업 상태는 아홉 값입니다. 명세는 COMPLETED, FAILED, CANCELED, REJECTED 넷을 끝 상태(terminal state)라고 적었습니다. INPUT_REQUIRED 와 AUTH_REQUIRED 둘은 멈춘 상태(interrupted state)입니다. 입력이나 인증이 있어야 진행합니다. 아래 표의 뜻은 명세의 설명을 옮긴 것이고, 오른쪽 칸은 블록 3 의 작업이 지난 상태입니다.
+명세의 작업 상태는 아홉 값이고, 5절에서 본 것처럼 넷은 종료 상태, 둘은 중단 상태입니다. 아래 표의 뜻은 명세의 설명을 옮긴 것입니다. 오른쪽 칸은 이 가짜 에이전트가 블록 3 의 작업마다 적어 둔 상태입니다.
 
-| 상태 | 명세의 뜻 | 명세의 구분 | 블록 3 |
+| 상태 | 명세의 뜻 | 명세의 구분 | 이 가짜가 적은 작업 |
 |---|---|---|---|
 | TASK_STATE_UNSPECIFIED | 알 수 없거나 정해지지 않은 상태 | 적지 않음 | 없음 |
 | TASK_STATE_SUBMITTED | 작업을 받았다고 확인함 | 적지 않음 | 세 작업 모두 처음 |
 | TASK_STATE_WORKING | 에이전트가 처리하는 중 | 적지 않음 | 세 작업 모두, cpy-1 은 응답에 보임 |
-| TASK_STATE_INPUT_REQUIRED | 사용자 입력이 더 있어야 진행함 | 멈춘 상태 | 없음 |
-| TASK_STATE_AUTH_REQUIRED | 인증이 있어야 진행함 | 멈춘 상태 | 없음 |
-| TASK_STATE_COMPLETED | 성공으로 끝남 | 끝 상태 | tgt-1, cpy-1 |
-| TASK_STATE_FAILED | 오류로 끝남 | 끝 상태 | 없음 |
-| TASK_STATE_CANCELED | 끝나기 전에 취소됨 | 끝 상태 | 없음 |
-| TASK_STATE_REJECTED | 에이전트가 그 작업을 하지 않기로 정함 | 끝 상태 | tgt-2 |
+| TASK_STATE_INPUT_REQUIRED | 사용자 입력이 더 있어야 진행함 | 중단 상태 | 없음 |
+| TASK_STATE_AUTH_REQUIRED | 인증이 있어야 진행함 | 중단 상태 | 없음 |
+| TASK_STATE_COMPLETED | 성공으로 끝남 | 종료 상태 | tgt-1, cpy-1 |
+| TASK_STATE_FAILED | 오류로 끝남 | 종료 상태 | 없음 |
+| TASK_STATE_CANCELED | 끝나기 전에 취소됨 | 종료 상태 | 없음 |
+| TASK_STATE_REJECTED | 에이전트가 그 작업을 하지 않기로 정함 | 종료 상태 | tgt-2 |
 
-응답에는 그 순간의 상태 하나만 담깁니다. 블록 3 의 마지막 세 줄은 에이전트 쪽이 적어 둔 상태의 차례이고, 오케스트레이터가 받은 것은 그 가운데 응답을 보낸 순간의 상태입니다. 명세에는 작업을 취소하는 CancelTask 도 있습니다. 이미 끝난 작업처럼 취소할 수 없는 상태의 작업에는 TaskNotCancelableError(-32002)로 답합니다. 없는 작업 id 에는 TaskNotFoundError(-32001)로 답합니다. 블록이 찍은 오류는 -32004 하나입니다.
+응답에는 그 순간의 상태 하나만 담깁니다. 블록 3 의 마지막 세 줄은 이 가짜 에이전트가 적어 둔 상태의 차례입니다. 명세가 SUBMITTED 와 WORKING 을 꼭 지나라고 정한 것은 아니고, 이 가짜가 작업을 만들 때 그 둘을 적은 것입니다. 오케스트레이터가 받은 것은 그 가운데 응답을 보낸 순간의 상태입니다. 명세에는 작업을 취소하는 CancelTask 도 있습니다. 이미 완료, 실패, 취소된 작업처럼 취소할 수 없는 상태의 작업에는 TaskNotCancelableError(-32002)로 답합니다. 없는 작업 id 에는 TaskNotFoundError(-32001)로 답합니다. 블록이 찍은 오류는 -32004 하나입니다.
 
-아래는 블록 3 이 타겟 에이전트에게 처음 보낸 SendMessage 요청과 그 응답입니다. 블록이 만든 사전을 JSON 으로 옮긴 것이고, 필드와 값은 블록의 것과 같습니다.
+아래는 블록 3 이 타겟 에이전트에게 처음 보낸 SendMessage 요청과 그 응답입니다. 블록이 만든 사전을 JSON 으로 옮긴 것이고, 필드와 값은 블록의 것과 같습니다. HTTP 로 보낸다면 클라이언트는 요청마다 A2A-Version 헤더를 보내야 하고, 이 글이 따르는 버전이면 값은 1.0 입니다. 명세는 헤더 대신 요청 파라미터로 줘도 된다고 했고, 값이 비어 있으면 에이전트가 0.3 으로 읽는다고 적었습니다.
 
 ```json
 {
@@ -1032,7 +1039,36 @@ read 는 아직 읽지 않은 것을 읽습니다. 목록 전이면 get_campaign
 }
 ```
 
-끝난 작업 tgt-2 에 다시 보낸 메시지의 응답은 오류입니다. result 대신 error 가 있고, data 는 @type 이 든 객체의 목록입니다.
+실패 길의 응답에는 TASK_STATE_REJECTED 와, 까닭을 적은 에이전트의 메시지가 듭니다. 명세는 서버가 보내는 메시지에 contextId 를 꼭 넣고, 작업을 만들었으면 taskId 도 넣으라고 적었습니다. 그래서 이 메시지에는 ctx-2 와 tgt-2 가 함께 들어갑니다.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "result": {
+    "task": {
+      "id": "tgt-2",
+      "contextId": "ctx-2",
+      "status": {
+        "state": "TASK_STATE_REJECTED",
+        "message": {
+          "messageId": "tgt-2-m1",
+          "contextId": "ctx-2",
+          "taskId": "tgt-2",
+          "role": "ROLE_AGENT",
+          "parts": [
+            {
+              "text": "sensitive_attribute"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+종료 상태의 작업 tgt-2 에 다시 보낸 메시지의 응답은 오류입니다. result 대신 error 가 있고, data 는 @type 이 든 객체의 목록입니다.
 
 ```json
 {

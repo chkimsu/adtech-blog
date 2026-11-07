@@ -58,9 +58,11 @@
         const S = 'wl-calls'; if (!has(S)) return; let s = '';
         const x0 = 120, w = 360, max = 16000;
         const px = ms => x0 + Math.round(ms / max * w);
-        s += T(40, 18, 'run 하나의 시간 (빌린 기록, 도구는 0ms)', 'lbl k');
+        // 가정 셋: 시간은 28주째 기록에서 빌리고, 호출 차례대로 30개를 쓴 뒤 첫 값부터 다시 쓰고, 도구 호출은 0ms 로 친다
+        s += T(40, 16, 'run 하나의 시간: 28주째 기록의 호출 시간을 빌려 셈', 'lbl k');
+        s += T(40, 32, '호출 차례대로 30개를 쓰고 다시 첫 값부터, 도구 호출은 0ms', 'lbl sm');
         // [이름, run 마다 ms, 표시 색, 중앙값 글자, 줄의 y]
-        const rows = [['자율 루프', LOOP_MS, 'b', '중앙값 7,236.5ms', 34], ['워크플로', FLOW_MS, 'a', '중앙값 1,712.5ms', 94]];
+        const rows = [['자율 루프', LOOP_MS, 'b', '중앙값 7,236.5ms', 42], ['워크플로', FLOW_MS, 'a', '중앙값 1,712.5ms', 94]];
         rows.forEach(([name, ms, c, med, y]) => {
             s += T(40, y + 16, name, 'lbl k');
             s += `<rect class="track" x="${x0}" y="${y}" width="${w}" height="22"/>`;
@@ -68,17 +70,18 @@
             s += T(x0, y + 38, med, 'lbl sm');
         });
         [0, 4000, 8000, 12000, 16000].forEach(v => {
-            s += `<line class="tick" x1="${px(v)}" y1="150" x2="${px(v)}" y2="156"/>`;
-            s += T(px(v), 170, v.toLocaleString('en-US'), 'lbl sm', 'middle');
+            s += `<line class="tick" x1="${px(v)}" y1="142" x2="${px(v)}" y2="148"/>`;
+            s += T(px(v), 162, v.toLocaleString('en-US'), 'lbl sm', 'middle');
         });
-        s += T(x0 - 10, 170, 'ms', 'lbl sm', 'end');
-        s += list(40, 186, 446, 66, [
+        s += T(x0 - 10, 162, 'ms', 'lbl sm', 'end');
+        s += list(40, 172, 446, 66, [
             { t: '10번씩 돌린 결과', cls: 'h' },
             'LLM 호출 (최소, 중앙값, 최대): 자율 루프 3, 4, 5 / 워크플로 1, 1, 1',
             '단계: 자율 루프 3, 4, 5 / 워크플로 4',
             '자율 루프의 멈춤: end_turn 3, 같은 호출 반복 7, 단계 상한 0',
         ]);
-        s += T(40, 276, '긴 두 값 5,201ms, 5,494ms 를 받은 run: 자율 루프 1, 8 / 워크플로 1, 2', 'lbl sm');
+        s += T(40, 258, '긴 두 값 5,201ms, 5,494ms 를 받은 run: 자율 루프 1, 8 / 워크플로 1, 2', 'lbl sm');
+        s += T(40, 276, '비교는 중앙값으로: 자율 루프 run 9, 10, 5 는 워크플로 run 2 보다 짧음', 'lbl sm');
         svg(S, s);
     })();
 
@@ -128,7 +131,7 @@
             'name, description, supportedInterfaces, version, capabilities',
             'defaultInputModes, defaultOutputModes, skills',
         ]);
-        s += T(40, 292, '끝 상태: COMPLETED, FAILED, CANCELED, REJECTED', 'lbl sm');
+        s += T(40, 292, '종료 상태: COMPLETED, FAILED, CANCELED, REJECTED', 'lbl sm');
         svg(S, s);
     })();
 

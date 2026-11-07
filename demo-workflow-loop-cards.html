@@ -45,12 +45,12 @@
     <div class="tg-grid">
       <section class="tg-card" data-card="two_ways"><h2>TWO WAYS</h2><p class="tg-k">두 방식</p><p class="tg-easy"><b>쉽게 말하면</b> 자율 루프는 모델이 단계마다 다음 할 일을 고르고, 워크플로는 코드가 순서를 정한 뒤 모델에게 요약만 맡깁니다.</p><div class="tg-fig" id="wl-two_ways"></div>
         <p class="tg-cap">두 방식 모두 같은 서버와 같은 <b>approve</b> 를 지납니다. 미리 승인한 범위는 <b>c1 상한 20,000원</b>입니다.</p></section>
-      <section class="tg-card" data-card="calls"><h2>CALLS</h2><p class="tg-k">호출 수와 시간</p><p class="tg-easy"><b>쉽게 말하면</b> 자율 루프는 다음 할 일을 정할 때마다 모델의 답을 기다려서, LLM 호출이 많은 만큼 오래 걸립니다.</p><div class="tg-fig" id="wl-calls"></div>
-        <p class="tg-cap">LLM 호출은 자율 루프 <b>3~5번</b>, 워크플로 <b>1번</b>입니다. run 하나의 시간은 중앙값 <b>7,236.5ms</b> 와 <b>1,712.5ms</b> 입니다.</p></section>
+      <section class="tg-card" data-card="calls"><h2>CALLS</h2><p class="tg-k">호출 수와 시간</p><p class="tg-easy"><b>쉽게 말하면</b> 자율 루프는 다음 할 일을 정할 때마다 모델의 답을 기다립니다. run 의 시간은 LLM 호출 수와 각 호출에 대응시킨 기록의 값으로 정해지고, 중앙값은 자율 루프가 깁니다.</p><div class="tg-fig" id="wl-calls"></div>
+        <p class="tg-cap">LLM 호출은 자율 루프 <b>3~5번</b>, 워크플로 <b>1번</b>입니다. 빌려 온 호출 시간으로 센 run 하나의 시간은 중앙값 <b>7,236.5ms</b> 와 <b>1,712.5ms</b> 입니다.</p></section>
       <section class="tg-card" data-card="variance"><h2>VARIANCE</h2><p class="tg-k">10번의 결과</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 일을 10번 맡겨도 자율 루프는 내리는지와 얼마나 내리는지가 run 마다 달랐습니다.</p><div class="tg-fig" id="wl-variance"></div>
         <p class="tg-cap">최종 입찰가는 자율 루프 <b>세 가지</b>, 워크플로 <b>한 가지</b>입니다. 자율 루프에서 러닝화를 내린 run 은 <b>5번</b>입니다.</p></section>
-      <section class="tg-card" data-card="a2a"><h2>A2A</h2><p class="tg-k">오케스트레이터와 상태</p><p class="tg-easy"><b>쉽게 말하면</b> 다른 팀의 에이전트에게 일을 맡기면, 결과는 작업 상태와 함께 돌아옵니다. 끝 상태의 작업은 메시지를 더 받지 않습니다.</p><div class="tg-fig" id="wl-a2a"></div>
-        <p class="tg-cap">성공 길의 두 작업은 <b>COMPLETED</b>, 실패 길은 <b>REJECTED</b> 로 끝났습니다. 끝난 작업에 다시 보낸 메시지는 <b>-32004</b> 입니다.</p></section>
+      <section class="tg-card" data-card="a2a"><h2>A2A</h2><p class="tg-k">오케스트레이터와 상태</p><p class="tg-easy"><b>쉽게 말하면</b> 다른 팀의 에이전트에게 일을 맡기면, 결과는 작업 상태와 함께 돌아옵니다. 종료 상태의 작업은 메시지를 더 받지 않습니다.</p><div class="tg-fig" id="wl-a2a"></div>
+        <p class="tg-cap">성공 길의 두 작업은 <b>COMPLETED</b>, 실패 길은 <b>REJECTED</b> 로 끝났습니다. 종료 상태의 작업에 다시 보낸 메시지는 <b>-32004</b> 입니다.</p></section>
     </div>
 
     <section class="tg-real">

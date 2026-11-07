@@ -4244,6 +4244,28 @@ window.DEMO_EDU = {
             { el: '[data-card="guard"]', title: '끝에 남는 것', body: '막힌 길 셋은 호스트의 approve, 서버의 가드레일, 서버의 도구 목록이 막았습니다. 세 길 모두 입찰가는 20,000원 그대로입니다.' }
         ]
     },
+    'workflow-loop-cards': {
+        analogy: '같은 입찰가 일을 두 방식으로 10번씩 돌렸다. 자율 루프는 LLM 을 run 마다 3~5번 불렀고, 최종 입찰가가 세 가지였다. 워크플로는 LLM 을 1번 불렀고 10번 모두 18,000원이었다. A2A 로 맡긴 일은 작업 상태와 함께 돌아왔다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'two_ways': return '헷갈리는 것은 <strong>워크플로에는 LLM 이 없는가</strong>입니다. 이 카드의 워크플로도 마지막에 LLM 을 한 번 불러 요약을 받습니다. 다른 것은 다음 할 일을 정하는 쪽입니다.';
+                    case 'calls': return '헷갈리는 것은 <strong>시간 차이가 모델이 느려서인가</strong>입니다. 두 방식은 같은 기록에서 호출 시간을 빌렸고 도구 시간은 0 입니다. 차이는 차례대로 기다린 LLM 호출 수에서 나옵니다.';
+                    case 'variance': return '헷갈리는 것은 <strong>흔들림이 모두 모델 탓인가</strong>입니다. 같은 호출 반복 검사가 자율 루프 7번을 멈췄고, 그 가운데 3번은 쓰기 전이었습니다. run 이 어디서 끝나는지는 코드의 규칙도 정합니다.';
+                    case 'a2a': return '헷갈리는 것은 <strong>A2A 가 MCP 를 대신하는가</strong>입니다. MCP 는 에이전트가 도구에 붙는 방법이고, A2A 는 에이전트끼리 일을 주고받는 방법입니다. A2A 의 서버 에이전트가 안에서 MCP 로 도구를 부를 수 있습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 코드가 정한 일, 벽돌색은 모델이 고른 것, 먹색은 서버와 에이전트입니다. 회색은 막힌 호출과 멈춘 run, 점선은 가상 값과 승인 기록입니다.' },
+            { el: '[data-card="two_ways"]', title: '가장 먼저 볼 것', body: '두 방식은 같은 서버와 같은 approve 를 지납니다. 다른 것은 다음 할 일을 모델이 고르는지, 코드가 정하는지입니다.', waitFor: 'click' },
+            { el: '[data-card="variance"]', title: '끝에 남는 것', body: '최종 입찰가는 자율 루프가 세 가지, 워크플로가 한 가지였습니다. 자율 루프에서 러닝화를 내린 run 은 5번입니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

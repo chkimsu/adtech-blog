@@ -4187,7 +4187,7 @@ window.DEMO_EDU = {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
                     case 'quote': return '헷갈리는 것은 <strong>quote 가 있으면 카피의 사실이 맞는가</strong>입니다. 근거 게이트는 quote 가 자산 안에 글자 그대로 있는지만 봅니다. 카피가 quote 에 없는 말을 더해도, 숫자가 없으면 게이트를 지납니다.';
-                    case 'generate': return '헷갈리는 것은 <strong>5개까지라고 했는데 왜 모두 5개인가</strong>입니다. 시스템 메시지는 상한만 정했고, 사실을 적은 자산 8개는 모두 상한을 채웠습니다. 그 가운데 여럿은 자산의 문장을 그대로 옮긴 카피입니다.';
+                    case 'generate': return '헷갈리는 것은 <strong>5개까지라고 했는데 왜 모두 5개인가</strong>입니다. 시스템 메시지는 상한만 정했고, 사실을 적은 자산 8개는 모두 상한을 채웠습니다. 그 가운데 여럿은 자산의 구절을 그대로 옮긴 카피입니다.';
                     case 'gates': return '헷갈리는 것은 <strong>0개인 게이트는 없어도 되는가</strong>입니다. 길이, 중복, 최상급은 이 기록에서 하나도 걸지 않았지만, 손으로 만든 카피에는 각각 걸렸습니다. 자산과 기록이 바뀌면 걸리는 수도 바뀝니다.';
                     case 'none': return '헷갈리는 것은 <strong>no_generation 은 실패인가</strong>입니다. 쓸 사실이 없는 글에 카피를 쓰면 사실을 지어내거나 인사말을 옮기게 됩니다. 코드는 no_generation 을 게이트 실패와 따로 세고, 광고주에게 안내 문장을 보입니다.';
                     default: return '';

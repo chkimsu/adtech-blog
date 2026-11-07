@@ -7,7 +7,8 @@
       python3 scripts/gen-copy-data.py --prompts grounded-ad-copy-generation > data/llm-records/prompts/grounded-ad-copy-generation.json
                                                        앞 기록을 읽는 빌더(판정 체계 편의 -score, -pairs 는 카피 기록을, -cascade 는
                                                        -score 와 -pairs 기록을 읽는다)는 그 기록이 없거나 쓸 수 없으면 까닭을 알리고 1 로 끝난다.
-                                                       -cascade 가 고른 것이 없으면 프롬프트 파일을 만들지 않고 1 로 끝난다
+                                                       -cascade 가 고른 것이 없으면 아무것도 찍지 않고 1 로 끝난다. 위처럼 > 로 받으면
+                                                       셸이 빈 파일을 남기니 지운다. 남은 빈 파일은 --check 가 「만들지 않아야 하는 파일이 있습니다」로 잡는다
   python3 scripts/gen-copy-data.py --check             자산 10개의 꼴과 사람 라벨(HUMAN)의 꼴을 본 뒤 아래 일곱을 대조하고 몇 건 대조했는지 찍는다
                                                        0) 이 생성기의 슬러그(grounded-ad-copy-generation, generated-copy-judging-system)로
                                                           시작하는 프롬프트 파일과 기록 파일이 모두 PROMPTS 에 등록한 슬러그인가. 아니면 실패다

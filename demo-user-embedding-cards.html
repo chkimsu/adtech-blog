@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 유저 임베딩 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="유저 벡터를 새벽에 미리 만들어 pCTR 랭커의 피처로 읽는 자리를 카드 한 장씩으로 봅니다. 새벽 배치, 피처 스토어의 키와 벡터, 랭커가 읽는 피처, 예산 8ms 와 LLM 호출입니다. 회원과 클릭은 가상 값이고, LLM 호출의 시간과 토큰은 기록입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>LLM 유저 임베딩 카드 네 장</h1>
+      <p>회원의 30일 문서를 새벽에 64차원 벡터로 바꿔 두고, 광고 랭커가 요청 때 그 벡터를 피처로 읽는 자리를 한 장씩 봅니다. 새벽 배치, 피처 스토어의 키와 벡터, 랭커가 읽는 피처, 예산 8ms 와 LLM 호출입니다. 회원과 광고, 가짜 클릭은 설명용 가상 값이고, LLM 호출의 시간과 토큰은 qwen3.5:27b 의 기록입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 놓여 있는 데이터 (문서, 벡터, 피처 스토어)</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 지금 오는 것 (요청, 코사인, LLM 호출)</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 모델과 서버</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 만드는 작업 (새벽 배치)과 비교할 기준값</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 적어 둔 것 (낱말마다 인코더가 정한 버킷)</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="batch"><h2>NIGHTLY BATCH</h2><p class="tg-k">새벽 배치</p><p class="tg-easy"><b>쉽게 말하면</b> 회원마다 문서를 벡터로 한 번 바꾸고, 새벽에 한꺼번에 피처 스토어에 넣어 둡니다.</p><div class="tg-fig" id="ue-batch"></div>
+        <p class="tg-cap">회원 2,000명의 문서를 한 번에 64차원 벡터로 바꿨습니다. 회원 1,400만 명이면 <b>3,584,000,000</b>바이트, <b>3.58GB</b> 입니다.</p></section>
+      <section class="tg-card" data-card="store"><h2>FEATURE STORE</h2><p class="tg-k">피처 스토어의 키와 벡터</p><p class="tg-easy"><b>쉽게 말하면</b> 키는 회원 번호이고 값은 벡터와 만든 시각입니다. 랭커는 요청 때 키로 읽기만 합니다.</p><div class="tg-fig" id="ue-store"></div>
+        <p class="tg-cap">회원 A 의 벡터는 64개 값 가운데 <b>6</b>개만 0 이 아닙니다. 가장 큰 값 <b>0.676</b> 은 러닝화의 버킷입니다.</p></section>
+      <section class="tg-card" data-card="ranker"><h2>RANKER FEATURES</h2><p class="tg-k">랭커가 읽는 피처</p><p class="tg-easy"><b>쉽게 말하면</b> 기본 피처 셋에 유저 벡터와 광고 벡터의 코사인 하나를 더해 클릭 확률을 매깁니다.</p><div class="tg-fig" id="ue-ranker"></div>
+        <p class="tg-cap">시험 회원 400명에서 AUC 는 <b>0.637</b> 에서 <b>0.670</b> 으로 올랐습니다. 숨은 관심을 그대로 알아도 AUC 는 <b>0.738</b> 입니다.</p></section>
+      <section class="tg-card" data-card="budget"><h2>8MS BUDGET</h2><p class="tg-k">예산 8ms 와 실시간 호출</p><p class="tg-easy"><b>쉽게 말하면</b> LLM 호출 한 번이 랭커의 예산 전부보다 훨씬 깁니다. 그래서 LLM 은 새벽 배치에만 둡니다.</p><div class="tg-fig" id="ue-budget"></div>
+        <p class="tg-cap">thinking 을 끈 호출도 <b>1,114ms</b> 로 예산의 <b>139</b>배입니다. 노출마다 부르면 하루 <b>9,302,400원</b> 이상이고, 새벽 배치는 <b>6,425원</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>유저 벡터를 랭커에 넣을 때는</b> 세 가지를 묻습니다. 언제 만든 벡터인가, 같은 버전의 광고 벡터와 맞추는가, 벡터가 없는 요청은 어떻게 매기는가.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=llm-user-embedding-features">LLM 유저 임베딩을 pCTR 피처로</a> 편에 이 카드들이 절마다 들어 있습니다. 회원과 문서는 <a href="post.html?id=users-as-documents">유저를 문서로</a> 편에서 왔습니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/user-embedding-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

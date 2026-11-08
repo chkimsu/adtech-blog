@@ -933,7 +933,7 @@ def rebind_errors(slug, text, names, compared=()) -> tuple[list[str], int]:
                 found.setdefault((n, k), []).append(form)
         for (n, k), forms in sorted(found.items()):
             shown = lines[n - 1].strip()
-            out.append('posts/%s.md: 파이썬 %d번째 블록 %d번째 줄이 %s 을 정의 밖에서 바꿉니다(%s). 그 줄 「%s」 대신 생성기의 정의를 '
+            out.append('posts/%s.md: 파이썬 %d번째 블록 %d번째 줄이 공용 이름 %s 의 값을 정의 밖에서 바꿉니다(%s). 그 줄 「%s」 대신 생성기의 정의를 '
                        '고친 뒤 글에 옮기거나, 바꾼 값을 새 이름에 담습니다'
                        % (slug, i, n, names[k], ', '.join(forms), shown if len(shown) <= 80 else shown[:80] + '…'))
     return out, seen

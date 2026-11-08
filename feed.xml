@@ -173,7 +173,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-as-a-judge"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-as-a-judge</id>
     <updated>2026-11-17T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 26주째에 질의와 상품 쌍 50개의 채점을 모델에게 맡깁니다. 점수마다 뜻을 적은 채점표를 주고 1~5 점을 받아, 가상 사람 라벨 상, 중, 하와 견줬습니다. 일치율은 32/50 = 0.64, 우연 일치를 덜어 낸 Cohen&apos;s kappa 는 0.45 였습니다. 사람이 중을 단 15쌍은 모두 하로 판정되었습니다. 상품 둘을 견주는 짝비교 20쌍은 자리를 바꿔 두 번 물었습니다. 18쌍은 두 번 다 사람과 같은 쪽을 골랐고, 2쌍은 두 번 다 A 자리가 이겼습니다.</summary>
+    <summary>지훈 씨가 모델 팀 26주째에 질의와 상품 쌍 50개의 채점을 모델에게 맡깁니다. 점수마다 뜻을 적은 채점표를 주고 1~5 점을 받아, 가상 사람 라벨 상, 중, 하와 비교했습니다. 일치율은 32/50 = 0.64, 우연 일치를 덜어 낸 Cohen&apos;s kappa 는 0.45 였습니다. 사람이 중을 단 15쌍은 모두 하로 판정되었습니다. 상품 둘의 짝비교 20쌍은 자리를 바꿔 두 번 물었습니다. 18쌍은 두 번 다 사람과 같은 쪽을 골랐고, 2쌍은 두 번 다 A 자리가 이겼습니다.</summary>
     <category term="LLM &amp; Agents"/>
   </entry>
   <entry>

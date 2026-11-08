@@ -6,7 +6,7 @@
 
 답은 배치 하나 안에 있습니다. 클릭 한 건이 양성 쌍(positive pair) 한 줄이고, 같은 배치에 든 다른 회원의 광고가 음성(negative)입니다. 점수표의 줄마다 자기 광고 칸을 고르게 하는 것이 손실이고, 인기 광고 쪽 쏠림을 푸는 보정 둘을 꼭 넣습니다. 이것을 알면 재현율이 떨어졌을 때 데이터, 음성, 보정, 버전 번호 가운데 어디부터 볼지가 정해집니다.
 
-> **한 줄 요약:** 클릭 한 건이 양성 쌍 한 줄이고, 음성은 같은 배치에 든 다른 회원의 광고입니다. 배치 B줄로 B×B 점수표를 만들어 줄마다 소프트맥스로 대각선을 고르게 하고, 인기 광고 보정(logQ)과 accidental hit 제거를 꼭 넣습니다. 평가는 다음 날 클릭이 상위 500 안에 드는 비율(Recall@500)입니다. 배포는 광고 벡터를 미리 색인에 넣고 회원 타워를 요청마다 돌립니다.
+> **한 줄 요약:** 클릭 한 건이 양성 쌍 한 줄이고, 음성은 같은 배치에 든 다른 회원의 광고입니다. 배치 B줄로 B×B 점수표를 만들어 줄마다 소프트맥스로 대각선을 고르게 합니다. 인기 광고 보정(logQ)과 accidental hit 제거를 꼭 넣습니다. 평가는 다음 날 클릭이 상위 500 안에 드는 비율(Recall@500)입니다. 배포는 광고 벡터를 미리 색인에 넣고 회원 타워를 요청마다 돌립니다.
 
 > **골라 읽는 법** — 절이 11개인 글입니다. 1절 앞에 이 글의 예시를 푼 표가 먼저 있습니다.
 >
@@ -321,7 +321,7 @@ print(f'Recall@10  two-tower {recall:.3f}  클릭 많은 순 {base:.3f}')
 # Recall@10  two-tower 0.932  클릭 많은 순 0.496
 ```
 
-라이브러리를 쓰면 같은 일을 인자로 켭니다. TensorFlow Recommenders 에서는 `tfrs.tasks.Retrieval` 이 이 일을 합니다. accidental hit 제거는 만들 때 `remove_accidental_hits=True` 를 주고, 호출할 때 광고 번호 `candidate_ids` 를 넘기면 켜집니다. 번호를 넘기지 않으면 오류가 납니다. 인기 보정은 호출할 때 `candidate_sampling_probability` 를 넘겨 넣습니다.
+라이브러리를 쓰면 같은 일을 인자로 켭니다. TensorFlow Recommenders 에서는 `tfrs.tasks.Retrieval` 이 이 일을 합니다. accidental hit 제거는 만들 때 `remove_accidental_hits=True` 를 줍니다. 호출할 때 광고 번호 `candidate_ids` 를 넘기면 켜집니다. 번호를 넘기지 않으면 오류가 납니다. 인기 보정은 호출할 때 `candidate_sampling_probability` 를 넘겨 넣습니다.
 :::
 
 ## 8. 평가: 다음 날 클릭이 상위 500 안에 드나

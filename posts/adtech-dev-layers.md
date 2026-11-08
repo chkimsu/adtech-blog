@@ -182,6 +182,8 @@ graph TD
     style E stroke:#5b7d6a
 ```
 
+위 다이어그램의 출발점은 4절 예측 모델의 점수(pCTR × pCVR)입니다. 예측이 틀리면 최종 입찰가도 같이 틀리므로 9절의 우선순위에서 입찰은 예측 다음입니다. 7절의 피드백 루프도 예측 정확도 다음에 입찰 정확도를 둡니다.
+
 **관련 포스트:**
 - [Auto-Bidding 과 예산 페이싱: 하루 예산을 언제 얼마씩 쓰나](post.html?id=auto-bidding-pacing)
 - [Bid Shading: 1st Price 경매에서 얼마를 깎아 부를까](post.html?id=bid-shading-censored)

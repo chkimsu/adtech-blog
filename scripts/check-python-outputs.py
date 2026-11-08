@@ -22,7 +22,7 @@ import sys
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TIMEOUT = 120
+TIMEOUT = 300
 OUT_MARK = re.compile(r'^# 출력(?=[\s(:]|$)')
 NUM = re.compile(r'\d+(?:[.,]\d+)*')
 

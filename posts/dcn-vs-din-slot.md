@@ -217,7 +217,7 @@ DIN 모듈은 왼쪽 방법만 됩니다. 관심 벡터가 광고마다 달라�
 <a class="demo-embed-open" href="demo-dcn-vs-din-slot.html" target="_blank" rel="noopener">↗ 그림 네 장 전체로 열기</a>
 </div>
 
-②번 자리는 Wide & Deep(2016)이 출발점입니다. DeepFM 과 DCN 은 둘 다 2017년에 따로 나왔고, DCN-V2(2021)가 DCN 을 고쳤습니다. ①번 자리는 DIN(2018) 다음에 DIEN(2019)과 BST(2019)가 나왔습니다. DIEN 은 관심이 시간에 따라 바뀌는 순서를 GRU 로 보고 BST 는 Transformer 를 씁니다. ③번 자리는 ESMM 과 MMoE 가 2018년에 같이 나왔지만 푸는 문제가 다르고, 이어지는 계보는 MMoE 에서 PLE(2020)로 갑니다. 연도는 학회에 발표된 해입니다.
+②번 자리는 Wide & Deep(2016)이 출발점입니다. DeepFM 과 DCN 은 둘 다 2017년에 따로 나왔고, DCN-V2(2021)가 DCN 을 고쳤습니다. ①번 자리는 DIN(2018) 다음에 DIEN(2019)과 BST(2019)가 나왔습니다. DIEN 은 관심이 시간에 따라 바뀌는 순서를 GRU 로 봅니다. BST 는 Transformer 를 씁니다. ③번 자리는 ESMM 과 MMoE 가 2018년에 같이 나왔지만 푸는 문제가 다르고, 이어지는 계보는 MMoE 에서 PLE(2020)로 갑니다. 연도는 학회에 발표된 해입니다.
 
 ## 한눈 정리
 

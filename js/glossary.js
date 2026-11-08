@@ -566,7 +566,7 @@ const GLOSSARY = [
   {
     term: 'recall@k',
     abbr: 'Recall at k',
-    body: '검증 쌍마다 짝이 <strong>코사인으로 정렬한 위 k 개 안에 든</strong> 비율. 임베딩과 벡터 검색 편의 재현율@10, Two-Tower 학습 편의 Recall@500 과는 정답이 달라 숫자를 비교하지 않는다.'
+    body: '정답 가운데 <strong>상위 k 개 안에 든 몫</strong>. 임베딩 모델 파인튜닝 편은 검증 쌍의 짝이 위 k 개에 든 비율로 세고, 재현율@10, Recall@500 과는 정답이 달라 비교하지 않는다.'
   }
 ];
 

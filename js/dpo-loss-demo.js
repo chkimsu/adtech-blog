@@ -6,7 +6,7 @@
 //   무게   = σ(−margin)
 //   push   = β × 무게. 손실을 정책 chosen 과 정책 rejected 의 로그 확률로 미분한 값의 크기다.
 //            경사 하강은 정책 chosen 의 로그 확률을 올리고 정책 rejected 를 내린다. 참조 둘은 학습하지 않는다.
-// 기본값(d02, β 0.1)이면 margin -0.080, 손실 0.734, 무게 0.520 이다. 글 1 블록 2 의 d02 줄과 같다.
+// 기본값(d02, β 0.1)이면 margin -0.080, 손실 0.734, 무게 0.520 이다. sft-and-dpo 편 블록 2 의 d02 줄과 같다.
 // ===================================================================
 
 // 쌍 하나의 네 값. 글의 dpo_numbers(pol_w, pol_l, ref_w, ref_l, beta) 와 인자 차례가 같다.
@@ -161,7 +161,8 @@ if (typeof document !== 'undefined') {
           scales: {
             x: { ticks: { color: p.muted, autoSkip: false, maxRotation: 90, minRotation: 0 }, grid: { display: false } },
             y: { min: 0, max: 1, title: { display: true, text: '무게 σ(-margin)', color: p.muted },
-              ticks: { color: p.muted, stepSize: 0.25 }, grid: { color: p.grid } },
+              // 기본 글자 꼴은 눈금 간격으로 자릿수를 정해 0.25 를 「0.3」으로 적는다. 둘째 자리까지 적는다.
+              ticks: { color: p.muted, stepSize: 0.25, callback: v => v.toFixed(2) }, grid: { color: p.grid } },
           },
         },
       });
@@ -194,9 +195,15 @@ if (typeof document !== 'undefined') {
 
       // 지금 쌍. 버튼은 지금 쌍 하나만 눌린 모양이다.
       document.querySelectorAll('.dl-preset-btn').forEach(b => b.setAttribute('aria-pressed', String(!!cur && b.dataset.pair === cur[0])));
-      $('dl-pair').textContent = cur
-        ? `${cur[0]}, ${SOURCE_NAME[cur[1]]} 쌍. chosen ${cur[2]} 「${cur[4]}」, rejected ${cur[3]} 「${cur[5]}」`
-        : '지금 로그 확률 넷과 같은 쌍은 20개 가운데 없습니다. 쌍 버튼을 누르면 그 쌍의 값을 불러옵니다.';
+      // 쌍 이름, chosen, rejected 를 한 줄씩 적는다. 카피 둘을 한 줄에 이으면 80자를 넘는 쌍이 많다.
+      const pairLines = cur
+        ? [`${cur[0]}, ${SOURCE_NAME[cur[1]]} 쌍`, `chosen ${cur[2]} 「${cur[4]}」`, `rejected ${cur[3]} 「${cur[5]}」`]
+        : ['지금 로그 확률 넷과 같은 쌍은 20개 가운데 없습니다.', '쌍 버튼을 누르면 그 쌍의 값을 불러옵니다.'];
+      $('dl-pair').replaceChildren(...pairLines.map(t => {
+        const line = document.createElement('div');
+        line.textContent = t;
+        return line;
+      }));
 
       // 지표 넷
       const push4 = r.push.toFixed(4);

@@ -4613,7 +4613,7 @@ window.DEMO_EDU = {
             {
                 el: '.dl-metrics',
                 title: '숫자 넷',
-                body: 'DPO 손실, margin, 기울기 무게, 미는 크기입니다. 기본값 d02, β 0.1 은 글 1 블록 2 의 d02 줄과 같은 <strong>0.734, -0.080, 0.520</strong> 이고, 미는 크기는 0.0520 입니다.'
+                body: 'DPO 손실, margin, 기울기 무게, 미는 크기입니다. 기본값 d02, β 0.1 은 SFT 와 DPO 편 블록 2 의 d02 줄과 같은 <strong>0.734, -0.080, 0.520</strong> 입니다. 미는 크기는 0.0520 입니다.'
             },
             {
                 el: '#dl-pl',

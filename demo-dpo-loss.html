@@ -145,7 +145,7 @@
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
-        <li><span class="step-text">기본값에서 <strong>-0.080, 0.734, 0.520</strong>을 봅니다. 글 1 블록 2 의 d02 줄과 같은 값입니다.</span></li>
+        <li><span class="step-text">기본값에서 <strong>-0.080, 0.734, 0.520</strong>을 봅니다. SFT 와 DPO 편 블록 2 의 d02 줄과 같은 값입니다.</span></li>
         <li><span class="step-text"><strong>정책 rejected</strong>를 -14.8 까지 내립니다. 두 로그 비율이 같아져 margin 이 0, 손실이 0.693 이 됩니다.</span></li>
         <li><span class="step-text"><strong>β</strong>를 1.0 으로 올립니다. margin 이 음수인 쌍의 막대는 0.5 위로, 양수인 쌍의 막대는 아래로 멀어집니다.</span></li>
       </ol>
@@ -246,7 +246,7 @@
           <ol>
             <li><strong>margin 은 로그 비율을 비교합니다</strong> — d07 은 정책이 rejected 에 준 -16.7 이 chosen 의 -17.4 보다 높습니다. 그래도 로그 비율이 +3.1 과 +1.4 라 margin 은 +0.170 입니다.</li>
             <li><strong>정책이 틀린 쌍에 무게가 더 붙습니다</strong> — β 0.1 에서 margin 이 음수인 쌍은 d02, d05, d08, d20 넷입니다. 넷 모두 무게가 0.5 보다 큽니다.</li>
-            <li><strong>β 는 쌍 사이의 무게 차이를 바꿉니다</strong> — 글 1 은 margin 음수 4쌍과 나머지 16쌍의 무게 평균을 셉니다. β 1.0 에서는 0.662 와 0.154, β 0.01 에서는 0.502 와 0.494 입니다.</li>
+            <li><strong>β 는 쌍 사이의 무게 차이를 바꿉니다</strong> — SFT 와 DPO 편은 margin 음수 4쌍과 나머지 16쌍의 무게 평균을 셉니다. β 1.0 에서는 0.662 와 0.154, β 0.01 에서는 0.502 와 0.494 입니다.</li>
           </ol>
         </div>
       </section>
@@ -254,7 +254,8 @@
       <section class="demo-practice">
         <h2>현업에서는 이렇게 씁니다</h2>
         <p>
-          DPO 를 돌리기 전에 쌍마다 이 셈을 해 보면, 학습이 어느 쌍을 세게 밀지 미리 보입니다.
+          학습 도중 체크포인트에서 쌍마다 이 셈을 해 보면, 다음 걸음이 어느 쌍을 세게 밀지 보입니다.
+          처음에는 정책이 참조 모델과 같아 모든 쌍을 같은 무게로 밉니다.
           참조 모델은 학습하지 않으니 그 로그 확률은 학습 전에 한 번 구해 둘 수 있습니다.
           걸음마다 다시 세는 것은 정책의 로그 확률뿐입니다.
         </p>

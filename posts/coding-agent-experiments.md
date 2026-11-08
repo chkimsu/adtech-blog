@@ -682,7 +682,7 @@ print(f'사건 {len(EVENTS)}개: 명령 {len(commands)}개, Write {len(EVENTS) -
 
 # 2단계: 단계마다 걸린 시간을 센다
 # 단계의 시간은 다음 단계의 첫 사건 시각에서 이 단계의 첫 사건 시각을 뺀 값이고, 마지막 단계는 커밋까지다.
-# 기록의 창은 기록 명령의 시각에서 다음 시각이 남은 사건까지다. 창 사이에는 다음 프롬프트를 만드는 명령이 돌았다.
+# 기록 구간은 기록 명령의 시각에서 다음 시각이 남은 사건까지다. 기록 구간 사이에는 다음 프롬프트를 만드는 명령이 돌았다.
 stages = list(dict.fromkeys(e[0] for e in EVENTS))
 first = {s: sec(next(e[2] for e in EVENTS if e[0] == s and e[2])) for s in stages}
 end = sec(timed[-1][2])
@@ -696,10 +696,10 @@ for name, requests, tool_sec, during in RECORDS:
     windows.append(sec(timed[i + 1][2]) - sec(timed[i][2]))
     if i + 2 < len(timed) and timed[i + 2][3].startswith('기록 '):
         gaps.append(sec(timed[i + 2][2]) - sec(timed[i + 1][2]))
-print('기록의 창: ' + ', '.join(f'{r[0]} {show(w)}' for r, w in zip(RECORDS, windows)))
+print('기록 구간: ' + ', '.join(f'{r[0]} {show(w)}' for r, w in zip(RECORDS, windows)))
 print('기록 도구가 잰 시간: ' + ', '.join(f'{r[0]} {r[2]}초' for r in RECORDS)
       + f', 합 {sum(r[2] for r in RECORDS)}초, 요청 {sum(r[1] for r in RECORDS)}개')
-print('창 사이: ' + ', '.join(f'{g}초' for g in gaps))
+print('기록 구간 사이: ' + ', '.join(f'{g}초' for g in gaps))
 print('기록이 도는 동안 돌린 Claude Code 도구 호출: ' + ', '.join(
     f'{r[0]} {sum(r[3].values())}번' + (' (' + ', '.join(f'{t} {n}' for t, n in r[3].items()) + ')' if r[3] else '')
     for r in RECORDS))
@@ -727,9 +727,9 @@ print(f'묶음 전체에서 사람이 승인한 자리: {len(people)}번 (' + ',
 # 실행: 약 4분 → 약 16분, 12분 25초
 # 보고: 약 16분 → 약 44분, 27분 20초
 # 시작에서 커밋까지 약 44분
-# 기록의 창: 투표 6분 8초, 심판 4분 9초, 묶기 49초
+# 기록 구간: 투표 6분 8초, 심판 4분 9초, 묶기 49초
 # 기록 도구가 잰 시간: 투표 366초, 심판 248초, 묶기 48초, 합 662초, 요청 14개
-# 창 사이: 36초, 43초
+# 기록 구간 사이: 36초, 43초
 # 기록이 도는 동안 돌린 Claude Code 도구 호출: 투표 9번 (Bash 3, WebFetch 5, Read 1), 심판 9번 (Bash 9), 묶기 0번
 # 3단계 뜻: 모델을 부른 llm-record.py 는 4개이고, 프롬프트를 만들고 대조한 gen-ads-data.py 는 10개다.
 # 구현 명령 6개: gen-ads-data.py 4, git 1, llm-record.py 1
@@ -742,7 +742,7 @@ print(f'묶음 전체에서 사람이 승인한 자리: {len(people)}번 (' + ',
 # 묶음 전체에서 사람이 승인한 자리: 2번 (계획서 승인(작업 전), 마지막 전체 검토 뒤의 병합과 push 승인(미리))
 ```
 
-구현 단계는 약 4분, 실행 단계는 12분 25초, 보고 단계는 27분 20초였습니다. 실행 단계에서 기록 도구가 잰 시간은 662초였습니다. 기록 사이의 36초와 43초에는 한글 수 세기와 다음 프롬프트를 만드는 명령이 돌았습니다. 기록이 도는 동안에도 Claude Code 의 도구 호출이 투표 때 9번, 심판 때 9번 있었습니다. 발췌의 명령 23개 가운데는 gen-ads-data.py 가 10개로 가장 많았고, llm-record.py 는 4개였습니다. 모델을 부른 명령보다 프롬프트를 만들고 대조한 명령이 더 많았습니다.
+구현 단계는 약 4분, 실행 단계는 12분 25초, 보고 단계는 27분 20초였습니다. 실행 단계에서 기록 도구가 잰 시간은 662초였습니다. 기록 구간 사이의 36초와 43초에는 한글 수 세기와 다음 프롬프트를 만드는 명령이 돌았습니다. 기록이 도는 동안에도 Claude Code 의 도구 호출이 투표 때 9번, 심판 때 9번 있었습니다. 발췌의 명령 23개 가운데는 gen-ads-data.py 가 10개로 가장 많았고, llm-record.py 는 4개였습니다. 모델을 부른 명령보다 프롬프트를 만들고 대조한 명령이 더 많았습니다.
 
 구현자의 사건에서 사람이 승인한 자리는 0번이었습니다. 사람의 승인은 묶음 전체에 두 번 있었습니다. 작업 전에 계획서를 승인했고, 병합과 push 는 마지막 전체 검토 뒤에 하도록 미리 승인했습니다. 결과를 사람이 읽고 믿는 대신 검사로 다시 세는 방식은 코딩 에이전트를 재는 벤치마크도 같습니다. Jimenez 외(2023)의 SWE-bench 는 파이썬 저장소 12곳의 GitHub 이슈와 풀 리퀘스트로 문제 2,294개를 만들었습니다. 모델이 낸 패치가 저장소에 적용되고, 그 문제의 단위 테스트와 시스템 테스트가 모두 통과해야 푼 것으로 셉니다. 논문은 그때 가장 나았던 Claude 2 도 BM25 로 고른 맥락에서 1.96% 만 풀었다고 적었습니다.
 

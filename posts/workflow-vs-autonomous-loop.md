@@ -31,7 +31,7 @@
 
 워크플로는 코드가 순서를 정합니다. 캠페인 목록을 읽고, 캠페인마다 통계를 읽고, 목표보다 낮은 캠페인의 입찰가를 10% 내립니다. 마지막에 LLM 을 한 번 불러 바뀐 것을 요약하게 합니다. 이 LLM 은 도구를 받지 않아 다음 할 일을 고르지 않고, 코드도 난수를 쓰지 않습니다.
 
-두 방식은 쓰기를 같은 관문에 보냅니다. 37주째 편의 승인 함수 approve 와, 모델의 호출 하나를 승인 검사를 거쳐 서버에 보내는 host_call 입니다. 광고주들의 미리 승인은 approve 가 읽는 데이터의 rules 칸에 적었습니다. 목표 아래 캠페인마다 지금 입찰가를 상한으로 두고, 그 이하로 바꾸는 set_bid 만 승인합니다. 이 작업에는 물어볼 사람이 없어서, 범위 밖의 쓰기는 서버에 가지 않습니다.
+두 방식은 쓰기를 같은 관문에 보냅니다. 37주째 편의 승인 함수 approve 와, 모델의 호출 하나를 승인 검사를 거쳐 서버에 보내는 host_call 입니다. 광고주들의 미리 승인은 approve 가 읽는 데이터의 rules 필드에 적었습니다. 목표 아래 캠페인마다 지금 입찰가를 상한으로 두고, 그 이하로 바꾸는 set_bid 만 승인합니다. 이 작업에는 물어볼 사람이 없어서, 범위 밖의 쓰기는 서버에 가지 않습니다.
 
 Anthropic 의 글 「Building effective agents」는 두 방식을 이렇게 나눕니다. 워크플로는 LLM 과 도구를 미리 정한 코드 경로로 엮은 시스템입니다. 에이전트는 LLM 이 자기 과정과 도구 사용을 그때그때 스스로 이끌고, 일을 어떻게 해낼지에 대한 통제를 쥔 시스템입니다. 이 글의 자율 루프는 뒤의 정의를 가짜 LLM 으로 만든 것입니다. 아래 표는 두 방식이 다른 자리를 모은 것입니다.
 
@@ -702,7 +702,7 @@ Anthropic 의 글은 가장 단순한 방법을 찾고, 필요할 때만 복잡�
 
 1~4절의 일은 에이전트 하나가 도구를 부르는 일이었습니다. 새 캠페인을 여는 일은 다릅니다. 이 절에서는 보여 줄 사람을 타겟 팀의 에이전트가, 카피를 카피 팀의 에이전트가 만든다고 둡니다. 이 둘에게 일을 나눠 맡기고 결과를 모으는 쪽을 오케스트레이터라고 부릅니다. 오케스트레이터가 다른 에이전트와 주고받는 꼴을 정한 공개 명세가 A2A(Agent2Agent)이고, 이 글은 1.0.0 버전을 따릅니다. MCP 가 에이전트와 도구를 잇는 약속이라면, A2A 는 에이전트와 에이전트를 잇는 약속입니다.
 
-A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)를 내놓습니다. 명세는 클라이언트가 카드를 찾는 디스커버리(discovery) 방법으로 셋을 적었습니다. 하나는 에이전트 도메인의 /.well-known/agent-card.json 을 읽는 것입니다. 나머지 둘은 에이전트를 모은 카탈로그에 묻기와, 카드의 주소나 내용을 미리 설정해 두기입니다. 명세가 꼭 넣으라는 칸은 name, description, supportedInterfaces, version, capabilities 입니다. 기본 입출력 형식인 defaultInputModes, defaultOutputModes 와 스킬 목록 skills 도 꼭 넣습니다. 오케스트레이터는 카드의 스킬을 보고 일을 맡길 에이전트를 고릅니다.
+A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)를 내놓습니다. 명세는 클라이언트가 카드를 찾는 디스커버리(discovery) 방법으로 셋을 적었습니다. 하나는 에이전트 도메인의 /.well-known/agent-card.json 을 읽는 것입니다. 나머지 둘은 에이전트를 모은 카탈로그에 묻기와, 카드의 주소나 내용을 미리 설정해 두기입니다. 명세의 필수 필드는 name, description, supportedInterfaces, version, capabilities 입니다. 기본 입출력 형식인 defaultInputModes, defaultOutputModes 와 스킬 목록 skills 도 꼭 넣습니다. 오케스트레이터는 카드의 스킬을 보고 일을 맡길 에이전트를 고릅니다.
 
 일을 맡기는 메서드는 SendMessage 입니다. 메시지에는 messageId, role, parts 가 꼭 들고, 받은 에이전트는 작업(Task)을 만들어 돌려주거나 메시지로 바로 답합니다. 작업에는 id 와 상태(status)가 있고, 결과물은 artifacts 에 담깁니다. 작업의 지금 상태는 GetTask 로 다시 물을 수 있습니다. 상태 이름은 TASK_STATE_COMPLETED 처럼 TASK_STATE_ 로 시작하는 아홉 값이고, 이 글은 앞부분을 빼고 적기도 합니다. 그 가운데 COMPLETED, FAILED, CANCELED, REJECTED 넷은 종료 상태(terminal state)입니다. INPUT_REQUIRED 와 AUTH_REQUIRED 둘은 중단 상태(interrupted state)입니다. 작업이 입력이나 인증을 기다리다가, 받으면 이어 가는 상태입니다.
 
@@ -711,8 +711,8 @@ A2A 의 에이전트는 자기를 소개하는 에이전트 카드(Agent Card)�
 # 하는 일: 오케스트레이터가 A2A 꼴의 JSON-RPC 메시지로 타겟 에이전트와 카피 에이전트에게 일을 맡기고, 작업 상태를 받는다.
 
 # 1단계: 에이전트 카드 둘을 둔다
-# A2A 명세 1.0.0 의 AgentCard 필수 칸만 채운다. name, description, supportedInterfaces, version, capabilities,
-# defaultInputModes, defaultOutputModes, skills 다. 스킬의 필수 칸은 id, name, description, tags 다.
+# A2A 명세 1.0.0 의 AgentCard 필수 필드만 채운다. name, description, supportedInterfaces, version, capabilities,
+# defaultInputModes, defaultOutputModes, skills 다. 스킬의 필수 필드는 id, name, description, tags 다.
 # 명세의 디스커버리 방법 하나는 에이전트 도메인의 /.well-known/agent-card.json 에서 카드를 읽는 것이다.
 # 두 에이전트는 이 블록 안의 가짜라 example 주소는 열리지 않는다.
 def agent_card(name, description, url, skill):
@@ -924,7 +924,7 @@ for agent in AGENTS.values():
 
 담장 안의 플랫폼은 캠페인 설정, 어제 통계, 입찰가를 바꾸는 API 를 모두 가집니다. 그래서 이 글의 밤 작업처럼 순서가 정해진 일은 한 회사의 코드로 워크플로를 둡니다. 광고주의 미리 승인도 같은 플랫폼의 광고주 화면에서 받습니다.
 
-타겟 에이전트와 카피 에이전트가 다른 팀의 것이어도 같은 회사 안이라, 카드의 인증 칸을 회사 안의 방식으로 정합니다. 명세의 카드에는 인증 방식을 적는 securitySchemes 칸이 있습니다. 에이전트에 접속할 때의 요구는 securityRequirements 칸에 적습니다. 둘 다 꼭 넣을 칸은 아닙니다.
+타겟 에이전트와 카피 에이전트가 다른 팀의 것이어도 같은 회사 안이라, 카드의 인증 필드를 회사 안의 방식으로 정합니다. 명세의 카드에는 인증 방식을 적는 securitySchemes 필드가 있습니다. 에이전트에 접속할 때의 요구는 securityRequirements 필드에 적습니다. 둘 다 필수 필드는 아닙니다.
 
 ### 열린 RTB 에서는 입찰 경로 밖의 일만 맡깁니다 [무대: 열린 RTB]
 
@@ -1102,7 +1102,7 @@ read 는 아직 읽지 않은 것을 읽습니다. 목록 전이면 get_campaign
 ## 참고문헌
 
 - Anthropic (2024-12-19). *Building effective agents*. [anthropic.com](https://www.anthropic.com/engineering/building-effective-agents). 워크플로와 에이전트의 정의입니다. 가장 단순한 방법에서 시작하고, 복잡도는 필요할 때만 늘리라고 권합니다.
-- A2A Project (The Linux Foundation). *Agent2Agent (A2A) Protocol Specification* (1.0.0 버전). [a2a-protocol.org](https://a2a-protocol.org/v1.0.0/specification/). 에이전트 카드의 필수 칸, SendMessage 와 GetTask, 작업 상태 아홉, 오류 코드입니다. 부록 B 는 MCP 와의 관계를 적었습니다.
+- A2A Project (The Linux Foundation). *Agent2Agent (A2A) Protocol Specification* (1.0.0 버전). [a2a-protocol.org](https://a2a-protocol.org/v1.0.0/specification/). 에이전트 카드의 필수 필드, SendMessage 와 GetTask, 작업 상태 아홉, 오류 코드입니다. 부록 B 는 MCP 와의 관계를 적었습니다.
 - Shunyu Yao 외 (2022). *ReAct: Synergizing Reasoning and Acting in Language Models*. arXiv:2210.03629. [arxiv.org](https://arxiv.org/abs/2210.03629). 추론하는 글과 행동을 번갈아 내게 하는 방법입니다.
 - LangChain. *Workflows and agents* (LangGraph 문서). [docs.langchain.com](https://docs.langchain.com/oss/python/langgraph/workflows-agents). 미리 정한 코드 경로의 워크플로와, 과정과 도구 사용을 스스로 정하는 에이전트를 나눕니다.
 - LangChain. *Graph API* (LangGraph 문서). [docs.langchain.com](https://docs.langchain.com/oss/python/langgraph/graph-api). 한 번의 실행이 도는 super-step 수의 상한, recursion limit 입니다.

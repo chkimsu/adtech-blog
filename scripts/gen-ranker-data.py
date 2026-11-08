@@ -269,7 +269,9 @@ def name_writes(code, name):
 
 def rebind_errors(path, text):
     """글 하나의 python 블록에서 COMPARED 의 이름을 리터럴 밖에서 다시 대입하거나 고치는 줄을 찾는다. (틀린 곳 목록, 본 블록 수).
-    줄 머리가 「이름 = [」 인 줄은 리터럴의 첫 줄로 보고 넘긴다. 그 리터럴이 이 파일의 것과 같은지는 글자 대조가 따로 본다."""
+    줄 맨 앞에서 시작해 끝 공백을 뗀 글이 「이름 = [」 하나인 줄만 여러 줄 리터럴의 첫 줄로 보고 넘긴다.
+    그 리터럴이 이 파일의 것과 같은지는 글자 대조가 따로 본다. 글자 대조도 줄 맨 앞의 머리만 찾으므로 들여 쓴 머리는 넘기지 않는다.
+    「이름 = [c for c in 이름 if …]」 처럼 한 줄로 다시 대입하는 줄도 넘기지 않는다."""
     out, seen = [], 0
     for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
         seen += 1
@@ -283,7 +285,7 @@ def rebind_errors(path, text):
                     out.append('%s: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 %s 를 다시 대입하는지 보지 못했습니다' % (rel(path), i, name))
                 continue
             for n in writes:
-                if not lines[n - 1].startswith(name + ' = ['):
+                if lines[n - 1].rstrip() != name + ' = [':
                     out.append('%s: %d번째 줄(파이썬 %d번째 블록)이 %s 를 리터럴 밖에서 다시 대입하거나 고칩니다. '
                                '후보를 바꾸려면 생성기의 리터럴을 고치고, 다른 값이면 새 이름을 붙입니다' % (rel(path), first + n - 1, i, name))
     return out, seen

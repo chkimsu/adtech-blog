@@ -127,7 +127,7 @@
         s += box(270, 168, 216, 24, '다시 보낸 메시지 -32004', 'c', 10);
         s += T(270, 208, 'UnsupportedOperationError', 'lbl sm');
         s += list(40, 222, 446, 52, [
-            { t: '에이전트 카드의 필수 칸 (A2A 명세 1.0.0)', cls: 'h' },
+            { t: '에이전트 카드의 필수 필드 (A2A 명세 1.0.0)', cls: 'h' },
             'name, description, supportedInterfaces, version, capabilities',
             'defaultInputModes, defaultOutputModes, skills',
         ]);

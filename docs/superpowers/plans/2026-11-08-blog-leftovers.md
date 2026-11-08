@@ -55,7 +55,7 @@
 - 수필 동사를 새로 쓰지 않는다. 위 표의 낱말과 「드러나다」, 「어긋나다」, 「통째로」, 「~인 셈이다」를 새 문장에 넣지 않는다.
 - 파이썬 블록이 있는 글을 고치면 `python3 scripts/check-python-outputs.py --post <slug>` 가 통과해야 한다. 고친 글이 데크를 실으면 데크 iframe 이 뜨는지 본다.
 - 기준표(`scripts/wording-baseline.json`, `scripts/code-blocks-baseline.json`)를 늘리지 않는다.
-- 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 커밋 전에 `grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ scripts/ css/ *.html` 이 출력 없이 끝나야 한다(대소문자 구분). `NAMES_FILE` 은 저장소 밖 이름 목록이고 컨트롤러가 디스패치에 적는다. 목록의 줄은 ERE 대안이라 `grep -F -f` 로는 세지 않는다. 다크 토큰 `#7FAAEA` 같은 색 코드가 걸리면 색 코드를 지우고 다시 센다.
+- 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 커밋 전에 `grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ scripts/ css/ *.html` 이 출력 없이 끝나야 한다(대소문자 구분). `NAMES_FILE` 은 저장소 밖 이름 목록이고 컨트롤러가 디스패치에 적는다. 목록의 줄은 ERE 대안이라 `grep -F -f` 로는 세지 않는다. 16진수 색 코드 안의 글자가 걸리면 `sed -E 's/#[0-9A-Fa-f]{6}//g'` 로 색 코드를 지우고 다시 센다.
 - 커밋은 저장소의 기존 커밋과 같은 계정(`chkimsu <37789148+chkimsu@users.noreply.github.com>`)으로, 파일을 하나씩 명시한다. `git add -A` 금지. 메시지는 한국어 conventional commit. 꼬리는 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`(Sonnet 구현자는 `Claude Sonnet 5.5`). push 하지 않는다.
 - 파이썬은 `PYTHONDONTWRITEBYTECODE=1` 로 돌리고, 시험용 사본과 스크린샷은 저장소 밖에 둔다. 표준 모듈 이름(`math.py` 같은)으로 임시 파일을 만들지 않는다.
 - 각 Task 의 「검사 전부」 단계는 아래를 모두 뜻한다.

@@ -45,6 +45,11 @@
 6. **생성기 검사의 범위.** 묶음 3 minor 묶음이 적은 두 구멍(카피 생성기의 ASSETS 가 뒤 블록에서 다시 대입되는 것, 광고 생성기의 공용 정의가 `+=` 와 함수 안에서 바뀌는 것)을 닫는다. 같은 김에 공용 이름이 가리키는 객체를 고치는 줄(첨자 대입, 속성 대입, 목록과 사전과 집합의 고치는 메서드)도 잡는다. 함수 안에서 `global` 없이 같은 이름에 대입하는 것은 지역 이름이라 잡지 않는다. 다른 이름을 거친 고침(별칭, 함수 인자, `globals()`)은 잡지 않고 docstring 에 한계로 적는다. `scripts/gen-training-data.py` 의 docstring 에 적은 한계와 같은 꼴이다.
 7. **정적 점.** 움직이지 않는 점은 `.dot` 대신 새 클래스 `.pt`(배경색 테두리 1.5px)와 채움 클래스(`f-k`, `f-a`, `f-b`, `f-c`)로 그린다. `.dot` 은 움직임 줄이기 설정에서 숨는 움직이는 점 전용으로 남긴다. `.pt` 는 2026-11-08 에 `css/`, `js/`, `demo-*.html` 에서 쓰지 않는 이름이었다.
 8. **짧은 절은 글 안의 사실로 채운다.** 절의 표나 목록을 읽는 법과 까닭을 풀어 300자를 넘긴다. 새 숫자와 새 바깥 주장을 넣지 않는다.
+9. **어색한 낱말을 글 전부에서 마저 고친다(2026-11-09 보충).** Task 3~5 는 검사가 세는 자리가 있던 파일에서 같은 낱말의 모든 활용을 고쳤다. 그 결과 데크는 새 낱말인데 그 데크를 싣는 글 일부는 옛 낱말이라, 같은 대상이 두 이름이 되었다. Task 7 과 8 이 나머지 글 84편을 같은 규칙으로 고친다. 자리는 아래 꼴로 낱말 첫머리만 센다(「상품은」, 「사실을」 같은 다른 낱말을 빼려고). 2026-11-09 에 `8d8b8db` 에서 381자리였다.
+
+   `(^|[^가-힣])(얹|견[주준줄줍줘줬줌]|훑|품[고는어었습은으음]|굳[^이]|싣|실[어려린리릴립었렸을으]|가릴|가렸|가려[^고]|가린|가립|가리[^키])|줄 ?세[우워웠운웁울]|줄을 세|순으로 세|순서로 세|순위를 세|한 줄[로에] 세`
+
+   이 꼴에도 다른 뜻이 걸린다(「광고가 실리는 페이지」 같은 게재 뜻, 「앞에 세우다」, 「무게가 실리다」). 자리마다 읽고 어색한 뜻일 때만 고친다. Task 6 은 Task 8 뒤 맨 끝이다.
 
 ## Global Constraints
 
@@ -70,8 +75,8 @@
 |---|---|
 | Task 1(생성기 검사) 구현과 검토 | Opus |
 | Task 2(데크의 정적 점) 구현과 검토 | Sonnet |
-| Task 3~5(어색한 낱말) 구현 | Opus |
-| Task 3~5 검토 | Sonnet |
+| Task 3~5, 7, 8(어색한 낱말) 구현 | Opus |
+| Task 3~5, 7, 8 검토 | Sonnet |
 | Task 6(긴 문장과 짧은 절) 구현과 검토 | Opus |
 | 고침 뒤 재검토 | Sonnet. 산문만 고친 라운드와 스크립트로 다 확인되는 고침은 컨트롤러가 확인한다 |
 | 마지막 브랜치 전체 검토 | Fable |
@@ -185,13 +190,40 @@
 - [ ] **Step 5: 필드와 페이지 문장** — posts.js 를 고친 엔트리마다 excerpt, worldNote, worldPractical 의 80자: `node -e "const {overLong}=require('./scripts/check-content-standard.js');const {posts}=require('./js/posts.js');let n=0;for(const p of posts)for(const f of ['excerpt','worldNote','worldPractical'])for(const s of overLong(p[f]||'')){n++;console.log(p.id,f,s.length)}console.log('80자 초과',n)"` → `80자 초과 0`. `node scripts/check-page-sentences.js`, `node scripts/check-course-data.js` 통과. 고친 데크는 1280 과 375 에서 글자가 viewBox 안에 있는지 찍어 본다.
 - [ ] **Step 6~8:** Task 3 의 Step 6~8 과 같다. 커밋 메시지 `fix(demos): 데크, 놀이터, 글 목록의 어색한 낱말을 표준 낱말로`.
 
+### Task 7: 어색한 낱말 마저 — 글 앞쪽 35편(195자리)
+
+**Files:** `posts/` 의 이 35편. ab-test-vs-mab(1), ad-log-pipeline(5), ad-network-vs-exchange(4), adtech-30min-primer(1), adtech-dev-layers(7), adtech-ecosystem-map(7), advertiser-agent-mcp(1), algorithm-binary-search-stack(27), algorithm-coding-test-toolkit(6), algorithm-complexity-array(25), algorithm-dp-greedy(7), algorithm-graph-search(1), algorithm-hash-sort(22), algorithm-tree-heap(2), api-basics(1), auto-bidding-pacing(2), behavior-sequence-attention(9), bentoml-model-serving(7), bid-shading-censored(6), campaign-setup-flow(2), candidate-pool-basics(5), candidate-pool-questions(5), causal-inference-101(3), coding-agent-experiments(8), cold-start-pctr(3), contextual-targeting(2), conversion-definition(4), data-distribution-layer(2), data-engineer-first-six-months(1), data-handoff-methods(2), dcn-vs-din-slot(1), din-architecture(2), disjoint-LinUCB(6), dsp-ssp-exchange(3), ecpm-ranking(5). 괄호는 정한 것 9 의 꼴로 센 자리 수다. 그리고 `js/posts.js` 의 algorithm-complexity-array 제목 한 줄.
+
+**Interfaces:**
+- Consumes: Task 5 가 고친 데크와 투어 글(새 낱말). 정한 것 3 의 표, 판정 L-7, L-8, L-12, L-13(장부).
+- Produces: 이 35편에 어색한 뜻의 활용 0(남긴 자리는 보고서에).
+
+- [ ] **Step 1: 자리 뽑기** — Run: `grep -nE '<정한 것 9 의 꼴>' posts/<35편>.md`. Expected: 195줄 안팎.
+- [ ] **Step 2: 고치기** — Task 3 의 Step 3 과 같다. 글이 싣는 데크의 제목이나 캡션을 Task 5 가 새 낱말로 바꿨으면 글의 같은 글(iframe 제목, 캡션 문장)을 그 낱말에 맞춘다. data-handoff-methods 의 「실려 가는 길」은 데크의 「전달되는 길」로.
+- [ ] **Step 3: 제목 하나** — algorithm-complexity-array 의 제목 「복잡도와 배열 훑기: …」를 「복잡도와 배열 순회: …」로 바꾸고(`js/posts.js`), 그 제목을 옮긴 링크 글 셋(algorithm-dp-greedy, algorithm-binary-search-stack, algorithm-coding-test-toolkit)과 본문을 맞춘다. 같은 엔트리의 excerpt 는 이미 「배열을 순회하는 세 가지 요령」이다.
+- [ ] **Step 4: 낱말 검사** — Step 1 의 grep 이 남긴 자리(보고서에 까닭)만 찍는다. `node scripts/check-wording.js` → 통과, 어색한 낱말 0.
+- [ ] **Step 5: 출력 검사** — 고친 글 가운데 파이썬 블록이 있는 글마다 `check-python-outputs.py --post <slug>` 통과.
+- [ ] **Step 6: 검사 전부** — Global Constraints 의 「검사 전부」. 80자 초과 합이 시작 때보다 늘지 않음.
+- [ ] **Step 7: 보고와 커밋** — 자리마다 한 줄(파일과 줄, 전, 후, 고른 뜻), 남긴 자리와 까닭. 커밋 `fix(posts): 글 35편에 남은 어색한 낱말을 표준 낱말로`(고친 글, `js/posts.js`, 바뀌었으면 `search-index.json`).
+
+### Task 8: 어색한 낱말 마저 — 글 뒤쪽 49편(186자리)
+
+**Files:** `posts/` 의 이 49편. elasticsearch-hybrid-retrieval(1), embedding-table-ops(1), embeddings-vector-search(2), exploration-exploitation(2), gateway-ingress-router(1), git-practical-guide(4), grounded-ad-copy-generation(1), hadoop-hive-basics(2), hadoop-hive-spark-roles(2), header-bidding(6), instrumental-variables(3), interview-experiment-metrics(6), interview-ml-modeling(2), interview-system-design(2), kakao-ads-bidding-measurement(3), kakao-ads-prediction-targeting(1), kubernetes-networking(4), llm-as-a-judge(1), llm-labels-code-ranker(2), lookalike-computation(1), ltv-ad-ranking(3), mab(3), model-ab-testing(6), model-deployment-rollback(1), model-versioning-reproducibility(2), natural-language-audience(1), negative-sampling-bias(3), offline-metrics-gauc(8), offpolicy-evaluation(7), online-learning-delayed-feedback(1), position-bias-ultr(5), privacy-signal-loss(8), prompting-chain-of-thought(6), rag-basics(5), rct-randomized-experiment(1), realtime-feature-pipeline(5), retargeting-frequency-cap(2), second-price-auction(4), serving-latency-throughput(1), software-architecture-patterns(4), stats-confidence-interval-ttest(40), stream-window-aggregation(4), training-pipeline-dag(1), TS-linTS(1), two-tower-training(4), ucb-family(1), uplift-incrementality(5), user-profile-features(4), walled-garden(3).
+
+**Interfaces:** Task 7 과 같다.
+
+- [ ] **Step 1~7:** Task 7 과 같은 차례다. 다른 점은 파일 목록, Step 1 의 186줄 안팎, Step 3 대신 아래 셋, 커밋 메시지 `fix(posts): 글 49편에 남은 어색한 낱말을 표준 낱말로`.
+  - stats-confidence-interval-ttest 의 「품다」(찍힌 「품음」 포함, 판정 L-7)와 iframe 제목 「…95번쯤 품습니다」를 데크의 「포함한다」에 맞춘다.
+  - realtime-feature-pipeline 의 「시각 순서로 세워」는 놀이터와 excerpt 의 「정렬해」로, header-bidding 의 절 제목 「Waterfall — 한 줄로 세워 파는 법」은 생태계 페이지의 「순위를 매겨」에 맞춘다(옛 앵커 링크를 찾아 함께).
+  - lookalike-computation 3행의 첫 「줄」에 풀이를 단다(Task 4 검토 Minor, 판정 L-12). 예: 「다만 순위로 늘어선 줄의 앞을 넓게 자를수록」.
+
 ### Task 6: 옛 글의 80자 넘는 문장과 짧은 절
 
 **Files:**
 - Modify: `posts/` 의 position1-pairwise-ltr, model-api-from-training-script, dcn-vs-din-slot, din-architecture, two-tower-training, inference-server, data-engineer-first-six-months, algorithm-coding-test-toolkit, offline-metrics-gauc, header-bidding, second-price-auction, rct-randomized-experiment, pCVR-modeling(id pcvr-modeling), mab-summary, adtech-dev-layers. Task 1~5 뒤 새로 걸린 글이 있으면 그 글도.
 
 **Interfaces:**
-- Consumes: Task 3~5 가 고친 글.
+- Consumes: Task 3~5, 7, 8 이 고친 글.
 - Produces: 글 전부에서 `check-content-standard` 의 ⚠ 와 ✗ 0, 요약 「표준 충족 140 / 140편」.
 
 - [ ] **Step 1: 자리 뽑기** — Run: `node scripts/check-content-standard.js $(node -e "const {posts}=require('./js/posts.js');console.log(posts.map(p=>p.id).join(' '))") | grep -B3 -E '⚠|✗'`. Expected: 80자 초과 26개(Task 1~5 가 늘리지 않았다면)와 짧은 섹션 셋 — algorithm-coding-test-toolkit 의 「문제를 읽고 바로 고르는 표」와 「7. 제출 전에 세 가지」(167자), adtech-dev-layers 의 「5. 입찰 최적화 — 얼마에 입찰할까」(295자).

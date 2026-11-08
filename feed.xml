@@ -5,8 +5,125 @@
   <link href="https://chkimsu.github.io/adtech-blog/home.html"/>
   <link rel="self" href="https://chkimsu.github.io/adtech-blog/feed.xml"/>
   <id>https://chkimsu.github.io/adtech-blog/</id>
-  <updated>2026-11-18T00:00:00Z</updated>
+  <updated>2026-12-01T00:00:00Z</updated>
   <author><name>chkimsu</name></author>
+  <entry>
+    <title>코딩 에이전트로 실험 돌리기: 계획, 구현, 실행, 보고를 스킬과 훅으로</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=coding-agent-experiments"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=coding-agent-experiments</id>
+    <updated>2026-12-01T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 40주째에, 31주째 관심사 사전 실험을 맡긴 Claude Code 세션을 다시 봅니다. 계획서의 칸과 Task 마다의 순서는 스킬이 정했고, 구현자는 Task 4 의 브리프 하나만 받았습니다. 생성기는 투표 기록이 없으면 심판 프롬프트를 만들지 않았고, 투표 뒤에는 keep 이 다른 키워드 4개만 심판에게 보냈습니다. 모델 기록 셋은 기록 도구가 잰 662초였고, 시작에서 커밋까지는 약 44분이었습니다. git 규칙 넷을 PreToolUse 훅의 판단 함수로 옮기자 예시 다섯 가운데 셋이 종료 코드 2 로 막혔습니다. 사람은 계획서를 승인했고, 병합과 push 는 마지막 전체 검토 뒤로 미리 승인했습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>생성형 검색과 Semantic ID: 광고를 코드 몇 개로 적고 생성해 꺼내기</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=generative-retrieval-semantic-id"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=generative-retrieval-semantic-id</id>
+    <updated>2026-11-30T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 39주째에 상품 300건을 코드 셋으로 적습니다. 384차원 벡터를 단마다 중심 16개의 k-means 로 나누고, 잔차를 다음 단에서 다시 나눴습니다. 잔차 길이 평균은 1.000 에서 0.748 로 줄었습니다. 단마다 같은 상품에서 출발하는 규칙 탓에 셋째 단은 길이 0 인 초기 중심에 284건이 몰려, 코드 셋이 147가지였습니다. 코드 셋이 같은 상품은 넷째 자리로 구분했습니다. 회원 A 가 본 상품 셋의 평균 벡터로 빔 3 을 돌려 10건을 꺼냈고, 전수 코사인 상위 10건과 겹친 것은 1건이었습니다. 새 상품 10건은 노출 기록 없이 바로 코드를 받았고, 그 가운데 2건은 회원 A 의 빔이 꺼냈습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>워크플로와 자율 루프: 비용, 지연, 예측 가능성으로 고르는 기준</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=workflow-vs-autonomous-loop"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=workflow-vs-autonomous-loop</id>
+    <updated>2026-11-29T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 38주째에, 목표 ROAS 아래 캠페인의 입찰가를 내리는 밤 작업을 두 방식으로 10번씩 돌립니다. 서버와 승인 검사는 37주째 편의 코드를 그대로 옮겼습니다. 가짜 LLM 이 확률표로 다음 도구를 고르는 자율 루프는 LLM 을 run 마다 3~5번 불렀습니다. 코드가 순서를 정한 워크플로는 요약에 한 번만 불렀습니다. 28주째 기록의 호출 시간을 빌려 세면 run 하나는 중앙값 7,236.5ms 와 1,712.5ms 였습니다. 최종 입찰가는 자율 루프가 세 가지, 워크플로가 한 가지였습니다. 자율 루프에서 러닝화를 내린 run 은 5번이었습니다. A2A 로 맡긴 일은 COMPLETED 와 REJECTED 같은 작업 상태로 돌아왔습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Software Engineering"/>
+  </entry>
+  <entry>
+    <title>광고주 에이전트: 캠페인 설정을 대화로 하면 무엇이 열리고 막히나</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=advertiser-agent-mcp"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=advertiser-agent-mcp</id>
+    <updated>2026-11-28T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 37주째에, 서연 씨가 대화로 캠페인을 손보는 에이전트를 MCP 서버로 만듭니다. 한 프로세스 안의 서버는 MCP 명세 2026-07-28 버전을 따라 JSON-RPC 요청 셋에 답합니다. 쓰기를 끈 서버의 도구 목록에는 읽기 도구 둘만 나오고, 서연 씨의 서버는 c1 만 보여 줍니다. 「러닝화 캠페인 ROAS 가 목표보다 낮습니다」는 읽기 둘, 10% 인하 제안, 승인을 거쳐 4단계에 끝났습니다. 입찰가는 20,000원에서 18,000원이 되었습니다. 승인 기록이 없는 쓰기는 호스트가, 승인한 35% 인하는 서버의 가드레일이, 쓰기를 끈 서버의 set_bid 는 도구 목록이 막았습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Bidding &amp; Auction"/>
+  </entry>
+  <entry>
+    <title>생성 문구 판정 체계: 노출 전 게이트, 오프라인 비교, 사후 원인 귀속</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=generated-copy-judging-system"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=generated-copy-judging-system</id>
+    <updated>2026-11-27T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 36주째에 지난주 게이트를 지난 카피 35개를 판정합니다. qwen3.5:27b 에게 채점표로 다섯 번씩 채점하게 하자 28개는 다섯 번 모두 같은 점수였고 7개가 흔들렸습니다. 판정자는 거의 4 점과 5 점만 썼는데, 그 둘이 사람 라벨과 상관없이 나뉘어 중앙값과 가상 사람 라벨의 kappa 는 -0.00 이었습니다. 같은 자산의 카피 20쌍을 좌우를 바꿔 두 번씩 물으니 6쌍은 두 번 다 A 자리가 이겼습니다. 흔들린 카피 1개와 바뀐 6쌍, 항목 13/75 만 thinking 을 켠 비싼 판정자에게 넘기자 4쌍의 승자가 정해졌습니다. 캐스케이드는 3,054.6초로, 비싼 판정자로 다 볼 때를 평균 × 75개로 어림한 16,444.1초보다 훨씬 짧았습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>광고 카피 생성: 근거를 인용해 쓰고 코드 게이트가 거른다</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=grounded-ad-copy-generation"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=grounded-ad-copy-generation</id>
+    <updated>2026-11-26T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 35주째에 서연 씨의 상품 설명으로 광고 카피를 씁니다. 광고주 자산 10개를 qwen3.5:27b 에 주고, 카피마다 자산에서 옮긴 구절을 quote 로 같이 받았습니다. 답 10개가 모두 읽혔고, 상품 사실이 없는 얇은 자산 둘은 no_generation 이었습니다. 카피 40개를 근거, 길이, 중복, 최상급 게이트에 차례로 넣자 35개가 남았습니다. 걸린 5개는 모두 quote 의 숫자 뒤에 공백이 끼어 자산의 글자와 달랐습니다. 남은 카피 가운데 13개는 자산의 구절 그대로였고, 범위가 빠진 「가장 가벼운」도 게이트를 지났습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>LLM 유저 임베딩을 pCTR 피처로: 들어가는 자리와 얻는 것</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-user-embedding-features"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-user-embedding-features</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 34주째에 회원의 30일 기록을 64차원 유저 벡터로 바꿔 pCTR 랭커의 피처로 넣습니다. 장난감 인코더로 회원 2,000명의 문서를 새벽 배치처럼 한 번에 피처 스토어에 넣었고, 회원 1,400만 명이면 3.58GB 입니다. 유저 벡터와 광고 벡터의 코사인을 피처 하나로 더하자 시험 AUC 가 0.637 에서 0.670 으로 올랐습니다. 가짜 클릭을 만든 숨은 관심을 그대로 알아도 AUC 는 0.738 입니다. 기록의 LLM 호출 한 번은 thinking 을 끄고도 1,114ms 로, 모델 서버 예산 8ms 의 139배입니다. 노출마다 부르면 하루 9,302,400원 이상이고, 새벽 배치는 GPU 서버 한 대로 낙관적으로 어림해 6,425원입니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="ML Infrastructure"/>
+  </entry>
+  <entry>
+    <title>LLM 라벨링과 증류: 관련성 라벨 1만 건으로 작은 랭커를 학습하기</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-labeling-distillation"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-labeling-distillation</id>
+    <updated>2026-11-24T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 33주째에 qwen3.5:27b 의 관련성 판정을 작은 랭커로 옮깁니다. 앞 글의 기록에서 판정 한 번은 평균 2.73초였고, 가상 단가로 라벨 1만 건은 작은 상용 모델 2,138원이었습니다. 규칙으로 라벨을 붙이고 500건을 뒤집는 가짜 교사가 1만 쌍에 라벨을 붙였습니다. 피처 여섯의 로지스틱 회귀가 학생으로 그 라벨을 배웠습니다. 학생은 시험 2,000쌍에서 교사와 92.0% 가 같았고, kappa 는 0.84 였습니다. 다른 161쌍 가운데 102쌍은 뒤집은 라벨, 48쌍은 학생이 볼 수 없는 근거 없는 주장이었습니다. 라벨 100만 건은 학생이 CPU 서버 한 대로 465원이고, 교사의 라벨과 가짜 클릭은 36.1% 가 달랐습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>LLM 라벨과 코드 랭커: 판정은 LLM 이, 순위는 코드가</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-labels-code-ranker"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-labels-code-ranker</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 32주째에 「러닝화 추천」의 광고 후보 30개를 qwen3.5:27b 에게 하나씩 판정하게 합니다. 하나씩 받은 답은 정답과 17/30 이 맞았고, kappa 는 0.45 였으며, low 는 한 번도 나오지 않았습니다. 근거 없이 성능, 가격, 인기를 내세운 광고 3개는 모두 policy_risk 로 걸렀고, 근거 id 도 그 문장을 가리켰습니다. 순위는 코드가 라벨 가중치 × pCTR × 입찰가로 정했고, 상위 5개가 모두 high 였습니다. 라벨 없이 정한 상위 5개와 비교하면 4개가 바뀌어, 서연 씨 러닝화가 9위에서 3위로 올라왔습니다. 30개를 한 번에 맡긴 목록은 맞은 라벨이 10/30 이었고, 출력 상한 400 토큰에서는 답이 잘려 읽지 못했습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Measurement &amp; Modeling"/>
+  </entry>
+  <entry>
+    <title>관심사 사전 만들기: 로그 키워드가 이름 붙은 오디언스가 되기까지</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=interest-audience-library"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=interest-audience-library</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 31주째에 검색 키워드 120개로 관심사 사전을 만듭니다. qwen3.5:27b 에게 남길지 거를지를 temperature 0 과 0.7 로 두 번 물었습니다. keep 이 다른 4개만 thinking 을 켠 심판에게 보냈습니다. 최종 결정은 정답과 112개가 맞았습니다. 틀린 8개 가운데 7개는 두 투표가 같은 답을 내서 심판에게 가지 않은 키워드였습니다. 남은 94개는 모델이 묶음 9개로 나누고 영어 이름을 붙였고, 코드의 나누기와 최소 크기 규칙은 아무것도 바꾸지 않았습니다. 가장 큰 office_supplies 795명 가운데 713명은 noise 인 번역기를 검색한 회원이었습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>키워드 확장 전략: 광고 하나에서 전략 일곱으로 키워드를 넓히기</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=keyword-expansion-strategies"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=keyword-expansion-strategies</id>
+    <updated>2026-11-21T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 30주째에 서연 씨 러닝화의 상품 설명과 키워드 120개를 qwen3.5:27b 에 줍니다. 모델은 전략 일곱의 키워드를 지어내지 않고 사전의 id 로 고릅니다. 한 번에 일곱을 맡기면 direct 를 런솔 라이트라는 그 상품으로 읽어, 러닝화 같은 정답 direct 를 하나도 맞히지 못했습니다. thinking 을 끄고 전략마다 따로 부르면 맞은 수의 합이 27개에서 30개로 늘었지만, 전략끼리 id 14개가 겹쳤습니다. problem_goal 은 네 설정 모두 무릎통증 같은 health 키워드를 끌어왔습니다. 코드가 겹침을 하나로 남기고 health 와 noise 를 뺀 최종 목록은 34, 15, 30, 26개였습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>유저를 문서로: 광고 키워드로 사람을 검색하는 역방향 검색</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=users-as-documents"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=users-as-documents</id>
+    <updated>2026-11-20T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 29주째에 회원 2,000명의 30일 행동을 회원마다 문서 한 편으로 적습니다. 서연 씨 러닝화 광고의 키워드를 전략 셋으로 나눠 BM25 로 검색하고, 세 목록을 RRF 로 합쳐 앞 200명을 자릅니다. 러닝화를 12번 검색한 회원 A 는 행동 낱말로 문서가 길어 direct 목록에서 49위였습니다. 그 목록 하나에만 들어 합친 순위는 171위였습니다. 검색 200명은 세그먼트 317 의 229명과 165명이 겹쳤고, 다음 30일 구매자 비율은 20.5% 와 20.1% 로 비슷했습니다. 질의 낱말을 검색한 적 없는 세그먼트 회원 17명은 검색이 찾지 못했습니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
+  <entry>
+    <title>자연어 → 타겟 조건: 의도 분류와 조건 추출로 쿼리를 만드는 워크플로</title>
+    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=nl-to-targeting-query"/>
+    <id>https://chkimsu.github.io/adtech-blog/post.html?id=nl-to-targeting-query</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>지훈 씨가 모델 팀 28주째에 서연 씨의 요청 30개를 받습니다. 18주째에는 문장마다 판정과 조건을 한 번에 받았지만, 이번에는 두 번으로 나눠 묻고 쿼리와 답은 코드가 씁니다. 판정만 따로 물은 답은 24/30 을 맞혀, 한 번에 물은 25/30 보다 하나 적었습니다. 두 기록 모두 노출 이력이 붙은 일부 지원 5개를 불가로 보았고, 받으면 안 되는 요청을 받은 답은 0개였습니다. 조건 단계는 「러닝화 살 사람」에 구매 조건 하나를 더 붙여 명단을 441,000명에서 84,000명으로 줄였습니다. 나눠서 얻은 것은 정답 수가 아니라, 단계마다 따로 채점하고 고칠 수 있게 된 것입니다. 쿼리는 코드가 허용 목록을 확인한 뒤 쓰고, 거절과 일부 지원은 고정 템플릿으로 답합니다.</summary>
+    <category term="LLM &amp; Agents"/>
+    <category term="Targeting &amp; Audience"/>
+  </entry>
   <entry>
     <title>비용, 캐시, 비결정성: 하루 100만 요청의 값과 같은 입력에 다른 답</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-cost-cache-nondeterminism"/>
@@ -62,110 +179,5 @@
     <updated>2026-11-12T00:00:00Z</updated>
     <summary>지훈 씨가 모델 팀 21주째에 같은 문제를 묻는 말만 바꿔 세 번 보냅니다. 답을 바꾸는 자리는 시스템 메시지의 할 일 설명, 예시, 지시 한 줄 셋입니다. 광고 운영 숫자 문제 20개를 qwen3.5:27b 에 세 벌로 물었습니다. 문제만 보낸 plain 은 14개, 예시 셋을 더한 fewshot 은 13개를 맞혔습니다. 단계를 먼저 쓰게 한 steps 는 17개를 맞혔고, 차이는 두세 단계 문제에서 났습니다. 대신 출력 토큰 합은 163개에서 1,223개로 7.5배가 되었습니다.</summary>
     <category term="LLM &amp; Agents"/>
-  </entry>
-  <entry>
-    <title>LLM 모델 고르기: 자주 쓰는 모델, reasoning 과 thinking 이 뜻하는 것</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-model-selection"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-model-selection</id>
-    <updated>2026-11-11T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 20주째에 모델 이름이 길게 적힌 목록을 받습니다. 모델은 이름보다 네 가지로 고릅니다. 상용 API 인지 공개 가중치인지, 크기와 활성 파라미터, 컨텍스트 길이, thinking 입니다. thinking 은 답 앞에 모델이 쓰는 풀이 토큰이고, 풀이도 출력 토큰으로 값을 냅니다. 광고 운영 숫자 문제 20개를 qwen3.5:27b 에 thinking 을 끄고 물으니 14개를 맞혔습니다. 두세 단계로 푸는 hard 10개는 thinking 을 켜자 맞힘이 4개에서 10개가 되었습니다. 대신 출력 토큰은 92.9배, 시간은 43.6배였습니다. 가상 단가로 하루 100만 요청은 작은 모델 72만 원, 큰 모델 780만 원, 캐시를 쓰면 420만 원입니다.</summary>
-    <category term="LLM &amp; Agents"/>
-  </entry>
-  <entry>
-    <title>LLM 호출 한 번: 프롬프트가 토큰이 되고 답이 돌아오는 길</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-first-call"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-first-call</id>
-    <updated>2026-11-10T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 19주째에 노트북의 공개 모델에 첫 요청을 보냅니다. 요청은 모델 이름, 메시지 둘, thinking 을 켤지를 담은 JSON 한 덩이입니다. 시스템 메시지와 사용자 메시지는 역할 표시와 이어져 프롬프트 78토큰이 됩니다. 서연 씨 캠페인 한 줄의 목표는 {&quot;objective&quot;: &quot;conversion&quot;} 한 줄로 돌아왔습니다. 응답에는 출력 토큰 6개와 걸린 시간 1,114ms 가 같이 실려 옵니다. thinking 을 켜면 답은 같고, 출력 토큰은 505개로 84.2배, 시간은 28.7배가 됩니다.</summary>
-    <category term="LLM &amp; Agents"/>
-  </entry>
-  <entry>
-    <title>자연어 오디언스: 「러닝화 살 사람」 한 문장이 조건과 명단이 되기까지</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=natural-language-audience"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=natural-language-audience</id>
-    <updated>2026-11-09T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 18주째에 새 과제의 첫 화면을 엽니다. 광고주가 번호 대신 「러닝화 살 사람」 같은 문장을 적으면 회원 수가 나오는 입력 칸입니다. 문장은 판정, 조건 추출, 필터, 명단 크기를 지나고, 앞의 둘은 LLM 이 JSON 한 줄로, 뒤의 둘은 코드가 맡습니다. 한 번 기록한 답에서 「러닝화 살 사람」은 「러닝화 검색 1회 이상」이 되어 표본 2,000명 중 63명이 남습니다. 「우리 광고 안 본」이 붙은 캠핑 요청은 일부 지원이어야 했지만, 기준 답은 통째로 불가로 판정했습니다. thinking 을 켜고 한 번 더 물으면 조건 셋이 나왔지만 출력 토큰이 114배였습니다. 건강 상태 요청은 여섯 번 모두 불가였고, 광고주에게는 코드가 고른 템플릿 한 문장만 갑니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>컨텍스추얼 타겟팅: 지면 글만으로 광고를 고르는 세 방법</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=contextual-targeting"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=contextual-targeting</id>
-    <updated>2026-11-08T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 17주째에 비로그인 C 의 광고 요청을 열어 보니 회원 번호가 없고 지면 주소만 있습니다. 가상 지면 50개에 카테고리 10개를 붙이는 세 방법을 나란히 봅니다. 카테고리마다 낱말 4개를 적은 사전은 33개를 맞히고 10개를 비워 둡니다. TF-IDF 벡터와 카테고리 중심의 코사인은 빈칸 없이 34개를 맞히지만, 되풀이되는 틀의 낱말에 끌리기도 합니다. 한 번 기록한 LLM 은 43개를 맞히는데, 제목과 첫 문단이 다른 지면 10개 중 6개는 적어 둔 기준과 달리 첫 문단을 따랐습니다. thinking 을 켜면 10개 모두 제목을 따르는 대신, 출력 토큰은 106배, 시간은 46배가 됩니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>전환 예측으로 타겟 고르기: 세그먼트 대신 pCVR 상위를 쓰면 무엇이 달라지나</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=pcvr-based-targeting"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=pcvr-based-targeting</id>
-    <updated>2026-11-07T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 16주째에 서연 씨의 「살 사람에게만」 부탁을 받습니다. 표본 20,000명에 가상 pCVR 을 매기면 세그먼트 317 안의 평균은 0.60% 입니다. 그 안에서 1% 넘는 341명이 기대 전환의 절반 넘게를 냅니다. 같은 2,290명을 pCVR 순서로 고르면 1,390명이 317 밖 사람으로 바뀌고 기대 전환이 1.55배가 됩니다. 상위 5% 로 좁히면 세그먼트를 1.00 으로 둔 전환당 비용이 0.41 로 내려갑니다. 광고 없이도 살 사람의 비율이 pCVR 이 높을수록 크다고 두면, 증분의 차이가 줄고 상위 5% 의 증분은 세그먼트보다 적어집니다. 어느 가정이 맞는지는 대조군으로 잽니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>Lookalike 계산: 시드 8만 명에서 140만 명을 뽑는 실제 순서</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-computation"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=lookalike-computation</id>
-    <updated>2026-11-06T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 15주째에 번호 6001 을 만드는 밤 배치를 맡습니다. 표본 20,000명에서, 「우수 고객」이 대부분인 서연 씨의 구매자 목록을 옮긴 시드 114명을 고릅니다. 그 벡터를 평균한 중심 벡터 하나와 코사인 유사도로 시드를 뺀 19,886명의 줄을 세웁니다. 앞 1% 는 러닝 성향이 0.985, 10% 는 0.709 로 넓게 자를수록 정밀도가 내려갑니다. 구매자 가운데 아무나 시드로 고르면 중심이 운동 용품 구매 쪽으로 쏠려 5% 가 10% 보다 낮아집니다. 방향을 한 번 뽑은 랜덤 투영 해시로 중심 근처의 버킷만 재면 거리 계산이 2,678번으로 줄어듭니다. 대신 전수 검색의 앞 2,000명 가운데 0.383 만 찾습니다. 이웃 버킷까지 보면 9,955번에 0.782 이고, 방향을 다시 뽑으면 이 값들이 달라집니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>관심사 분류: 같은 글 200건에 규칙, 분류 모델, LLM 라벨을 나란히</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=interest-classification"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=interest-classification</id>
-    <updated>2026-11-05T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 14주째에 회원 A 의 「러닝 글 9편」을 거슬러 올라가 봅니다. 글의 관심사 칸은 키워드 몇 개로 붙이는 규칙이 채우고 있었습니다. 가상 글 200건에 키워드 규칙, 단어 가방 로지스틱 회귀, LLM 을 나란히 붙여 봅니다. 규칙은 붙인 라벨이 대부분 맞지만 79건을 비워 두고, 분류 모델과 LLM 은 평가 40건 중 똑같이 38건을 맞히되 틀리는 글이 다릅니다. 로컬 모델로 한 번 기록한 LLM 의 답은 헷갈리지 않는 글 180건을 모두 맞힙니다. 헷갈리는 글 20건 중 16건은 제목 대신 첫 문장을 따랐고, 다시 물어도 바뀐 답은 0건이었습니다. 한 건에 가상 단가로 0.070원과 0.86초가 드는 LLM 을 모델 점수가 낮은 10건에만 부르면 같은 38건을 맞힙니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>유저 프로파일 피처: 행동 로그 30일이 세그먼트 번호와 벡터가 되기까지</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=user-profile-features"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=user-profile-features</id>
-    <updated>2026-11-04T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 13주째 월요일에 세그먼트 317 의 정의 코드를 엽니다. 회원 A 의 최근 30일은 러닝화 검색 12회, 운동 앱 8일, 러닝 글 9편 같은 행동 8종의 기록입니다. 같은 기록에 규칙을 대면 번호가 붙고, 숫자로 세면 8차원 벡터가 됩니다. 합계는 날짜를 보지 않아서, 사건을 7일마다 절반으로 덜 쳐서 더합니다. 그러면 이번 주의 러닝 글 9편은 7.21, 같은 9편이 2주 전이었다면 1.80 입니다. 행동마다 표본 2,000명의 평균을 빼고 표준편차로 나눕니다. 이 값으로는 회원 A 의 운동 용품 구매 1회가 카페 글 3편보다 큽니다. 오디언스와 세그먼트 편의 조건 셋을 그대로 대 보면 표본 2,000명 중 229명(11.4%)에게 317 이 붙습니다. 같은 생성기를 20,000명으로 키우면 2,290명입니다.</summary>
-    <category term="Targeting &amp; Audience"/>
-  </entry>
-  <entry>
-    <title>Elasticsearch 하이브리드 검색: 글자와 뜻으로 찾고 순위로 합치기</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=elasticsearch-hybrid-retrieval"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=elasticsearch-hybrid-retrieval</id>
-    <updated>2026-11-01T00:00:00Z</updated>
-    <summary>지훈 씨가 검색 광고의 후보를 맡았는데 「헤드셋」을 검색하면 헤드폰 상품이 하나도 후보에 오르지 않습니다. 노트북에 Elasticsearch 노드 둘을 띄우고 상품 3만 건을 넣어 질의 셋의 응답을 기록합니다. BM25 는 토큰이 상품 이름에 있어야 찾아서 「헤드셋」이 0건이었고, kNN 은 질의를 384차원 벡터로 바꿔 헤드폰 100개를 찾았지만 「스니커즈」에는 선글라스를 1위로 줬습니다. RRF 는 점수 대신 순위로 1 ÷ (60 + 순위) 를 더해 두 목록을 합칩니다. 샤드 둘과 replica 의 자리, 그리고 날마다 바뀌는 피처를 운영 인덱스에 바로 넣을 때와 새 인덱스를 만들어 별칭을 옮길 때의 p99 까지 기록한 응답 그대로 다시 봅니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>실시간 피처 파이프라인: 이벤트 한 건이 Redis 값이 되는 2초</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=realtime-feature-pipeline"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=realtime-feature-pipeline</id>
-    <updated>2026-11-01T00:00:00Z</updated>
-    <summary>지훈 씨가 노트북에 Kafka, 처리기, Redis, API 를 띄우고 동영상 광고의 재생 이벤트 다섯 건을 보내며 자리마다 응답을 기록합니다. PAUSE 한 건은 Kafka 의 partition 3, offset 710 에 앉고, 처리기가 2초 들고 있다가 이벤트 시각 순서로 세워 적용해 보낸 지 2,035ms 뒤에 Redis 의 누적 재생 초가 0 에서 12 로 바뀝니다. 처리기를 12초 멈추면 lag 이 80 에서 552 로 자라지만, 다시 켜고 2초 뒤 한꺼번에 적용돼 잃는 이벤트는 없습니다. 같은 피처를 읽어 추천 점수를 내는 요청은 5.2ms 이고 그중 77% 가 모델 서버 한 번입니다. 기록한 응답을 시간 순서대로 다시 그리는 그림 셋이 절마다 들어 있습니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>Position 1 추론과 Pairwise LTR: 순서는 맞는데 점수 크기가 틀리는 이유</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=position1-pairwise-ltr"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=position1-pairwise-ltr</id>
-    <updated>2026-10-26T00:00:00Z</updated>
-    <summary>지훈 씨가 pCTR 점수로 센 예상 클릭이 실제보다 많은 것을 봅니다. 순서를 정하기 전에 불리는 pCTR 은 위치를 모르므로 모든 후보를 1위로 두고 추론하고, 그 점수는 1위 기준이라 아래 위치에서 부풉니다. 가상 데이터에서 2위 광고는 1.3배, 3위 광고는 2배 부풀고, 하루 1만 번 노출이면 2위 광고의 예상 광고비가 20만 원 대 15만 원으로 어긋납니다. 순서를 정할 때는 위치 1 점수를 그대로 쓰고, 돈을 셀 때는 정해진 위치의 효과를 곱합니다. Pairwise LTR 은 같은 검색 안의 순서만 배우고 점수 크기는 정하지 않아, 입찰가를 곱하면 클릭률 2% 광고가 3% 로 부풀어 1위가 뒤집힐 수 있습니다. 쌍 데이터가 기우는 세 자리와 PAL, skip-above 같은 처방까지 다룹니다.</summary>
-    <category term="Measurement &amp; Modeling"/>
-  </entry>
-  <entry>
-    <title>모델 API: 학습 스크립트에서 바뀌는 것은 함수 모양, 동시성, 실패 처리 셋</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=model-api-from-training-script"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=model-api-from-training-script</id>
-    <updated>2026-10-16T00:00:00Z</updated>
-    <summary>지훈 씨가 열째 주에 광고 소재 품질 모델의 추론 서버를 직접 짜게 됐습니다. 학습 스크립트와 도커 이미지와 쿠버네티스 배포는 해 봤는데 요청을 받아 답하는 서버는 처음입니다. 학습 스크립트와 서버 코드의 차이는 「끝나는가, 기다리는가」이고 기다리는 부분은 라이브러리가 합니다. 표준 라이브러리만으로 API 하나를 띄워 요청 하나를 보내 보면 직접 쓴 줄은 셋입니다. 하루 노출 2억 2,800만 건은 평균 2,639 QPS, 피크 7,917 QPS 이고, 요청 하나에 CPU 6ms 가 들면 8코어 서버가 안전선 60% 에서 800 QPS 를 받아 10대, 예비 2대를 더해 12대입니다. 피처 조회가 2ms 를 넘기면 기본 피처로 점수를 내서 예산 12ms 를 넘기는 요청을 0건으로 만듭니다. 트래픽은 플랫폼, 앞단 서버, 모델 서버 세 층이 나눠 받고, 쿠버네티스 설정의 replicas 와 HPA 와 readiness probe 가 그대로 서빙 낱말입니다.</summary>
-    <category term="ML Infrastructure"/>
-  </entry>
-  <entry>
-    <title>코딩테스트 핵심 도구: 지문 낱말로 이진 탐색, 정렬, 힙, BFS, DFS 고르기</title>
-    <link href="https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit"/>
-    <id>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-coding-test-toolkit</id>
-    <updated>2026-10-16T00:00:00Z</updated>
-    <summary>지문에 「최소 이동 횟수」가 보이면 BFS, 「상위 K개」가 보이면 힙, 「정렬된 배열에서 개수」가 보이면 bisect 입니다. 출제 빈도가 높은 다섯 도구를 지문 낱말로 고르는 표 한 장과, 표준 라이브러리로 바로 쓰는 템플릿을 모았습니다. bisect_left 와 bisect_right 의 차로 개수를 세는 법, 크기 K 최소 힙으로 Top-K 를 남기는 법, 격자 BFS 와 DFS 템플릿, 재귀 깊이 한도까지 제출 전에 볼 것을 정리했습니다.</summary>
-    <category term="Interview &amp; Algorithms"/>
   </entry>
 </feed>

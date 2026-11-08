@@ -4068,7 +4068,7 @@ window.DEMO_EDU = {
     // 키워드 확장 전략 카드 네 장 (중급)
     // ==========================================
     'keyword-expansion-cards': {
-        analogy: '서연 씨 러닝화의 상품 설명과 키워드 120개로 전략 일곱의 키워드를 사전에서 고르게 했다. 한 번에 맡기면 direct 를 그 상품의 이름으로 읽어 정답 direct 가 0/7 이었다. 전략마다 따로 부르면 맞은 수의 합이 27에서 30으로 늘고 겹친 id 가 14개였다. 코드가 겹침과 health 를 뺀 최종 목록은 34, 15, 30, 26개였다',
+        analogy: '서연 씨 러닝화의 상품 설명과 키워드 120개로 전략 일곱의 키워드를 사전에서 고르게 했다. 한 번에 맡기면 direct 를 그 상품의 이름으로 읽어 정답 direct 가 0/7 이었다. thinking 을 끄고 전략마다 따로 부르면 맞은 수의 합이 27에서 30으로 늘고 겹친 id 가 14개였다. 코드가 겹침과 health 를 뺀 최종 목록은 34, 15, 30, 26개였다',
         anchor: '.tg-host',
         embedKeep: ['.tg-grid'],
         embedHide: ['.tg-hero', '.tg-real'],
@@ -4391,11 +4391,14 @@ window.DEMO_EDU = {
             // 전략을 모두 끄면 판정의 뒤 문장 자리에 「체크 상자를 하나 이상 켭니다」가 온다.
             '#ua-k1': ({ value, prev }) => {
                 const t = id => (document.getElementById(id) || {}).textContent || '';
+                // 전략을 모두 끄면 겹침은 0명, 비율은 「—」라 그 문장 대신 고른 전략이 없다고 적는다
+                const none = !document.querySelector('.ua-strat input:checked');
                 return `BM25 의 k1 을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
                     (value > prev
                         ? 'TF 항이 1 에 더 천천히 다가가, 같은 낱말의 검색 횟수가 점수를 더 오래 올립니다. '
                         : 'TF 항이 1 에 더 빨리 다가가, 같은 낱말을 몇 번만 검색해도 TF 항이 1 에 가까워집니다. ') +
-                    `겹침은 ${t('ua-overlap')}, 구매자 비율은 ${t('ua-rate')} 입니다. ` + (t('ua-verdict').split('. ')[1] || '');
+                    (none ? '고른 전략이 없습니다. ' : `겹침은 ${t('ua-overlap')}, 구매자 비율은 ${t('ua-rate')} 입니다. `) +
+                    (t('ua-verdict').split('. ')[1] || '');
             },
             '#ua-b': ({ value, prev }) => {
                 const t = id => (document.getElementById(id) || {}).textContent || '';

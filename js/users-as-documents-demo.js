@@ -246,8 +246,9 @@
     });
   }
 
-  // 회원 A 가 든 목록과 그 목록의 순위. 목록이 하나면 「하나」를 붙인다.
+  // 회원 A 가 든 목록과 그 목록의 순위. 목록이 하나면 「하나」를 붙인다. 전략을 모두 끄면 목록이 없다고만 적는다.
   function rankNote(r) {
+    if (!r.active.length) return '고른 전략이 없습니다';
     if (!r.rankA) return '고른 전략의 질의 낱말이 회원 A 의 문서에 없습니다';
     const where = r.active.filter(s => r.place[s].has(MEMBER_A)).map(s => `${s} ${r.place[s].get(MEMBER_A)}위`);
     return where.join(', ') + (where.length === 1 ? ' 하나' : '') + (r.inCut ? ', 자르는 선 안' : ', 자르는 선 밖');

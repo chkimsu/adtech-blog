@@ -8,15 +8,22 @@
       python3 scripts/gen-ads-data.py --prompts <슬러그> > data/llm-records/prompts/<슬러그>.json
                                                     앞 기록을 읽는 빌더(관심사 사전 편의 -referee, -groups)는 그 기록이 없거나 쓸 수 없으면
                                                     한 줄로 알리고 1 로 끝난다
-  python3 scripts/gen-ads-data.py --check           키워드와 자산 텍스트의 꼴을 본 뒤 아래 넷을 대조하고 몇 건 대조했는지 찍는다
+  python3 scripts/gen-ads-data.py --check           키워드와 자산 텍스트의 꼴을 먼저 본다. 꼴이 틀리면 틀린 곳만 찍고 1 로 끝난다.
+                                                    꼴이 맞으면 아래 다섯을 대조하고 몇 건 대조했는지 찍는다
+                                                    0) 이 생성기의 슬러그(keyword-expansion-strategies, interest-audience-library)로
+                                                       시작하는 프롬프트 파일과 기록 파일이 모두 PROMPTS 에 등록한 슬러그인가. 아니면 실패다
                                                     1) js/ads-users-data.js 가 지금 생성 결과와 같은가 (파일이 없으면 실패)
                                                     2) posts/ 에서 「KEYWORDS = [」 줄이 있는 글마다 그 리터럴이 이 파일의 것과 글자까지 같은가
-                                                    3) PROMPTS 에 등록한 프롬프트 파일이 있으면 그 파일 전체(system, think, repeat, repeat_subset,
+                                                    3) PROMPTS 의 프롬프트 파일마다 파일 전체(system, think, repeat, repeat_subset,
                                                        think_subset, options, allow_length, items)가 빌더로 다시 만든 글과 글자까지 같은가.
-                                                       앞 기록을 읽는 빌더는 지금 있는 앞 기록에서 다시 만든다
+                                                       파일이 없으면 실패로 두고, 기록이 있는데 파일이 없으면 그렇다고 알린다.
+                                                       앞 기록을 읽는 빌더는 지금 있는 앞 기록에서 다시 만들고, 다시 만들 수 없으면 그 슬러그의
+                                                       파일이 하나라도 있을 때 실패다. 빌더가 만들 항목이 없으면(None) 그 프롬프트 파일과 기록이
+                                                       둘 다 없어야 통과한다. 기록이 있으면 지금 프롬프트로 받은 기록인지도 본다. 항목마다 id, think,
+                                                       run, system, user, options 가 기록 도구(scripts/llm-record.py)가 보낼 차례와 같고 error 가 없어야 한다
                                                     4) 생성기를 옮긴 글(ANCHORS 의 함수나 「KEYWORDS = [」 리터럴이 있는 글)의 python 블록이
                                                        SHARED 의 이름을 정의하면 그 정의가 이 파일의 것과 글자까지 같은가
-                                                    2) ~ 4) 는 아직 없는 글과 프롬프트 파일, 정의하지 않은 이름을 건너뛴다
+                                                    2) 와 4) 는 아직 없는 글과 정의하지 않은 이름을 건너뛴다
 
 회원은 유저 프로파일 피처 편(posts/user-profile-features.md)의 make_members 와 그 도우미, 자연어 오디언스 편의 ages, regions 를
 글자 그대로 옮겼다. 그래서 같은 2,000명이고 세그먼트 317 은 229명이다. extend 는 그 뒤에 따로 만든 random.Random(7) 로
@@ -26,6 +33,7 @@ KEYWORDS 리터럴(「KEYWORDS = [」 줄부터 닫는 「]」 줄까지)과 SHA
 표준 라이브러리만 쓴다.
 """
 import ast
+import importlib.util
 import json
 import os
 import random
@@ -38,6 +46,7 @@ DATA = os.path.join(ROOT, 'js', 'ads-users-data.js')
 POSTS_DIR = os.path.join(ROOT, 'posts')
 RECORDS_DIR = os.path.join(ROOT, 'data', 'llm-records')
 PROMPTS_DIR = os.path.join(RECORDS_DIR, 'prompts')
+RECORD_TOOL = os.path.join(ROOT, 'scripts', 'llm-record.py')
 N_MEMBERS = 2000
 
 # 행동마다 사건의 경과일을 적는다. 0 은 오늘, 29 는 29일 전이고, 같은 날 두 번이면 두 번 적는다.
@@ -180,6 +189,29 @@ ASSET_RUNNING = ('런솔 라이트는 달리기를 처음 시작하는 사람을
                  '한 짝 무게 240g 으로 가볍고, 발볼이 넓은 사람도 편하게 신도록 앞코를 넉넉하게 만들었습니다. '
                  '사이즈는 230mm 부터 290mm 까지 5mm 단위로 있고, 받은 날부터 30일 안에 한 번 교환할 수 있습니다.')
 
+
+# ---------- --check 의 첫 관문이다. 글에는 옮기지 않는다. ----------
+# 아래 TEXT 와 POOL 은 이 파일을 불러올 때 KEYWORDS 로 바로 만든다. 항목의 꼴이 틀리거나 camping 키워드가 없으면
+# 그때 traceback 이 나서 --check 가 안내를 찍지 못한다. 그래서 --check 로 돌릴 때는 표를 만들기 전에 그 둘부터 본다.
+def row_ok(k):
+    """키워드 하나가 (id, 검색어, 주제, 전략, 하루 검색 수) 꼴인가. 앞 넷은 글자, 하루 검색 수는 정수다."""
+    return isinstance(k, tuple) and len(k) == 5 and all(isinstance(x, str) for x in k[:4]) and type(k[4]) is int
+
+
+def table_errors():
+    """TEXT 와 POOL 을 만들 수 있는지 본다. 틀린 곳을 적은 문장 목록을 돌려주고, 만들 수 있으면 빈 목록이다."""
+    out = ['%r: (id, 검색어, 주제, 전략, 하루 검색 수) 꼴이 아닙니다' % (k,) for k in KEYWORDS if not row_ok(k)]
+    if not out and not any(k[2] == 'camping' for k in KEYWORDS):
+        out.append('camping 주제의 키워드가 없습니다. make_pool 이 캠핑 용품 후보를 만들지 못합니다')
+    return out
+
+
+if __name__ == '__main__' and sys.argv[1:] == ['--check'] and table_errors():
+    for line in table_errors():
+        print('✗ ' + line)
+    print('✗ 키워드 리터럴의 꼴이 틀려 대조하지 않았습니다. 위를 고친 뒤 다시 돌립니다')
+    raise SystemExit(1)
+
 # 검색 기록을 만드는 표. 키워드는 후보 안에서 하루 검색 수에 비례해 뽑는다.
 TEXT = {kid: text for kid, text, topic, strategy, daily in KEYWORDS}
 # 캠핑 용품 검색이 뽑는 후보. 캠핑 키워드 10개 가운데 용품 일곱이고, 글램핑, 캠핑장예약, 차박은 뺀다.
@@ -285,8 +317,9 @@ DATA_HEAD = ('// 가상 회원 2,000명과 키워드 120개입니다. scripts/ge
 
 # 프롬프트 파일 목록. 키는 data/llm-records/prompts/<슬러그>.json 의 슬러그이고, 값은 그 파일 한 벌을 만드는 함수다.
 # 함수는 인자 없이 {"system": ..., "think": ..., "repeat": ..., "items": [{"id": ..., "user": ...}, ...]} 를 돌려준다.
-# 만들 항목이 없으면 None 을 돌려주고, 그때는 파일도 없어야 한다. 키워드 확장 편과 관심사 사전 편이 자기 빌더를 여기에 더한다.
-# 앞 기록을 읽어 뒤 프롬프트를 만드는 빌더는 그 기록을 쓸 수 없으면 NeedRecord 를 낸다. --check 는 파일 전체를 prompt_text 와 대조한다.
+# 만들 항목이 없으면 None 을 돌려주고, 그때는 프롬프트 파일과 기록이 둘 다 없어야 한다. 키워드 확장 편과 관심사 사전 편이
+# 자기 빌더를 여기에 더한다. 앞 기록을 읽어 뒤 프롬프트를 만드는 빌더는 그 기록을 쓸 수 없으면 NeedRecord 를 낸다.
+# --check 는 파일 전체를 prompt_text 와 대조하고, 기록이 있으면 그 파일로 받은 기록인지도 본다.
 PROMPTS = {}
 
 
@@ -497,6 +530,9 @@ def library_prompts_groups():
 PROMPTS[LIBRARY_VOTERS] = library_prompts_voters
 PROMPTS[LIBRARY_REFEREE] = library_prompts_referee
 PROMPTS[LIBRARY_GROUPS] = library_prompts_groups
+# 이 생성기가 쓰는 슬러그의 앞부분. 이 말로 시작하는 프롬프트 파일과 기록 파일은 모두 PROMPTS 에 등록한 슬러그여야 한다.
+# 등록하지 않은 파일은 --check 의 대조가 열어 보지 않아서, 손으로 만든 파일이 검사 밖에 남기 때문이다.
+OWN_PREFIXES = ('keyword-expansion-strategies', 'interest-audience-library')
 
 # 글에 옮기는 이름. 회원, 나이와 지역, 키워드, 검색 기록, 문서를 다시 만드는 맨 위 함수와 상수,
 # 그리고 심판에 보낼 키워드를 정하는 거르기 답 읽기(관심사 사전 편)다.
@@ -524,8 +560,7 @@ def keyword_errors():
     if KEYWORDS and tuple(KEYWORDS[0]) != ('k001', '러닝화', 'running', 'direct', 52000):
         out.append('k001 이 ("k001", "러닝화", "running", "direct", 52000) 이 아닙니다')
     for k in KEYWORDS:
-        if not (isinstance(k, tuple) and len(k) == 5 and all(isinstance(x, str) for x in k[:4])
-                and type(k[4]) is int):
+        if not row_ok(k):
             out.append('%r: (id, 검색어, 주제, 전략, 하루 검색 수) 꼴이 아닙니다' % (k,))
             continue
         kid, text, topic, strategy, daily = k
@@ -714,10 +749,65 @@ def rel(path):
     return os.path.relpath(path, ROOT)
 
 
+def planned(spec):
+    """기록 도구가 이 프롬프트로 보낼 요청의 차례. scripts/llm-record.py 의 plan_requests 를 그대로 불러 쓴다.
+    불러올 때 scripts/__pycache__ 가 생기지 않게 바이트코드를 쓰지 않는다."""
+    loader = importlib.util.spec_from_file_location('llm_record', RECORD_TOOL)
+    tool = importlib.util.module_from_spec(loader)
+    keep, sys.dont_write_bytecode = sys.dont_write_bytecode, True
+    try:
+        loader.loader.exec_module(tool)
+    finally:
+        sys.dont_write_bytecode = keep
+    return tool.plan_requests(spec, None)
+
+
+def record_errors(slug, spec):
+    """기록 하나가 지금 프롬프트로 받은 것인지 본다. (틀린 곳 목록, 기록이 있었는가).
+    항목마다 id, think, run, system, user, options 를 기록 도구가 보낼 차례와 대조하고, error 가 남은 항목도 찾는다."""
+    path = os.path.join(RECORDS_DIR, slug + '.json')
+    if not os.path.exists(path):
+        return [], False
+    try:
+        with open(path, encoding='utf-8') as f:
+            items = json.load(f)['items']
+        fields = ('id', 'think', 'run', 'system', 'user', 'options')
+        got = [tuple(json.dumps(it[k], ensure_ascii=False, sort_keys=True) for k in fields) for it in items]
+        broken = [it['id'] for it in items if 'error' in it]
+    except (ValueError, KeyError, TypeError) as e:
+        return ['%s 를 읽지 못했습니다 (%s: %s)' % (rel(path), type(e).__name__, e)], True
+    want = [tuple(json.dumps(job[k], ensure_ascii=False, sort_keys=True) for k in fields) for job in planned(spec)]
+    out = []
+    if got != want:
+        n = next((k for k, (x, y) in enumerate(zip(got, want)) if x != y), min(len(got), len(want)))
+        out.append('%s 는 지금 프롬프트로 받은 기록이 아닙니다 (항목 %d개, 보낼 요청 %d개, 처음 다른 자리 %d번째). '
+                   '--prompts %s 로 다시 뽑고 다시 기록합니다' % (rel(path), len(got), len(want), n + 1, slug))
+    if broken:
+        out.append('%s 에 error 가 남은 항목이 있습니다 (%s). 다시 기록합니다' % (rel(path), ', '.join(broken)))
+    return out, True
+
+
 def check():
+    # 키워드와 자산 텍스트의 꼴부터 본다. 꼴이 틀린 키워드로 회원을 만들면 안내 대신 traceback 이 날 수 있어서,
+    # 틀린 곳이 있으면 그것만 알리고 회원을 만들기 전에 멈춘다
     errors = keyword_errors() + asset_errors()
+    if errors:
+        for e in errors:
+            print('✗ ' + e)
+        print('✗ 키워드나 자산 텍스트의 꼴이 틀려 대조하지 않았습니다. 위를 고친 뒤 다시 돌립니다')
+        return 1
     members = corpus()
     done = Counter()
+    # 0) 등록하지 않은 파일. 이 생성기의 슬러그로 시작하는 프롬프트 파일과 기록 파일은 모두 PROMPTS 에 있어야 한다
+    for folder in (PROMPTS_DIR, RECORDS_DIR):
+        for name in sorted(os.listdir(folder)):
+            stem, ext = os.path.splitext(name)
+            if ext != '.json' or not stem.startswith(OWN_PREFIXES):
+                continue
+            done['등록을 확인한 파일'] += 1
+            if stem not in PROMPTS:
+                errors.append('%s: 이 생성기의 슬러그(%s)로 시작하는데 PROMPTS 에 등록하지 않은 파일입니다. '
+                              '빌더를 PROMPTS 에 등록하거나 파일을 지웁니다' % (rel(os.path.join(folder, name)), ', '.join(OWN_PREFIXES)))
     # 1) 놀이터 데이터 파일
     try:
         with open(DATA, encoding='utf-8') as f:
@@ -750,38 +840,53 @@ def check():
             errors += wrong
             done['공용 정의'] += compared
             done['공용 정의를 옮긴 글'] += 1 if compared else 0
-    # 3) 등록한 프롬프트 파일. 파일 전체가 빌더로 다시 만든 글(prompt_text)과 글자까지 같아야 한다.
+    # 3) 등록한 프롬프트 파일과 그 기록. 파일 전체가 빌더로 다시 만든 글(prompt_text)과 글자까지 같아야 한다.
     # 그래서 system, think, repeat, repeat_subset, think_subset, options, allow_length, items 가 모두 대조된다.
     # 앞 기록을 읽는 빌더는 지금 있는 앞 기록에서 다시 만들고, 그 기록을 쓸 수 없으면 그 까닭이 오류가 된다.
+    # 기록이 있으면 항목마다 system 과 user 를 포함한 요청이 이 프롬프트로 보낼 요청과 같아야 한다.
     for slug, build in PROMPTS.items():
         path = os.path.join(PROMPTS_DIR, slug + '.json')
-        if not os.path.exists(path):
-            continue
-        done['프롬프트 파일'] += 1
-        with open(path, encoding='utf-8') as f:
-            on_disk = f.read()
+        there = [rel(p) for p in (path, os.path.join(RECORDS_DIR, slug + '.json')) if os.path.exists(p)]
         try:
             spec = build()
         except NeedRecord as e:
-            errors.append('%s 를 다시 만들 수 없습니다. %s' % (rel(path), e))
+            # 앞 기록이 없거나 쓸 수 없어 다시 만들 수 없다. 이 슬러그의 파일이 하나라도 있으면 대조할 수 없으니 실패다
+            if there:
+                errors.append('%s 를 빌더로 다시 만들 수 없습니다. %s' % (', '.join(there), e))
             continue
         if spec is None:
-            errors.append('%s: 빌더가 만들 항목이 없다고 하는데 파일이 있습니다' % rel(path))
+            # 빌더가 만들 항목이 없다. 그 프롬프트 파일과 기록은 만들지 않으므로 둘 다 없어야 한다
+            if there:
+                errors.append('%s: 빌더(%s)가 만들 항목이 없다고 하는데 파일이 있습니다. 지우거나 앞 기록을 다시 봅니다'
+                              % (', '.join(there), build.__name__))
+            else:
+                done['만들 항목이 없어 만들지 않은 프롬프트'] += 1
             continue
-        want = prompt_text(spec)
-        if on_disk != want:
-            line, got, exp = first_char_diff(on_disk, want)
-            errors.append('%s: 빌더로 다시 만든 글과 %d번째 줄부터 다릅니다 (파일 「%s」, 빌더 「%s」). '
-                          '--prompts %s 로 다시 뽑고 다시 기록합니다' % (rel(path), line, got, exp, slug))
+        wrong, has_record = record_errors(slug, spec)
+        if not os.path.exists(path):
+            errors.append('%s 가 없습니다%s. --prompts %s 로 뽑습니다' % (
+                rel(path), ' (기록 data/llm-records/%s.json 은 있습니다)' % slug if has_record else '', slug))
+        else:
+            done['프롬프트 파일'] += 1
+            with open(path, encoding='utf-8') as f:
+                on_disk = f.read()
+            want = prompt_text(spec)
+            if on_disk != want:
+                line, got, exp = first_char_diff(on_disk, want)
+                errors.append('%s: 빌더로 다시 만든 글과 %d번째 줄부터 다릅니다 (파일 「%s」, 빌더 「%s」). '
+                              '--prompts %s 로 다시 뽑고 다시 기록합니다' % (rel(path), line, got, exp, slug))
+        if has_record:
+            done['기록'] += 1
+            errors += wrong
     for e in errors:
         print('✗ ' + e)
     if errors:
         return 1
-    total = done['데이터 파일'] + done['KEYWORDS 리터럴'] + done['공용 정의'] + done['프롬프트 파일']
-    print('✓ 대조 %d건(데이터 파일 %d, 글의 KEYWORDS 리터럴 %d, 글 %d편의 공용 정의 %d, 프롬프트 파일 %d)이 지금 생성 결과와 같습니다. '
-          '키워드 %d개와 자산 텍스트 %d자의 꼴도 맞습니다'
+    total = done['데이터 파일'] + done['KEYWORDS 리터럴'] + done['공용 정의'] + done['프롬프트 파일'] + done['기록']
+    print('✓ 대조 %d건(데이터 파일 %d, 글의 KEYWORDS 리터럴 %d, 글 %d편의 공용 정의 %d, 프롬프트 파일 %d, 기록 %d)이 지금 생성 결과와 같습니다. '
+          '키워드 %d개와 자산 텍스트 %d자의 꼴도 맞고, 이 생성기의 슬러그로 시작하는 파일 %d개가 모두 등록돼 있습니다'
           % (total, done['데이터 파일'], done['KEYWORDS 리터럴'], done['공용 정의를 옮긴 글'], done['공용 정의'],
-             done['프롬프트 파일'], len(KEYWORDS), len(ASSET_RUNNING)))
+             done['프롬프트 파일'], done['기록'], len(KEYWORDS), len(ASSET_RUNNING), done['등록을 확인한 파일']))
     return 0
 
 

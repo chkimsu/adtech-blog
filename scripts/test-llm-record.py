@@ -78,9 +78,11 @@ def stops(fn, *args):
 
 
 # ---------- 가짜 Ollama 서버 ----------
-# 사용자 메시지에 trunc 가 있으면 done_reason length, noreason 이 있으면 done_reason 없이, boom 이 있으면 HTTP 500 을 돌려준다.
-# 모델은 good 만 있다. 요청 수를 경로마다 센다.
+# 사용자 메시지에 trunc 가 있으면 done_reason length 와 잘린 본문(CUT_BODY), noreason 이 있으면 done_reason 없이,
+# boom 이 있으면 HTTP 500 을 돌려준다. 모델은 good 만 있다. 요청 수를 경로마다 센다.
 CALLS = {'chat': 0, 'show': 0}
+# 잘려 온 답의 본문. 출력 상한에 닿아 JSON 이 닫히지 않은 꼴이라, 기록이 받은 글자를 그대로 남겼는지 이 글자로 본다.
+CUT_BODY = '{"ok": tr'
 
 
 class Fake(BaseHTTPRequestHandler):
@@ -113,7 +115,7 @@ class Fake(BaseHTTPRequestHandler):
         user = req['messages'][1]['content']
         if 'boom' in user:
             return self.reply(500, {'error': 'boom'})
-        resp = {'message': {'role': 'assistant', 'content': '{"ok": true}'},
+        resp = {'message': {'role': 'assistant', 'content': CUT_BODY if 'trunc' in user else '{"ok": true}'},
                 'prompt_eval_count': 5, 'eval_count': 3, 'total_duration': 12000000}
         if 'noreason' not in user:
             resp['done_reason'] = 'length' if 'trunc' in user else 'stop'
@@ -175,10 +177,11 @@ def test_allow_length_keeps_cut_answer():
     path = os.path.join(recs, 'cut.json')
     items = read(path)['items'] if os.path.exists(path) else []
     const = run_tool('--slug', 'cut', '--export-constant')
+    # 가짜 서버는 a2 에 닫히지 않은 본문(CUT_BODY)을 보낸다. 기록과 상수가 그 글자를 고치지 않고 그대로 담아야 한다
     eq('allow_length 가 참이면 잘린 답도 error 없이 쓰고 그 항목에만 done_reason length, output 은 받은 글자 그대로, 상수에도 든다',
        (r.returncode, [('error' in it, it.get('done_reason'), it.get('output')) for it in items], const.stdout.strip()),
-       (0, [(False, None, '{"ok": true}'), (False, 'length', '{"ok": true}')],
-        'RECORD = {"a1": "{\\"ok\\": true}", "a2": "{\\"ok\\": true}"}'))
+       (0, [(False, None, '{"ok": true}'), (False, 'length', CUT_BODY)],
+        'RECORD = ' + json.dumps({'a1': '{"ok": true}', 'a2': CUT_BODY}, ensure_ascii=False)))
 
 
 def test_cut_answer_is_error_without_allow_length():

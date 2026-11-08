@@ -4,7 +4,9 @@
   python3 scripts/gen-ranker-data.py                   후보 30개를 한 줄씩 찍는다 (id, 정답 라벨, pCTR, 입찰가, pCTR × 입찰가, 첫 문장)
   python3 scripts/gen-ranker-data.py --prompts <슬러그>  PROMPTS 에 등록한 프롬프트 파일 한 벌을 찍는다. 아래처럼 받아 쓴다
       python3 scripts/gen-ranker-data.py --prompts llm-labels-code-ranker > data/llm-records/prompts/llm-labels-code-ranker.json
-  python3 scripts/gen-ranker-data.py --check           후보 30개의 꼴과 정답 수를 본 뒤 아래 넷을 대조하고 몇 건 대조했는지 찍는다
+  python3 scripts/gen-ranker-data.py --check           후보 30개의 꼴과 정답 수를 본 뒤 아래 다섯을 대조하고 몇 건 대조했는지 찍는다
+                                                       0) 이 생성기의 슬러그(llm-labels-code-ranker)로 시작하는 프롬프트 파일과 기록 파일이
+                                                          모두 PROMPTS 에 등록한 슬러그인가. 아니면 실패다
                                                        1) PROMPTS 의 프롬프트 파일마다 파일 전체(system, think, repeat, repeat_subset,
                                                           think_subset, options, allow_length, items)가 빌더로 다시 만든 글과 글자까지 같은가.
                                                           파일이 없으면 실패로 두고, 기록이 있는데 파일이 없으면 그렇다고 알린다
@@ -13,6 +15,8 @@
                                                        3) 글(posts/llm-labels-code-ranker.md)의 파이썬 블록에 「CANDIDATES = [」 줄부터
                                                           닫는 「]」 줄까지의 리터럴이 글자까지 그대로 들어 있는가 (글이 없으면 실패)
                                                        4) 이 후보를 이어 쓰는 글(LATER 의 글)이 있고 「CANDIDATES = [」 줄이 있으면 그 리터럴도 같은가
+                                                       3) 과 4) 의 글은 python 블록을 구문 트리로 읽어, 「CANDIDATES = [」 리터럴 말고 CANDIDATES 를
+                                                       다시 대입하거나 고치는 줄이 없는지도 본다. 리터럴 뒤에서 값을 바꾸면 글자 대조만으로는 통과하기 때문이다
 
 후보 하나는 (id, 문장 s1, 문장 s2, 문장 s3, pCTR, 클릭 한 번의 입찰가 원, 정답 라벨) 이다. 질의는 「러닝화 추천」 하나다.
 정답 라벨은 high 6개, mid 8개, low 10개, exclude 6개이고 모두 가상 값이다. exclude 셋은 질의와 무관한 광고, 셋은 근거 없이
@@ -24,6 +28,7 @@ a01 은 서연 씨의 런솔 라이트다. 첫 문장은 scripts/gen-ads-data.py
 CANDIDATES 리터럴이나 시스템 메시지를 고치면 글의 블록도 똑같이 고치고, 프롬프트 파일을 다시 뽑아
 python3 scripts/llm-record.py --slug <슬러그> 로 다시 기록한다. 표준 라이브러리만 쓴다.
 """
+import ast
 import importlib.util
 import json
 import os
@@ -141,6 +146,9 @@ def listwise_prompts():
 
 # 프롬프트 파일 목록. 키는 data/llm-records/prompts/<슬러그>.json 의 슬러그이고, 값은 그 파일 한 벌을 만드는 함수다.
 PROMPTS = {POINTWISE: pointwise_prompts, LISTWISE: listwise_prompts}
+# 이 생성기가 쓰는 슬러그의 앞부분. 이 말로 시작하는 프롬프트 파일과 기록 파일은 모두 PROMPTS 에 등록한 슬러그여야 한다.
+# 등록하지 않은 파일은 --check 의 대조가 열어 보지 않아서, 손으로 만든 파일이 검사 밖에 남기 때문이다.
+OWN_PREFIXES = (POINTWISE,)
 
 # ---------- 여기부터는 대조와 출력이다. 글에는 옮기지 않는다. ----------
 
@@ -208,6 +216,77 @@ def own_source():
 
 
 LITERAL = re.compile(r'^CANDIDATES = \[\n.*?^\]$', re.M | re.S)
+FENCE = re.compile(r'^```([^\n`]*)\n(.*?)^```[ \t]*$', re.M | re.S)    # scripts/check-code-blocks.js 의 FENCE 와 같은 꼴
+# 글자로 대조하는 이름. 글의 python 블록은 「CANDIDATES = [」 리터럴 말고는 이 이름을 다시 대입하거나 고치면 안 된다.
+COMPARED = ('CANDIDATES',)
+# 목록을 그 자리에서 고치는 list 메서드. CANDIDATES.append(...) 처럼 부르면 리터럴의 값이 바뀐다.
+LIST_MUTATORS = ('append', 'extend', 'insert', 'pop', 'remove', 'sort', 'reverse', 'clear')
+
+
+def name_writes(code, name):
+    """python 블록 하나에서 name 에 값을 묶거나 name 이 가리키는 목록을 고치는 줄의 번호 목록(블록의 첫 줄이 1).
+    대입(=, +=, :=, 꼴 표시가 붙은 대입), for 와 with 가 묶는 이름, def, class, import, del, except 의 이름, 함수 인자,
+    name[...] = 와 name.x = 같은 대입, name.append() 같은 list 메서드 부르기를 센다. 함수 안의 지역 이름도 센다.
+    맨 위의 「name = [」 리터럴 대입도 한 줄로 든다. 파이썬으로 읽지 못하면 SyntaxError 가 난다."""
+    found = []
+
+    def base(t):        # name[0], name.x, *name 의 맨 앞 이름
+        while isinstance(t, (ast.Subscript, ast.Attribute, ast.Starred)):
+            t = t.value
+        return t
+
+    def leaves(t):      # (a, name) = ... 처럼 묶어 대입하면 하나씩 본다
+        if isinstance(t, (ast.Tuple, ast.List)):
+            for e in t.elts:
+                yield from leaves(e)
+        else:
+            yield t
+
+    def visit(node, line):
+        line = getattr(node, 'lineno', line)    # withitem 과 alias 는 줄 번호가 없어 그 문장의 줄을 쓴다
+        targets = []
+        if isinstance(node, (ast.Assign, ast.Delete)):
+            targets = node.targets
+        elif isinstance(node, (ast.AugAssign, ast.AnnAssign, ast.For, ast.AsyncFor, ast.NamedExpr)):
+            targets = [node.target]
+        elif isinstance(node, ast.withitem) and node.optional_vars is not None:
+            targets = [node.optional_vars]
+        named = [base(leaf) for t in targets for leaf in leaves(t)]
+        if (any(isinstance(b, ast.Name) and b.id == name for b in named)
+                or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and node.name == name
+                or isinstance(node, ast.ExceptHandler) and node.name == name
+                or isinstance(node, ast.arg) and node.arg == name
+                or isinstance(node, ast.alias) and (node.asname or node.name.split('.')[0]) == name
+                or isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr in LIST_MUTATORS
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == name):
+            found.append(line)
+        for child in ast.iter_child_nodes(node):
+            visit(child, line)
+
+    visit(ast.parse(code), 0)
+    return sorted(set(found))
+
+
+def rebind_errors(path, text):
+    """글 하나의 python 블록에서 COMPARED 의 이름을 리터럴 밖에서 다시 대입하거나 고치는 줄을 찾는다. (틀린 곳 목록, 본 블록 수).
+    줄 머리가 「이름 = [」 인 줄은 리터럴의 첫 줄로 보고 넘긴다. 그 리터럴이 이 파일의 것과 같은지는 글자 대조가 따로 본다."""
+    out, seen = [], 0
+    for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
+        seen += 1
+        code, first = m.group(2), text.count('\n', 0, m.start(2)) + 1
+        lines = code.split('\n')
+        for name in COMPARED:
+            try:
+                writes = name_writes(code, name)
+            except SyntaxError:
+                if re.search(r'\b%s\b' % name, code):
+                    out.append('%s: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 %s 를 다시 대입하는지 보지 못했습니다' % (rel(path), i, name))
+                continue
+            for n in writes:
+                if not lines[n - 1].startswith(name + ' = ['):
+                    out.append('%s: %d번째 줄(파이썬 %d번째 블록)이 %s 를 리터럴 밖에서 다시 대입하거나 고칩니다. '
+                               '후보를 바꾸려면 생성기의 리터럴을 고치고, 다른 값이면 새 이름을 붙입니다' % (rel(path), first + n - 1, i, name))
+    return out, seen
 
 
 def literal_source():
@@ -273,6 +352,16 @@ def record_errors(slug, spec):
 def check():
     errors = candidate_errors()
     done = Counter()
+    # 0) 등록하지 않은 파일. 이 생성기의 슬러그로 시작하는 프롬프트 파일과 기록 파일은 모두 PROMPTS 에 있어야 한다
+    for folder in (PROMPTS_DIR, RECORDS_DIR):
+        for name in sorted(os.listdir(folder)):
+            stem, ext = os.path.splitext(name)
+            if ext != '.json' or not stem.startswith(OWN_PREFIXES):
+                continue
+            done['등록을 확인한 파일'] += 1
+            if stem not in PROMPTS:
+                errors.append('%s: 이 생성기의 슬러그(%s)로 시작하는데 PROMPTS 에 등록하지 않은 파일입니다. '
+                              '빌더를 PROMPTS 에 등록하거나 파일을 지웁니다' % (rel(os.path.join(folder, name)), ', '.join(OWN_PREFIXES)))
     # 1) 프롬프트 파일, 2) 기록
     for slug, build in PROMPTS.items():
         path = os.path.join(PROMPTS_DIR, slug + '.json')
@@ -293,7 +382,7 @@ def check():
         if has_record:
             done['기록'] += 1
             errors += wrong
-    # 3) 글의 리터럴, 4) 뒤 글의 리터럴
+    # 3) 글의 리터럴, 4) 뒤 글의 리터럴. 두 글 모두 리터럴 밖에서 CANDIDATES 를 다시 대입하거나 고치는 줄이 없어야 한다
     literal = literal_source()
     for path, required in [(POST, True)] + [(p, False) for p in LATER]:
         try:
@@ -303,6 +392,10 @@ def check():
             if required:
                 errors.append('%s 가 없습니다' % rel(path))
             continue
+        wrong, seen = rebind_errors(path, text)
+        errors += wrong
+        done['다시 대입을 본 글'] += 1
+        done['다시 대입을 본 블록'] += seen
         starts = len(re.findall(r'^CANDIDATES = \[', text, re.M))
         if not required and not starts:
             continue
@@ -316,8 +409,11 @@ def check():
         return 1
     labels = Counter(c[6] for c in CANDIDATES)
     print('✓ 후보 %d개(high %d, mid %d, low %d, exclude %d)의 꼴이 맞고, 대조 %d건(프롬프트 파일 %d, 기록 %d, 글의 CANDIDATES 리터럴 %d)이 '
-          '이 파일과 같습니다' % (len(CANDIDATES), labels['high'], labels['mid'], labels['low'], labels['exclude'],
-                           sum(done.values()), done['프롬프트 파일'], done['기록'], done['글의 CANDIDATES 리터럴']))
+          '이 파일과 같습니다. 글 %d편의 python 블록 %d개에 리터럴 밖에서 CANDIDATES 를 바꾸는 줄이 없고, '
+          '이 생성기의 슬러그로 시작하는 파일 %d개가 모두 등록돼 있습니다'
+          % (len(CANDIDATES), labels['high'], labels['mid'], labels['low'], labels['exclude'],
+             done['프롬프트 파일'] + done['기록'] + done['글의 CANDIDATES 리터럴'], done['프롬프트 파일'], done['기록'],
+             done['글의 CANDIDATES 리터럴'], done['다시 대입을 본 글'], done['다시 대입을 본 블록'], done['등록을 확인한 파일']))
     return 0
 
 

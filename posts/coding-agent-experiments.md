@@ -850,7 +850,7 @@ permission_mode 는 지금의 권한 모드입니다. 값은 default, plan, acce
 }
 ```
 
-훅 파일은 블록 1 의 import 와 1단계, 2단계를 옮긴 것입니다. 맨 아래에는 `sys.exit(run_hook(sys.stdin.read(), sys.stderr))` 한 줄을 둡니다. 3단계와 4단계는 예시라서 옮기지 않습니다. `run_hook` 은 JSON 을 읽지 못하거나 판단하다 예외가 나면 2 를 돌려주므로, 그때도 호출을 막습니다. 그래도 경로를 잘못 적었거나 python3 를 찾지 못하면 이 코드는 돌지도 않습니다. 문서는 그런 훅이 막지 않는 오류 알림만 남긴다고 경고합니다. 문서가 실패로 세는 것은 시작하지 못한 훅, 0 과 2 가 아닌 종료 코드, 시간 초과, 읽을 수 없는 JSON 출력입니다. 위 설정처럼 onFailure 를 block 으로 두면, 실패한 훅도 그 이벤트의 종료 코드 2 처럼 호출을 막습니다. 이 필드는 Claude Code v2.1.295 이상에서 씁니다. 문서의 경고 하나도 덧붙입니다. command 훅은 사용자의 권한 그대로 셸 명령을 돌리므로, 넣기 전에 명령을 읽고 시험해야 합니다.
+훅 파일은 블록 1 의 import 와 1단계, 2단계를 옮긴 것입니다. 맨 아래에는 `sys.exit(run_hook(sys.stdin.read(), sys.stderr))` 한 줄을 둡니다. 3단계와 4단계는 예시라서 옮기지 않습니다. `run_hook` 은 JSON 을 읽지 못하거나 판단하다 예외가 나면 2 를 돌려주므로, 그때도 호출을 막습니다. 그래도 경로를 잘못 적었거나 python3 를 찾지 못하면 이 코드는 돌지도 않습니다. 문서는 그런 훅이 막지 않는 오류 알림만 남긴다고 경고합니다. 실패로 세는 것은 시작하지 못한 훅, 0 과 2 가 아닌 종료 코드, 시간 초과, 읽을 수 없거나 스키마 검증에 걸린 JSON 출력입니다. 위 설정처럼 onFailure 를 block 으로 두면, 실패한 훅도 그 이벤트의 종료 코드 2 처럼 호출을 막습니다. 이 필드는 Claude Code v2.1.295 이상에서 씁니다. 문서의 경고 하나도 덧붙입니다. command 훅은 사용자의 권한 그대로 셸 명령을 돌리므로, 넣기 전에 명령을 읽고 시험해야 합니다.
 :::
 
 :::deep 발췌를 다듬은 규칙
@@ -889,5 +889,5 @@ permission_mode 는 지금의 권한 모드입니다. 값은 default, plan, acce
 - Anthropic. *Extend Claude with skills* (Claude Code 문서). [code.claude.com](https://code.claude.com/docs/en/skills). SKILL.md 의 frontmatter 와 지시, 스킬을 부르는 두 방법입니다. 부른 스킬의 내용이 메시지 하나로 대화에 남는다고 적었습니다.
 - Anthropic. *Create custom subagents* (Claude Code 문서). [code.claude.com](https://code.claude.com/docs/en/sub-agents). 서브에이전트는 자기 컨텍스트 윈도우에서 따로 정한 시스템 프롬프트와 도구, 권한으로 돌아갑니다. settings 의 PreToolUse 훅은 서브에이전트의 도구 호출 앞에서도 돈다고 적었습니다.
 - Anthropic. *Configure permissions* (Claude Code 문서). [code.claude.com](https://code.claude.com/docs/en/permissions). allow, ask, deny 규칙과 평가 차례, 훅과 규칙 사이의 우선순위입니다. `Bash(git push *)` 규칙이 막지 못하는 꼴의 표가 있습니다.
-- Jimenez, C. E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., Narasimhan, K. (2023). *SWE-bench: Can Language Models Resolve Real-World GitHub Issues?* ICLR 2024. arXiv:2310.06770. [arxiv.org](https://arxiv.org/abs/2310.06770). 파이썬 저장소 12곳의 GitHub 이슈와 풀 리퀘스트로 만든 문제 2,294개입니다. 패치가 적용되고 그 문제의 테스트가 모두 통과해야 푼 것으로 셉니다.
+- Carlos E. Jimenez 외 (2023). *SWE-bench: Can Language Models Resolve Real-World GitHub Issues?* ICLR 2024. arXiv:2310.06770. [arxiv.org](https://arxiv.org/abs/2310.06770). 파이썬 저장소 12곳의 GitHub 이슈와 풀 리퀘스트로 만든 문제 2,294개입니다. 패치가 적용되고 그 문제의 테스트가 모두 통과해야 푼 것으로 셉니다.
 - Vincent, J. *superpowers* (7.0.0 버전). [github.com](https://github.com/obra/superpowers/tree/v7.0.0). 이 묶음이 쓴 writing-plans 와 subagent-driven-development 스킬이 든 공개 플러그인입니다. 계획서의 칸, Task 마다 구현자와 검토자를 부르는 순서, 장부의 줄 꼴을 적었습니다.

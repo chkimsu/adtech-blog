@@ -968,7 +968,7 @@ for agent in AGENTS.values():
 
 read 는 아직 읽지 않은 것을 읽습니다. 목록 전이면 get_campaigns 를, 목록 뒤면 아직 읽지 않은 캠페인의 get_stats 를 한 응답에 담습니다. reread 는 이미 읽은 캠페인 하나의 get_stats 를 다시 부르는 것이라, 같은 호출 반복 검사가 그 단계에서 멈춥니다. change 는 목표 아래 캠페인을, change_other 는 그 밖의 캠페인을 CUTS 의 폭만큼 내립니다. CUTS 는 5, 10, 15, 25, 30 이고 같은 확률로 뽑습니다. end 는 처음 입찰가와 다른 캠페인을 글로 적고 end_turn 으로 끝냅니다.
 
-25주째 편의 더 깊이 보기에서 본 ReAct 는 LLM 이 추론하는 글과 행동을 번갈아 내게 했습니다. 이 글의 가짜 LLM 은 추론하는 글 없이 행동만 고릅니다. LangGraph 는 실행을 super-step 이라는 차례로 나눠 진행합니다. 나란히 도는 노드는 한 super-step 을 함께 쓰고, 차례로 도는 노드는 따로 씁니다. 문서는 한 번의 실행이 도는 super-step 수의 상한을 recursion limit 이라 부릅니다. 상한을 넘으면 GraphRecursionError 를 낸다고 적었습니다. 이 글의 max_steps 처럼, 루프가 끝없이 돌지 않게 막는 장치입니다.
+25주째 편의 더 깊이 보기에서 본 ReAct 는 LLM 이 추론하는 글과 행동을 번갈아 내게 했습니다. 이 글의 가짜 LLM 은 추론하는 글 없이 행동만 고릅니다. LangGraph 는 실행을 super-step 이라는 차례로 나눠 진행합니다. 나란히 도는 노드는 한 super-step 을 함께 쓰고, 차례로 도는 노드는 따로 씁니다. LangGraph 문서는 한 번의 실행이 도는 super-step 수의 상한을 recursion limit 이라 부릅니다. 상한을 넘으면 GraphRecursionError 를 낸다고 적었습니다. 이 글의 max_steps 처럼, 루프가 끝없이 돌지 않게 막는 장치입니다.
 :::
 
 :::deep A2A 작업 상태와 메시지 전문

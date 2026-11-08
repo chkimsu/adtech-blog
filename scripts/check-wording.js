@@ -9,6 +9,9 @@
 // 0건이어야 한다. 남은 자리를 고쳤으면 --update 로 기준표를 줄인다.
 //
 // 이야기 속 대사는 그 사람의 말투 그대로 둔다. 「」, “”, 『』, ‘’ 안과, 글 산문의 "" 안은 세지 않는다.
+// 글의 코드 블록은 주석과 코드를 「」 안까지 센다. 다만 python 블록의 RECORD = , USAGE = 줄과 # 출력: 아래의 찍힌 줄은
+// 기록하거나 찍은 데이터라 세지 않는다. 출력 영역의 뜻 줄(# N단계 뜻: …)은 쓴 사람의 글이라 센다.
+// 「~하세요」처럼 ~ 로 시작하는 인용은 어미를 가리키는 이름이라 코드 블록 안에서도 세지 않는다.
 // 사람이 읽어야 판단되는 것(같은 틀의 되풀이, 「칸」 「판」처럼 뜻이 여럿인 낱말)은 세지 않는다.
 const fs = require('fs');
 const path = require('path');
@@ -18,8 +21,9 @@ const BASELINE = path.join(__dirname, 'wording-baseline.json');
 const RULES = [
   {
     key: 'haeyo', label: '해요체',
-    // 「요」나 「죠」 뒤에 문장 끝이 오는 자리. 「~할까요?」는 남기기로 했다. 「~니까요」는 센다.
-    re: /[가-힣]+(?:요|죠)(?=[.!?|*)\]:(]|\s*['"`<]|\s*$|\s+[—-]|\s*\$\{|\s*\+)/gm,
+    // 「요」나 「죠」 뒤에 문장 끝이나 닫는 따옴표(」』”’)가 오는 자리. 「~할까요?」는 남기기로 했다. 「~니까요」는 센다.
+    // 산문의 따옴표 안은 미리 지워서, 닫는 따옴표 뒤를 보는 것은 코드 블록의 주석과 코드다.
+    re: /[가-힣]+(?:요|죠)(?=[.!?|*)\]:(」』”’]|\s*['"`<]|\s*$|\s+[—-]|\s*\$\{|\s*\+)/gm,
     skip: w => /(필요|중요|주요|개요|수요|요요|강요|소요)$/.test(w) || (/까요$/.test(w) && !/니까요$/.test(w)),
     fix: '~입니다, ~합니다. 안내는 ~해 봅니다, 물음은 ~할까요?',
   },
@@ -63,6 +67,7 @@ const RULES = [
 // 지운 자리를 같은 길이의 공백으로 채운다 — 위치와 줄 번호가 원문과 그대로 맞는다.
 const blank = s => s.replace(/[^\n]/g, ' ');
 const QUOTES = /“[^”\n]*”|「[^」\n]*」|『[^』\n]*』|‘[^’\n]*’/g;
+const ENDING_NAME = /“~[^”\n]*”|「~[^」\n]*」|『~[^』\n]*』|‘~[^’\n]*’/g;   // 「~하세요」 같은 어미 이름
 
 function stripJs(s) {
   return s.replace(/\/\*[\s\S]*?\*\//g, blank)
@@ -71,10 +76,21 @@ function stripJs(s) {
 
 function textOf(file, src) {
   if (file.endsWith('.md')) {
-    let fence = false;
+    let fence = false, python = false, out = false;
     return src.split('\n').map(line => {
-      if (/^\s*```/.test(line)) { fence = !fence; return blank(line); }
-      if (fence) return line;            // 코드 블록의 주석과 출력도 독자가 읽는다
+      if (/^\s*```/.test(line)) {
+        fence = !fence;
+        python = fence && line.trim().slice(3).trim() === 'python';
+        out = false;
+        return blank(line);
+      }
+      if (fence) {                       // 코드 블록의 주석과 코드도 독자가 읽는다
+        line = line.replace(ENDING_NAME, blank);
+        if (!python) return line;
+        if (/^(?:RECORD|USAGE) = /.test(line)) return blank(line);          // 기록 파일에서 옮긴 데이터
+        if (/^# 출력(?=[\s(:]|$)/.test(line)) { out = true; return line; }
+        return out && !/^# (?:\d+단계 )?뜻: /.test(line) ? blank(line) : line;   // 찍힌 줄은 데이터, 뜻 줄은 쓴 글
+      }
       return line.replace(/`[^`]*`/g, blank)
         .replace(/\]\([^)]*\)/g, m => '](' + blank(m.slice(2)))
         .replace(QUOTES, blank)

@@ -76,8 +76,8 @@
         s += tag(40, 52, 'search_running_shoes >= 1', 'b');
         s += tag(40 + tw('search_running_shoes >= 1') + 22, 52, 'sports_goods_buy >= 1', 'b');
         s += T(40, 92, '코드가 확인하는 것', 'lbl k');
-        s += box(40, 100, 140, 22, '필드가 FIELDS 에 있다', 'a', 10) + box(190, 100, 120, 22, '비교가 OPS 에 있다', 'a', 10) +
-            box(320, 100, 100, 22, '값이 숫자다', 'a', 10);
+        s += box(40, 100, 122, 22, '필드가 FIELDS 에 있다', 'a', 10) + box(168, 100, 104, 22, '비교가 OPS 에 있다', 'a', 10) +
+            box(278, 100, 64, 22, '값이 숫자다', 'a', 10) + box(348, 100, 128, 22, '지역은 이름 9개 중 하나', 'a', 10);
         s += `<rect class="grp" x="34" y="132" width="452" height="38"/>`;
         s += line(44, 148, 'SELECT COUNT(*) FROM members WHERE', 'list-t h');
         s += line(44, 162, 'search_running_shoes >= 1 AND sports_goods_buy >= 1');
@@ -85,7 +85,7 @@
         s += bar(184, '정답 조건 하나', 63, '63명, 441,000명');
         s += bar(206, '워크플로의 조건 둘', 12, '12명, 84,000명');
         s += tag(40, 236, "region == seoul' OR '1'='1", 'c');
-        s += T(40 + tw("region == seoul' OR '1'='1") + 22, 249, '가상 조건이라 쿼리를 쓰지 않고 멈춥니다', 'lbl sm');
+        s += T(40 + tw("region == seoul' OR '1'='1") + 22, 249, '지역 이름 9개 밖이라 쿼리를 쓰지 않고 멈춥니다', 'lbl sm');
         s += T(40, 284, '조건 하나가 명단을 441,000명에서 84,000명으로 줄였습니다', 'lbl');
         svg(S, s);
     })();

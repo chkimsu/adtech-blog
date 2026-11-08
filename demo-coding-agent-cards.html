@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코딩 에이전트 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="코딩 에이전트에게 맡긴 실험 하나가 계획, 구현, 실행, 보고를 지나는 자리를 카드 한 장씩으로 봅니다. 네 단계, 스킬이 정하는 순서, 훅이 막는 것, 장부와 보고입니다. 숫자는 31주째 관심사 사전 편을 만든 세션의 발췌에서 셌습니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>코딩 에이전트 카드 네 장</h1>
+      <p>코딩 에이전트에게 맡긴 실험 하나가 계획, 구현, 실행, 보고를 지나는 자리를 한 장씩 봅니다. 네 단계, 스킬이 정하는 순서, 훅이 막는 것, 장부와 보고입니다. 숫자는 31주째 관심사 사전 편을 만든 Claude Code 세션의 발췌에서 셌습니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 저장소에 놓인 파일</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 에이전트가 보낸 도구 호출</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = Claude Code 와 검사 스크립트</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 막힌 호출과 기록이 도는 시간</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 적어 둔 규칙과 사람의 승인</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="steps"><h2>STEPS</h2><p class="tg-k">계획, 구현, 실행, 보고</p><p class="tg-easy"><b>쉽게 말하면</b> 실험 하나를 글로 적고, 코드를 고치고, 돌리고, 숫자를 다시 세어 적는 네 단계로 나눕니다.</p><div class="tg-fig" id="ca-steps"></div>
+        <p class="tg-cap">시작에서 커밋까지 <b>약 44분</b>이었습니다. 실행 단계는 <b>12분 25초</b>, 보고 단계는 <b>27분 20초</b>였습니다. 모델 기록 셋은 기록 도구가 잰 <b>662초</b>였습니다.</p></section>
+      <section class="tg-card" data-card="skill"><h2>SKILL</h2><p class="tg-k">스킬이 정하는 순서</p><p class="tg-easy"><b>쉽게 말하면</b> 계획서를 쓰는 스킬이 칸을 정하고, Task 를 맡기는 스킬이 구현자와 검토자를 부르는 차례를 정합니다.</p><div class="tg-fig" id="ca-skill"></div>
+        <p class="tg-cap">Task 4 의 검토는 <b>spec 통과, Critical 0, Important 0, Minor 6</b> 이었습니다. 사람의 승인은 계획서와 병합, push 의 <b>두</b> 자리에만 있었습니다.</p></section>
+      <section class="tg-card" data-card="hook"><h2>HOOK</h2><p class="tg-k">훅이 막는 것</p><p class="tg-easy"><b>쉽게 말하면</b> 도구가 실행되기 전에 그 입력을 코드로 읽고, 규칙을 어기면 종료 코드 2 로 막습니다.</p><div class="tg-fig" id="ca-hook"></div>
+        <p class="tg-cap">예시 다섯 가운데 <b>둘</b>은 종료 코드 0, <b>셋</b>은 2 를 받았습니다. 브랜치 이름이 없는 git push 와 bash -c 안의 명령은 놓쳤습니다.</p></section>
+      <section class="tg-card" data-card="ledger"><h2>LEDGER</h2><p class="tg-k">장부와 보고</p><p class="tg-easy"><b>쉽게 말하면</b> 구현자는 보고서를, 컨트롤러는 장부를 남기고, 검사기와 검토자가 그 숫자를 다시 셉니다.</p><div class="tg-fig" id="ca-ledger"></div>
+        <p class="tg-cap">발췌의 도구 호출 <b>23</b>번 가운데 gen-ads-data.py 가 <b>10</b>번이었습니다. 구현자의 사건에 사람의 승인은 <b>0</b>번이었습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>코딩 에이전트에게 실험을 맡길 때는</b> 세 가지를 정해 둡니다. 순서를 적은 계획서, 규칙을 막는 코드, 결과를 다시 세는 검사입니다.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=coding-agent-experiments">코딩 에이전트로 실험 돌리기</a> 편에 이 카드들이 절마다 들어 있습니다. 발췌의 실험은 <a href="post.html?id=interest-audience-library">관심사 사전 만들기</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/coding-agent-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

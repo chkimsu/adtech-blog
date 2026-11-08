@@ -51,7 +51,7 @@
 <script src="https://ads.example.com/px.js" data-event="add_to_cart"></script>
 ```
 
-회원 A 가 러닝화를 장바구니에 담아 그 페이지가 열리면, 이 코드가 광고 플랫폼에 한 줄을 보냅니다. 「회원 A, add_to_cart, 14:02」. 회원 A 가 로그인해 있으면 회원 ID 가 실리고, 아니면 브라우저의 쿠키 ID 가 실립니다.
+회원 A 가 러닝화를 장바구니에 담아 그 페이지가 열리면, 이 코드가 광고 플랫폼에 한 줄을 보냅니다. 「회원 A, add_to_cart, 14:02」. 회원 A 가 로그인해 있으면 회원 ID 가 담기고, 아니면 브라우저의 쿠키 ID 가 담깁니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-targeting-cards.html?embed=1&card=retarget" height="480" loading="lazy" title="이미 만난 사람의 목록"></iframe>

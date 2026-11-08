@@ -62,7 +62,7 @@ graph LR
 코드는 표와 똑같은 가정을 쓴다. 시간대별 전환율, 하루 예산 100만 원, 시간대 무관 CPC 500원. 표준 라이브러리만 쓰니 그대로 복사해 돌리면 표①의 숫자가 그대로 나온다.
 
 ```python
-# 하는 일: 하루 예산 100만 원을 아침 소진, 균등 분배, 성과 가중 배분 세 가지로 시간대 6개에 나눠 쓸 때 총 전환 수를 견준다.
+# 하는 일: 하루 예산 100만 원을 아침 소진, 균등 분배, 성과 가중 배분 세 가지로 시간대 6개에 나눠 쓸 때 총 전환 수를 비교한다.
 # 1단계: 예산, CPC, 시간대별 전환율을 둔다
 # 모든 수치는 가상의 예시다(실제 카카오 데이터 아님). 표준 라이브러리만 쓴다.
 BUDGET = 1_000_000          # 하루 예산(원) - 가상
@@ -98,7 +98,7 @@ alloc_b = [BUDGET / 6] * 6
 cvr_sum = sum(cvr for _, cvr in dayparts)
 alloc_c = [BUDGET * (cvr / cvr_sum) for _, cvr in dayparts]
 
-# 4단계: 전략마다 총 전환을 찍고 가중 배분의 차이를 견준다
+# 4단계: 전략마다 총 전환을 찍고 가중 배분의 차이를 비교한다
 for label, alloc in [("아침에 다 소진", alloc_a), ("균등 분배", alloc_b), ("성과 가중 배분", alloc_c)]:
     total = total_conversions(alloc)
     print(f"{label:<12} 총 전환 {total:5.2f}건")
@@ -284,7 +284,7 @@ graph LR
 
 ## 더 깊이 보기
 
-- 무엇이 팔리고 eCPM으로 어떻게 줄 세워지나 → [1편: 카카오 광고 상품 지도](post.html?id=kakao-ads-products)
+- 무엇이 팔리고 eCPM으로 어떻게 순위가 매겨지나 → [1편: 카카오 광고 상품 지도](post.html?id=kakao-ads-products)
 - 무엇으로 확률을 맞히고 누구를 겨냥하나 → [2편: 카카오는 무엇으로 광고를 고르나](post.html?id=kakao-ads-prediction-targeting)
 - 예산 페이싱의 PID, 라그랑주 산수 → [Auto-Bidding 과 예산 페이싱](post.html?id=auto-bidding-pacing)
 - 패찰가 없이 입찰가를 추정하는 법 → [Bid Shading: Censored Data](post.html?id=bid-shading-censored)

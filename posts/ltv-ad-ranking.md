@@ -241,7 +241,7 @@ $$\text{LTV 기준 점수} = pCTR \times (\text{90일 고객 LTV}) \times 1{,}00
 파이썬으로 그대로 확인해 보겠습니다.
 
 ```python
-# 하는 일: 광고 5개의 단기 eCPM 순위와 90일 LTV 순위를 각각 계산해 견준다.
+# 하는 일: 광고 5개의 단기 eCPM 순위와 90일 LTV 순위를 각각 계산해 비교한다.
 # 1단계: 광고 5개를 둔다
 # 표준 라이브러리만 쓰니 그대로 복붙해 돌려 볼 수 있다.
 ads = [
@@ -267,7 +267,7 @@ ecpm_rank = rank_by("ecpm")
 ltv_rank = rank_by("ltv_score")
 
 # 3단계: 두 순위를 나란히 찍는다
-# 단기 eCPM 순위대로 줄 세우고 LTV 순위와 변동을 함께 찍는다.
+# 단기 eCPM 순위대로 정렬하고 LTV 순위와 변동을 함께 찍는다.
 print(f"{'광고':<22}{'단기eCPM':>10}{'eCPM순위':>9}{'LTV점수':>13}{'LTV순위':>8}  변동")
 for ad in sorted(ads, key=lambda a: ecpm_rank[a["name"]]):
     name = ad["name"]
@@ -330,7 +330,7 @@ for ad in ads:
 true_rank = rank_by(ads, "score_true")
 pred_rank = rank_by(ads, "score_pred")
 
-# 3단계: 두 순위를 견주어 찍는다
+# 3단계: 두 순위를 비교해 찍는다
 # 예측 순위가 실제와 다르면 표시한다.
 print(f"{'광고':<22}{'실제 LTV':>11}{'예측 LTV':>11}{'실제순위':>8}{'예측순위':>8}")
 for ad in sorted(ads, key=lambda a: true_rank[a["name"]]):

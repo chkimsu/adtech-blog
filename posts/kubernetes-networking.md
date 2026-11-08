@@ -119,7 +119,7 @@
 "집 주소를 그냥 외워 두면 안 되나?"라는 생각이 들 수 있습니다. 왜 안 되는지 세어 봅시다. 가상 데이터입니다.
 
 ```python
-# 하는 일: Pod 3개짜리 앱이 하루 4번 배포할 때, 클라이언트가 Pod IP 를 직접 외우는 경우와 Service 주소 하나만 외우는 경우의 한 달 실패 요청을 견준다.
+# 하는 일: Pod 3개짜리 앱이 하루 4번 배포할 때, 클라이언트가 Pod IP 를 직접 외우는 경우와 Service 주소 하나만 외우는 경우의 한 달 실패 요청을 비교한다.
 import random
 random.seed(42)
 
@@ -152,7 +152,7 @@ fails_b = RPS * INFLIGHT_SEC * PODS * DEPLOYS_PER_DAY * DAYS
 
 total_requests = RPS * 60 * 60 * 24 * DAYS
 
-# 5단계: 두 방식의 한 달 실패를 견준다
+# 5단계: 두 방식의 한 달 실패를 비교한다
 print("방식 A — Pod IP를 직접 외운다")
 print(f"  배포 1회당 실패 요청   {fails_per_deploy:>12,.0f}건")
 print(f"  한 달 실패 요청        {fails_a:>12,.0f}건  (전체의 {fails_a/total_requests*100:.3f}%)")
@@ -239,7 +239,7 @@ print("→ Service 주소는 배포와 무관하게 그대로다. 그래서 외�
 Ingress 없이 서비스마다 입구를 내면 어떻게 되는지도 세어 봅시다. 클라우드 요금은 대략치이고 공급자마다 다릅니다.
 
 ```python
-# 하는 일: 마이크로서비스 12개를 바깥에 낼 때 서비스마다 LoadBalancer 를 붙이는 경우와 Ingress 하나로 경로를 나누는 경우의 월 비용, 공인 IP, 인증서 관리 시간을 견준다.
+# 하는 일: 마이크로서비스 12개를 바깥에 낼 때 서비스마다 LoadBalancer 를 붙이는 경우와 Ingress 하나로 경로를 나누는 경우의 월 비용, 공인 IP, 인증서 관리 시간을 비교한다.
 
 # 1단계: 서비스 수와 LoadBalancer 요금, 인증서 관리 시간을 둔다
 # "Ingress 없이 서비스마다 입구를 내면 안 되나?"에 비용으로 답한다. 요금은 대략치이고 공급자마다 다르다.
@@ -261,7 +261,7 @@ b_ips = 1
 b_certs = 1                    # 와일드카드 인증서 하나로 서브경로를 덮는다
 b_minutes = 1 * CERT_MANAGE_MIN
 
-# 4단계: 두 방식을 표로 견준다
+# 4단계: 두 방식을 표로 비교한다
 print(f"마이크로서비스 {SERVICES}개를 바깥에 노출한다면\n")
 print(f"{'':22}{'A) LB 여러 개':>16}{'B) Ingress 하나':>18}")
 print(f"{'월 비용':22}{'$' + str(a_cost):>16}{'$' + str(b_cost):>18}")

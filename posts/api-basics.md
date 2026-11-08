@@ -69,7 +69,7 @@
 <rect x="396" y="126" width="92" height="30"/><rect x="396" y="158" width="92" height="30"/></g>
 <g style="font-size:12px; fill:var(--text-primary); text-anchor:middle">
 <text x="442" y="145">결제사</text><text x="442" y="177">지도 서비스</text></g>
-<text x="130" y="150" style="font-size:11.5px; fill:var(--text-secondary)">위쪽 화살표에는 비밀키를 실을 수 없습니다.</text>
+<text x="130" y="150" style="font-size:11.5px; fill:var(--text-secondary)">위쪽 화살표에는 비밀키를 담을 수 없습니다.</text>
 <text x="130" y="168" style="font-size:11.5px; fill:var(--text-secondary)">앱을 뜯으면 그 키가 그대로 나오기 때문입니다.</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">같은 "API 호출"이지만 위와 아래는 다른 문제입니다. 위쪽은 부르는 쪽을 못 믿는 상태에서 설계해야 하고, 아래쪽은 양쪽 다 우리가 관리하거나 계약한 서버라 훨씬 자유롭습니다.</figcaption>

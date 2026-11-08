@@ -132,7 +132,7 @@ def pool(history, ad):
     return w, user
 
 
-# 4단계: 광고마다 가중치와 관심 벡터를 내고 softmax 와 견준다
+# 4단계: 광고마다 가중치와 관심 벡터를 내고 softmax 와 비교한다
 for name, v in ADS.items():
     w, user = pool(list(E.values()), v)
     soft = [math.exp(x) for x in w]

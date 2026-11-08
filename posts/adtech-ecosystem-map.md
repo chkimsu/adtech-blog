@@ -551,7 +551,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 <span class="chart-layer-item orange">고른 것만 보이는 편향(Selection Bias)</span>
 <span class="chart-layer-item orange">지연 피드백</span>
 <span class="chart-layer-item orange">분포가 달라지는 것(Distribution Shift)</span>
-<span class="chart-layer-item orange">가려진 데이터(Censored Data)</span>
+<span class="chart-layer-item orange">숨겨진 데이터(Censored Data)</span>
 </div>
 </div>
 </div>
@@ -564,7 +564,7 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 | **고른 것만 보이는 편향** | 낙찰한 광고만 클릭/전환 데이터 수집 | 못 이긴 경매의 잠재 성과를 모름 | ESMM, Inverse Propensity Weighting |
 | **지연 피드백** | 전환은 클릭 후 수 시간~수 일 후 발생 | 최신 데이터에 전환 라벨 누락 | Attribution Window, FSIW |
 | **분포가 달라지는 것** | 유저 행동, 시즌, 경쟁 환경 변화 | 어제의 모델이 오늘 부정확 | 온라인 학습, 주기적 재학습 |
-| **가려진 데이터** | 패찰 시 경쟁자 가격 미관측 | 시장 분포 과소추정 → 과도한 shading | Censored Regression, Survival Analysis |
+| **숨겨진 데이터** | 패찰 시 경쟁자 가격 미관측 | 시장 분포 과소추정 → 과도한 shading | Censored Regression, Survival Analysis |
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
 
@@ -669,7 +669,7 @@ for n in (1, 4, 24):
 | [LinUCB](demo-linucb.html) | 개인화 광고 선택 | **유저 Feature**를 활용한 pCTR 예측의 기초 원리 |
 | [RTB Auction](demo-rtb.html) | 광고 거래소 경매 | pCTR × ConvValue가 입찰가로 변환되는 과정 |
 | [Bid Landscape](demo-bid-landscape.html) | 입찰 전략 분석 | pCTR 정확도가 최적 입찰가에 미치는 영향 |
-| [Bid Shading](demo-bid-shading.html) | 입찰 최적화 + 가려진 데이터 | 1st Price에서 Shading이 필수인 이유 + 관측 불가 문제 |
+| [Bid Shading](demo-bid-shading.html) | 입찰 최적화 + 숨겨진 데이터 | 1st Price에서 Shading이 필수인 이유 + 관측 불가 문제 |
 
 ### 추천 학습 순서
 
@@ -685,7 +685,7 @@ for n in (1, 4, 24):
 
 ### 지도에서 같은 연결을 눌러 보기
 
-위 표를 외울 필요는 없습니다. [살아있는 생태계 지도](ecosystem.html)에서 상자를 클릭하면, 그 모듈의 정의와 연결된 데모, 글이 옆 패널에 열립니다. DSP 상자를 누르면 위 표의 데모가 거기 다 붙어 있습니다. 지도와 글이 같은 색인을 공유한다는 뜻입니다. 두뇌 층만 순서대로 훑고 싶다면 [ML 엔지니어 트랙](ml-track.html)이 읽는 순서를 정해 줍니다. 회사별 역할은 [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange), 전체 관문은 [30분 입문 가이드](post.html?id=adtech-30min-primer)입니다.
+위 표를 외울 필요는 없습니다. [살아있는 생태계 지도](ecosystem.html)에서 상자를 클릭하면, 그 모듈의 정의와 연결된 데모, 글이 옆 패널에 열립니다. DSP 상자를 누르면 위 표의 데모가 거기 다 붙어 있습니다. 지도와 글이 같은 색인을 공유한다는 뜻입니다. 두뇌 층만 순서대로 살펴보고 싶다면 [ML 엔지니어 트랙](ml-track.html)이 읽는 순서를 정해 줍니다. 회사별 역할은 [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange), 전체 관문은 [30분 입문 가이드](post.html?id=adtech-30min-primer)입니다.
 
 ---
 
@@ -707,8 +707,8 @@ for n in (1, 4, 24):
 
 마지막 줄이 요점입니다. 두 층을 잇는 세로선만 어느 무대에서도 경계를 넘지 않습니다. 수수료 곱셈은 [DSP, SSP, Exchange](post.html?id=dsp-ssp-exchange)에 있습니다.
 
-:::deep 화살표에 실려 가는 것 — OpenRTB 입찰 요청의 뼈대
-경계를 넘는 화살표에는 정해진 서식의 JSON이 실립니다. `imp`(지면 크기, 바닥값), `site`/`app`, `device`, `user`, `tmax`(제한시간)가 뼈대입니다. 여기 없는 값은 좋은 모델로도 쓸 수 없습니다.
+:::deep 화살표에 담겨 가는 것 — OpenRTB 입찰 요청의 뼈대
+경계를 넘는 화살표에는 정해진 서식의 JSON이 담깁니다. `imp`(지면 크기, 바닥값), `site`/`app`, `device`, `user`, `tmax`(제한시간)가 뼈대입니다. 여기 없는 값은 좋은 모델로도 쓸 수 없습니다.
 :::
 
 ### 상자 여럿이 한 회사 안에 있을 때 [무대: 닫힌 생태계]
@@ -723,7 +723,7 @@ for n in (1, 4, 24):
 
 2. **모델링은 입찰의 시작일 뿐입니다.** pCTR → 참 가치 → Bid Shading → 예산 페이싱까지 end-to-end 파이프라인을 이해해야 합니다. 그래야 모델 개선의 방향을 잡을 수 있습니다.
 
-3. **피드백 루프의 함정에 주의해야 합니다.** 고른 것만 보이는 편향, 지연 피드백, 가려진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
+3. **피드백 루프의 함정에 주의해야 합니다.** 고른 것만 보이는 편향, 지연 피드백, 숨겨진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
 
 4. **캘리브레이션이 AUC보다 중요할 수 있습니다.** 입찰 시스템에서는 "얼마나 정확한 확률인가"(calibration)가 "순서를 잘 맞추는가"(AUC)보다 직접적으로 비용에 영향을 미칩니다.
 

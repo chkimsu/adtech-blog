@@ -141,7 +141,7 @@ while lo < hi:
 people = [("amy", 90), ("bob", 85), ("cat", 90)]
 
 # 2단계: 점수 내림차순, 이름 오름차순으로 정렬해 찍는다
-# 튜플은 첫 칸부터 차례로 견준다. 점수에 - 를 붙이면 그 칸만 내림차순이 된다.
+# 튜플은 첫 칸부터 차례로 비교한다. 점수에 - 를 붙이면 그 칸만 내림차순이 된다.
 people.sort(key=lambda x: (-x[1], x[0]))
 print(people)
 
@@ -178,7 +178,7 @@ print(people)
 가장 큰 K개를 찾을 때는 반대로 최소 힙을 크기 K 로 유지합니다. 힙의 맨 위가 K등이고, 그보다 작은 값은 넣자마자 버립니다.
 
 ```python
-# 하는 일: 숫자 7개가 하나씩 들어올 때 크기 3 의 최소 힙으로 가장 큰 3개를 남기고, heapq.nlargest 와 견준다.
+# 하는 일: 숫자 7개가 하나씩 들어올 때 크기 3 의 최소 힙으로 가장 큰 3개를 남기고, heapq.nlargest 와 비교한다.
 import heapq
 
 # 1단계: 크기 K 인 최소 힙으로 가장 큰 K개를 남기는 함수를 만든다
@@ -192,7 +192,7 @@ def top_k(stream, k):
             heapq.heapreplace(h, x)   # pop 하고 push 를 한 번에
     return sorted(h, reverse=True)
 
-# 2단계: 숫자 7개로 돌리고 nlargest 와 견준다
+# 2단계: 숫자 7개로 돌리고 nlargest 와 비교한다
 stream = [5, 1, 9, 3, 7, 8, 2]
 print(f'top_k            {top_k(stream, 3)}')
 print(f'heapq.nlargest   {heapq.nlargest(3, stream)}')
@@ -393,7 +393,7 @@ print(bfs(1))
 
 > 노드가 0 부터 N-1 로 숫자면 `[[] for _ in range(N)]` 도 됩니다. 노드가 문자열이거나 번호가 띄엄띄엄하면 `defaultdict(list)` 가 편합니다.
 
-방향 그래프인지 무방향 그래프인지 먼저 확인합니다. `graph[b].append(a)` 한 줄을 빼먹으면 오류 없이 다른 문제를 풉니다. 인접 리스트와 인접 행렬이 들고 있는 칸 수를 견준 표는 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다.
+방향 그래프인지 무방향 그래프인지 먼저 확인합니다. `graph[b].append(a)` 한 줄을 빼먹으면 오류 없이 다른 문제를 풉니다. 인접 리스트와 인접 행렬이 들고 있는 칸 수를 비교한 표는 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다.
 
 ## 7. 제출 전에 세 가지
 
@@ -403,7 +403,7 @@ print(bfs(1))
 
 ## 더 깊이 보기
 
-- 이 표의 도구마다 원리와 함정을 직접 재 본 글이 트랙 앞 여섯 편입니다. [복잡도와 배열 훑기](post.html?id=algorithm-complexity-array)에서 시간 복잡도를 재는 법부터 시작합니다.
+- 이 표의 도구마다 원리와 함정을 직접 재 본 글이 트랙 앞 여섯 편입니다. [복잡도와 배열 순회](post.html?id=algorithm-complexity-array)에서 시간 복잡도를 재는 법부터 시작합니다.
 - 이진 탐색의 네 변형과 `lo = mid` 의 무한 루프는 [이분 탐색과 스택](post.html?id=algorithm-binary-search-stack) 편에 있습니다. [이진 탐색 데모](demo-binary-search.html)에서 `lo`, `hi`, `mid` 가 움직이는 것을 볼 수 있습니다.
 - 힙과 다익스트라는 [트리와 힙](post.html?id=algorithm-tree-heap) 편과 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다. [DFS vs BFS 데모](demo-bfs-dfs.html)에서 방문 순서를 나란히 볼 수 있습니다.
 - 모든 경우를 다 보는 DFS 를 되돌리는 백트래킹과, 겹치는 계산을 적어 두는 동적 계획법은 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편에 있습니다.

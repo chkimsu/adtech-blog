@@ -196,7 +196,7 @@ for step, amount in enumerate(trail):
     print(f"  단계 {step}   잔액 {amount:8,.0f}원")
 print(f"실효 take rate {effective_take_rate(SPEND, publisher_revenue):.1%}")
 
-# 3단계: 중개 수를 바꿔 견준다
+# 3단계: 중개 수를 바꿔 비교한다
 # 리셀러가 하나 끼어 넷이 되거나, Exchange 를 빼고 PMP 로 직거래해 둘이 되는 경우다.
 scenarios = {
     "기본 3단계(DSP, Exchange, SSP)": [0.20, 0.15, 0.20],

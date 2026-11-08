@@ -135,7 +135,7 @@ routes:
 
 | 키 | 무엇을 정하나 | 잘못 잡으면 |
 |---|---|---|
-| `source` | 어느 topic 을 읽나 | 엉뚱한 데이터가 실립니다 |
+| `source` | 어느 topic 을 읽나 | 엉뚱한 데이터가 담깁니다 |
 | `sink`, `table` | 어느 테이블에 쓰나 | 다른 테이블을 덮어씁니다 |
 | `write_mode` | 덮어쓰나 새로 넣나 | 두 번 돌면 정산이 두 배가 됩니다 |
 | `retry` | 몇 번, 얼마 간격으로 | 마감을 넘기거나 버립니다 |
@@ -231,7 +231,7 @@ output {
 
 ## 더 깊이 보기
 
-- 이 층을 품은 여섯 층 전체와 888 밀리초 예산의 출처는 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편에 있습니다.
+- 이 층을 포함한 여섯 층 전체와 888 밀리초 예산의 출처는 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편에 있습니다.
 - 이 층 앞뒤의 여섯 자리와 Kafka 가 왜 며칠 들고 있는지는 [데이터 파이프라인 입문](post.html?id=pipeline-push-and-pull) 편이 출발점입니다.
 - 이 층이 읽는 topic 안쪽 — 보존 기간을 비용으로 정하는 이야기는 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다.
 - 서빙 피처 목적지 쪽은 [Feature Store](post.html?id=feature-store-serving) 편이 다룹니다.

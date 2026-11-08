@@ -154,7 +154,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">낙찰과 패찰 로그 — 경매 결과</div>
-      <div class="chart-step-desc">낙찰, 패찰을 Exchange가 알려줍니다. 입찰 응답 전송 후 ~50-100ms 안에 옵니다. 낙찰이면 낙찰가(clearing price)가 실리고, 패찰이면 가격이 안 보입니다(Right-Censored).</div>
+      <div class="chart-step-desc">낙찰, 패찰을 Exchange가 알려줍니다. 입찰 응답 전송 후 ~50-100ms 안에 옵니다. 낙찰이면 낙찰가(clearing price)가 담기고, 패찰이면 가격이 안 보입니다(Right-Censored).</div>
       <span class="chart-step-badge blue">Exchange → DSP, ~100ms</span>
     </div>
   </div>
@@ -339,7 +339,7 @@ sequenceDiagram
 - **Budget 차감**: 낙찰 시 win_price만큼 예산에서 차감
 - **Exchange별 경쟁 분석**: Exchange마다 다른 가격 분포와 경쟁 강도 파악
 
-> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 실립니다. 그래서 censored regression(중도절단 회귀)이 필요합니다. 보이지 않는 절반을 감안해 맞추는 회귀입니다.
+> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 담깁니다. 그래서 censored regression(중도절단 회귀)이 필요합니다. 보이지 않는 절반을 감안해 맞추는 회귀입니다.
 
 ---
 
@@ -636,7 +636,7 @@ training_data = (
 "1,000배 차이"가 어디서 나오는지 통과율을 순서대로 곱해 확인해 봅시다. 가상 데이터입니다.
 
 ```python
-# 하는 일: 하루 입찰 요청 50억 건이 로그 일곱 단계를 지나며 통과율대로 줄어드는 행 수와 저장량을 구하고, 저장량이 가장 큰 로그와 가장 작은 로그를 견준다.
+# 하는 일: 하루 입찰 요청 50억 건이 로그 일곱 단계를 지나며 통과율대로 줄어드는 행 수와 저장량을 구하고, 저장량이 가장 큰 로그와 가장 작은 로그를 비교한다.
 
 # 1단계: 하루 요청 수와 로그 일곱 단계를 둔다
 # 로그 볼륨이 왜 1,000배 넘게 벌어지는지 깔때기를 직접 곱해 본다. 각 단계의 통과율(가상)을 순서대로 곱하면 하루 행 수가 나온다. 행 크기(저장 단가)는 Parquet 압축 뒤의 대략치이고, 실제 값은 회사와 리전마다 다르다.
@@ -679,7 +679,7 @@ print()
 print(f"요청 대비 전환 로그   1 / {req_rows / conv_rows:,.0f}")
 print(f"저장량 합계          {sum(t for _, _, t in results)/1000:,.1f}TB")
 
-# 4단계: 저장량이 가장 큰 로그와 가장 작은 로그를 견준다
+# 4단계: 저장량이 가장 큰 로그와 가장 작은 로그를 비교한다
 big = max(results, key=lambda r: r[2])
 small = min(results, key=lambda r: r[2])
 print(f"저장량 1위           {big[0]} {big[2]/1000:,.1f}TB (보존 30일뿐인데도 1위)")
@@ -1116,7 +1116,7 @@ print(f"Request→Impression 전환율: {win_rate_approx:.2%}")  # 보통: 10-30
 
 5. **로그 품질 = 모델 품질.** Impression 중복, Click fraud, Conversion 누락은 모두 학습 라벨을 오염시킵니다. 로그 파이프라인의 신뢰성이 모델 성능의 상한선을 결정합니다.
 
-> 이 글에서 다룬 로그 파이프라인은 광고 ML 시스템의 **데이터 기반(data foundation)**입니다. 그 위에 세 층이 얹힙니다.
+> 이 글에서 다룬 로그 파이프라인은 광고 ML 시스템의 **데이터 기반(data foundation)**입니다. 그 위에 세 층이 올라갑니다.
 >
 > - [피처 스토어](post.html?id=feature-store-serving) — 피처를 공급한다
 > - [모델 서빙 아키텍처](post.html?id=model-serving-architecture) — 추론을 실행한다

@@ -30,17 +30,22 @@
                                                           (사람 라벨 리터럴 HUMAN, 답 읽기, 쌍 고르기, 캐스케이드 고르기)을 모두 정의하고, 정의마다
                                                           줄 전체가 이 파일의 것과 같은가 (글이 없으면 실패)
                                                        7) 3)~6) 의 글의 파이썬 블록이 정의 밖에서 지킬 이름을 바꾸지 않는가. 지킬 이름은 3) 과 5) 의
-                                                          글에서는 ASSETS 와 그 글이 정의한 SHARED 의 이름이고, 6) 의 글에서는 JUDGE_SHARED 의 이름이다.
+                                                          글에서는 ASSETS 와, 4) 와 5) 가 대조하는 이름(SHARED 와 ASSET_RUNNING) 가운데 그 글이 정의한
+                                                          것이고, 6) 의 글에서는 JUDGE_SHARED 의 이름이다.
                                                           정의는 대조가 글자로 보는 맨 위 문장(def 와, 대상이 하나인 = 대입)이라 몸까지 넘기고, ASSETS 는
                                                           줄 맨 앞의 「ASSETS = [」 줄에서 시작하는 리터럴 문장 하나만 정의로 친다. 블록을 구문 트리로 읽어
                                                           모듈 수준(맨 위와 그 안의 if, for, while, try, with)의 =, +=, :=, 꼴 표시가 붙은 대입, for 와
                                                           with 의 대상, import, del, def, class, except 의 이름과, 함수 안에서 global 로 적은 뒤의 묶기를
                                                           센다. 첨자와 속성 대입, del 첨자, 고치는 메서드(MUTATORS 의 append, update, add 같은 것) 부르기는
                                                           그 자리의 이름이 모듈의 것일 때 센다. 함수 안에서 인자이거나 global 없이 묶은 이름은 그 함수의
-                                                          지역 이름이라 묶기도 고치기도 세지 않는다. 읽지 못한 블록에 지킬 이름이 있으면 실패다.
+                                                          지역 이름이라 묶기도 고치기도 세지 않는다. 읽지 못한 블록에 지킬 이름이 있으면 실패다. 다만
+                                                          4)~6) 이 읽지 못한 블록으로 이미 알린 블록은 다시 알리지 않는다.
                                                           이 검사가 보지 못하는 길도 있다. 다른 이름에 묶어 그 이름으로 고치는 것(별칭), 함수 인자로 넘겨
                                                           그 안에서 고치는 것(rng.shuffle(ASSETS) 같은 것), globals() 로 고치는 것, MUTATORS 에 없는
-                                                          이름의 메서드(__setitem__, __iadd__ 같은 것)로 고치는 것이다. 이런 줄은 글을 읽는 사람이 막는다
+                                                          이름의 메서드(__setitem__, __iadd__ 같은 것)로 고치는 것, 장식으로 고치는 것(@ASSETS.append),
+                                                          컴프리헨션의 첨자 대상(for ASSETS[0] in …), from x import * 로 묶는 것이다. 이런 줄은 글을 읽는
+                                                          사람이 막는다. 반대로 잘라 낸 사본의 메서드 부르기(ASSETS[:].sort())는 ASSETS 가 그대로인데도
+                                                          실패로 친다
 
 자산 하나는 (id, 자산 텍스트) 이다. x01 은 서연 씨 러닝화의 자산 텍스트로, scripts/gen-ads-data.py 의 ASSET_RUNNING 을 읽어 온다(옮겨 적지 않는다).
 x02~x08 은 이 트랙의 가상 광고주 상품이고 브랜드는 가상 이름(모노웍스, 숲결)만 쓴다. x09 와 x10 은 상품의 사실이 없는 얇은 자산이다.
@@ -602,16 +607,22 @@ def human_errors():
     return out
 
 
+def looks_defined(code, names):
+    """읽지 못한 블록 code 에 names 가운데 한 이름의 정의처럼 보이는 줄(「def 이름(」 이나 「이름 = 」)이 있는가.
+    shared_errors 가 이런 블록을 읽지 못한 블록으로 알리고, rebind_errors 는 같은 블록을 다시 알리지 않는다."""
+    pattern = '|'.join(names)
+    return bool(pattern) and bool(re.search(r'^\s*(?:def (?:%s)\(|(?:%s) = )' % (pattern, pattern), code, re.M))
+
+
 def shared_errors(path, text, wants, required):
     """글 하나의 python 블록에서 정의를 대조한다. wants 는 (이름, 그 정의의 글, 출처를 적은 말) 목록이다.
     (틀린 곳 목록, 대조한 정의 수). required 면 wants 의 이름을 모두 정의해야 하고, 아니면 정의한 것만 대조한다."""
     out, done, seen = [], 0, set()
-    names = '|'.join(name for name, _, _ in wants)
     for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
         try:
             defs = definitions(m.group(2))
         except SyntaxError:
-            if re.search(r'^\s*(?:def (?:%s)\(|(?:%s) = )' % (names, names), m.group(2), re.M):
+            if looks_defined(m.group(2), [name for name, _, _ in wants]):
                 out.append('%s: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 정의를 대조하지 못했습니다' % (rel(path), i))
             continue
         for key, want, source in wants:
@@ -648,7 +659,8 @@ def name_writes(tree, name, skip=()):
     class 안에서 global name 을 적은 뒤의 묶기를 센다. name[...] = 와 name.x = 같은 대입, del name[...], MUTATORS 의 메서드 부르기는
     그 자리의 name 이 모듈의 이름일 때 센다. 함수와 lambda 의 인자, 그 안에서 global 없이 묶은 이름은 지역 이름이라 묶기도 고치기도
     세지 않고, 그 안쪽 함수에서 고쳐도 세지 않는다. 컴프리헨션의 for 가 묶는 이름과 class 몸에서 묶은 이름도 그 안의 이름이다.
-    skip 은 블록 맨 위 문장 가운데 정의로 대조하는 문장의 id 이고, 그 문장은 몸까지 보지 않는다."""
+    skip 은 블록 맨 위 문장 가운데 정의로 대조하는 문장의 id 이고, 그 문장은 몸까지 보지 않는다.
+    scripts/gen-ads-data.py 에 같은 name_writes, defined_name, MUTATORS, AUG_OPS 가 있다. 하나를 고치면 두 파일을 같이 고친다."""
     events, local, declared = [], set(), set()      # (줄, 꼴, 범위 사슬, 묶기인가), name 이 지역 이름인 범위, global 로 적은 범위
 
     def base(t):        # name[0], name.x, name[0].x 의 맨 앞
@@ -757,21 +769,23 @@ def name_writes(tree, name, skip=()):
     return sorted(found)
 
 
-def rebind_errors(slug, text, names) -> tuple[list[str], int]:
+def rebind_errors(slug, text, names, compared=()) -> tuple[list[str], int]:
     """posts/<slug>.md 의 python 블록에서 names 의 이름을 정의 밖에서 바꾸는 줄을 찾는다(7번). (틀린 줄 목록, 본 python 블록 수).
-    정의는 대조가 글자로 보는 맨 위 문장이라 몸까지 넘긴다. defined_name 이 names 의 이름을 돌려주는 문장(def 와, 대상이 하나인
-    = 대입)이고, ASSETS 만은 줄 맨 앞의 「ASSETS = [」 줄에서 시작하는 리터럴 문장이다. 3) 의 글자 대조는 그 리터럴만 보므로
-    「ASSETS = ASSETS[:5]」 같은 줄은 정의가 아니다. 나머지 자리는 name_writes 로 센다. 파이썬으로 읽지 못한 블록은 names 의
-    이름이 그 안에 있으면 shared_errors 처럼 실패로 알린다."""
-    out, seen = [], 0
+    names 는 지킬 이름마다 그 정의가 있는 곳(「이 파일의」, 「scripts/gen-ads-data.py 의」)이고, 틀린 줄의 안내가 그곳의 정의를
+    고치라고 적는다. 정의는 대조가 글자로 보는 맨 위 문장이라 몸까지 넘긴다. defined_name 이 names 의 이름을 돌려주는 문장(def 와,
+    대상이 하나인 = 대입)이고, ASSETS 만은 줄 맨 앞의 「ASSETS = [」 줄에서 시작하는 리터럴 문장이다. 3) 의 글자 대조는 그 리터럴만
+    보므로 「ASSETS = ASSETS[:5]」 같은 줄은 정의가 아니다. 나머지 자리는 name_writes 로 센다. 파이썬으로 읽지 못한 블록은 names 의
+    이름이 그 안에 있으면 실패로 알린다. 다만 compared(shared_errors 가 이 글에서 대조하는 이름)의 정의처럼 보이는 줄이 있으면
+    shared_errors 가 이미 알린 블록이라 다시 알리지 않는다(같은 looks_defined 로 본다)."""
+    out, seen, order = [], 0, list(names)
     for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
         seen += 1
         code = m.group(2)
         try:
             tree = ast.parse(code)
         except SyntaxError:
-            hit = [n for n in names if re.search(r'\b%s\b' % n, code)]
-            if hit:
+            hit = [n for n in order if re.search(r'\b%s\b' % n, code)]
+            if hit and not looks_defined(code, compared):
                 out.append('posts/%s.md: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 정의 밖에서 바꾸는 줄을 보지 못했습니다 (이름: %s)'
                            % (slug, i, ', '.join(hit)))
             continue
@@ -779,14 +793,15 @@ def rebind_errors(slug, text, names) -> tuple[list[str], int]:
         skip = {id(node) for node in tree.body if defined_name(node) in names
                 and (defined_name(node) != 'ASSETS' or lines[node.lineno - 1].rstrip() == 'ASSETS = [')}
         found = {}
-        for k, name in enumerate(names):
+        for k, name in enumerate(order):
             for n, form in name_writes(tree, name, skip):
                 found.setdefault((n, k), []).append(form)
         for (n, k), forms in sorted(found.items()):
             shown = lines[n - 1].strip()
-            out.append('posts/%s.md: 파이썬 %d번째 블록 %d번째 줄이 %s 을 정의 밖에서 바꿉니다(%s). 그 줄 「%s」 대신 이 파일의 정의를 '
+            out.append('posts/%s.md: 파이썬 %d번째 블록 %d번째 줄이 %s 을 정의 밖에서 바꿉니다(%s). 그 줄 「%s」 대신 %s 정의를 '
                        '고친 뒤 글에 옮기거나, 바꾼 값을 새 이름에 담습니다'
-                       % (slug, i, n, names[k], ', '.join(forms), shown if len(shown) <= 80 else shown[:80] + '…'))
+                       % (slug, i, n, order[k], ', '.join(forms), shown if len(shown) <= 80 else shown[:80] + '…',
+                          names[order[k]]))
     return out, seen
 
 
@@ -842,7 +857,7 @@ def check():
     mine = definitions(read_text(os.path.abspath(__file__)))
     ads = definitions(read_text(ADS_TOOL))['ASSET_RUNNING']
     gate_wants = [(k, mine[k], '이 파일의') for k in SHARED] + [('ASSET_RUNNING', ads, 'scripts/gen-ads-data.py 의')]
-    guarded = {}    # 7) 에서 볼 글마다 (글, 지킬 이름)
+    guarded = {}    # 7) 에서 볼 글마다 (글, {지킬 이름: 그 정의가 있는 곳}, shared_errors 가 대조한 이름)
     for path, required in [(POST, True)] + [(p, False) for p in LATER]:
         try:
             text = read_text(path)
@@ -859,8 +874,11 @@ def check():
         wrong, compared = shared_errors(path, text, gate_wants, required)
         errors += wrong
         done['글의 공용 정의'] += compared
+        # 지킬 이름은 4) 와 5) 가 대조하는 gate_wants 에서 뽑는다. 대조하는 이름이 늘면 같이 지킨다(ASSET_RUNNING 도 여기서 든다)
         defined = defined_names(text)
-        guarded[path] = (text, ['ASSETS'] + [k for k in SHARED if k in defined])
+        names = {'ASSETS': '이 파일의'}
+        names.update((k, source) for k, _, source in gate_wants if k in defined)
+        guarded[path] = (text, names, [k for k, _, _ in gate_wants])
     # 6) 판정 체계 글의 공용 정의. 사람 라벨 리터럴(HUMAN)도 이름 하나로 대조한다
     try:
         text = read_text(JUDGE_POST)
@@ -870,10 +888,12 @@ def check():
         wrong, compared = shared_errors(JUDGE_POST, text, [(k, mine[k], '이 파일의') for k in JUDGE_SHARED], True)
         errors += wrong
         done['판정 글의 공용 정의'] += compared
-        guarded.setdefault(JUDGE_POST, (text, []))[1].extend(JUDGE_SHARED)
+        entry = guarded.setdefault(JUDGE_POST, (text, {}, []))
+        entry[1].update((k, '이 파일의') for k in JUDGE_SHARED)
+        entry[2].extend(JUDGE_SHARED)
     # 7) 3)~6) 의 글이 정의 밖에서 지킬 이름을 바꾸는 줄. 판정 체계 글은 5) 와 6) 에 다 들어 이름을 합쳐 한 번 본다
-    for path, (text, names) in guarded.items():
-        wrong, seen = rebind_errors(os.path.splitext(os.path.basename(path))[0], text, names)
+    for path, (text, names, compared_names) in guarded.items():
+        wrong, seen = rebind_errors(os.path.splitext(os.path.basename(path))[0], text, names, compared_names)
         errors += wrong
         done['python 블록'] += seen
     for e in errors:

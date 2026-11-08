@@ -30,10 +30,14 @@
                                                        except 의 이름과, 함수 안에서 global 로 적은 뒤의 묶기를 센다. 첨자와 속성 대입, del 첨자,
                                                        고치는 메서드(MUTATORS 의 append, update, add 같은 것) 부르기는 그 자리의 이름이 모듈의 것일 때
                                                        센다. 함수 안에서 인자이거나 global 없이 묶은 이름은 그 함수의 지역 이름이라 묶기도 고치기도
-                                                       세지 않는다. 읽지 못한 블록에 지킬 이름이 있으면 실패다.
+                                                       세지 않는다. 읽지 못한 블록에 지킬 이름이 있으면 실패다. 다만 4) 가 읽지 못한 블록으로 이미
+                                                       알린 블록은 다시 알리지 않는다.
                                                        이 검사가 보지 못하는 길도 있다. 다른 이름에 묶어 그 이름으로 고치는 것(별칭), 함수 인자로
                                                        넘겨 그 안에서 고치는 것(rng.shuffle(KEYS) 같은 것), globals() 로 고치는 것, MUTATORS 에 없는
-                                                       이름의 메서드(__setitem__, __iadd__ 같은 것)로 고치는 것이다. 이런 줄은 글을 읽는 사람이 막는다
+                                                       이름의 메서드(__setitem__, __iadd__ 같은 것)로 고치는 것, 장식으로 고치는 것(@KEYS.append),
+                                                       컴프리헨션의 첨자 대상(for KEYS[0] in …), from x import * 로 묶는 것이다. 이런 줄은 글을 읽는
+                                                       사람이 막는다. 반대로 잘라 낸 사본의 메서드 부르기(KEYS[:].sort())는 KEYS 가 그대로인데도
+                                                       실패로 친다
                                                     2), 4), 5) 는 아직 없는 글과 정의하지 않은 이름을 건너뛴다
 
 회원은 유저 프로파일 피처 편(posts/user-profile-features.md)의 make_members 와 그 도우미, 자연어 오디언스 편의 ages, regions 를
@@ -756,6 +760,13 @@ def generator_blocks(text):
     return blocks
 
 
+def looks_defined(code, names):
+    """읽지 못한 블록 code 에 names 가운데 한 이름의 정의처럼 보이는 줄(「def 이름(」 이나 「이름 = 」)이 있는가.
+    shared_errors 가 이런 블록을 읽지 못한 블록으로 알리고, rebind_errors 는 같은 블록을 다시 알리지 않는다."""
+    pattern = '|'.join(names)
+    return bool(pattern) and bool(re.search(r'^\s*(?:def (?:%s)\(|(?:%s) = )' % (pattern, pattern), code, re.M))
+
+
 def shared_errors(name, text, mine):
     """글 하나의 python 블록에서 SHARED 이름의 정의를 이 파일의 것과 대조한다. (틀린 곳 목록, 대조한 정의 수).
     생성기를 옮긴 글이 아니면 ([], 0) 이다."""
@@ -763,10 +774,9 @@ def shared_errors(name, text, mine):
     if blocks is None:
         return [], 0
     out, done = [], 0
-    names = '|'.join(SHARED)
     for i, code, defs in blocks:
         if defs is None:                                     # 읽지 못한 블록은 정의처럼 보이는 줄이 있으면 실패로 둔다
-            if re.search(r'^\s*(?:def (?:%s)\(|(?:%s) = )' % (names, names), code, re.M):
+            if looks_defined(code, SHARED):
                 out.append('posts/%s: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 생성기 이름의 정의를 대조하지 못했습니다' % (name, i))
             continue
         for key in SHARED:
@@ -787,7 +797,8 @@ def name_writes(tree, name, skip=()):
     class 안에서 global name 을 적은 뒤의 묶기를 센다. name[...] = 와 name.x = 같은 대입, del name[...], MUTATORS 의 메서드 부르기는
     그 자리의 name 이 모듈의 이름일 때 센다. 함수와 lambda 의 인자, 그 안에서 global 없이 묶은 이름은 지역 이름이라 묶기도 고치기도
     세지 않고, 그 안쪽 함수에서 고쳐도 세지 않는다. 컴프리헨션의 for 가 묶는 이름과 class 몸에서 묶은 이름도 그 안의 이름이다.
-    skip 은 블록 맨 위 문장 가운데 정의로 대조하는 문장의 id 이고, 그 문장은 몸까지 보지 않는다."""
+    skip 은 블록 맨 위 문장 가운데 정의로 대조하는 문장의 id 이고, 그 문장은 몸까지 보지 않는다.
+    scripts/gen-copy-data.py 에 같은 name_writes, defined_name, MUTATORS, AUG_OPS 가 있다. 하나를 고치면 두 파일을 같이 고친다."""
     events, local, declared = [], set(), set()      # (줄, 꼴, 범위 사슬, 묶기인가), name 이 지역 이름인 범위, global 로 적은 범위
 
     def base(t):        # name[0], name.x, name[0].x 의 맨 앞
@@ -896,11 +907,12 @@ def name_writes(tree, name, skip=()):
     return sorted(found)
 
 
-def rebind_errors(slug, text, names) -> tuple[list[str], int]:
+def rebind_errors(slug, text, names, compared=()) -> tuple[list[str], int]:
     """posts/<slug>.md 의 python 블록에서 names 의 이름을 정의 밖에서 바꾸는 줄을 찾는다(5번). (틀린 줄 목록, 본 python 블록 수).
     정의는 4) 가 글자로 대조하는 맨 위 문장이라 몸까지 넘긴다. defined_name 이 names 의 이름을 돌려주는 문장(def 와, 대상이
     하나인 = 대입. MEMBER_B[...] = 도 든다)이다. 나머지 자리는 name_writes 로 센다. 파이썬으로 읽지 못한 블록은 names 의
-    이름이 그 안에 있으면 shared_errors 처럼 실패로 알린다."""
+    이름이 그 안에 있으면 실패로 알린다. 다만 compared(shared_errors 가 대조하는 이름, 곧 SHARED)의 정의처럼 보이는 줄이
+    있으면 shared_errors 가 이미 알린 블록이라 다시 알리지 않는다(같은 looks_defined 로 본다)."""
     out, seen = [], 0
     for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
         seen += 1
@@ -909,7 +921,7 @@ def rebind_errors(slug, text, names) -> tuple[list[str], int]:
             tree = ast.parse(code)
         except SyntaxError:
             hit = [n for n in names if re.search(r'\b%s\b' % n, code)]
-            if hit:
+            if hit and not looks_defined(code, compared):
                 out.append('posts/%s.md: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 정의 밖에서 바꾸는 줄을 보지 못했습니다 (이름: %s)'
                            % (slug, i, ', '.join(hit)))
             continue
@@ -1024,8 +1036,9 @@ def check():
             done['공용 정의를 옮긴 글'] += 1 if compared else 0
         blocks = generator_blocks(text)
         if blocks is not None:
+            # shared_errors 를 돌린 글이면 그것이 이미 알린 읽지 못한 블록을 다시 알리지 않도록 SHARED 를 같이 넘긴다
             defined = {key for _, _, defs in blocks if defs for key in defs}
-            wrong, seen = rebind_errors(name[:-3], text, [k for k in SHARED if k in defined])
+            wrong, seen = rebind_errors(name[:-3], text, [k for k in SHARED if k in defined], () if missing else SHARED)
             errors += wrong
             done['python 블록'] += seen
     # 3) 등록한 프롬프트 파일과 그 기록. 파일 전체가 빌더로 다시 만든 글(prompt_text)과 글자까지 같아야 한다.

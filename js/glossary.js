@@ -447,6 +447,66 @@ const GLOSSARY = [
     term: 'Cohen\'s kappa',
     abbr: 'Cohen\'s Kappa',
     body: '두 채점자의 일치에서 <strong>우연히 맞을 몫을 뺀 뒤에 남는</strong> 일치의 크기. 모두 상이라 답하는 판정은 일치율이 0.90 이어도 kappa 가 0.00 이 된다.'
+  },
+  {
+    term: 'BM25',
+    abbr: 'Best Matching 25',
+    body: '질의 낱말마다 <strong>idf(역문서 빈도)와 TF 항을 곱해 더하는</strong> 검색 점수. TF 항은 낱말이 문서에 든 횟수가 늘수록 커지지만 일정 값에 다가갈 뿐이고, b 가 0 보다 크면 평균보다 긴 문서에서 작아진다.'
+  },
+  {
+    term: 'RRF',
+    abbr: 'Reciprocal Rank Fusion',
+    body: '여러 순위 목록을 <strong>점수 대신 순위로 합치는</strong> 방법. 목록마다 1 ÷ (k + 순위) 를 더하며, 이 식을 낸 2009년 논문은 시험 삼아 돌린 실험에서 k 를 60 으로 정했다.'
+  },
+  {
+    term: '역방향 검색',
+    abbr: 'Users as Documents',
+    body: '보통의 검색과 방향을 바꿔 <strong>광고의 키워드로 사람을 찾는</strong> 검색. 회원마다 30일 행동을 문서 한 편으로 적어 두고, 광고 키워드를 질의로 그 문서를 검색해 점수 순으로 회원을 고른다.'
+  },
+  {
+    term: '키워드 확장',
+    abbr: 'Keyword Expansion',
+    body: '광고 하나에서 <strong>살 만한 검색어를 늘리는</strong> 일. 이 블로그는 전략 일곱의 키워드를 LLM 이 사전의 id 로 고르게 하고, health 와 noise 주제는 코드가 거른다.'
+  },
+  {
+    term: '판정 캐스케이드',
+    abbr: 'LLM Cascade',
+    body: '모두를 <strong>싼 판정자에게 먼저 보이고, 답을 믿기 어려운 것만 비싼 판정자에게 넘기는</strong> 순서. 생성 문구 판정 체계 편은 점수 다섯의 폭이 2 이상인 카피와 좌우를 바꾸면 승자가 바뀐 쌍을 넘겼다.'
+  },
+  {
+    term: '포인트와이즈와 리스트와이즈',
+    abbr: 'Pointwise, Listwise',
+    body: '후보를 <strong>하나씩 따로 보느냐, 목록 전체를 한 번에 보느냐</strong>로 나눈 두 방식. LLM 라벨과 코드 랭커 편의 포인트와이즈는 후보 30개를 한 번씩 묻고, 리스트와이즈는 30개를 한 번에 주고 정렬한 목록을 받았다.'
+  },
+  {
+    term: '지식 증류',
+    abbr: 'Knowledge Distillation',
+    body: '큰 모델(교사)이 붙인 라벨로 <strong>작은 모델(학생)을 학습하는</strong> 일. 학생이 교사를 잘 따라 할수록 판정을 싸게 맡길 수 있고, 교사가 바뀌면 라벨을 다시 받아 학생도 다시 학습한다.'
+  },
+  {
+    term: '근거 인용',
+    abbr: 'Grounding, Quote',
+    body: '모델이 쓴 문장마다 <strong>기댄 구절을 원문에서 그대로 옮겨 적게 하는</strong> 방법. 광고 카피 생성 편은 그 구절을 quote 필드로 받아 자산 텍스트에 있는지 코드가 보고, 카피가 자산의 뜻을 넘는지는 보지 않는다.'
+  },
+  {
+    term: '짝비교 판정',
+    abbr: 'Pairwise Comparison',
+    body: '둘 가운데 <strong>나은 쪽만 고르게 하는</strong> 판정. 점수 척도를 쓰지 않는 대신, 자리를 바꿔 한 번 더 물어야 자리로 승자를 정하는 위치 편향이 보인다.'
+  },
+  {
+    term: 'A2A',
+    abbr: 'Agent2Agent Protocol',
+    body: '오케스트레이터가 다른 에이전트에게 <strong>일을 맡기고 결과를 받는 메시지의 꼴을 정한</strong> 공개 명세. MCP 가 에이전트와 도구를 잇는다면 A2A 는 에이전트와 에이전트를 잇고, 에이전트마다 자기를 소개하는 에이전트 카드를 내놓는다.'
+  },
+  {
+    term: 'Semantic ID',
+    abbr: 'Semantic ID',
+    body: '상품의 내용 벡터에서 만드는 <strong>짧은 코드 묶음</strong>. 비슷한 상품이 앞자리 코드를 나눠 갖게 만들고, 생성 모델이 이 코드를 한 자리씩 생성해 후보를 꺼내는 방법을 생성형 검색이라고 부른다.'
+  },
+  {
+    term: '훅',
+    abbr: 'Hook',
+    body: '프로그램이 <strong>정해진 자리에서 저절로 실행하도록 걸어 두는</strong> 사용자 코드. Claude Code 의 PreToolUse 훅은 도구 호출이 실행되기 전에 그 입력을 받고, 종료 코드 2 로 호출을 막을 수 있다.'
   }
 ];
 

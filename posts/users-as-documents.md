@@ -702,6 +702,8 @@ $$\mathrm{RRF}(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$
 이 글에서 합친 순위가 정해지는 차례는 셋입니다. 목록마다 1 ÷ (60 + 순위) 를 구하고, direct, category, co_purchase 차례로 더합니다. 그다음 점수가 큰 순서로 정렬합니다. 점수가 같으면 회원 번호가 작은 쪽이 앞입니다. 회원 A 와 회원 126 은 둘 다 1 ÷ 109 를 받아 이 규칙으로 171위와 172위가 되었습니다. 같은 순위를 다른 프로그램으로 다시 계산할 때도 더하는 차례와 동점 규칙을 같게 두어야 같은 순위가 나옵니다.
 :::
 
+- [유저 문서 검색 놀이터](demo-users-as-documents.html) — 전략, k1, b, k, 자르는 수를 바꿔 이 글의 셈을 다시 해 보는 곳입니다. 기본값에서는 이 글과 같은 200명, 165명, 20.5%, 171위가 나옵니다.
+
 ## 참고문헌
 
 - Robertson, S., Zaragoza, H. (2009). *The Probabilistic Relevance Framework: BM25 and Beyond*. Foundations and Trends in Information Retrieval 3(4), 333–389. [staff.city.ac.uk](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf). BM25 의 포화 함수(TF 항)와 길이 정규화를 유도한 정리입니다. 분자의 (k1 + 1) 은 순위를 바꾸지 않는다고 적었습니다.

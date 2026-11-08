@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="가상 회원 2,000명의 30일 행동을 회원마다 문서 한 편으로 적고, 광고 키워드로 BM25 검색을 합니다. 전략, k1 과 b, RRF 의 k, 자르는 수를 바꾸면 고른 회원과 세그먼트 317 의 겹침이 바뀝니다. 다음 30일 구매자 비율과 회원 A 의 순위도 함께 봅니다.">
+  <title>유저 문서 검색 놀이터 — Ad Tech Blog</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .ua-container { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 0; }
+
+    .ua-hero { text-align: center; padding: 2rem 0 1rem; }
+    .ua-hero h1 { font-size: 2.05rem; margin-bottom: 0.5rem; color: var(--accent-primary); }
+    .ua-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
+
+    .ua-intro {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 1.15rem 1.5rem;
+      background: var(--bg-secondary); border: 1px dashed var(--border-color);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+    }
+    .ua-intro p { margin: 0 0 0.6rem; }
+    .ua-intro p:last-child { margin-bottom: 0; }
+    .ua-intro strong { color: var(--accent-primary); }
+    .ua-intro code { background: var(--bg-tertiary); padding: 0.08rem 0.35rem; border-radius: 0; font-size: 0.88em; }
+    /* 식이 화면보다 넓으면 페이지가 아니라 식 칸 안에서만 밀리게 한다. */
+    .ua-formula { overflow-x: auto; overflow-y: hidden; margin: 0.2rem 0 0.7rem; color: var(--text-primary); }
+
+    .ua-controls {
+      max-width: 980px; margin: 0 auto 1.25rem; padding: 1.3rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0;
+    }
+    .ua-strats { display: grid; grid-template-columns: 250px 1fr; align-items: start; gap: 0.8rem; margin-bottom: 0.5rem; }
+    @media (max-width: 700px) { .ua-strats { grid-template-columns: 1fr; } }
+    .ua-strat-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .ua-strat {
+      display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary);
+      padding: 0.35rem 0.7rem; border: 1px dashed var(--border-color); border-radius: 0;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .ua-strat small { font-family: var(--font-sans); font-size: 0.72rem; color: var(--text-muted); }
+    .ua-strat.is-on { color: var(--accent-secondary); border-color: var(--accent-secondary); border-style: solid; font-weight: 700; }
+    .ua-strat input { accent-color: var(--accent-secondary); margin: 0; }
+    .ua-query { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; margin: 0.2rem 0 1rem; overflow-wrap: anywhere; }
+
+    .ua-slider-row { margin-bottom: 0.9rem; display: grid; grid-template-columns: 250px 1fr 96px; align-items: center; gap: 0.8rem; }
+    @media (max-width: 700px) { .ua-slider-row { grid-template-columns: 1fr; } }
+    .ua-slider-label, .ua-strats-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .ua-slider-label small, .ua-strats-label small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
+    .ua-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 0; outline: none; }
+    .ua-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; }
+    .ua-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent-primary); border-radius: 0; cursor: pointer; border: none; }
+    .ua-slider-value { text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--accent-primary); }
+    @media (max-width: 700px) { .ua-slider-value { text-align: left; } }
+
+    .ua-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .ua-presets-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); margin-right: 0.2rem; }
+    .ua-preset-btn {
+      font-family: var(--font-sans); font-size: 0.8rem; padding: 0.35rem 0.8rem; cursor: pointer;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 0;
+      transition: all var(--transition-fast);
+    }
+    .ua-preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    .ua-metrics { max-width: 980px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+    @media (max-width: 900px) { .ua-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .ua-metrics { grid-template-columns: minmax(0, 1fr); } }
+    .ua-metric { min-width: 0; padding: 1rem 1.1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; text-align: center; }
+    .ua-metric-label { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .ua-metric-value { font-size: 1.35rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+    .ua-metric-value.good { color: var(--state-good); }
+    .ua-metric-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.45; }
+
+    .ua-verdict {
+      max-width: 980px; margin: 0 auto 1.5rem; padding: 0.9rem 1.3rem; text-align: center;
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-primary);
+      border-radius: 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+    }
+
+    /* 1fr 의 자동 최솟값은 min-content 라, 안에 든 캔버스가 안 줄면 트랙째 늘어난다.
+       minmax(0, …) 와 카드의 min-width:0 이 있어야 좁은 화면에서 컨테이너 안에 들어온다. */
+    .ua-charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .ua-charts { grid-template-columns: minmax(0, 1fr); } }
+    .ua-chart-card { min-width: 0; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 0; padding: 1.3rem 1.4rem; }
+    .ua-chart-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .ua-chart-card p.note { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.7rem; line-height: 1.5; }
+    .ua-chart-wrap { position: relative; height: 300px; }
+
+    @media (max-width: 520px) { .ua-container { padding: 1.25rem 1rem 0; } }
+  </style>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="ua-hero">
+      <div class="ua-container">
+        <h1>유저 문서 검색 놀이터</h1>
+        <p>회원 한 명의 30일 행동을 문서 한 편으로 적으면 광고 키워드로 사람을 검색할 수 있습니다.
+          전략마다 BM25 로 검색한 목록을 RRF 로 합치고 앞에서 자릅니다. 다섯 값을 바꾸며 세그먼트 317 과 얼마나 같은 사람이 나오는지 봅니다.</p>
+      </div>
+    </section>
+
+    <div class="ua-container">
+      <div class="demo-prereq">
+        <span class="demo-prereq-label">먼저 보면 좋습니다</span>
+        <a href="post.html?id=users-as-documents">유저를 문서로</a>
+      </div>
+
+      <div class="demo-tldr-analogy">
+        <div class="demo-tldr-analogy-icon">검</div>
+        <div class="demo-tldr-analogy-body">
+          <div class="demo-tldr-analogy-label">한 줄 요약</div>
+          <div class="demo-tldr-analogy-text">
+            기본값에서 검색 200명은 세그먼트 317 의 229명과 <strong>165명이 겹치고</strong>, 다음 30일 구매자 비율은 20.5% 와 20.1% 로 비슷합니다. 회원 A 는 direct 목록 하나에만 들어 171위입니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-intro">
+        <div><span class="demo-intro-label">이 데모가 보여주는 것</span>서연 씨 러닝화 광고의 키워드를 전략마다 질의로 만들어 문서 2,000편을 검색합니다.
+          기본값은 유저를 문서로 편의 다섯 값이고, 고른 회원 200명, 겹침 165명, 구매자 비율 20.5%, 회원 A 171위가 나옵니다.
+          체크 상자와 슬라이더로 네 숫자가 어떻게 움직이는지 봅니다.</div>
+        <div><span class="demo-intro-label">왜 알아야 하나</span>세그먼트는 「든다」와 「안 든다」 둘뿐이지만, 검색은 점수로 순위를 매겨 예산만큼 앞에서 자를 수 있습니다.
+          같은 순위에서 <strong>몇 명을 자르느냐</strong>가 구매자 비율과 구매자 수를 함께 바꿉니다.</div>
+      </div>
+
+      <ol class="demo-steps">
+        <span class="demo-steps-title">이렇게 해봅니다 — 5분</span>
+        <li><span class="step-text">기본값에서 <strong>200명, 165명, 20.5%, 171위</strong>를 봅니다. 글의 파이썬이 찍은 값과 같습니다.</span></li>
+        <li><span class="step-text"><strong>b</strong> 를 0 으로 내립니다. 문서 길이를 보지 않아 회원 A 가 direct 40위, 합친 143위로 오릅니다.</span></li>
+        <li><span class="step-text"><strong>자르는 수</strong>를 100 과 400 으로 옮깁니다. 구매자 비율이 23.0% 와 14.6% 가 됩니다.</span></li>
+      </ol>
+
+      <div class="ua-intro">
+        <p><strong>식</strong> — 회원마다 검색어는 검색한 횟수만큼, 행동은 「러닝글」 같은 낱말 하나를 횟수만큼 이어 문서 한 편을 씁니다.
+          질의는 고른 전략의 정답 키워드이고, 전략마다 따로 검색해 목록 하나를 얻습니다.
+          문서 $D$ 의 BM25 점수는 질의 낱말 $t$ 마다 아래 값을 더한 것입니다.</p>
+        <div class="ua-formula">$$\mathrm{score}(D, Q) = \sum_{t \in Q} \mathrm{idf}(t) \cdot \frac{f(t, D)}{f(t, D) + k_1 \left(1 - b + b \cdot \frac{|D|}{\mathrm{avgdl}}\right)}$$</div>
+        <div class="ua-formula">$$\mathrm{idf}(t) = \ln\left(1 + \frac{N - n(t) + 0.5}{n(t) + 0.5}\right)$$</div>
+        <p>$f(t, D)$ 는 문서에 $t$ 가 든 횟수, $|D|$ 는 문서의 낱말 수, avgdl 은 문서 길이의 평균 15.7낱말입니다.
+          $N$ 은 문서 수 2,000, $n(t)$ 는 $t$ 가 든 문서 수입니다.
+          분자에 $(k_1 + 1)$ 을 곱하지 않는 꼴이라 TF 항은 1 을 넘지 않습니다.
+          점수가 0 보다 큰 회원만 목록에 들고, 점수가 같으면 회원 번호가 작은 쪽이 앞입니다.</p>
+        <div class="ua-formula">$$\mathrm{RRF}(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$</div>
+        <p>RRF 는 목록 $r$ 에서 회원 $d$ 의 순위 $r(d)$ 로 위 값을 구해 더합니다. 목록에 없는 회원은 그 목록에서 0 을 받습니다.
+          더하는 차례는 체크 상자의 차례이고, 점수가 같으면 번호가 작은 회원이 앞입니다.
+          합친 순위의 앞에서 자르는 수만큼 고릅니다.</p>
+        <p>회원은 설명을 위해 만든 가상 회원 2,000명이고, 다음 30일 구매도 가상 정답입니다.
+          problem_goal 의 정답 10개 가운데 건강 주제 4개는 질의에 넣지 않습니다.
+          <a href="post.html?id=keyword-expansion-strategies">키워드 확장 전략</a> 편의 정책 거르기와 같은 기준입니다.
+          셈은 <a href="post.html?id=users-as-documents">유저를 문서로</a> 편의 bm25_scores, ranked, rrf 와 같은 식이라, 기본값의 네 숫자가 그 글의 출력과 같습니다.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="ua-controls">
+        <div class="ua-strats">
+          <div class="ua-strats-label" id="ua-strats-label">전략<small>고른 전략마다 따로 검색해 목록 하나</small></div>
+          <div class="ua-strat-list" role="group" aria-labelledby="ua-strats-label">
+            <label class="ua-strat is-on" data-edu-said="1"><input type="checkbox" value="direct" checked> direct <small>7개</small></label>
+            <label class="ua-strat is-on" data-edu-said="1"><input type="checkbox" value="category" checked> category <small>6개</small></label>
+            <label class="ua-strat is-on" data-edu-said="1"><input type="checkbox" value="co_purchase" checked> co_purchase <small>6개</small></label>
+            <label class="ua-strat" data-edu-said="0"><input type="checkbox" value="problem_goal"> problem_goal <small>6개</small></label>
+            <label class="ua-strat" data-edu-said="0"><input type="checkbox" value="persona"> persona <small>5개</small></label>
+            <label class="ua-strat" data-edu-said="0"><input type="checkbox" value="brand"> brand <small>4개</small></label>
+            <label class="ua-strat" data-edu-said="0"><input type="checkbox" value="product_line"> product_line <small>6개</small></label>
+          </div>
+        </div>
+        <div class="ua-query" id="ua-query">—</div>
+        <div class="ua-slider-row">
+          <div class="ua-slider-label">BM25 k1<small>TF 항이 1 에 다가가는 빠르기. 클수록 천천히</small></div>
+          <input type="range" class="ua-slider" id="ua-k1" min="0.5" max="2" step="0.1" value="1.2" aria-label="BM25 k1">
+          <div class="ua-slider-value" id="ua-k1-val">1.2</div>
+        </div>
+        <div class="ua-slider-row">
+          <div class="ua-slider-label">BM25 b<small>문서 길이를 보는 정도. 0 이면 길이를 보지 않음</small></div>
+          <input type="range" class="ua-slider" id="ua-b" min="0" max="1" step="0.05" value="0.75" aria-label="BM25 b">
+          <div class="ua-slider-value" id="ua-b-val">0.75</div>
+        </div>
+        <div class="ua-slider-row">
+          <div class="ua-slider-label">RRF k<small>순위에 더하는 값. 클수록 순위마다 받는 값의 차이가 작음</small></div>
+          <input type="range" class="ua-slider" id="ua-k" min="1" max="100" step="1" value="60" aria-label="RRF k">
+          <div class="ua-slider-value" id="ua-k-val">60</div>
+        </div>
+        <div class="ua-slider-row">
+          <div class="ua-slider-label">자르는 수<small>합친 순위의 앞에서 고르는 회원 수</small></div>
+          <input type="range" class="ua-slider" id="ua-cut" min="50" max="400" step="10" value="200" aria-label="자르는 수">
+          <div class="ua-slider-value" id="ua-cut-val">200명</div>
+        </div>
+        <div class="ua-presets">
+          <span class="ua-presets-label">프리셋</span>
+          <button type="button" class="ua-preset-btn" data-preset="direct+category+co_purchase,1.2,0.75,60,200">기본</button>
+          <button type="button" class="ua-preset-btn" data-preset="direct+category+co_purchase,1.2,0,60,200">길이를 보지 않으면</button>
+          <button type="button" class="ua-preset-btn" data-preset="all,1.2,0.75,60,200">전략 일곱</button>
+          <button type="button" class="ua-preset-btn" data-preset="direct,1.2,0.75,60,200">direct 하나</button>
+          <button type="button" class="ua-preset-btn" data-preset="direct+category+co_purchase,1.2,0.75,60,100">앞 100명</button>
+          <button type="button" class="ua-preset-btn" data-preset="direct+category+co_purchase,1.2,0.75,60,400">앞 400명</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="ua-metrics">
+        <div class="ua-metric">
+          <div class="ua-metric-label">고른 회원</div>
+          <div class="ua-metric-value" id="ua-picked">—</div>
+          <div class="ua-metric-sub" id="ua-picked-sub">합친 순위의 앞에서</div>
+        </div>
+        <div class="ua-metric">
+          <div class="ua-metric-label">세그먼트 317 과 겹침</div>
+          <div class="ua-metric-value" id="ua-overlap">—</div>
+          <div class="ua-metric-sub" id="ua-overlap-sub">두 명단에 다 든 회원</div>
+        </div>
+        <div class="ua-metric">
+          <div class="ua-metric-label">다음 30일 구매자 비율</div>
+          <div class="ua-metric-value" id="ua-rate">—</div>
+          <div class="ua-metric-sub" id="ua-rate-sub">고른 회원 가운데</div>
+        </div>
+        <div class="ua-metric">
+          <div class="ua-metric-label">회원 A 의 순위</div>
+          <div class="ua-metric-value" id="ua-rank">—</div>
+          <div class="ua-metric-sub" id="ua-rank-sub">합친 순위</div>
+        </div>
+      </div>
+
+      <div class="ua-verdict" id="ua-verdict">—</div>
+
+      <!-- Charts -->
+      <div class="ua-charts">
+        <div class="ua-chart-card">
+          <h3>자르는 수와 구매자 비율</h3>
+          <p class="note">같은 합친 순위에서 앞 몇 명을 고르느냐만 바꾼 선입니다. 점선은 세그먼트 317 의 구매자 비율이고, 고리가 지금 자르는 수입니다. 합친 회원보다 많이 자르면 선이 평평해집니다.</p>
+          <div class="ua-chart-wrap"><canvas id="ua-cut-chart" aria-label="자르는 수에 따른 다음 30일 구매자 비율"></canvas></div>
+        </div>
+        <div class="ua-chart-card">
+          <h3>겹침 안팎의 구매자 비율</h3>
+          <p class="note">세그먼트 317 과 고른 회원, 그 둘을 나눈 세 무리의 구매자 비율입니다. 파랑은 세그먼트 317 쪽, 벽돌색은 검색 쪽, 회색은 두 명단에 다 든 회원입니다.</p>
+          <div class="ua-chart-wrap"><canvas id="ua-group-chart" aria-label="세그먼트 317 과 고른 회원을 다섯 무리로 나눈 구매자 비율"></canvas></div>
+        </div>
+      </div>
+
+      <!-- TL;DR -->
+      <section class="demo-tldr">
+        <div class="demo-tldr-inner">
+          <h3>이 데모에서 알게 된 3가지</h3>
+          <ol>
+            <li><strong>행동 낱말은 길이만 늘립니다</strong> — 회원 A 는 러닝화를 12번 검색했지만 문서가 37낱말로 길어 direct 49위입니다. b 를 0 으로 두면 40위로 오릅니다.</li>
+            <li><strong>여러 목록에 든 회원이 앞섭니다</strong> — RRF 는 점수 대신 순위를 더합니다. 기본값에서는 목록 둘 이상에 든 회원이 모두 앞 200명 안에 듭니다.</li>
+            <li><strong>자르는 수가 비율과 수를 바꿉니다</strong> — 앞 100명은 구매자 23명(23.0%), 200명은 41명(20.5%) 입니다. 합친 322명 전부는 47명(14.6%) 입니다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="demo-practice">
+        <h2>현업에서는 이렇게 씁니다</h2>
+        <p>
+          회원의 검색어와 읽은 글이 같은 회원 번호로 쌓이는 플랫폼은 회원마다 문서를 쓰고 매일 밤 색인을 새로 만들 수 있습니다.
+          광고주는 문서를 보지 않고 키워드만 건넵니다.
+          검색이 고른 명단은 번호 하나가 되어 회원 프로필에 적힙니다.
+        </p>
+        <ul>
+          <li><strong>건강 키워드는 질의로 받지 않습니다:</strong> 이 놀이터도 problem_goal 의 건강 키워드 4개를 뺍니다. 기준은 <a href="post.html?id=keyword-expansion-strategies">키워드 확장 전략</a> 편의 정책 거르기입니다.</li>
+          <li><strong>점수는 같은 질의 안에서만 비교합니다:</strong> 전략마다 낱말 수와 idf 가 달라 목록은 점수 대신 순위로 합칩니다. 어제 색인과 오늘 색인의 점수도 비교하지 않습니다.</li>
+          <li><strong>동점 규칙을 코드에 적습니다:</strong> 기본값에서 회원 A 와 회원 126 은 RRF 점수가 1 ÷ 109 로 같고, 번호가 작은 회원 A 가 171위입니다. 다시 셀 때도 더하는 차례와 이 규칙을 같게 둡니다.</li>
+        </ul>
+      </section>
+
+      <!-- Next Up -->
+      <section class="demo-next">
+        <div class="demo-next-inner">
+          <h3>다음 배우기</h3>
+          <div class="demo-next-grid">
+            <a href="post.html?id=users-as-documents" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">유저를 문서로: 광고 키워드로 사람을 검색하는 역방향 검색</span>
+              <span class="demo-next-excerpt">이 놀이터의 기본값 다섯과 회원 A 의 171위가 나온 글입니다</span>
+            </a>
+            <a href="post.html?id=keyword-expansion-strategies" class="demo-next-card">
+              <span class="demo-next-label">관련 포스트</span>
+              <span class="demo-next-title">키워드 확장 전략: 광고 하나에서 전략 일곱으로 키워드를 넓히기</span>
+              <span class="demo-next-excerpt">전략 일곱의 정의와 정책 거르기가 나온 글입니다</span>
+            </a>
+            <a href="demo-user-docs-cards.html" class="demo-next-card">
+              <span class="demo-next-label">관련 데모</span>
+              <span class="demo-next-title">유저를 문서로 카드 네 장</span>
+              <span class="demo-next-excerpt">회원 A 의 문서, BM25, RRF, 자르기를 카드 한 장씩으로</span>
+              <span class="demo-next-meta">⏱ 5분, 중급</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/ads-users-data.js"></script>
+  <script src="js/users-as-documents-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

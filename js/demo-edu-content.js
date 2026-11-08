@@ -4379,5 +4379,81 @@ window.DEMO_EDU = {
                 body: '슬라이더와 버튼을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
             }
         ]
+    },
+
+    'users-as-documents': {
+        analogy: '회원마다 30일 행동을 문서 한 편으로 적고 광고 키워드로 BM25 검색을 한다. 전략별 목록을 RRF 로 합쳐 앞 200명을 자르면 세그먼트 317 과 165명이 겹친다. 구매자 비율은 20.5% 와 20.1% 로 비슷하고, 회원 A 는 171위다',
+        anchor: '.ua-controls',
+        embedKeep: ['.ua-controls'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.ua-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            // 판정은 두 문장이다. 앞은 구매자 비율과 수, 뒤는 회원 A 의 자리다. 숫자의 소수점 뒤에는 공백이 없어 「. 」로 나눈다.
+            // 전략을 모두 끄면 판정의 뒤 문장 자리에 「체크 상자를 하나 이상 켭니다」가 온다.
+            '#ua-k1': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `BM25 의 k1 을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    (value > prev
+                        ? 'TF 항이 1 에 더 천천히 다가가, 같은 낱말의 검색 횟수가 점수를 더 오래 올립니다. '
+                        : 'TF 항이 1 에 더 빨리 다가가, 같은 낱말을 몇 번만 검색해도 TF 항이 1 에 가까워집니다. ') +
+                    `겹침은 ${t('ua-overlap')}, 구매자 비율은 ${t('ua-rate')} 입니다. ` + (t('ua-verdict').split('. ')[1] || '');
+            },
+            '#ua-b': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `BM25 의 b 를 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(2)} → ${value.toFixed(2)}</strong>). ` +
+                    (value > prev ? '문서 길이를 더 봐서, 평균보다 긴 문서의 점수가 더 깎입니다. ' : '문서 길이를 덜 봐서, 평균보다 긴 문서의 점수가 덜 깎입니다. ') +
+                    '회원 A 의 문서는 37낱말로 평균 15.7낱말의 두 배가 넘습니다. ' + (t('ua-verdict').split('. ')[1] || '');
+            },
+            '#ua-k': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `RRF 의 k 를 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev} → ${value}</strong>). ` +
+                    (value > prev
+                        ? '순위마다 받는 값의 차이가 작아져, 순위보다 든 목록 수가 합친 순위를 더 크게 정합니다. '
+                        : '앞 순위와 뒤 순위가 받는 값의 차이가 커져, 한 목록의 앞 순위가 합친 순위를 더 크게 정합니다. ') +
+                    (t('ua-verdict').split('. ')[1] || '');
+            },
+            '#ua-cut': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `자르는 수를 ${value > prev ? '늘렸' : '줄였'}습니다 (<strong>${prev}명 → ${value}명</strong>). ` +
+                    '합친 순위는 그대로이고, 앞에서 몇 명을 고르는지만 바뀝니다. ' + t('ua-verdict').split('. ')[0] + '.';
+            },
+            // 체크 상자 input 에 직접 걸면 해설이 안 나온다(click 은 input 을 걸러내고, input 이벤트는 value 가 그대로라 바뀐 것으로 보지 않는다).
+            // 감싸는 label 에 걸고, 라벨 글자를 눌러 click 이 두 번 오는 것은 data-edu-said(마지막으로 설명한 체크 상태)로 막는다.
+            '.ua-strat': ({ el }) => {
+                const box = el.querySelector('input');
+                const on = box.checked ? '1' : '0';
+                if (el.dataset.eduSaid === on) return '';
+                el.dataset.eduSaid = on;
+                const v = document.getElementById('ua-verdict');
+                return `질의에 <strong>${box.value}</strong> 전략을 ${box.checked ? '넣었' : '뺐'}습니다. ` +
+                    `질의 낱말은 ${v.dataset.terms}개, 합친 회원은 ${v.dataset.merged}명입니다. ` + v.textContent;
+            },
+            '.ua-preset-btn': ({ el }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `<strong>${el.textContent.trim()}</strong> 프리셋을 적용했습니다. ` + t('ua-verdict');
+            }
+        },
+        tour: [
+            {
+                el: '.ua-metrics',
+                title: '숫자 넷',
+                body: '고른 회원, 세그먼트 317 과 겹침, 다음 30일 구매자 비율, 회원 A 의 순위입니다. 기본값은 글의 출력과 같은 <strong>200명, 165명, 20.5%, 171위</strong>입니다.'
+            },
+            {
+                el: '#ua-b',
+                title: '길이를 덜 봅니다',
+                body: '<strong>b</strong> 를 움직여 봅니다. 0 이면 문서 길이를 보지 않아 회원 A 가 171위에서 143위로 오릅니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.ua-chart-card:first-child',
+                title: '자르는 수와 구매자 비율',
+                body: '고리가 지금 자르는 수이고, 점선은 세그먼트 317 의 구매자 비율입니다.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '체크 상자와 슬라이더를 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
+            }
+        ]
     }
 };

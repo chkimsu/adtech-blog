@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 87개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 101개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -535,6 +535,7 @@
               <a href="demo-llm-cost.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 비용 놀이터</a>
               <a href="demo-candidate-pool.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 후보풀 그림 다섯 장</a>
               <a href="demo-pool-map.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 광고 후보풀 지도</a>
+              <a href="demo-users-as-documents.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 유저 문서 검색 놀이터</a>
             </div>
           </div>
           <!-- 중급 -->
@@ -579,6 +580,19 @@
               <a href="demo-dcn-vs-din-slot.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ DCN 과 DIN 모듈 그림 네 장</a>
               <a href="demo-din-architecture.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ DIN 모델 구조 그림 다섯 장</a>
               <a href="demo-two-tower-training.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Two-Tower 학습 그림 여덟 장</a>
+              <a href="demo-nl-query-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 자연어 → 타겟 조건 카드 네 장</a>
+              <a href="demo-user-docs-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 유저를 문서로 카드 네 장</a>
+              <a href="demo-keyword-expansion-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 키워드 확장 전략 카드 네 장</a>
+              <a href="demo-interest-library-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 관심사 사전 카드 다섯 장</a>
+              <a href="demo-label-ranker-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 라벨과 코드 랭커 카드 네 장</a>
+              <a href="demo-distillation-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 라벨링과 증류 카드 네 장</a>
+              <a href="demo-user-embedding-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ LLM 유저 임베딩 카드 네 장</a>
+              <a href="demo-copy-gen-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 광고 카피 생성 카드 네 장</a>
+              <a href="demo-copy-judge-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 생성 문구 판정 카드 네 장</a>
+              <a href="demo-advertiser-agent-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 광고주 에이전트 카드 네 장</a>
+              <a href="demo-workflow-loop-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 워크플로와 자율 루프 카드 네 장</a>
+              <a href="demo-semantic-id-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Semantic ID 카드 네 장</a>
+              <a href="demo-coding-agent-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 코딩 에이전트 카드 네 장</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -675,12 +689,12 @@
       </div>
     </section>
 
-    <!-- 주제별 데모 87개 -->
+    <!-- 주제별 데모 101개 -->
     <section class="section">
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">87개, 주제 11개</span>
+          <span class="count">101개, 주제 12개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
@@ -690,6 +704,7 @@
           <a class="demos-jump-item" href="#demo-topic-targeting">타겟팅과 오디언스<b>4</b></a>
           <a class="demos-jump-item" href="#demo-topic-targeting-model">타겟팅 모델<b>7</b></a>
           <a class="demos-jump-item" href="#demo-topic-llm">LLM 기초<b>10</b></a>
+          <a class="demos-jump-item" href="#demo-topic-llm-ads">LLM 광고 응용<b>14</b></a>
           <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>9</b></a>
           <a class="demos-jump-item" href="#demo-topic-ops">모델 운영<b>12</b></a>
           <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>11</b></a>
@@ -1401,6 +1416,198 @@
                 <span class="demo-card-meta-item">LLM 비용 놀이터 먼저 보면 좋음</span>
               </div>
               <a href="demo-llm-cost-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-llm-ads">
+          <div class="demo-topic-head">
+            <h3>LLM 광고 응용</h3>
+            <span class="demo-topic-count">14개</span>
+          </div>
+          <p class="demo-topic-desc">LLM 을 광고 일에 붙이는 자리들입니다. 문장을 타겟 조건으로 옮기기, 광고 키워드로 사람 찾기, 키워드 확장과 관심사 사전, LLM 라벨과 증류, 카피 생성과 판정을 봅니다. 이어서 MCP 로 붙인 광고주 에이전트, 워크플로와 자율 루프, Semantic ID, 코딩 에이전트를 봅니다. 모델의 답과 토큰 수는 공개 모델을 개인 컴퓨터에서 돌려 기록한 값입니다. 에이전트 두 편의 LLM 과 증류 편의 교사 라벨 1만 쌍은 코드로 만든 가짜입니다. 코딩 에이전트 편의 숫자는 관심사 사전 편을 만든 세션의 발췌에서 셉니다. 카드 데크 13개와 놀이터 하나입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>자연어 → 타겟 조건 카드 네 장</h3>
+              <p>광고주의 요청 한 문장이 판정, 조건, 쿼리, 명단을 지나는 자리를 카드 한 장씩으로. 네 단계의 차례, 판정 셋의 혼동표, 코드가 쓴 쿼리와 회원 수, 판정과 reason_code 짝마다 정해 둔 템플릿.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">자연어 오디언스 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-nl-query-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>유저를 문서로 카드 네 장</h3>
+              <p>회원 한 명의 30일 행동을 문서 한 편으로 적고 광고 키워드로 검색하는 자리를 카드 한 장씩으로. 회원 A 의 문서, BM25 점수, RRF 로 합치기, 앞 200명과 세그먼트 317 의 겹침.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">유저 프로파일 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-user-docs-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>유저 문서 검색 놀이터</h3>
+              <p>전략 일곱의 체크 상자와 BM25 의 k1, b, RRF 의 k, 자르는 수를 슬라이더로. 고른 회원 수, 세그먼트 317 과 겹친 수, 다음 30일 구매자 비율, 회원 A 의 순위가 함께 바뀝니다. 기본값은 유저를 문서로 편의 출력과 같습니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">유저를 문서로 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-users-as-documents.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>키워드 확장 전략 카드 네 장</h3>
+              <p>광고 하나에서 전략 일곱으로 키워드를 넓히는 자리를 카드 한 장씩으로. 상품 설명을 읽는 일곱 가지 질문, 한 번에 묻기와 전략마다 묻기, 전략 사이의 겹침, health 와 noise 를 빼는 코드 거르기.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">유저를 문서로 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-keyword-expansion-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>관심사 사전 카드 다섯 장</h3>
+              <p>로그 키워드 120개가 이름 붙은 오디언스가 되는 자리를 카드 한 장씩으로. 다섯 단계와 맡는 쪽, 두 번 묻는 투표, 답이 다른 4개만 보는 심판, 이름과 나누기 기준, 최소 크기 20명.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 6분</span>
+                <span class="demo-card-meta-item">키워드 확장 전략 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-interest-library-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>LLM 라벨과 코드 랭커 카드 네 장</h3>
+              <p>광고 후보 30개를 LLM 이 하나씩 판정하고 순위는 코드가 정하는 자리를 카드 한 장씩으로. 후보 하나에 라벨 하나, 코드가 섞는 순위, 노출된 광고에만 붙이는 근거, 한 번에 다 맡기면 잘리는 답.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM-as-a-Judge 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-label-ranker-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>LLM 라벨링과 증류 카드 네 장</h3>
+              <p>LLM 교사의 관련성 라벨로 작은 학생 랭커를 학습하는 자리를 카드 한 장씩으로. 교사 라벨로 학생 학습, 일치율과 kappa, 라벨 100만 건의 값과 시간, 관련성 라벨과 클릭의 차이.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM 라벨과 코드 랭커 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-distillation-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>LLM 유저 임베딩 카드 네 장</h3>
+              <p>유저 벡터를 새벽에 미리 만들어 pCTR 랭커의 피처로 읽는 자리를 카드 한 장씩으로. 새벽 배치, 피처 스토어의 키와 벡터, 랭커가 읽는 피처, 예산 8ms 와 실시간 호출.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">유저를 문서로 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-user-embedding-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>광고 카피 생성 카드 네 장</h3>
+              <p>자산 텍스트로 카피를 쓰고 카피마다 근거 구절을 받아 코드 게이트가 거르는 자리를 카드 한 장씩으로. 자산에서 인용, 카피 후보 다섯, 게이트 넷, 생성 없음도 정상 답.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">RAG 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-copy-gen-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>생성 문구 판정 카드 네 장</h3>
+              <p>게이트를 지난 카피를 모델이 판정하는 자리를 카드 한 장씩으로. 판정 세 겹, 같은 카피의 점수 다섯, 좌우를 바꿔 묻는 짝비교, 싼 판정자를 먼저 쓰는 캐스케이드.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">광고 카피 생성 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-copy-judge-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>광고주 에이전트 카드 네 장</h3>
+              <p>광고주가 대화로 캠페인을 바꾸는 에이전트를 카드 한 장씩으로. MCP 의 클라이언트와 서버, 읽기 도구와 쓰기 도구, 승인 단계, 서버의 가드레일.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">Tool use 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-advertiser-agent-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>워크플로와 자율 루프 카드 네 장</h3>
+              <p>같은 입찰가 일을 자율 루프와 워크플로로 10번씩 돌린 결과를 카드 한 장씩으로. 두 방식, 호출 수와 시간, 10번의 결과, A2A 의 오케스트레이터와 작업 상태.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">광고주 에이전트 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-workflow-loop-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>Semantic ID 카드 네 장</h3>
+              <p>상품 벡터를 세 단의 코드북으로 양자화해 코드 셋을 붙이고 빔 탐색으로 꺼내는 자리를 카드 한 장씩으로. 3단 코드북, 코드 트리, 단마다 고르기, 새 상품.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">임베딩 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-semantic-id-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>코딩 에이전트 카드 네 장</h3>
+              <p>코딩 에이전트에게 맡긴 실험 하나가 계획, 구현, 실행, 보고를 지나는 자리를 카드 한 장씩으로. 네 단계, 스킬이 정하는 순서, 훅이 막는 것, 장부와 보고.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">관심사 사전 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-coding-agent-cards.html" class="btn-try">체험하기</a>
             </div>
           </div>
         </section>

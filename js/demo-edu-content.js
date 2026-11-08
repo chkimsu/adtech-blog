@@ -4320,7 +4320,7 @@ window.DEMO_EDU = {
                 switch (el.dataset.card) {
                     case 'sft': return '헷갈리는 것은 <strong>SFT 는 chosen 만 올리는가</strong>입니다. SFT 의 손실은 chosen 하나만 보지만, rejected 도 -12.425 에서 -12.121 로 올랐습니다. 두 카피가 쿠션, 폼, 러닝화를 함께 쓰기 때문입니다.';
                     case 'pairs': return '헷갈리는 것은 <strong>쌍만 많으면 출처는 상관없는가</strong>입니다. 판정자 쌍 8개는 chosen 이 평균 14.4자 길어 길이를 가르칩니다. 그래서 쌍마다 출처를 적어 두고, 출처별로 무엇을 가르치는지 셉니다.';
-                    case 'loss': return '헷갈리는 것은 <strong>margin 이 양수면 정책이 chosen 을 더 좋아하는가</strong>입니다. d07 은 margin +0.170 이지만, 정책의 로그 확률은 rejected 가 -16.7 로 chosen 의 -17.4 보다 높습니다. margin 은 두 카피의 비율, 곧 참조 모델에서 움직인 양을 비교합니다.';
+                    case 'loss': return '헷갈리는 것은 <strong>margin 이 양수면 정책이 chosen 을 더 좋아하는가</strong>입니다. d07 은 margin +0.170 이지만, 정책의 로그 확률은 rejected 가 -16.7 로 chosen 의 -17.4 보다 높습니다. margin 은 두 카피의 로그 비율, 곧 참조 모델에서 움직인 양을 비교합니다.';
                     case 'overopt': return '헷갈리는 것은 <strong>손실이 줄면 카피도 좋아지는가</strong>입니다. 손실은 300걸음 내내 줄었지만 통과율은 50걸음 뒤로 떨어졌습니다. 손실은 쌍 20개의 margin 만 보고, 쌍에 없는 c06, c07 의 확률은 보지 않습니다.';
                     default: return '';
                 }

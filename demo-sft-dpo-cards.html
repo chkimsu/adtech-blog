@@ -32,9 +32,9 @@
       <h1>SFT 와 DPO 카드 네 장</h1>
       <p>선호 쌍으로 카피를 쓰는 모델을 학습하는 자리를 한 장씩 봅니다. SFT 한 걸음과 DPO 한 걸음, 선호 쌍의 출처 셋, 로그 확률 넷으로 세는 손실, 꺾이는 통과율입니다. 카피 후보 12개와 선호 쌍 20개, 두 모델의 로그 확률은 설명을 위해 만든 가상 값입니다.</p>
       <div class="tg-legend">
-        <span class="tg-chip"><i class="a"></i>파랑 = 참조 모델, 선호 쌍, 게이트를 지난 카피</span>
+        <span class="tg-chip"><i class="a"></i>파랑 = 참조 모델, 선호 쌍, 게이트를 지난 카피, chosen 과 공유 토큰</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 학습하는 정책, margin 이 음수인 쌍</span>
-        <span class="tg-chip"><i class="k"></i>먹색 = 손실, 기울기, 글자 수 차이</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 손실, 기울기, 글자 수 차이, 로그 비율과 margin 상자</span>
         <span class="tg-chip"><i class="c"></i>회색 = 게이트에 걸린 카피</span>
         <span class="tg-chip"><i class="n"></i>점선 = 게이트 조건, margin 0, c06+c07 확률</span>
       </div>

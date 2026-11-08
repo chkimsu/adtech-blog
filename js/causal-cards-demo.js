@@ -14,7 +14,7 @@
     'use strict';
     const { T, tag, table, tool, list, arrow, dots, svg, hbar, lines } = window.CardKit;
     const has = id => !!document.getElementById(id);
-    const dot = (x, y, cls) => `<circle class="dot ${cls}" cx="${x}" cy="${y}" r="3"/>`;
+    const dot = (x, y, cls) => `<circle class="pt f-${cls}" cx="${x}" cy="${y}" r="3"/>`;
     const line = (x1, y1, x2, y2, cls) => `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
 
     // ---------- 1. 이중차분 (difference-in-differences) ----------

@@ -6482,6 +6482,7 @@ html.is-embed .tg-card { border: none; padding: 0.4rem 0.2rem 0.2rem; }
 .mk.k { fill: var(--text-secondary); } .mk.a { fill: var(--navy); } .mk.b { fill: var(--oxide); } .mk.c { fill: var(--grey); }
 .dot { stroke: var(--bg-primary); stroke-width: 1.5; }
 .dot.k { fill: var(--text-primary); } .dot.a { fill: var(--navy); } .dot.b { fill: var(--oxide); } .dot.c { fill: var(--grey); }
+.pt { stroke: var(--bg-primary); stroke-width: 1.5; }
 .usr { fill: var(--text-secondary); }
 .tok { stroke-width: 1.2; }
 .tok.c { fill: var(--grey); } .tok.k { fill: var(--text-primary); } .tok.b { fill: var(--oxide); } .tok.a { fill: var(--navy); }

@@ -85,7 +85,7 @@
         for (let k = 29; k >= 0; k--) d += `${k === 29 ? 'M' : 'L'}${xOf(k).toFixed(1)},${yOf(Math.pow(0.5, k / 7)).toFixed(1)} `;
         s += `<path class="ar k" d="${d.trim()}"/>`;
         [[0, '1'], [7, '0.5'], [14, '0.25'], [29, '0.06']].forEach(p => {
-            s += `<circle class="dot k" cx="${xOf(p[0])}" cy="${yOf(Math.pow(0.5, p[0] / 7))}" r="3"/>`;
+            s += `<circle class="pt f-k" cx="${xOf(p[0])}" cy="${yOf(Math.pow(0.5, p[0] / 7))}" r="3"/>`;
             s += T(xOf(p[0]) + (p[0] === 0 ? -6 : 6), yOf(Math.pow(0.5, p[0] / 7)) - 6, p[1], 'lbl k', p[0] === 0 ? 'end' : 'start');
         });
         [[29, '29일 전'], [14, '14일 전'], [7, '7일 전'], [0, '오늘']].forEach(p => {

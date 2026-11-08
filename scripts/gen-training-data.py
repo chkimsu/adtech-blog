@@ -22,8 +22,15 @@
                                                     고치지 않는가. 리터럴 뒤에서 값을 바꾸면 글자 대조만으로는 통과하기 때문이다. 블록을 구문
                                                     트리로 읽어 =, +=, :=, 꼴 표시가 붙은 대입, for 와 with 와 컴프리헨션이 묶는 이름, def,
                                                     class, import, del, except 의 이름, 함수 인자, 첨자와 속성 대입, list 메서드와 shuffle
-                                                    부르기를 센다. 줄 맨 앞에서 시작해 끝 공백을 뗀 글이 「COPY_POOL = [」 나 「PREF_PAIRS = [」 인
-                                                    머리 줄과, 이 파일의 BETA 줄과 바이트까지 같은 줄만 넘긴다
+                                                    부르기를 센다. 넘기는 것은 블록 맨 위 문장인 = 대입(대상은 그 이름 하나) 가운데, 끝 공백을
+                                                    뗀 글이 「COPY_POOL = [」 나 「PREF_PAIRS = [」 인 머리 줄과 이 파일의 BETA 줄과 바이트까지
+                                                    같은 줄뿐이다. 함수 인자와 그 기본값은 줄 맨 앞에 따로 서 있어도 넘기지 않는다.
+                                                    COPY_POOL 과 PREF_PAIRS 를 다른 이름에 그대로 묶는 대입(pool = COPY_POOL, pool: list = COPY_POOL,
+                                                    (pool := COPY_POOL))도 실패로 친다. 그 이름으로 고치면 위의 셈에 걸리지 않기 때문이다.
+                                                    이 검사가 보지 못하는 길도 있다. 목록을 함수나 메서드의 인자로 넘겨 고치는 것(list.sort(COPY_POOL),
+                                                    shuffle(x=PREF_PAIRS), 함수 안에서 인자를 고치는 것), __setitem__ 같은 이름으로 부르는 것,
+                                                    globals() 로 고치는 것, 튜플이나 다른 목록에 넣거나 for 와 함수 기본값으로 다른 이름에 묶는
+                                                    것이다. 이런 줄은 글을 읽는 사람이 막는다
                                                  없는 파일, 다른 글자, 등록하지 않은 파일과 글은 모두 실패이고 처음 다른 자리를 찍는다
 
 후보 하나는 (id, 카피, 글자 수, 숫자 일치 0|1, 근거 없는 최상급 0|1, 참조 로그 확률, 정책 로그 확률) 이다. 카피는 서연 씨 러닝화의
@@ -182,7 +189,10 @@ POOL_LINE = re.compile(r'    \("[^"\\]*", "[^"\\]*", \d+, \d+, \d+, -?\d+\.\d, -
 PAIR_LINE = re.compile(r'    \("[^"\\]*", "[^"\\]*", "[^"\\]*", "[^"\\]*"\),?')
 FENCE = re.compile(r'^```([^\n`]*)\n(.*?)^```[ \t]*$', re.M | re.S)    # scripts/check-code-blocks.js 의 FENCE 와 같은 꼴
 # 글자로 대조하는 이름. 글의 python 블록은 두 리터럴의 머리 줄과 이 파일과 같은 BETA 줄 말고는 이 이름을 다시 대입하거나 고치면 안 된다.
+# 머리 줄과 BETA 줄도 블록 맨 위 문장인 = 대입일 때만 넘긴다.
 COMPARED = ('COPY_POOL', 'PREF_PAIRS', 'BETA')
+# 다른 이름에 그대로 묶으면 실패로 치는 목록. BETA 는 실수라 다른 이름을 거쳐 고칠 수 없어 넣지 않는다.
+LISTS = ('COPY_POOL', 'PREF_PAIRS')
 # 목록을 그 자리에서 고치는 list 메서드. PREF_PAIRS.append(...) 처럼 부르면 리터럴의 값이 바뀐다. rng.shuffle(PREF_PAIRS) 도 따로 센다.
 LIST_MUTATORS = ('append', 'extend', 'insert', 'pop', 'remove', 'sort', 'reverse', 'clear')
 
@@ -371,11 +381,16 @@ def literal_errors(path, text):
 
 
 def name_writes(tree, name):
-    """python 블록 하나의 구문 트리에서 name 에 값을 묶거나 name 이 가리키는 목록을 고치는 줄의 번호 목록(블록의 첫 줄이 1).
+    """python 블록 하나의 구문 트리에서 name 에 값을 묶거나 name 이 가리키는 목록을 고치는 자리의 목록. 자리마다
+    (줄 번호, 블록 맨 위 대입인가) 이고, 줄 번호는 블록의 첫 줄이 1 이다.
     scripts/gen-ranker-data.py 의 name_writes 가 세는 것에 컴프리헨션의 for 와 shuffle 부르기를 더 센다. 대입(=, +=, :=,
     꼴 표시가 붙은 대입), for 와 with 와 컴프리헨션이 묶는 이름, def, class, import, del, except 의 이름, 함수 인자,
     name[...] = 와 name.x = 같은 대입, name.append() 같은 list 메서드 부르기, rng.shuffle(name) 이다. 함수 안의 지역 이름도
-    센다. 맨 위의 「name = [」 리터럴 대입과 「BETA = 0.1」 대입도 한 줄로 든다. 넘길지는 rebind_errors 가 정한다."""
+    센다. 블록 맨 위 대입은 블록의 맨 위 문장인 = 대입 가운데 대상이 name 하나뿐인 것이고, 「name = [」 리터럴 대입과
+    「BETA = 0.1」 대입이 이 꼴이다. 함수 인자와 그 기본값은 줄 맨 앞에 따로 서 있어도 블록 맨 위 대입이 아니다.
+    넘길지는 rebind_errors 가 그 줄의 글까지 보고 정한다."""
+    top = {id(n) for n in tree.body if isinstance(n, ast.Assign) and len(n.targets) == 1
+           and isinstance(n.targets[0], ast.Name) and n.targets[0].id == name}
     found = []
 
     def base(t):        # name[0], name.x, *name 의 맨 앞 이름
@@ -411,7 +426,7 @@ def name_writes(tree, name):
                 or isinstance(func, ast.Attribute) and func.attr in LIST_MUTATORS and named(func.value)
                 or func is not None and getattr(func, 'attr', getattr(func, 'id', None)) == 'shuffle'
                 and bool(node.args) and named(node.args[0])):
-            found.append(line)
+            found.append((line, id(node) in top))
         for child in ast.iter_child_nodes(node):
             visit(child, line)
 
@@ -419,12 +434,29 @@ def name_writes(tree, name):
     return sorted(set(found))
 
 
+def alias_lines(tree, name):
+    """python 블록 하나의 구문 트리에서 name 이 가리키는 목록을 다른 이름에 그대로 묶는 줄의 번호 목록(블록의 첫 줄이 1).
+    오른쪽이 name 하나뿐인 =, 꼴 표시가 붙은 대입, := 이다(pool = COPY_POOL, pool: list = COPY_POOL, (pool := COPY_POOL)).
+    그 이름으로 pool.sort() 처럼 고치면 name_writes 가 보지 못하기 때문이다. 튜플이나 다른 목록에 넣는 것, for 와 함수
+    인자와 기본값으로 묶는 것은 세지 않는다."""
+    return sorted({node.lineno for node in ast.walk(tree)
+                   if isinstance(node, (ast.Assign, ast.AnnAssign, ast.NamedExpr))
+                   and isinstance(node.value, ast.Name) and node.value.id == name})
+
+
+def head_line(name, line, beta):
+    """블록 맨 위 대입인 줄 line 을 넘겨도 되는가. COPY_POOL 과 PREF_PAIRS 는 끝 공백을 뗀 글이 「name = [」 인 머리 줄이고,
+    BETA 는 이 파일의 BETA 줄(beta)과 바이트까지 같은 줄이다."""
+    return line == beta if name == 'BETA' else line.rstrip() == name + ' = ['
+
+
 def rebind_errors(path, text, beta):
-    """POSTS 의 글 하나의 python 블록에서 COMPARED 의 이름을 리터럴 밖에서 다시 대입하거나 고치는 줄을 찾는다(5번).
-    (틀린 곳 목록, 본 블록 수). 줄 맨 앞에서 시작해 끝 공백을 뗀 글이 「COPY_POOL = [」 나 「PREF_PAIRS = [」 하나인 줄만
-    여러 줄 리터럴의 첫 줄로 보고 넘긴다. 그 리터럴이 이 파일의 것과 같은지는 2번의 글자 대조가 본다. BETA 는 이 파일의
-    BETA 줄(beta)과 바이트까지 같은 줄만 넘긴다. 들여 쓴 머리 줄, 「PREF_PAIRS = [p for p in PREF_PAIRS if …]」 처럼
-    한 줄로 다시 대입하는 줄, 함수 안의 대입은 넘기지 않는다."""
+    """POSTS 의 글 하나의 python 블록에서 COMPARED 의 이름을 리터럴 밖에서 다시 대입하거나 고치는 줄과, LISTS 의 목록을
+    다른 이름에 그대로 묶는 줄을 찾는다(5번). (틀린 곳 목록, 본 블록 수).
+    넘기는 줄은 name_writes 가 블록 맨 위 대입으로 센 자리 가운데 head_line 이 맞다고 본 줄뿐이다. 곧 끝 공백을 뗀 글이
+    「COPY_POOL = [」 나 「PREF_PAIRS = [」 인 여러 줄 리터럴의 첫 줄과, 이 파일의 BETA 줄(beta)과 바이트까지 같은 줄이다.
+    그 리터럴이 이 파일의 것과 같은지는 2번의 글자 대조가 본다. 들여 쓴 머리 줄, 「PREF_PAIRS = [p for p in PREF_PAIRS
+    if …]」 처럼 한 줄로 다시 대입하는 줄, 함수 안의 대입, 줄 맨 앞에 따로 선 함수 인자와 그 기본값은 넘기지 않는다."""
     out, seen = [], 0
     for i, m in enumerate(python_blocks(text), 1):
         seen += 1
@@ -438,18 +470,25 @@ def rebind_errors(path, text, beta):
                            % (path, i, first, ', '.join(names)))
             continue
         lines = code.split('\n')
+
+        def shown(n):
+            line = lines[n - 1].strip()
+            return line if len(line) <= 80 else line[:80] + '…'
+
         for name in COMPARED:
-            for n in name_writes(tree, name):
-                line = lines[n - 1]
-                if (line == beta) if name == 'BETA' else (line.rstrip() == name + ' = ['):
-                    continue
-                if name == 'BETA':
-                    guide = 'β 를 바꾸려면 scripts/gen-training-data.py 의 「%s」 줄을 고치고, 다른 β 는 beta 같은 새 이름으로 둡니다' % beta
-                else:
-                    guide = '값을 바꾸려면 scripts/gen-training-data.py 의 리터럴을 고치고, 고르거나 바꾼 목록은 새 이름에 담습니다'
-                shown = line.strip() if len(line.strip()) <= 80 else line.strip()[:80] + '…'
+            bad = sorted({n for n, top in name_writes(tree, name) if not (top and head_line(name, lines[n - 1], beta))})
+            if name == 'BETA':
+                guide = 'β 를 바꾸려면 scripts/gen-training-data.py 의 「%s」 줄을 고치고, 다른 β 는 beta 같은 새 이름으로 둡니다' % beta
+            else:
+                guide = '값을 바꾸려면 scripts/gen-training-data.py 의 리터럴을 고치고, 고르거나 바꾼 목록은 새 이름에 담습니다'
+            for n in bad:
                 out.append('%s: %d번째 줄(파이썬 %d번째 블록)이 리터럴 밖에서 %s 의 값을 다시 대입하거나 고칩니다 (「%s」). %s'
-                           % (path, first + n - 1, i, name, shown, guide))
+                           % (path, first + n - 1, i, name, shown(n), guide))
+            for n in (alias_lines(tree, name) if name in LISTS else []):
+                if n not in bad:
+                    out.append('%s: %d번째 줄(파이썬 %d번째 블록)이 %s 의 목록을 다른 이름에 그대로 묶습니다 (「%s」). '
+                               '그 이름으로 고치면 %s 도 바뀝니다. 다른 이름이 필요하면 list(%s) 처럼 복사한 새 목록에 담습니다'
+                               % (path, first + n - 1, i, name, shown(n), name, name))
     return out, seen
 
 
@@ -486,7 +525,7 @@ def check():
             line, a, b = first_char_diff(on_disk.decode('utf-8', 'replace'), want.decode('utf-8'))
             errors.append('%s 에 지금 생성한 글과 다른 글자가 있습니다 (%d번째 줄, 파일 「%s」, 생성기 「%s」). '
                           'python3 scripts/gen-training-data.py --write 로 다시 씁니다' % (path, line, a, b))
-    # 2) 등록한 글의 두 리터럴, 5) 리터럴 밖에서 세 이름을 바꾸는 줄
+    # 2) 등록한 글의 두 리터럴, 5) 리터럴 밖에서 세 이름을 바꾸는 줄과 두 목록을 다른 이름에 그대로 묶는 줄
     beta = beta_line()
     for path in POSTS:
         try:

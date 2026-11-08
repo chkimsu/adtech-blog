@@ -349,7 +349,7 @@ JSON_SCHEMA = {
     'additionalProperties': False,
 }
 
-# 2단계: output_config 의 format 에 스키마를 실어 보낸다
+# 2단계: output_config 의 format 에 스키마를 담아 보낸다
 # SYSTEM 은 앞 블록의 시스템 메시지다. 모델 이름은 문서의 예시에 적힌 것이다.
 # 이 블로그에는 API 키가 없어 이 블록은 돌리지 않는다.
 client = anthropic.Anthropic()
@@ -375,7 +375,7 @@ else:
 
 보장에는 예외가 있다고 문서는 적었습니다. stop_reason 이 refusal 이면 거절하는 글이 스키마보다 앞섭니다. max_tokens 이면 답이 길이 상한에서 잘려 스키마와 맞지 않을 수 있습니다. 그래서 발췌의 3단계는 stop_reason 부터 보고, 그 두 경우를 review 로 보냅니다.
 
-문서는 글자 enum 값의 대소문자도 보장하지 않는다고 적었습니다. supported 가 Supported 로 오면, 이 글의 `validate` 는 enum 밖 값으로 봅니다. 문서는 enum 값을 대소문자 없이 견주라고 권합니다. 숫자의 최솟값 같은 제약은 스키마에 적을 수 없고, 적으면 오류가 난다고도 적었습니다. 그래서 「나이는 0 이상」 같은 규칙은 코드가 따로 봅니다.
+문서는 글자 enum 값의 대소문자도 보장하지 않는다고 적었습니다. supported 가 Supported 로 오면, 이 글의 `validate` 는 enum 밖 값으로 봅니다. 문서는 enum 값을 대소문자 없이 비교하라고 권합니다. 숫자의 최솟값 같은 제약은 스키마에 적을 수 없고, 적으면 오류가 난다고도 적었습니다. 그래서 「나이는 0 이상」 같은 규칙은 코드가 따로 봅니다.
 
 꼴이 맞아도 값의 뜻은 틀릴 수 있습니다. 「건강 상태로 고른 사람」에 supported 와 none 을 적은 답도 스키마로는 맞습니다. 자연어 오디언스 편에도 일부 지원이라면서 reason_code 를 none 으로 적은 답이 스키마 검사를 지났습니다. OpenAI 문서도 Structured Outputs 의 답에 실수가 남을 수 있다고 적었습니다.
 
@@ -421,7 +421,7 @@ else:
 
 ## 더 깊이 보기
 
-:::deep 세 자리의 스키마를 견줍니다
+:::deep 세 자리의 스키마를 비교합니다
 같은 네 필드를 세 자리가 다른 꼴로 적습니다. 이 글의 `SCHEMA` 는 파이썬 사전입니다. 자연어 오디언스 편의 `read()` 는 같은 규칙을 if 문으로 적었습니다. 발췌의 `JSON_SCHEMA` 는 JSON Schema 꼴이라 상용 API 에 그대로 넘깁니다. type, enum, required 같은 낱말의 뜻은 JSON Schema 의 검증 명세에 있습니다.
 
 | 무엇을 보나 | 이 글의 SCHEMA 와 validate | 자연어 오디언스 편의 read() | 발췌의 JSON_SCHEMA |

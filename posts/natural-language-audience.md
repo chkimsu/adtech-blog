@@ -97,7 +97,7 @@
  "reason_code": "exposure_history_unavailable"}
 ```
 
-조건 하나는 field, op, value 셋으로 적습니다. field 에는 필드 10개 가운데 하나의 이름이 들어갑니다. op 에는 크거나 같다(>=), 작거나 같다(<=), 같다(==) 가운데 하나가 들어가고, value 는 견줄 값입니다. 러닝화 요청의 조건은 30일 동안 「러닝화」를 한 번 이상 검색한 회원입니다. 문턱 1 은 문장에 없는 값이라 LLM 이 고른 것입니다.
+조건 하나는 field, op, value 셋으로 적습니다. field 에는 필드 10개 가운데 하나의 이름이 들어갑니다. op 에는 크거나 같다(>=), 작거나 같다(<=), 같다(==) 가운데 하나가 들어가고, value 는 비교할 값입니다. 러닝화 요청의 조건은 30일 동안 「러닝화」를 한 번 이상 검색한 회원입니다. 문턱 1 은 문장에 없는 값이라 LLM 이 고른 것입니다.
 
 「살 사람」은 지난 30일에 한 일이 아니라 앞으로 할 일에 대한 말입니다. 그런데 필드에는 지난 30일의 횟수만 있습니다. 그래서 시스템 메시지에 「구매 의향이나 관심처럼 마음을 말하는 표현은 그 마음이 드러나는 행동 필드의 조건으로 옮긴다」고 적었습니다. 기준 답은 이 줄대로 「살 사람」을 「검색한 사람」으로 옮겼습니다. 그렇게 바꾼 조건이 실제로 살 사람을 고르는지는 LLM 도 코드도 확인하지 않습니다.
 
@@ -119,7 +119,7 @@
 아래 코드의 1단계가 1절의 표본을 만들고, 2단계가 기록의 답 19개를 스키마대로 읽습니다. 스키마는 JSON 에 어떤 이름의 필드가 어떤 값으로 들어가는지 정해 둔 꼴입니다. 필드가 빠지거나 enum 밖의 낱말이 오면 그 답은 읽지 못한 답으로 셉니다. 3단계가 쿼리를 만들어 세고, 4~6단계는 5절과 6절에서 씁니다.
 
 ```python
-# 하는 일: 기록한 LLM 답 19개를 스키마대로 읽고, 조건을 표본 2,000명에 대어 명단 크기를 센 뒤, 다섯 번 더 보낸 답과 thinking 을 켠 답을 견주고 응답을 고른다.
+# 하는 일: 기록한 LLM 답 19개를 스키마대로 읽고, 조건을 표본 2,000명에 대어 명단 크기를 센 뒤, 다섯 번 더 보낸 답과 thinking 을 켠 답을 비교하고 응답을 고른다.
 # 기록 data/llm-records/natural-language-audience.json 에서 옮김
 import json
 import random
@@ -315,8 +315,8 @@ for k in ('r1', 'r2', 'r2|on|1', 'r3'):
     steps = [size(a['conditions'][:j + 1]) for j in range(len(a['conditions']))]
     print(f'    조건을 하나씩 더하면 {len(rows):,}명 → ' + ' → '.join(f'{x:,}명' for x in steps))
 
-# 4단계: temperature 0.7 로 다섯 번 더 보낸 답을 기준 답과 견준다
-# 조건은 (field, op, value) 묶음의 집합으로 견주어 차례는 보지 않는다. 판정이 바뀐 답과 명단 크기도 센다.
+# 4단계: temperature 0.7 로 다섯 번 더 보낸 답을 기준 답과 비교한다
+# 조건은 (field, op, value) 묶음의 집합으로 비교해 차례는 보지 않는다. 판정이 바뀐 답과 명단 크기도 센다.
 def cond_set(a):
     return frozenset((c['field'], c['op'], c['value']) for c in a['conditions'])
 
@@ -326,7 +326,7 @@ for k in REQUESTS:
     runs = {run: answers[f'{k}|off|{run}'] for run in range(2, 7)}
     readable = {run: a for run, a in runs.items() if a is not None}
     if base is None:
-        print(f'{k}: 기준 답을 읽지 못해 견주지 않는다')
+        print(f'{k}: 기준 답을 읽지 못해 비교하지 않는다')
         continue
     changed = sum(cond_set(a) != cond_set(base) for a in readable.values())
     flipped = sum(a['verdict'] != base['verdict'] for a in readable.values())
@@ -335,12 +335,12 @@ for k in REQUESTS:
         n = f'{size(a["conditions"]):,}명' if countable(a) else '명단 없음'
         print(f'    run {run}: {a["verdict"]}, {a["reason_code"]}, [{show(a["conditions"])}], 빠진 부분 {a["unsupported_parts"]}, {n}')
 
-# 5단계: r2 를 thinking 을 켜고 물은 답과 견준다
+# 5단계: r2 를 thinking 을 켜고 물은 답과 비교한다
 # thinking 으로 쓴 풀이의 토큰은 출력 토큰에 들어 있다. 둘 다 한 번 기록한 값이다.
 off, on = answers['r2'], answers['r2|on|1']
 partial = [a for a in (answers[f'r2|off|{run}'] for run in range(2, 7)) if a is not None and a['verdict'] == 'partial']
 if off is None or on is None:
-    print('r2 의 기준 답이나 thinking 을 켠 답을 읽지 못해 판정을 견주지 않는다')
+    print('r2 의 기준 답이나 thinking 을 켠 답을 읽지 못해 판정을 비교하지 않는다')
 else:
     same = [cond_set(on) == cond_set(a) for a in partial]
     print(f'thinking 끔 {off["verdict"]}, 켬 {on["verdict"]}. 켠 답의 조건 묶음이 0.7 의 일부 지원 답 {len(same)}개와 같은가 {same}')
@@ -603,7 +603,7 @@ Structured outputs 처럼 모델이 토큰을 고르는 단계에서 꼴을 강�
 :::deep 흔들림을 잰 방법
 기준 답은 temperature 0, seed 7 로 한 번씩 받았습니다. 반복은 기록 도구의 repeat_subset 으로 세 요청을 다섯 번씩 더 보냈습니다. temperature 는 0.7 이고 seed 는 7 + run 이라, run 2 부터 6 까지 seed 9~13 이 쓰였습니다. 프롬프트 파일의 맨 위 options 에 seed 를 적으면 이 묶음이 그 seed 를 물려받아 다섯 번이 같은 seed 로 나갑니다. 그래서 맨 위에는 temperature 만 적었습니다.
 
-조건이 바뀌었는지는 조건마다 field, op, value 세 값을 묶은 뒤 집합으로 만들어 기준 답의 집합과 견줍니다. 집합이라 차례는 보지 않아서, 캠핑 요청의 run 4 와 run 5 는 차례가 달라도 같은 묶음입니다. 판정은 따로 견주었고, 그래서 러닝화 요청은 조건이 바뀐 답 2개와 판정이 바뀐 답 3개가 따로 나옵니다.
+조건이 바뀌었는지는 조건마다 field, op, value 세 값을 묶은 뒤 집합으로 만들어 기준 답의 집합과 비교합니다. 집합이라 차례는 보지 않아서, 캠핑 요청의 run 4 와 run 5 는 차례가 달라도 같은 묶음입니다. 판정은 따로 비교했고, 그래서 러닝화 요청은 조건이 바뀐 답 2개와 판정이 바뀐 답 3개가 따로 나옵니다.
 
 thinking 을 켠 답은 캠핑 요청에만 temperature 0, seed 7 로 한 번 받았습니다. Ollama 의 응답에는 thinking 토큰 수가 따로 없어서, 풀이가 든 출력 토큰 수와 풀이의 글자 수를 적었습니다. 풀이 글 자체는 기록에 두지 않았습니다. 이 기록으로 말할 수 없는 것도 셋입니다. 다섯 번보다 많이 보냈을 때의 비율, 다른 temperature 에서의 흔들림, thinking 을 켠 답의 흔들림입니다.
 :::

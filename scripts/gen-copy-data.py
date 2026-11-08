@@ -9,7 +9,7 @@
                                                        -score 와 -pairs 기록을 읽는다)는 그 기록이 없거나 쓸 수 없으면 까닭을 알리고 1 로 끝난다.
                                                        -cascade 가 고른 것이 없으면 아무것도 찍지 않고 1 로 끝난다. 위처럼 > 로 받으면
                                                        셸이 빈 파일을 남기니 지운다. 남은 빈 파일은 --check 가 「만들지 않아야 하는 파일이 있습니다」로 잡는다
-  python3 scripts/gen-copy-data.py --check             자산 10개의 꼴과 사람 라벨(HUMAN)의 꼴을 본 뒤 아래 일곱을 대조하고 몇 건 대조했는지 찍는다
+  python3 scripts/gen-copy-data.py --check             자산 10개의 꼴과 사람 라벨(HUMAN)의 꼴을 본 뒤 아래 여덟을 대조하고 몇 건 대조했는지 찍는다
                                                        0) 이 생성기의 슬러그(grounded-ad-copy-generation, generated-copy-judging-system)로
                                                           시작하는 프롬프트 파일과 기록 파일이 모두 PROMPTS 에 등록한 슬러그인가. 아니면 실패다
                                                        1) PROMPTS 의 프롬프트 파일마다 파일 전체(system, think, repeat, repeat_subset,
@@ -29,6 +29,18 @@
                                                        6) 판정 체계 글(posts/generated-copy-judging-system.md)의 파이썬 블록이 JUDGE_SHARED 의 이름
                                                           (사람 라벨 리터럴 HUMAN, 답 읽기, 쌍 고르기, 캐스케이드 고르기)을 모두 정의하고, 정의마다
                                                           줄 전체가 이 파일의 것과 같은가 (글이 없으면 실패)
+                                                       7) 3)~6) 의 글의 파이썬 블록이 정의 밖에서 지킬 이름을 바꾸지 않는가. 지킬 이름은 3) 과 5) 의
+                                                          글에서는 ASSETS 와 그 글이 정의한 SHARED 의 이름이고, 6) 의 글에서는 JUDGE_SHARED 의 이름이다.
+                                                          정의는 대조가 글자로 보는 맨 위 문장(def 와, 대상이 하나인 = 대입)이라 몸까지 넘기고, ASSETS 는
+                                                          줄 맨 앞의 「ASSETS = [」 줄에서 시작하는 리터럴 문장 하나만 정의로 친다. 블록을 구문 트리로 읽어
+                                                          모듈 수준(맨 위와 그 안의 if, for, while, try, with)의 =, +=, :=, 꼴 표시가 붙은 대입, for 와
+                                                          with 의 대상, import, del, def, class, except 의 이름과, 함수 안에서 global 로 적은 뒤의 묶기를
+                                                          센다. 첨자와 속성 대입, del 첨자, 고치는 메서드(MUTATORS 의 append, update, add 같은 것) 부르기는
+                                                          그 자리의 이름이 모듈의 것일 때 센다. 함수 안에서 인자이거나 global 없이 묶은 이름은 그 함수의
+                                                          지역 이름이라 묶기도 고치기도 세지 않는다. 읽지 못한 블록에 지킬 이름이 있으면 실패다.
+                                                          이 검사가 보지 못하는 길도 있다. 다른 이름에 묶어 그 이름으로 고치는 것(별칭), 함수 인자로 넘겨
+                                                          그 안에서 고치는 것(rng.shuffle(ASSETS) 같은 것), globals() 로 고치는 것, MUTATORS 에 없는
+                                                          이름의 메서드(__setitem__, __iadd__ 같은 것)로 고치는 것이다. 이런 줄은 글을 읽는 사람이 막는다
 
 자산 하나는 (id, 자산 텍스트) 이다. x01 은 서연 씨 러닝화의 자산 텍스트로, scripts/gen-ads-data.py 의 ASSET_RUNNING 을 읽어 온다(옮겨 적지 않는다).
 x02~x08 은 이 트랙의 가상 광고주 상품이고 브랜드는 가상 이름(모노웍스, 숲결)만 쓴다. x09 와 x10 은 상품의 사실이 없는 얇은 자산이다.
@@ -236,6 +248,13 @@ BODY_WORDS = ('건강', '통증', '무릎', '관절', '부상', '체중', '다�
               '발등', '근육', '혈액', '피부', '수면', '칼로리', '심박', '허리', '어깨')
 FENCE = re.compile(r'^```([^\n`]*)\n(.*?)^```[ \t]*$', re.M | re.S)    # scripts/check-code-blocks.js 의 FENCE 와 같은 꼴
 LITERAL = re.compile(r'^ASSETS = \[\n.*?^\]$', re.M | re.S)
+# 모듈의 이름이 가리키는 객체를 그 자리에서 고치는 메서드(목록, 사전, 집합의 것). ASSETS.append(...) 처럼 부르면 정의한 값이 바뀐다.
+MUTATORS = ('append', 'extend', 'insert', 'remove', 'pop', 'clear', 'sort', 'reverse', 'update', 'setdefault', 'popitem',
+            'add', 'discard')
+# 증강 대입의 연산자. 정의 밖에서 바꾸는 줄의 꼴을 「+= 대입」 처럼 적는다.
+AUG_OPS = {ast.Add: '+=', ast.Sub: '-=', ast.Mult: '*=', ast.MatMult: '@=', ast.Div: '/=', ast.FloorDiv: '//=',
+           ast.Mod: '%=', ast.Pow: '**=', ast.LShift: '<<=', ast.RShift: '>>=', ast.BitOr: '|=', ast.BitXor: '^=',
+           ast.BitAnd: '&='}
 
 
 def rel(path):
@@ -293,19 +312,25 @@ def literal_source():
     return found.group(0)
 
 
+def defined_name(node):
+    """맨 위 문장 하나가 정의하는 이름. def 와, 대상이 하나인 = 대입(대상이 이름이거나 이름[...])이 정의이고, 그 밖은 None 이다.
+    definitions 가 이 이름으로 정의를 모으고, rebind_errors 는 이 문장을 대조하는 정의로 보고 넘긴다."""
+    if isinstance(node, ast.FunctionDef):
+        return node.name
+    if isinstance(node, ast.Assign) and len(node.targets) == 1:
+        target = node.targets[0]
+        target = target.value if isinstance(target, ast.Subscript) else target
+        return target.id if isinstance(target, ast.Name) else None
+    return None
+
+
 def definitions(src):
     """맨 위 수준에서 정의한 이름마다 그 정의의 글. 문장의 줄 전체(끝 줄의 주석까지)이고, 한 이름을 여러 문장이 정의하면
     나온 차례로 잇는다. scripts/gen-ads-data.py 의 definitions 와 같은 꼴이다. 파이썬으로 읽지 못하면 SyntaxError 가 난다."""
     lines = src.split('\n')
     out = {}
     for node in ast.parse(src).body:
-        name = None
-        if isinstance(node, ast.FunctionDef):
-            name = node.name
-        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
-            target = node.targets[0]
-            target = target.value if isinstance(target, ast.Subscript) else target
-            name = target.id if isinstance(target, ast.Name) else None
+        name = defined_name(node)
         if name:
             out.setdefault(name, []).append('\n'.join(lines[node.lineno - 1:node.end_lineno]))
     return {name: '\n'.join(parts) for name, parts in out.items()}
@@ -604,6 +629,167 @@ def shared_errors(path, text, wants, required):
     return out, done
 
 
+def defined_names(text):
+    """글의 python 블록이 맨 위 수준에서 정의한 이름(definitions 의 키)의 집합. 파이썬으로 읽지 못한 블록은 건너뛴다."""
+    out = set()
+    for m in FENCE.finditer(text):
+        if m.group(1).strip() == 'python':
+            try:
+                out.update(definitions(m.group(2)))
+            except SyntaxError:
+                pass
+    return out
+
+
+def name_writes(tree, name, skip=()):
+    """python 블록 하나의 구문 트리에서 모듈의 name 을 바꾸는 자리의 목록. 자리마다 (줄 번호, 꼴) 이고, 줄 번호는 블록의 첫 줄이 1 이다.
+    scripts/gen-training-data.py 의 name_writes 처럼 노드의 꼴을 보되 범위를 따진다. 모듈 수준(맨 위와 그 안의 if, for, while, try,
+    with)에서 name 을 묶는 것(=, +=, :=, 꼴 표시가 붙은 대입, for 와 with 의 대상, import, del, def, class, except 의 이름)과, 함수나
+    class 안에서 global name 을 적은 뒤의 묶기를 센다. name[...] = 와 name.x = 같은 대입, del name[...], MUTATORS 의 메서드 부르기는
+    그 자리의 name 이 모듈의 이름일 때 센다. 함수와 lambda 의 인자, 그 안에서 global 없이 묶은 이름은 지역 이름이라 묶기도 고치기도
+    세지 않고, 그 안쪽 함수에서 고쳐도 세지 않는다. 컴프리헨션의 for 가 묶는 이름과 class 몸에서 묶은 이름도 그 안의 이름이다.
+    skip 은 블록 맨 위 문장 가운데 정의로 대조하는 문장의 id 이고, 그 문장은 몸까지 보지 않는다."""
+    events, local, declared = [], set(), set()      # (줄, 꼴, 범위 사슬, 묶기인가), name 이 지역 이름인 범위, global 로 적은 범위
+
+    def base(t):        # name[0], name.x, name[0].x 의 맨 앞
+        while isinstance(t, (ast.Subscript, ast.Attribute)):
+            t = t.value
+        return t
+
+    def leaves(t):      # (a, name) = ... 와 *name 처럼 묶어 대입하면 하나씩 본다
+        if isinstance(t, (ast.Tuple, ast.List)):
+            for e in t.elts:
+                yield from leaves(e)
+        else:
+            yield t.value if isinstance(t, ast.Starred) else t
+
+    def named(t):
+        return isinstance(t, ast.Name) and t.id == name
+
+    def targets(node):  # node 가 값을 묶거나 지우는 대상과 그 꼴
+        if isinstance(node, ast.Assign):
+            return [(t, '= 대입') for t in node.targets]
+        if isinstance(node, ast.AugAssign):
+            return [(node.target, AUG_OPS[type(node.op)] + ' 대입')]
+        if isinstance(node, ast.AnnAssign) and node.value is not None:
+            return [(node.target, '꼴 표시가 붙은 대입')]
+        if isinstance(node, (ast.For, ast.AsyncFor)):
+            return [(node.target, 'for 의 대상')]
+        if isinstance(node, ast.withitem) and node.optional_vars is not None:
+            return [(node.optional_vars, 'with 의 대상')]
+        if isinstance(node, ast.NamedExpr):
+            return [(node.target, ':= 대입')]
+        if isinstance(node, ast.Delete):
+            return [(t, 'del') for t in node.targets]
+        return []
+
+    def bind(line, form, chain):    # name 을 묶는다. 함수, class, 컴프리헨션 안이면 그 범위의 이름이 된다
+        if chain:
+            local.add(chain[-1][0])
+        events.append((line, form, chain, True))
+
+    def walk(node, line, chain):    # chain 은 지금 자리를 감싼 범위의 (id, 갈래) 이고, 빈 튜플이면 모듈 수준이다
+        if id(node) in skip:
+            return
+        line = getattr(node, 'lineno', line)    # withitem 과 alias 는 줄 번호가 없어 그 문장의 줄을 쓴다
+        if isinstance(node, (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)):
+            inner = chain + ((id(node), 'comp'),)
+            for k, gen in enumerate(node.generators):   # 맨 앞 for 의 반복 대상만 바깥 범위에서 돈다
+                if any(named(leaf) for leaf in leaves(gen.target)):
+                    local.add(id(node))
+                walk(gen.iter, line, inner if k else chain)
+                for cond in gen.ifs:
+                    walk(cond, line, inner)
+            for child in ast.iter_child_nodes(node):
+                if not isinstance(child, ast.comprehension):
+                    walk(child, line, inner)
+            return
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            kind = 'class' if isinstance(node, ast.ClassDef) else 'function'
+            if getattr(node, 'name', None) == name:
+                bind(line, kind if kind == 'class' else 'def', chain)
+            if kind == 'function':
+                a = node.args
+                if any(x.arg == name for x in a.posonlyargs + a.args + a.kwonlyargs + [a.vararg, a.kwarg] if x):
+                    local.add(id(node))
+            body = node.body if isinstance(node.body, list) else [node.body]
+            for child in ast.iter_child_nodes(node):    # 장식, 기본값, 꼴 표시, 부모 class 는 바깥 범위에서 돈다
+                walk(child, line, chain + ((id(node), kind),) if any(child is b for b in body) else chain)
+            return
+        if isinstance(node, (ast.Global, ast.Nonlocal)) and name in node.names and chain:
+            (declared if isinstance(node, ast.Global) else local).add(chain[-1][0])
+        for target, form in targets(node):
+            for leaf in leaves(target):
+                if named(leaf):
+                    scope = chain
+                    while isinstance(node, ast.NamedExpr) and scope and scope[-1][1] == 'comp':
+                        scope = scope[:-1]          # := 는 컴프리헨션 밖의 범위에 묶는다
+                    bind(line, form, scope)
+                elif isinstance(leaf, (ast.Subscript, ast.Attribute)) and named(base(leaf)):
+                    part = '첨자' if isinstance(leaf, ast.Subscript) else '속성'
+                    events.append((line, 'del ' + part if form == 'del' else part + ' 대입', chain, False))
+        func = node.func if isinstance(node, ast.Call) else None
+        if isinstance(func, ast.Attribute) and func.attr in MUTATORS and named(base(func.value)):
+            events.append((line, func.attr + ' 부르기', chain, False))
+        if isinstance(node, ast.alias) and (node.asname or node.name.split('.')[0]) == name:
+            bind(line, 'import', chain)
+        if isinstance(node, ast.ExceptHandler) and node.name == name:
+            bind(line, 'except 의 이름', chain)
+        for child in ast.iter_child_nodes(node):
+            walk(child, line, chain)
+
+    walk(tree, 0, ())
+    found = set()
+    for line, form, chain, binds in events:
+        if binds:           # 모듈 수준의 묶기와, global 로 적은 범위 안의 묶기만 모듈의 name 을 바꾼다
+            if not chain or chain[-1][0] in declared:
+                found.add((line, 'global 뒤 ' + form if chain else form))
+            continue
+        scope = None        # 고치는 자리의 name 이 어느 범위의 이름인지 안에서 바깥으로 찾는다. None 이면 모듈의 이름이다
+        for k in range(len(chain) - 1, -1, -1):
+            if chain[k][1] == 'class' and k < len(chain) - 1:
+                continue    # class 몸의 이름은 그 안의 함수와 컴프리헨션에서 보이지 않는다
+            if chain[k][0] in declared or chain[k][0] in local:
+                scope = chain[k][0]
+                break
+        if scope is None or scope in declared:
+            found.add((line, form))
+    return sorted(found)
+
+
+def rebind_errors(slug, text, names) -> tuple[list[str], int]:
+    """posts/<slug>.md 의 python 블록에서 names 의 이름을 정의 밖에서 바꾸는 줄을 찾는다(7번). (틀린 줄 목록, 본 python 블록 수).
+    정의는 대조가 글자로 보는 맨 위 문장이라 몸까지 넘긴다. defined_name 이 names 의 이름을 돌려주는 문장(def 와, 대상이 하나인
+    = 대입)이고, ASSETS 만은 줄 맨 앞의 「ASSETS = [」 줄에서 시작하는 리터럴 문장이다. 3) 의 글자 대조는 그 리터럴만 보므로
+    「ASSETS = ASSETS[:5]」 같은 줄은 정의가 아니다. 나머지 자리는 name_writes 로 센다. 파이썬으로 읽지 못한 블록은 names 의
+    이름이 그 안에 있으면 shared_errors 처럼 실패로 알린다."""
+    out, seen = [], 0
+    for i, m in enumerate((m for m in FENCE.finditer(text) if m.group(1).strip() == 'python'), 1):
+        seen += 1
+        code = m.group(2)
+        try:
+            tree = ast.parse(code)
+        except SyntaxError:
+            hit = [n for n in names if re.search(r'\b%s\b' % n, code)]
+            if hit:
+                out.append('posts/%s.md: 파이썬 %d번째 블록을 파이썬으로 읽지 못해 정의 밖에서 바꾸는 줄을 보지 못했습니다 (이름: %s)'
+                           % (slug, i, ', '.join(hit)))
+            continue
+        lines = code.split('\n')
+        skip = {id(node) for node in tree.body if defined_name(node) in names
+                and (defined_name(node) != 'ASSETS' or lines[node.lineno - 1].rstrip() == 'ASSETS = [')}
+        found = {}
+        for k, name in enumerate(names):
+            for n, form in name_writes(tree, name, skip):
+                found.setdefault((n, k), []).append(form)
+        for (n, k), forms in sorted(found.items()):
+            shown = lines[n - 1].strip()
+            out.append('posts/%s.md: 파이썬 %d번째 블록 %d번째 줄이 %s 을 정의 밖에서 바꿉니다(%s). 그 줄 「%s」 대신 이 파일의 정의를 '
+                       '고친 뒤 글에 옮기거나, 바꾼 값을 새 이름에 담습니다'
+                       % (slug, i, n, names[k], ', '.join(forms), shown if len(shown) <= 80 else shown[:80] + '…'))
+    return out, seen
+
+
 def check():
     errors = asset_errors() + human_errors()
     done = Counter()
@@ -656,6 +842,7 @@ def check():
     mine = definitions(read_text(os.path.abspath(__file__)))
     ads = definitions(read_text(ADS_TOOL))['ASSET_RUNNING']
     gate_wants = [(k, mine[k], '이 파일의') for k in SHARED] + [('ASSET_RUNNING', ads, 'scripts/gen-ads-data.py 의')]
+    guarded = {}    # 7) 에서 볼 글마다 (글, 지킬 이름)
     for path, required in [(POST, True)] + [(p, False) for p in LATER]:
         try:
             text = read_text(path)
@@ -672,6 +859,8 @@ def check():
         wrong, compared = shared_errors(path, text, gate_wants, required)
         errors += wrong
         done['글의 공용 정의'] += compared
+        defined = defined_names(text)
+        guarded[path] = (text, ['ASSETS'] + [k for k in SHARED if k in defined])
     # 6) 판정 체계 글의 공용 정의. 사람 라벨 리터럴(HUMAN)도 이름 하나로 대조한다
     try:
         text = read_text(JUDGE_POST)
@@ -681,15 +870,22 @@ def check():
         wrong, compared = shared_errors(JUDGE_POST, text, [(k, mine[k], '이 파일의') for k in JUDGE_SHARED], True)
         errors += wrong
         done['판정 글의 공용 정의'] += compared
+        guarded.setdefault(JUDGE_POST, (text, []))[1].extend(JUDGE_SHARED)
+    # 7) 3)~6) 의 글이 정의 밖에서 지킬 이름을 바꾸는 줄. 판정 체계 글은 5) 와 6) 에 다 들어 이름을 합쳐 한 번 본다
+    for path, (text, names) in guarded.items():
+        wrong, seen = rebind_errors(os.path.splitext(os.path.basename(path))[0], text, names)
+        errors += wrong
+        done['python 블록'] += seen
     for e in errors:
         print('✗ ' + e)
     if errors:
         return 1
     parts = ['프롬프트 파일', '기록', '글의 ASSETS 리터럴', '글의 공용 정의', '판정 글의 공용 정의']
     print('✓ 자산 %d개(얇은 자산 %s)와 사람 라벨 %d개의 꼴이 맞고, 대조 %d건(%s)이 이 파일과 같습니다. '
+          'python 블록 %d개에 정의 밖에서 공용 이름을 바꾸는 줄이 없고, '
           '이 생성기의 슬러그로 시작하는 파일 %d개가 모두 등록돼 있고, 고른 것이 없어 만들지 않은 프롬프트는 %d벌입니다'
           % (len(ASSETS), ', '.join(THIN), len(HUMAN), sum(done[k] for k in parts), ', '.join('%s %d' % (k, done[k]) for k in parts),
-             done['등록을 확인한 파일'], done['고른 것이 없어 만들지 않은 프롬프트']))
+             done['python 블록'], done['등록을 확인한 파일'], done['고른 것이 없어 만들지 않은 프롬프트']))
     return 0
 
 

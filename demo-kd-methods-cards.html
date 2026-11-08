@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지식 증류 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="큰 모델의 답을 작은 모델에 옮기는 세 방법을 카드 한 장씩으로 봅니다. 교사에게 받는 것 셋, 온도가 펼친 확률, 쌍 50개로 배울 때, 서빙 100만 건의 값입니다. 질의와 광고 쌍과 교사는 모두 가상 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>지식 증류 카드 네 장</h1>
+      <p>큰 모델의 답을 작은 모델에 옮기는 세 방법을 한 장씩 봅니다. 교사에게 받는 것 셋, 온도가 펼친 확률, 쌍 50개로 배울 때의 일치율, 서빙 100만 건의 값입니다. 질의와 광고 쌍 2,000개와 가상 교사는 설명을 위해 만든 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 교사의 출력</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 학생의 답</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 서버와 값</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 학생이 못 보는 피처</span>
+        <span class="tg-chip"><i class="n"></i>점선 = 온도와 손실</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="three"><h2>THREE TARGETS</h2><p class="tg-k">교사에게 받는 것 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 큰 모델이 쌍 하나에 내놓는 것 가운데, 작은 모델이 무엇을 따라 배우느냐로 세 방법이 나뉩니다.</p><div class="tg-fig" id="kd-three"></div>
+        <p class="tg-cap">같은 쌍 1,000개에서 학생이 맞히는 것만 다릅니다. 라벨 하나, 확률 넷, 숫자 여덟입니다.</p></section>
+      <section class="tg-card" data-card="soft"><h2>SOFT TARGETS</h2><p class="tg-k">온도가 펼친 확률</p><p class="tg-easy"><b>쉽게 말하면</b> 교사의 점수를 온도로 나눠 확률을 고르게 펴면, 가장 큰 답 말고 다른 답에도 몫이 더 갑니다.</p><div class="tg-fig" id="kd-soft"></div>
+        <p class="tg-cap">T=1 에서 <b>0.567</b> 이던 중의 확률이 T=4 에서 <b>0.351</b> 이 되고, 상과 무관의 몫도 커집니다.</p></section>
+      <section class="tg-card" data-card="small_data"><h2>FIFTY PAIRS</h2><p class="tg-k">쌍 50개로 배울 때</p><p class="tg-easy"><b>쉽게 말하면</b> 교사에게 받은 쌍이 50개뿐일 때, 답 글자만 배운 학생이 확률이나 벡터를 배운 학생보다 덜 맞혔습니다.</p><div class="tg-fig" id="kd-small"></div>
+        <p class="tg-cap">50쌍에서 일치율은 라벨 <b>0.685</b>, 로짓 T=2 <b>0.755</b>, 임베딩 <b>0.758</b> 입니다. 1,000쌍에서는 다섯 학생이 <b>0.771~0.789</b> 입니다.</p></section>
+      <section class="tg-card" data-card="cost"><h2>SERVING COST</h2><p class="tg-k">100만 건의 값</p><p class="tg-easy"><b>쉽게 말하면</b> 학습 데이터는 큰 모델에게 한 번 받고, 날마다 들어오는 판정은 작은 모델이 서버에서 맡습니다.</p><div class="tg-fig" id="kd-cost"></div>
+        <p class="tg-cap">100만 건에 교사는 작은 상용 모델로도 <b>720,000원</b>, 학생은 CPU 서버 한 대로 <b>465원</b>입니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>증류 방법을 고를 때는</b> 세 가지를 봅니다. 교사의 확률이나 내부 벡터에 손이 닿나, 학습 쌍을 몇 개 받을 수 있나, 서빙 때 학생이 몇 건을 맡나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=knowledge-distillation">지식 증류</a> 편에 이 카드들이 절마다 들어 있습니다. 교사의 라벨로 학생을 배운 글은 <a href="post.html?id=llm-labeling-distillation">LLM 라벨링과 증류</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/kd-methods-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

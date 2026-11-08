@@ -4310,6 +4310,28 @@ window.DEMO_EDU = {
             { el: '[data-card="ledger"]', title: '끝에 남는 것', body: '보고서와 장부가 남고, 검사 스크립트와 검토자가 숫자를 다시 셉니다. 사람의 승인은 묶음 전체에 두 번이었습니다.' }
         ]
     },
+    'sft-dpo-cards': {
+        analogy: '토큰 12개짜리 모델에서 SFT 한 걸음은 rejected 도 올렸고, DPO 한 걸음은 공유 토큰 셋을 0.000 움직였다. 가상 선호 쌍 20개 가운데 d02 는 margin -0.080, 손실 0.734, 무게 0.520 이었다. 가중치 셋을 300걸음 학습하자 손실은 내내 줄었지만 통과율은 50걸음의 0.597 에서 0.008 로 떨어졌다',
+        anchor: '.tg-host',
+        embedKeep: ['.tg-grid'],
+        embedHide: ['.tg-hero', '.tg-real'],
+        explain: {
+            '.tg-card': ({ el }) => {
+                switch (el.dataset.card) {
+                    case 'sft': return '헷갈리는 것은 <strong>SFT 는 chosen 만 올리는가</strong>입니다. SFT 의 손실은 chosen 하나만 보지만, rejected 도 -12.425 에서 -12.121 로 올랐습니다. 두 카피가 쿠션, 폼, 러닝화를 함께 쓰기 때문입니다.';
+                    case 'pairs': return '헷갈리는 것은 <strong>쌍만 많으면 출처는 상관없는가</strong>입니다. 판정자 쌍 8개는 chosen 이 평균 14.4자 길어 길이를 가르칩니다. 그래서 쌍마다 출처를 적어 두고, 출처별로 무엇을 가르치는지 셉니다.';
+                    case 'loss': return '헷갈리는 것은 <strong>margin 이 양수면 정책이 chosen 을 더 좋아하는가</strong>입니다. d07 은 margin +0.170 이지만, 정책의 로그 확률은 rejected 가 -16.7 로 chosen 의 -17.4 보다 높습니다. margin 은 두 카피의 비율, 곧 참조 모델에서 움직인 양을 비교합니다.';
+                    case 'overopt': return '헷갈리는 것은 <strong>손실이 줄면 카피도 좋아지는가</strong>입니다. 손실은 300걸음 내내 줄었지만 통과율은 50걸음 뒤로 떨어졌습니다. 손실은 쌍 20개의 margin 만 보고, 쌍에 없는 c06, c07 의 확률은 보지 않습니다.';
+                    default: return '';
+                }
+            }
+        },
+        tour: [
+            { el: '.tg-legend', title: '색 넷과 점선', body: '파랑은 참조 모델과 선호 쌍, 벽돌색은 학습하는 정책, 먹색은 손실과 기울기입니다. 회색은 게이트에 걸린 카피, 점선은 게이트 조건입니다.' },
+            { el: '[data-card="sft"]', title: '가장 먼저 볼 것', body: 'SFT 는 chosen 하나를 보고, DPO 는 chosen 과 rejected 를 함께 봅니다. 두 걸음 모두 같은 시작점에서 출발합니다.', waitFor: 'click' },
+            { el: '[data-card="overopt"]', title: '끝에 남는 것', body: '손실이 가장 낮은 300걸음이 아니라, 통과율이 가장 높은 50걸음의 체크포인트로 되돌립니다.' }
+        ]
+    },
     // ==========================================
     // LLM 비용 놀이터 (입문)
     // ==========================================

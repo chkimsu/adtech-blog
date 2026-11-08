@@ -167,7 +167,7 @@ DEFAULT_PAIR = 'd02'
 DATA_FILES = ['js/training-dpo-pairs.js']
 # 두 리터럴을 글자 그대로 옮긴 글(posts/<슬러그>.md). 「COPY_POOL = [」 나 「PREF_PAIRS = [」 로 시작하는 줄이 있는 글은 모두
 # 여기 있어야 한다. --check 가 그 글의 리터럴을 대조하고 리터럴 밖에서 세 이름을 바꾸는 줄을 찾는다. 글을 쓸 때 그 글을 더한다.
-POSTS = []
+POSTS = ['posts/sft-and-dpo.md']
 
 # ---------- 여기부터는 꼴 검사, 대조, 출력이다. 글에는 옮기지 않는다. ----------
 

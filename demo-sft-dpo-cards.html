@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SFT 와 DPO 카드 네 장 — Ad Tech Blog</title>
+  <meta name="description" content="선호 쌍으로 카피 모델을 학습하는 자리를 카드 한 장씩으로 봅니다. SFT 한 걸음과 DPO 한 걸음, 선호 쌍의 출처 셋, 로그 확률 넷으로 세는 손실, 꺾이는 통과율입니다. 카피 후보와 선호 쌍과 로그 확률은 모두 가상 값입니다.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">AdTech Blog</a>
+      <div class="nav-content">
+        <div class="nav-actions">
+          <a href="posts-browse.html" class="btn-demo">Posts</a>
+          <a href="topics.html" class="btn-demo">주제별</a>
+          <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+          <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+          <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+          <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tg-hero">
+      <h1>SFT 와 DPO 카드 네 장</h1>
+      <p>선호 쌍으로 카피를 쓰는 모델을 학습하는 자리를 한 장씩 봅니다. SFT 한 걸음과 DPO 한 걸음, 선호 쌍의 출처 셋, 로그 확률 넷으로 세는 손실, 꺾이는 통과율입니다. 카피 후보 12개와 선호 쌍 20개, 두 모델의 로그 확률은 설명을 위해 만든 가상 값입니다.</p>
+      <div class="tg-legend">
+        <span class="tg-chip"><i class="a"></i>파랑 = 참조 모델과 선호 쌍</span>
+        <span class="tg-chip"><i class="b"></i>벽돌색 = 학습하는 정책</span>
+        <span class="tg-chip"><i class="k"></i>먹색 = 손실과 기울기</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 게이트에 걸린 카피</span>
+        <span class="tg-chip"><i class="n"></i>점선 상자 = 게이트 조건</span>
+      </div>
+    </section>
+
+    <div class="tg-host"></div>
+
+    <div class="tg-grid">
+      <section class="tg-card" data-card="sft"><h2>SFT STEP</h2><p class="tg-k">SFT 한 걸음과 DPO 한 걸음</p><p class="tg-easy"><b>쉽게 말하면</b> SFT 는 좋은 카피 하나만 보고 올립니다. DPO 는 좋은 카피와 나쁜 카피를 함께 보고 둘의 차이를 벌립니다.</p><div class="tg-fig" id="sd-sft"></div>
+        <p class="tg-cap">SFT 한 걸음에 chosen 은 <b>-12.425</b> 에서 <b>-11.121</b>, rejected 는 <b>-12.121</b> 로 같이 올랐습니다. DPO 한 걸음은 공유 토큰 셋의 점수를 <b>0.000</b> 움직였습니다.</p></section>
+      <section class="tg-card" data-card="pairs"><h2>PAIR SOURCES</h2><p class="tg-k">선호 쌍 20개의 출처 셋</p><p class="tg-easy"><b>쉽게 말하면</b> 둘 가운데 나은 쪽을 정한 기록이 선호 쌍입니다. 게이트, 판정자, 광고주가 나은 쪽을 정하는 법이 서로 다릅니다.</p><div class="tg-fig" id="sd-pairs"></div>
+        <p class="tg-cap">게이트 <b>6쌍</b>, 판정자 <b>8쌍</b>, 광고주 편집 <b>6쌍</b>입니다. 판정자 쌍은 chosen 이 rejected 보다 평균 <b>14.4자</b> 깁니다.</p></section>
+      <section class="tg-card" data-card="loss"><h2>DPO LOSS</h2><p class="tg-k">로그 확률 넷으로 세는 손실</p><p class="tg-easy"><b>쉽게 말하면</b> 정책이 참조 모델보다 chosen 을 얼마나 더 좋아하는지와 rejected 를 얼마나 더 좋아하는지를 비교합니다.</p><div class="tg-fig" id="sd-loss"></div>
+        <p class="tg-cap">d02 는 정책이 최상급 카피 쪽으로 기울어 margin <b>-0.080</b>, 손실 <b>0.734</b>, 무게 <b>0.520</b> 입니다.</p></section>
+      <section class="tg-card" data-card="overopt"><h2>OVER-OPTIMIZATION</h2><p class="tg-k">오래 학습하면 꺾이는 통과율</p><p class="tg-easy"><b>쉽게 말하면</b> 손실은 계속 줄어도, 게이트를 지나는 카피의 확률은 어느 걸음부터 떨어질 수 있습니다.</p><div class="tg-fig" id="sd-overopt"></div>
+        <p class="tg-cap">손실은 300걸음 내내 <b>0.693</b> 에서 <b>0.354</b> 로 줄었습니다. 통과율은 50걸음의 <b>0.597</b> 에서 300걸음의 <b>0.008</b> 로 떨어졌습니다.</p></section>
+    </div>
+
+    <section class="tg-real">
+      <h2>현업에서는 이렇게 씁니다</h2>
+      <ul>
+        <li><b>선호 쌍으로 모델을 학습할 때는</b> 세 가지를 봅니다. 쌍마다 출처를 적었나, 손실과 따로 잰 값을 같이 보나, 체크포인트를 그 값으로 고르나.</li>
+        <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=sft-and-dpo">SFT 와 DPO</a> 편에 이 카드들이 절마다 들어 있습니다. 카피와 게이트를 처음 다룬 글은 <a href="post.html?id=grounded-ad-copy-generation">광고 카피 생성</a> 편입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/card-kit.js"></script>
+  <script src="js/sft-dpo-cards-demo.js"></script>
+  <script src="js/demo-edu-content.js"></script>
+  <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

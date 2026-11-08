@@ -75,7 +75,7 @@
         s += arrow('ca-sk-f3', 'M360,147 L374,147', 'k', { svg: S });
         s += list(378, 136, 104, 22, ['장부: complete']);
         s += arrow('ca-sk-back', 'M327,160 C327,176 163,176 163,162', 'c', { svg: S, dash: true });
-        s += T(50, 190, 'Critical 이나 Important 가 있으면 구현자에게 돌려보냄, 최대 5번', 'lbl sm');
+        s += T(50, 190, 'spec 실패나 Critical, Important 가 있으면 고침, 최대 5번 (4번째부터 새 구현자)', 'lbl sm');
         s += T(50, 206, 'Task 4: spec 통과, Critical 0, Important 0, Minor 6', 'lbl b');
         s += arrow('ca-sk-2', 'M140,224 L140,236', 'k', { svg: S });
         s += box(40, 240, 160, 22, '마지막 전체 검토', 'k', 10.5);
@@ -106,9 +106,10 @@
             { t: '4  exit 2  git commit -am …', cls: 'b' },
             { t: '5  exit 2  git push --force origin main  (규칙 둘)', cls: 'b' },
         ]);
-        s += T(40, 244, '권한 문서가 Bash(git push *) 로 못 막는다고 적은 꼴 셋: exit 2', 'lbl k');
-        s += T(40, 262, '놓친 꼴: 브랜치 이름 없는 git push, bash -c 안의 명령', 'lbl');
-        s += T(40, 284, '이 글은 설정 파일을 바꾸지 않았음 (등록하는 꼴은 글의 더 깊이 보기)', 'lbl sm');
+        s += T(40, 240, '권한 문서가 Bash(git push *) 로 못 막는다고 적은 꼴 셋: exit 2', 'lbl k');
+        s += T(40, 257, '끝이 / 인 경로, 와일드카드, : 로 시작하는 경로, commit 의 . 도 exit 2', 'lbl');
+        s += T(40, 274, '놓친 꼴: 브랜치 없는 push, / 없는 디렉터리, bash -c 안의 명령', 'lbl');
+        s += T(40, 292, '이 글은 설정 파일을 바꾸지 않았음 (등록하는 꼴은 글의 더 깊이 보기)', 'lbl sm');
         svg(S, s);
     })();
 
@@ -136,10 +137,10 @@
             'Task 4: complete (commits 5b16504..5327bb4, review clean)',
         ]);
         // 블록 2 의 3단계와 4단계가 찍은 값
-        s += T(40, 218, '발췌의 도구 호출 23번: 구현 6, 실행 9, 보고 8', 'lbl k');
-        s += T(40, 236, 'gen-ads-data.py 10번, llm-record.py 4번, git 3번', 'lbl');
+        s += T(40, 218, '발췌의 명령 23개: 구현 6, 실행 9, 보고 8', 'lbl k');
+        s += T(40, 236, 'gen-ads-data.py 10개, llm-record.py 4개, git 3개', 'lbl');
         s += T(40, 258, '사람의 승인: 구현자의 사건 0번, 묶음 전체 2번', 'lbl b');
-        s += T(40, 280, '기록이 도는 동안 다른 도구 호출: 투표 9번, 심판 9번', 'lbl sm');
+        s += T(40, 280, '기록이 도는 동안 Claude Code 도구 호출: 투표 9번, 심판 9번', 'lbl sm');
         svg(S, s);
     })();
 

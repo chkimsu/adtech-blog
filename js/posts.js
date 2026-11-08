@@ -1817,6 +1817,11 @@ const series = {
     desc: '지훈 씨가 28주째부터 서연 씨 캠페인에 LLM 을 붙입니다. 타겟 조건, 유저 검색, 키워드, 라벨과 랭커, 카피와 판정, 에이전트를 한 주에 하나씩 엽니다',
     posts: ['nl-to-targeting-query', 'users-as-documents', 'keyword-expansion-strategies', 'interest-audience-library', 'llm-labels-code-ranker', 'llm-labeling-distillation', 'llm-user-embedding-features', 'grounded-ad-copy-generation', 'generated-copy-judging-system', 'advertiser-agent-mcp', 'workflow-vs-autonomous-loop', 'generative-retrieval-semantic-id', 'coding-agent-experiments'],
   },
+  'llm-training-track': {
+    title: 'LLM 학습 트랙',
+    desc: '지훈 씨가 41주째부터 LLM 과 임베딩 모델을 직접 학습합니다. SFT 와 DPO, 보상 모델과 RLHF, 지식 증류, 임베딩 파인튜닝을 한 주에 하나씩 엽니다',
+    posts: ['sft-and-dpo', 'rlhf-rlaif-grpo-reward-model', 'knowledge-distillation', 'embedding-model-finetuning'],
+  },
   'advanced-bidding-track': {
     title: '입찰, 생태계 심화 트랙',
     desc: '생태계 구조 → 개발 레이어 → 자동입찰, 페이싱 → 입찰 셰이딩',
@@ -1892,9 +1897,9 @@ const mlTrack = {
     },
     {
       id: 'stage-6',
-      title: '6단계, LLM — 호출 한 번부터 판정과 비용까지',
-      goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하게 할 수 있습니다. 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다.',
-      posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism'],
+      title: '6단계, LLM 기초와 학습 — 호출 한 번부터 선호 학습과 증류까지',
+      goal: '이 단계를 마치면: LLM 을 부르고, 답을 JSON 으로 받아 코드가 검사하게 할 수 있습니다. 문서를 넣어 답하게 하고, 도구를 고르게 하고, 답을 채점하고, 하루 비용을 셀 수 있습니다. 선호 쌍으로 모델을 학습하고, 보상 모델의 버릇을 찾고, 큰 모델을 작은 모델로 옮길 수 있습니다. 임베딩 모델도 클릭한 쌍으로 파인튜닝할 수 있습니다.',
+      posts: ['llm-first-call', 'llm-model-selection', 'prompting-chain-of-thought', 'structured-output', 'embeddings-vector-search', 'rag-basics', 'tool-use-agent-loop', 'llm-as-a-judge', 'llm-cost-cache-nondeterminism', 'sft-and-dpo', 'rlhf-rlaif-grpo-reward-model', 'knowledge-distillation', 'embedding-model-finetuning'],
     },
     {
       id: 'stage-7',

@@ -70,7 +70,7 @@
 
 ## 3. YARN: 계산할 자리를 나눠 줍니다
 
-**쿼리 하나는 계산 조각 여러 개로 나뉩니다. ResourceManager 가 큐에서 CPU 와 메모리를 떼어 워커 상자의 NodeManager 에 조각을 얹습니다.**
+**쿼리 하나는 계산 조각 여러 개로 나뉩니다. ResourceManager 가 큐에서 CPU 와 메모리를 떼어 워커 상자의 NodeManager 에 조각을 올립니다.**
 
 384 MB 파일의 줄 수를 세는 쿼리를 보냈다고 하겠습니다. 이 일은 조각 셋을 각각 세고 합치는 일로 나뉩니다. 조각 하나를 세는 일이 계산 조각 하나입니다. 계산 조각을 어느 상자에서 돌릴지 정하는 것이 YARN 이고, 그 머리가 ResourceManager 상자입니다.
 
@@ -149,7 +149,7 @@ jdbc:hive2://zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181,zk4.
 
 지훈 씨가 `SELECT count(*) FROM adlog.ad_click` 을 보내면 일곱 자리를 지납니다. 1 내 컴퓨터가 ZooKeeper 에 「HiveServer2 어디 있어」를 묻습니다. 2 ZooKeeper 가 목록에서 살아 있는 hs2-a 를 알려 줍니다. 3 내 컴퓨터가 hs2-a 에 계정과 SQL 을 보냅니다. 여기까지가 접속입니다.
 
-4 hs2-a 가 Metastore 에 ad_click 의 컬럼과 파일 위치를 묻습니다. 5 hs2-a 가 ResourceManager 의 analytics 줄에서 자원을 받습니다. 6 워커 상자들의 NodeManager 위에 계산 조각이 얹혀 DataNode 의 조각을 읽고 셉니다. 7 센 결과가 hs2-a 로 모여 내 컴퓨터로 돌아옵니다.
+4 hs2-a 가 Metastore 에 ad_click 의 컬럼과 파일 위치를 묻습니다. 5 hs2-a 가 ResourceManager 의 analytics 줄에서 자원을 받습니다. 6 워커 상자들의 NodeManager 위에 계산 조각이 올라가 DataNode 의 조각을 읽고 셉니다. 7 센 결과가 hs2-a 로 모여 내 컴퓨터로 돌아옵니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-hadoop-boxes.html?embed=1&fig=6" height="600" loading="lazy" title="쿼리 한 건이 지나는 길"></iframe>

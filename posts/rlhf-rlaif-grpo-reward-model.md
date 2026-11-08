@@ -631,6 +631,7 @@ $$\ell(\mathbf{w}) = -\log \sigma(\mathbf{w} \cdot \Delta\phi), \qquad \nabla_{\
 - [LLM-as-a-Judge](post.html?id=llm-as-a-judge) — 판정의 버릇과 판정 모델을 바꾸지 않는 까닭을 적은 26주째 편입니다.
 - [생성 문구 판정 체계](post.html?id=generated-copy-judging-system) — 노출 전 게이트, 오프라인 비교, 사후 원인 귀속을 다룬 36주째 편입니다.
 - [보상 루프 카드 네 장](demo-reward-loop-cards.html) — 이 글의 카드 전체입니다. 카드를 누르면 헷갈리는 것 하나가 더 나옵니다.
+- [DPO 손실 놀이터](demo-dpo-loss.html) — 이 글과 같은 선호 쌍 20개로 DPO 손실과 기울기 무게를 세어 보는 곳입니다. 보상 모델 없이 로그 확률 넷과 β 만 씁니다.
 
 ## 참고문헌
 

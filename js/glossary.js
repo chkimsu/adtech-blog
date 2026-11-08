@@ -507,6 +507,66 @@ const GLOSSARY = [
     term: '훅',
     abbr: 'Hook',
     body: '프로그램이 <strong>정해진 자리에서 저절로 실행하도록 걸어 두는</strong> 사용자 코드. Claude Code 의 PreToolUse 훅은 도구 호출이 실행되기 전에 그 입력을 받고, 종료 코드 2 로 호출을 막을 수 있다.'
+  },
+  {
+    term: 'SFT',
+    abbr: 'Supervised Fine-Tuning',
+    body: '좋은 답 하나를 정답으로 주고 <strong>그 답의 로그 확률을 올리는</strong> 학습. 손실은 좋은 답 하나만 보지만, 낱말을 함께 쓰는 나쁜 답의 로그 확률도 같이 오를 수 있다.'
+  },
+  {
+    term: 'DPO',
+    abbr: 'Direct Preference Optimization',
+    body: '선호 쌍의 chosen 과 rejected 를 함께 보고 <strong>정책을 참조 모델보다 chosen 쪽으로 미는</strong> 학습. 보상 모델과 강화학습 없이, 정책과 참조 모델이 두 답에 준 로그 확률 넷으로 손실을 센다.'
+  },
+  {
+    term: 'RLHF',
+    abbr: 'Reinforcement Learning from Human Feedback',
+    body: '선호 쌍으로 <strong>보상 모델을 먼저 배우고 그 점수로 정책을 강화학습하는</strong> 방법. InstructGPT 논문은 PPO 로 정책을 고쳤고, 보상 모델의 과최적화를 줄이려고 SFT 모델과의 KL 벌점을 더했다.'
+  },
+  {
+    term: 'RLAIF',
+    abbr: 'Reinforcement Learning from AI Feedback',
+    body: '선호 쌍의 라벨을 <strong>사람 대신 LLM 판정자가 붙이는</strong> RLHF. 라벨을 얻은 뒤의 보상 모델 학습과 강화학습은 RLHF 와 같고, 판정자의 버릇은 라벨을 거쳐 보상 모델에 그대로 들어간다.'
+  },
+  {
+    term: 'GRPO',
+    abbr: 'Group Relative Policy Optimization',
+    body: '같은 프롬프트로 답을 여럿 뽑아 <strong>묶음의 보상 평균을 기준으로 이점을 세는</strong> 강화학습. 묶음 평균이 대신하는 것은 PPO 의 가치 모델이고, 답마다의 보상은 여전히 보상 모델이 매긴다.'
+  },
+  {
+    term: '보상 모델',
+    abbr: 'Reward Model',
+    body: '답 하나를 받아 <strong>점수 하나를 내는</strong> 모델. chosen 점수가 rejected 보다 높도록 Bradley-Terry 손실로 배우고, 차이만 배워 점수의 기준점은 정해지지 않는다.'
+  },
+  {
+    term: '보상 해킹',
+    abbr: 'Reward Hacking',
+    body: '정책이 보상 모델의 버릇을 이용해 점수를 올리는 사이 <strong>정말 원하는 값은 떨어지는</strong> 일. RLHF, RLAIF, GRPO 와 보상 모델 편에서는 KL 을 약하게 걸수록 보상은 올랐지만, 통과율은 한 번 오른 뒤 0.000 이 되었다.'
+  },
+  {
+    term: 'LoRA',
+    abbr: 'Low-Rank Adaptation',
+    body: '원래 행렬 W0 를 고정하고 <strong>작은 행렬 둘의 곱 BA 만 학습해 더하는</strong> 파인튜닝 방법. 4096 × 4096 행렬 하나에서 r 이 8 이면 학습할 가중치는 65,536개로, 행렬의 0.39% 이다.'
+  },
+  {
+    term: '로짓 증류',
+    abbr: 'Logit Distillation',
+    body: '교사의 로짓을 온도 T 로 나눠 소프트맥스에 넣은 <strong>확률을 학생이 그대로 맞히는</strong> 증류. 온도를 올려도 가장 큰 라벨은 그대로이고, 그 밖의 라벨에 가는 몫이 커진다.'
+  },
+  {
+    term: 'contrastive 학습',
+    abbr: 'Contrastive Learning',
+    body: '가까워야 할 쌍은 <strong>당기고 아닌 쌍은 밀어</strong> 벡터를 배우는 방법. 임베딩 모델 파인튜닝 편은 같은 묶음의 두 낱말을 양성 쌍으로 두고, 배치 안의 다른 쌍의 짝을 음성으로 썼다.'
+  },
+  {
+    term: 'in-batch negatives',
+    abbr: 'In-batch Negatives',
+    body: '배치 안에서 <strong>다른 쌍의 짝을 음성으로 쓰는</strong> 방법. 점수표의 대각선 칸이 정답이고 나머지 칸이 음성이라, 음성은 저장하지 않고 학습할 때 배치 안에서 만든다.'
+  },
+  {
+    term: 'recall@k',
+    abbr: 'Recall at k',
+    body: '검증 쌍마다 짝이 <strong>코사인으로 정렬한 위 k 개 안에 든</strong> 비율. 임베딩과 벡터 검색 편의 재현율@10, Two-Tower 학습 편의 Recall@500 과는 정답이 달라 숫자를 비교하지 않는다.'
   }
 ];
 

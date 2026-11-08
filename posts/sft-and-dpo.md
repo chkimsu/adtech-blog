@@ -684,6 +684,7 @@ $$h = W_0 x + \Delta W x = W_0 x + B A x, \qquad B \in \mathbb{R}^{d \times r},\
 - [광고 카피 생성](post.html?id=grounded-ad-copy-generation) — 게이트 넷과 서연 씨 러닝화 자산이 나온 35주째 편입니다.
 - [생성 문구 판정 체계](post.html?id=generated-copy-judging-system) — 판정자가 카피에 점수를 매기고 둘 가운데 고른 36주째 편입니다.
 - [SFT 와 DPO 카드 네 장](demo-sft-dpo-cards.html) — 이 글의 카드 전체입니다. 카드를 누르면 헷갈리는 것 하나가 더 나옵니다.
+- [DPO 손실 놀이터](demo-dpo-loss.html) — 로그 확률 넷과 β 를 바꿔 이 글의 DPO 손실을 다시 세는 곳입니다. 기본값에서는 블록 2 의 d02 줄과 같은 margin -0.080, 손실 0.734, 무게 0.520 이 나옵니다.
 
 ## 참고문헌
 

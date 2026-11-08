@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 101개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 106개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -593,6 +593,11 @@
               <a href="demo-workflow-loop-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 워크플로와 자율 루프 카드 네 장</a>
               <a href="demo-semantic-id-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Semantic ID 카드 네 장</a>
               <a href="demo-coding-agent-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 코딩 에이전트 카드 네 장</a>
+              <a href="demo-sft-dpo-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ SFT 와 DPO 카드 네 장</a>
+              <a href="demo-dpo-loss.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ DPO 손실 놀이터</a>
+              <a href="demo-reward-loop-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 보상 루프 카드 네 장</a>
+              <a href="demo-kd-methods-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 지식 증류 카드 네 장</a>
+              <a href="demo-contrastive-cards.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ contrastive 학습 카드 네 장</a>
             </div>
           </div>
           <!-- 고급 -->
@@ -689,12 +694,12 @@
       </div>
     </section>
 
-    <!-- 주제별 데모 101개 -->
+    <!-- 주제별 데모 106개 -->
     <section class="section">
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">101개, 주제 12개</span>
+          <span class="count">106개, 주제 13개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
@@ -705,6 +710,7 @@
           <a class="demos-jump-item" href="#demo-topic-targeting-model">타겟팅 모델<b>7</b></a>
           <a class="demos-jump-item" href="#demo-topic-llm">LLM 기초<b>10</b></a>
           <a class="demos-jump-item" href="#demo-topic-llm-ads">LLM 광고 응용<b>14</b></a>
+          <a class="demos-jump-item" href="#demo-topic-llm-training">LLM 학습<b>5</b></a>
           <a class="demos-jump-item" href="#demo-topic-model">학습 데이터와 서빙<b>9</b></a>
           <a class="demos-jump-item" href="#demo-topic-ops">모델 운영<b>12</b></a>
           <a class="demos-jump-item" href="#demo-topic-pipeline">데이터 파이프라인과 하둡<b>11</b></a>
@@ -1608,6 +1614,81 @@
                 <span class="demo-card-meta-item">관심사 사전 카드 먼저 보면 좋음</span>
               </div>
               <a href="demo-coding-agent-cards.html" class="btn-try">체험하기</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="demo-topic" id="demo-topic-llm-training">
+          <div class="demo-topic-head">
+            <h3>LLM 학습</h3>
+            <span class="demo-topic-count">5개</span>
+          </div>
+          <p class="demo-topic-desc">선호 쌍으로 모델을 미는 SFT 와 DPO, 판정자를 보상으로 쓰는 RLHF 와 GRPO 를 봅니다. 큰 모델을 작은 모델로 옮기는 증류와, 클릭한 쌍으로 고치는 임베딩도 봅니다. 데크의 숫자는 모두 가상 데이터 위의 파이썬이 찍은 값입니다. 카드 데크 넷과, SFT 와 DPO 편의 손실 식을 브라우저에서 다시 세는 놀이터 하나입니다.</p>
+
+          <div class="demos-grid">
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>SFT 와 DPO 카드 네 장</h3>
+              <p>선호 쌍으로 카피 모델을 학습하는 자리를 카드 한 장씩으로. SFT 한 걸음과 DPO 한 걸음, 선호 쌍의 출처 셋, 로그 확률 넷으로 세는 손실, 꺾이는 통과율.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">생성 문구 판정 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-sft-dpo-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>DPO 손실 놀이터</h3>
+              <p>선호 쌍 하나의 로그 확률 넷과 β 를 움직여, DPO 손실과 보상 차이와 기울기 무게가 어떻게 바뀌는지 봅니다. 쌍 20개를 버튼으로 불러옵니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 8분</span>
+                <span class="demo-card-meta-item">SFT 와 DPO 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-dpo-loss.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>보상 루프 카드 네 장</h3>
+              <p>판정자를 보상으로 써서 카피 모델을 학습하는 자리를 카드 한 장씩으로. 선호 쌍으로 배우는 보상 모델, KL 세기와 보상 해킹, GRPO 의 묶음 이점, 학습 도중의 판정자 교체.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">SFT 와 DPO 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-reward-loop-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>지식 증류 카드 네 장</h3>
+              <p>큰 모델의 답을 작은 모델에 옮기는 세 방법을 카드 한 장씩으로. 교사에게 받는 것 셋, 온도가 펼친 확률, 쌍 50개로 배울 때, 서빙 100만 건의 값.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">LLM 라벨링과 증류 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-kd-methods-cards.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-intermediate">중급</span>
+              </div>
+              <h3>contrastive 학습 카드 네 장</h3>
+              <p>같이 클릭된 낱말 쌍으로 임베딩을 고치는 contrastive 학습을 카드 한 장씩으로. 양성 쌍 200개, 배치 하나의 점수표, 학습 전과 뒤의 recall@5, 온도 셋.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 5분</span>
+                <span class="demo-card-meta-item">임베딩 카드 먼저 보면 좋음</span>
+              </div>
+              <a href="demo-contrastive-cards.html" class="btn-try">체험하기</a>
             </div>
           </div>
         </section>

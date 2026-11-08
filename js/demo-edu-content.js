@@ -4546,5 +4546,91 @@ window.DEMO_EDU = {
                 body: '체크 상자와 슬라이더를 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
             }
         ]
+    },
+
+    // ==========================================
+    // DPO 손실 놀이터 (중급)
+    // ==========================================
+    'dpo-loss': {
+        analogy: '선호 쌍 하나의 DPO 손실은 정책과 참조 모델이 두 카피에 준 로그 확률 넷과 β 로 정해진다. 기본값 d02 와 β 0.1 은 margin -0.080, 손실 0.734, 무게 0.520 이다. margin 이 음수인 쌍은 무게가 0.5 보다 커서 더 세게 밀린다',
+        anchor: '.dl-controls',
+        embedKeep: ['.dl-controls'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.dl-intro', '.demo-tldr', '.demo-practice', '.demo-next'],
+        explain: {
+            // 판정은 소수점이 든 한 문장이라 「.」로 나누지 않고 한 문장 그대로 붙인다.
+            // 로그 확률 넷은 margin = β × ((정책 chosen − 참조 chosen) − (정책 rejected − 참조 rejected)) 에 든 부호대로 margin 을 옮긴다.
+            '#dl-pw': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `정책 chosen 의 로그 확률을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    (value > prev
+                        ? 'chosen 의 로그 비율이 커져 margin 이 커지고, 손실과 무게는 작아집니다. '
+                        : 'chosen 의 로그 비율이 작아져 margin 이 작아지고, 손실과 무게는 커집니다. ') +
+                    `지금 margin 은 ${t('dl-margin')}, 손실은 ${t('dl-loss')} 입니다. ` + t('dl-verdict');
+            },
+            '#dl-pl': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `정책 rejected 의 로그 확률을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    (value > prev
+                        ? 'rejected 의 로그 비율이 커져 margin 이 작아지고, 손실과 무게는 커집니다. '
+                        : 'rejected 의 로그 비율이 작아져 margin 이 커지고, 손실과 무게는 작아집니다. ') +
+                    `지금 margin 은 ${t('dl-margin')}, 손실은 ${t('dl-loss')} 입니다. ` + t('dl-verdict');
+            },
+            '#dl-rw': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `참조 chosen 의 로그 확률을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    (value > prev
+                        ? 'chosen 의 로그 비율이 작아져 margin 이 작아지고, 손실과 무게는 커집니다. '
+                        : 'chosen 의 로그 비율이 커져 margin 이 커지고, 손실과 무게는 작아집니다. ') +
+                    '참조 모델은 학습하는 동안 고정하는 기준이고, 이 슬라이더는 그 기준이 다를 때의 margin 을 보여 줍니다. ' +
+                    `지금 margin 은 ${t('dl-margin')} 입니다. ` + t('dl-verdict');
+            },
+            '#dl-rl': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `참조 rejected 의 로그 확률을 ${value > prev ? '올렸' : '내렸'}습니다 (<strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>). ` +
+                    (value > prev
+                        ? 'rejected 의 로그 비율이 작아져 margin 이 커지고, 손실과 무게는 작아집니다. '
+                        : 'rejected 의 로그 비율이 커져 margin 이 작아지고, 손실과 무게는 커집니다. ') +
+                    '참조 모델은 학습하는 동안 고정하는 기준이고, 이 슬라이더는 그 기준이 다를 때의 margin 을 보여 줍니다. ' +
+                    `지금 margin 은 ${t('dl-margin')} 입니다. ` + t('dl-verdict');
+            },
+            // β 슬라이더의 값은 일곱 칸의 자리라, 지금 β 는 화면에 적힌 글자로 읽는다.
+            '#dl-beta': ({ value, prev }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `β 를 ${value > prev ? '키웠' : '줄였'}습니다. 지금 β 는 <strong>${t('dl-beta-val')}</strong> 입니다. ` +
+                    '같은 로그 확률 넷에서 margin 은 β 에 비례해 바뀝니다. ' +
+                    (value > prev
+                        ? '무게 막대는 margin 이 음수인 쌍이 0.5 위로, 양수인 쌍이 0.5 아래로 더 멀어집니다. '
+                        : '무게 막대는 모두 0.5 쪽으로 다가갑니다. ') +
+                    `지금 margin 은 ${t('dl-margin')}, 손실은 ${t('dl-loss')} 입니다. ` + t('dl-verdict');
+            },
+            '.dl-preset-btn': ({ el }) => {
+                const t = id => (document.getElementById(id) || {}).textContent || '';
+                return `<strong>${el.textContent.trim()}</strong> 쌍의 로그 확률 넷을 불러왔습니다. β 는 그대로 ${t('dl-beta-val')} 입니다. ` +
+                    `지금 margin 은 ${t('dl-margin')}, 손실은 ${t('dl-loss')} 입니다. ` + t('dl-verdict');
+            }
+        },
+        tour: [
+            {
+                el: '.dl-metrics',
+                title: '숫자 넷',
+                body: 'DPO 손실, margin, 기울기 무게, 미는 크기입니다. 기본값 d02, β 0.1 은 글 1 블록 2 의 d02 줄과 같은 <strong>0.734, -0.080, 0.520</strong> 이고, 미는 크기는 0.0520 입니다.'
+            },
+            {
+                el: '#dl-pl',
+                title: 'rejected 를 내려 봅니다',
+                body: '<strong>정책 rejected</strong> 를 움직여 봅니다. -14.8 에서 두 로그 비율이 같아 margin 이 0 이 되고, 그보다 내리면 무게가 0.5 아래로 내려갑니다.',
+                waitFor: 'input'
+            },
+            {
+                el: '.dl-chart-card:last-child',
+                title: '쌍 20개의 무게',
+                body: '지금 β 에서 쌍마다 센 무게입니다. 점선 0.5 위의 막대가 margin 이 음수인 쌍이고, 슬라이더 넷이 어느 쌍과 같으면 그 막대가 벽돌색입니다.'
+            },
+            {
+                el: '#demo-edu-explain',
+                title: '해설 패널',
+                body: '슬라이더와 쌍 버튼을 움직일 때마다 여기에 지금 일어난 일이 적힙니다.'
+            }
+        ]
     }
 };

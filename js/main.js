@@ -179,7 +179,7 @@ function setupDemoTermPopover() {
 //
 // 말풍선은 용어 안에 있지만 position:fixed 로 화면 기준 자리에 뜬다. 예전처럼 용어 기준
 // absolute 로 띄우면 표(overflow:hidden)나 표 감싸개(.table-wrapper, overflow-x:auto) 같은
-// 상자 밖으로 나간 부분이 잘렸다. 입문 글 표 안의 CPA 말풍선은 위쪽 80px 가 가려졌다.
+// 상자 밖으로 나간 부분이 잘렸다. 입문 글 표 안의 CPA 말풍선은 위쪽 80px 가 안 보였다.
 // fixed 는 그런 상자에 잘리지 않고, 숨은 말풍선이 문서 폭을 늘려 가로 스크롤을 만들지도 않는다.
 // 자리는 보이기 직전(마우스 올림, 초점, 탭)과 스크롤, 리사이즈 때 다시 계산한다.
 const TERM_POP_GAP = 10;     // 용어와 말풍선 사이
@@ -479,7 +479,7 @@ function renderPosts(postsToRender) {
 function renderCover() {
   const featured = document.getElementById('cover-featured');
   if (!featured || typeof getAllPosts !== 'function') return;
-  // 최신 글부터 훑되 주제가 겹치지 않게 셋을 고른다 — 표지에서 한 주제만 보이던 것을 고친다
+  // 최신 글부터 순회하되 주제가 겹치지 않게 셋을 고른다 — 표지에서 한 주제만 보이던 것을 고친다
   const seen = new Set();
   const pick = [];
   for (const p of getAllPosts()) {

@@ -128,7 +128,7 @@
       sub.textContent = `글 ${posts.length}편을 주제 ${model.length}개로 묶었습니다. 트랙 ${trackCount}개는 읽는 순서대로, 나머지는 새 글부터입니다.`;
     }
     root.innerHTML = model.map(sectionHtml).join('');
-    // 주소에 #topic-… 이 실려 오면 그 절로 (렌더 뒤라 여기서 한 번 더).
+    // 주소에 #topic-… 이 담겨 오면 그 절로 (렌더 뒤라 여기서 한 번 더).
     if (location.hash) {
       const el = document.getElementById(location.hash.slice(1));
       if (el) el.scrollIntoView({ block: 'start' });

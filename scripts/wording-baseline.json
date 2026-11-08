@@ -12,32 +12,5 @@
   "analogy": {},
   "wordnum": {},
   "coined": {},
-  "awkward": {
-    "demo-api-course.html": 1,
-    "demo-bfs-dfs.html": 1,
-    "demo-data-model-cards.html": 2,
-    "demo-distributed-cards.html": 1,
-    "demo-feedback-loop.html": 5,
-    "demo-hadoop-boxes.html": 1,
-    "demo-http-methods.html": 1,
-    "demo-judge-cards.html": 2,
-    "demo-kafka-partition.html": 1,
-    "demo-lookalike-batch-cards.html": 1,
-    "demo-lookalike-ratio.html": 4,
-    "demo-metrics-lab.html": 1,
-    "demo-pcvr-target-cards.html": 1,
-    "demo-serving-cards.html": 1,
-    "demo-targeting-cards.html": 1,
-    "demos.html": 1,
-    "js/contextual-cards-demo.js": 1,
-    "js/course-data.js": 1,
-    "js/demo-edu-content.js": 6,
-    "js/ecosystem-easy.js": 1,
-    "js/hadoop-boxes-demo.js": 1,
-    "js/hadoop-cards-demo.js": 1,
-    "js/inference-cards-demo.js": 1,
-    "js/interest-cards-demo.js": 1,
-    "js/posts.js": 16,
-    "js/stats-cards-demo.js": 1
-  }
+  "awkward": {}
 }

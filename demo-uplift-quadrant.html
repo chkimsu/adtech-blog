@@ -25,7 +25,7 @@
     .uq-hero p { color: var(--text-secondary); max-width: 760px; margin: 0 auto; font-size: 0.98rem; }
 
     /* .uq-controls · .uq-explain-host · .uq-metrics · .uq-charts 는 <main> 의 직계 자식이다.
-       임베드에서 이 넷만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 훑는다).
+       임베드에서 이 넷만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 순회한다).
        그래서 폭·여백을 바깥 통에 기대지 않고 각자 갖는다. */
     .uq-page,
     .uq-controls,
@@ -226,7 +226,7 @@
     .uq-quad { font-size: 12.5px; fill: var(--ink3); }
     .uq-quad.is-bad { fill: var(--oxide); }
     /* 컷 선 글자와 곡선 위 글자는 점·선에 겹쳐도 읽혀야 한다.
-       바탕색으로 테두리를 먼저 칠하고 글자를 그 위에 얹는다(halo). */
+       바탕색으로 테두리를 먼저 칠하고 글자를 그 위에 올린다(halo). */
     .uq-cut {
       font-size: 12.5px; font-weight: 700; fill: var(--accent-primary);
       paint-order: stroke; stroke: var(--paper); stroke-width: 3.5px; stroke-linejoin: round;

@@ -120,7 +120,7 @@
       ? '이 요청량부터 GPU 가 처음 싸집니다'
       : `${won(QMAX)} QPS 까지 CPU 가 계속 쌉니다`;
 
-    // 차트 — 요청량을 훑으며 두 곡선을 그린다
+    // 차트 — 요청량을 순회하며 두 곡선을 그린다
     const step = (QMAX - QMIN) / STEPS;
     const xs = Array.from({ length: STEPS + 1 }, (_, i) => Math.round(QMIN + i * step));
     const cn = xs.map(q => ({ x: q, y: machines(q, s.ccap, s.load, s.spare).n }));

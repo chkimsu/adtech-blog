@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지를 슬라이더로 정합니다. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀝니다. 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.">
+    content="회원 1,400만 명을 시드와 닮은 순서로 정렬한 줄에서 앞 몇 % 까지 가져올지를 슬라이더로 정합니다. 확장 비율, 시드 크기, 정밀도 감쇠 계수를 움직이면 도달, 정밀도, 전환율, 예상 전환 수가 함께 바뀝니다. 전환 수가 가장 많은 비율이 어디로 옮겨 가는지 봅니다.">
   <title>Lookalike 확장 비율 놀이터 — Ad Tech Blog</title>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -113,7 +113,7 @@
     <section class="lr-hero">
       <div class="lr-container">
         <h1>Lookalike 확장 비율 놀이터</h1>
-        <p>회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 몇 % 까지 가져올지가 확장 비율입니다.
+        <p>회원 1,400만 명을 시드와 닮은 순서로 정렬한 줄에서 앞 몇 % 까지 가져올지가 확장 비율입니다.
           넓히면 도달은 늘고 정밀도와 전환율은 내려갑니다. 도달에 전환율을 곱한 전환 수가 가장 많은 비율을 슬라이더로 찾습니다.</p>
       </div>
     </section>
@@ -179,7 +179,7 @@
           <div class="lr-slider-value" id="lr-ratio-val">10%</div>
         </div>
         <div class="lr-slider-row">
-          <div class="lr-slider-label">시드 크기 (n)<small>줄을 세우는 기준이 되는 회원 수</small></div>
+          <div class="lr-slider-label">시드 크기 (n)<small>순위를 매기는 기준이 되는 회원 수</small></div>
           <input type="range" class="lr-slider" id="lr-seed" min="10000" max="200000" step="10000" value="80000" aria-label="시드 크기">
           <div class="lr-slider-value" id="lr-seed-val">8만 명</div>
         </div>
@@ -229,7 +229,7 @@
       <div class="lr-charts">
         <div class="lr-chart-card">
           <h3>1% 의 몇 배가 남나</h3>
-          <p class="note">정밀도와 전환율을 각자 1% 의 값으로 나눈 선입니다. 두 값은 다른 양이라 이렇게 놓고 내려가는 빠르기를 견줍니다. 속이 빈 점은 두 글의 1, 5, 10% 값입니다.</p>
+          <p class="note">정밀도와 전환율을 각자 1% 의 값으로 나눈 선입니다. 두 값은 다른 양이라 이렇게 놓고 내려가는 빠르기를 비교합니다. 속이 빈 점은 두 글의 1, 5, 10% 값입니다.</p>
           <div class="lr-chart-wrap"><canvas id="lr-rate-chart" aria-label="확장 비율에 따른 정밀도와 전환율"></canvas></div>
         </div>
         <div class="lr-chart-card">
@@ -244,7 +244,7 @@
         <div class="demo-tldr-inner">
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
-            <li><strong>1% 는 회원 전체의 1% 입니다</strong> — 시드를 1만 명으로 줄여도 20만 명으로 늘려도 1% 는 14만 명입니다. 시드는 줄을 세우는 기준으로만 쓰입니다.</li>
+            <li><strong>1% 는 회원 전체의 1% 입니다</strong> — 시드를 1만 명으로 줄여도 20만 명으로 늘려도 1% 는 14만 명입니다. 시드는 순위를 매기는 기준으로만 쓰입니다.</li>
             <li><strong>전환율이 높은 비율이 전환 수도 많지는 않습니다</strong> — 1% 는 3.20% 에 4,480건, 10% 는 0.90% 에 12,600건입니다.</li>
             <li><strong>어디서 자를지는 닮음이 옅어지는 빠르기가 정합니다</strong> — 빠르기 s 가 크면 앞에서, 작으면 뒤에서 자르는 쪽이 전환이 많습니다. 시드가 작거나 감쇠 계수가 크면 s 가 커집니다.</li>
           </ol>
@@ -259,9 +259,9 @@
           그래서 비율은 이 식이 아니라 재 본 값에서 정합니다.
         </p>
         <ul>
-          <li><strong>비율 몇 개를 작게 걸어 봅니다:</strong> 1%, 5%, 10% 목록에 같은 소재와 작은 예산을 걸고 전환율을 견줍니다. 그 세 점이 이 놀이터의 곡선 자리에 들어갑니다.</li>
+          <li><strong>비율 몇 개를 작게 걸어 봅니다:</strong> 1%, 5%, 10% 목록에 같은 소재와 작은 예산을 걸고 전환율을 비교합니다. 그 세 점이 이 놀이터의 곡선 자리에 들어갑니다.</li>
           <li><strong>시드는 산 사람으로 채웁니다:</strong> 시드의 크기보다 누구로 채웠나가 줄을 더 크게 바꿉니다. <a href="post.html?id=lookalike-computation">Lookalike 계산</a> 편에서 구매자를 무작위로 고른 시드는 5% 의 정밀도가 0.459 였습니다.</li>
-          <li><strong>전환 수는 대조군으로 다시 셉니다:</strong> 닮은 회원에는 광고가 없어도 살 사람이 많습니다. 광고를 일부러 안 보인 무리와 견주는 셈은 <a href="post.html?id=uplift-incrementality">Uplift 와 증분 전환</a> 편에 있습니다.</li>
+          <li><strong>전환 수는 대조군으로 다시 셉니다:</strong> 닮은 회원에는 광고가 없어도 살 사람이 많습니다. 광고를 일부러 안 보인 무리와 비교하는 셈은 <a href="post.html?id=uplift-incrementality">Uplift 와 증분 전환</a> 편에 있습니다.</li>
         </ul>
       </section>
 

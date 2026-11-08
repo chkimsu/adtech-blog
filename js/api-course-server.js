@@ -21,17 +21,17 @@
   const REQUIRED = ['req_id', 'ad_id', 'event'];
 
   // 부르는 쪽마다 받는 쪽이 요구하는 자격증명이 다르다.
-  // 앱은 비밀키를 못 실으므로 아예 안 받고 값을 다시 검사한다.
+  // 앱은 비밀키를 못 담으므로 아예 안 받고 값을 다시 검사한다.
   const WANT_AUTH = { app: 'none', server: 'apikey' };
   const AUTH_LABEL = { none: '자격증명 없음', token: '사용자 토큰', apikey: 'API 키' };
 
-  // 401 은 두 가지 다른 실패를 하나로 뭉치지 않는다 — 아예 안 실었는지,
-  // 실었는데 이 주소가 받는 종류가 아닌지를 갈라 말한다.
+  // 401 은 두 가지 다른 실패를 하나로 뭉치지 않는다 — 아예 안 담았는지,
+  // 담았는데 이 주소가 받는 종류가 아닌지를 갈라 말한다.
   function authMessage(s) {
     const want = WANT_AUTH[s.caller];
-    if (s.auth === 'none') return '자격증명을 안 실었습니다. 이 주소가 원하는 것은 ' + AUTH_LABEL[want] + '입니다';
-    if (want === 'none') return '지금 실은 자격증명은 ' + AUTH_LABEL[s.auth] + '입니다. 이 주소는 앱이 부를 때 자격증명을 받지 않습니다';
-    return '지금 실은 자격증명은 ' + AUTH_LABEL[s.auth] + '입니다. 이 주소가 원하는 것은 ' + AUTH_LABEL[want] + '입니다';
+    if (s.auth === 'none') return '자격증명을 안 담았습니다. 이 주소가 원하는 것은 ' + AUTH_LABEL[want] + '입니다';
+    if (want === 'none') return '지금 담은 자격증명은 ' + AUTH_LABEL[s.auth] + '입니다. 이 주소는 앱이 부를 때 자격증명을 받지 않습니다';
+    return '지금 담은 자격증명은 ' + AUTH_LABEL[s.auth] + '입니다. 이 주소가 원하는 것은 ' + AUTH_LABEL[want] + '입니다';
   }
 
   // 🔴 본문의 키 이름과 순서는 posts/log-hops-to-kafka.md 60행이 정본이다.

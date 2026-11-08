@@ -47,7 +47,7 @@
         <p class="tg-cap">두 요청은 <b>think</b> 하나만 다릅니다. 시스템 메시지와 사용자 메시지는 <b>messages</b> 목록에 차례대로 들어갑니다.</p></section>
       <section class="tg-card" data-card="tokens"><h2>TOKENS</h2><p class="tg-k">두 메시지가 역할 표시와 함께 프롬프트 하나가 된다</p><p class="tg-easy"><b>쉽게 말하면</b> 모델은 JSON 이 아니라 메시지를 이은 글 하나를 받습니다. 그 글을 토큰이라는 조각으로 읽고, 몇 조각인지는 서버가 셉니다.</p><div class="tg-fig" id="fc-tokens"></div>
         <p class="tg-cap">사용자 문장을 자른 조각 경계는 <b>그림일 뿐</b>입니다. 기록에 남은 것은 프롬프트 전체의 토큰 수 <b>78개</b>와 <b>76개</b>뿐입니다.</p></section>
-      <section class="tg-card" data-card="response"><h2>RESPONSE</h2><p class="tg-k">응답 JSON 의 필드와 기록 도구가 옮겨 적는 다섯 값</p><p class="tg-easy"><b>쉽게 말하면</b> 응답에는 답 한 줄과 함께 몇 토큰을 읽고 썼는지, 얼마나 걸렸는지가 실려 옵니다. 기록 도구는 그 가운데 다섯 값만 적습니다.</p><div class="tg-fig" id="fc-response"></div>
+      <section class="tg-card" data-card="response"><h2>RESPONSE</h2><p class="tg-k">응답 JSON 의 필드와 기록 도구가 옮겨 적는 다섯 값</p><p class="tg-easy"><b>쉽게 말하면</b> 응답에는 답 한 줄과 함께 몇 토큰을 읽고 썼는지, 얼마나 걸렸는지가 담겨 옵니다. 기록 도구는 그 가운데 다섯 값만 적습니다.</p><div class="tg-fig" id="fc-response"></div>
         <p class="tg-cap">thinking 을 끈 답은 <b>프롬프트 78토큰</b>, <b>출력 6토큰</b>, <b>1,114ms</b> 입니다. 답 27자가 출력 토큰 6개라 토큰은 글자가 아닙니다.</p></section>
       <section class="tg-card" data-card="think"><h2>THINKING</h2><p class="tg-k">thinking 을 끈 답과 켠 답의 출력 토큰과 시간</p><p class="tg-easy"><b>쉽게 말하면</b> thinking 을 켜면 모델이 답 앞에 풀이를 먼저 씁니다. 풀이도 출력 토큰이라 답이 같아도 토큰과 시간이 늡니다.</p><div class="tg-fig" id="fc-think"></div>
         <p class="tg-cap">답은 둘 다 <b>conversion</b> 입니다. 출력 토큰은 <b>6개에서 505개</b>로, 시간은 <b>1.1초에서 32.0초</b>로 늘었습니다.</p></section>

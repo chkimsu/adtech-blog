@@ -163,7 +163,7 @@
     $('lc-saved').className = 'lc-metric-value' + (r.saved > 0 ? ' good' : '');
     $('lc-saved-sub').textContent = `캐시 0% 의 ${won(r.dayNoCache)}에서 ${pct(r.saved, r.dayNoCache)}`;
 
-    // 차트 — 캐시 적중 비율 0..100 을 훑는다
+    // 차트 — 캐시 적중 비율 0..100 을 순회한다
     const rows = [];
     for (let c = 0; c <= 100; c += 5) rows.push({ x: c, y: model(Object.assign({}, st, { cache: c })).day });
     cacheChart.data.datasets[0].data = rows;

@@ -98,7 +98,7 @@
   const AUTO_GENS = 30;  // "30세대 자동" 한 번에 도는 세대 수
   const AUTO_MS = 130;
 
-  // 계열 색 토큰. 광고가 일곱 번째부터는 같은 색에 빗금을 얹어 구분한다
+  // 계열 색 토큰. 광고가 일곱 번째부터는 같은 색에 빗금을 더해 구분한다
   // (계열이 넷을 넘으면 색만으로 구분하지 않는다).
   const SERIES = ['--series-1', '--series-2', '--series-3', '--series-4', '--series-5', '--series-6'];
 
@@ -281,7 +281,7 @@
 
   const trueMean = () => S.ads.reduce((s, ad) => s + S.truth[ad], 0) / S.nAds;
 
-  // 완전히 굳은 한 세대 배분의 지니 — 누적 지니의 상한
+  // 완전히 고정된 한 세대 배분의 지니 — 누적 지니의 상한
   function lockedGini() {
     const fake = {};
     S.ads.forEach((ad, i) => { fake[ad] = S.nAds - i; });
@@ -497,16 +497,16 @@
 
     out += tile('누적 지니계수',
       h ? h.gi.toFixed(3) : '—', '',
-      '0 = 똑같이 나눠 가짐, 완전히 굳으면 ' + lockedGini().toFixed(3));
+      '0 = 똑같이 나눠 가짐, 완전히 고정되면 ' + lockedGini().toFixed(3));
 
     if (lg === null) {
-      out += tile('굳음', '—', '', '노출 집합이 마지막으로 바뀐 세대');
+      out += tile('고정', '—', '', '노출 집합이 마지막으로 바뀐 세대');
     } else if (lg === '없음') {
-      out += tile('굳음', '없음', 'is-good', '매 세대 모든 광고가 노출을 받는 중');
+      out += tile('고정', '없음', 'is-good', '매 세대 모든 광고가 노출을 받는 중');
     } else if (lg === S.gen) {
-      out += tile('굳음', '이번 세대 변경', 'is-warn', '노출 집합이 방금 바뀌었습니다');
+      out += tile('고정', '이번 세대 변경', 'is-warn', '노출 집합이 방금 바뀌었습니다');
     } else {
-      out += tile('굳음', lg + '세대', 'is-bad', '그 뒤 ' + (S.gen - lg) + '세대 동안 그대로');
+      out += tile('고정', lg + '세대', 'is-bad', '그 뒤 ' + (S.gen - lg) + '세대 동안 그대로');
     }
 
     out += tile('오라클 대비 클릭',

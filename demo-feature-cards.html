@@ -51,7 +51,7 @@
         <p class="tg-cap">학습은 <b>그날 자정까지의 값</b>만 써야 하고, 서빙은 지금 값을 1ms 안에 읽습니다. 정의를 한 곳에 적고 양쪽이 불러 쓰면 고칠 때 한 번만 고칩니다.</p></section>
 
       <section class="tg-card" data-card="freshness"><h2>FRESHNESS BUDGET</h2><p class="tg-k">갱신 주기는 피처마다 정한다</p><p class="tg-easy"><b>쉽게 말하면</b> 모든 피처를 실시간으로 만들 필요가 없습니다. 값이 빨리 변하는 것만 자주 만들고, 천천히 변하는 것은 하루 한 번으로 둡니다.</p><div class="tg-fig" id="ft-freshness"></div>
-        <p class="tg-cap">캠페인 남은 예산은 <b>1분</b>, 유저 최근 클릭 수는 <b>5분</b>, 유저 7일 클릭률은 <b>하루 한 번</b>입니다. 기기는 요청에 실려 와 계산이 거의 공짜입니다.</p></section>
+        <p class="tg-cap">캠페인 남은 예산은 <b>1분</b>, 유저 최근 클릭 수는 <b>5분</b>, 유저 7일 클릭률은 <b>하루 한 번</b>입니다. 기기는 요청에 담겨 와 계산이 거의 공짜입니다.</p></section>
 
       <section class="tg-card" data-card="fallback"><h2>FEATURE FALLBACK</h2><p class="tg-k">피처가 안 올 때 무엇을 넣나</p><p class="tg-easy"><b>쉽게 말하면</b> 저장소가 늦거나 답을 못 줘도 광고는 나가야 합니다. 그래서 무엇으로 채울지를 미리 순서대로 적어 둡니다. 아래로 갈수록 답은 나가지만 맞는 정도가 떨어집니다.</p><div class="tg-fig" id="ft-fallback"></div>
         <p class="tg-cap">순서는 <b>조금 전 값, 무리 평균, 전체 평균</b> 셋입니다. 무엇으로 채웠는지 로그에 남겨야 그 요청이 왜 나빴는지 나중에 찾을 수 있습니다.</p></section>

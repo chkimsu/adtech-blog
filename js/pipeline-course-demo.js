@@ -92,7 +92,7 @@
 
   // rail 의 실제 렌더 높이를 재서 --plc-rail-h 에 넣는다. detail 의 sticky
   // top 이 이 값을 쓰므로, rail 이 좁은 화면에서 두 줄이 되어도 detail 이
-  // rail 을 가리지 않는다.
+  // rail 을 덮지 않는다.
   function syncRailHeight() {
     const h = $('plc-rail').getBoundingClientRect().height;
     if (h > 0) document.documentElement.style.setProperty('--plc-rail-h', h + 'px');

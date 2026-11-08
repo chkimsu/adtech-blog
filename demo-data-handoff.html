@@ -131,7 +131,7 @@
         <p class="dh-cap">같은 메시지를 <b>세 팀이 각자 속도로</b> 받습니다. 실시간이고 받는 쪽이 여럿일 때 씁니다.</p></section>
       <section class="dh-card" data-card="api"><h2>API</h2><p class="dh-k">건별로 지금 값을 물어본다</p><p class="dh-easy"><b>쉽게 말하면</b> 필요한 것 하나를 그때그때 「이 광고 지금 상태 알려 줘」 하고 물어서 답을 받는 것입니다. 한 건에 한 번씩 묻습니다.</p><div class="dh-fig" id="dh-api"></div>
         <p class="dh-cap">건 하나가 요청 하나입니다. 228만 건이면 요청 228만 번이라 <b>대량 전달에는 안 맞고</b> 조회에 맞습니다.</p></section>
-      <section class="dh-card" data-card="log"><h2>LOG PIPELINE</h2><p class="dh-k">행동 기록을 수집기에 태운다</p><p class="dh-easy"><b>쉽게 말하면</b> 서비스가 무슨 일이 있을 때마다 한 줄씩 기록을 남기면, 그 기록이 자동으로 웨어하우스까지 실려 가는 길입니다. 서비스 팀은 한 줄 남기는 것만 합니다.</p><div class="dh-fig" id="dh-log"></div>
+      <section class="dh-card" data-card="log"><h2>LOG PIPELINE</h2><p class="dh-k">행동 기록을 수집기에 태운다</p><p class="dh-easy"><b>쉽게 말하면</b> 서비스가 무슨 일이 있을 때마다 한 줄씩 기록을 남기면, 그 기록이 자동으로 웨어하우스까지 전달되는 길입니다. 서비스 팀은 한 줄 남기는 것만 합니다.</p><div class="dh-fig" id="dh-log"></div>
         <p class="dh-cap">서비스 팀에 오는 요청은 <b>「이 로그 한 줄 남겨 주세요」</b> 모양입니다. 한 번 남기면 뒤 자리들은 이미 깔려 있습니다.</p></section>
       <section class="dh-card" data-card="reverse"><h2>REVERSE ETL</h2><p class="dh-k">웨어하우스 결과를 서비스로 되돌린다</p><p class="dh-easy"><b>쉽게 말하면</b> 웨어하우스에서 계산한 결과(이 사용자는 어느 그룹인가)를 서비스가 빨리 읽을 수 있는 DB 에 매일 옮겨 두는 것입니다. 서비스는 그 DB 만 봅니다.</p><div class="dh-fig" id="dh-reverse"></div>
         <p class="dh-cap">웨어하우스는 느리고 서비스는 1ms 안에 답해야 합니다. 그래서 결과를 <b>서비스 옆 DB 에 옮겨 두고</b> 건별로 읽게 합니다.</p></section>

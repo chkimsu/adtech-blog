@@ -160,7 +160,7 @@
         </div>
         <ol class="pr-trail" id="pr-trail"></ol>
         <p class="pr-sum" id="pr-sum"></p>
-        <p class="pr-cap">1번과 2번 자리는 몇 ms 안에 끝납니다. 걸리는 시간은 거의 다 3번 자리의 <b>hold 2초</b>입니다. 처리기는 받은 이벤트를 2초 들고 있다가 이벤트 시각 순서로 세워 적용합니다. 4번의 시각은 0.25초마다 Redis 를 읽다가 바뀐 값을 본 때라 적용 시각보다 조금 늦습니다. 기록할 때는 보내기 전 값을 같이 받으려고 POST /events 와 같은 길로 보내는 /trace/send 를 썼습니다.</p>
+        <p class="pr-cap">1번과 2번 자리는 몇 ms 안에 끝납니다. 걸리는 시간은 거의 다 3번 자리의 <b>hold 2초</b>입니다. 처리기는 받은 이벤트를 2초 들고 있다가 이벤트 시각 순서로 정렬해 적용합니다. 4번의 시각은 0.25초마다 Redis 를 읽다가 바뀐 값을 본 때라 적용 시각보다 조금 늦습니다. 기록할 때는 보내기 전 값을 같이 받으려고 POST /events 와 같은 길로 보내는 /trace/send 를 썼습니다.</p>
       </section>
 
       <section class="pr-sec" data-fig="2">

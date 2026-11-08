@@ -64,7 +64,7 @@
   var CLICK_EVERY = 6;              // 6이벤트에 하나가 클릭 (실제는 101에 하나)
 
   // 애니메이션 시간 — 실제 ms 를 그대로 쓰면 0 ms 층이 안 보인다.
-  // 그래서 층마다 최소 통과 시간을 얹는다. 누적 시간 표시는 이 값이 아니라
+  // 그래서 층마다 최소 통과 시간을 더한다. 누적 시간 표시는 이 값이 아니라
   // 언제나 실제 ms 로 환산해서 쓴다(realRate 참고).
   var BASE_ANIM = 80;
   var MS_SCALE = 0.8;
@@ -185,7 +185,7 @@
     // (1) 시간을 흘린다 — 멈춰 세운 층에서도 시간은 흐른다
     for (i = 0; i < state.packets.length; i++) state.packets[i].age += dt;
 
-    // (2) 이동 — 하류부터 훑어야 앞칸이 비면서 뒤칸이 따라 들어온다
+    // (2) 이동 — 하류부터 순회해야 앞칸이 비면서 뒤칸이 따라 들어온다
     var byHop = groupByHop();
     var counts = byHop.map(function (l) { return l.length; });
     var retire = [];

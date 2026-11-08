@@ -22,7 +22,7 @@
        =================================================================== */
 
     /* .sl-stage 와 .sl-panels 는 <main> 의 직계 자식이다.
-       임베드에서 이 둘만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 훑는다).
+       임베드에서 이 둘만 남기려면 그래야 한다(demo-edu.js 가 main.children 을 순회한다).
        그래서 폭·여백을 바깥 통에 기대지 않고 각자 갖는다. */
     .sl-page,
     .sl-stage,
@@ -359,7 +359,7 @@
               <div class="sl-gauge-label">관측 가능한 전환 비율</div>
               <div class="sl-gauge-value" id="sl-g2">—</div>
               <div class="sl-gauge-sub" id="sl-g2-sub">—</div>
-              <div class="sl-gauge-foot">값이 실려 오는 전환만 셉니다.
+              <div class="sl-gauge-foot">값이 담겨 오는 전환만 셉니다.
                 건수만 오는 것과 버킷째 지워진 것은 빠집니다.</div>
             </div>
             <div class="sl-gauge">

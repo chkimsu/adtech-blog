@@ -1,6 +1,6 @@
 // ===================================================================
 // Lookalike 확장 비율 놀이터 — js/lookalike-ratio-demo.js
-// 회원 1,400만 명을 시드와 닮은 순서로 세운 줄에서 앞 r% 를 자른다.
+// 회원 1,400만 명을 시드와 닮은 순서로 정렬한 줄에서 앞 r% 를 자른다.
 // 도달은 1,400만 × r ÷ 100 이라 시드 크기와 상관이 없다.
 // 정밀도와 전환율은 1% 의 값에서 비율이 오를수록 내려가는 가상 곡선이다.
 // 감쇠 계수 1.0, 시드 8만 명이면 두 곡선은 두 글의 1, 5, 10% 값을 지난다.
@@ -209,7 +209,7 @@
     $('lr-conv').className = 'lr-metric-value' + (cur.r === best.r ? ' good' : '');
     $('lr-conv-sub').textContent = '도달 × 전환율';
 
-    // 차트 — 비율 1..20 을 훑는다
+    // 차트 — 비율 1..20 을 순회한다
     const rows = ratios.map(r => model(r, st.seed, st.k));
     const rate = (m, key) => ({ x: m.r, y: m[key] / (key === 'prec' ? PREC.y1 : CVR.y1), text: key === 'prec' ? m.prec.toFixed(3) : (m.cvr * 100).toFixed(2) + '%' });
     rateChart.data.datasets[0].data = rows.map(m => rate(m, 'prec'));

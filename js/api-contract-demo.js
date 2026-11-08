@@ -513,7 +513,7 @@
     verdictHost.classList.toggle('is-bad', bad);
 
     // 해설 패널(js/demo-edu-content.js)이 읽어 갈 값. 전역을 만들지 않으려고
-    // 판정 박스의 data-* 에 실어 둔다.
+    // 판정 박스의 data-* 에 담아 둔다.
     //
     // 자릿점이 붙는 것과 안 붙는 것을 갈라 둔다.
     //   화면에 그대로 박는 값 → 자릿점 붙임 (acSent · acRows · acBlocked ·

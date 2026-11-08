@@ -265,7 +265,7 @@
     function renderResponse(res) {
         const ok = res.status < 400;
         const statusHtml = '<span class="' + (ok ? 'st-ok' : 'st-bad') + '">' + esc('HTTP/1.1 ' + res.status + ' ' + res.reason) + '</span>';
-        const bodyHtml = res.body ? esc(res.body) : '<span class="dim">(없음 — 204 는 본문을 싣지 않습니다)</span>';
+        const bodyHtml = res.body ? esc(res.body) : '<span class="dim">(없음 — 204 는 본문을 담지 않습니다)</span>';
         el.resParts.innerHTML =
             part('상태 줄', statusHtml) +
             part('헤더', headerLines(res.headers)) +
@@ -278,7 +278,7 @@
         const d = res.diff;
         const changedIds = Object.keys(d.changed).filter(k => d.changed[k].length);
         let what;
-        if (d.added.length) what = '서버 데이터에 <b>' + d.added.join(', ') + '번 글이 새로 생겼습니다.</b> 새 글의 주소가 Location 헤더에 실려 왔습니다.';
+        if (d.added.length) what = '서버 데이터에 <b>' + d.added.join(', ') + '번 글이 새로 생겼습니다.</b> 새 글의 주소가 Location 헤더에 담겨 왔습니다.';
         else if (changedIds.length) {
             const id = changedIds[0];
             what = '<b>' + id + '번 글의 ' + d.changed[id].join(', ') + ' 필드가 바뀌었습니다.</b>' +

@@ -164,7 +164,7 @@
       consumers: 6, store: 'ClickHouse', product: 'Flink, Kafka Streams', mode: 'stream', how: '붙어서 한 건씩',
       why: '운영자가 화면을 보며 지금 잘 나가는지 판단합니다',
       late: '멈춘 화면으로 보입니다',
-      faster: '이득 없습니다. 사람 눈이 2초 아래를 못 가립니다',
+      faster: '이득 없습니다. 사람 눈이 2초 아래를 못 구분합니다',
     },
     {
       key: 'report', name: '광고주 리포트', deadline: '5분', deadlineSec: 300,

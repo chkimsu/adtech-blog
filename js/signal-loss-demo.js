@@ -46,7 +46,7 @@
 
   // 7절 — 라플라스 노이즈 b=20, 표준편차 28.3건, 50건 미만 억제
   const LAP_B = 20, LAP_SD = 28.3, SUPPRESS_CUT = 50;
-  const DIFF_SD = 40.0;            // 두 버킷의 차이에 실리는 노이즈 표준편차
+  const DIFF_SD = 40.0;            // 두 버킷의 차이에 더해지는 노이즈 표준편차
   const LEVELS = [10, 40, 120, 400, 1200, 4000];
   const REL_SD = [282.8, 70.7, 23.6, 7.1, 2.4, 0.7];   // 상대SD%
   const SUP_RATE = [93.6, 69.5, 1.6, 0.0, 0.0, 0.0];   // 억제율%
@@ -420,7 +420,7 @@
     $('sl-spread-svg').innerHTML = drawSpread(m, panelW('sl-spread-svg'));
     $('sl-spread-note').innerHTML = '이 광고의 평균오차는 ' + pct(state.noise ? 0 : MEAN_ERR[levelIdx]) +
       ', 7일을 합산하면 상대 흔들림이 ' + pct(state.noise ? 0 : WEEK_SD[levelIdx]) + ' 로 내려간다. ' +
-      '대가는 시간 해상도다. 두 광고를 견주면 노이즈가 두 번 실려 ±' + DIFF_SD.toFixed(1) +
+      '대가는 시간 해상도다. 두 광고를 비교하면 노이즈가 두 번 더해져 ±' + DIFF_SD.toFixed(1) +
       '건이 된다. 전환 40건에서 5% 차이는 2건, 노이즈의 0.05배다. ' +
       '4,000건에서 5% 차이는 200건, 5.00배다.';
 

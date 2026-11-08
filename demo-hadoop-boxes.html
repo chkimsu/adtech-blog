@@ -139,9 +139,9 @@
 
       <section class="hb-sec" data-fig="3">
         <h2><span class="no">3</span>YARN: 계산할 자리를 나눠 줍니다</h2>
-        <p class="hb-one">쿼리 하나가 계산 조각 여러 개로 나뉩니다. ResourceManager 가 큐(줄)에서 CPU 와 메모리를 떼어 워커 상자의 NodeManager 에 조각을 얹습니다.</p>
+        <p class="hb-one">쿼리 하나가 계산 조각 여러 개로 나뉩니다. ResourceManager 가 큐(줄)에서 CPU 와 메모리를 떼어 워커 상자의 NodeManager 에 조각을 올립니다.</p>
         <div class="hb-fig" id="hb-fig3"></div>
-        <p class="hb-cap">큐는 서버가 아닙니다. ResourceManager 안에서 <b>자원을 나누는 줄</b>입니다. 주소 끝의 <code>tez.queue.name=analytics</code> 는 「내 쿼리는 analytics 줄에서 자원을 받아라」는 뜻입니다. 그 줄이 가득 차면 쿼리는 줄에서 기다립니다. 계산 조각은 데이터 조각이 있는 상자에 먼저 얹힙니다.</p>
+        <p class="hb-cap">큐는 서버가 아닙니다. ResourceManager 안에서 <b>자원을 나누는 줄</b>입니다. 주소 끝의 <code>tez.queue.name=analytics</code> 는 「내 쿼리는 analytics 줄에서 자원을 받아라」는 뜻입니다. 그 줄이 가득 차면 쿼리는 줄에서 기다립니다. 계산 조각은 데이터 조각이 있는 상자에 먼저 올라갑니다.</p>
       </section>
 
       <section class="hb-sec" data-fig="4">
@@ -162,7 +162,7 @@
         <h2><span class="no">6</span>쿼리 한 건이 지나는 길</h2>
         <p class="hb-one">내가 주소로 직접 가는 곳은 ZooKeeper 와 HiveServer2 두 곳입니다. 나머지는 상자들끼리 서로 압니다.</p>
         <div class="hb-fig" id="hb-fig6"></div>
-        <p class="hb-cap">1 ZooKeeper 에 「HiveServer2 어디 있어」를 묻고, 2 살아 있는 하나(hs2-a)를 받습니다. 3 hs2-a 에 계정과 SQL 을 보냅니다. 4 hs2-a 가 Metastore 에 컬럼과 파일 위치를 묻고, 5 ResourceManager 의 analytics 줄에서 자원을 받습니다. 6 워커 상자들에 계산 조각이 얹혀 데이터 조각을 읽고 셉니다. 7 결과가 hs2-a 를 거쳐 나에게 돌아옵니다.</p>
+        <p class="hb-cap">1 ZooKeeper 에 「HiveServer2 어디 있어」를 묻고, 2 살아 있는 하나(hs2-a)를 받습니다. 3 hs2-a 에 계정과 SQL 을 보냅니다. 4 hs2-a 가 Metastore 에 컬럼과 파일 위치를 묻고, 5 ResourceManager 의 analytics 줄에서 자원을 받습니다. 6 워커 상자들에 계산 조각이 올라가 데이터 조각을 읽고 셉니다. 7 결과가 hs2-a 를 거쳐 나에게 돌아옵니다.</p>
       </section>
     </div>
 

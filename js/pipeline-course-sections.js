@@ -67,7 +67,7 @@
   }
 
   // 상자 하나 — rect 는 늘 불투명(var(--bg-secondary))이라 선의 끝이 상자
-  // 밑에서 가려진다. 문제는 상자가 아니라 선 위에 홀로 뜬 배지 쪽이다(아래).
+  // 밑에서 안 보인다. 문제는 상자가 아니라 선 위에 홀로 뜬 배지 쪽이다(아래).
   function foBoxSVG(b, cls, lines) {
     let s = '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h +
       '" class="' + cls + '"/>';

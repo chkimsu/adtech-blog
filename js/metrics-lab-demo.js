@@ -189,7 +189,7 @@
       const pairs = pr * nr;
       gWin += win; gPair += pairs; gSum += win / pairs; used++;
 
-      // 이 요청의 ROC 계단을 눈금 위에 얹는다
+      // 이 요청의 ROC 계단을 눈금 위에 올린다
       for (let a = 0; a < K; a++) ord[a] = s0 + a;
       ord.sort((a, b) => pred[b] - pred[a]);
       let tp = 0, fp = 0, g = 0;
@@ -270,7 +270,7 @@
   const signPct = (x) => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(1) + '%';
   const grp = (x) => Math.round(x).toLocaleString('en-US');
 
-  let baseline = null;      // 기본값 상태의 지표 — 게이트가 견주는 자리
+  let baseline = null;      // 기본값 상태의 지표 — 게이트가 비교하는 자리
   let showAt = 0;           // 오른쪽에 띄운 요청
 
   function setCard(id, valueText, subText, state) {
@@ -302,10 +302,10 @@
     if (!baseline) baseline = res;
 
     // 요청 간 편차와 자리 수는 데이터를 바꾼다 — 평가 표본 자체가 달라진다.
-    // 그러면 "기존 모델 대비" 문턱(GAUC -0.001 · NE +0.5%)은 견줄 자리가 없다.
+    // 그러면 "기존 모델 대비" 문턱(GAUC -0.001 · NE +0.5%)은 비교할 자리가 없다.
     // 절대 문턱(NE 1.0 · COPC 0.97~1.03)만 표본이 달라도 그대로 유효하다.
     const sameSample = (sb === DEF.sb && K === DEF.K);
-    const NOCMP = '기준과 <b>다른 표본</b>이라 견줄 수 없다';
+    const NOCMP = '기준과 <b>다른 표본</b>이라 비교할 수 없다';
 
     // --- 지표 다섯 칸 ---
     const dAuc = res.auc - baseline.auc;
@@ -330,7 +330,7 @@
     const dNe = baseline.ne > 0 ? (res.ne - baseline.ne) / baseline.ne : 0;
     const neBad = res.ne >= 1.0;
     setCard('ne', fmt4(res.ne),
-      (sameSample ? '기준 대비 <b>' + signPct(dNe) + '</b>' : '표본이 달라도 <b>NE 는 견줄 수 있다</b>') +
+      (sameSample ? '기준 대비 <b>' + signPct(dNe) + '</b>' : '표본이 달라도 <b>NE 는 비교할 수 있다</b>') +
       ', 1.0 은 상수 모델과 같다', neBad ? 'bad' : 'plain');
     gateBadge('ne',
       neBad ? '즉시 중단' : !sameSample ? '절댓값만' : dNe >= 0.005 ? '중단' : '통과',

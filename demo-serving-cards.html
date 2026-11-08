@@ -43,8 +43,8 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="retrieval"><h2>RETRIEVAL</h2><p class="tg-k">10만 개에서 수백 개로 추린다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 후보 10만 개에 정밀한 모델을 다 돌리면 30초가 걸립니다. 예산은 0.1초입니다. 그래서 먼저 가벼운 방법으로 훑어 수백 개만 남기고, 거기에만 정밀 모델을 씁니다.</p><div class="tg-fig" id="mc-retrieval"></div>
-        <p class="tg-cap">정밀 모델 전수는 30,000ms, 벡터 내적은 <b>13.6ms</b>입니다. 후보가 100만 개가 되면 내적도 128.8ms 라 2%만 훑는 ANN 이 3.4ms 로 받습니다.</p></section>
+      <section class="tg-card" data-card="retrieval"><h2>RETRIEVAL</h2><p class="tg-k">10만 개에서 수백 개로 추린다</p><p class="tg-easy"><b>쉽게 말하면</b> 광고 후보 10만 개에 정밀한 모델을 다 돌리면 30초가 걸립니다. 예산은 0.1초입니다. 그래서 먼저 가벼운 방법으로 스캔해 수백 개만 남기고, 거기에만 정밀 모델을 씁니다.</p><div class="tg-fig" id="mc-retrieval"></div>
+        <p class="tg-cap">정밀 모델 전수는 30,000ms, 벡터 내적은 <b>13.6ms</b>입니다. 후보가 100만 개가 되면 내적도 128.8ms 라 2%만 스캔하는 ANN 이 3.4ms 로 받습니다.</p></section>
 
       <section class="tg-card" data-card="skew"><h2>TRAIN / SERVE SKEW</h2><p class="tg-k">같은 피처 이름, 다른 값</p><p class="tg-easy"><b>쉽게 말하면</b> 「지난 7일 클릭 수」라는 같은 이름의 피처를, 학습은 자정에 만든 표에서 읽고 서빙은 실시간 카운터에서 읽습니다. 이름이 같으니 아무도 모릅니다.</p><div class="tg-fig" id="mc-skew"></div>
         <p class="tg-cap">평균 <b>3.366%p</b> 어긋나고, 심한 유저는 pCTR 3.4%가 14.2%로, 입찰가가 34원에서 142원이 됩니다. 활발해진 유저를 늘 낮게 봅니다.</p></section>

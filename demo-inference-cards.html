@@ -50,7 +50,7 @@
       <section class="tg-card" data-card="load"><h2>SERVER STARTUP</h2><p class="tg-k">서버가 뜨는 41초</p><p class="tg-easy"><b>쉽게 말하면</b> 새 서버는 켜지자마자 답할 수 없습니다. 이미지가 켜지고, 모델 파일을 내려받아 올리고, 더미 요청 200건으로 웜업을 마친 뒤에야 readiness probe 를 통과합니다. 게이트웨이는 이 검사를 통과한 서버에만 요청을 보냅니다.</p><div class="tg-fig" id="in-load"></div>
         <p class="tg-cap">이미지 시작 12초, 내려받기 6초, 적재 3초, 웜업 20초로 <b>41초</b>입니다. 웜업 20초를 빼고 열면 첫 30초가 2.5배 느립니다.</p></section>
 
-      <section class="tg-card" data-card="batch"><h2>ONE TENSOR</h2><p class="tg-k">후보 800건을 한 번에</p><p class="tg-easy"><b>쉽게 말하면</b> 요청 하나에 후보 800건이 실려 옵니다. 하나씩 800번 모델을 부르면 부를 때마다 오버헤드가 붙어 96ms 가 되고, 800줄을 한 텐서로 한 번에 넣으면 3.0ms 입니다. 예산 8ms 안에 드는 것은 한 번에 넣는 쪽뿐입니다.</p><div class="tg-fig" id="in-batch"></div>
+      <section class="tg-card" data-card="batch"><h2>ONE TENSOR</h2><p class="tg-k">후보 800건을 한 번에</p><p class="tg-easy"><b>쉽게 말하면</b> 요청 하나에 후보 800건이 담겨 옵니다. 하나씩 800번 모델을 부르면 부를 때마다 오버헤드가 붙어 96ms 가 되고, 800줄을 한 텐서로 한 번에 넣으면 3.0ms 입니다. 예산 8ms 안에 드는 것은 한 번에 넣는 쪽뿐입니다.</p><div class="tg-fig" id="in-batch"></div>
         <p class="tg-cap">호출 한 번의 오버헤드는 0.116ms, 후보 한 건의 계산은 0.0036ms 입니다. 800번 부르면 오버헤드만 <b>93ms</b> 입니다.</p></section>
 
       <section class="tg-card" data-card="twoversions"><h2>TWO VERSIONS</h2><p class="tg-k">두 버전을 동시에 올려 둔다</p><p class="tg-easy"><b>쉽게 말하면</b> 운영 중인 v417 과 새 v418 을 한 서버에 같이 올려 두고, 어느 쪽이 답할지는 설정 한 줄로 정합니다. 바꾸는 것도 되돌리는 것도 그 한 줄이라 몇 초면 됩니다. 비용은 임베딩 표가 하나 더 드는 27.7GB 입니다.</p><div class="tg-fig" id="in-twoversions"></div>

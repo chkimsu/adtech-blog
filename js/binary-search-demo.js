@@ -140,7 +140,7 @@ class BinarySearchEngine {
         while (!this.done && guard++ < 200) this.step();
     }
 
-    /** 앞에서부터 훑었다면 몇 번 비교했을까 */
+    /** 앞에서부터 스캔했다면 몇 번 비교했을까 */
     linearSteps() {
         for (let i = 0; i < this.arr.length; i++) {
             if (this.mode === 'exact' && this.arr[i] === this.target) return i + 1;
@@ -244,7 +244,7 @@ function render() {
     $('bs-log-body').innerHTML = rows ||
         '<tr><td colspan="7" class="bs-log-empty">아직 한 회차도 안 돌았습니다</td></tr>';
 
-    // --- 훑기와 비교 ---
+    // --- 스캔과 비교 ---
     const lin = engine.linearSteps();
     const bin = Math.ceil(Math.log2(arr.length + 1));
     $('bs-cmp-linear').textContent = `${lin}회`;

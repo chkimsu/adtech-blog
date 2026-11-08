@@ -73,7 +73,7 @@
                         `<tr><td class="num">p${a.partition} #${a.offset}</td><td>${esc(a.action)}</td><td>${esc(NOTE[a.note] || a.note)}</td>` +
                         `<td class="num${a.added ? ' chg' : ''}">${a.added}</td><td class="num">${a.playtime_sec}</td><td class="num">${a.completed}</td></tr></tbody></table></div>` +
                         `<p>보낸 지 <b>${fmtMs(t.applied)}</b> 만에 적용됐습니다. 그중 ${HOLD / 1000}초는 일부러 들고 있는 시간입니다. ` +
-                        `순서가 뒤바뀌어 온 이벤트를 이벤트 시각 순서로 세우려고 둡니다.</p>`
+                        `순서가 뒤바뀌어 온 이벤트를 이벤트 시각 순서로 정렬하려고 둡니다.</p>`
                 },
                 {
                     t: t.redis, title: 'Redis 의 값이 바뀝니다', sub: `Hash ${esc(r.key)}`,

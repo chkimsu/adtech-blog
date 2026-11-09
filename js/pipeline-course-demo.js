@@ -318,7 +318,7 @@
   function buildTools() {
     const rows = TOOL_ROWS.map(function (r) {
       if (r.axis === '원문') {
-        return [r.axis, withCode('안 건드립니다 — ', 'message', ' 필드에 통째로'),
+        return [r.axis, withCode('안 건드립니다 — ', 'message', ' 필드에 그대로'),
           '파싱해서 ' + finalFieldCount() + '개 필드로'];
       }
       return [r.axis, r.beat, r.logstash];

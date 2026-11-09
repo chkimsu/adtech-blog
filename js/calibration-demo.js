@@ -126,7 +126,7 @@
     if (e < 0.02) verdict = '거의 완벽하게 보정됨 — 예측 확률을 그대로 입찰에 써도 안전합니다.';
     else if (slope > 1.05 && Math.abs(bias) < 0.1) verdict = '과신(overconfident): 높은 pCTR 구간에서 과대입찰, 낮은 구간에서 과소입찰 — 비싼 트래픽에 돈을 더 씁니다.';
     else if (slope < 0.95 && Math.abs(bias) < 0.1) verdict = '과소(underconfident): 좋은 트래픽에 과소입찰해 기회를 놓치고, 나쁜 트래픽엔 과대입찰합니다.';
-    else if (bias > 0.1) verdict = '전반적 과대예측: 모든 구간에서 실제보다 높게 봐 입찰가가 부풀려집니다(과지출).';
+    else if (bias > 0.1) verdict = '전반적 과대예측: 모든 구간에서 실제보다 높게 봐 입찰가가 커집니다(과지출).';
     else if (bias < -0.1) verdict = '전반적 과소예측: 모든 구간에서 보수적으로 입찰해 노출/전환을 놓칩니다.';
     else verdict = '약한 miscalibration — AUC는 그대로지만 입찰가가 조금씩 어긋납니다.';
     $('cal-verdict').textContent = verdict;

@@ -75,7 +75,7 @@
     L('+', 'host.name', 'web-03', '어느 기계의 파일인가'),
     L('+', 'log.file.path', '/var/log/nginx/event.log', ''),
     L('+', 'log.file.offset', '88213', '여기까지 읽었습니다'),
-    L(' ', 'message', NGINX_LINE, '한 글자도 안 바꾸고 통째로 넣습니다')
+    L(' ', 'message', NGINX_LINE, '한 글자도 안 바꾸고 그대로 넣습니다')
   ];
 
   var XFORM_OUT = [

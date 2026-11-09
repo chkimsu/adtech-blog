@@ -53,8 +53,8 @@
       <section class="tg-card" data-card="position"><h2>POSITION BIAS</h2><p class="tg-k">자리가 만드는 착각</p><p class="tg-easy"><b>쉽게 말하면</b> 위에 있는 광고가 더 눌리는 건 당연한데, 로그만 보면 그게 광고가 좋아서인지 자리가 좋아서인지 구분이 안 됩니다.</p><div class="tg-fig" id="mc-position"></div>
         <p class="tg-cap">같은 광고가 1위와 5위에서 <b>6.7배</b> 차이 납니다. 눈길이 닿는 확률로 나누면 4위였던 광고가 1위로 올라옵니다.</p></section>
 
-      <section class="tg-card" data-card="negsample"><h2>NEGATIVE SAMPLING</h2><p class="tg-k">줄이고 되돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 안 눌린 로그가 너무 많아 다 쓰면 학습이 안 끝납니다. 그래서 10분의 1만 남기는데, 그러면 클릭이 흔해 보여 모델이 확률을 부풉니다. 공식 한 줄로 되돌립니다.</p><div class="tg-fig" id="mc-negsample"></div>
-        <p class="tg-cap">진짜 2%인 클릭률이 학습셋에서 16.86%가 되고 예측은 진짜의 <b>7.7배</b>로 부풉니다. 보정하면 1.98%로 돌아옵니다.</p></section>
+      <section class="tg-card" data-card="negsample"><h2>NEGATIVE SAMPLING</h2><p class="tg-k">줄이고 되돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 안 눌린 로그가 너무 많아 다 쓰면 학습이 안 끝납니다. 그래서 10분의 1만 남기는데, 그러면 클릭이 흔해 보여 모델이 확률을 실제보다 크게 잡습니다. 공식 한 줄로 되돌립니다.</p><div class="tg-fig" id="mc-negsample"></div>
+        <p class="tg-cap">진짜 2%인 클릭률이 학습셋에서 16.86%가 되고 예측은 진짜의 <b>7.7배</b>로 커집니다. 보정하면 1.98%로 돌아옵니다.</p></section>
 
       <section class="tg-card" data-card="convdef"><h2>WHAT COUNTS AS A CONVERSION</h2><p class="tg-k">광고주마다 전환이 다르다</p><p class="tg-easy"><b>쉽게 말하면</b> 어떤 광고주는 상담 신청을 전환으로 세고 어떤 광고주는 재구매를 셉니다. 둘의 확률이 50배 차이인데 모델은 하나입니다.</p><div class="tg-fig" id="mc-convdef"></div>
         <p class="tg-cap">유형을 모르는 모델은 한쪽에 2.5배 과소, 다른 쪽에 20배 과대예측합니다. 그런데 <b>전체 COPC 는 1.00</b>이라 대시보드는 멀쩡해 보입니다.</p></section>

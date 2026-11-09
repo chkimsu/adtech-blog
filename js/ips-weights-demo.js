@@ -384,7 +384,7 @@
     const foot = $('ipw-foot-weights');
     if (foot) {
       if (worstIdx < 0) {
-        foot.textContent = '가중치가 비교적 고르게 퍼져 있습니다. 한 건이 값을 통째로 흔드는 자리가 없습니다.';
+        foot.textContent = '가중치가 비교적 고르게 퍼져 있습니다. 한 건이 값 전체를 흔드는 자리가 없습니다.';
       } else {
         const b = bins[worstIdx];
         const share = Math.round(b.w / st.wSum * 100);

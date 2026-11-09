@@ -76,7 +76,7 @@
         s += rect(230, 18, 12, 12, 'f-a') + T(248, 28, '실제 클릭률 (실제로 간 위치에서)', 'lbl sm');
         const base = 236, k = 28;
         s += line(40, base, 490, base, 'tick');
-        [[115, 'A, 1위', 5.0, 5.0, ''], [265, 'B, 2위', 4.0, 3.0, '1.3배 부풂'], [415, 'C, 3위', 3.0, 1.5, '2.0배 부풂']].forEach(([cx, name, p, a, t]) => {
+        [[115, 'A, 1위', 5.0, 5.0, ''], [265, 'B, 2위', 4.0, 3.0, '1.3배 큼'], [415, 'C, 3위', 3.0, 1.5, '2.0배 큼']].forEach(([cx, name, p, a, t]) => {
             const hp = p * k, ha = a * k;
             s += rect(cx - 50, base - hp, 46, hp, 'track') + T(cx - 27, base - hp - 6, p.toFixed(1) + '%', 'lbl k', 'middle');
             s += rect(cx + 4, base - ha, 46, ha, 'f-a') + T(cx + 27, base - ha - 6, a.toFixed(1) + '%', 'lbl k', 'middle');

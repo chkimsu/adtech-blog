@@ -56,7 +56,7 @@
       <section class="tg-card" data-card="backfill"><h2>BACKFILL</h2><p class="tg-k">지난 30일을 다시 돌린다</p><p class="tg-easy"><b>쉽게 말하면</b> 조인 조건이 잘못됐던 것을 고치면 어제 하루가 아니라 지난 30일치 학습 데이터를 다시 만들어야 합니다. 한 날 63분씩 30번인데, 여섯 날을 동시에 돌리면 5시간 15분입니다.</p><div class="tg-fig" id="pl-backfill"></div>
         <p class="tg-cap">직렬이면 31시간 30분, <b>6개 동시면 5시간 15분</b>입니다. 백필은 라벨과 피처만 다시 만들고 모델은 마지막에 한 번 학습합니다.</p></section>
 
-      <section class="tg-card" data-card="idempotent"><h2>IDEMPOTENT WRITE</h2><p class="tg-k">두 번 돌아도 같은 결과</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 날 태스크를 두 번 돌렸을 때 결과가 같아야 재실행과 백필을 안심하고 할 수 있습니다. 파티션을 통째로 덮어쓰면 같고, 있는 것 뒤에 덧붙이면 돌릴 때마다 두 배가 됩니다.</p><div class="tg-fig" id="pl-idempotent"></div>
+      <section class="tg-card" data-card="idempotent"><h2>IDEMPOTENT WRITE</h2><p class="tg-k">두 번 돌아도 같은 결과</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 날 태스크를 두 번 돌렸을 때 결과가 같아야 재실행과 백필을 안심하고 할 수 있습니다. 파티션 전체를 덮어쓰면 같고, 있는 것 뒤에 덧붙이면 돌릴 때마다 두 배가 됩니다.</p><div class="tg-fig" id="pl-idempotent"></div>
         <p class="tg-cap">덮어쓰기는 몇 번을 돌려도 2,485만 행이고 덧붙이기는 두 번째에 <b>4,970만 행</b>이 됩니다. 절반에서 죽은 뒤 덧붙이면 3,728만 행 중 1,243만 행이 중복입니다.</p></section>
     </div>
 

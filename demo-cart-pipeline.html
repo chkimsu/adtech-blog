@@ -237,7 +237,7 @@
 
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 3분</span>
-        <li><span class="step-text"><strong>1번 앱 SDK</strong>부터 순서대로 눌러 봅니다. 오른쪽 칸이 자리마다 통째로 바뀝니다.</span></li>
+        <li><span class="step-text"><strong>1번 앱 SDK</strong>부터 순서대로 눌러 봅니다. 오른쪽 칸이 자리마다 전부 바뀝니다.</span></li>
         <li><span class="step-text"><strong>4번 변환기</strong>에서 멈춥니다. 크기는 <code>5 B</code> 줄었는데 필드가 <code>4개에서 15개</code>가 됩니다. 바이트로는 아무 일도 없어 보이는 자리에서 가장 큰 일이 일어납니다.</span></li>
         <li><span class="step-text"><strong>6번 읽는 쪽 넷</strong>에서 칩 넷을 갈아 눌러 봅니다. 왼쪽은 그대로인데 오른쪽만 넷으로 나뉩니다 — 같은 한 줄이 네 결과가 됩니다.</span></li>
         <li><span class="step-text">맨 아래에서 <strong>멈춘 시간을 240시간</strong>으로 밉니다. 보존 7일을 넘는 순간 앞부분이 지워졌다고 바뀝니다. 보존 기간을 30일로 올리면 다시 살아납니다.</span></li>
@@ -341,7 +341,7 @@
           <ol>
             <li><span class="step-text"><strong>크기와 쓸모는 따로 논다</strong> — 3번에서 4번으로 가며 325 B가 320 B로 줄어드는데, 쓸 수 있는 필드는 4개에서 15개가 됩니다. envelope 은 감싸느라 커졌고 변환기는 통짜 문자열을 필드로 쪼갰습니다. 바이트만 보면 놓치는 자리입니다.</span></li>
             <li><span class="step-text"><strong>과금액은 앱이 안 보낸다</strong> — 1번에 없던 <code>cost</code> 가 4번에서 붙습니다. 앱이 보낸 값은 사람이 고칠 수 있어서, 돈이 걸린 값은 서버가 캠페인 표에서 직접 찾습니다.</span></li>
-            <li><span class="step-text"><strong>보존 기간은 여유가 아니라 복구를 산다</strong> — 멈춘 시간을 밀어 보면 보존 윈도우 안에서는 전부 되감아지고, 윈도우를 넘는 순간 그만큼이 통째로 사라집니다. 넷이 다 읽어도 줄은 안 줄어듭니다.</span></li>
+            <li><span class="step-text"><strong>보존 기간은 여유가 아니라 복구를 산다</strong> — 멈춘 시간을 밀어 보면 보존 윈도우 안에서는 전부 되감아지고, 윈도우를 넘는 순간 그만큼이 전부 사라집니다. 넷이 다 읽어도 줄은 안 줄어듭니다.</span></li>
           </ol>
         </div>
       </section>

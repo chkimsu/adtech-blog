@@ -27,12 +27,12 @@ window.DEMO_EDU = {
         explain: {
             '#slider-alpha': ({ value, prev }) =>
                 `α(클릭+1)를 <strong>${prev} → ${value}</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
-                `성공 데이터가 ${value > prev ? '늘어난' : '줄어든'} 셈이라 봉우리가 ` +
+                `성공 데이터가 ${value > prev ? '늘어난' : '줄어든'} 것이라 봉우리가 ` +
                 `<strong>${value > prev ? '오른쪽(높은 CTR 쪽)' : '왼쪽(낮은 CTR 쪽)'}</strong>으로 움직입니다. ` +
                 `분포가 바뀌어 쌓인 샘플은 초기화됐습니다.`,
             '#slider-beta': ({ value, prev }) =>
                 `β(무시+1)를 <strong>${prev} → ${value}</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
-                `실패 데이터가 ${value > prev ? '늘어난' : '줄어든'} 셈이라 봉우리가 ` +
+                `실패 데이터가 ${value > prev ? '늘어난' : '줄어든'} 것이라 봉우리가 ` +
                 `<strong>${value > prev ? '왼쪽(낮은 CTR 쪽)' : '오른쪽(높은 CTR 쪽)'}</strong>으로 움직입니다. ` +
                 `α+β가 클수록 곡선이 좁아져 "확신"이 커집니다.`,
             '#btn-one': () =>
@@ -94,7 +94,7 @@ window.DEMO_EDU = {
             '#slider-c': ({ value, prev }) =>
                 `탐색 상수 c를 <strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
                 `c가 클수록 회색 막대(불확실성 보너스)가 커져 <strong>덜 검증된 광고</strong>에도 기회가 갑니다. ` +
-                `${value > prev ? '호기심이 늘어난 셈입니다' : '검증된 광고에 더 집중하게 됩니다'}. 차트에 즉시 반영됩니다.`,
+                `${value > prev ? '호기심이 늘어납니다' : '검증된 광고에 더 집중하게 됩니다'}. 차트에 즉시 반영됩니다.`,
             'button[onclick="runOneRound()"]': () =>
                 '한 라운드를 진행했습니다. <strong>색깔+회색 막대의 합이 가장 길었던 광고</strong>가 선택돼 노출됐습니다. ' +
                 '클릭 여부에 따라 평균(색깔)이 갱신되고, 선택된 광고의 보너스(회색)는 줄어듭니다. ' +
@@ -520,7 +520,7 @@ window.DEMO_EDU = {
                     : '너무 내리면 비용은 아끼지만 낙찰 기회 자체를 놓쳐서 전체 이익이 줍니다.'),
             '#slider-median': ({ value, prev }) =>
                 `시장 중앙값(경쟁자들의 평균 입찰 수준)을 <strong>${prev.toFixed(2)} → ${value.toFixed(2)}달러</strong>로 바꿨습니다. ` +
-                `${value > prev ? '시장이 비싸진' : '시장이 싸진'} 셈이라 낙찰률 S자 곡선 전체가 <strong>${value > prev ? '오른쪽' : '왼쪽'}</strong>으로 밀립니다. ` +
+                `${value > prev ? '시장이 비싸진' : '시장이 싸진'} 것이라 낙찰률 S자 곡선 전체가 <strong>${value > prev ? '오른쪽' : '왼쪽'}</strong>으로 밀립니다. ` +
                 'Optimal Bid도 같이 움직였는지 확인합니다.',
             '#slider-competition': ({ value, prev }) =>
                 `경쟁 강도 k를 <strong>${prev.toFixed(1)} → ${value.toFixed(1)}</strong>로 바꿨습니다. ` +
@@ -653,7 +653,7 @@ window.DEMO_EDU = {
             '#cal-bias': ({ value, prev }) =>
                 `편향(bias)을 <strong>${(+prev).toFixed(2)} → ${(+value).toFixed(2)}</strong>로 바꿨습니다. ` +
                 (value > 0.1
-                    ? '0보다 크면 <strong>전반적 과대예측</strong> — 모든 구간에서 실제보다 높게 봐서 입찰선이 통째로 위로 뜹니다(과지출).'
+                    ? '0보다 크면 <strong>전반적 과대예측</strong> — 모든 구간에서 실제보다 높게 봐서 입찰선 전체가 위로 뜹니다(과지출).'
                     : value < -0.1
                         ? '0보다 작으면 <strong>전반적 과소예측</strong> — 모든 구간에서 보수적으로 입찰해 노출 기회를 놓칩니다.'
                         : '0 근처면 위아래 치우침은 거의 없습니다. 이제 왜곡의 주범은 기울기(slope)입니다.'),
@@ -664,7 +664,7 @@ window.DEMO_EDU = {
             '[data-preset="0.6,0"]': () =>
                 '<strong>과소(underconfident)</strong> 프리셋. 모델이 자신이 없어 확률을 가운데로 모읍니다. 좋은 트래픽엔 과소입찰해 기회를 놓치고, 나쁜 트래픽엔 과대입찰합니다.',
             '[data-preset="1,0.6"]': () =>
-                '<strong>양성 편향</strong> 프리셋. 모든 구간에서 확률이 부풀어, 입찰선 전체가 적정선 위로 뜹니다 — 전 구간 과지출. ECE와 두 왜곡 지표를 확인합니다.'
+                '<strong>양성 편향</strong> 프리셋. 모든 구간에서 확률이 커져, 입찰선 전체가 적정선 위로 뜹니다 — 전 구간 과지출. ECE와 두 왜곡 지표를 확인합니다.'
         },
         tour: [
             {
@@ -711,7 +711,7 @@ window.DEMO_EDU = {
             '#slider-bias': ({ value, prev }) =>
                 `pCTR 편향을 <strong>${prev > 0 ? '+' : ''}${prev}% → ${value > 0 ? '+' : ''}${value}%</strong>로 바꿨습니다. ` +
                 (value > 0
-                    ? '모델이 클릭 확률을 실제보다 높게 봅니다 → 입찰가가 부풀어 낙찰은 늘지만, 적정가보다 비싸게 사서 Surplus가 깎입니다.'
+                    ? '모델이 클릭 확률을 실제보다 높게 봅니다 → 입찰가가 커져 낙찰은 늘지만, 적정가보다 비싸게 사서 Surplus가 깎입니다.'
                     : value < 0
                         ? '모델이 클릭 확률을 실제보다 낮게 봅니다 → 입찰가가 낮아져 좋은 노출을 놓치지만, 산 것은 싸게 사서 손실은 과대입찰보다 작습니다.'
                         : '편향 0 — 예측이 정확해 Surplus 곡선의 꼭대기(최적점)에 서 있습니다.'),
@@ -735,7 +735,7 @@ window.DEMO_EDU = {
             {
                 el: '#slider-bias',
                 title: '모델을 일부러 틀리게',
-                body: '편향 슬라이더를 <strong>+10%</strong>쯤으로 올려봅니다. 모델이 클릭 확률을 10% 부풀려 보는 상황입니다.',
+                body: '편향 슬라이더를 <strong>+10%</strong>쯤으로 올려봅니다. 모델이 클릭 확률을 10% 크게 보는 상황입니다.',
                 waitFor: 'input'
             },
             {
@@ -892,7 +892,7 @@ window.DEMO_EDU = {
                 `파라미터가 바뀌어 탐색은 처음부터 다시 시작했습니다.`,
             '#slider-mu': ({ value, prev }) =>
                 `시장 중심 μ를 <strong>${prev} → ${value.toFixed(2)}</strong>로 ${value > prev ? '올렸' : '내렸'}습니다. ` +
-                `경쟁자들이 평균적으로 ${value > prev ? '더 비싸게' : '더 싸게'} 입찰하는 시장이 된 셈이라, ` +
+                `경쟁자들이 평균적으로 ${value > prev ? '더 비싸게' : '더 싸게'} 입찰하는 시장이 된 것이라, ` +
                 `봉우리(최적 입찰가)가 <strong>${value > prev ? '오른쪽으로 밀리고 기대 이익은 줄어듭니다' : '왼쪽으로 내려오고 기대 이익은 커집니다'}</strong>.`,
             '#slider-sigma': ({ value, prev }) =>
                 `시장 변동성 σ를 <strong>${prev} → ${value.toFixed(2)}</strong>로 ${value > prev ? '키웠' : '줄였'}습니다. ` +
@@ -1022,7 +1022,7 @@ window.DEMO_EDU = {
             '#btn-greedy': () =>
                 '가치가 가장 높은 <strong>Slot A에 전부</strong> 몰았습니다. 그런데 Total Profit은 오히려 줄었습니다. ' +
                 '한 지면에 계속 부으면 포화 때문에 <strong>마지막 예산의 추가 이익이 0에 가까워집니다</strong>. ' +
-                '다른 지면의 초반 큰 기울기를 통째로 버린 셈입니다.',
+                '다른 지면의 초반 큰 기울기를 전부 버린 것입니다.',
             '#btn-optimize': () =>
                 '<strong>등한계효용</strong> 분배를 찾았습니다 — 모든 지면에서 "마지막 1달러의 추가 이익(Marginal)"이 ' +
                 '같아지는 지점입니다. 각 카드의 <strong>Marginal 값이 거의 같아진 것</strong>을 확인해 봅니다. ' +
@@ -1216,7 +1216,7 @@ window.DEMO_EDU = {
                 }
                 if (now === 'ad_id') {
                     return 'key를 <strong>ad_id</strong>로 바꿨습니다. 같은 광고는 늘 같은 partition으로 가서 광고별 집계를 partition 하나 안에서 끝낼 수 있습니다. ' +
-                        '대신 <strong>4건짜리 인기 광고 9931이 있는 partition만 부풀고</strong>, 그 partition을 맡은 consumer만 밀립니다.';
+                        '대신 <strong>4건짜리 인기 광고 9931이 있는 partition만 커지고</strong>, 그 partition을 맡은 consumer만 밀립니다.';
                 }
                 return 'key를 <strong>req_id</strong>로 바꿨습니다. 같은 요청의 노출과 클릭이 같은 partition에 모여 순서대로 읽힙니다 — 둘을 이어 붙이기 좋은 상태입니다.';
             },
@@ -1327,7 +1327,7 @@ window.DEMO_EDU = {
                 `보존 기간을 <strong>${prev}일 → ${value}일</strong>로 바꿨습니다. ` +
                 (+value > +prev
                     ? '늘리면 더 오래 되감을 수 있지만 디스크를 그만큼 더 씁니다. 늘릴 것이 아니라 <strong>가장 늦게 읽는 쪽과 고치는 데 걸리는 시간</strong>을 재서 정합니다.'
-                    : '줄이면 되감을 수 있는 윈도우가 좁아집니다. 멈춘 시간을 이 값 너머로 밀어 보면 앞부분이 통째로 사라지는 것이 보입니다.'),
+                    : '줄이면 되감을 수 있는 윈도우가 좁아집니다. 멈춘 시간을 이 값 너머로 밀어 보면 앞부분이 전부 사라지는 것이 보입니다.'),
             '#cp-stall': ({ value, prev }) =>
                 `예산 소진 확인이 멈춘 시간을 <strong>${prev}시간 → ${value}시간</strong>으로 바꿨습니다. ` +
                 (document.querySelector('#cp-verdict.is-lost')
@@ -1450,7 +1450,7 @@ window.DEMO_EDU = {
             {
                 el: '.mx-chart',
                 title: '두 곡선이 갈라진다',
-                body: '위 실선(전체 ROC)만 바깥으로 부풀고 아래 점선(요청 안 ROC 평균)은 거의 그대로입니다. ' +
+                body: '위 실선(전체 ROC)만 바깥으로 커지고 아래 점선(요청 안 ROC 평균)은 거의 그대로입니다. ' +
                     '그 사이 면적이 <strong>요청을 가로지른 짝</strong>이 만든 몫입니다. 경매는 그 짝을 쓰지 않습니다.'
             },
             {
@@ -1540,7 +1540,7 @@ window.DEMO_EDU = {
                 '<strong>두 정책이 비슷한</strong> 상태입니다. 겹침률이 크게 오르고 구간이 좁아집니다. ' +
                 '그런데 진짜 값도 옛 정책 값 쪽으로 내려왔습니다. 잘 재지는데 잴 만한 차이가 없는 자리입니다.',
             '[data-ipw-preset="0.1,1,7,0"]': () =>
-                '<strong>보상 모델이 지면 평균만</strong> 내놓는 상태로 바꿨습니다. DR의 앞항이 통째로 틀립니다. ' +
+                '<strong>보상 모델이 지면 평균만</strong> 내놓는 상태로 바꿨습니다. DR의 앞항이 전부 틀립니다. ' +
                 '그래도 400주 평균은 진짜 값 근처를 지킵니다. 성향점수와 보상 모델 중 <strong>하나만 맞으면 된다</strong>는 것이 DR의 성질입니다.'
         },
         tour: [
@@ -1640,7 +1640,7 @@ window.DEMO_EDU = {
                 return on
                     ? 'IPS 재가중을 <strong>켰습니다</strong>(윈도우: ' + win + '). 광고마다 1÷성향점수를 가중해 "모두 똑같이 띄웠다면 나왔을 평균 CTR"을 되찾으려는 계산입니다. ' +
                       '<strong>배분은 하나도 바뀌지 않습니다</strong> — 측정만 바뀝니다. 아래 "성향점수 0인 광고" 칸을 같이 봅니다. ' +
-                      '그 값이 0보다 크면 1÷0 이 생겨 그 광고들은 계산에서 통째로 빠집니다.'
+                      '그 값이 0보다 크면 1÷0 이 생겨 그 광고들은 계산에서 전부 빠집니다.'
                     : 'IPS 재가중을 <strong>껐습니다</strong>. 이제 "로그 그대로" 값만 남습니다. 고리가 CTR 높은 광고만 남겼기 때문에 이 값은 진짜 값보다 위로 떠 있습니다.';
             },
             '#fb-win': ({ value }) => value === '0'
@@ -1736,7 +1736,7 @@ window.DEMO_EDU = {
                     `광고비가 값을 하는 부류는 이 하나뿐입니다. 전체 증분이 <strong>${g('uq-cvr-lift')}</strong>, ` +
                     `전원에게 광고했을 때 증분 전환이 <strong>${g('uq-inc-total')}</strong>이 됐습니다. ` +
                     `이들은 pCVR이 낮은 편이라 왼쪽 그림에서 <strong>가로선 위, 세로선 왼쪽</strong>에 많이 앉습니다 — ` +
-                    `pCVR 순으로 고르면 그 자리가 통째로 빠집니다.`;
+                    `pCVR 순으로 고르면 그 자리가 전부 빠집니다.`;
             },
             '#uq-sure': ({ value, prev }) => {
                 const g = (id) => (document.getElementById(id) || {}).textContent || '—';
@@ -1763,14 +1763,14 @@ window.DEMO_EDU = {
             },
             '#uq-mode-pcvr': () => {
                 const g = (id) => (document.getElementById(id) || {}).textContent || '—';
-                return `고르는 기준을 <strong>pCVR 순</strong>으로 바꿨습니다. 왼쪽 그림에서 <strong>세로선 오른쪽</strong>이 통째로 진해집니다. ` +
+                return `고르는 기준을 <strong>pCVR 순</strong>으로 바꿨습니다. 왼쪽 그림에서 <strong>세로선 오른쪽</strong>이 전부 진해집니다. ` +
                     `오른쪽 아래 칸(확실 구매)까지 같이 딸려 옵니다. ` +
                     `리포트 전환 <strong>${g('uq-p-report')}</strong>에 겉보기 CPA <strong>${g('uq-p-cpa')}</strong> — 여기까지는 좋아 보입니다. ` +
                     `그런데 증분은 <strong>${g('uq-p-inc')}</strong>, 증분 CPA는 <strong>${g('uq-p-icpa')}</strong>입니다.`;
             },
             '#uq-mode-uplift': () => {
                 const g = (id) => (document.getElementById(id) || {}).textContent || '—';
-                return `고르는 기준을 <strong>uplift 순</strong>으로 바꿨습니다. 이번에는 <strong>가로선 위쪽</strong>이 진해지고 오른쪽 아래 칸이 통째로 빠집니다. ` +
+                return `고르는 기준을 <strong>uplift 순</strong>으로 바꿨습니다. 이번에는 <strong>가로선 위쪽</strong>이 진해지고 오른쪽 아래 칸이 전부 빠집니다. ` +
                     `리포트 전환은 <strong>${g('uq-u-report')}</strong>으로 줄었는데 증분은 <strong>${g('uq-u-inc')}</strong>, ` +
                     `증분 CPA는 <strong>${g('uq-u-icpa')}</strong>입니다. 리포트가 나빠진 계획이 매출은 더 늘렸습니다.`;
             },
@@ -1793,7 +1793,7 @@ window.DEMO_EDU = {
             {
                 el: '#uq-mode-pcvr',
                 title: '기준을 바꿔 봅니다',
-                body: '<strong>pCVR 순</strong>을 눌러 봅니다. 진해지는 점 무리가 통째로 옮겨 갑니다. ' +
+                body: '<strong>pCVR 순</strong>을 눌러 봅니다. 진해지는 점 무리가 전부 옮겨 갑니다. ' +
                     '세로선 오른쪽을 전부 사게 되고, 오른쪽 아래 칸이 같이 딸려 옵니다.',
                 waitFor: 'click'
             },
@@ -2053,7 +2053,7 @@ window.DEMO_EDU = {
                     `회차 계단이 <strong>${(+value).toFixed(1)}% → ${step2}% → ${step3}%</strong>로 다시 잡히고 ` +
                     `요청 합계가 ${d.acSent}건이 됐습니다. ` +
                     (+d.acDup > 0
-                        ? `전환 테이블은 ${d.acRows}줄(+${d.acInflate})입니다. 유실은 <strong>돌아오는 응답</strong>에서만 났는데 부푸는 것은 기록입니다.`
+                        ? `전환 테이블은 ${d.acRows}줄(+${d.acInflate})입니다. 유실은 <strong>돌아오는 응답</strong>에서만 났는데 늘어나는 것은 기록입니다.`
                         : `전환 테이블은 ${d.acRows}줄 그대로입니다. 늘어난 것은 요청 수뿐이고, 멱등키가 그 차이를 먹었습니다.`);
             },
             '#ac-retry': ({ value, prev }) => {
@@ -2108,7 +2108,7 @@ window.DEMO_EDU = {
             {
                 el: '#ac-idem-label',
                 title: '멱등키를 꺼 봅니다',
-                body: '<strong>멱등키 사용</strong> 칸을 눌러 꺼 봅니다. 요청 수는 하나도 안 늘어나는데 전환 테이블만 부풉니다.',
+                body: '<strong>멱등키 사용</strong> 칸을 눌러 꺼 봅니다. 요청 수는 하나도 안 늘어나는데 전환 테이블만 늘어납니다.',
                 waitFor: 'click'
             },
             {
@@ -2364,7 +2364,7 @@ window.DEMO_EDU = {
                 el: '#bs-step',
                 title: 'Step 을 눌러 봅니다',
                 body: '한 회차가 지나면 칸의 절반이 흐려집니다. 흐려진 칸은 <strong>다시는 안 봅니다</strong>. ' +
-                    '가운데 값 하나만 보고 나머지 절반을 통째로 지운 것입니다.',
+                    '가운데 값 하나만 보고 나머지 절반을 한꺼번에 지운 것입니다.',
                 waitFor: 'click'
             },
             {
@@ -2416,7 +2416,7 @@ window.DEMO_EDU = {
                 }
                 return '표시를 <strong>꺼낼 때</strong>로 바꿨습니다. 여러 이웃이 같은 마디를 동시에 발견하면 ' +
                     '그 마디가 큐에 여러 번 들어갑니다. 끝까지 돌려 아래 <strong>넣은 횟수</strong>를 비교해 봅니다' +
-                    (넣은 ? '' : '') + ' — 답은 같은데 큐만 부풉니다. 마디 만 개짜리 문제에서는 이것만으로 시간 초과가 납니다.';
+                    (넣은 ? '' : '') + ' — 답은 같은데 큐만 커집니다. 마디 만 개짜리 문제에서는 이것만으로 시간 초과가 납니다.';
             },
         },
         tour: [
@@ -2444,7 +2444,7 @@ window.DEMO_EDU = {
                 el: '.bd-counts',
                 title: '넣은 횟수를 봅니다',
                 body: 'BFS 에서 방문 표시를 "꺼낼 때"로 바꾸면 이 숫자가 늡니다. ' +
-                    '<strong>답은 그대로인데 큐만 부푸는</strong> 것이라 코딩 테스트에서 원인을 찾기 어렵습니다.'
+                    '<strong>답은 그대로인데 큐만 커지는</strong> 것이라 코딩 테스트에서 원인을 찾기 어렵습니다.'
             }
         ]
     },
@@ -2466,7 +2466,7 @@ window.DEMO_EDU = {
                     case 'POST':
                         return 'POST 를 골랐습니다. 목록 주소 <strong>/v1/posts</strong> 로 보내면 새 글이 만들어집니다. 본문에 title 이 꼭 있어야 합니다.';
                     case 'PUT':
-                        return 'PUT 을 골랐습니다. 글 하나를 <strong>통째로 교체</strong>합니다. 본문에 없는 필드는 기본값으로 돌아가니 likes 필드를 지켜봅니다.';
+                        return 'PUT 을 골랐습니다. 글 하나를 <strong>전부 교체</strong>합니다. 본문에 없는 필드는 기본값으로 돌아가니 likes 필드를 지켜봅니다.';
                     case 'PATCH':
                         return 'PATCH 를 골랐습니다. 본문에 적은 <strong>필드만</strong> 바뀌고 나머지는 그대로입니다.';
                     case 'DELETE':
@@ -2500,7 +2500,7 @@ window.DEMO_EDU = {
                 el: '.hm-server',
                 title: '서버 데이터',
                 body: '표에 14번 글이 <strong>새로 생김</strong> 표시와 함께 늘었습니다. ' +
-                    '이제 <strong>4 제목만 고치기</strong>와 <strong>5 통째로 바꾸기</strong>를 번갈아 눌러 likes 필드가 어떻게 다른지 봅니다.'
+                    '이제 <strong>4 제목만 고치기</strong>와 <strong>5 전부 바꾸기</strong>를 번갈아 눌러 likes 필드가 어떻게 다른지 봅니다.'
             }
         ]
     },
@@ -2644,7 +2644,7 @@ window.DEMO_EDU = {
         tour: [
             { el: '[data-card="map"]', title: '저장소는 네 층', body: '폴더 넷이 층 넷입니다. 파일 수가 가장 많은 층은 <strong>SQL 모델</strong>이고, 실제 로직이 거기 있습니다.' },
             { el: '[data-card="extract"]', title: '첫 달의 일', body: '표 하나를 매일 복사하는 DAG 한 장입니다. 두 파일인데 첫 두 주의 커밋이 거의 다 붙습니다. 그 팀의 규칙을 처음 밟기 때문입니다.', waitFor: 'click' },
-            { el: '[data-card="flink"]', title: '넷째 달의 일', body: '실시간 잡 하나를 통째로 만듭니다. 원천에 맞는 커넥터가 없어서 <strong>Java 클래스를 처음부터</strong> 직접 만들었습니다.' }
+            { el: '[data-card="flink"]', title: '넷째 달의 일', body: '실시간 잡 하나를 전부 만듭니다. 원천에 맞는 커넥터가 없어서 <strong>Java 클래스를 처음부터</strong> 직접 만들었습니다.' }
         ]
     },
 
@@ -2834,7 +2834,7 @@ window.DEMO_EDU = {
                     case 'delay': return '헷갈리는 것은 <strong>놓친 전환이 어디로 가나</strong>입니다. 사라지는 것이 아니라 「안 샀다」로 학습에 들어갑니다. 그래서 기다리지 않으면 라벨이 없는 게 아니라 <strong>틀린 라벨</strong>이 생깁니다.';
                     case 'ssb': return '헷갈리는 것은 <strong>왜 클릭한 것만으로 배우면 안 되나</strong>입니다. 클릭한 사람은 이미 관심이 있는 사람이라, 그들만 보고 배운 확률을 아직 안 누른 노출 전체에 쓰면 맞지 않습니다.';
                     case 'position': return '헷갈리는 것은 <strong>보정이 무엇을 되돌리나</strong>입니다. 클릭 수를 늘리는 것이 아니라, 그 자리에서 눈길이 닿았을 확률로 나누는 것입니다. 1위는 100%로 나누니 그대로이고 5위는 15%로 나누니 커집니다.';
-                    case 'negsample': return '헷갈리는 것은 <strong>보정을 왜 상수 하나로 못 하나</strong>입니다. 부풀림의 배수가 확률대마다 다릅니다. 진짜 0.5%는 약 9.4배, 진짜 5%는 약 6.8배 부풉니다. 그래서 예측값마다 공식을 통과시킵니다.';
+                    case 'negsample': return '헷갈리는 것은 <strong>보정을 왜 상수 하나로 못 하나</strong>입니다. 커지는 배수가 확률대마다 다릅니다. 진짜 0.5%는 약 9.4배, 진짜 5%는 약 6.8배 커집니다. 그래서 예측값마다 공식을 통과시킵니다.';
                     case 'convdef': return '헷갈리는 것은 <strong>전체 COPC 가 1.00 인데 왜 문제인가</strong>입니다. 과소와 과대가 서로를 지워 평균만 맞기 때문입니다. 광고주 한 곳씩 보면 2.5배와 20배로 다릅니다.';
                     case 'tenlogs': return '헷갈리는 것은 <strong>왜 Bid 로그가 저장량 1위인가</strong>입니다. 보존은 30일로 가장 짧은데 하루 30억 건이라 그렇습니다. 전환 로그는 2년을 남겨도 28GB 입니다.';
                     default: return '';
@@ -2860,7 +2860,7 @@ window.DEMO_EDU = {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
                     case 'retrieval': return '헷갈리는 것은 <strong>내적이 왜 그렇게 빠른가</strong>입니다. 유저 쪽 계산을 요청당 한 번만 하고, 광고 벡터는 미리 만들어 두기 때문입니다. 남는 일은 곱하고 더하는 것뿐입니다.';
-                    case 'skew': return '헷갈리는 것은 <strong>어긋남의 방향</strong>입니다. 배치값은 늘 과거라 한쪽으로만 틀립니다. 오늘 활발해진 유저를 항상 낮게 봅니다. 가장 반응이 좋은 유저에게 가장 낮게 입찰하는 셈입니다.';
+                    case 'skew': return '헷갈리는 것은 <strong>어긋남의 방향</strong>입니다. 배치값은 늘 과거라 한쪽으로만 틀립니다. 오늘 활발해진 유저를 항상 낮게 봅니다. 가장 반응이 좋은 유저에게 가장 낮게 입찰하는 것입니다.';
                     case 'batch': return '헷갈리는 것은 <strong>왜 배치를 무한정 못 키우나</strong>입니다. 서버를 줄이는 이득은 금방 포화되는데, 모이기를 기다리는 시간은 계속 선형으로 붙기 때문입니다.';
                     case 'hashing': return '헷갈리는 것은 <strong>97.8%가 부딪치는데 왜 괜찮은가</strong>입니다. 충돌 상대가 대개 노출이 거의 없는 꼬리 광고라 그렇습니다. 문제는 머리끼리 부딪친 200쌍입니다.';
                     case 'embtable': return '헷갈리는 것은 <strong>왜 학습에서 3배가 되나</strong>입니다. 옵티마이저가 값마다 상태를 따로 들기 때문입니다. Adam 은 값 하나가 숫자 세 개가 됩니다.';
@@ -2952,7 +2952,7 @@ window.DEMO_EDU = {
     // 위치 1 추론과 LTR 카드 12장 (중급)
     // ==========================================
     'rank-score-cards': {
-        analogy: '점수의 순서는 맞는데 크기가 틀리는 두 경우. 1위로 두고 낸 점수는 부풀고, pairwise 점수는 크기를 모른다',
+        analogy: '점수의 순서는 맞는데 크기가 틀리는 두 경우. 1위로 두고 낸 점수는 커지고, pairwise 점수는 크기를 모른다',
         anchor: '.tg-host',
         embedKeep: ['.tg-grid'],
         embedHide: ['.tg-hero', '.tg-real'],
@@ -2961,7 +2961,7 @@ window.DEMO_EDU = {
                 switch (el.dataset.card) {
                     case 'p-learn': return '헷갈리는 것은 <strong>위치를 넣으면 위치가 품질을 대신하지 않나</strong>입니다. 위치 피처가 있으면 위치가 만든 클릭 차이를 위치 피처가 가져가고, 광고 피처에는 위치와 상관없는 차이만 남습니다. 위치를 빼면 그 차이가 광고 ID 와 집계 피처로 새어 들어갑니다.';
                     case 'p-serve': return '헷갈리는 것은 <strong>왜 하필 1위인가</strong>입니다. 순서만 보면 모두 같은 위치이기만 하면 됩니다. 1위는 가장 잘 보이는 자리에서의 품질이라 해석이 쉽고, 위치 효과도 1위를 1.0 으로 두고 재기 때문에 곱하기가 간단해집니다.';
-                    case 'p-inflate': return '헷갈리는 것은 <strong>AUC 는 그대로인데 왜 문제인가</strong>입니다. AUC 는 순서만 재서 부푼 크기를 못 봅니다. 크기는 예측 합 대비 실제 클릭 합의 비율로 봐야 드러납니다.';
+                    case 'p-inflate': return '헷갈리는 것은 <strong>AUC 는 그대로인데 왜 문제인가</strong>입니다. AUC 는 순서만 재서 커진 크기를 못 봅니다. 크기는 예측 합 대비 실제 클릭 합의 비율로 봐야 드러납니다.';
                     case 'p-fix': return '헷갈리는 것은 <strong>위치 효과 표가 하나면 되나</strong>입니다. 광고가 3개 나올 때와 5개 나올 때 2위의 위치 효과가 다를 수 있습니다. 그래서 광고 개수별로, 지면별로 따로 둡니다.';
                     case 'p-swap': return '헷갈리는 것은 <strong>어느 위치로 고정하든 순서는 같지 않나</strong>입니다. 위치 효과가 모든 광고에 같은 비율로 붙을 때만 그렇습니다. 모델이 위치와 광고의 조합을 배우면 고정값이 순서를 바꿉니다.';
                     case 'p-unseen': return '헷갈리는 것은 <strong>데이터를 더 모으면 해결되나</strong>입니다. 기존 랭킹이 1위에 올리지 않는 광고는 아무리 오래 모아도 1위 기록이 생기지 않습니다. 탐색 트래픽으로 위치를 섞어 보여 주거나, 위치를 따로 배우는 구조를 씁니다.';
@@ -2976,7 +2976,7 @@ window.DEMO_EDU = {
             }
         },
         tour: [
-            { el: '[data-card="p-inflate"]', title: '가장 먼저 볼 것', body: '순서는 맞는데 크기가 부풉니다. 아래 위치의 광고일수록 더 부풉니다.', waitFor: 'click' },
+            { el: '[data-card="p-inflate"]', title: '가장 먼저 볼 것', body: '순서는 맞는데 크기가 커집니다. 아래 위치의 광고일수록 더 커집니다.', waitFor: 'click' },
             { el: '[data-card="l-bid"]', title: '같은 문제가 학습 쪽에서', body: 'pairwise 점수도 크기를 모릅니다. 입찰가를 곱하는 순간 순서가 뒤집힐 수 있습니다.' }
         ]
     },
@@ -3126,7 +3126,7 @@ window.DEMO_EDU = {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
                     case 'logjoin': return '헷갈리는 것은 <strong>기다리기가 왜 공짜가 아닌가</strong>입니다. 7일 윈도우가 닫힌 뒤 조인하면 라벨은 정확하지만 모델은 일주일 늦은 세상을 배웁니다. 먼저 쓰고 고치기는 신선하지만 라벨을 두 번 만드는 파이프라인이 필요합니다.';
-                    case 'rank1': return '헷갈리는 것은 <strong>순서가 맞는데 왜 고치나</strong>입니다. 순서만 쓰는 랭킹에는 문제가 없지만, 확률 크기를 쓰는 입찰가(eCPM)에는 3번 자리 광고가 1번 기준으로 부풀어 들어갑니다. 그래서 계수 0.40 을 곱해 내려 잡습니다.';
+                    case 'rank1': return '헷갈리는 것은 <strong>순서가 맞는데 왜 고치나</strong>입니다. 순서만 쓰는 랭킹에는 문제가 없지만, 확률 크기를 쓰는 입찰가(eCPM)에는 3번 자리 광고가 1번 기준으로 커져 들어갑니다. 그래서 계수 0.40 을 곱해 내려 잡습니다.';
                     case 'fanout': return '헷갈리는 것은 <strong>30 과 11 의 차이 19 가 비용이 아니다</strong>는 점입니다. 비용은 목적지를 하나 더 붙일 때 나옵니다. 층이 없으면 잡 5개를 고치고 배포 승인 5번이고, 층이 있으면 0개입니다.';
                     case 'aggwindow': return '헷갈리는 것은 <strong>왜 에러가 안 나나</strong>입니다. 누출된 피처도 서빙에서 값을 내놓으니 파이프라인은 멀쩡히 돕니다. 오프라인 AUC 0.894 가 실서빙 0.779 로 떨어진 뒤에야 보입니다.';
                     case 'din': return '헷갈리는 것은 <strong>유저 표현이 왜 하나가 아닌가</strong>입니다. 어텐션은 후보 광고를 보고 이력에 가중치를 주니, 같은 유저라도 후보 광고마다 표현이 새로 계산됩니다. 후보가 50개면 50번 계산합니다.';

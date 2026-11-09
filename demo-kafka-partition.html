@@ -240,7 +240,7 @@
       <ol class="demo-steps">
         <span class="demo-steps-title">이렇게 해봅니다 — 4분</span>
         <li><span class="step-text">partition을 <strong>3</strong>, consumer를 <strong>5</strong>로 — 두 명이 아무 partition도 못 맡습니다. 사람을 늘려도 처리량이 안 늘어나는 지점입니다.</span></li>
-        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 봅니다. 인기 광고 <code>9931</code>이 있는 partition만 부풀고 빈 partition이 생깁니다.</span></li>
+        <li><span class="step-text">key를 <strong><code>ad_id</code></strong>로 바꿔 봅니다. 인기 광고 <code>9931</code>이 있는 partition만 커지고 빈 partition이 생깁니다.</span></li>
         <li><span class="step-text">key를 <strong>없음</strong>으로 — 가장 고르게 퍼지지만, 같은 요청의 노출과 클릭이 다른 partition으로 흩어집니다.</span></li>
         <li><span class="step-text">key를 <code>req_id</code>로 되돌리고 partition을 <strong>4 → 8</strong>로 밀어 봅니다. 옮겨간 줄에 <code>↰</code> 가 붙습니다 — 순서 보장이 끊기는 순간입니다.</span></li>
       </ol>
@@ -289,7 +289,7 @@
           <h3>이 데모에서 알게 된 3가지</h3>
           <ol>
             <li><strong>처리량 상한은 partition 수가 정한다</strong> — partition 하나는 그룹 안에서 consumer 한 명만 맡는다. consumer를 partition 수보다 많이 두면 남는 사람은 놀기만 한다. 사람을 늘려서 밀린 것을 따라잡으려면 partition부터 늘려야 한다.</li>
-            <li><strong>순서 보장 범위는 key가 정한다</strong> — 같은 key는 늘 같은 partition으로 가고, partition 하나 안에서만 순서가 지켜진다. key를 빼면 가장 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 갈라진다. <code>ad_id</code>로 잡으면 순서는 광고 단위로 묶이지만 인기 광고가 든 partition만 부푼다.</li>
+            <li><strong>순서 보장 범위는 key가 정한다</strong> — 같은 key는 늘 같은 partition으로 가고, partition 하나 안에서만 순서가 지켜진다. key를 빼면 가장 고르게 퍼지는 대신 같은 요청의 노출과 클릭이 갈라진다. <code>ad_id</code>로 잡으면 순서는 광고 단위로 묶이지만 인기 광고가 든 partition만 커진다.</li>
             <li><strong>partition 수는 나중에 바꾸기 어렵다</strong> — partition이 몇 개냐가 나눗셈에 들어가므로, partition 수를 바꾸는 순간 같은 key가 다른 partition으로 옮겨간다. 옮겨간 줄은 예전 partition에 남은 줄과 순서가 더 이상 이어지지 않는다.</li>
           </ol>
         </div>
@@ -304,7 +304,7 @@
         <ul>
           <li><strong>partition 수 정하기:</strong> 초당 들어오는 줄 수를 consumer 한 명이 감당하는 처리량으로 나눈 값이 최소치입니다. 여기에 앞으로 늘어날 몫을 더합니다. partition은 늘릴 수 있지만, 늘리는 순간 기존 key의 배정이 흔들립니다.</li>
           <li><strong>key 정하기:</strong> "무엇 단위로 순서가 지켜져야 하나"를 먼저 답합니다. 노출과 클릭을 이어 붙일 거라면 <code>req_id</code>, 광고별 카운터를 갱신할 거라면 <code>ad_id</code>입니다. 쏠림이 걱정되면 key 뒤에 작은 번호를 붙여 몇 갈래로 쪼개고, 대신 그만큼 순서 보장 범위가 좁아지는 것을 받아들입니다.</li>
-          <li><strong>밀릴 때 진단:</strong> 특정 consumer만 밀린다면 사람을 늘리기 전에 partition별 줄 수부터 봅니다. partition 하나만 부풀어 있으면 원인은 인원이 아니라 key입니다. 모든 partition이 고르게 밀려 있을 때만 partition과 인원을 함께 늘리는 것이 답이 됩니다.</li>
+          <li><strong>밀릴 때 진단:</strong> 특정 consumer만 밀린다면 사람을 늘리기 전에 partition별 줄 수부터 봅니다. partition 하나만 커져 있으면 원인은 인원이 아니라 key입니다. 모든 partition이 고르게 밀려 있을 때만 partition과 인원을 함께 늘리는 것이 답이 됩니다.</li>
         </ul>
       </section>
 

@@ -93,7 +93,7 @@ sources:
 ```
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-de-first-months.html?embed=1&card=extract" height="480" loading="lazy" title="첫 달의 수급 DAG 한 장"></iframe>
+<iframe class="demo-embed" src="demo-de-first-months.html?embed=1&card=extract" height="480" loading="lazy" title="첫 달, 수급 DAG 한 장"></iframe>
 <a class="demo-embed-open" href="demo-de-first-months.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
@@ -169,7 +169,7 @@ Spark 는 이 저장소에서 계산 엔진이라기보다 읽고 쓰는 커넥�
 
 이 층이 새로 온 사람에게 중요한 이유가 있습니다. 첫 두 달은 팀이 만든 부품 위에서 YAML 과 SQL 을 썼습니다. 넷째 달부터는 그 부품 자체를 고치기 시작합니다. 남이 쓸 것을 만드는 쪽으로 한 칸 올라간 것입니다.
 
-## 5. 셋째 달, 실시간 잡 하나를 통째로 만듭니다
+## 5. 셋째 달, 실시간 잡 하나를 처음부터 끝까지 만듭니다
 
 **셋째 달의 어느 하루에 커밋 여러 개가 Flink 폴더에 한꺼번에 들어갔습니다. 시청 품질 로그를 초 단위로 받아 묶는 잡입니다. 원천 저장소에 맞는 소스 커넥터가 없어서 Java 클래스를 처음부터 직접 만들었습니다.**
 

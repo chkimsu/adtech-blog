@@ -142,7 +142,7 @@
     const HAS_BODY = { GET: false, POST: true, PUT: true, PATCH: true, DELETE: false };
     const DEFAULT_BODY = {
         POST: '{"title": "지훈 씨의 첫 글", "author": "jihoon"}',
-        PUT: '{"title": "통째로 바꿨습니다", "author": "jihoon"}',
+        PUT: '{"title": "전부 바꿨습니다", "author": "jihoon"}',
         PATCH: '{"title": "제목만 바꿨습니다"}'
     };
     const SCENARIOS = [
@@ -150,7 +150,7 @@
         { n: '2', label: '12번 글 하나 받기', method: 'GET', target: 'one', id: 12 },
         { n: '3', label: '새 글 만들기', method: 'POST', target: 'list', body: DEFAULT_BODY.POST },
         { n: '4', label: '12번 제목만 고치기', method: 'PATCH', target: 'one', id: 12, body: DEFAULT_BODY.PATCH },
-        { n: '5', label: '12번 통째로 바꾸기', method: 'PUT', target: 'one', id: 12, body: DEFAULT_BODY.PUT },
+        { n: '5', label: '12번 전부 바꾸기', method: 'PUT', target: 'one', id: 12, body: DEFAULT_BODY.PUT },
         { n: '6', label: '13번 지우기', method: 'DELETE', target: 'one', id: 13 },
         { n: '7', label: '13번 다시 지우기', method: 'DELETE', target: 'one', id: 13 },
         { n: '8', label: '본문 모양이 틀린 요청', method: 'POST', target: 'list', body: '{"title": "따옴표가 빠진 글}' }
@@ -282,7 +282,7 @@
         else if (changedIds.length) {
             const id = changedIds[0];
             what = '<b>' + id + '번 글의 ' + d.changed[id].join(', ') + ' 필드가 바뀌었습니다.</b>' +
-                (req.method === 'PUT' ? ' PUT 은 통째로 바꾸므로 본문에 없던 필드는 기본값으로 돌아갑니다.' : ' PATCH 는 보낸 필드만 건드립니다.');
+                (req.method === 'PUT' ? ' PUT 은 전부 바꾸므로 본문에 없던 필드는 기본값으로 돌아갑니다.' : ' PATCH 는 보낸 필드만 건드립니다.');
         }
         else if (d.removed.length) what = '<b>' + d.removed[0].id + '번 글이 지워졌습니다.</b> 지운 뒤에는 돌려줄 것이 없어 본문 없는 204 가 옵니다.';
         else if (res.status === 200 && req.method === 'GET') what = '<b>서버 데이터는 그대로입니다.</b> GET 은 읽기만 하므로 몇 번을 보내도 같은 답이 옵니다.';

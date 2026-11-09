@@ -925,7 +925,7 @@ class BidLog:
 
 발견도 늦습니다. 보통 이런 순서로 옵니다. 먼저 며칠에서 몇 주가 지납니다. 그다음 "CTR이 왜 이렇게 낮지?"라는 질문이 나옵니다. 그리고 모델을 의심하며 며칠을 씁니다. 마지막에야 로그를 열어 봅니다.
 
-아래 함정들이 그렇게 지나간 것들입니다. 하나씩 볼 때 **"이게 어느 방향으로 모델을 틀어 놓는가"** 를 같이 봅니다. 중복은 분모를 부풀려 확률을 **낮추고**, 지연은 라벨을 음성으로 만들어 역시 **낮춥니다**. 방향을 알면 대시보드 숫자만 보고도 어느 함정인지 짚을 수 있습니다.
+아래 함정들이 그렇게 지나간 것들입니다. 하나씩 볼 때 **"이게 어느 방향으로 모델을 틀어 놓는가"** 를 같이 봅니다. 중복은 분모를 키워 확률을 **낮추고**, 지연은 라벨을 음성으로 만들어 역시 **낮춥니다**. 방향을 알면 대시보드 숫자만 보고도 어느 함정인지 짚을 수 있습니다.
 
 <div class="chart-cards">
   <div class="chart-card">
@@ -943,7 +943,7 @@ class BidLog:
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">영향</span>
-        <span class="chart-card-row-value">같은 노출이 2-3번 기록 &rarr; CTR 분모 부풀림 &rarr; pCTR 과소추정</span>
+        <span class="chart-card-row-value">같은 노출이 2-3번 기록 &rarr; CTR 분모 증가 &rarr; pCTR 과소추정</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">대응</span>

@@ -755,7 +755,7 @@ logloss 는 쌍마다 노출 $n$ 번과 클릭 $k$ 번, 모델의 확률 $p$ 로
 
 $$\mathrm{logloss} = -\frac{1}{\sum n} \sum_{\text{쌍}} \Big[\, k \log p + (n - k) \log (1 - p) \,\Big]$$
 
-AUC 는 점수의 순서만 보고, logloss 는 확률의 크기도 봅니다. 모든 확률을 두 배로 부풀려도 순서는 그대로라 AUC 는 같지만, logloss 는 나빠집니다. 확률의 크기를 맞추는 일은 [Calibration](post.html?id=calibration) 편에 있습니다.
+AUC 는 점수의 순서만 보고, logloss 는 확률의 크기도 봅니다. 모든 확률을 두 배로 키워도 순서는 그대로라 AUC 는 같지만, logloss 는 나빠집니다. 확률의 크기를 맞추는 일은 [Calibration](post.html?id=calibration) 편에 있습니다.
 :::
 
 - [유저를 문서로](post.html?id=users-as-documents) — 29주째 편입니다. 이 글의 회원 2,000명과 문서가 그 편에서 왔습니다.

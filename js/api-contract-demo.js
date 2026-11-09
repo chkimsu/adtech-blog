@@ -240,7 +240,7 @@
         title: '전환 테이블',
         l2: fmt(m.records) + '줄',
         mono2: true,
-        l3: m.dup > 0 ? '+' + pct1(m.inflate) + ' 부풀었다' : '실제와 같다',
+        l3: m.dup > 0 ? '+' + pct1(m.inflate) + ' 늘었다' : '실제와 같다',
         kind: m.dup > 0 ? 'risk' : 'neutral'
       }
     ];

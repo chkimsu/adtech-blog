@@ -135,7 +135,7 @@
     (function () {
         const S = 'pl-idempotent'; if (!has(S)) return; let s = '';
         s += `<line class="split" x1="260" y1="20" x2="260" y2="250"/>`;
-        s += T(40, 26, '덮어쓰기 — 파티션을 통째로 바꿉니다', 'lbl k');
+        s += T(40, 26, '덮어쓰기 — 파티션 전체를 바꿉니다', 'lbl k');
         s += tool(34, 44, 96, { label: '3 피처 만들기', sub: '1회차' });
         s += tool(34, 130, 96, { label: '3 다시', sub: '2회차' });
         s += table(172, 76, { label: 'dt=09-15', sub: '2,485만 행' });

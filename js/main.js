@@ -1200,7 +1200,25 @@ async function renderPostDetail() {
 
     try {
       let content = '';
-      if (post.contentUrl) {
+      // 쉬운 판 — post.html?id=<id>&v=easy. 목록은 js/easy-posts.js 의 EASY_POST_IDS 이고 파일은 posts-easy/<id>.md 다.
+      const hasEasy = typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(post.id);
+      const wantEasy = urlParams.get('v') === 'easy';
+      const showEasy = hasEasy && wantEasy;
+      if (wantEasy && !hasEasy) {
+        contentContainer.innerHTML = `
+          <div class="easy-note">
+            <p>이 글의 쉬운 판은 아직 없습니다.</p>
+            <a href="post.html?id=${encodeURIComponent(post.id)}">원래 판으로 보기</a>
+          </div>`;
+        return;
+      }
+      if (showEasy) {
+        const response = await fetch(`posts-easy/${post.id}.md`);
+        if (!response.ok) {
+          throw new Error(`Failed to load easy content: ${response.statusText}`);
+        }
+        content = await response.text();
+      } else if (post.contentUrl) {
         const response = await fetch(post.contentUrl);
         if (!response.ok) {
           throw new Error(`Failed to load content: ${response.statusText}`);
@@ -1271,6 +1289,14 @@ async function renderPostDetail() {
         contentContainer.innerHTML = restoreMathBlocks(parsed);
       } else {
         contentContainer.innerHTML = content;
+      }
+
+      // 쉬운 판이 있는 글은 맨 위에 판 바꾸기 링크를 둔다
+      if (hasEasy) {
+        const base = `post.html?id=${encodeURIComponent(post.id)}`;
+        contentContainer.insertAdjacentHTML('afterbegin', showEasy
+          ? `<div class="easy-note"><span class="tag">쉬운 판</span> 이 글을 쉽게 다시 쓴 판입니다. <a href="${base}">원래 판으로 보기</a></div>`
+          : `<div class="easy-note"><a href="${base}&v=easy">쉬운 판으로 보기</a></div>`);
       }
 
       // 섹션 무대 배지 — [무대: …] 마커를 배지로 (TOC 생성보다 먼저)

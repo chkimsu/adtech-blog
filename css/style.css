@@ -6676,3 +6676,7 @@ pre.cb-wrap .hljs-number { white-space: nowrap; }
   .post-container .post-content { --post-pad: 24px; padding: 2rem var(--post-pad); border-left: 0; border-right: 0; }
   .post-container { padding-left: 0; padding-right: 0; }
 }
+
+/* 쉬운 판 안내 — 글 맨 위 한 줄 */
+.easy-note { margin: 0 0 1.5rem; font-size: 0.9rem; color: var(--ink2); }
+.easy-note a { color: var(--navy); }

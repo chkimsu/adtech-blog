@@ -12,7 +12,7 @@ const { posts } = require(path.join(root, 'js', 'posts.js'));
 
 const MIN_BYTES = 15000;      // 표준 8: 얇은 글은 15KB 이상
 const MIN_SECTION_CHARS = 300; // 표준 2: 한두 줄로 끝나는 섹션 금지
-const MAX_SENTENCE = 80;       // 표준 7: 한 문장 = 한 생각
+const MAX_SENTENCE = 80;       // 길이를 재는 도우미(overLong 등)의 기준값. 2026-11-09 사용자 결정으로 경고와 표준 충족 셈에는 쓰지 않는다
 
 // 파이썬을 일부러 안 쓰는 글 — API·Kafka 8편(2026-08-16 사용자 확정).
 // 표를 뽑으려고 60~80줄을 싣는 대신 표와 실물(로그 줄·요청 원문·설정 파일)로
@@ -235,8 +235,6 @@ if (args.length) {
     console.log(`\n── ${r.id}  ${(r.bytes / 1024).toFixed(1)}KB  (world: ${r.world})`);
     console.log(`   h2 ${r.h2} · python ${r.python} · 표 ${r.tables} · deep ${r.deep} · 데모 ${r.demo} · 무대배지 ${r.badges} · worldPractical ${r.hasPractical ? 'O' : 'X'}`);
     if (r.short.length) console.log(`   ⚠ 짧은 섹션 ${r.short.length}개: ${r.short.map(s => `${s.title}(${s.len}자)`).join(', ')}`);
-    if (r.long.length) console.log(`   ⚠ ${MAX_SENTENCE}자 초과 문장 ${r.long.length}개:\n${r.long.map(s => `      ${s.length}자 · ${s.slice(0, 60)}…`).join('\n')}`);
-    if (r.bullets.length) console.log(`   ⚠ 글머리표 ${MAX_SENTENCE}자 초과 ${r.bullets.length}개:\n${r.bullets.map(s => `      ${s.length}자 · ${s.slice(0, 60)}…`).join('\n')}`);
     if (r.badBadge.length) console.log(`   ✗ 잘못된 무대 마커: ${r.badBadge.join(', ')}`);
     if (r.tildeTrap.length) console.log(`   ✗ 물결표 2개 문장(취소선 오파싱): ${r.tildeTrap.length}개`);
     if (r.mathKorean.length) console.log(`   ✗ 수식 안 한글: ${r.mathKorean.length}개`);
@@ -246,8 +244,6 @@ if (args.length) {
   const flag = r => [
     r.bytes < MIN_BYTES ? '분량' : '',
     r.short.length ? `짧은섹션${r.short.length}` : '',
-    r.long.length > 6 ? `장문${r.long.length}` : '',
-    r.bullets.length ? `글머리표${r.bullets.length}` : '',
     r.python === 0 && !NO_PYTHON_BY_DESIGN.has(r.id) ? '코드없음' : '',
     r.tables === 0 ? '표없음' : '',
     r.world !== 'na' && !r.hasPractical ? 'practical없음' : '',

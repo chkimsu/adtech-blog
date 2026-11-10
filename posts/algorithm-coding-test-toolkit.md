@@ -415,3 +415,4 @@ print(bfs(1))
 - 이진 탐색의 네 변형과 `lo = mid` 의 무한 루프는 [이분 탐색과 스택](post.html?id=algorithm-binary-search-stack) 편에 있습니다. [이진 탐색 데모](demo-binary-search.html)에서 `lo`, `hi`, `mid` 가 움직이는 것을 볼 수 있습니다.
 - 힙과 다익스트라는 [트리와 힙](post.html?id=algorithm-tree-heap) 편과 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다. [DFS vs BFS 데모](demo-bfs-dfs.html)에서 방문 순서를 나란히 볼 수 있습니다.
 - 모든 경우를 다 보는 DFS 를 되돌리는 백트래킹과, 겹치는 계산을 적어 두는 동적 계획법은 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편에 있습니다.
+- 문제를 받았을 때 이 도구들을 고르기 전과 후에 할 일, 곧 이해, 제약 보기, 구현과 확인까지의 순서는 [코딩테스트 풀이 순서](post.html?id=algorithm-solving-steps) 편에 있습니다.

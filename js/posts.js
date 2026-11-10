@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-solving-steps',
+    world: 'na',
+    title: '코딩테스트 풀이 순서: 제약에서 복잡도, 자료구조, 접근 방법, 확인까지',
+    excerpt: '코딩테스트 문제를 푸는 순서를 이해, 제약 보기, 자료구조, 접근 방법, 구현과 확인 다섯 단계로 정리했습니다. 면접 준비 자료가 UMPIRE 라고 부르는 순서입니다. n 의 최댓값으로 허용 시간 복잡도를 거꾸로 계산하는 어림 기준, 자주 하는 연산으로 고르는 자료구조 다섯, 지문 신호에서 투 포인터, 슬라이딩 윈도우, 이진 탐색, 그리디, BFS/DFS, DP 로 가는 표를 담았습니다. 지어낸 클릭 수 문제 하나를 처음부터 끝까지 풀며 브루트 포스와 무작위 입력 500개로 비교하고, 함수형과 표준 입력형 템플릿, 30분 라이브 코딩의 시간 배분 제안까지 다룹니다.',
+    date: '2026-11-10',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-solving-steps.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'embedding-model-finetuning',
     world: 'both',
     worldNote: '양성 쌍으로 사상을 학습하는 셈과 온도를 고르는 법은 두 무대가 같습니다. 다른 것은 양성 쌍을 어디서 얼마나 얻느냐입니다. 담장 안은 검색 로그의 질의와 클릭이 바로 양성 쌍이 됩니다. 열린 RTB 의 DSP 는 이긴 노출의 클릭으로만 쌍을 얻어 쌍이 적습니다.',
@@ -1889,7 +1900,7 @@ const series = {
     desc: '복잡도를 직접 재 보는 것부터 배열, 해시, 정렬, 이분탐색, 스택큐, 트리, 힙, 그래프, DP까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
     posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
             'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
-            'algorithm-coding-test-toolkit'],
+            'algorithm-coding-test-toolkit', 'algorithm-solving-steps'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

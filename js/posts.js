@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-more-structures',
+    world: 'na',
+    title: '연결 리스트, 문자열, Union-Find, Trie, 구간: 시리즈에서 빠진 다섯 가지',
+    excerpt: '알고리즘 트랙에서 다루지 않은 연결 리스트, 문자열, Union-Find, Trie, 구간 다섯 가지를 지어낸 광고 데이터로 돌려 봅니다. 연결 리스트는 prev 와 cur, slow 와 fast 두 포인터로 뒤집기, 가운데, 순환을 풀고, 문자열은 Counter 로 애너그램을 확인하고 슬라이딩 윈도우로 같은 글자가 없는 가장 긴 부분 문자열을 구하며, 조각 2만 개를 += 로 붙이면 최적화가 꺼졌을 때 16억 글자를 복사해 join 의 1만 배라는 것을 계산합니다. Union-Find 는 경로 압축과 크기 기준 합치기로 찾기 1,000번의 걸음을 499,500에서 999로 줄이고, Trie 와 정렬된 list 와 bisect 로 같은 접두어 검색 답을 내며, 구간은 시작 정렬로 합치고 시작과 끝 사건을 정렬해 최대 겹침 3을 셉니다. 마지막에 지문 신호, 구조, 비용 표를 둡니다.',
+    date: '2026-11-10',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-more-structures.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-think-aloud',
     world: 'na',
     title: '말하며 풀기: 질문, 설명, 테스트를 말로 하는 순서',
@@ -1923,7 +1934,8 @@ const series = {
     posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
             'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
             'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
-            'algorithm-practical-live-coding', 'algorithm-think-aloud'],
+            'algorithm-practical-live-coding', 'algorithm-think-aloud',
+            'algorithm-more-structures'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

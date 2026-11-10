@@ -357,3 +357,4 @@ print(f'트리 값의 합 {total(root)}')
 - 그리디와 DP 를 언제 고르는지는 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편, BFS 와 DFS 는 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다.
 - 요구가 하나씩 늘어나는 로그 집계 문제와 LRU 캐시 같은 작은 클래스를 직접 짜 보는 글은 [실무형 라이브 코딩](post.html?id=algorithm-practical-live-coding) 편입니다.
 - 이 다섯 단계를 면접관에게 소리 내어 말하는 순서와 영어 표현은 [말하며 풀기](post.html?id=algorithm-think-aloud) 편에 있습니다.
+- 이 글의 신호표에 없는 연결 리스트, 문자열, Union-Find, Trie, 구간 다섯 가지는 [시리즈에서 빠진 다섯 가지](post.html?id=algorithm-more-structures) 편에 있습니다.

@@ -264,7 +264,7 @@ print(f'무작위 300개 중 틀린 답 {bad}개')
 | 확인 질문 | How large can the input be? | 입력이 최대 얼마나 큽니까? |
 | 확인 질문 | Can the list be empty, or contain duplicates? | 리스트가 비어 있거나 중복이 있을 수 있습니까? |
 | 확인 질문 | Should I return the indices or the values? | 위치를 돌려줍니까, 값을 돌려줍니까? |
-| 느린 풀이 | A brute-force approach is to check every pair, which is O(n squared). | 모든 쌍을 보는 브루트 포스는 O(n^2) 입니다. |
+| 느린 풀이 | A brute-force approach would be to check every pair, which is O(n squared). | 모든 쌍을 보는 브루트 포스는 O(n^2) 입니다. |
 | 더 나은 풀이 | I think we can do better with a hash map, in O(n) time. | 해시 맵으로 O(n) 시간에 할 수 있을 것 같습니다. |
 | 동의 받기 | Does this approach sound good to you before I start coding? | 코드를 쓰기 전에 이 방법이 괜찮을까요? |
 | 말하며 코드 쓰기 | Here I'm storing each value with its index. | 여기서 값마다 위치를 함께 넣습니다. |
@@ -273,9 +273,9 @@ print(f'무작위 300개 중 틀린 답 {bad}개')
 | 손으로 따라가기 | Let me also check some edge cases, like an empty list. | 빈 리스트 같은 경계 입력도 확인하겠습니다. |
 | 막혔을 때 | I'm stuck on this part. I tried X, but it fails when the input is Y. | 이 부분에서 막혔습니다. X 를 해 봤는데 입력이 Y 일 때 틀립니다. |
 | 막혔을 때 | Could you give me a small hint? | 작은 힌트를 주실 수 있을까요? |
-| 힌트 받기 | Thanks. So you mean I should check before inserting, right? | 감사합니다. 넣기 전에 확인하라는 뜻이 맞습니까? |
+| 힌트 받기 | Thanks. So you're suggesting I check before I insert, right? | 감사합니다. 넣기 전에 확인하라는 말씀이 맞습니까? |
 | 마무리 | The time complexity is O(n) and the space complexity is O(n). | 시간 복잡도는 O(n), 공간 복잡도는 O(n) 입니다. |
-| 마무리 | If I had more time, I would handle invalid input. | 시간이 더 있다면 잘못된 입력을 처리하겠습니다. |
+| 마무리 | If I had more time, I would add input validation. | 시간이 더 있다면 입력 검증을 더하겠습니다. |
 
 complement 는 이 문제에서 `target - bid`, 곧 짝이 될 값을 부르는 영어 낱말이고, Two Sum 풀이를 영어로 설명하는 글에서 자주 보이는 이름입니다. 말이 막히면 표현을 바꾸려 애쓰기보다 「Let me think for a moment.」(잠시 생각해 보겠습니다)라고 말하고 몇 초 생각하는 편이 낫고, 침묵이 길어지기 전에 무엇을 생각하는지 한 문장으로 말하면 됩니다.
 

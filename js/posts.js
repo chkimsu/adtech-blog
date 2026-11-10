@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-think-aloud',
+    world: 'na',
+    title: '말하며 풀기: 질문, 설명, 테스트를 말로 하는 순서',
+    excerpt: '라이브 코딩에서 면접관이 볼 수 있는 것은 코드와 소리 내어 한 말뿐이라, 말하며 풀기를 아홉 단계 순서로 정리했습니다. 문제를 다시 말하고, 입력 크기와 빈 입력과 중복과 돌려줄 모양을 묻고, 브루트 포스와 비용을 먼저 말한 뒤 더 나은 풀이로 동의를 받고, 코드를 쓰며 설명하고, 테스트 입력을 손으로 따라가고, 복잡도와 시간이 더 있으면 할 일을 말합니다. 지어낸 광고 입찰가 Two Sum 문제로 할 말을 코드 줄 옆에 적고, n 이 10만이면 모든 쌍은 약 50억 번, 해시는 10만 번이라는 숫자와 손 따라가기를 실행 출력에 맞춥니다. 막혔을 때 말하는 법, 힌트 받는 법, 영어 면접 표현 16개까지 다룹니다.',
+    date: '2026-11-10',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-think-aloud.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-practical-live-coding',
     world: 'na',
     title: '실무형 라이브 코딩: 로그 집계, 작은 클래스, 요구가 늘어나는 문제',
@@ -1912,7 +1923,7 @@ const series = {
     posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
             'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
             'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
-            'algorithm-practical-live-coding'],
+            'algorithm-practical-live-coding', 'algorithm-think-aloud'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

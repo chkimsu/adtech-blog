@@ -6680,3 +6680,25 @@ pre.cb-wrap .hljs-number { white-space: nowrap; }
 /* 쉬운 판 안내 — 글 맨 위 한 줄 */
 .easy-note { margin: 0 0 1.5rem; font-size: 0.9rem; color: var(--ink2); }
 .easy-note a { color: var(--navy); }
+
+/* ---- 왼쪽 레일: 주제와 트랙을 펼쳐 글 제목 보기 (2026-11-10) ---- */
+.category-rail-inner { max-height: calc(100vh - 90px); overflow-y: auto; }
+.rail-chip { display: none; }
+.rail-group > summary { list-style: none; cursor: pointer; }
+.rail-group > summary::-webkit-details-marker { display: none; }
+.rail-group > summary::after, a.rail-track::after { content: "\25B8"; font-size: 0.82rem; color: var(--ink2); margin-left: 0.5rem; flex: none; width: 0.7rem; text-align: center; }
+a.rail-track::after { content: "\2192"; }
+.rail-group[open] > summary::after { content: "\25BE"; }
+.rail-group > summary .rail-count { margin-left: auto; }
+.rail-list { padding: 0.35rem 0 0.6rem 0.2rem; border-bottom: 1px dotted var(--rule); }
+.rail-post { display: flex; gap: 0.4rem; font-size: 0.76rem; line-height: 1.45; color: var(--ink2); text-decoration: none; padding: 0.24rem 0; }
+.rail-post:hover { color: var(--navy); }
+.rail-num { font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink3); min-width: 1.1rem; flex: none; padding-top: 0.1rem; }
+.rail-more { color: var(--navy); font-weight: 600; }
+.rail-tracks { margin-top: 1.2rem; padding-top: 0.9rem; border-top: 1px solid var(--rule); }
+.rail-track { font-size: 0.82rem; }
+@media (max-width: 1023px) {
+  .category-rail-inner { max-height: none; overflow-y: visible; }
+  .rail-group, .rail-tracks { display: none; }
+  .rail-chip { display: flex; }
+}

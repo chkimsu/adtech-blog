@@ -393,12 +393,41 @@ function renderCategoryRail() {
   const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
   // topics.html 에서는 레일이 그 페이지 안의 절로 뛰고, 다른 곳에서는 탐색 페이지 필터로 간다.
   const onTopics = !!document.getElementById('topics-root');
+  const escText = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const RAIL_PREVIEW = 5; // 펼쳤을 때 먼저 보이는 최신 글 수
   const catItems = cats.map(c => {
     const cAttr = c.replace(/"/g, '&quot;');
     const href = onTopics ? `#topic-${topicSlug(c)}` : `posts-browse.html?category=${encodeURIComponent(c)}`;
-    return `<a class="rail-cat" href="${href}">
-      <span class="rail-dot" data-category="${cAttr}"></span>${c}<span class="rail-count">${counts[c]}</span></a>`;
+    const head = `<span class="rail-dot" data-category="${cAttr}"></span>${c}<span class="rail-count">${counts[c]}</span>`;
+    // topics.html 에서는 그 페이지의 절로 뛰는 링크만 둔다. 다른 페이지에서는 주제를 펼쳐 최신 글 제목을 본다.
+    if (onTopics) return `<a class="rail-cat" href="${href}">${head}</a>`;
+    const inCat = posts.filter(p => (p.categories || []).includes(c))
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    const rows = inCat.slice(0, RAIL_PREVIEW).map(p =>
+      `<a class="rail-post" href="post.html?id=${p.id}">${escText(p.title)}</a>`).join('');
+    const more = `<a class="rail-post rail-more" href="${href}">이 주제 ${inCat.length}편 모두 보기 →</a>`;
+    return `<a class="rail-cat rail-chip" href="${href}">${head}</a>
+      <details class="rail-group"><summary class="rail-cat">${head}</summary>
+      <div class="rail-list">${rows}${more}</div></details>`;
   }).join('');
+  // 읽기 트랙 — ML 엔지니어 트랙(단계별 커리큘럼 페이지)과 posts.js 의 series 를 주제와 같은 모양으로 나열한다.
+  // 펼치면 그 트랙의 글을 읽는 순서대로 보여 준다.
+  const trackItems = [];
+  if (typeof mlTrack !== 'undefined') {
+    const n = mlTrack.stages.reduce((s, st) => s + st.posts.length, 0);
+    trackItems.push(`<a class="rail-cat rail-track" href="ml-track.html">${escText(mlTrack.title)}<span class="rail-count">${n}</span></a>`);
+  }
+  if (typeof series !== 'undefined' && typeof getSeries === 'function') {
+    Object.keys(series).forEach(id => {
+      const s = getSeries(id);
+      if (!s || !s.posts.length) return;
+      const rows = s.posts.map((p, i) =>
+        `<a class="rail-post" href="post.html?id=${p.id}"><span class="rail-num">${i + 1}</span>${escText(p.title)}</a>`).join('');
+      trackItems.push(`<details class="rail-group"><summary class="rail-cat rail-track">${escText(s.title)}<span class="rail-count">${s.posts.length}</span></summary>
+        <div class="rail-list">${rows}</div></details>`);
+    });
+  }
+  const tracksHtml = trackItems.length ? `<div class="rail-tracks"><div class="rail-title">트랙으로 읽기</div>${trackItems.join('')}</div>` : '';
   const legend = (typeof WORLD_META !== 'undefined') ? Object.keys(WORLD_META).map(id => {
     const m = WORLD_META[id];
     return `<span class="world-legend-item"><span class="world-dot" data-world="${id}"></span>${m.label}, ${m.short}</span>`;
@@ -408,7 +437,7 @@ function renderCategoryRail() {
   el.innerHTML = `<div class="category-rail-inner">
     ${hasOwnCategoryFilter ? '' : `<div class="rail-title">주제로 찾기</div>
     ${catItems}${onTopics ? '' : `<a class="rail-cat rail-all" href="topics.html">전체를 주제별로 보기<span class="rail-count">${posts.length}</span></a>`}`}
-    <a class="rail-ml" href="ml-track.html"><b>▸ ML 엔지니어 트랙</b><span>pCTR/pCVR 실무 커리큘럼 — 입문→실무→심화</span></a>
+    ${tracksHtml}
     <div class="rail-stage"><div class="rail-title">무대 — 이 글이 노는 곳</div>${legend}</div>
   </div>`;
 }

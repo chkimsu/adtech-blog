@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-ml-coding',
+    world: 'na',
+    title: 'ML 코딩: AUC, log loss, 샘플링, k-means 를 직접 짜는 법',
+    excerpt: 'ML 코딩 면접에 나올 수 있는 AUC, log loss, 샘플링, k-means, softmax 를 표준 라이브러리만으로 짜고, 지어낸 광고 데이터로 경계를 확인합니다. AUC 는 쌍 세기 정의와 정렬과 순위로 구하는 O(n log n) 방식이 동점을 0.5 로 세어 같은 0.7667 을 내고 무작위 입력 300개에서도 같은 값인지 봅니다. log loss 는 확률 1.0 을 준 오답 하나에서 log(0) 오류가 나고, 잘라도 eps 에 따라 1.3094 에서 4.3796 까지 달라집니다. 누적합과 bisect 로 가중치 랜덤 선택을, reservoir sampling 으로 길이를 모르는 스트림의 표본을 뽑고, negative 를 10% 만 남긴 모델의 예측 0.1695 를 q / (q + (1 - q) / r) 로 0.0200 에 되돌립니다. k-means 는 시작 중심에 따라 inertia 19.67 과 27.67 로 다르게 멈추고, softmax 는 최댓값을 빼 넘침을 막습니다.',
+    date: '2026-11-10',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test', 'Calibration'],
+    contentUrl: 'posts/algorithm-ml-coding.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-more-structures',
     world: 'na',
     title: '연결 리스트, 문자열, Union-Find, Trie, 구간: 시리즈에서 빠진 다섯 가지',
@@ -1935,7 +1946,7 @@ const series = {
             'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
             'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
             'algorithm-practical-live-coding', 'algorithm-think-aloud',
-            'algorithm-more-structures'],
+            'algorithm-more-structures', 'algorithm-ml-coding'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

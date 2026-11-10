@@ -404,7 +404,7 @@ function renderCategoryRail() {
     const inCat = posts.filter(p => (p.categories || []).includes(c))
       .sort((a, b) => String(b.date).localeCompare(String(a.date)));
     const rows = inCat.slice(0, RAIL_PREVIEW).map(p =>
-      `<a class="rail-post" href="post.html?id=${p.id}">${escText(p.title)}</a>`).join('');
+      `<a class="rail-post" href="post.html?id=${p.id}"><span class="rail-num rail-date">${String(p.date || '').slice(5).replace('-', '.')}</span>${escText(p.title)}</a>`).join('');
     const more = `<a class="rail-post rail-more" href="${href}">이 주제 ${inCat.length}편 모두 보기 →</a>`;
     return `<a class="rail-cat rail-chip" href="${href}">${head}</a>
       <details class="rail-group"><summary class="rail-cat">${head}</summary>

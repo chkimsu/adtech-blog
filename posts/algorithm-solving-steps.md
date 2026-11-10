@@ -355,3 +355,4 @@ print(f'트리 값의 합 {total(root)}')
 - 표준 라이브러리 문서는 [heapq](https://docs.python.org/3/library/heapq.html), [bisect](https://docs.python.org/3/library/bisect.html), [collections](https://docs.python.org/3/library/collections.html) 입니다.
 - 투 포인터와 슬라이딩 윈도우를 직접 재 본 글은 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편이고, 도구별 템플릿은 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편에 있습니다.
 - 그리디와 DP 를 언제 고르는지는 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편, BFS 와 DFS 는 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다.
+- 요구가 하나씩 늘어나는 로그 집계 문제와 LRU 캐시 같은 작은 클래스를 직접 짜 보는 글은 [실무형 라이브 코딩](post.html?id=algorithm-practical-live-coding) 편입니다.

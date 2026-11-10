@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-practical-live-coding',
+    world: 'na',
+    title: '실무형 라이브 코딩: 로그 집계, 작은 클래스, 요구가 늘어나는 문제',
+    excerpt: '실무형 라이브 코딩은 레코드 집계, 상태가 있는 작은 클래스, 요구가 하나씩 늘어나는 추가 질문 세 가지 모양으로 나옵니다. 지어낸 광고 로그 14줄로 광고별 클릭 수, 중복 이벤트 제거, 최근 N초, 상위 K 네 부분을 차례로 풀며, 요구마다 함수 하나를 두면 앞 함수를 고치지 않고 함수 하나씩만 더한다는 것을 봅니다. = 와 += 를 바꿔 쓴 덮어쓰기 버그, None 과 0 을 섞은 TypeError, 시각 정렬을 가정한 코드가 빈 결과를 내는 자리를 실행 출력으로 보이고 고칩니다. OrderedDict 로 짠 LRU 캐시, deque 로 짠 rate limiter, 스트림 Top-K, 메모리 키-값 저장소와 빈 목록, 빠진 필드, 0 같은 경계 입력, 오류를 낼지 기본값을 줄지의 선택까지 다룹니다.',
+    date: '2026-11-10',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test', 'Data Structure'],
+    contentUrl: 'posts/algorithm-practical-live-coding.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-solving-steps',
     world: 'na',
     title: '코딩테스트 풀이 순서: 제약에서 복잡도, 자료구조, 접근 방법, 확인까지',
@@ -1900,7 +1911,8 @@ const series = {
     desc: '복잡도를 직접 재 보는 것부터 배열, 해시, 정렬, 이분탐색, 스택큐, 트리, 힙, 그래프, DP까지 — 회차별 상태 변화를 그림과 실행 출력으로 따라가는 코딩테스트 준비',
     posts: ['algorithm-complexity-array', 'algorithm-hash-sort', 'algorithm-binary-search-stack',
             'algorithm-tree-heap', 'algorithm-graph-search', 'algorithm-dp-greedy',
-            'algorithm-coding-test-toolkit', 'algorithm-solving-steps'],
+            'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
+            'algorithm-practical-live-coding'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

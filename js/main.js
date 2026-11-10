@@ -395,6 +395,13 @@ function renderCategoryRail() {
   const onTopics = !!document.getElementById('topics-root');
   const escText = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const RAIL_PREVIEW = 5; // 펼쳤을 때 먼저 보이는 최신 글 수
+  // 글 한 줄. 쉬운 판이 있으면 그 판으로 가는 링크를 옆에 붙인다(링크 안에 링크를 넣지 않으려고 줄을 감싼다).
+  // flag 는 트랙 목록에서만 쓴다 — 'read' 는 읽은 글, 'next' 는 처음 나오는 안 읽은 글.
+  const railRow = (p, num, flag) => {
+    const label = flag === 'read' ? '<span class="rail-flag">읽음</span>' : flag === 'next' ? '<span class="rail-flag is-next">다음</span>' : '';
+    const a = `<a class="rail-post${flag === 'read' ? ' is-read' : ''}" href="post.html?id=${p.id}">${num}<span class="rail-post-title">${escText(p.title)}${label}</span></a>`;
+    return hasEasyVersion(p.id) ? `<div class="rail-row">${a}<a class="rail-easy easy-mark" href="${easyHref(p.id)}">쉬운 판</a></div>` : a;
+  };
   const catItems = cats.map(c => {
     const cAttr = c.replace(/"/g, '&quot;');
     const href = onTopics ? `#topic-${topicSlug(c)}` : `posts-browse.html?category=${encodeURIComponent(c)}`;
@@ -404,7 +411,7 @@ function renderCategoryRail() {
     const inCat = posts.filter(p => (p.categories || []).includes(c))
       .sort((a, b) => String(b.date).localeCompare(String(a.date)));
     const rows = inCat.slice(0, RAIL_PREVIEW).map(p =>
-      `<a class="rail-post" href="post.html?id=${p.id}"><span class="rail-num rail-date">${String(p.date || '').slice(5).replace('-', '.')}</span>${escText(p.title)}</a>`).join('');
+      railRow(p, `<span class="rail-num rail-date">${String(p.date || '').slice(5).replace('-', '.')}</span>`)).join('');
     const more = `<a class="rail-post rail-more" href="${href}">이 주제 ${inCat.length}편 모두 보기 →</a>`;
     return `<a class="rail-cat rail-chip" href="${href}">${head}</a>
       <details class="rail-group"><summary class="rail-cat">${head}</summary>
@@ -414,16 +421,21 @@ function renderCategoryRail() {
   // 펼치면 그 트랙의 글을 읽는 순서대로 보여 준다.
   const trackItems = [];
   if (typeof mlTrack !== 'undefined') {
-    const n = mlTrack.stages.reduce((s, st) => s + st.posts.length, 0);
-    trackItems.push(`<a class="rail-cat rail-track" href="ml-track.html">${escText(mlTrack.title)}<span class="rail-count">${n}</span></a>`);
+    const ids = mlTrackPostIds();
+    const done = ids.filter(readSafe).length;
+    trackItems.push(`<a class="rail-cat rail-track" href="ml-track.html">${escText(mlTrack.title)}<span class="rail-count">${done ? `${done}/${ids.length}` : ids.length}</span></a>`);
   }
   if (typeof series !== 'undefined' && typeof getSeries === 'function') {
     Object.keys(series).forEach(id => {
       const s = getSeries(id);
       if (!s || !s.posts.length) return;
+      // 읽은 글이 하나라도 있으면 「n/m」 과 「다음」 을 보인다. 하나도 없으면 편수만.
+      const done = s.posts.filter(p => readSafe(p.id)).length;
+      const nextId = done ? (s.posts.find(p => !readSafe(p.id)) || {}).id : null;
       const rows = s.posts.map((p, i) =>
-        `<a class="rail-post" href="post.html?id=${p.id}"><span class="rail-num">${i + 1}</span>${escText(p.title)}</a>`).join('');
-      trackItems.push(`<details class="rail-group"><summary class="rail-cat rail-track">${escText(s.title)}<span class="rail-count">${s.posts.length}</span></summary>
+        railRow(p, `<span class="rail-num">${i + 1}</span>`, readSafe(p.id) ? 'read' : (p.id === nextId ? 'next' : ''))).join('');
+      const count = done ? `<span class="rail-count rail-progress">${done}/${s.posts.length}</span>` : `<span class="rail-count">${s.posts.length}</span>`;
+      trackItems.push(`<details class="rail-group"><summary class="rail-cat rail-track">${escText(s.title)}${count}</summary>
         <div class="rail-list">${rows}</div></details>`);
     });
   }
@@ -456,6 +468,7 @@ function renderPostCard(post) {
       ${worldBadges ? `<span class="world-badge-group">${worldBadges}</span>` : ''}
     </div>
     <h3>${post.title}</h3>
+    ${hasEasyVersion(post.id) ? `<a class="easy-mark card-easy" href="${easyHref(post.id)}">쉬운 판</a>` : ''}
     <div class="post-card-footer">
       <div class="post-meta">
         <span class="post-date">${formatDate(post.date)}</span>
@@ -465,6 +478,10 @@ function renderPostCard(post) {
       </div>
     </div>
   `;
+
+  // 쉬운 판 링크는 그 판으로만 간다 — 카드 클릭(원래 판으로 이동)이 같이 일어나지 않게 막는다.
+  const easyLink = card.querySelector('.card-easy');
+  if (easyLink) easyLink.addEventListener('click', e => e.stopPropagation());
 
   // Add click handlers to tags
   const tagElements = card.querySelectorAll('.tag');
@@ -520,6 +537,168 @@ function renderCover() {
   while (pick.length < 3) { const p = getAllPosts()[pick.length]; if (!p) break; if (!pick.includes(p)) pick.push(p); }
   featured.innerHTML = '';
   pick.forEach(p => featured.appendChild(renderPostCard(p)));
+}
+
+// ========================================
+// 첫 화면 도구 — 쉬운 판 표시, 읽은 수, 검색창, 목적별 시작 카드 (2026-11-10)
+// ========================================
+
+// 쉬운 판이 있는 글인가. 목록은 js/easy-posts.js 의 EASY_POST_IDS 다(그 파일을 안 읽은 페이지는 늘 false).
+function hasEasyVersion(id) {
+  return typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(id);
+}
+function easyHref(id) { return `post.html?id=${encodeURIComponent(id)}&v=easy`; }
+// 읽기 상태(js/reading-state.js)가 없는 페이지에서는 모두 안 읽은 것으로 본다.
+function readSafe(id) { return typeof ReadingState !== 'undefined' && ReadingState.isRead(id); }
+function mlTrackPostIds() {
+  if (typeof mlTrack === 'undefined') return [];
+  return [...new Set(mlTrack.stages.flatMap(st => st.posts))];
+}
+
+// 검색창 — #home-finder 가 있는 페이지(index.html)에서만 붙는다.
+function setupHomeFinder() {
+  const box = document.getElementById('home-finder');
+  if (!box || typeof posts === 'undefined') return;
+  const input = box.querySelector('input');
+  const list = box.querySelector('.finder-list');
+  const MAX = 8;
+  let bodyIndex = null;   // search-index.json — 본문을 소문자로 담은 { id: text }, 처음 focus 때 받는다
+  let items = [];
+  let active = -1;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+  const loadIndex = () => {
+    if (bodyIndex !== null) return;
+    bodyIndex = {};
+    fetch('search-index.json').then(r => r.ok ? r.json() : {})
+      .then(j => { bodyIndex = j; if (input.value.trim()) render(); })
+      .catch(() => { bodyIndex = {}; });
+  };
+
+  const topicRows = () => {
+    const counts = {};
+    posts.forEach(p => (p.categories || []).forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
+    return Object.keys(counts).map(c => ({ kind: '주제', title: c, sub: `${counts[c]}편`,
+      href: `posts-browse.html?category=${encodeURIComponent(c)}` }));
+  };
+  const trackRows = () => {
+    const out = [];
+    if (typeof mlTrack !== 'undefined') {
+      out.push({ kind: '트랙', title: mlTrack.title, sub: `${mlTrackPostIds().length}편`, href: 'ml-track.html' });
+    }
+    if (typeof series !== 'undefined') {
+      Object.keys(series).forEach(id => {
+        const s = getSeries(id);
+        if (!s || !s.posts.length) return;
+        const next = s.posts.find(p => !readSafe(p.id)) || s.posts[0];
+        out.push({ kind: '트랙', title: s.title, sub: `${s.posts.length}편`, href: `post.html?id=${next.id}` });
+      });
+    }
+    return out;
+  };
+
+  const search = (q) => {
+    const score = p => (p.title.toLowerCase().includes(q) ? 3 : 0)
+      + ((p.tags || []).some(t => t.toLowerCase().includes(q)) ? 2 : 0)
+      + ((p.excerpt || '').toLowerCase().includes(q) ? 1 : 0);
+    const meta = posts.map(p => ({ p, s: score(p) })).filter(x => x.s > 0)
+      .sort((a, b) => b.s - a.s || String(b.p.date).localeCompare(String(a.p.date))).map(x => x.p);
+    const metaIds = new Set(meta.map(p => p.id));
+    const body = bodyIndex ? posts.filter(p => !metaIds.has(p.id) && bodyIndex[p.id] && bodyIndex[p.id].includes(q)) : [];
+    const groups = [...topicRows(), ...trackRows()].filter(r => r.title.toLowerCase().includes(q)).slice(0, 3);
+    const postRow = (p, inBody) => ({ kind: '글', title: p.title, id: p.id, href: `post.html?id=${p.id}`,
+      sub: inBody ? '본문 일치' : (p.categories || [])[0] || '', easy: hasEasyVersion(p.id) });
+    const room = MAX - groups.length;
+    const postsPart = [...meta.map(p => postRow(p, false)), ...body.map(p => postRow(p, true))].slice(0, room);
+    return [...postsPart, ...groups];
+  };
+
+  const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); active = -1; };
+  const paint = () => {
+    list.querySelectorAll('.finder-row').forEach((el, i) => el.classList.toggle('is-active', i === active));
+    const el = list.querySelector('.finder-row.is-active');
+    if (el) input.setAttribute('aria-activedescendant', el.id); else input.removeAttribute('aria-activedescendant');
+  };
+  const render = () => {
+    const raw = input.value.trim();
+    if (!raw) { list.innerHTML = ''; items = []; close(); return; }
+    items = search(raw.toLowerCase());
+    active = items.length ? 0 : -1;
+    list.innerHTML = items.length ? items.map((it, i) => `<a class="finder-row" role="option" id="finder-opt-${i}" href="${it.href}">
+        <span class="finder-kind">${it.kind}</span>
+        <span class="finder-title">${esc(it.title)}</span>
+        ${it.easy ? '<span class="easy-mark">쉬운 판</span>' : ''}
+        <span class="finder-sub">${esc(it.sub)}</span></a>`).join('')
+      : `<div class="finder-empty">「${esc(raw)}」에 맞는 글이 없습니다.</div>`;
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    paint();
+  };
+
+  input.addEventListener('focus', () => { loadIndex(); if (input.value.trim()) render(); });
+  input.addEventListener('input', render);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (list.hidden) { render(); return; }
+      if (!items.length) return;
+      active = e.key === 'ArrowDown' ? Math.min(items.length - 1, active + 1) : Math.max(0, active - 1);
+      paint();
+    } else if (e.key === 'Enter') {
+      if (!list.hidden && items[active]) { e.preventDefault(); window.location.href = items[active].href; }
+    } else if (e.key === 'Escape') {
+      close();
+    }
+  });
+  document.addEventListener('click', (e) => { if (!box.contains(e.target)) close(); });
+  // 「/」 로 검색창에 들어간다 — 다른 입력 칸에 쓰는 중이면 그대로 둔다.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    e.preventDefault();
+    input.focus();
+  });
+}
+
+// 목적별 시작 카드 — #home-goals 가 있는 페이지(index.html)에서만 그린다.
+// 목적 하나에 트랙 하나를 잇고, 읽은 글이 있으면 다음 안 읽은 글로, 없으면 첫 글로 보낸다.
+const HOME_GOALS = [
+  { goal: '코딩 면접 준비', track: 'algorithm-track' },
+  { goal: '광고 ML 입문', track: 'ml' },
+  { goal: 'LLM 공부', track: 'llm-basics-track' },
+  { goal: '데이터 엔지니어링', track: 'engineering-foundations' },
+  { goal: '모델 운영', track: 'mlops-track' },
+  { goal: '측정과 실험', track: 'judgment-track' },
+];
+function renderHomeGoals() {
+  const el = document.getElementById('home-goals');
+  if (!el || typeof getPostById !== 'function') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  el.innerHTML = HOME_GOALS.map(g => {
+    let title, list;
+    if (g.track === 'ml') {
+      if (typeof mlTrack === 'undefined') return '';
+      title = mlTrack.title;
+      list = mlTrackPostIds().map(getPostById).filter(Boolean);
+    } else {
+      const s = (typeof getSeries === 'function') && getSeries(g.track);
+      if (!s) return '';
+      title = s.title;
+      list = s.posts;
+    }
+    if (!list.length) return '';
+    const done = list.filter(p => readSafe(p.id)).length;
+    const next = list.find(p => !readSafe(p.id));
+    const target = next || list[0];
+    const action = done === 0 ? '첫 글' : (next ? '이어 읽기' : '다 읽었습니다, 처음 글');
+    return `<a class="goal-card" href="post.html?id=${target.id}">
+      <span class="goal-name">${esc(g.goal)}</span>
+      <span class="goal-track">${esc(title)}</span>
+      <span class="goal-meta">${list.length}편${done ? `<b>${done}/${list.length} 읽음</b>` : ''}</span>
+      <span class="goal-next"><em>${action}</em>${esc(target.title)}</span>
+    </a>`;
+  }).join('');
 }
 
 // 큐레이션 홈 — 시작하기/최신/시리즈 (renderPostCard + posts.js 게터 재사용)
@@ -2083,6 +2262,8 @@ document.addEventListener('DOMContentLoaded', () => {
   } else if (coverRoot) {
     // 표지(랜딩) 페이지 (index.html)
     renderCover();
+    renderHomeGoals();
+    setupHomeFinder();
   }
 
   // Initialize smooth scrolling

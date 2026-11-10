@@ -6704,3 +6704,62 @@ a.rail-track::after { content: "\2192"; }
   .rail-group, .rail-tracks { display: none; }
   .rail-chip { display: flex; }
 }
+
+/* ---- 첫 화면 검색창, 목적별 시작 카드, 트랙 진행, 쉬운 판 표시 (2026-11-10) ---- */
+.easy-mark { display: inline-block; font-size: 0.68rem; font-weight: 600; line-height: 1.4; color: var(--navy); background: var(--navy-bg);
+  border: 1px solid var(--navy-bd); border-radius: 0; padding: 0.05rem 0.4rem; text-decoration: none; white-space: nowrap; flex: none; }
+a.easy-mark:hover { background: var(--navy); color: var(--paper); }
+.card-easy { align-self: flex-start; margin: -0.4rem 0 0.8rem; }
+
+.home-top { padding: 1.6rem 0 0.4rem; }
+.home-finder { position: relative; max-width: 720px; margin-bottom: 1.8rem; }
+.home-finder input { width: 100%; box-sizing: border-box; padding: 0.85rem 2.8rem 0.85rem 1rem; font: inherit; font-size: 1rem;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 0; -webkit-appearance: none; appearance: none; }
+.home-finder input:focus { outline: none; border-color: var(--navy); }
+.finder-key { position: absolute; right: 0.8rem; top: 0.72rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink3);
+  border: 1px solid var(--rule); border-radius: 0; padding: 0.05rem 0.4rem; pointer-events: none; }
+.finder-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 40; background: var(--paper); border: 1px solid var(--navy); border-top: none;
+  max-height: 70vh; overflow-y: auto; }
+.finder-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; color: var(--ink); text-decoration: none;
+  border-top: 1px solid var(--rule2); font-size: 0.9rem; line-height: 1.45; }
+.finder-row:first-child { border-top: none; }
+.finder-row.is-active, .finder-row:hover { background: var(--navy-bg); }
+.finder-kind { flex: none; min-width: 2.2rem; font-size: 0.7rem; font-weight: 700; color: var(--navy); letter-spacing: 0.04em; }
+.finder-title { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.finder-sub { flex: none; max-width: 30%; font-size: 0.74rem; color: var(--ink3); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.finder-empty { padding: 0.8rem 0.9rem; font-size: 0.9rem; color: var(--ink3); }
+
+.home-goals-head { margin-bottom: 0.9rem; }
+.home-goals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.goal-card { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.95rem 1.05rem; background: var(--plate); border: 1px solid var(--rule);
+  border-radius: 0; color: var(--ink); text-decoration: none; min-width: 0; }
+.goal-card:hover { border-color: var(--navy); }
+.goal-name { font-size: 1.02rem; font-weight: 700; }
+.goal-track { font-size: 0.82rem; color: var(--ink2); }
+.goal-meta { display: flex; gap: 0.6rem; font-size: 0.76rem; color: var(--ink3); }
+.goal-meta b { color: var(--navy); font-weight: 600; }
+.goal-next { margin-top: 0.25rem; font-size: 0.82rem; color: var(--navy); overflow-wrap: anywhere; }
+.goal-next em { font-style: normal; font-weight: 700; margin-right: 0.45rem; }
+@media (max-width: 1100px) { .home-goals { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .home-goals { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+  .goal-card { padding: 0.75rem 0.9rem; }
+  .finder-sub { display: none; }
+  .home-finder { margin-bottom: 1.3rem; }
+}
+
+/* 레일 — 읽은 글은 옅게, 처음 나오는 안 읽은 글에는 「다음」. 쉬운 판이 있는 줄은 링크 둘을 감싼다. */
+.rail-list > * + * { border-top: 1px dotted var(--rule); }
+.rail-row { padding-bottom: 0.5rem; }
+.rail-row .rail-post { padding-bottom: 0.3rem; }
+.rail-easy { margin-left: 1.6rem; font-size: 0.62rem; padding: 0 0.3rem; }
+.rail-row:has(.rail-date) .rail-easy { margin-left: 2.8rem; }
+.rail-post-title { flex: 1 1 auto; min-width: 0; }
+.rail-post.is-read { color: var(--ink3); }
+.rail-flag { display: inline-block; margin-left: 0.35rem; font-size: 0.62rem; line-height: 1.4; color: var(--ink3); border: 1px solid var(--rule); padding: 0 0.3rem; vertical-align: 0.05rem; white-space: nowrap; }
+.rail-flag.is-next { color: var(--navy); border-color: var(--navy-bd); background: var(--navy-bg); font-weight: 600; }
+.rail-progress { color: var(--navy); font-weight: 600; }
+
+/* 탐색 — 쉬운 판 있는 글만 */
+.browse-easy { display: inline-flex; align-items: center; gap: 0.45rem; margin: -0.6rem 0 1.2rem; font-size: 0.88rem; color: var(--ink2); cursor: pointer; }
+.browse-easy input { width: 1rem; height: 1rem; accent-color: var(--navy); margin: 0; }

@@ -3,7 +3,9 @@
 // main.js(renderPostCard)를 재사용한다. (스크립트 로드 순서: posts.js → main.js → browse.js)
 (function () {
   const PAGE = 12;
-  const state = { search: '', categories: new Set(), tags: new Set(), sort: 'newest', shown: PAGE };
+  const state = { search: '', categories: new Set(), tags: new Set(), sort: 'newest', easy: false, shown: PAGE };
+  // 쉬운 판이 있는 글만 — 목록은 js/easy-posts.js 의 EASY_POST_IDS
+  const hasEasy = p => typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(p.id);
   let TAG_COLLAPSED = true;
   const $ = id => document.getElementById(id);
 
@@ -15,6 +17,7 @@
     // 제거된 정렬 모드(readtime 등)가 북마크 URL로 들어와도 안전하게 newest로
     const sortParam = p.get('sort');
     state.sort = sortParam === 'oldest' ? 'oldest' : 'newest';
+    state.easy = p.get('easy') === '1';
   }
   function syncUrl() {
     const p = new URLSearchParams();
@@ -22,16 +25,17 @@
     if (state.categories.size) p.set('category', [...state.categories].join(','));
     if (state.tags.size) p.set('tag', [...state.tags].join(','));
     if (state.sort !== 'newest') p.set('sort', state.sort);
+    if (state.easy) p.set('easy', '1');
     history.replaceState(null, '', p.toString() ? `?${p}` : location.pathname);
   }
 
   function apply() {
-    const filtered = filterPosts(state.search, [...state.categories], [...state.tags]);
+    const filtered = filterPosts(state.search, [...state.categories], [...state.tags]).filter(p => !state.easy || hasEasy(p));
     const sorted = sortPosts(filtered, state.sort);
     $('browse-count').textContent = `${sorted.length}개 글`;
     renderGrid(sorted.slice(0, state.shown));
     $('browse-more').hidden = sorted.length <= state.shown;
-    $('browse-clear').hidden = !(state.search || state.categories.size || state.tags.size);
+    $('browse-clear').hidden = !(state.search || state.categories.size || state.tags.size || state.easy);
     syncUrl();
   }
 
@@ -82,13 +86,15 @@
 
   function toggleCat(c) { state.categories.has(c) ? state.categories.delete(c) : state.categories.add(c); state.shown = PAGE; renderChips(); apply(); }
   function toggleTag(t) { state.tags.has(t) ? state.tags.delete(t) : state.tags.add(t); state.shown = PAGE; renderChips(); apply(); }
-  function clearAll() { state.search = ''; state.categories.clear(); state.tags.clear(); state.shown = PAGE; $('browse-search').value = ''; renderChips(); apply(); }
+  function clearAll() { state.search = ''; state.categories.clear(); state.tags.clear(); state.easy = false; state.shown = PAGE; $('browse-search').value = ''; $('browse-easy').checked = false; renderChips(); apply(); }
 
   function init() {
     if (!$('browse-grid')) return;
     readUrl();
     $('browse-search').value = state.search;
     $('browse-sort').value = state.sort;
+    $('browse-easy').checked = state.easy;
+    $('browse-easy').addEventListener('change', e => { state.easy = e.target.checked; state.shown = PAGE; apply(); });
     renderChips();
     $('browse-search').addEventListener('input', e => { state.search = e.target.value; state.shown = PAGE; apply(); });
     $('browse-sort').addEventListener('change', e => { state.sort = e.target.value; apply(); });

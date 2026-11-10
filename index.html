@@ -54,6 +54,19 @@
   <div class="rail-layout">
   <aside id="category-rail" class="category-rail" aria-label="카테고리"></aside>
   <div id="main-content">
+    <section class="home-top">
+      <div class="container">
+        <div class="home-finder" id="home-finder">
+          <input type="search" placeholder="글, 주제, 트랙 검색" aria-label="글, 주제, 트랙 검색" autocomplete="off"
+            role="combobox" aria-expanded="false" aria-controls="finder-list" aria-autocomplete="list">
+          <kbd class="finder-key" aria-hidden="true">/</kbd>
+          <div class="finder-list" id="finder-list" role="listbox" hidden></div>
+        </div>
+        <div class="home-section-head home-goals-head"><h2>무엇을 준비하나</h2><a href="topics.html">주제별로 보기 →</a></div>
+        <div class="home-goals" id="home-goals"></div>
+      </div>
+    </section>
+
     <section class="cover-hero" id="cover-root">
       <div class="container">
         <div class="cover-kicker">한국어로 읽는 애드테크</div>
@@ -125,6 +138,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
   <script src="js/posts.js"></script>
+  <script src="js/easy-posts.js"></script>
   <script src="js/reading-state.js"></script>
   <script src="js/main.js"></script>
 </body>

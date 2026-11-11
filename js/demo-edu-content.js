@@ -3182,7 +3182,7 @@ window.DEMO_EDU = {
         explain: {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
-                    case 'precompute': return '헷갈리는 것은 <strong>38배가 어디서 나오나</strong>입니다. 사람 수가 아니라 요청 수의 차이입니다. 같은 사람이 하루 16.3번 요청하므로, 사람마다 한 번만 계산하면 그만큼 덜 듭니다.';
+                    case 'precompute': return '헷갈리는 것은 <strong>38배가 어디서 나오나</strong>입니다. 같은 사람이 하루 16.3번 요청하고, 새벽 배치는 한 명에 0.86ms 로 요청 때의 2.0ms 보다 쌉니다. 이 두 차이를 곱하면 38배입니다.';
                     case 'cache': return '헷갈리는 것은 <strong>적중률과 평균 시간의 관계</strong>입니다. 못 찾은 요청만 2ms 를 쓰므로 평균은 적중률로 섞입니다. 적중 80% 면 0.56ms 이고 100% 면 0.20ms 입니다.';
                     case 'cost': return '헷갈리는 것은 <strong>GPU 가 왜 세 대인가</strong>입니다. 2,639 QPS 면 두 대로 되는데, 한 대가 빠지면 부하율이 1.15 로 넘어갑니다. 예비 한 대가 비용의 3분의 1 입니다.';
                     default: return '';

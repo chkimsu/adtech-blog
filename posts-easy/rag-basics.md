@@ -517,5 +517,5 @@ $$\text{Precision@}k = \frac{1}{N}\sum_{n=1}^{N} \frac{1}{k}\sum_{i=1}^{k} \math
 ## 참고문헌
 
 - Patrick Lewis 외 (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. arXiv:2005.11401. [arxiv.org](https://arxiv.org/abs/2005.11401). 학습한 seq2seq 모델과 벡터 색인에서 문단을 찾는 검색기를 묶은 RAG 입니다.
-- Shahul Es 외 (2023). *Ragas: Automated Evaluation of Retrieval Augmented Generation*. arXiv:2309.15217. [arxiv.org](https://arxiv.org/abs/2309.15217). 사람이 단 정답 없이 RAG 를 평가하는 지표 묶음입니다.
+- Shahul Es 외 (2023). *Ragas: Automated Evaluation of Retrieval Augmented Generation*. arXiv:2309.15217. [arxiv.org](https://arxiv.org/abs/2309.15217). 사람이 단 정답 없이 RAG 를 평가하는 지표 세트입니다.
 - Nelson F. Liu 외 (2023). *Lost in the Middle: How Language Models Use Long Contexts*. arXiv:2307.03172. [arxiv.org](https://arxiv.org/abs/2307.03172). 관련 정보가 긴 입력의 가운데에 있으면 성능이 떨어진다는 분석입니다.

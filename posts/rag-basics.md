@@ -473,7 +473,7 @@ for fake in ({'value': '99999', 'doc_ids': [q['doc_id']]}, {'value': str(q['valu
 ## 더 깊이 보기
 
 :::deep RAGAS 는 정답 없이 측정하는 지표를 내놓았습니다
-RAGAS 논문은 RAG 를 사람이 단 정답 없이 평가하는 지표 묶음을 내놓았습니다. 초록은 평가할 것을 셋으로 적습니다. 검색이 관련 있고 군더더기 없는 문단을 찾는지, LLM 이 그 문단을 충실히 쓰는지, 생성한 글의 품질입니다. 이 글의 두 값은 이름이 비슷하지만 정답 문서로 셉니다. 질문을 만들 때 정답 문서를 정해 두었기 때문입니다.
+RAGAS 논문은 RAG 를 사람이 단 정답 없이 평가하는 지표 세트을 내놓았습니다. 초록은 평가할 것을 셋으로 적습니다. 검색이 관련 있고 군더더기 없는 문단을 찾는지, LLM 이 그 문단을 충실히 쓰는지, 생성한 글의 품질입니다. 이 글의 두 값은 이름이 비슷하지만 정답 문서로 셉니다. 질문을 만들 때 정답 문서를 정해 두었기 때문입니다.
 
 정답 문서를 $g$, 상위 $k$ 조각의 문서를 $c_1, \dots, c_k$ 라고 둡니다. 질문 $N$ 개에 대해 이 글이 센 두 값은 아래와 같습니다.
 
@@ -499,5 +499,5 @@ $$\text{Precision@}k = \frac{1}{N}\sum_{n=1}^{N} \frac{1}{k}\sum_{i=1}^{k} \math
 ## 참고문헌
 
 - Patrick Lewis 외 (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. arXiv:2005.11401. [arxiv.org](https://arxiv.org/abs/2005.11401). 학습한 seq2seq 모델과 벡터 색인에서 문단을 찾는 검색기를 묶은 RAG 입니다.
-- Shahul Es 외 (2023). *Ragas: Automated Evaluation of Retrieval Augmented Generation*. arXiv:2309.15217. [arxiv.org](https://arxiv.org/abs/2309.15217). 사람이 단 정답 없이 RAG 를 평가하는 지표 묶음입니다.
+- Shahul Es 외 (2023). *Ragas: Automated Evaluation of Retrieval Augmented Generation*. arXiv:2309.15217. [arxiv.org](https://arxiv.org/abs/2309.15217). 사람이 단 정답 없이 RAG 를 평가하는 지표 세트입니다.
 - Nelson F. Liu 외 (2023). *Lost in the Middle: How Language Models Use Long Contexts*. arXiv:2307.03172. [arxiv.org](https://arxiv.org/abs/2307.03172). 관련 정보가 긴 입력의 가운데에 있으면 성능이 떨어진다는 분석입니다.

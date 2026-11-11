@@ -23,4 +23,5 @@ const EASY_POST_IDS = [
   'container-ci-pipeline',
   'model-deployment-rollback',
   'training-pipeline-dag',
+  'stream-window-aggregation',
 ];

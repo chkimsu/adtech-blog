@@ -579,7 +579,7 @@ for 동전, 금액 in (([500, 100, 50, 10], 1260), ([4, 3, 1], 6)):
 
 ## 더 깊이 보기
 
-- 이 글의 백트래킹이 [그래프 탐색](post.html?id=algorithm-graph-search) 편의 DFS와 같은 구조다. 되돌아올 때 상태를 원래대로 돌린다는 점만 다르다.
-- 적어 두기의 딕셔너리는 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에서 본 딕셔너리다. 키로 쓸 수 있는 것의 조건이 `@lru_cache` 에도 그대로 적용된다.
-- 재귀 깊이 한계와 그 우회는 [트리와 힙](post.html?id=algorithm-tree-heap) 편에 있다.
-- 입력 크기로 방법을 고르는 감각은 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편 2절의 표가 기준이다.
+- 이 글의 백트래킹이 [그래프 탐색](post.html?id=algorithm-graph-search) 편의 DFS와 같은 구조입니다. 되돌아올 때 상태를 원래대로 돌린다는 점만 다릅니다.
+- 적어 두기의 딕셔너리는 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에서 본 딕셔너리입니다. 키로 쓸 수 있는 것의 조건이 `@lru_cache` 에도 그대로 적용됩니다.
+- 재귀 깊이 한계와 그 우회는 [트리와 힙](post.html?id=algorithm-tree-heap) 편에 있습니다.
+- 입력 크기로 방법을 고르는 감각은 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편 2절의 표가 기준입니다.

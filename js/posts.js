@@ -2023,9 +2023,9 @@ const mlTrack = {
 // 글의 "무대"(경매 위치) 렌더용 메타. 값(id)은 data/taxonomy.json 의 worlds 와 동일(단일 소스).
 // 'na'(광고 경매 무관)는 배지를 그리지 않으므로 여기 없음 → getWorldMeta 가 null 반환.
 const WORLD_META = {
-  'open-rtb':      { label: '열린 RTB', short: '경매 바깥',    tip: '외부 DSP가 남의 실시간 경매에 입찰. 패찰하면 경쟁가를 못 봄(censored).' },
-  'walled-garden': { label: '닫힌 생태계',  short: '한 회사가 소유',    tip: '한 회사가 인벤토리, 경매, 데이터를 소유. 경매를 직접 돌려 모든 입찰을 관측.' },
-  'both':          { label: '공통',     short: '두 세계',      tip: '두 세계 다 쓰는 기법. 데이터, 전제만 다름.' },
+  'open-rtb':      { label: '열린 RTB', short: '남의 경매에 입찰',    tip: '외부 DSP가 남의 실시간 경매에 입찰. 패찰하면 경쟁가를 못 봄(censored).' },
+  'walled-garden': { label: '닫힌 생태계',  short: '한 회사의 경매',    tip: '한 회사가 인벤토리, 경매, 데이터를 소유. 경매를 직접 돌려 모든 입찰을 관측.' },
+  'both':          { label: '공통',     short: '두 시장 모두',      tip: '두 세계 다 쓰는 기법. 데이터, 전제만 다름.' },
 };
 function getWorldMeta(world) { return WORLD_META[world] || null; }
 // post.world 는 문자열('open-rtb') 또는 배열(['open-rtb','walled-garden']) 둘 다 허용.

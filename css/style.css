@@ -6763,3 +6763,7 @@ a.easy-mark:hover { background: var(--navy); color: var(--paper); }
 /* 탐색 — 쉬운 판 있는 글만 */
 .browse-easy { display: inline-flex; align-items: center; gap: 0.45rem; margin: -0.6rem 0 1.2rem; font-size: 0.88rem; color: var(--ink2); cursor: pointer; }
 .browse-easy input { width: 1rem; height: 1rem; accent-color: var(--navy); margin: 0; }
+
+/* 첫 화면 제목 가운데 정렬 */
+.cover-kicker, .cover-head { text-align: center; }
+.cover-dek { text-align: center; margin-left: auto; margin-right: auto; }

@@ -450,7 +450,7 @@ function renderCategoryRail() {
     ${hasOwnCategoryFilter ? '' : `<div class="rail-title">주제로 찾기</div>
     ${catItems}${onTopics ? '' : `<a class="rail-cat rail-all" href="topics.html">전체를 주제별로 보기<span class="rail-count">${posts.length}</span></a>`}`}
     ${tracksHtml}
-    <div class="rail-stage"><div class="rail-title">무대 — 이 글이 노는 곳</div>${legend}</div>
+    <div class="rail-stage"><div class="rail-title">색 표시 — 어느 시장의 글</div>${legend}</div>
   </div>`;
 }
 

@@ -31,4 +31,5 @@ const EASY_POST_IDS = [
   'offline-metrics-gauc',
   'offpolicy-evaluation',
   'doubly-robust',
+  'feedback-loop-remedies',
 ];

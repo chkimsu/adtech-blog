@@ -30,4 +30,5 @@ const EASY_POST_IDS = [
   'bentoml-model-serving',
   'offline-metrics-gauc',
   'offpolicy-evaluation',
+  'doubly-robust',
 ];

@@ -54,7 +54,7 @@
         <p class="tg-cap">직접 짠 쪽은 <b>1.1GB</b> 에 모델이 이미지 밖이고, BentoML 쪽은 <b>1.4GB</b> 에 모델이 이미지 안입니다. 모델만 바꿔도 이미지를 다시 빌드해야 합니다.</p></section>
 
       <section class="tg-card" data-card="batching"><h2>WHEN BATCHING PAYS</h2><p class="tg-k">동적 배칭이 이득인 경우</p><p class="tg-easy"><b>쉽게 말하면</b> 여러 요청을 잠깐 모아 한 번에 추론합니다. 얻는 것은 건당 계산이 줄어드는 몫이고, 드는 것은 요청이 모이기를 기다리는 시간입니다.</p><div class="tg-fig" id="bt-batching"></div>
-        <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 계산이 <b>3%</b> 만 줄어듭니다. 요청 하나가 작고 자주 올 때는 <b>78%</b> 줄어듭니다.</p></section>
+        <p class="tg-cap">요청 하나에 후보가 800건이면 묶어도 건당 계산이 <b>1%</b> 만 줄어듭니다. 요청 하나가 작고 자주 올 때는 <b>78%</b> 줄어듭니다.</p></section>
 
       <section class="tg-card" data-card="workers"><h2>MORE WORKERS</h2><p class="tg-k">워커를 늘리면 무엇이 바뀌고 무엇이 그대로인가</p><p class="tg-easy"><b>쉽게 말하면</b> 파이썬은 GIL 때문에 프로세스 하나로 코어 하나만 씁니다. 그래서 워커 프로세스를 여러 개 띄웁니다. 처리량은 늘지만 요청 한 건의 처리 시간은 그대로입니다.</p><div class="tg-fig" id="bt-workers"></div>
         <p class="tg-cap">워커 1개면 부하율이 1.04 라 대기열이 쌓이고, 4개면 대기가 <b>0.04ms</b> 로 거의 사라집니다. 그 뒤로는 늘려도 얻을 것이 없고, 한 건의 처리 시간 <b>4.75ms</b> 는 내내 같습니다.</p></section>
@@ -63,9 +63,9 @@
     <section class="tg-real">
       <h2>현업에서는 이렇게 씁니다</h2>
       <ul>
-        <li><b>새 모델을 띄우자는 말이 나오면</b> 세 가지를 먼저 묻습니다. 예산이 밀리초인가 초인가, 요청이 초당 몇 건인가, 이런 모델이 앞으로 몇 개 더 생기나.</li>
+        <li><b>새 모델을 띄우자는 말이 나오면</b> 세 가지를 먼저 묻습니다. 예산이 한 자리 밀리초인가 수백 밀리초 이상인가, 요청이 초당 몇 건인가, 이런 모델이 앞으로 몇 개 더 생기나.</li>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
-        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=bentoml-model-serving">BentoML</a> 편에 이 카드들이 절마다 한 장씩 들어 있습니다. 직접 짜면 어떤 모양인지는 <a href="post.html?id=inference-server">추론 서버</a> 편입니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=bentoml-model-serving">BentoML</a> 편에 이 카드들이 다섯 절에 한 장씩 들어 있습니다. 직접 짜면 어떤 모양인지는 <a href="post.html?id=inference-server">추론 서버</a> 편입니다.</li>
       </ul>
     </section>
   </main>

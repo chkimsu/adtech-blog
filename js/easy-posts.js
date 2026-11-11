@@ -9,4 +9,13 @@ const EASY_POST_IDS = [
   'algorithm-graph-search',
   'algorithm-dp-greedy',
   'algorithm-coding-test-toolkit',
+  'deep-ctr-models',
+  'behavior-sequence-attention',
+  'din-architecture',
+  'dcn-vs-din-slot',
+  'calibration',
+  'multi-task-learning',
+  'negative-sampling-bias',
+  'position-bias-ultr',
+  'position1-pairwise-ltr',
 ];

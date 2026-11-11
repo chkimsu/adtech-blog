@@ -25,4 +25,5 @@ const EASY_POST_IDS = [
   'training-pipeline-dag',
   'stream-window-aggregation',
   'model-api-from-training-script',
+  'batch-vs-realtime-inference',
 ];

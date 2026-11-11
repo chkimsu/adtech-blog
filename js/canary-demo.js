@@ -65,7 +65,7 @@
         shown: readable ? vals.copc.toFixed(2) : `${vals.copc.toFixed(2)} (클릭 부족)`,
         ratio: readable ? copcDev / COPC_HALF : null,
         state: !readable ? 'skip' : (copcDev <= COPC_HALF ? 'pass' : 'fail') },
-      { name: '클릭률 차이 (새 − 옛)', cond: `${GATE.ctrDiff}% 이상`,
+      { name: '클릭률 차이 ((새 − 옛) ÷ 옛)', cond: `${GATE.ctrDiff}% 이상`,
         shown: (vals.ctr >= 0 ? '+' : '') + vals.ctr.toFixed(1) + '%',
         ratio: readable ? Math.max(0, -vals.ctr) / Math.abs(GATE.ctrDiff) : null,
         state: !readable ? 'skip' : (vals.ctr >= GATE.ctrDiff ? 'pass' : 'fail') },

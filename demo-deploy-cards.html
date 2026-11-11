@@ -48,16 +48,16 @@
         <p class="tg-cap">응답을 안 쓰니 손해가 <b>0</b> 이고, 모델 서버가 한 벌 더 도니 비용이 <b>2배</b> 입니다. 나간 광고는 옛 모델 것이라 클릭으로는 채점하지 못합니다.</p></section>
 
       <section class="tg-card" data-card="canary"><h2>CANARY STEPS</h2><p class="tg-k">1, 10, 50, 100 으로 넓힌다</p><p class="tg-easy"><b>쉽게 말하면</b> 새 모델에 요청을 한 번에 다 주지 않고 100건 중 1건부터 줍니다. 게이트웨이 규칙의 가중치 한 줄이 그 비율을 정하고, 단계마다 머무는 시간과 보는 것이 다릅니다.</p><div class="tg-fig" id="dp-canary"></div>
-        <p class="tg-cap">1% 단계는 <b>5분</b> 동안 서버가 죽지 않나만 봅니다. COPC 와 클릭률은 <b>10% 단계에서 30분</b> 뒤에 봅니다. 파드는 2대에서 6대, 12대로 같이 늘립니다.</p></section>
+        <p class="tg-cap">1% 단계는 <b>5분</b> 동안 서버가 죽지 않나만 봅니다. COPC 는 <b>10% 단계에서 30분</b> 뒤에, 클릭률은 <b>50% 단계에서 30분</b> 뒤에 봅니다. 파드는 2대에서 6대, 12대로 같이 늘립니다.</p></section>
 
       <section class="tg-card" data-card="gates"><h2>FOUR GATES</h2><p class="tg-k">넓혀도 되는지 정하는 문 넷</p><p class="tg-easy"><b>쉽게 말하면</b> 다음 단계로 넓히기 전에 통과해야 하는 조건 넷을 미리 적어 둡니다. 앞의 둘은 서버가 멀쩡한가이고 뒤의 둘은 모델이 돈을 버는가입니다.</p><div class="tg-fig" id="dp-gates"></div>
         <p class="tg-cap">1% 단계에서는 클릭이 79건뿐이라 COPC 를 <b>읽지 않습니다</b>. 10% 에서 COPC 가 <b>1.09</b> 로 나와 게이트 0.95~1.05 를 넘었고, 그 한 줄이 되돌리기를 정했습니다.</p></section>
 
       <section class="tg-card" data-card="rollback"><h2>ROLLBACK TIMELINE</h2><p class="tg-k">알람부터 확인까지 14분</p><p class="tg-easy"><b>쉽게 말하면</b> 게이트가 걸리면 새 모델로 가던 요청을 옛 모델로 돌립니다. 파드를 끄는 것이 아니라 가중치를 0 으로 바꾸는 일이라 1분이면 끝납니다.</p><div class="tg-fig" id="dp-rollback"></div>
-        <p class="tg-cap">14분 중 기계가 쓴 시간은 <b>1분</b> 이고 사람 판단이 5분, 확인이 7분입니다. 그 40분 동안 새 모델이 답한 요청은 <b>633,360건</b> 이고, 100% 였다면 633만 건입니다.</p></section>
+        <p class="tg-cap">14분 중 기계가 쓴 시간은 <b>1분</b> 이고 사람 판단이 5분, 명령이 1분, 확인이 7분입니다. 그 40분 동안 새 모델이 답한 요청은 <b>633,360건</b> 이고, 100% 였다면 633만 건입니다.</p></section>
 
       <section class="tg-card" data-card="warmup"><h2>WARM-UP</h2><p class="tg-k">새 파드의 첫 30초</p><p class="tg-easy"><b>쉽게 말하면</b> 새로 뜬 서버는 처음 얼마 동안 느립니다. 요청을 받기 전에 더미 요청 200건을 먼저 보내 두면 그 느린 구간이 사라집니다.</p><div class="tg-fig" id="dp-warmup"></div>
-        <p class="tg-cap">웜업 없이 21초에 열면 첫 30초 동안 8ms 초과율이 4.62% 에서 <b>11.74%</b> 로 오릅니다. 웜업 20초를 넣어 41초에 열면 <b>처음부터 4.62%</b> 입니다.</p></section>
+        <p class="tg-cap">웜업 없이 21초에 열면 첫 30초 동안 서버 12대 전체의 8ms 초과율이 4.62% 에서 <b>11.74%</b> 로 오르고 새 파드만 보면 그보다 훨씬 높습니다. 웜업 20초를 넣어 41초에 열면 <b>처음부터 4.62%</b> 입니다.</p></section>
     </div>
 
     <section class="tg-real">

@@ -18,4 +18,5 @@ const EASY_POST_IDS = [
   'negative-sampling-bias',
   'position-bias-ultr',
   'position1-pairwise-ltr',
+  'inference-server',
 ];

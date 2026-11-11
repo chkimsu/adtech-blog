@@ -24,4 +24,5 @@ const EASY_POST_IDS = [
   'model-deployment-rollback',
   'training-pipeline-dag',
   'stream-window-aggregation',
+  'model-api-from-training-script',
 ];

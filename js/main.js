@@ -597,15 +597,25 @@ function setupHomeFinder() {
     return out;
   };
 
+  // 두 글자 이하 검색어는 낱말 첫머리에서만 찾는다. 「힙」이 「읽힙니다」 속 글자에 걸리지 않게 하려는 것이다.
+  // 세 글자 이상은 어디에 있든 찾는다.
+  const hit = (text, q) => {
+    if (!text) return false;
+    if (q.length >= 3) return text.includes(q);
+    for (let i = text.indexOf(q); i !== -1; i = text.indexOf(q, i + 1)) {
+      if (i === 0 || !/[\p{L}\p{N}]/u.test(text[i - 1])) return true;
+    }
+    return false;
+  };
   const search = (q) => {
-    const score = p => (p.title.toLowerCase().includes(q) ? 3 : 0)
-      + ((p.tags || []).some(t => t.toLowerCase().includes(q)) ? 2 : 0)
-      + ((p.excerpt || '').toLowerCase().includes(q) ? 1 : 0);
+    const score = p => (hit(p.title.toLowerCase(), q) ? 3 : 0)
+      + ((p.tags || []).some(t => hit(t.toLowerCase(), q)) ? 2 : 0)
+      + (hit((p.excerpt || '').toLowerCase(), q) ? 1 : 0);
     const meta = posts.map(p => ({ p, s: score(p) })).filter(x => x.s > 0)
       .sort((a, b) => b.s - a.s || String(b.p.date).localeCompare(String(a.p.date))).map(x => x.p);
     const metaIds = new Set(meta.map(p => p.id));
-    const body = bodyIndex ? posts.filter(p => !metaIds.has(p.id) && bodyIndex[p.id] && bodyIndex[p.id].includes(q)) : [];
-    const groups = [...topicRows(), ...trackRows()].filter(r => r.title.toLowerCase().includes(q)).slice(0, 3);
+    const body = bodyIndex ? posts.filter(p => !metaIds.has(p.id) && hit(bodyIndex[p.id], q)) : [];
+    const groups = [...topicRows(), ...trackRows()].filter(r => hit(r.title.toLowerCase(), q)).slice(0, 3);
     const postRow = (p, inBody) => ({ kind: '글', title: p.title, id: p.id, href: `post.html?id=${p.id}`,
       sub: inBody ? '본문 일치' : (p.categories || [])[0] || '', easy: hasEasyVersion(p.id) });
     const room = MAX - groups.length;
@@ -1959,7 +1969,7 @@ function setupSearchModal() {
       items = getAllPosts().slice(0, 10);
     } else {
       items = posts
-        .filter(p => inMeta(p, q) || (bodyIndex && bodyIndex[p.id] && bodyIndex[p.id].includes(q)))
+        .filter(p => inMeta(p, q) || (bodyIndex && hit(bodyIndex[p.id], q)))
         .slice(0, 20);
     }
     currentItems = items;

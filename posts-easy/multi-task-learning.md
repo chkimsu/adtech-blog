@@ -25,7 +25,7 @@
 |------|---------|---------|-------------|-------------|-----------|
 | **태스크 하나짜리 (pCTR)** | 독립 모델 | 해당 없음 | 없음 | 낮음 (별도 모델) | 매우 낮음 |
 | **태스크 하나짜리 (pCVR)** | 독립 모델 (클릭 데이터만) | 미해결 | 없음 | 낮음 (별도 모델) | 낮음 |
-| **ESMM** | 두 타워 + 곱셈 | 완전 해결 | 없음 (곱셈 결합) | 중간 (Embedding 공유) | 낮음 |
+| **ESMM** | 두 타워 + 곱셈 | 완전 해결 | 낮음 (Embedding만 공유) | 중간 (Embedding 공유) | 낮음 |
 | **Shared-Bottom** | 공유 하위 레이어 + 태스크(task)별 타워 | 미해결 | 높음 (Negative Transfer) | 높음 (최대 공유) | 매우 낮음 |
 | **MMoE** | 다중 전문가(Expert) + 태스크별 게이트(Gate) | 미해결 | 낮음 (게이트가 조절) | 중간 | 중간 |
 | **PLE** | 공용(Shared) + 태스크 전용 전문가(Task-specific Expert), 다층 | 미해결 | 매우 낮음 | 중~낮음 (전문가 분리) | 높음 |
@@ -85,10 +85,10 @@ pCVR 모델을 단독으로 학습하면, 학습 데이터는 "클릭이 발생�
 
 수식으로 정리하면:
 
-- **학습 시**: $P(\text{Conversion}=1 \mid \text{Click}=1, x)$ --- 클릭한 것 중에서의 전환 확률
-- **서빙 시**: $P(\text{Conversion}=1 \mid x)$ --- 전체 노출에서의 전환 확률
+- **학습 시**: $P(\text{Conversion}=1 \mid \text{Click}=1, x)$ --- 클릭한 노출의 $x$로만 배운 전환 확률
+- **서빙 시**: 같은 $P(\text{Conversion}=1 \mid \text{Click}=1, x)$ --- 이것을 전체 노출의 $x$에 대해 예측해야 함
 
-여기서 $P(A \mid B)$는 B가 일어났다는 것을 알 때 A가 일어날 확률이고, $x$는 노출 하나의 피처(유저, 광고, 상황 정보)입니다. 이 두 확률은 다릅니다. 클릭한 유저의 분포와 전체 유저의 분포가 다르기 때문입니다. 예를 들어, 특정 광고 카테고리에 관심이 높은 유저가 더 많이 클릭하므로, 클릭 데이터만 보면 그 카테고리의 전환율이 과대추정됩니다.
+여기서 $P(A \mid B)$는 B가 일어났다는 것을 알 때 A가 일어날 확률이고, $x$는 노출 하나의 피처(유저, 광고, 상황 정보)입니다. 예측하려는 확률은 같지만, 학습 때 본 입력과 서빙 때 들어오는 입력이 다릅니다. 클릭한 유저의 분포와 전체 유저의 분포가 다르기 때문입니다. 예를 들어, 특정 광고 카테고리에 관심이 높은 유저가 더 많이 클릭하므로, 클릭 데이터만 보면 그 카테고리의 전환율이 과대추정됩니다.
 
 ### ESMM의 핵심 아이디어: 곱셈 분해
 
@@ -190,10 +190,10 @@ ESMM은 pCVR 타워도 전체 노출 1억 건 위에서 배우게 하므로 학�
 
 ### Alibaba 실험 결과
 
-Alibaba는 프로덕션 데이터 8억 건 이상으로 ESMM을 검증했습니다. 기존 독립 CVR 모델과 비교한 결과입니다. AUC는 양성 샘플과 음성 샘플을 하나씩 뽑았을 때 양성에 더 높은 점수를 줄 확률이라 1에 가까울수록 좋습니다.
+Alibaba는 Taobao 추천 로그로 ESMM을 검증했습니다. 클릭한 샘플만으로 학습한 기존 CVR 모델(BASE)과 비교한 결과이고, 아래 수치는 AUC의 절대 차이입니다. AUC는 양성 샘플과 음성 샘플을 하나씩 뽑았을 때 양성에 더 높은 점수를 줄 확률이라 1에 가까울수록 좋습니다.
 
-- CVR 예측 AUC: **+2.56%** 향상
-- CTCVR 예측 AUC: **+3.25%** 향상
+- 공개 데이터셋(노출 8,400만 건): CVR 예측 AUC **+2.56%p**, CTCVR 예측 AUC **+3.25%p**
+- 프로덕션 데이터셋(노출 89억 건): CVR 예측 AUC **+2.18%p**, CTCVR 예측 AUC **+2.32%p**
 - 전체 노출 공간에서 학습함으로써 데이터가 드문 문제(Data Sparsity)도 동시에 완화: pCVR 학습 데이터는 클릭된 샘플뿐이라 노출보다 훨씬 적은데, 전체 노출에서 배우는 CTR의 풍부한 신호가 공유 임베딩을 통해 CVR 타워로 전해지기 때문입니다
 
 > ESMM의 강점은 SSB를 구조로 해결한다는 점입니다. 다른 MTL 아키텍처는 태스크 간 지식 공유에 초점을 맞춥니다. Shared-Bottom, MMoE, PLE 모두 SSB를 직접 해결하지는 않습니다. 실무에서는 ESMM의 곱셈 구조를 그대로 둡니다. 그 안의 타워만 MMoE나 PLE로 바꿔 끼우는 하이브리드가 일반적입니다.
@@ -314,7 +314,7 @@ print(f"(b)의 오차가 (a)보다 {err_a / err_b:.1f}배 작다")
 
 출력의 맨 아래 줄이 이 실험의 결론입니다. 그리고 그 위 표의 마지막 행이 가장 눈에 띕니다. **신규 지면은 노출 15,000건(전체의 15%)인데 클릭이 25건뿐입니다.** 참 CVR은 0.0%인데, 클릭만 보고 배운 값은 2.40%가 나왔습니다. (a)는 이 세그먼트의 전환 0건에 클릭 평균 3.00%를 100 표본만큼 섞고 클릭 25건과 100을 더한 125로 나누므로 (0 + 100 × 3.00%) ÷ (25 + 100) = 2.40%가 됩니다. 클릭이 25건뿐이라 섞어 넣은 100 표본의 비중이 훨씬 커서, 클릭 평균 3.00%가 그 세그먼트를 거의 그대로 덮어 버린 결과입니다. (b)는 분모가 노출 15,000건이라 같은 100 표본이 훨씬 약하게 작용해서 0.22%로 참값에 훨씬 가깝습니다.
 
-오차가 어디에 쏠렸는지도 봐야 합니다. 오차가 큰 세그먼트는 전부 **노출은 많고 클릭은 적은** 자리입니다. 그리고 하필 그 자리가 노출 예산이 많이 나가는 곳입니다. 노출 가중 평균 절대오차는 0.637%p 대 0.042%p로 15.2배 차이가 났습니다. 참 CVR이 2% 수준인 판에서 0.6%p는 30% 왜곡입니다. 입찰가는 pCTR × pCVR에 비례하니, 이 왜곡은 그대로 돈으로 번집니다. 자세한 계산은 [eCPM 랭킹](post.html?id=ecpm-ranking)에 있습니다.
+오차가 어디에 쏠렸는지도 봐야 합니다. 오차가 큰 세그먼트는 전부 **노출은 많고 클릭은 적은** 자리입니다. 그리고 하필 그 자리가 노출 예산이 많이 나가는 곳입니다. 노출 가중 평균 절대오차는 0.637%p 대 0.042%p로 15.2배 차이가 났습니다. 참 CVR이 2% 수준인 판에서 0.637%p는 30%가 넘는 왜곡입니다. 입찰가는 pCTR × pCVR에 비례하니, 이 왜곡은 그대로 돈으로 번집니다. 자세한 계산은 [eCPM 랭킹](post.html?id=ecpm-ranking)에 있습니다.
 
 주의할 점도 있습니다. 이 코드는 ESMM의 기울기 학습을 흉내낸 것이 아닙니다. "학습 공간이 넓어지면 같은 정규화가 약하게 작용한다"는 한 가지 메커니즘만 떼어내 보인 것입니다. 실제 ESMM의 이득은 여기에 하나가 더 붙습니다. 공유 Embedding이 CTR 태스크의 풍부한 신호로 함께 학습된다는 점입니다. 그 효과는 다음 파이썬 절에서 따로 확인합니다.
 
@@ -628,11 +628,11 @@ Shared-Bottom에서는 두 태스크가 같은 표현을 받지만, MMoE에서�
 | **유연성** | 없음 | 입력 $x$에 따라 동적으로 전문가 조합 변경 |
 | **해석 가능성** | 낮음 | 게이트 가중치로 task-expert 관계 분석 가능 |
 
-실제로 게이트 가중치를 뽑아 보면 태스크별로 쏠림이 보입니다. CTR 태스크는 "유저 행동 패턴" 전문가에 높은 가중치를 줍니다. CVR 태스크는 "광고 품질" 전문가 쪽으로 기웁니다. 두 태스크가 쓰는 전문가가 나뉘면 서로의 기울기가 덜 부딪힙니다. 이것이 Negative Transfer를 완화하는 메커니즘입니다.
+예를 들어 게이트 가중치를 뽑아 보면 태스크별로 쏠림이 보일 수 있습니다. CTR 태스크는 "유저 행동 패턴" 전문가에 높은 가중치를 주고, CVR 태스크는 "광고 품질" 전문가 쪽으로 기우는 식입니다. 실제로 어느 전문가가 무엇을 맡는지는 학습해 봐야 압니다. 두 태스크가 쓰는 전문가가 나뉘면 서로의 기울기가 덜 부딪힙니다. 이것이 Negative Transfer를 완화하는 메커니즘입니다.
 
 ### Google 실험 결과
 
-Google은 Census Income 데이터로 태스크 correlation(두 태스크의 라벨이 함께 움직이는 정도)을 인위적으로 조절해 실험했습니다. 상관이 낮아질수록 MMoE와 Shared-Bottom의 격차가 벌어졌습니다. 상관 0.0에서 Shared-Bottom은 성능이 급격히 떨어졌습니다. MMoE는 그 지점에서도 성능을 유지했습니다. 게이트가 태스크 간 상충을 조절한다는 근거입니다. 앞 절 세계 B에서 공유의 이득이 0이 됐던 것과 같은 현상입니다.
+Google은 합성 데이터(synthetic data, 정해 둔 규칙으로 만들어 낸 데이터)로 두 태스크의 correlation(두 태스크의 라벨이 함께 움직이는 정도)을 직접 조절해 실험했습니다. 상관이 낮아지면 모든 모델의 성능이 내려갔지만, MMoE는 내려가는 폭이 Shared-Bottom보다 훨씬 작았습니다. 실험한 상관 1, 0.9, 0.5 가운데 가장 낮은 0.5에서 이 차이가 가장 컸습니다. 상관이 원래 낮은(절댓값 0.18, 0.24) 실제 데이터인 Census Income에서도 MMoE가 Shared-Bottom보다 좋았습니다. 게이트가 태스크 간 상충을 조절한다는 근거입니다. 앞 절 세계 B에서 공유의 이득이 0이 됐던 것과 같은 현상입니다.
 
 ---
 
@@ -739,7 +739,7 @@ Tencent는 자사 대규모 추천 시스템에서 PLE를 검증했습니다. �
 
 - MMoE 대비 **모든 태스크에서 동시에** 성능 향상 (한쪽이 오르면 한쪽이 내리는 현상 해소)
 - 태스크 correlation이 낮을수록 MMoE 대비 개선 폭이 커짐
-- 프로덕션 A/B 테스트에서 VCR(Video Completion Rate, 영상을 끝까지 본 비율) +1.97% 개선. VTR(View-Through Rate, 영상 시청 비율)도 +0.63% 개선
+- 4주간의 온라인 A/B 테스트에서 기존 MTL 모델 중 가장 좋은 것 대비 조회 수(view-count) +2.23%, 시청 시간(watch time) +1.84%. 학습 태스크인 VCR(View Completion Ratio, 한 번 볼 때 영상을 얼마나 끝까지 봤는지의 비율)과 VTR(View-Through Rate, 시청 시간이 기준을 넘은 유효 조회인지)이 각각 이 두 지표를 겨냥합니다
 
 > PLE의 가장 큰 기여는 "모든 태스크의 성능을 동시에 올릴 수 있다"는 실증입니다. 기존 MTL에서는 한 태스크를 올리면 다른 태스크가 내려가기 일쑤였습니다. 이 한쪽이 오르면 한쪽이 내리는 현상이 MTL 도입의 가장 큰 장벽이었습니다.
 
@@ -747,7 +747,7 @@ Tencent는 자사 대규모 추천 시스템에서 PLE를 검증했습니다. �
 
 ## 9. 실무 선택 가이드
 
-**고를 때 보는 것은 세 가지입니다.** 태스크가 몇 개인가, 서로 얼마나 상관 있는가, 데이터가 얼마나 있는가. 아래 표는 이 세 기준으로 나눈 것입니다. 표 끝의 두 줄에는 서빙 레이턴시(요청 하나에 점수를 내기까지 걸리는 시간)도 들어 있습니다.
+**고를 때 보는 것은 네 가지입니다.** 태스크가 몇 개인가, 서로 얼마나 상관 있는가, 데이터가 얼마나 있는가, 서빙 레이턴시가 얼마나 엄격한가. 아래 표는 이 네 기준으로 나눈 것입니다. 서빙 레이턴시는 요청 하나에 점수를 내기까지 걸리는 시간이고, 표 끝의 두 줄이 이 기준입니다.
 
 | 상황 | 추천 구조 | 이유 |
 |------|---------|------|
@@ -776,7 +776,7 @@ MTL에서 각 task의 Loss를 어떤 비율로 합칠지는 모델 성능에 직
 
 $$\mathcal{L} = w_1 \cdot \mathcal{L}_{CTR} + w_2 \cdot \mathcal{L}_{CVR} + w_3 \cdot \mathcal{L}_{engagement}$$
 
-문제는 최적의 $w_1, w_2, w_3$를 찾기 위해 grid search(후보 값의 조합을 하나씩 모두 시험해 보는 탐색)가 필요하다는 점입니다. Task가 3개만 되어도 조합 수가 폭발합니다.
+문제는 최적의 $w_1, w_2, w_3$를 찾기 위해 grid search(후보 값의 조합을 하나씩 모두 시험해 보는 탐색)가 필요하다는 점입니다. 조합 수는 task 수만큼 곱으로 늘어납니다. task마다 후보 값 5개만 시험해도 task 3개면 125가지입니다.
 
 **실무 팁: Loss Scale 차이에 주의**
 
@@ -807,7 +807,7 @@ $$\mathcal{L} = \frac{1}{2\sigma_1^2}\mathcal{L}_1 + \frac{1}{2\sigma_2^2}\mathc
 
 $$\|G_k^W(t)\| \approx \bar{G}(t) \times [r_k(t)]^\alpha$$
 
-기호를 하나씩 풀면 이렇습니다. $G_k^W(t)$는 task $k$의 weighted gradient 크기입니다. $\bar{G}(t)$는 전체 태스크의 평균 gradient 크기입니다. $r_k(t)$는 task $k$의 상대적 학습 속도입니다. $\alpha$는 balancing을 얼마나 세게 걸지 정하는 hyperparameter입니다.
+기호를 하나씩 풀면 이렇습니다. $G_k^W(t)$는 task $k$의 weighted gradient 크기입니다. $\bar{G}(t)$는 전체 태스크의 평균 gradient 크기입니다. $r_k(t)$는 task $k$의 상대적 역학습 속도(relative inverse training rate)입니다. 손실이 처음 값의 몇 배로 남았는지($L_k(t)/L_k(0)$)를 전체 태스크 평균으로 나눈 값이라, 학습이 느린 task일수록 커지고 그 task의 목표 gradient 크기도 커집니다. $\alpha$는 balancing을 얼마나 세게 걸지 정하는 hyperparameter이고, 학습으로 정해지는 것은 task별 가중치 $w_k(t)$입니다.
 
 ### 방법 비교
 
@@ -815,12 +815,12 @@ $$\|G_k^W(t)\| \approx \bar{G}(t) \times [r_k(t)]^\alpha$$
 |------|-------|------------|-----------|-----------|
 | **Static Weighting** | 수동 | 없음 | 높음 | 매우 낮음 |
 | **Uncertainty Weighting** | 자동 | Task 수만큼 | 중간 | 낮음 |
-| **GradNorm** | 자동 | $\alpha$ 1개 | 중~높음 | 중간 |
+| **GradNorm** | 자동 | Task 수만큼 ($w_k$, hyperparameter $\alpha$ 1개 별도) | 중~높음 | 중간 |
 
 실무 권장 순서:
 
 1. **Static Weighting으로 시작** --- 각 task Loss를 데이터 수로 정규화한 후, CTR:CVR = 1:1로 시작
-2. 성능이 불만족스러우면 **Uncertainty Weighting 적용** --- 구현이 간단하고 대부분의 경우 Static보다 개선
+2. 성능이 불만족스러우면 **Uncertainty Weighting 적용** --- 구현이 간단합니다. 다만 잘 튜닝한 Static Weighting이 이런 자동 방식과 비슷하거나 더 낫다는 연구도 있으니(Xin et al., 2022; Kurin et al., 2022), 개선 여부는 직접 비교해 확인
 3. Task가 3개 이상이고 Seesaw 현상이 심하면 **GradNorm 검토** --- 구현 복잡도 대비 이점이 있는지 A/B 테스트로 확인
 
 ---
@@ -1045,3 +1045,6 @@ CVR에 5배를 주면(1:5) CVR 손실이 0.3269까지 회복됩니다. 단독 �
 - Ma, J., Zhao, Z., Yi, X., Chen, J., Hong, L., & Chi, E. H. (2018). *Modeling Task Relationships in Multi-task Learning with Multi-gate Mixture-of-Experts*. In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining.
 - Tang, H., Liu, J., Zhao, M., & Gong, X. (2020). *Progressive Layered Extraction (PLE): A Novel Multi-Task Learning (MTL) Model for Personalized Recommendations*. In Proceedings of the 14th ACM Conference on Recommender Systems.
 - Kendall, A., Gal, Y., & Cipolla, R. (2018). *Multi-Task Learning Using Uncertainty to Weigh Losses for Scene Geometry and Semantics*. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR).
+- Chen, Z., Badrinarayanan, V., Lee, C.-Y., & Rabinovich, A. (2018). *GradNorm: Gradient Normalization for Adaptive Loss Balancing in Deep Multitask Networks*. In Proceedings of the 35th International Conference on Machine Learning (ICML).
+- Xin, D., Ghorbani, B., Garg, A., Firat, O., & Gilmer, J. (2022). *Do Current Multi-Task Optimization Methods in Deep Learning Even Help?* arXiv:2209.11379.
+- Kurin, V., De Palma, A., Kostrikov, I., Whiteson, S., & Kumar, M. P. (2022). *In Defense of the Unitary Scalarization for Deep Multi-Task Learning*. In Advances in Neural Information Processing Systems (NeurIPS).

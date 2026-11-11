@@ -641,7 +641,7 @@ def doubly_robust_loss(predictions, labels, propensities,
     return np.mean(dr)
 ```
 
-실무에서 DR Estimator는 IPS 단독보다 안정적입니다. 특히 propensity 추정이 부정확한 현실적 상황에서, 직접 모델의 예측이 "안전망" 역할을 하여 분산을 크게 줄여줍니다. Schnabel et al. (2016)은 추천 시스템에서 DR이 IPS보다 일관되게 낮은 MSE(평균 제곱 오차)를 보였다고 보고했습니다.
+실무에서 DR Estimator는 IPS 단독보다 안정적입니다. 특히 propensity 추정이 부정확한 현실적 상황에서, 직접 모델의 예측이 "안전망" 역할을 하여 분산을 크게 줄여줍니다. Wang et al. (2019)은 추천 데이터에서 DR 기반 학습이 IPS 기반 학습보다 낮은 MSE(평균 제곱 오차)를 보였고, propensity 분산이 커져도 MSE가 덜 늘었다고 보고했습니다.
 
 ---
 
@@ -703,9 +703,9 @@ $r$ 값을 어떻게 정할 것인가는 CTR과 데이터 규모에 따라 달�
 
 | 원래 CTR | 일일 데이터 규모 | 권장 $r$ | 다운샘플링 후 Positive 비율 | 근거 |
 |---------|----------------|---------|--------------------------|------|
-| 0.1% | 10억+ | 0.01 ~ 0.05 | 2% ~ 10% | 데이터 과잉, 공격적 샘플링 가능 |
-| 0.5% | 1억 ~ 10억 | 0.05 ~ 0.1 | 5% ~ 10% | 표준적 설정 |
-| 1% ~ 3% | 1천만 ~ 1억 | 0.1 ~ 0.3 | 3% ~ 10% | 보수적 샘플링 |
+| 0.1% | 10억+ | 0.01 ~ 0.05 | 2% ~ 9% | 데이터 과잉, 공격적 샘플링 가능 |
+| 0.5% | 1억 ~ 10억 | 0.05 ~ 0.1 | 5% ~ 9% | 표준적 설정 |
+| 1% ~ 3% | 1천만 ~ 1억 | 0.1 ~ 0.3 | 3% ~ 24% | 보수적 샘플링 |
 | 5%+ | 1천만 이하 | 0.5 ~ 1.0 | Imbalance가 심하지 않음 | 다운샘플링 불필요할 수 있음 |
 
 핵심 원칙은 다음과 같습니다:
@@ -770,7 +770,7 @@ def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
 
 4절의 Sample Selection Bias도 사정이 낫습니다. 후보에 올랐다가 떨어진 광고의 점수를 전부 로깅할 수 있습니다. 경매 후보 목록, 각자의 pCTR, 최종 순위가 모두 내 시스템 안에 있습니다. 그러면 propensity $e(x)$를 추정할 재료가 실제로 존재합니다. 탐색 트래픽도 내가 설계할 수 있습니다. 전체의 1~5%를 무작위 노출로 떼어 두면, 편향 없는 작은 데이터셋이 매일 쌓입니다.
 
-대신 담장 안에서 제일 자주 나는 사고는 다른 종류입니다. **$r$이 파이프라인 여러 곳에서 서로 다른 값이 되는 것입니다.** 재학습 때 $r$을 0.1에서 0.05로 바꿨는데, 서빙 코드의 보정 상수는 0.1로 남아 있는 경우입니다. 학습은 안 눌린 줄을 줄여 odds 를 $1/0.05$ 배로 키웠는데 서빙은 $1/0.1$ 배만 되돌리므로 예측이 조용히 두 배로 커집니다. 며칠 뒤 광고주 CPA(전환 한 건을 얻는 데 든 비용)가 튄 다음에야 발견됩니다.
+대신 담장 안에서 제일 자주 나는 사고는 다른 종류입니다. **$r$이 파이프라인 여러 곳에서 서로 다른 값이 되는 것입니다.** 재학습 때 $r$을 0.1에서 0.05로 바꿨는데, 서빙 코드의 보정 상수는 0.1로 남아 있는 경우입니다. 학습은 안 눌린 줄을 줄여 odds 를 $1/0.05$ 배로 키웠는데 서빙은 $1/0.1$ 배만 되돌리므로 예측의 odds 가 조용히 두 배가 됩니다. 광고 클릭률처럼 작은 확률에서는 예측 확률도 거의 두 배로 커집니다. 며칠 뒤 광고주 CPA(전환 한 건을 얻는 데 든 비용)가 튄 다음에야 발견됩니다.
 
 그래서 $r$은 코드 상수로 두지 않습니다. 모델 파일의 메타데이터에 박아 모델과 함께 배포하는 것이 안전합니다. 학습이 쓴 값을 서빙이 그대로 읽어 가는 구조입니다. 이 값을 어디에 두고 나르는지는 [피처 스토어와 서빙](post.html?id=feature-store-serving)에 있습니다. 로그가 학습 데이터가 되는 경로는 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에 있습니다.
 
@@ -812,9 +812,10 @@ def monitor_po_ratio(predictions, actuals, segments, threshold=0.2):
 
 ## 참고문헌
 
-- He, X. et al. (2014). *Practical Lessons from Predicting Clicks of Ads at Facebook.* AdKDD 2014. -- Negative Downsampling과 Log-odds Correction의 실무 적용 사례. Facebook 광고 시스템의 대규모 CTR 예측 경험.
+- He, X. et al. (2014). *Practical Lessons from Predicting Clicks on Ads at Facebook.* AdKDD 2014. -- Negative Downsampling과 Log-odds Correction의 실무 적용 사례. Facebook 광고 시스템의 대규모 CTR 예측 경험.
 - McMahan, H.B. et al. (2013). *Ad Click Prediction: a View from the Trenches.* KDD 2013. -- Google 광고 시스템의 대규모 학습 파이프라인. FTRL-Proximal 최적화와 Calibration 운영 경험.
-- Schnabel, T. et al. (2016). *Recommendations as Treatments: Debiasing Learning and Evaluation.* ICML 2016. -- 추천 시스템에서 IPS와 Doubly Robust Estimator의 체계적 비교. Selection Bias 보정의 이론적 프레임워크.
+- Schnabel, T. et al. (2016). *Recommendations as Treatments: Debiasing Learning and Evaluation.* ICML 2016. -- 추천 시스템의 Selection Bias를 IPS와 SNIPS로 보정하는 평가와 학습의 이론적 프레임워크. 실험은 Naive, IPS, SNIPS Estimator를 비교.
+- Wang, X., Zhang, R., Sun, Y., Qi, J. (2019). *Doubly Robust Joint Learning for Recommendation on Data Missing Not at Random.* ICML 2019. -- 추천 시스템에서 Doubly Robust Estimator와 IPS의 편향 비교, DR 기반 학습과 IPS 기반 학습의 실험 비교.
 - Wang, X. et al. (2016). *Learning to Rank with Selection Bias in Personal Search.* SIGIR 2016. -- 검색 시스템에서 Selection Bias가 Learning to Rank에 미치는 영향과 IPS 기반 보정.
 
 ---

@@ -28,4 +28,5 @@ const EASY_POST_IDS = [
   'batch-vs-realtime-inference',
   'distributed-training',
   'bentoml-model-serving',
+  'offline-metrics-gauc',
 ];

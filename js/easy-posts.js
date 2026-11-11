@@ -22,4 +22,5 @@ const EASY_POST_IDS = [
   'model-versioning-reproducibility',
   'container-ci-pipeline',
   'model-deployment-rollback',
+  'training-pipeline-dag',
 ];

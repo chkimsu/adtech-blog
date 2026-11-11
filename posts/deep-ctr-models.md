@@ -533,7 +533,7 @@ $$\hat{y} = \sigma(y_{FM} + y_{DNN})$$
 | 임베딩 공유 | Wide와 Deep 별도 | **FM과 DNN 공유** |
 | End-to-End 학습 | 부분적 | **완전한 End-to-End** |
 
-[Bid Shading](post.html?id=bid-shading-censored) 글에 실험 비교가 나옵니다. Zhou et al.이 시장 가격 분포 추정에 여러 네트워크 구조를 붙여 봤습니다. 그중 **DeepFM이 Surplus Lift +7.10%로 최고 성능**을 기록했습니다.
+[Bid Shading](post.html?id=bid-shading-censored) 글에 실험 비교가 나옵니다. Zhou et al.이 시장 가격 분포 추정에 여러 네트워크 구조를 붙여 봤습니다. 그중 **DeepFM이 Surplus Lift +7.10%로 최고 성능**을 기록했습니다. 다만 논문은 온라인 지연 제약 때문에 온라인 실험에는 FwFM을 썼습니다.
 
 FM의 2차 조합과 DNN의 고차 조합이 함께 작동한 결과입니다. 시장 가격은 exchange, 시간대, 디바이스, 광고 카테고리가 얽혀서 정해집니다. 이런 복잡한 조합을 두 갈래가 나눠서 포착했습니다.
 
@@ -543,13 +543,11 @@ DCN(Deep & 조합 층 망)은 피처 조합 학습에 대한 또 다른 접근�
 
 #### 조합 층(Cross Layer)의 수식
 
-조합 층 망의 각 layer는 이렇게 정의됩니다.
-
-$$x_{l+1} = x_0 \odot (W_l x_l + b_l) + x_l$$
-
-여기서 $x_0$은 입력, $x_l$은 $l$번째 layer의 출력입니다. $W_l$은 weight이고 $\odot$은 element-wise 곱입니다. DCN의 원래 논문에서는 $W_l$이 벡터였습니다.
+DCN 논문(2017)은 조합 층 망의 각 layer를 이렇게 정의합니다.
 
 $$x_{l+1} = x_0 \cdot x_l^T w_l + b_l + x_l$$
+
+여기서 $x_0$은 입력, $x_l$은 $l$번째 layer의 출력입니다. $w_l$과 $b_l$은 길이 $d$짜리 weight 벡터와 bias 벡터입니다. 아래 DCN-v2는 이 벡터 $w_l$을 행렬로 바꿉니다.
 
 핵심 특성은 세 가지입니다.
 
@@ -588,21 +586,21 @@ graph LR
 
 #### DCN-v2 (2021)
 
-DCN의 원래 조합 층에서 $W_l$은 벡터였습니다. 이는 **rank-1 행렬**만 만들 수 있어 표현력이 제한됩니다. DCN-v2는 이를 **full-rank weight matrix**로 확장했습니다.
+DCN의 원래 조합 층에서 $w_l$은 벡터였습니다. 이는 **rank-1 행렬**만 만들 수 있어 표현력이 제한됩니다. DCN-v2는 이를 **full-rank weight matrix**로 확장했습니다.
 
 $$x_{l+1} = x_0 \odot (W_l x_l + b_l) + x_l$$
 
-여기서 $W_l \in \mathbb{R}^{d \times d}$는 행렬입니다. 대신 파라미터 수가 늘어나는 대가가 따릅니다. 그래서 **Mixture of Experts (MoE)** 구조로 이 비용을 나눕니다.
+여기서 $W_l \in \mathbb{R}^{d \times d}$는 행렬이고 $\odot$은 element-wise 곱입니다. 대신 파라미터 수와 계산량이 layer당 $O(d^2)$로 늘어나는 대가가 따릅니다. 논문은 학습된 $W_l$의 rank가 실제로는 낮다는 관찰에서 출발해, 이 비용을 **low-rank 분해**로 줄입니다. $d \times d$ 행렬을 $d \times r$ 행렬 두 개의 곱 $U_l V_l^T$ ($r \ll d$)으로 근사합니다. 여기에 **Mixture of Experts (MoE)** 를 더해, 이런 low-rank expert $K$개를 입력에 따라 섞어 표현력을 보탭니다(논문의 DCN-Mix).
 
-$$W_l = \sum_{i=1}^{K} G_i(x) \cdot W_l^{(i)}$$
+$$x_{l+1} = \sum_{i=1}^{K} G_i(x_l) \, E_i(x_l) + x_l, \quad E_i(x_l) = x_0 \odot (U_l^{i} (V_l^{i})^T x_l + b_l)$$
 
-여기서 $G_i(x)$는 gating function입니다. $W_l^{(i)}$는 expert별 weight matrix입니다. 입력에 따라 다른 expert가 켜지므로, 파라미터 효율을 유지하면서 표현력을 높입니다.
+여기서 $G_i(x_l)$는 gating function입니다. $E_i$는 $i$번째 low-rank expert이고, $U_l^{i}, V_l^{i}$가 그 expert의 $d \times r$ 행렬입니다. 입력에 따라 expert마다 비중이 달라지므로, 비용을 낮게 유지하면서 표현력을 높입니다. 논문의 복잡도 분석은 full-rank cross network를 $O(d^2 L)$, DCN-Mix를 $O(2drKL)$로 적고, $rK \ll d$일 때 효율적이라고 합니다.
 
 | 비교 항목 | FM | DCN | DCN-v2 |
 |----------|-----|-----|--------|
 | 조합 차수 | 2차 | $(L+1)$차 | $(L+1)$차 |
 | Cross weight | 내적 (스칼라) | 벡터 (rank-1) | **행렬 (full-rank)** |
-| 파라미터 효율 | $O(nk)$ | $O(Ld)$ | $O(Ld^2 / K)$ (MoE) |
+| 파라미터 효율 | $O(nk)$ | $O(Ld)$ | $O(Ld^2)$, DCN-Mix는 $O(2LdrK)$ |
 | 표현력 | 제한적 | 중간 | **높음** |
 
 ---
@@ -859,7 +857,7 @@ AUGRU(Attention-based GRU)로 **후보 광고와 관련된 관심사의 시간�
 
 $$a_t = \text{Attention}(h_t, v_A)$$
 
-$$\tilde{u}_t = a_t \cdot u_t$$
+$$\tilde{u}'_t = a_t \cdot u'_t$$
 
 $$h'_t = (1 - \tilde{u}'_t) \odot h'_{t-1} + \tilde{u}'_t \odot \tilde{h}'_t$$
 

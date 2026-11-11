@@ -19,4 +19,6 @@ const EASY_POST_IDS = [
   'position-bias-ultr',
   'position1-pairwise-ltr',
   'inference-server',
+  'model-versioning-reproducibility',
+  'container-ci-pipeline',
 ];

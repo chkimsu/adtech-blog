@@ -37,15 +37,17 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 순서 맞히기는 **순서**만 봅니다. 클릭할 노출이 안 클릭할 노출보다 높은 점수를 받았는지만 셉니다. 보정은 **값 자체**를 봅니다. pCTR 2%라고 적었으면 실제로 100번 중 2번 클릭이 나야 합니다.
 
-광고 시스템에서는 둘 다 필요하지만, 보정이 더 치명적입니다. 이유는 명확합니다: **입찰가는 순서가 아니라 절대값으로 계산됩니다.** pCTR 0.01과 0.03은 "순서"로는 같은 방향이지만, 입찰가로는 3배 차이입니다.
+광고 시스템에서는 둘 다 필요하지만, 보정이 더 위험합니다. 이유는 명확합니다: **입찰가는 순서가 아니라 절대값으로 계산됩니다.** 실제 CTR이 0.01인 광고를 모델이 0.03으로 예측해도, 다른 광고도 모두 3배로 예측했다면 순서는 그대로라 AUC는 변하지 않습니다. 그러나 입찰가는 3배가 됩니다.
 
 ---
 
 ## 2. 보정이 광고 비즈니스에 미치는 영향
 
-### 과대 예측(Over-confident) 시나리오
+### 과대 예측(Over-prediction) 시나리오
 
 pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입찰가를 높게 제출합니다.
+
+> 이 글에서 과대 예측(over-prediction)은 평균 pCTR이 실제보다 높은 상태를 말합니다. 확률을 0이나 1 쪽으로 너무 치우치게 내는 과신(over-confidence)과는 다릅니다. 과신한 모델은 높은 pCTR은 너무 높게, 낮은 pCTR은 너무 낮게 내므로 평균은 맞을 수도 있습니다. 4절의 Temperature Scaling이 고치는 것은 과신 쪽입니다.
 
 | 항목 | 실제 | 모델 예측 |
 |------|------|----------|
@@ -59,7 +61,7 @@ pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입
 - 광고주 CPA가 3배 상승 (목표 `$10` → 실제 `$30`)
 - 광고주 이탈, 플랫폼 신뢰도 하락
 
-### 과소 예측(Under-confident) 시나리오
+### 과소 예측(Under-prediction) 시나리오
 
 pCTR을 실제보다 낮게 예측하면, 참 가치가 과소 계산되고, 입찰가를 낮게 제출합니다.
 
@@ -276,8 +278,8 @@ graph TD
 | 패턴 | 대각선 대비 위치 | 의미 | 광고 임팩트 |
 |------|----------------|------|------------|
 | Perfect | 대각선에 붙음 | 예측 = 실제 | 최적 입찰 |
-| Over-confident | 대각선보다 아래 | "2% 예측했지만 실제는 1%" | CPA 폭등 |
-| Under-confident | 대각선보다 위 | "1% 예측했지만 실제는 2%" | 노출 급감 |
+| Over-prediction | 대각선보다 아래 | "2% 예측했지만 실제는 1%" | CPA 폭등 |
+| Under-prediction | 대각선보다 위 | "1% 예측했지만 실제는 2%" | 노출 급감 |
 | S자 곡선 | 중간은 맞지만 양 끝이 틀림 | 극단값에서 miscalibration | 세그먼트별 편차 |
 
 <div class="demo-embed-wrap">
@@ -307,7 +309,7 @@ def reliability_diagram_data(y_true, y_prob, n_bins=10):
     return centers, accs, counts
 
 # 2단계: 과대예측하는 모델의 예측을 만들어 구간마다 찍는다
-# 실제 클릭은 3% 확률로 뽑고, 예측은 그와 상관없이 Beta(2, 50) 에서 뽑는다. 예측 평균이 실제보다 높은 과대예측(Over-confident) 모델이다.
+# 실제 클릭은 3% 확률로 뽑고, 예측은 그와 상관없이 Beta(2, 50) 에서 뽑는다. 예측 평균이 실제보다 높은 과대예측(Over-prediction) 모델이다.
 np.random.seed(42)
 y_true = np.random.binomial(1, 0.03, size=10000)
 y_prob = np.clip(np.random.beta(2, 50, size=10000), 0, 1)
@@ -323,7 +325,7 @@ for c, a, n in zip(centers, accs, counts):
 #   예측=0.120  실제=0.032  (n=280)  Over ↓
 ```
 
-### ECE (Expected 보정 Error)
+### ECE (Expected Calibration Error)
 
 보정 그림을 **하나의 숫자**로 요약한 것이 ECE(예측과 실제의 평균 격차)입니다.
 
@@ -360,7 +362,7 @@ def expected_calibration_error(y_true, y_prob, n_bins=10):
     return ece
 
 # 2단계: 과대예측하는 모델로 ECE 를 잰다
-# 예측은 실제와 상관없이 Beta(2, 30) 에서 뽑는다. 평균이 2% 보다 높은 과대예측(Over-confident) 모델이다.
+# 예측은 실제와 상관없이 Beta(2, 30) 에서 뽑는다. 평균이 2% 보다 높은 과대예측(Over-prediction) 모델이다.
 np.random.seed(42)
 y_true = np.random.binomial(1, 0.02, size=10000)   # 실제 CTR 2%
 y_prob = np.clip(np.random.beta(2, 30, size=10000), 0, 1)
@@ -383,19 +385,19 @@ $$\text{P/O Ratio} = \frac{\bar{p}}{\bar{y}} = \frac{\text{평균 예측 CTR}}{\
 | P/O Ratio | 해석 | 조치 |
 |-----------|------|------|
 | 1.0 | 완벽하게 보정됨 | 유지 |
-| > 1.0 (예: 1.3) | Over-confident (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
-| < 1.0 (예: 0.7) | Under-confident (30% 과소 예측) | 입찰가 30% 과소 → 보정 필요 |
+| > 1.0 (예: 1.3) | Over-prediction (30% 과대 예측) | 입찰가 30% 과다 → 보정 필요 |
+| < 1.0 (예: 0.7) | Under-prediction (30% 과소 예측) | 입찰가 30% 과소 → 보정 필요 |
 
 P/O Ratio의 진정한 가치는 **세그먼트별로 쪼개서 모니터링**할 수 있다는 점입니다.
 
 | 세그먼트 | 평균 pCTR | 실제 CTR | P/O Ratio | 상태 |
 |---------|----------|---------|-----------|------|
 | Exchange A | 2.1% | 2.0% | 1.05 | 양호 |
-| Exchange B | 1.8% | 1.2% | **1.50** | Over-confident |
+| Exchange B | 1.8% | 1.2% | **1.50** | Over-prediction |
 | Mobile | 3.2% | 3.0% | 1.07 | 양호 |
-| Desktop | 1.5% | 2.1% | **0.71** | Under-confident |
+| Desktop | 1.5% | 2.1% | **0.71** | Under-prediction |
 | 오전 (6-12시) | 1.9% | 1.8% | 1.06 | 양호 |
-| 오후 (18-24시) | 2.5% | 1.6% | **1.56** | Over-confident |
+| 저녁 (18-24시) | 2.5% | 1.6% | **1.56** | Over-prediction |
 
 이 테이블이 보여주는 것은 하나입니다. **Global P/O Ratio가 1.0에 가까워도, 세그먼트별로는 심각하게 miscalibrated일 수 있습니다.** Exchange B에서는 50% 과대 예측, Desktop에서는 29% 과소 예측입니다. Global Calibration만으로는 이 문제를 발견할 수 없습니다.
 
@@ -436,7 +438,7 @@ $$BS = \underbrace{\frac{1}{n}\sum_{k} n_k (p_k - \bar{y}_k)^2}_{\text{reliabili
 
 ## 4. Calibration 보정 기법
 
-모델 학습이 끝난 후, **Post-hoc Calibration** 기법으로 예측 확률을 보정할 수 있습니다. 아래 기법들의 핵심 원리는 모두 같습니다. 모델의 raw output $f(x)$에 **단조 변환**(monotonic transformation)을 적용합니다. 순서는 그대로 두고, 값만 실제에 가깝게 당기는 변환입니다.
+모델 학습이 끝난 후, **Post-hoc Calibration** 기법으로 예측 확률을 보정할 수 있습니다. Platt, Isotonic, Temperature 세 기법의 원리는 같습니다. 모델의 raw output $f(x)$에 **단조 변환**(monotonic transformation)을 적용합니다. 순서는 그대로 두고, 값만 실제에 가깝게 당기는 변환입니다. 마지막의 Histogram Binning 은 bin별 실제 비율을 그대로 쓰므로 단조가 보장되지 않습니다.
 
 ### Platt Scaling
 
@@ -519,9 +521,11 @@ Temperature Scaling은 **파라미터 하나**로 전체 확률 분포의 "날�
 $$q = \sigma\left(\frac{f(x)}{T}\right)$$
 
 - $T$ : Temperature 파라미터 (validation set에서 학습)
-- $T > 1$ : 확률을 부드럽게 (confident한 예측을 완화) → 과대 예측 보정
-- $T < 1$ : 확률을 날카롭게 (불확실한 예측을 강화) → Under-confident 보정
+- $T > 1$ : 확률을 0.5 쪽으로 당김 (0이나 1에 치우친 예측을 완화) → 과신(over-confidence) 보정
+- $T < 1$ : 확률을 0이나 1 쪽으로 밀어냄 (머뭇거리는 예측을 강화) → 확신이 부족한(under-confident) 모델 보정
 - $T = 1$ : 원래 모델 그대로
+
+> $T > 1$ 은 0.5보다 큰 확률은 내리고 0.5보다 작은 확률은 올립니다. 그래서 평균 pCTR이 실제보다 높은 과대 예측은 Temperature로 고치지 못합니다. pCTR이 대부분 0.5보다 훨씬 작은 광고에서는 $T > 1$ 이 오히려 pCTR을 올립니다. 평균 수준을 옮기려면 Platt의 $B$처럼 logit에 더하는 항이나 P/O Ratio로 나누는 보정이 필요합니다.
 
 **장점:**
 - 파라미터 단 하나 → overfitting 위험 최소
@@ -544,6 +548,7 @@ Histogram Binning은 예측 확률을 bin으로 나눈 후, 각 bin의 예측값
 - bin 경계에서 불연속적 (discontinuity)
 - bin 개수 선택에 민감
 - 충분한 데이터가 없으면 bin별 추정치가 불안정
+- bin별 값이 단조 증가한다는 보장이 없음 → 이웃 bin 사이에서 순서가 뒤집힐 수 있고, 같은 bin 안의 점수는 모두 동점이 됨
 
 ### 기법 비교
 
@@ -554,7 +559,7 @@ Histogram Binning은 예측 확률을 bin으로 나눈 후, 각 bin의 예측값
 | Temperature Scaling | 1 ($T$) | 낮음 | 매우 낮음 | 극히 낮음 (나눗셈 1회) | 높음 -- NN 모델에 특히 |
 | Histogram Binning | $M$ (bin 수) | 높음 | 높음 | 극히 낮음 (lookup) | 낮음 -- 불연속성 문제 |
 
-> 실무 권장: **Platt 보정(Platt Scaling)부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려합니다. Temperature 보정은 Deep Learning 모델이 과대 예측할 때 가장 먼저 시도할 기법입니다.
+> 실무 권장: **Platt 보정(Platt Scaling)부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려합니다. Temperature 보정은 Deep Learning 모델이 과신할 때(확률을 0이나 1 쪽으로 치우치게 낼 때) 가장 먼저 시도할 기법입니다. 평균이 높은 과대 예측에는 Platt이나 P/O Ratio 보정을 씁니다.
 
 ---
 
@@ -676,27 +681,27 @@ graph TD
 - Platt 보정의 경우 $(A, B)$를 exponential moving average로 업데이트
 - P/O Ratio 보정의 경우, rolling P/O ratio를 직접 적용
 
-> 보정이 낡는 것(Calibration Drift)는 세상이 변해 모델이 낡는 것(Concept Drift)의 직접적인 결과입니다. 세상이 변해 모델이 낡는 것과 모델 Staleness 문제는 따로 다뤘습니다. [온라인 학습(Online Learning)](post.html?id=online-learning-delayed-feedback) 글에 있습니다. 온라인 학습 파이프라인과 보정 모니터링은 붙어 있어야 합니다.
+> 보정이 낡는 것(Calibration Drift)은 세상이 변해 모델이 낡는 것(Concept Drift)의 직접적인 결과입니다. Concept Drift와 모델 Staleness 문제는 [온라인 학습(Online Learning)](post.html?id=online-learning-delayed-feedback) 글에서 따로 다뤘습니다. 온라인 학습 파이프라인과 보정 모니터링은 붙어 있어야 합니다.
 
 ---
 
 ## 6. 보정 vs 순서 맞히기: Trade-off는 있는가
 
-자주 받는 질문이 있습니다. "보정을 보정하면 AUC가 떨어지지 않나요?"
+자주 받는 질문이 있습니다. "보정을 맞추면 AUC가 떨어지지 않나요?"
 
-**답: 일반적으로 No.** Isotonic 은 순서를 지키며 계단으로 맞추는 보정입니다. 사후 보정 기법은 모두 **단조 변환(monotonic transformation)**입니다. Platt, Isotonic, Temperature 가 그렇습니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
+**답: 일반적으로 No.** Isotonic 은 순서를 지키며 계단으로 맞추는 보정입니다. 이 글에서 권하는 Platt, Isotonic, Temperature 는 모두 **단조 변환(monotonic transformation)**입니다. Histogram Binning 은 bin마다 값을 따로 정하므로 단조가 보장되지 않습니다. 단조 변환은 순서를 보존하므로, 이론적으로 **AUC에 영향을 주지 않습니다.**
 
-직관적으로 보겠습니다. $f(x_1) > f(x_2)$이면 단조 변환 후에도 $g(f(x_1)) > g(f(x_2))$입니다. 순서가 바뀌지 않으니 AUC는 동일합니다.
+직관적으로 보겠습니다. $g$가 순증가 함수라면(Platt에서 $A > 0$일 때, Temperature) $f(x_1) > f(x_2)$일 때 $g(f(x_1)) > g(f(x_2))$입니다. 순서가 바뀌지 않으니 AUC는 동일합니다. Isotonic은 계단 함수라 $g(f(x_1)) \ge g(f(x_2))$까지만 보장합니다. 순서가 뒤집히지는 않지만 같은 계단에 들어간 점수는 동점이 되므로, 계단이 거칠면 AUC가 조금 내려갈 수 있습니다.
 
 | 상황 | AUC 변화 | 보정 변화 | 설명 |
 |------|---------|-----------------|------|
-| 사후 보정 적용 | 불변 | 개선 | 단조 변환이므로 ranking 보존 |
+| 사후 보정 적용 (Platt, Temperature) | 불변 | 개선 | 순증가 변환이므로 ranking 보존 |
 | Calibration-aware Loss로 재학습 | 미세 변화 가능 | 개선 | Loss 함수 변경으로 모델 자체가 변함 |
-| 극단적 Isotonic 보정 (데이터 부족) | 미세 하락 가능 | 개선 (과적합 위험) | 비단조적 노이즈가 끼어들 수 있음 |
+| 극단적 Isotonic 보정 (데이터 부족) | 미세 하락 가능 | 개선 (과적합 위험) | 순서는 뒤집히지 않지만 평평한 계단 안의 점수가 동점이 됨 |
 
 **실무 원칙:**
 
-> "먼저 AUC를 최대화하고, 그다음 보정을 보정한다." 이 순서가 중요합니다. AUC(순서 맞히기)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, 보정은 사후 보정(Post-hoc 보정)의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
+> "먼저 AUC를 최대화하고, 그다음 보정을 맞춘다." 이 순서가 중요합니다. AUC(순서 맞히기)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, 보정은 사후 보정(Post-hoc Calibration)의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
 
 단, **Calibration-aware 학습**이라는 접근도 있습니다. 교차 엔트로피 손실(Cross-entropy Loss) 자체에 보정을 유도하는 성질이 있습니다. 그래서 학습 과정에서 보정을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 교차 엔트로피 손실로 하고, 배포 전에 보정 Layer를 한 번 더 붙입니다. 이런 **이중 보정** 전략입니다.
 

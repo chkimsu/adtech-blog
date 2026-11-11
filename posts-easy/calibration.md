@@ -375,7 +375,7 @@ $$ECE = \sum_{m=1}^{M} \frac{|B_m|}{n} \left| \text{acc}(B_m) - \text{conf}(B_m)
 아래 코드는 실제 CTR 이 2% 인 노출에 과대 예측을 붙이고 위 식 그대로 ECE 를 계산합니다. 예측은 실제와 상관없이 Beta 분포에서 뽑으며 평균이 2% 보다 높습니다.
 
 ```python
-# 하는 일: 실제 CTR 2% 인 노출 10,000건에 과대예측한 예측을 붙이고, 구간마다 예측과 실제의 차이를 샘플 수로 가중 평균한 ECE 를 잰다.
+# 하는 일: 실제 CTR 2% 인 노출 10,000건에 과대예측한 예측을 붙이고, 구간마다 예측과 실제의 차이를 샘플 수로 가중 평균한 ECE 를 측정한다.
 import numpy as np
 
 # 1단계: ECE 를 구하는 함수를 만든다
@@ -393,7 +393,7 @@ def expected_calibration_error(y_true, y_prob, n_bins=10):
         ece += (mask.sum() / len(y_true)) * abs(bin_acc - bin_conf)
     return ece
 
-# 2단계: 과대예측하는 모델로 ECE 를 잰다
+# 2단계: 과대예측하는 모델로 ECE 를 측정한다
 # 예측은 실제와 상관없이 Beta(2, 30) 에서 뽑는다. 평균이 2% 보다 높은 과대예측(Over-prediction) 모델이다.
 np.random.seed(42)
 y_true = np.random.binomial(1, 0.02, size=10000)   # 실제 CTR 2%

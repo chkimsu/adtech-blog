@@ -29,4 +29,5 @@ const EASY_POST_IDS = [
   'distributed-training',
   'bentoml-model-serving',
   'offline-metrics-gauc',
+  'offpolicy-evaluation',
 ];

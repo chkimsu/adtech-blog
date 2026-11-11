@@ -190,7 +190,7 @@ Alibaba는 Taobao 추천 로그로 ESMM을 검증했습니다. 클릭한 샘플�
 
 - 공개 데이터셋(노출 8,400만 건): CVR 예측 AUC **+2.56%p**, CTCVR 예측 AUC **+3.25%p**
 - 프로덕션 데이터셋(노출 89억 건): CVR 예측 AUC **+2.18%p**, CTCVR 예측 AUC **+2.32%p**
-- 전체 노출 공간에서 학습함으로써 데이터가 드문 문제(Data Sparsity) 문제도 동시에 완화
+- 전체 노출 공간에서 학습함으로써 데이터가 드문 문제(Data Sparsity)도 동시에 완화
 
 > ESMM의 강점은 SSB를 구조로 해결한다는 점입니다. 다른 MTL 아키텍처는 태스크 간 지식 공유에 초점을 맞춥니다. Shared-Bottom, MMoE, PLE 모두 SSB를 직접 해결하지는 않습니다. 실무에서는 ESMM의 곱셈 구조를 그대로 둡니다. 그 안의 타워만 MMoE나 PLE로 바꿔 끼우는 하이브리드가 일반적입니다.
 
@@ -603,7 +603,7 @@ graph TD
 
 ### 수식
 
-전문가 망(Expert Network)가 $n$개 있다고 합시다. 각각 $f_1$부터 $f_n$까지입니다. 태스크 $k$의 게이트 망(Gating Network)는 입력 $x$를 받아 softmax 가중치를 냅니다.
+전문가 망(Expert Network)이 $n$개 있다고 합시다. 각각 $f_1$부터 $f_n$까지입니다. 태스크 $k$의 게이트 망(Gating Network)은 입력 $x$를 받아 softmax 가중치를 냅니다.
 
 $$g^k(x) = \text{softmax}(W_g^k \cdot x) \in \mathbb{R}^n$$
 
@@ -636,7 +636,7 @@ Google은 합성 데이터(synthetic data)로 두 태스크의 correlation을 �
 
 MMoE에서 모든 전문가는 모든 태스크에 공유됩니다. 게이트가 전문가 선택을 조절할 뿐입니다. 전문가 자체는 특정 태스크에 특화되지 않습니다. 이 때문에 두 가지 문제가 남습니다.
 
-1. **한쪽이 오르면 한쪽이 내리는 현상(Seesaw) 현상**: 한 태스크의 성능이 올라가면 다른 태스크가 떨어지는 trade-off가 완전히 해결되지 않습니다
+1. **한쪽이 오르면 한쪽이 내리는 현상(Seesaw)**: 한 태스크의 성능이 올라가면 다른 태스크가 떨어지는 trade-off가 완전히 해결되지 않습니다
 2. **태스크 전용(Task-specific) 학습 부족**: 전문가가 모든 태스크의 기울기를 받으므로, 특정 태스크에만 유용한 표현을 깊이 있게 학습하기 어렵습니다
 
 ### PLE의 구조
@@ -655,6 +655,7 @@ graph TD
         TE1B["Task B<br/>Experts"]
         G1A["Gate A"]
         G1B["Gate B"]
+        G1S["Gate S"]
     end
 
     subgraph Layer2["Extraction Layer 2"]
@@ -683,11 +684,13 @@ graph TD
     TE1A --> G1A
     SE1 --> G1B
     TE1B --> G1B
+    SE1 --> G1S
+    TE1A --> G1S
+    TE1B --> G1S
 
     G1A --> TE2A
-    G1A --> SE2
     G1B --> TE2B
-    G1B --> SE2
+    G1S --> SE2
 
     SE2 --> G2A
     TE2A --> G2A
@@ -713,7 +716,7 @@ PLE의 Extraction Network는 각 층(layer)에서 세 가지 일을 합니다.
 
 1. **공용 전문가**: 모든 태스크에 공통으로 유용한 표현을 학습
 2. **태스크 전용 전문가**: 해당 태스크에만 유용한 표현을 학습
-3. **게이트**: 공용 전문가와 태스크 전용 전문가의 출력을 태스크별로 가중 결합
+3. **게이트**: 공용 전문가와 태스크 전용 전문가의 출력을 태스크별로 가중 결합. 다음 층이 있으면 공용 전문가용 게이트가 하나 더 있어 그 층의 모든 전문가 출력을 섞어 다음 층의 공용 전문가로 넘김
 
 층을 거듭할수록 태스크별 표현이 **점진적으로** 나뉩니다. 하위 층에서는 공통 표현을 주로 배웁니다. 상위 층으로 갈수록 태스크 고유의 표현이 분화됩니다. 한 번에 나누지 않고 층층이 나누는 것이 이름에 붙은 "Progressive"의 뜻입니다.
 
@@ -733,7 +736,7 @@ Tencent는 자사 대규모 추천 시스템에서 PLE를 검증했습니다. �
 
 - MMoE 대비 **모든 태스크에서 동시에** 성능 향상 (한쪽이 오르면 한쪽이 내리는 현상 해소)
 - 태스크 correlation이 낮을수록 MMoE 대비 개선 폭이 커짐
-- 4주간의 온라인 A/B 테스트에서 기존 MTL 모델 중 가장 좋은 것 대비 조회 수(view-count) +2.23%, 시청 시간(watch time) +1.84%. 학습 태스크인 VCR(View Completion Ratio)과 VTR(View-Through Rate)이 각각 이 두 지표를 겨냥합니다
+- 4주간의 온라인 A/B 테스트에서 기존 MTL 모델(MMoE) 대비 조회 수(view-count) +2.23%, 시청 시간(watch time) +1.84%. 학습 태스크인 VCR(View Completion Ratio)과 VTR(View-Through Rate)이 이 두 지표를 겨냥합니다
 
 > PLE의 가장 큰 기여는 "모든 태스크의 성능을 동시에 올릴 수 있다"는 실증입니다. 기존 MTL에서는 한 태스크를 올리면 다른 태스크가 내려가기 일쑤였습니다. 이 한쪽이 오르면 한쪽이 내리는 현상이 MTL 도입의 가장 큰 장벽이었습니다.
 
@@ -774,13 +777,13 @@ $$\mathcal{L} = w_1 \cdot \mathcal{L}_{CTR} + w_2 \cdot \mathcal{L}_{CVR} + w_3 
 
 **실무 팁: Loss Scale 차이에 주의**
 
-CTR 데이터는 CVR 대비 100배 많습니다. 같은 가중치를 주면 CTR Loss의 gradient가 CVR을 압도합니다. 가장 간단한 해법은 각 task의 Loss를 그 task의 데이터 수로 나누는 것입니다.
+CTR 데이터는 CVR 대비 100배 많습니다. 같은 가중치를 주면 CTR Loss의 gradient가 CVR을 압도합니다. 가장 간단한 해법은 각 task의 Loss를 그 task의 데이터 수로 나누는 것입니다. 여기서 각 task의 Loss는 3절의 평균과 달리 샘플마다 손실을 더한 합입니다.
 
 $$\mathcal{L} = \frac{1}{N_{CTR}}\mathcal{L}_{CTR} + \frac{1}{N_{CVR}}\mathcal{L}_{CVR}$$
 
 ### Uncertainty Weighting (Kendall et al., 2018)
 
-각 task의 **Homoscedastic Uncertainty** $\sigma_k$를 학습 가능한 파라미터로 둡니다. 그러면 불확실성이 큰 task의 가중치가 자동으로 낮아집니다.
+각 task의 **Homoscedastic Uncertainty** $\sigma_k$를 학습 가능한 파라미터로 둡니다. 그러면 불확실성이 큰 task의 가중치가 자동으로 낮아집니다. 아래 식은 Kendall 논문에서 회귀 손실을 기준으로 한 꼴입니다. 분류 손실이면 가중치가 $\frac{1}{\sigma_k^2}$ 이 됩니다.
 
 $$\mathcal{L} = \frac{1}{2\sigma_1^2}\mathcal{L}_1 + \frac{1}{2\sigma_2^2}\mathcal{L}_2 + \log\sigma_1 + \log\sigma_2$$
 

@@ -27,4 +27,5 @@ const EASY_POST_IDS = [
   'model-api-from-training-script',
   'batch-vs-realtime-inference',
   'distributed-training',
+  'bentoml-model-serving',
 ];

@@ -12,7 +12,7 @@ const { posts } = require(path.join(root, 'js', 'posts.js'));
 
 const MIN_BYTES = 15000;      // 표준 8: 얇은 글은 15KB 이상
 const MIN_SECTION_CHARS = 300; // 표준 2: 한두 줄로 끝나는 섹션 금지
-const MAX_SENTENCE = 80;       // 길이를 재는 도우미(overLong 등)의 기준값. 2026-11-09 사용자 결정으로 경고와 표준 충족 셈에는 쓰지 않는다
+const MAX_SENTENCE = 80;       // 길이를 측정하는 도우미(overLong 등)의 기준값. 2026-11-09 사용자 결정으로 경고와 표준 충족 셈에는 쓰지 않는다
 
 // 파이썬을 일부러 안 쓰는 글 — API·Kafka 8편(2026-08-16 사용자 확정).
 // 표를 뽑으려고 60~80줄을 싣는 대신 표와 실물(로그 줄·요청 원문·설정 파일)로
@@ -47,7 +47,7 @@ function prose(md) {
     .replace(/^>\s?/gm, '');
 }
 
-// '## '로 시작하는 섹션별로 산문 길이를 잰다. '더 깊이 보기'는 링크 목록이라 제외.
+// '## '로 시작하는 섹션별로 산문 길이를 측정한다. '더 깊이 보기'는 링크 목록이라 제외.
 function shortSections(md) {
   const parts = md.split(/^## /m).slice(1);
   return parts
@@ -102,7 +102,7 @@ function decodeEntities(s) {
 }
 // 「」 안의 마침표, 물음표, 콜론 뒤 공백은 문장 경계가 아니다. 인용 안의 문장 셋이
 // 조각마다 짧게 세어져 112자 인용이 안 걸리던 것을 막는다. 공백을 자리표시자로 바꿔 두었다가 되돌린다.
-// 인용 하나는 여러 문장이어도 한 덩어리로 잰다(블로그 규칙: 「」 안에서 나누지 않는다).
+// 인용 하나는 여러 문장이어도 한 덩어리로 측정한다(블로그 규칙: 「」 안에서 나누지 않는다).
 const QUOTE_GAP = '\uE004';
 function overLong(text0) {
   const spans = [];
@@ -139,9 +139,9 @@ function longSentences(md) {
   return out;
 }
 
-// 글머리표 줄(`- `, `* `, `1. `)도 같은 분리기로 잰다. 참고문헌 줄(http 가 든 줄)은
-// 원제가 길 수 있어 건너뛴다. 줄마다 따로 잰다(글머리표 하나가 한 덩어리다).
-// 참고문헌 절(제목에 참고문헌, 참고 자료, References)의 글머리표는 재지 않는다.
+// 글머리표 줄(`- `, `* `, `1. `)도 같은 분리기로 측정한다. 참고문헌 줄(http 가 든 줄)은
+// 원제가 길 수 있어 건너뛴다. 줄마다 따로 측정한다(글머리표 하나가 한 덩어리다).
+// 참고문헌 절(제목에 참고문헌, 참고 자료, References)의 글머리표는 측정하지 않는다.
 // 논문 원제와 학회 이름은 줄여 쓸 수 없고, 주소가 다음 줄에 있으면 http 규칙으로도 안 빠진다.
 const REF_HEADING = /^(#{1,6})\s+.*(참고문헌|참고 자료|References)/;
 function longBullets(md) {
@@ -161,7 +161,7 @@ function longBullets(md) {
     if (refLevel) continue;
     const m = line.match(BULLET);
     if (!m) continue;
-    // 글머리표가 다음 줄로 이어지면(들여쓴 줄, 새 글머리표가 아님) 한 항목으로 이어 붙여 잰다.
+    // 글머리표가 다음 줄로 이어지면(들여쓴 줄, 새 글머리표가 아님) 한 항목으로 이어 붙여 측정한다.
     let text = m[1];
     while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1]) && !BULLET.test(lines[i + 1]) && !/^\s*\|/.test(lines[i + 1])) {
       text += ' ' + lines[++i].trim();

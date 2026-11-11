@@ -36,9 +36,9 @@
 
 1. **고쳐 쓰는 상태 표시와 새로 붙이는 상태 표시** — 의사코드 블록 5개(model-serving-architecture 첫째와 넷째, ad-log-system 첫째와 둘째, online-learning-delayed-feedback 첫째)의 첫 줄은 지금 꼴로는 형식 검사가 「상태 표시는 정해진 세 가지 꼴 가운데 하나로 씁니다」로 잡는다. 새 블록은 `# (의사코드 — 그대로 실행되지 않습니다.)` 로 바꾸고 나머지 말은 하는 일로 옮겼다. pyspark 블록 2개(ad-log-pipeline 첫째와 넷째)와 팀 도구로 DAG 를 만드는 블록 1개(data-engineer-first-six-months)에는 `# (Spark 예시 — 그대로 실행되지 않습니다.)`, `# (DAG 예시 — 그대로 실행되지 않습니다.)` 를 새로 붙였다. 여덟 블록 모두 실행 검사가 「실행 안 됨」으로 센다. 「라이브러리 없음」이나 실패로 세면 안 된다. Task 1 Step 4, Task 2 Step 3, Task 4 Step 3, Task 5 Step 3 이 표시 줄을 보고, Task 6 Step 1 이 `통과 189, 건너뜀 9 (라이브러리 없음 0, 실행 안 됨 9)` 를 본다.
 2. **출력 영역이 없는 블록** — 36개 가운데 12개는 출력 영역이 없다. 그중 4개(ad-log-pipeline 셋째의 dataclass, ad-log-system 셋째와 feature-store-serving 첫째의 피처 벡터, git-practical-guide)는 실행되며 아무것도 찍지 않아야 한다. 무엇이든 찍으면 실행 검사가 「찍힌 줄이 N줄 있는데 출력 영역이 없습니다」로 실패한다. 나머지 8개는 1번의 상태 표시 블록이다. Task 6 Step 2 의 셋째 값이 글마다 출력 없는 블록 수를 센다.
-3. **선 글자로 막대를 찍는 블록** — model-serving-architecture 둘째 블록은 `█` 막대를 찍는다. spec 4-7 대로 선 글자가 든 블록은 접지 않고 블록 안에서 옆으로 민다. 390 폭에서도 페이지 전체가 옆으로 넘치면 안 된다. Task 1 Step 7 이 네 폭으로 재고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
+3. **선 글자로 막대를 찍는 블록** — model-serving-architecture 둘째 블록은 `█` 막대를 찍는다. spec 4-7 대로 선 글자가 든 블록은 접지 않고 블록 안에서 옆으로 민다. 390 폭에서도 페이지 전체가 옆으로 넘치면 안 된다. Task 1 Step 7 이 네 폭으로 측정하고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
 4. **마지막 코드 줄 뒤에 있던 주석** — ad-log-pipeline 첫째 블록의 「# 결과: …」 세 줄은 출력 영역이 없는 블록이라 2단계 풀이로 옮겼다. feature-store-serving 첫째 블록의 「# → …」 두 줄은 한 문장으로 이어 마지막 코드 줄 아래 메모 한 줄로 남겼다. 내용이 사라지거나 옛 줄이 남으면 안 된다. Task 2 Step 3 과 Task 3 Step 3 이 옮긴 말이 있고 옛 줄이 없는지 본다.
-5. **휴대폰 폭의 긴 찍힌 줄** — software-architecture-patterns 셋째 블록의 읽기 비율 표, online-learning-delayed-feedback 둘째 블록의 학습기 표, kubernetes-networking 둘째 블록의 비용 표처럼 긴 찍힌 줄이 390 폭에서 옆으로 넘치거나 숫자 중간에서 끊기면 안 된다. Task 1 Step 7 이 첫 글을 네 폭으로 재고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
+5. **휴대폰 폭의 긴 찍힌 줄** — software-architecture-patterns 셋째 블록의 읽기 비율 표, online-learning-delayed-feedback 둘째 블록의 학습기 표, kubernetes-networking 둘째 블록의 비용 표처럼 긴 찍힌 줄이 390 폭에서 옆으로 넘치거나 숫자 중간에서 끊기면 안 된다. Task 1 Step 7 이 첫 글을 네 폭으로 측정하고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
 
 ## 이 계획에서 정한 것
 
@@ -62,7 +62,7 @@
 | 블록 안에 새 비유를 넣지 않는다 | 사용자 결정 「비유는 쓰지마」 | 풀이 한 줄 |
 | 글 커밋 머리는 `feat(posts): ML 인프라와 소프트웨어 공학 글 —` 와 `fix(posts): ML 인프라와 소프트웨어 공학 글 —` 이고, 올리기 직전에 하나로 합친다 | 다섯째 묶음과 같다 | 합치기를 건너뛰고 그대로 올린다 |
 | push 는 사용자가 `! git push origin main` 으로 한다 | 앞 묶음들에서 자동 권한 검사가 `git push` 를 막았다 | 사용자에게 부탁하는 줄 하나 |
-| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 잰다. 서버는 8774 포트다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다. 8773 은 다섯째 묶음이 썼다 | 도구와 포트만 바뀐다 |
+| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 측정한다. 서버는 8774 포트다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다. 8773 은 다섯째 묶음이 썼다 | 도구와 포트만 바뀐다 |
 
 ## 파일 지도
 
@@ -114,8 +114,8 @@
 - 새 블록 36개를 저장소 사본에 도우미로 넣었다. CI 검사 12가지가 통과했다(형식 검사 새 형식 198개, 옛 형식 49개, 문제 0건, 실행 검사 통과 189, 실행 안 됨 9). 표준 라이브러리만 있는 파이썬 3.9 로는 통과 179, 건너뜀 19(라이브러리 없음 10, 실행 안 됨 9)다. 파이썬 3.12 와 3.14 로도 12편이 모두 통과했다.
 - 도우미는 sha, 코드 줄, 찍힌 줄이 하나라도 다르면 글을 그대로 두고 멈춘다(다섯째 묶음 도우미와 표시 줄 이름만 다르다).
 - 네 폭에서 12편의 값 48개가 모두 「블록 수 true <출력 없는 블록> 0 false 0 0 0」이었다. 390 폭 훑기는 108편, 숫자 4,200개, 넘침 0, 끊김 0 이다.
-- 본문 단락을 블록마다 읽어 숫자를 찍힌 줄과 맞췄다. 맞지 않는 세 곳을 「여쭤볼 것 후보」에 적었다. 그 밖에 반올림해 쓴 곳(「4배 차이」는 141.85 / 34.22 = 4.15, 「여덟 배」는 196.5 / 25.0 = 7.86, 「12만 배」는 124,257)은 맞는 것으로 봤다. two-tower-retrieval 의 「내적으로 재면 +0.771로 밀려 6위」는 찍히지 않는 순위라 사본에서 따로 셌고, 맞았다.
-- 블록마다 돈 시간을 쟀다. 가장 오래 걸린 것은 serving-latency-throughput 첫째 블록(2.1초)과 embedding-table-ops 셋째 블록(1.6초)이다. 실행되는 28개를 하나씩 돌리는 데 로컬에서 6초 걸렸다. 다른 검사를 함께 돌리던 때는 같은 두 블록이 4초 넘게 걸렸다. 어느 쪽이든 실행 검사의 한도 120초보다 한참 짧다.
+- 본문 단락을 블록마다 읽어 숫자를 찍힌 줄과 맞췄다. 맞지 않는 세 곳을 「여쭤볼 것 후보」에 적었다. 그 밖에 반올림해 쓴 곳(「4배 차이」는 141.85 / 34.22 = 4.15, 「여덟 배」는 196.5 / 25.0 = 7.86, 「12만 배」는 124,257)은 맞는 것으로 봤다. two-tower-retrieval 의 「내적으로 측정하면 +0.771로 밀려 6위」는 찍히지 않는 순위라 사본에서 따로 셌고, 맞았다.
+- 블록마다 돈 시간을 측정했다. 가장 오래 걸린 것은 serving-latency-throughput 첫째 블록(2.1초)과 embedding-table-ops 셋째 블록(1.6초)이다. 실행되는 28개를 하나씩 돌리는 데 로컬에서 6초 걸렸다. 다른 검사를 함께 돌리던 때는 같은 두 블록이 4초 넘게 걸렸다. 어느 쪽이든 실행 검사의 한도 120초보다 한참 짧다.
 
 ---
 
@@ -161,7 +161,7 @@ def multi_stage_ranking(bid_request, budget_ms=10):
 # 하는 일: 요청당 고정 비용과 후보 1개당 비용을 더해, 후보 수마다 100ms 예산을 넘는지와 예산 안에 드는 최대 후보 수를 구한다.
 
 # 1단계: 예산과 두 종류의 비용을 둔다
-# 광고 요청 하나가 응답까지 쓸 수 있는 시간은 대략 100ms 다. 그 안에 피처 조회, 전처리, 모델 추론, 후처리(보정, 랭킹)가 다 들어가야 한다. 수치는 전부 가상값이다. 자리 크기만 맞췄고 사내에서 잰 값이 아니다.
+# 광고 요청 하나가 응답까지 쓸 수 있는 시간은 대략 100ms 다. 그 안에 피처 조회, 전처리, 모델 추론, 후처리(보정, 랭킹)가 다 들어가야 한다. 수치는 전부 가상값이다. 자리 크기만 맞췄고 사내에서 측정한 값이 아니다.
 BUDGET_MS = 100.0
 
 # 후보 수와 무관하게 한 번만 드는 비용 (요청당 고정)
@@ -254,7 +254,7 @@ print("→ 그 좁히는 단계가 Two-Tower 같은 retrieval이다.")
 import math
 
 # 1단계: 도착률과 배치 비용, p99 상한을 둔다
-# 크게 묶으면 처리량은 오르고, 먼저 온 요청은 배치가 찰 때까지 기다린다. 수치는 가상값이다. 사내에서 잰 값이 아니라 자리 크기만 맞춘 대략치다.
+# 크게 묶으면 처리량은 오르고, 먼저 온 요청은 배치가 찰 때까지 기다린다. 수치는 가상값이다. 사내에서 측정한 값이 아니라 자리 크기만 맞춘 대략치다.
 ARRIVAL_QPS = 20000.0    # 서비스 전체 도착률
 KERNEL_MS = 2.0          # 배치 1회당 고정 오버헤드(커널 실행, 텐서 복사)
 PER_ITEM_MS = 0.05       # 후보 1개당 순수 연산
@@ -573,7 +573,7 @@ class BidLog:
 <!-- cb6 post=ad-log-pipeline block=3 sha=b2a04611a0cd4350 -->
 ````python
 # (Spark 예시 — 그대로 실행되지 않습니다.)
-# 하는 일: 하루치 노출, 클릭, 요청 로그로 노출 중복률, 노출 없는 클릭 비율, 요청 대비 노출 비율을 재서 로그 파이프라인이 건전한지 매일 배치로 본다.
+# 하는 일: 하루치 노출, 클릭, 요청 로그로 노출 중복률, 노출 없는 클릭 비율, 요청 대비 노출 비율을 측정해서 로그 파이프라인이 건전한지 매일 배치로 본다.
 import pyspark.sql.functions as F
 
 # 1단계: 하루치 로그 셋을 읽는다
@@ -582,14 +582,14 @@ impression = spark.read.parquet(f"s3://logs/impression/dt={dt}")
 click = spark.read.parquet(f"s3://logs/click/dt={dt}")
 request = spark.read.parquet(f"s3://logs/request/dt={dt}")
 
-# 2단계: 노출 중복률을 잰다
+# 2단계: 노출 중복률을 측정한다
 # 전체 노출 행 가운데 같은 impression_id 로 겹쳐 남은 행의 비율이다.
 total_imp = impression.count()
 unique_imp = impression.select("impression_id").distinct().count()
 dup_rate = 1 - unique_imp / total_imp
 print(f"Impression 중복률: {dup_rate:.4%}")  # 정상: < 0.1%
 
-# 3단계: 노출 없는 클릭(Orphan Click)의 비율을 잰다
+# 3단계: 노출 없는 클릭(Orphan Click)의 비율을 측정한다
 # 노출 로그에 짝이 없는 클릭의 비율이다.
 orphan_clicks = (
     click.join(impression, on="impression_id", how="left_anti")
@@ -598,7 +598,7 @@ orphan_clicks = (
 orphan_rate = orphan_clicks / click.count()
 print(f"Orphan Click 비율: {orphan_rate:.4%}")  # 정상: < 0.5%
 
-# 4단계: 요청 대비 노출 비율을 잰다
+# 4단계: 요청 대비 노출 비율을 측정한다
 # 요청 가운데 노출까지 간 비율로, Win Rate 를 어림한 값이다.
 req_count = request.count()
 imp_count = unique_imp
@@ -773,7 +773,7 @@ import math
 GB = 1024 ** 3
 SERVER_GB = 64        # 서버 한 대가 임베딩에 내줄 수 있는 몫(가상). 램 전부는 못 쓴다.
 
-# 가상 테이블 구성 — (이름, 행 수, 차원). 자리 크기만 맞춘 값이고 사내에서 잰 값이 아니다.
+# 가상 테이블 구성 — (이름, 행 수, 차원). 자리 크기만 맞춘 값이고 사내에서 측정한 값이 아니다.
 tables = [("유저 ID", 200_000_000, 32), ("광고 소재", 30_000_000, 32),
           ("지면 슬롯", 5_000_000, 16), ("카테고리", 50_000, 16)]
 
@@ -1614,7 +1614,7 @@ err_calm = {n: [] for n in models}
 last_weekend_track = {n: [] for n in models}   # 4주차 주말 진입 6시간 예측값
 
 # 5단계: 4주 동안 시간마다 관측을 만들며 예측 오차를 모은다
-# 학습기마다 갱신하기 전에 먼저 예측해서, 진짜 예측 오차를 잰다.
+# 학습기마다 갱신하기 전에 먼저 예측해서, 진짜 예측 오차를 측정한다.
 for hour in range(HOURS):
     p_true = true_ctr(hour)
     # 노출 2천 건을 확률대로 하나씩 뽑아 관측 CTR을 만든다 → 통계적 잡음 포함
@@ -1829,7 +1829,7 @@ clicks = [draw_delay() if random.random() < TRUE_CVR else None
           for _ in range(N_CLICKS)]
 n_conv = sum(1 for d in clicks if d is not None)
 
-# 4단계: 기다리는 시간을 바꿔 가며 잡히는 전환 비율, 관측 CVR, 데이터 나이를 잰다
+# 4단계: 기다리는 시간을 바꿔 가며 잡히는 전환 비율, 관측 CVR, 데이터 나이를 측정한다
 # (a) 잡히는 전환 비율은 기다리는 동안 도착한 전환을 전체 전환으로 나눈 값이다. (b) 데이터 나이는 학습이 W시간 뒤처져 돌 때 쓰는 데이터가 평균 몇 시간 전 것인지로, 1.5W 시간이다.
 print(pad("대기", 8) + pad("잡힌전환", 11) + pad("관측CVR", 10)
       + pad("데이터나이", 12) + "한 줄 평")
@@ -1877,7 +1877,7 @@ MED_MS = 3.0    # 추론 시간 중앙값
 SIGMA  = 0.55   # 추론 시간이 흩어진 정도
 BUDGET = 8.0    # 모델이 받은 예산(ms)
 
-# 2단계: 체류 시간을 재는 함수와 분위수 함수를 만든다
+# 2단계: 체류 시간을 측정하는 함수와 분위수 함수를 만든다
 # 요청을 도착 순서대로 가장 먼저 비는 자리에 넣는다. 자리가 다 차면 뒤에 온 요청은 기다리고, 기다린 시간이 응답 시간에 그대로 더해진다.
 def simulate(qps, seconds=120, seed=20260823):
     """초당 qps 로 들어오는 요청의 체류 시간(대기 + 추론, ms)과 대기 시간을 돌려준다."""
@@ -2612,8 +2612,8 @@ code = lambda b: [l for l in b.split('\n') if l.strip() and not l.lstrip().start
 MOVED = [
     ('model-serving-architecture', 0, '# (의사코드 — 그대로 실행되지 않습니다.)\n# 하는 일: ', '# (의사코드 — 구조만 보여 줍니다. 그대로 실행되지 않습니다.)'),
     ('model-serving-architecture', 0, 'Multi-Stage Ranking Pipeline 이 10ms 예산 안에서 도는 구조만 보여 준다', '# 수천 후보 → 1개 선택, 총 10ms 이내'),
-    ('model-serving-architecture', 1, '자리 크기만 맞췄고 사내에서 잰 값이 아니다', '# 100ms 예산을 어디서 넘나 — 구간을 더해 본다.'),
-    ('model-serving-architecture', 2, '사내에서 잰 값이 아니라 자리 크기만 맞춘 대략치다', '# (가상 수치입니다. 사내에서 잰 값이 아니라 자리 크기만 맞춘 대략치입니다.)'),
+    ('model-serving-architecture', 1, '자리 크기만 맞췄고 사내에서 측정한 값이 아니다', '# 100ms 예산을 어디서 넘나 — 구간을 더해 본다.'),
+    ('model-serving-architecture', 2, '사내에서 측정한 값이 아니라 자리 크기만 맞춘 대략치다', '# (가상 수치입니다. 사내에서 측정한 값이 아니라 자리 크기만 맞춘 대략치입니다.)'),
     ('model-serving-architecture', 3, '# (의사코드 — 그대로 실행되지 않습니다.)\n# 하는 일: ', '# (의사코드 — 구조만 보여 줍니다. 그대로 실행되지 않습니다.)'),
     ('model-serving-architecture', 3, '모델 장애에도 입찰 기회를 놓치지 않는 방어 계층인 Timeout Fallback', '# 모델 장애에도 입찰 기회를 놓치지 않는 방어 계층'),
 ]
@@ -2682,7 +2682,7 @@ Expected: `기준표를 다시 적었습니다 — 옛 형식 블록 80개, 글 
 
 - [ ] **Step 7: 첫 글을 화면으로 본다**
 
-서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch6"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8774`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8774/post.html?id=model-serving-architecture` 를 새 캐시(`new_page` 에 `isolatedContext` 이름)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 잰다. 목록의 앞은 글 id, 뒤는 파일 이름이다.
+서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch6"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8774`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8774/post.html?id=model-serving-architecture` 를 새 캐시(`new_page` 에 `isolatedContext` 이름)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 측정한다. 목록의 앞은 글 id, 뒤는 파일 이름이다.
 
 ````js
 async () => {
@@ -2727,7 +2727,7 @@ async () => {
 
 Expected: 네 값 모두 `"5 true 2 0 false 0 0 0"` — 블록 5개, 원문과 같다, 출력 없는 블록 2(의사코드 둘), 바로 뒤에 남은 다른 코드 블록 0, 넘침 없음, 메모 겹침 0, 배치 빠짐 0, 용어 풀이와 수식이 끼어든 곳 0.
 
-그림을 `.playwright-mcp/batch6/` 에 찍는다. 1440 폭(창 1440×1000)과 390 폭(390px iframe 하나만 둔 감싸는 페이지), 라이트와 다크(`document.documentElement.setAttribute('data-theme','dark')`)다. 둘째 블록(선 글자 막대, 뜻 셋), 다섯째 블록(캐시 표, 뜻 둘), 첫째 블록(의사코드 표시)을 담는다. 블록이 길면 머리와 출력 영역으로 나눠 찍고 이름에 `-top`, `-out` 을 붙인다. 390 폭에서 파란 메뉴 단추(`#sidebar-toggle`)가 코드를 가리면 감싸는 페이지의 iframe 문서에 `#sidebar-toggle{display:none !important}` 를 넣은 `<style>` 을 붙여 숨긴다(인라인 `display:none` 은 글의 스크롤 처리가 되살린다). 글 안의 데모 iframe 은 `loading="lazy"` 라 스크롤하며 뒤 블록을 밀어내니, 위치를 재기 전에 `eager` 로 바꾸고 3초쯤 기다린다. 문서에 `scroll-behavior: smooth` 가 있어 `scrollTo` 에는 `behavior: 'instant'` 를 준다.
+그림을 `.playwright-mcp/batch6/` 에 찍는다. 1440 폭(창 1440×1000)과 390 폭(390px iframe 하나만 둔 감싸는 페이지), 라이트와 다크(`document.documentElement.setAttribute('data-theme','dark')`)다. 둘째 블록(선 글자 막대, 뜻 셋), 다섯째 블록(캐시 표, 뜻 둘), 첫째 블록(의사코드 표시)을 담는다. 블록이 길면 머리와 출력 영역으로 나눠 찍고 이름에 `-top`, `-out` 을 붙인다. 390 폭에서 파란 메뉴 단추(`#sidebar-toggle`)가 코드를 가리면 감싸는 페이지의 iframe 문서에 `#sidebar-toggle{display:none !important}` 를 넣은 `<style>` 을 붙여 숨긴다(인라인 `display:none` 은 글의 스크롤 처리가 되살린다). 글 안의 데모 iframe 은 `loading="lazy"` 라 스크롤하며 뒤 블록을 밀어내니, 위치를 측정하기 전에 `eager` 로 바꾸고 3초쯤 기다린다. 문서에 `scroll-behavior: smooth` 가 있어 `scrollTo` 에는 `behavior: 'instant'` 를 준다.
 
 볼 것: 첫째 블록 머리에 「의사코드」 라벨이 서고 하는 일이 그 아래 굵게 선다. 둘째 블록의 막대 줄은 접히지 않고 블록 안에서만 옆으로 밀리며, 390 폭에서도 페이지는 넘치지 않는다. 다섯째 블록은 뜻 줄 둘이 각자 자기 찍힌 줄 묶음에 붙는다. 서버를 끈다.
 
@@ -3436,7 +3436,7 @@ SCRATCH="${TMPDIR:-/tmp}/code-steps-batch6"; test -x "$SCRATCH/venv/bin/python" 
 
 Expected: `21 통과, 0 실패` 와 `✓ 통과 179, 건너뜀 19 (라이브러리 없음 10, 실행 안 됨 9), 실패 0` (다섯째 묶음의 라이브러리 없음 10 에 이 묶음은 더하지 않는다. 실행 안 됨은 의사코드 다섯과 새 표시 셋이 더해져 9 다)
 
-- [ ] **Step 2: 숫자로 재고 그림을 찍는다**
+- [ ] **Step 2: 숫자로 측정하고 그림을 찍는다**
 
 서버 파일이 있는지 보고, 없으면 계획에서 뽑는다(저장소 루트에서).
 
@@ -3542,7 +3542,7 @@ async () => {
 }
 ````
 
-Expected: `{"posts":108,"numbers":4200,"overflow":[],"broken":[]}` (계획을 쓸 때 잰 값. 다섯째 묶음이나 이 묶음의 리뷰가 블록 글을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
+Expected: `{"posts":108,"numbers":4200,"overflow":[],"broken":[]}` (계획을 쓸 때 측정한 값. 다섯째 묶음이나 이 묶음의 리뷰가 블록 글을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
 
 그림을 `.playwright-mcp/batch6/` 에 찍는다. 12편을 1440 폭 라이트로 한 장씩(12장), 아래 표에서 390 이라 적은 5편은 390 폭 라이트로도(5장), model-serving-architecture 와 software-architecture-patterns 는 1440 폭 다크로도(2장) 찍는다. 블록이 길면 머리와 출력 영역으로 나눠 찍고 이름에 `-top`, `-out` 을 붙인다. 담을 블록은 아래와 같다.
 

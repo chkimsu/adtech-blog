@@ -22,7 +22,7 @@
 - 기록 출력은 JSON 이고 문자열 값은 영어와 숫자만이다(한국어 0자). 시스템 메시지가 그렇게 요구한다. 한국어 문장은 산문의 「」 안에만. 기록 항목의 `user` 와 `system` 은 한국어여도 된다.
 - LLM 행동에 관한 숫자(정답률, 바뀐 비율, 토큰, 시간, 일치도)는 기록 파일에서 블록이 센 값이나 USAGE 에 있는 값만 쓴다. 기록 밖에서 센 수는 적지 않는다. 숫자 없는 과정 설명은 된다.
 - 프롬프트 손질과 재기록은 temperature 0 의 기준 답이 스키마대로 파싱되지 않을 때만 한다. 기록이 기대와 다르면(정확도가 안 오르거나 떨어짐) 기록을 그대로 두고 글이 그 사실을 가르친다. 파싱 안 되는 답은 「읽지 못한 답」으로 세고 틀린 답으로 친다.
-- 같은 기록 안에서는 temperature 0 의 10번이 글자까지 같았다. 같은 설정으로 다시 기록하면 답은 같아도 글자가 달라진 예가 하나 있다(27주째 글의 p17, 21주째 steps 기록과 비교. 둘 다 2026-11-05 기록). temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 흔들림은 두 설정을 나란히 두어 잰다.
+- 같은 기록 안에서는 temperature 0 의 10번이 글자까지 같았다. 같은 설정으로 다시 기록하면 답은 같아도 글자가 달라진 예가 하나 있다(27주째 글의 p17, 21주째 steps 기록과 비교. 둘 다 2026-11-05 기록). temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 흔들림은 두 설정을 나란히 두어 측정한다.
 - 가상 값은 글에서 한 번 「가상 데이터」라고 밝힌다. 설계 4절의 값(후보풀 캠페인 셋, 에이전트 과제 값, 상품 100건, 질의와 광고 쌍 50개, LLM 요청 한 건 1,200 + 150 토큰, 가상 단가, 하루 100만 요청 비용 72만 / 780만 / 420만 원)을 그대로 쓴다. 실제 상용 단가는 적지 않고 문서 링크로만.
 - 회사 안 시스템 이름, 숫자, 문장, 사람 이름은 어디에도 넣지 않는다. 올리기 전에 `grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html` 이 0건이어야 한다(대소문자 구분). `NAMES_FILE` 은 저장소 밖에 둔 사내 이름 목록 파일이다.
 - 커밋은 `chkimsu` 계정(GitHub no-reply 메일)으로, 파일을 하나씩 명시한다. `git add -A` 금지. 커밋 메시지는 한국어 conventional commit. 구현자 커밋 꼬리는 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`(Sonnet 구현자는 `Claude Sonnet 5.5`).
@@ -101,7 +101,7 @@
 - [ ] **Step 3: 데크 4장**(`fc-`, `'first-call-cards'` 엔트리. 마크업은 `demo-nl-audience-cards.html` 을 복사해 바꾼다).
 - [ ] **Step 4: 글 본문** — 도입은 지훈 씨가 19주째 월요일에 노트북의 공개 모델에 첫 요청을 보내는 장면(자연어 오디언스 편을 한 문장으로 잇는다).
 - [ ] **Step 5: 출력을 뽑아 붙인다** — `--show` 뒤 두 번 통과. 상수 검사 통과.
-- [ ] **Step 6: 엔트리와 검사 전부** — excerpt, worldNote, worldPractical 문장 80자 이하. 글머리표와 참고문헌은 손으로 잰다.
+- [ ] **Step 6: 엔트리와 검사 전부** — excerpt, worldNote, worldPractical 문장 80자 이하. 글머리표와 참고문헌은 손으로 측정한다.
 - [ ] **Step 7: 커밋** — 글, posts.js, 데크 둘, demo-edu-content.js, 프롬프트, 기록. `feat(posts): LLM 호출 한 번 — 프롬프트가 토큰이 되고 답이 돌아오는 길. LLM 기초 트랙 첫째 글`.
 
 ---
@@ -204,7 +204,7 @@
 
 데크(`ev-`, 4장): `vector` 문장 하나가 384개 숫자가 되는 그림 / `cosine` 두 벡터의 각도 / `bruteforce` 3,000건 전수 / `ann` 해시 묶음만 보는 근사 검색과 재현율.
 
-절: 1 문장이 숫자 384개가 됩니다(파이썬 1, 카드 vector) / 2 가까움은 코사인으로 잽니다(표, 카드 cosine) / 3 전수 검색은 3,000 × 384 번 곱합니다(파이썬 2 이어서, 카드 bruteforce) / 4 근사 검색은 일부만 보고 조금 놓칩니다(파이썬 3 이어서, 카드 ann) / 5 임베딩이 광고에서 쓰이는 자리(표: 후보 검색, Lookalike, RAG, 유저 벡터) / 6 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(임베딩 차원 수와 품질, 코사인과 내적, 재현율은 누락이지 품질이 아니다) / 더 깊이 보기(해시 임베딩 식, HNSW 한 문단) / 참고문헌(Sentence-BERT arXiv 1908.10084, HNSW arXiv 1603.09320, Faiss arXiv 2401.08281).
+절: 1 문장이 숫자 384개가 됩니다(파이썬 1, 카드 vector) / 2 가까움은 코사인으로 측정합니다(표, 카드 cosine) / 3 전수 검색은 3,000 × 384 번 곱합니다(파이썬 2 이어서, 카드 bruteforce) / 4 근사 검색은 일부만 보고 조금 놓칩니다(파이썬 3 이어서, 카드 ann) / 5 임베딩이 광고에서 쓰이는 자리(표: 후보 검색, Lookalike, RAG, 유저 벡터) / 6 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(임베딩 차원 수와 품질, 코사인과 내적, 재현율은 누락이지 품질이 아니다) / 더 깊이 보기(해시 임베딩 식, HNSW 한 문단) / 참고문헌(Sentence-BERT arXiv 1908.10084, HNSW arXiv 1603.09320, Faiss arXiv 2401.08281).
 
 - [ ] Step 1 스캐폴드(`"LLM & Agents" "Embedding,LLM,입문"`, 11-14) → Step 2 데크(`ev-`, `'embedding-cards'`) → Step 3 글 본문(블록 셋 이어서) → Step 4 출력 두 번 통과(재현율@10 이 세 질의에서 찍히고 1.0 이 아닌 것이 하나는 있어야 「조금 놓친다」가 성립. 전부 1.0 이면 테이블 수를 4 로 줄여 다시) → Step 5 엔트리와 검사 전부 → Step 6 커밋 `feat(posts): 임베딩과 벡터 검색 — 문장 하나가 384개 숫자가 되고 이웃을 찾기까지`.
 
@@ -271,7 +271,7 @@
 
 절: 1 사람이 50쌍을 다 볼 수 없어 모델에게 채점표를 줍니다(표, 카드 rubric) / 2 채점 50건과 사람 라벨(파이썬 1 기록 상수, 카드 score) / 3 일치율이 아니라 kappa 로 봅니다(파이썬 2 이어서, 카드 kappa) / 4 순서를 바꾸면 승자가 바뀌는 쌍(파이썬 3 기록 상수 둘째, 카드 swap) / 5 판정을 어디에 쓰고 어디에 못 쓰나(표: 오프라인 비교, 노출 전 게이트, 학습 보상) / 6 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(절대 점수와 짝비교, kappa 가 0.4 면 무엇인가, 판정 모델을 학습 중에 바꾸면 안 되는 이유는 묶음 4 로) / 더 깊이 보기(kappa 식, 채점표 전문) / 참고문헌(Zheng et al. Judging LLM-as-a-Judge arXiv 2306.05685, Wang et al. Large Language Models are not Fair Evaluators arXiv 2305.17926, Cohen 1960 kappa).
 
-- [ ] Step 1 스캐폴드(`"LLM & Agents" "LLM Evaluation,LLM"`, 11-17) → Step 2 생성기(쌍 50개, 사람 라벨, 짝비교 20쌍의 좌우 두 벌)와 프롬프트 파일 둘 → Step 3 기록 둘(50 + 40, error 0, 한글 0자) → Step 4 데크(`jd-`, `'judge-cards'`) → Step 5 글 본문(블록 셋, 블록 1 과 3 이 기록 상수) → Step 6 출력 두 번 통과, 상수 검사(한 글에 기록 둘) → Step 7 엔트리와 검사 전부 → Step 8 커밋 `feat(posts): LLM-as-a-Judge — 채점표로 채점하고 사람과 얼마나 맞는지 재기. 기록 90건`.
+- [ ] Step 1 스캐폴드(`"LLM & Agents" "LLM Evaluation,LLM"`, 11-17) → Step 2 생성기(쌍 50개, 사람 라벨, 짝비교 20쌍의 좌우 두 벌)와 프롬프트 파일 둘 → Step 3 기록 둘(50 + 40, error 0, 한글 0자) → Step 4 데크(`jd-`, `'judge-cards'`) → Step 5 글 본문(블록 셋, 블록 1 과 3 이 기록 상수) → Step 6 출력 두 번 통과, 상수 검사(한 글에 기록 둘) → Step 7 엔트리와 검사 전부 → Step 8 커밋 `feat(posts): LLM-as-a-Judge — 채점표로 채점하고 사람과 얼마나 맞는지 측정. 기록 90건`.
 
 ---
 
@@ -318,6 +318,6 @@
 - [ ] **Step 2: 데모 목록** — `demos.html` 바로가기 줄에 `<a class="demos-jump-item" href="#demo-topic-llm">LLM 기초<b>10</b></a>` 을 「타겟팅 모델」 뒤에, 주제 절 `demo-topic-llm`(데크 9장 + 놀이터 1장, 설명 한 문단)을 「타겟팅 모델」 절 뒤에. 「난이도별 N개 데모」와 「주제별 N개, 주제 N개」를 10 과 1 늘리고, 로드맵은 짝 글의 「입문」 태그를 기준으로(입문 태그 글의 데크와 놀이터는 입문, 나머지는 중급) 배정해 합이 맞게 한다.
 - [ ] **Step 3: 용어 열** — `js/glossary.js` 끝에, 기존 항목과 겹치는 이름이 없는지 먼저 본다.
 - [ ] **Step 4: 표지와 README** — `index.html` 「글 123편 전체」, 태그별 여덟 수는 `node -e` 로 `posts.js` 의 tags 를 세어 모두 맞춘다. `README.md` 의 글 수, 카테고리 수(8), LLM 줄(영어).
-- [ ] **Step 5: 검사 전부** — Run: `node scripts/validate-posts.js && node scripts/check-content-standard.js llm-first-call llm-model-selection prompting-chain-of-thought structured-output embeddings-vector-search rag-basics tool-use-agent-loop llm-as-a-judge llm-cost-cache-nondeterminism && node scripts/check-wording.js && node scripts/check-code-blocks.js && for s in llm-first-call llm-model-selection prompting-chain-of-thought structured-output embeddings-vector-search rag-basics tool-use-agent-loop llm-as-a-judge llm-cost-cache-nondeterminism; do python3 scripts/check-python-outputs.py --post $s || exit 1; done && python3 scripts/check-llm-constants.py && python3 scripts/test-llm-record.py && python3 scripts/gen-llm-problems.py --check && python3 scripts/gen-rag-docs.py --check && python3 scripts/gen-judge-pairs.py --check && node scripts/test-long-sentences.js && node scripts/check-design.js && node scripts/test-code-steps.js && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html; echo "names grep exit=$?"` Expected: 전부 통과, 마지막 grep 은 출력 없이 `exit=1`. 아홉 글의 글머리표와 참고문헌 줄을 손으로 재어 80자 초과가 원제뿐인지 본다. 기록 여섯 벌의 outputs 에 한글이 0자인지 `python3 -c` 로 센다.
+- [ ] **Step 5: 검사 전부** — Run: `node scripts/validate-posts.js && node scripts/check-content-standard.js llm-first-call llm-model-selection prompting-chain-of-thought structured-output embeddings-vector-search rag-basics tool-use-agent-loop llm-as-a-judge llm-cost-cache-nondeterminism && node scripts/check-wording.js && node scripts/check-code-blocks.js && for s in llm-first-call llm-model-selection prompting-chain-of-thought structured-output embeddings-vector-search rag-basics tool-use-agent-loop llm-as-a-judge llm-cost-cache-nondeterminism; do python3 scripts/check-python-outputs.py --post $s || exit 1; done && python3 scripts/check-llm-constants.py && python3 scripts/test-llm-record.py && python3 scripts/gen-llm-problems.py --check && python3 scripts/gen-rag-docs.py --check && python3 scripts/gen-judge-pairs.py --check && node scripts/test-long-sentences.js && node scripts/check-design.js && node scripts/test-code-steps.js && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ *.html; echo "names grep exit=$?"` Expected: 전부 통과, 마지막 grep 은 출력 없이 `exit=1`. 아홉 글의 글머리표와 참고문헌 줄을 손으로 측정해 80자 초과가 원제뿐인지 본다. 기록 여섯 벌의 outputs 에 한글이 0자인지 `python3 -c` 로 센다.
 - [ ] **Step 6: 화면 확인** — 헤드리스 크롬으로 글 9편을 1440 과 390 폭으로(카드 iframe 로드, 가로 스크롤 없음), 데크 9장과 놀이터를 라이트와 다크로, `demos.html`, `topics.html`(LLM 주제와 트랙), `ml-track.html`(6단계 아홉 편), `index.html`, `posts-browse.html?category=LLM%20%26%20Agents`(새 카테고리 칩 색) 를 찍는다. 스크린샷은 저장소 밖 작업 폴더에.
 - [ ] **Step 7: 커밋** — 파일 여덟을 이름으로. `feat(demos): LLM 비용 놀이터와 LLM 기초 데모 절, 용어 열, 표지 123편`. 병합과 push 는 컨트롤러가 브랜치 전체 검토 뒤에 한다(이번 묶음은 사용자가 2026-11-04 밤 미리 승인했다).

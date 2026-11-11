@@ -355,7 +355,7 @@
         `<div class="cb-out-cols"><span>단계</span><span>찍힌 줄</span><span>뜻</span></div>${groups}</div>`;
     }
     return `<div class="cb${nosteps ? ' cb-nosteps' : ''}" data-src="${esc(m.src)}">` +
-      // 글자 폭을 재는 숨은 글자. 크기 0 인 상자 안에 둬서 페이지 폭을 늘리지 않는다.
+      // 글자 폭을 측정하는 숨은 글자. 크기 0 인 상자 안에 둬서 페이지 폭을 늘리지 않는다.
       `<span class="cb-probes" aria-hidden="true"><span class="cb-probe">${'0'.repeat(100)}</span>` +
       `<span class="cb-probe cb-probe-w">${'가'.repeat(100)}</span></span>` +
       // 상태 표시 줄은 0번부터, 하는 일 줄은 그 바로 다음이다.

@@ -56,7 +56,7 @@
                     t: 0, title: 'API 에 보냅니다', sub: 'POST /events',
                     body: `<div>요청 본문</div>${pretty({ user_id: ev.user_id, video_id: ev.video_id, action: ev.action, ts: ev.ts })}` +
                         `<p>API 가 Kafka 에 넣고 돌려준 답은 partition <b>${s.partition}</b>, offset <b>${s.offset}</b> 입니다. ` +
-                        `브로커가 받았다고 답하기까지 <b>${fmtMs(s.produce_ms)}</b>, 보내는 쪽에서 잰 왕복은 ${fmtMs(s.rtt_ms)} 였습니다.</p>` +
+                        `브로커가 받았다고 답하기까지 <b>${fmtMs(s.produce_ms)}</b>, 보내는 쪽에서 측정한 왕복은 ${fmtMs(s.rtt_ms)} 였습니다.</p>` +
                         `<p>API 가 붙인 event_id 는 <code>${esc(ev.event_id)}</code> 입니다. 같은 번호가 또 오면 처리기가 중복으로 버립니다.</p>`
                 },
                 {
@@ -87,7 +87,7 @@
                 },
                 {
                     t: t.api, title: 'API 로 읽으면 그 값이 옵니다', sub: `GET /features/${esc(ev.user_id)}/${esc(ev.video_id)}`,
-                    body: `${pretty(f.response)}<p>API 는 위 Hash 를 읽어 숫자로 바꿔 돌려줍니다. 보내는 쪽에서 잰 왕복은 ${fmtMs(f.ms)}, ` +
+                    body: `${pretty(f.response)}<p>API 는 위 Hash 를 읽어 숫자로 바꿔 돌려줍니다. 보내는 쪽에서 측정한 왕복은 ${fmtMs(f.ms)}, ` +
                         `그중 Redis 를 읽은 시간은 ${fmtMs(f.response.redis_ms)} 입니다.</p>`
                 }
             ];

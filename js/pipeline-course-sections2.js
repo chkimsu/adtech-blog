@@ -163,7 +163,7 @@
 
   // 비용이 갈리는 축 — 잡이 몇 시간 떠 있나. stream 의 jobHours(24) 와
   // batch 의 dawnMinutes(20) 를 대비한다. 둘 다 model.js 에 구조 상수로
-  // 주석이 달려 있다 — post 가 잰 시간이 아니라 "상시로 떠 있어야 하는 것"
+  // 주석이 달려 있다 — post 가 측정한 시간이 아니라 "상시로 떠 있어야 하는 것"
   // 대 "하루 한 번 잠깐 도는 것"의 성격을 보여 주는 예시 값이다.
   function buildCostAxis() {
     const stream = M.READ_MODES.filter(function (m) { return m.key === 'stream'; })[0];
@@ -297,7 +297,7 @@
   // 1.00% 를 만들 수 없으니 이 문장은 표본 얘기를 하지 않고 실제 값만 말한다.
   function buildCtrReal() {
     $('plc-ctr-real').textContent =
-      '표본 여섯 줄로는 비율을 못 만듭니다. 실제 비율은 하루치로 재야 나오고 그 값이 ' +
+      '표본 여섯 줄로는 비율을 못 만듭니다. 실제 비율은 하루치로 측정해야 나오고 그 값이 ' +
       CD.val.ctr + '입니다 (' + CD.val.ctrClicks + ' 나누기 ' + CD.val.ctrImpressions + ').';
   }
 

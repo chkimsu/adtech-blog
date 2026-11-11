@@ -288,7 +288,7 @@ AUC 는 오히려 올랐는데 COPC 가 1.06 입니다. 모델이 클릭률을 �
 - [데이터 엔지니어 첫 6개월](post.html?id=data-engineer-first-six-months) — 신입이 첫 달에 만드는 것이 수급 DAG 한 장입니다. 스케줄러와 DAG 가 저장소에서 어떻게 생겼는지 봅니다.
 - [데이터 파이프라인 설계](post.html?id=data-pipeline-design) — 로그 파이프라인의 30일 백필이 9.5시간인 계산과, 처리 코드가 바깥 값을 읽으면 다시 돌린 결과가 달라지는 함정.
 - [Online Learning 과 지연 피드백](post.html?id=online-learning-delayed-feedback) — 전환이 라벨일 때 얼마나 기다려야 하나. 1일 80.7%, 7일 97.2%.
-- [Calibration](post.html?id=calibration) — 게이트의 COPC 가 무엇을 재고 왜 돈과 이어지나.
+- [Calibration](post.html?id=calibration) — 게이트의 COPC 가 무엇을 측정하고 왜 돈과 이어지나.
 - [모델 모니터링](post.html?id=model-monitoring) — 게이트를 지난 뒤에 조용히 나빠지는 것을 어떻게 알아채나.
 - [학습 파이프라인 카드 다섯 장](demo-pipeline-cards.html) — 이 글의 카드 전체. 카드를 누르면 헷갈리는 것 하나가 더 나옵니다.
 - 다음 편 [모델 버전과 재현](post.html?id=model-versioning-reproducibility) — 지훈 씨의 둘째 주. 지난주 모델을 오늘 똑같이 다시 만들 수 있나.

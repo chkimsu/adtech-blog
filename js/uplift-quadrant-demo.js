@@ -373,7 +373,7 @@
     $(pre + '-cpa').textContent = report > 0.5 ? won(spend / report) : '—';
     const icell = $(pre + '-icpa');
     if (inc > 0.5) { icell.textContent = won(spend / inc); icell.classList.remove('is-bad'); }
-    else { icell.textContent = '잴 수 없음'; icell.classList.add('is-bad'); }
+    else { icell.textContent = '측정할 수 없음'; icell.classList.add('is-bad'); }
     return { reach: reach, spend: spend, report: report, inc: inc };
   }
 
@@ -403,7 +403,7 @@
     $('uq-inc-total').textContent = comma(pop.sumTau * RATIO) + '건';
     $('uq-report-total').textContent = comma(pop.sumP1 * RATIO) + '건';
     $('uq-icpa-total').textContent = pop.sumTau > 0
-      ? won(N * RATIO * COST / (pop.sumTau * RATIO)) : '잴 수 없음';
+      ? won(N * RATIO * COST / (pop.sumTau * RATIO)) : '측정할 수 없음';
 
     const k = Math.max(1, Math.round(N * budget));
     $('uq-spend').textContent = comma(k * RATIO) + '명, 광고비 ' + won(k * RATIO * COST);

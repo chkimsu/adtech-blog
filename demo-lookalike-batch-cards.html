@@ -34,7 +34,7 @@
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 러닝 성향 (시드와 중심 벡터도 여기서 나옵니다)</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 러닝 성향이 아닌 회원</span>
-        <span class="tg-chip"><i class="c"></i>회색 = 거리를 잰 횟수</span>
+        <span class="tg-chip"><i class="c"></i>회색 = 거리를 측정한 횟수</span>
         <span class="tg-chip"><i class="n lb-n"></i>점선 = 앞 글에 적힌 8만 명 평균</span>
       </div>
     </section>
@@ -44,10 +44,10 @@
     <div class="tg-grid">
       <section class="tg-card" data-card="seed"><h2>SEED LIST</h2><p class="tg-k">시드 114명의 평균 넷을 앞 글의 8만 명 평균 옆에</p><p class="tg-easy"><b>쉽게 말하면</b> 서연 씨가 건넨 러닝화 구매자 목록을 표본에 옮긴 것이 시드 114명입니다. 그 목록은 「우수 고객」이 대부분이라, 30일 동안 러닝 글과 운동 앱 기록이 많은 구매자를 골랐습니다. 순위를 매길 기준은 이 사람들의 평균에서 나옵니다.</p><div class="tg-fig" id="lb-seed"></div>
         <p class="tg-cap">러닝 글은 <b>8.98회</b>로 8만 명 평균 12회의 4분의 3 수준이고, 운동 앱은 <b>7.84일</b>로 8일과 거의 같습니다. 둘 다 가상 값입니다.</p></section>
-      <section class="tg-card" data-card="centroid"><h2>CENTROID</h2><p class="tg-k">중심 벡터 하나와 회원마다 코사인 하나</p><p class="tg-easy"><b>쉽게 말하면</b> 시드 114명의 벡터를 평균해 화살표 하나로 만듭니다. 회원마다 그 화살표와 방향이 얼마나 같은지를 재서, 같은 쪽을 보는 회원부터 순위를 매깁니다.</p><div class="tg-fig" id="lb-centroid"></div>
+      <section class="tg-card" data-card="centroid"><h2>CENTROID</h2><p class="tg-k">중심 벡터 하나와 회원마다 코사인 하나</p><p class="tg-easy"><b>쉽게 말하면</b> 시드 114명의 벡터를 평균해 화살표 하나로 만듭니다. 회원마다 그 화살표와 방향이 얼마나 같은지를 측정해서, 같은 쪽을 보는 회원부터 순위를 매깁니다.</p><div class="tg-fig" id="lb-centroid"></div>
         <p class="tg-cap">중심 벡터는 러닝 글 <b>3.53</b>, 운동 앱 <b>3.18</b>, 운동 용품 <b>3.09</b> 가 비슷하게 큽니다. 회원 A 의 코사인은 <b>0.744</b> 로 162번째입니다.</p></section>
-      <section class="tg-card" data-card="search"><h2>SEARCH</h2><p class="tg-k">모두와 잴지, 중심 근처의 버킷만 잴지</p><p class="tg-easy"><b>쉽게 말하면</b> 회원 벡터를 비트 6개짜리 버킷 번호로 미리 나눠 두고, 중심 벡터와 번호가 같은 버킷만 잽니다. 재는 수가 줄어드는 대신 가까운 사람을 놓칠 수 있습니다.</p><div class="tg-fig" id="lb-search"></div>
-        <p class="tg-cap">버킷 하나만 재면 거리 계산이 <b>2,678번</b>이고 전수 상위 2,000명 중 <b>0.383</b> 을 찾습니다. 이웃 버킷까지 보면 <b>9,955번</b>에 <b>0.782</b> 입니다.</p></section>
+      <section class="tg-card" data-card="search"><h2>SEARCH</h2><p class="tg-k">모두와 측정할지, 중심 근처의 버킷만 측정할지</p><p class="tg-easy"><b>쉽게 말하면</b> 회원 벡터를 비트 6개짜리 버킷 번호로 미리 나눠 두고, 중심 벡터와 번호가 같은 버킷만 측정합니다. 측정하는 수가 줄어드는 대신 가까운 사람을 놓칠 수 있습니다.</p><div class="tg-fig" id="lb-search"></div>
+        <p class="tg-cap">버킷 하나만 측정하면 거리 계산이 <b>2,678번</b>이고 전수 상위 2,000명 중 <b>0.383</b> 을 찾습니다. 이웃 버킷까지 보면 <b>9,955번</b>에 <b>0.782</b> 입니다.</p></section>
       <section class="tg-card" data-card="cut"><h2>CUT</h2><p class="tg-k">순위 목록의 앞 1, 5, 10% 와 그 안의 러닝 성향</p><p class="tg-easy"><b>쉽게 말하면</b> 순위 목록의 앞에서 몇 명까지 가져올지가 확장 비율입니다. 넓게 자를수록 도달은 늘고, 시드와 덜 닮은 사람이 섞입니다.</p><div class="tg-fig" id="lb-cut"></div>
         <p class="tg-cap">정밀도는 1% 에서 <b>0.985</b>, 5% 에서 <b>0.793</b>, 10% 에서 <b>0.709</b> 입니다. 10% 는 1,400만 명이면 <b>140만 명</b>이고 번호 6001 이 붙습니다.</p></section>
     </div>

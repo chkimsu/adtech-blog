@@ -133,7 +133,7 @@ print(f'슬라이딩 윈도우 {2*n:>13,}번  {sec(2*n)}')
 
 인접 리스트는 노드마다 이웃 목록을 들고 있는 그래프 표현이고, 지문이 `(A, B)` 쌍으로 관계를 주면 이것을 먼저 만듭니다. 이 글의 예제는 날짜 순서대로 들어온 숫자를 인덱스로 읽기만 하므로 배열(`list`) 하나면 되고, 따로 만들 자료구조가 없습니다.
 
-자료구조마다 직접 시간을 재 본 비교는 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편과 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에 있고, 힙은 [트리와 힙](post.html?id=algorithm-tree-heap) 편에 있습니다.
+자료구조마다 직접 시간을 측정해 본 비교는 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편과 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에 있고, 힙은 [트리와 힙](post.html?id=algorithm-tree-heap) 편에 있습니다.
 
 ## 5. 접근 방법: 지문 신호와 풀이
 
@@ -353,7 +353,7 @@ print(f'트리 값의 합 {total(root)}')
 - UMPIRE 여섯 단계의 원문과 예제는 CodePath 의 [UMPIRE Interview Strategy](https://guides.codepath.org/compsci/UMPIRE-Interview-Strategy) 에 있습니다.
 - Python 자료구조별 연산 복잡도는 Python Wiki 의 [TimeComplexity](https://wiki.python.org/moin/TimeComplexity) 표에 있습니다.
 - 표준 라이브러리 문서는 [heapq](https://docs.python.org/3/library/heapq.html), [bisect](https://docs.python.org/3/library/bisect.html), [collections](https://docs.python.org/3/library/collections.html) 입니다.
-- 투 포인터와 슬라이딩 윈도우를 직접 재 본 글은 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편이고, 도구별 템플릿은 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편에 있습니다.
+- 투 포인터와 슬라이딩 윈도우를 직접 측정해 본 글은 [복잡도와 배열 순회](post.html?id=algorithm-complexity-array) 편이고, 도구별 템플릿은 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편에 있습니다.
 - 그리디와 DP 를 언제 고르는지는 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편, BFS 와 DFS 는 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다.
 - 요구가 하나씩 늘어나는 로그 집계 문제와 LRU 캐시 같은 작은 클래스를 직접 짜 보는 글은 [실무형 라이브 코딩](post.html?id=algorithm-practical-live-coding) 편입니다.
 - 이 다섯 단계를 면접관에게 소리 내어 말하는 순서와 영어 표현은 [말하며 풀기](post.html?id=algorithm-think-aloud) 편에 있습니다.

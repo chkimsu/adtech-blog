@@ -195,7 +195,7 @@ def m2(name, base, sens, it):
 def m3(name, base, sens, it):
     return true_cvr(base, sens, it)
 
-# 4단계: 개별 수준과 유형별 평균 오차를 재는 함수를 만든다
+# 4단계: 개별 수준과 유형별 평균 오차를 측정하는 함수를 만든다
 def errors(fn):
     """개별 수준 평균 절대오차와, 유형별 평균 오차를 함께 낸다."""
     ind = 0.0

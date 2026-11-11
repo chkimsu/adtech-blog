@@ -91,7 +91,7 @@
         const S = 'cx-embedding'; if (!has(S)) return; let s = '';
         s += T(40, 22, '지면 p014 의 벡터와 카테고리 중심 둘. 지면과 각 중심 사이의 각도만 맞춰 그렸습니다', 'lbl sm');
         // 원점에서 지면 벡터는 10도에 두고, 두 중심은 같은 쪽으로 지면에서 68도와 77도에 둔다.
-        // TF-IDF 벡터는 값이 모두 0 이상이라 어느 둘도 90도를 넘지 않는다. 두 중심 사이의 각도는 재지 않았다
+        // TF-IDF 벡터는 값이 모두 0 이상이라 어느 둘도 90도를 넘지 않는다. 두 중심 사이의 각도는 측정하지 않았다
         const ox = 92, oy = 250, len = 170, rad = d => d * Math.PI / 180;
         const at = (d, r) => [ox + r * Math.cos(rad(d)), oy - r * Math.sin(rad(d))];
         const ray = (id, d, cls) => {

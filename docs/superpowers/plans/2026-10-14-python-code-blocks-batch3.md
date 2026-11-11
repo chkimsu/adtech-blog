@@ -56,7 +56,7 @@
 | 넘긴 것 가운데 긴 글 배치 묶기와 글을 건너 잇는 사슬은 하지 않는다 | deep-ctr-models 와 feedback-loop-remedies 가 이 묶음에 없다 | 그 글이 든 묶음 계획이 맡는다 |
 | 검사와 화면 고침, 글쓰기 규칙은 태스크마다 커밋한다. 글 옮기기 커밋(Task 6, 7 과 리뷰 고침)은 올리기 직전에 하나로 합친다 | 둘째 묶음과 같다. 글 커밋 머리는 `feat(posts): 모델 운영 글 —` 와 `fix(posts): 모델 운영 글 —` 다 | 합치기를 건너뛰고 그대로 올린다 |
 | push 는 사용자가 `! git push origin main` 으로 한다 | 첫째, 둘째 묶음에서 자동 권한 검사가 `git push` 를 막았다 | 사용자에게 부탁하는 줄 하나 |
-| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 잰다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다 | 도구만 바뀐다 |
+| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 측정한다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다 | 도구만 바뀐다 |
 
 ## 파일 지도
 
@@ -1254,7 +1254,7 @@ Expected: `1`, 그다음 `✗ 글자 칸에 포커스가 있으면 복사 처리
 Run: `python3 -c "print(open('js/main.js','rb').read().count(b'\x00'))"`
 Expected: `4`
 
-- [ ] **Step 5: 고치기 전 숫자 줄바꿈을 잰다**
+- [ ] **Step 5: 고치기 전 숫자 줄바꿈을 측정한다**
 
 서버 파일은 아래 내용이다.
 
@@ -1344,7 +1344,7 @@ async () => {
 }
 ````
 
-Expected (계획을 쓸 때 잰 값): `{"posts":108,"numbers":1048,"overflow":[],"broken":["pipeline-push-and-pull:1","api-basics:2","log-hops-to-kafka:1"]}`. `broken` 은 글꼴에 따라 조금 다를 수 있다. 보고서에 그대로 적는다.
+Expected (계획을 쓸 때 측정한 값): `{"posts":108,"numbers":1048,"overflow":[],"broken":["pipeline-push-and-pull:1","api-basics:2","log-hops-to-kafka:1"]}`. `broken` 은 글꼴에 따라 조금 다를 수 있다. 보고서에 그대로 적는다.
 
 - [ ] **Step 6: CSS 를 고친다**
 
@@ -1366,7 +1366,7 @@ Expected (계획을 쓸 때 잰 값): `{"posts":108,"numbers":1048,"overflow":[]
 pre.cb-wrap .hljs-number { white-space: nowrap; }
 ````
 
-- [ ] **Step 7: 고친 뒤 다시 잰다**
+- [ ] **Step 7: 고친 뒤 다시 측정한다**
 
 같은 함수를 새 캐시로 다시 돌린다.
 Expected: `{"posts":108,"numbers":1048,"overflow":[],"broken":[]}` — `overflow` 와 `broken` 이 둘 다 비어 있어야 한다. 서버를 끈다.
@@ -2064,7 +2064,7 @@ Expected: `기준표를 다시 적었습니다 — 옛 형식 블록 184개, 글
 
 - [ ] **Step 6: 첫 글을 화면으로 본다**
 
-서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch3"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8771`, 파일은 Step 1 이 뽑았다) `http://127.0.0.1:8771/post.html?id=bentoml-model-serving` 를 새 캐시로 연다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 잰다.
+서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch3"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8771`, 파일은 Step 1 이 뽑았다) `http://127.0.0.1:8771/post.html?id=bentoml-model-serving` 를 새 캐시로 연다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 측정한다.
 
 ````js
 async () => {
@@ -2138,7 +2138,7 @@ EOF
 - Consumes: `$SCRATCH/migrate_batch3.py`(Task 6 이 만든 것. Step 1 이 없으면 계획에서 다시 뽑는다), 이 계획 부록 2~9 의 새 블록 13개
 - Produces: 새 형식 블록 76개, 옛 형식 블록 171개(68편)
 
-시간을 재는 블록은 container-ci-pipeline 첫 블록 하나다(`# 출력 (시간은 돌릴 때마다 다르다):`). 상태 표시가 붙는 블록은 없다.
+시간을 측정하는 블록은 container-ci-pipeline 첫 블록 하나다(`# 출력 (시간은 돌릴 때마다 다르다):`). 상태 표시가 붙는 블록은 없다.
 
 - [ ] **Step 1: 도우미가 있는지 본다**
 
@@ -2287,7 +2287,7 @@ SCRATCH="${TMPDIR:-/tmp}/code-steps-batch3"; python3 -m venv --without-pip "$SCR
 
 Expected: `21 통과, 0 실패` 와 `✓ 통과 72, 건너뜀 4 (라이브러리 없음 3, 실행 안 됨 1), 실패 0` (bentoml 블록 2개와 two-tower 의 torch 블록 1개가 「없음」으로 건너뛴다)
 
-- [ ] **Step 2: 숫자로 재고 그림을 찍는다**
+- [ ] **Step 2: 숫자로 측정하고 그림을 찍는다**
 
 서버 파일이 있는지 보고, 없으면 계획에서 뽑는다(저장소 루트에서).
 

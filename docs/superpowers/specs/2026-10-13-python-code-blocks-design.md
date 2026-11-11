@@ -103,7 +103,7 @@
 
 - 블록 폭이 600px 이하이면 메모를 모두 줄 아래로 내립니다.
 
-- 줄 폭은 그 기기에서 그려진 폭으로 셉니다. 라틴 글자 100개와 한글 100개를 숨겨 두고 재서 한글 한 자가 라틴 글자 몇 개 폭인지 구합니다. 맥의 Chrome 에서는 1.44자 폭이었고 서체마다 다릅니다.
+- 줄 폭은 그 기기에서 그려진 폭으로 셉니다. 라틴 글자 100개와 한글 100개를 숨겨 두고 측정해서 한글 한 자가 라틴 글자 몇 개 폭인지 구합니다. 맥의 Chrome 에서는 1.44자 폭이었고 서체마다 다릅니다.
 
 ### 4-3. 줄 접기
 
@@ -140,13 +140,13 @@
 
 - 쌓임은 블록에 거는 container query 로 정합니다 (`container: cb / inline-size`). 화면 폭이 아니라 블록 폭을 봅니다.
 
-- 잰 글 칸 폭은 1440 화면 1053px(나란히), 1280 화면 893px(쌓임), 1024 화면 917px(쌓임, 사이드바 접힘)입니다.
+- 측정한 글 칸 폭은 1440 화면 1053px(나란히), 1280 화면 893px(쌓임), 1024 화면 917px(쌓임, 사이드바 접힘)입니다.
 
 - `.post-content` 에 `--post-pad` 를 두고 블록은 `margin-inline: calc(-1 * var(--post-pad))` 로 넓힙니다. `.post-content` 바로 아래 자식인 블록만 넓힙니다. 인용 안의 블록(git-practical-guide 의 2개)은 그대로 둡니다.
 
 - 접는 절(`:::deep`) 안의 블록은 접는 절 안쪽 끝까지 넓힙니다. 접는 절은 안의 것에 좌우 1.1rem 여백을 주는데, 블록에서만 그 여백을 뺍니다. 파이썬 블록 11개가 접는 절 안에 있고, 시안의 two-tower 블록도 그중 하나입니다. 1440 화면에서 그 블록 폭은 947px 이라 설명 칸과 코드가 나란히 섭니다.
 
-- 접힌 절 안의 블록은 처음 그릴 때 폭이 0 입니다. 펼치면 `ResizeObserver` 가 폭을 다시 재서 배치를 잡습니다.
+- 접힌 절 안의 블록은 처음 그릴 때 폭이 0 입니다. 펼치면 `ResizeObserver` 가 폭을 다시 측정해서 배치를 잡습니다.
 
 - 768px 이하에서는 `--post-pad` 를 24px 로 둡니다. 글 칸을 감싼 `.container` 의 좌우 여백을 0 으로 하고 글 칸의 좌우 테두리를 뺍니다. 그래서 글 칸이 화면을 채웁니다. 이 규칙은 스타일 파일 맨 끝 디자인 블록 뒤에 둬서 넓은 화면 값을 이기게 합니다.
 
@@ -198,7 +198,7 @@
 
 - 뜻 줄의 번호는 그 아래 줄들을 찍은 단계입니다. 첫 단계 앞의 코드가 찍은 줄은 번호 없이 `# 뜻:` 으로 씁니다. 단계 없는 블록의 뜻 줄에는 번호가 없습니다.
 
-- 출력 머리의 괄호 안 글에 「돌릴 때마다」가 들어가면 실행 검사가 숫자를 빼고 비교합니다. 시간을 재는 블록은 `# 출력 (시간은 돌릴 때마다 다르다):` 로 씁니다.
+- 출력 머리의 괄호 안 글에 「돌릴 때마다」가 들어가면 실행 검사가 숫자를 빼고 비교합니다. 시간을 측정하는 블록은 `# 출력 (시간은 돌릴 때마다 다르다):` 로 씁니다.
 
 - 찍힌 줄 가운데 `[` 로 시작하는 줄이 45줄(`[A/B] 소재A: …`) 있고, `←` 나 `<-` 가 든 줄이 16줄 있습니다. 그래서 뜻 줄은 기호가 아니라 「뜻」이라는 낱말로 알아봅니다. 찍힌 줄 가운데 「N단계」나 「뜻」으로 시작하는 줄은 지금 없습니다.
 
@@ -219,7 +219,7 @@
 시안의 two-tower 블록을 이 방식으로 쓴 것입니다. 가운데는 줄였습니다.
 
 ```python
-# 하는 일: 가짜 광고 200개로 두 타워를 300번 학습하고, 학습에 안 쓴 클릭 2,000건으로 Recall@10 을 잰다.
+# 하는 일: 가짜 광고 200개로 두 타워를 300번 학습하고, 학습에 안 쓴 클릭 2,000건으로 Recall@10 을 측정한다.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -250,7 +250,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 - 블록 안의 글(하는 일, 단계 제목, 풀이, 메모, 뜻)은 지금 주석처럼 평서체(`~한다`, `~이다`)로 씁니다. 상태 표시는 5-2 의 글 그대로 씁니다.
 
-- 하는 일은 무엇을 얼마나 해서 무엇을 재는지 한 문장으로 씁니다.
+- 하는 일은 무엇을 얼마나 해서 무엇을 측정하는지 한 문장으로 씁니다.
 
 - 단계 제목은 `가짜 광고 200개를 만든다` 처럼 동사로 끝나는 짧은 말로 씁니다. 풀이는 이 단계가 왜 있는지, 무엇을 보면 되는지 한두 문장입니다.
 
@@ -271,7 +271,7 @@ member_tower, ad_tower = Tower(), Tower()
 | `scan(src)` | 파이썬 토크나이저. 줄마다 토큰 목록(주석, 문자열, 숫자, 키워드, 정의 이름, 내장 함수, 이름, 기호, 공백)을 돌려줍니다. 삼중 따옴표 문자열과 백슬래시 줄 이음 상태를 다음 줄로 넘깁니다. 문자열 접두사(r, b, f, u 와 그 조합)와 이스케이프를 다룹니다. f-string 안의 중괄호는 문자열로 둡니다 |
 | `parse(src)` | 5장 규칙으로 블록을 읽어 `{ format, ok, errors, labels, head, pre, steps, out }` 을 돌려줍니다. 하는 일 줄이 없으면 `format: 'legacy'` 입니다. `errors` 는 `{ line, msg }` 목록입니다 |
 | `render(model, src)` | 블록 HTML 문자열을 만듭니다. 원문은 블록의 `data-src` 에 HTML 이스케이프해 넣습니다. 코드 줄마다 들여쓰기(`--ind`), 라틴 글자 수와 넓은 글자 수, 메모를 붙입니다 |
-| `mount(root)` | root 안의 블록마다 줄 폭을 재서 메모 자리, 메모 내리기, 접힘 막대, 출력 묶음 모양을 정합니다. 같은 번호 밝히기를 겁니다. `ResizeObserver` 와 `document.fonts.ready` 에서 다시 잽니다 |
+| `mount(root)` | root 안의 블록마다 줄 폭을 측정해서 메모 자리, 메모 내리기, 접힘 막대, 출력 묶음 모양을 정합니다. 같은 번호 밝히기를 겁니다. `ResizeObserver` 와 `document.fonts.ready` 에서 다시 측정합니다 |
 | `splitLines(html, raw)` | hljs 가 만든 HTML 을 줄마다 나눕니다. 줄 끝에서 열린 span 을 닫고 다음 줄 앞에서 다시 엽니다. 파이썬이 아닌 블록의 줄 접기에 씁니다 |
 
 - 브라우저에서는 `window.CodeSteps`, node 에서는 `module.exports` 로 내보냅니다. 검사 스크립트가 같은 파일을 읽어서 화면과 검사가 같은 규칙을 씁니다.
@@ -296,7 +296,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 - 본문의 용어 풀이(`autoLinkGlossary`)와 수식 렌더러(KaTeX auto-render)는 `<pre>` 와 `<code>` 만 건너뜁니다. 새 블록은 `div` 로 그리므로 둘 다 `.cb` 를 건너뛰게 합니다. 파이썬 블록 5개에 `$` 가 있습니다.
 
-- 글자 폭을 재는 숨은 글자(라틴 100자, 한글 100자)는 크기 0 인 상자 안에 둡니다. 한글 100자는 1,200px 이 넘어서, 그냥 두면 페이지가 옆으로 넘칩니다.
+- 글자 폭을 측정하는 숨은 글자(라틴 100자, 한글 100자)는 크기 0 인 상자 안에 둡니다. 한글 100자는 1,200px 이 넘어서, 그냥 두면 페이지가 옆으로 넘칩니다.
 
 > `js/main.js` 에는 NUL 바이트가 있습니다. 찾을 때는 `grep -a` 를 쓰고, 고칠 때는 파일을 통째로 다시 쓰지 않습니다.
 
@@ -360,7 +360,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 - import 할 수 없는 라이브러리(`ModuleNotFoundError`)가 나오면 「건너뜀(라이브러리 없음)」으로 알리고 실패로 치지 않습니다. 그 밖의 예외, 120초 넘김, 비교가 틀리면 실패입니다.
 
-- `PYTHONHASHSEED=0` 으로 돌립니다. 247개를 시드 0 과 1 로 두 번씩 돌려 보니, 시간을 재는 8개 말고는 출력이 같았습니다.
+- `PYTHONHASHSEED=0` 으로 돌립니다. 247개를 시드 0 과 1 로 두 번씩 돌려 보니, 시간을 측정하는 8개 말고는 출력이 같았습니다.
 
 - 끝에 `통과 N, 건너뜀 N(라이브러리 없음 N, 실행 안 됨 N), 실패 N` 을 찍습니다. 기본은 4개씩 동시에 돌리고, `--jobs` 로 바꿉니다.
 
@@ -409,7 +409,7 @@ member_tower, ad_tower = Tower(), Tower()
 | 돌려 본 결과 | 블록 | 옮길 때 |
 |---|---|---|
 | 적힌 출력과 똑같다 | 200 (블록 안 154, 별도 블록 46) | 하는 일, 단계, 뜻을 더합니다. 공백만 다른 2개(ecpm-ranking, instrumental-variables)는 찍힌 그대로 고칩니다 |
-| 시간을 재서 돌릴 때마다 숫자가 다르다 | 9 | 출력 머리에 「시간은 돌릴 때마다 다르다」를 씁니다. algorithm-binary-search-stack 1, algorithm-complexity-array 2, algorithm-dp-greedy 2, algorithm-hash-sort 2, algorithm-tree-heap 1, container-ci-pipeline 1 |
+| 시간을 측정해서 돌릴 때마다 숫자가 다르다 | 9 | 출력 머리에 「시간은 돌릴 때마다 다르다」를 씁니다. algorithm-binary-search-stack 1, algorithm-complexity-array 2, algorithm-dp-greedy 2, algorithm-hash-sort 2, algorithm-tree-heap 1, container-ci-pipeline 1 |
 | 앞 블록에 이어서 돌려야 돈다 | 14 | 상태 표시를 붙입니다. 같은 글 12개(algorithm-graph-search 2, algorithm-tree-heap 4, bentoml-model-serving 1, feedback-loop-bias 2, negative-sampling-bias 1, offpolicy-evaluation 2), 앞 글 2개(feedback-loop-remedies, feedback-loop-bias 에 이어서) |
 | 적힌 출력과 다르다 | 3 | 다시 돌려 고칩니다. 아래 표 |
 | 의사코드이거나 여기서 돌릴 수 없다 | 11 | 의사코드 6, 없는 라이브러리 3(ad-log-pipeline 의 pyspark 2, data-engineer-first-six-months 1), 코드 조각 1(bentoml-model-serving), 없는 파일 1(audience-segmentation). 조각과 없는 파일에는 「그대로 실행되지 않습니다」 표시를 붙입니다 |
@@ -417,7 +417,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 적힌 출력과 다른 3개입니다.
 
-> container-ci-pipeline 첫 블록은 처음에 0줄로 나왔습니다. unittest 가 stderr 에 쓰기 때문이었습니다. stderr 를 같이 모으고 블록을 진짜 `__main__` 모듈로 돌리니 적힌 출력과 같았습니다. 걸린 시간 줄(`Ran 3 tests in 0.000s`)이 있어서 시간을 재는 블록에 넣었습니다.
+> container-ci-pipeline 첫 블록은 처음에 0줄로 나왔습니다. unittest 가 stderr 에 쓰기 때문이었습니다. stderr 를 같이 모으고 블록을 진짜 `__main__` 모듈로 돌리니 적힌 출력과 같았습니다. 걸린 시간 줄(`Ran 3 tests in 0.000s`)이 있어서 시간을 측정하는 블록에 넣었습니다.
 
 | 블록 | 다른 점 | 할 일 |
 |---|---|---|
@@ -429,7 +429,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 | 묶음 | 무엇 | 끝나는 조건 |
 |---|---|---|
-| 첫 묶음 | `js/code-steps.js`, `js/main.js`, `post.html`, `css/style.css`(블록과 휴대폰 여백), 검사 둘과 단위 테스트, CI, 글쓰기 규칙 문서. 글 3편 — two-tower-training(시안의 블록, torch), algorithm-complexity-array(시간 재는 블록), offpolicy-evaluation(앞 블록에 이어서) | 검사 통과, 7-4 화면 확인, 사용자 확인 |
+| 첫 묶음 | `js/code-steps.js`, `js/main.js`, `post.html`, `css/style.css`(블록과 휴대폰 여백), 검사 둘과 단위 테스트, CI, 글쓰기 규칙 문서. 글 3편 — two-tower-training(시안의 블록, torch), algorithm-complexity-array(시간 측정하는 블록), offpolicy-evaluation(앞 블록에 이어서) | 검사 통과, 7-4 화면 확인, 사용자 확인 |
 | 둘째부터 | 나머지 82편을 10편 안팎씩. 같은 트랙끼리 묶습니다. 알고리즘 글은 별도 출력 블록이 많아 한 묶음으로 둡니다 | 묶음마다 형식 검사, 로컬 실행 검사, 말투 검사, 디자인 검사 통과. 몇 편 화면 확인 |
 | 마지막 | 기준표를 비우고, 옛 형식 블록이 하나라도 있으면 실패하게 합니다 | 옛 형식 0개 |
 
@@ -457,7 +457,7 @@ member_tower, ad_tower = Tower(), Tower()
 
 | 파일 | 무엇 |
 |---|---|
-| `js/code-steps.js` | 새 파일. 토크나이저와 파서, 그리기, 줄 재기 |
+| `js/code-steps.js` | 새 파일. 토크나이저와 파서, 그리기, 줄 측정 |
 | `js/main.js` | 코드 렌더러, `enhanceCodeBlocks`, Copy, mount 부르기 |
 | `post.html` | 스크립트 한 줄 |
 | `css/style.css` | 맨 끝에 코드 블록 묶음, 휴대폰 여백 바로잡기 |

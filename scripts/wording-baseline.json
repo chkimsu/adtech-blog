@@ -12,5 +12,10 @@
   "analogy": {},
   "wordnum": {},
   "coined": {},
+  "measure": {
+    "js/label-ranker-cards-demo.js": 1,
+    "posts/llm-labeling-distillation.md": 1,
+    "posts/llm-labels-code-ranker.md": 1
+  },
   "awkward": {}
 }

@@ -77,7 +77,7 @@ eq('다른 글에 이어서', labels2.labels, [{ kind: 'cont-post', post: 'feedb
 const labels3 = C.parse(block('# (발췌 — 그대로 실행되지 않습니다.)', '# 하는 일: 조각이다.', '    return x'));
 eq('실행 안 됨', labels3.labels, [{ kind: 'norun', text: '발췌' }]);
 
-const varying = C.parse(block('# 하는 일: 시간을 잰다.', 'print(1)', '# 출력 (시간은 돌릴 때마다 다르다):', '# 뜻: 잰 시간이다.', '# 1'));
+const varying = C.parse(block('# 하는 일: 시간을 측정한다.', 'print(1)', '# 출력 (시간은 돌릴 때마다 다르다):', '# 뜻: 측정한 시간이다.', '# 1'));
 eq('「돌릴 때마다」 는 숫자를 빼고 비교', [varying.out.hint, varying.out.varying], ['시간은 돌릴 때마다 다르다', true]);
 
 const blanks = C.parse(block('# 하는 일: 빈 줄을 찍는다.', 'print()', 'print("a")', '', '# 출력:', '# 뜻: 빈 줄 다음 a 다.', '#', '# a', '# ', '#   b  '));

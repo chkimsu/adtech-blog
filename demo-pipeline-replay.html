@@ -137,7 +137,7 @@
   <main>
     <section class="pr-hero">
       <h1>이벤트 한 건 따라가기 기록</h1>
-      <p>노트북 한 대에 Kafka, 처리기, Redis, API 를 띄우고 이벤트를 보내며 응답을 기록해 두었습니다. 이 페이지는 그 기록을 시간 순서대로 다시 그립니다. 숫자는 지어낸 값이 아니라 그때 받은 응답 그대로입니다. 운영 서버가 아니라 노트북에서 잰 값이므로 ms 의 크기보다 어느 자리가 큰지를 봅니다.</p>
+      <p>노트북 한 대에 Kafka, 처리기, Redis, API 를 띄우고 이벤트를 보내며 응답을 기록해 두었습니다. 이 페이지는 그 기록을 시간 순서대로 다시 그립니다. 숫자는 지어낸 값이 아니라 그때 받은 응답 그대로입니다. 운영 서버가 아니라 노트북에서 측정한 값이므로 ms 의 크기보다 어느 자리가 큰지를 봅니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 지나간 자리, 읽고 커밋한 메시지</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 기다리는 중 (hold, 아직 안 읽은 메시지)</span>
@@ -182,7 +182,7 @@
 
       <section class="pr-sec" data-fig="3">
         <h2><span class="no">3</span>읽는 길은 ms 단위입니다. 추천 요청 한 건의 5.2ms</h2>
-        <p class="pr-one">같은 실습 환경에서 추천 요청 한 건이 지나는 구간 열 곳을 50번 재고, 구간마다 가운데 값을 냈습니다. Redis 를 다섯 구간에서 읽고, 피처 행렬을 만들고, 모델 서버를 한 번 부르고, 응답을 만듭니다.</p>
+        <p class="pr-one">같은 실습 환경에서 추천 요청 한 건이 지나는 구간 열 곳을 50번 측정하고, 구간마다 가운데 값을 냈습니다. Redis 를 다섯 구간에서 읽고, 피처 행렬을 만들고, 모델 서버를 한 번 부르고, 응답을 만듭니다.</p>
         <div class="pr-stack" id="pr-stack" role="group" aria-label="구간별 시간"></div>
         <div class="pr-leg"><span><i class="w" style="background:var(--navy)"></i>CPU 가 일한 구간</span><span><i class="w"></i>다른 서버의 답을 기다린 구간</span></div>
         <div class="pr-tw"><table class="pr-tbl" id="pr-anat"></table></div>

@@ -59,7 +59,7 @@
             "options": {"temperature": 0, "seed": 7}}]}
 ```
 
-프롬프트 파일 형식 `data/llm-records/prompts/<slug>.json`: `{"system": "…", "items": [{"id": "a001", "user": "…"}], "think": "off" | "on" | "both", "repeat": 1, "repeat_subset": {"ids": ["a001"], "repeat": 3}, "think_subset": {"ids": ["a001"], "think": "on"}}`. 뒤의 두 필드는 선택이다. `repeat_subset` 은 그 id 들만 지정한 횟수만큼 더 보내고(`run` 2, 3…), `think_subset` 은 그 id 들만 지정한 think 로 한 번 더 보낸다. `options` 도 선택이다. 파일 맨 위에 두면 기본값 `{"temperature": 0, "seed": 7}` 을 덮고, `repeat_subset` 과 `think_subset` 안에 두면 그 묶음에만 적용된다. 반복 묶음에서 `temperature` 가 0 보다 크고 `seed` 가 없으면 run 마다 `seed = 7 + run` 을 쓴다. temperature 0 은 다시 기록해도 같은 답이 나왔다. temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 기록 항목마다 실제로 쓴 `options` 를 적는다. 그래서 흔들림은 temperature 0(같은 답)과 0.7(바뀌는 답)을 견주어 잰다. Ollama 에 temperature 0 과 고정 seed 로 보내면 같은 답이 돌아오므로, 설계 4절의 「같은 입력 10회」 측정은 이 두 설정을 나란히 두는 것으로 읽는다.
+프롬프트 파일 형식 `data/llm-records/prompts/<slug>.json`: `{"system": "…", "items": [{"id": "a001", "user": "…"}], "think": "off" | "on" | "both", "repeat": 1, "repeat_subset": {"ids": ["a001"], "repeat": 3}, "think_subset": {"ids": ["a001"], "think": "on"}}`. 뒤의 두 필드는 선택이다. `repeat_subset` 은 그 id 들만 지정한 횟수만큼 더 보내고(`run` 2, 3…), `think_subset` 은 그 id 들만 지정한 think 로 한 번 더 보낸다. `options` 도 선택이다. 파일 맨 위에 두면 기본값 `{"temperature": 0, "seed": 7}` 을 덮고, `repeat_subset` 과 `think_subset` 안에 두면 그 묶음에만 적용된다. 반복 묶음에서 `temperature` 가 0 보다 크고 `seed` 가 없으면 run 마다 `seed = 7 + run` 을 쓴다. temperature 0 은 다시 기록해도 같은 답이 나왔다. temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 기록 항목마다 실제로 쓴 `options` 를 적는다. 그래서 흔들림은 temperature 0(같은 답)과 0.7(바뀌는 답)을 견주어 측정한다. Ollama 에 temperature 0 과 고정 seed 로 보내면 같은 답이 돌아오므로, 설계 4절의 「같은 입력 10회」 측정은 이 두 설정을 나란히 두는 것으로 읽는다.
 
 CLI: `python3 scripts/llm-record.py --slug <slug> [--model qwen3.5:27b] [--host http://localhost:11434] [--limit N]` 은 프롬프트 파일을 읽어 기록 파일을 쓴다(있으면 덮어쓴다). `--export-constant` 는 기록의 `items[].output` 을 `id` 순서로 `RECORD = {...}` 파이썬 상수 문자열로 찍는다(`id → output` 딕셔너리, `think` 와 `run` 이 여럿이면 키를 `id|on|2` 꼴로). `--selftest` 는 서버 버전을 묻고 한 줄짜리 요청 하나를 보내 형식 필드가 다 있는지 확인하고 0 으로 끝난다. 표준 라이브러리 `urllib.request`, `json`, `time`, `argparse`, `datetime` 만 쓴다. 요청은 `POST /api/chat`, 본문 `{"model", "messages": [{"role":"system"},{"role":"user"}], "stream": false, "think": bool, "options": {"temperature": 0, "seed": 7}}`. 응답의 `message.content`, `message.thinking`(없으면 빈 문자열), `prompt_eval_count`, `eval_count`, `total_duration`(ns → ms) 을 옮긴다. 한 항목이 실패하면 3번까지 다시 보내고 그래도 실패면 그 항목만 `"error"` 필드로 남기고 계속한다.
 
@@ -190,7 +190,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 데크 `demo-interest-cards.html`(`ic-`, 4장): `rule` 키워드 사전과 첫 매칭 / `model` 단어 가방이 가중치를 지나 8개 점수가 되는 그림 / `llm` 프롬프트 한 장과 JSON 답 한 줄 / `compare` precision, recall, 건당 비용 막대 셋.
 
-절: 1 글 200건과 라벨 8개(표) / 2 규칙: 사전에 있는 낱말만 잡습니다(파이썬 1, 카드 rule) / 3 분류 모델: 단어 가방과 로지스틱 회귀(파이썬 2, 카드 model) / 4 LLM 라벨: 프롬프트 하나로 200건, 다만 세 번 물으면 답이 바뀌는 글이 있습니다(파이썬 3 기록 상수, 카드 llm) / 5 셋을 한 표에: precision, recall, 건당 비용, 지연(표, 카드 compare) / 6 섞어 쓰기: 규칙으로 거르고 모델로 매기고 LLM 은 애매한 것만(표) / 7 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(precision 과 recall 중 무엇이 타겟팅에 비싼가, LLM 라벨의 흔들림은 오류가 아니라 재야 하는 값, 라벨 비용과 서빙 비용은 다르다) / 더 깊이 보기(one-vs-rest 식, 토큰 비용 식) / 참고문헌(Walmart 관련성 판정 LLM arXiv 2406.00247, Pinterest 검색 관련성 arXiv 2410.17152, Bing LLM 라벨링 arXiv 2309.10621).
+절: 1 글 200건과 라벨 8개(표) / 2 규칙: 사전에 있는 낱말만 잡습니다(파이썬 1, 카드 rule) / 3 분류 모델: 단어 가방과 로지스틱 회귀(파이썬 2, 카드 model) / 4 LLM 라벨: 프롬프트 하나로 200건, 다만 세 번 물으면 답이 바뀌는 글이 있습니다(파이썬 3 기록 상수, 카드 llm) / 5 셋을 한 표에: precision, recall, 건당 비용, 지연(표, 카드 compare) / 6 섞어 쓰기: 규칙으로 거르고 모델로 매기고 LLM 은 애매한 것만(표) / 7 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(precision 과 recall 중 무엇이 타겟팅에 비싼가, LLM 라벨의 흔들림은 오류가 아니라 측정해야 하는 값, 라벨 비용과 서빙 비용은 다르다) / 더 깊이 보기(one-vs-rest 식, 토큰 비용 식) / 참고문헌(Walmart 관련성 판정 LLM arXiv 2406.00247, Pinterest 검색 관련성 arXiv 2410.17152, Bing LLM 라벨링 arXiv 2309.10621).
 
 - [ ] **Step 1: 스캐폴드**
 
@@ -255,7 +255,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 데크(`lb-`, 4장): `seed` 시드 114명의 피처 평균 넷 / `centroid` 중심 벡터와 거리 / `search` 전수 대 근사(계산 횟수) / `cut` 1, 5, 10% 자르기와 정밀도.
 
-절: 1 시드 8만 명은 어떤 사람들인가(표, 카드 seed) / 2 중심 벡터 하나와 거리로 줄을 세웁니다(파이썬 1, 카드 centroid) / 3 전수로 재면 1,400만 × 8 이고 근사 검색은 그중 일부만 봅니다(파이썬 2, 카드 search) / 4 확장 비율을 올리면 도달은 늘고 정밀도는 내려갑니다(표, 카드 cut) / 5 번호 6001 이 적히는 두 자리(프로필과 캠페인 조건, 표) / 6 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(분모는 전체 회원, 중심 하나로 되는 시드와 안 되는 시드, 근사 검색의 재현율은 품질이 아니라 누락) / 더 깊이 보기(코사인 식, 랜덤 투영 해시의 충돌 확률) / 참고문헌(Walmart Lookalike arXiv 2301.03147, HNSW arXiv 1603.09320, Faiss arXiv 2401.08281).
+절: 1 시드 8만 명은 어떤 사람들인가(표, 카드 seed) / 2 중심 벡터 하나와 거리로 줄을 세웁니다(파이썬 1, 카드 centroid) / 3 전수로 측정하면 1,400만 × 8 이고 근사 검색은 그중 일부만 봅니다(파이썬 2, 카드 search) / 4 확장 비율을 올리면 도달은 늘고 정밀도는 내려갑니다(표, 카드 cut) / 5 번호 6001 이 적히는 두 자리(프로필과 캠페인 조건, 표) / 6 두 무대 / 한눈 정리 / 헷갈리기 쉬운 점(분모는 전체 회원, 중심 하나로 되는 시드와 안 되는 시드, 근사 검색의 재현율은 품질이 아니라 누락) / 더 깊이 보기(코사인 식, 랜덤 투영 해시의 충돌 확률) / 참고문헌(Walmart Lookalike arXiv 2301.03147, HNSW arXiv 1603.09320, Faiss arXiv 2401.08281).
 
 - [ ] **Step 1: 스캐폴드** — `node scripts/new-post.js lookalike-computation "Lookalike 계산: 시드 8만 명에서 140만 명을 뽑는 실제 순서" "Targeting & Audience" "Lookalike,Targeting,Segmentation" both`, series 추가.
 - [ ] **Step 2: 설계 문서 4절 표본 행에 20,000명 한 줄을 더한다.**
@@ -414,7 +414,7 @@ Expected: push 뒤 GitHub Actions 의 validate 와 sitemap 이 초록. 몇 분 �
 
 | 번호 | 결과 | 커밋 |
 |---|---|---|
-| 1 | 글머리표 줄도 80자를 잰다. 참고문헌 절은 건너뛴다. 옛 글 27편의 65개를 나눠 123편 전체 0 | e7c0c1d, cec4321, 65d662d |
+| 1 | 글머리표 줄도 80자를 측정한다. 참고문헌 절은 건너뛴다. 옛 글 27편의 65개를 나눠 123편 전체 0 | e7c0c1d, cec4321, 65d662d |
 | 2 | 난이도 로드맵에 빠진 옛 데모 5장을 넣어 87개(입문 47, 중급 35, 고급 5)로 주제별과 같게 | 2996ba3 |
 | 3 | box() 의 글자 크기를 인라인 style 에서 font-size 속성으로. 데크 36장 두 폭에서 그림 동일 | 8ff620e |
 | 4 | 옛 데크 27개의 메타 설명에서 80자 넘는 문장을 나눔. 신호 소실 데크 메타의 방향 오류도 고침 | cc8e9fa |
@@ -432,8 +432,8 @@ Expected: push 뒤 GitHub Actions 의 validate 와 sitemap 이 초록. 몇 분 �
 새로 나온 것(2026-11-05 밤에 닫음, 브랜치 chore/checker-followups):
 
 15. 검사기가 「」 안의 「. 」에서도 문장을 나눈다(산문과 글머리표 공통). → 「」 안에서는 나누지 않고, 「…?」 처럼 문장을 끝낸 인용 뒤는 경계로 둔다. 123편에서 새로 걸린 것은 세 문장짜리 인용 하나였고 둘로 나눴다(880eb4f, 그다음 커밋).
-16. 글머리표 아래 들여쓴 이어지는 줄은 재지 않는다. → 이어 붙여 잰다. 새로 걸린 것 0(880eb4f).
+16. 글머리표 아래 들여쓴 이어지는 줄은 측정하지 않는다. → 이어 붙여 측정한다. 새로 걸린 것 0(880eb4f).
 17. 검사기가 HTML 엔티티(&rarr; 같은 것)를 글자 수대로 센다. → 화면의 한 글자로 센다(880eb4f).
-18. demos.html 카드 설명에도 80자를 넘는 문장이 있다. → 24문장을 나누고, demos.html 문단과 데모 메타 설명을 재는 검사 `scripts/check-page-sentences.js` 를 CI 에 넣었다.
+18. demos.html 카드 설명에도 80자를 넘는 문장이 있다. → 24문장을 나누고, demos.html 문단과 데모 메타 설명을 측정하는 검사 `scripts/check-page-sentences.js` 를 CI 에 넣었다.
 
-남은 것(급하지 않음): 글 123편의 산문 80자 초과 26문장은 묶음 1 전부터 있던 옛 문장이다. http 가 든 글머리표 13개(참고문헌 절 밖, 출처를 적은 문장)는 재지 않는다.
+남은 것(급하지 않음): 글 123편의 산문 80자 초과 26문장은 묶음 1 전부터 있던 옛 문장이다. http 가 든 글머리표 13개(참고문헌 절 밖, 출처를 적은 문장)는 측정하지 않는다.

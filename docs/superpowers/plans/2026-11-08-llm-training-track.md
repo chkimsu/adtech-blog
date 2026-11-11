@@ -39,7 +39,7 @@
 - 구조: 도입 장면(400~500자, 문단 4개, 표 0개, 개념어 없이) → `> 한 줄 요약:` → 「골라 읽는 법」 글머리표 → 본문 절 → 끝에서 두 번째 절은 「두 무대」 → `## 한눈 정리`(표 하나) → `## 헷갈리기 쉬운 점`(셋) → `## 더 깊이 보기`(`:::deep` 3개 이하와 링크 글머리표) → `## 참고문헌`(공개 출처만).
 - 「두 무대」는 묶음 2 처럼 짧게 쓴다. 굵은 요약 한 줄과 `### … [무대: 닫힌 생태계]`, `### … [무대: 열린 RTB]` 소제목 둘에 한 문단씩이다. 소제목도 합쇼체 문장이다. 이 절은 문단 수 규칙과 「표 1개 또는 파이썬 1개」 규칙에서 빼고, 절 산문은 300자 이상(검사기의 짧은 절 기준)이다.
 - 다른 절마다 굵은 요약 한 줄 + 문단 4~6개(굵은 요약, 표, 코드, 임베드, 제목은 세지 않는다) + 표 1개 또는 파이썬 1개. 둘 다 있어도 된다. 표 총 5~7개. 산문 15KB 이상.
-- 문장 80자 상한. 「」 인용 안의 문장, 글머리표, 참고문헌, posts.js 의 excerpt, worldNote, worldPractical, 데크 캡션, 데크 메타 설명까지 잰다. 공개 출처 원제가 그 자체로 80자를 넘는 줄만 예외. 목표 평균 44~56자.
+- 문장 80자 상한. 「」 인용 안의 문장, 글머리표, 참고문헌, posts.js 의 excerpt, worldNote, worldPractical, 데크 캡션, 데크 메타 설명까지 측정한다. 공개 출처 원제가 그 자체로 80자를 넘는 줄만 예외. 목표 평균 44~56자.
 - 표준 용어는 첫 쓰임에 짧은 풀이를 붙이고 다시 풀지 않는다. 앞 글에서 푼 용어는 그 글을 링크하고 다시 풀지 않는다. 토큰(`llm-first-call`), 임베딩과 코사인(`embeddings-vector-search`), LLM-as-a-Judge 와 kappa(`llm-as-a-judge`), 증류와 교사와 학생(`llm-labeling-distillation`), in-batch negative 와 온도와 소프트맥스(`two-tower-training`)가 그렇다. 로그 확률, 참조 모델, 정책, 보상 모델은 이 묶음에서 처음 푼다. 표준 용어 자리에 지어낸 말을 쓰지 않는다(로짓, 소프트 타깃, KL 발산, 이점(advantage), 참조 모델, 정책).
 - 파이썬은 표준 라이브러리만, 3.9 문법, 글마다 1~3개. 모든 난수는 `random.Random(7)`(Task 가 정한 차례로 뽑는다). 블록은 `# 하는 일:` 한 줄, `# N단계:` 제목과 풀이, `# 출력:` 아래 `# N단계 뜻:` 과 찍힌 줄(`python3 scripts/check-python-outputs.py --post <slug> --show` 가 뽑은 것을 그대로 붙인다). 꼬리표는 `python` 하나. 같은 글의 뒤 블록은 `# (앞 블록에 이어서 돌린다.)` 로 잇는다. 이 묶음은 발췌 블록을 쓰지 않는다(라이브러리 API 를 서술하려면 그 문서를 열어야 하고, 네 글 모두 표준 라이브러리로 보일 수 있다).
 - 찍는 값에 실행 시간(측정한 ms)을 넣지 않는다. 블록 하나의 실행은 앞 블록을 다시 돌리는 시간을 합쳐 로컬에서 10초 안이다(검사기는 이어지는 블록마다 앞 블록을 다시 돌린다).
@@ -58,7 +58,7 @@
   - posts.js 필드 80자: `node -e "const {overLong}=require('./scripts/check-content-standard.js');const {posts}=require('./js/posts.js');let n=0;for(const p of posts.filter(p=>p.id===process.argv[1]))for(const f of ['excerpt','worldNote','worldPractical'])for(const s of overLong(p[f]||'')){n++;console.log(f,s.length,s.slice(0,40))}console.log('80자 초과',n)" <slug>` → `80자 초과 0`.
   - 데크 문장 80자: `node -e "const fs=require('fs');const {overLong}=require('./scripts/check-content-standard.js');let n=0;const h=fs.readFileSync(process.argv[1],'utf8');for(const m of h.matchAll(/<p(?: class=\"tg-(?:cap|easy|k)\")?>([\s\S]*?)<\/p>|<li>([\s\S]*?)<\/li>/g))for(const s of overLong((m[1]||m[2]).replace(/<[^>]+>/g,''))){n++;console.log(s.length,s.slice(0,40))}console.log('80자 초과',n)" demo-<이름>-cards.html` → `80자 초과 0`.
   - 말투 grep 셋이 모두 출력 없음: `grep -nE "(^|[^가-힣])내(가|게| )" posts/<slug>.md`(1인칭), `grep -nE "^## [0-9]+\. " posts/<slug>.md | grep -v "니다$"`(평서체 절 제목), `grep -nE "^### " posts/<slug>.md | grep -vE "니다 \[무대: (닫힌 생태계|열린 RTB)\]$"`.
-  - 민감어 grep `grep -nE "종교|소득|연봉|정치|religion|income" posts/<slug>.md` 0건, 이름 목록 grep 0건. 참고문헌 줄은 원제 밖의 문장을 손으로 잰다.
+  - 민감어 grep `grep -nE "종교|소득|연봉|정치|religion|income" posts/<slug>.md` 0건, 이름 목록 grep 0건. 참고문헌 줄은 원제 밖의 문장을 손으로 측정한다.
 
 ## 브리프에 그대로 옮기는 되풀이 실수
 
@@ -70,7 +70,7 @@
 2. **블록 밖에서 센 수.** 산문의 숫자마다 블록 출력에서 같은 값을 찾을 수 있어야 한다. 손으로 나누거나 더한 수도 블록이 찍게 한다.
 3. **문서와 안 맞는 API 와 논문 서술.** 연 원문의 문장만 쓴다. 기억으로 쓴 값(온도, 계수, 배수)은 원문에서 찾을 때까지 쓰지 않는다.
 4. **평서체 절 제목.** `## N. …니다` 꼴이다.
-5. **「」 안의 80자 초과.** 검사기는 인용 하나를 한 덩어리로 잰다. 긴 대사는 두 인용으로 나눈다.
+5. **「」 안의 80자 초과.** 검사기는 인용 하나를 한 덩어리로 측정한다. 긴 대사는 두 인용으로 나눈다.
 6. **민감한 예시.** 건강, 종교, 소득, 정치, 성적 지향을 예시에 넣지 않는다.
 7. **틀린 링크 대상.** 링크 글자가 가리키는 내용이 그 글에 실제로 있는지 열어 본다. id 는 `js/posts.js` 에서 확인한다.
 
@@ -232,21 +232,21 @@
 
 1. **보상 모델.** 선형 보상 `r(c) = dot(w, φ(c))` 를 Bradley-Terry 손실 `-log σ(r(w) - r(l))` 로 배운다. w 는 0 에서 시작, 쌍 평균 기울기, 학습률 1.0, 200걸음. 20쌍 모두로 배운 것이 판정자 A 의 보상 모델 `w_A`, 판정자 쌍 8개를 뺀 gate 와 edit 12쌍으로 배운 것이 판정자 B 의 `w_B` 다. 찍을 것: 출처별 글자 수 차이 평균(원인 줄), `w_A` 와 `w_B`, 각자 맞힌 쌍 수와 평균 손실, 후보 12개의 `r_A`, `r_B`, 통과.
 2. **KL 세기와 보상 해킹, GRPO.** RLHF 목적 `E_π[r_A] - β KL(π‖π_ref)` 의 최적 정책은 후보가 12개라 `π_β(c) ∝ π_ref(c) exp(r_A(c)/β)` 로 바로 센다. β 4, 2, 1, 0.5, 0.25 마다 E[r_A], KL, 통과율, 평균 글자 수, 확률이 가장 큰 후보를 찍는다. 이어서 GRPO: `rng = random.Random(7)`, 후보 id 는 `COPY_POOL` 차례, 걸음마다 `rng.choices(ids, weights=[π(c) …], k=8)` 로 묶음 8개를 뽑고, 이점 `A_i = (r_i - 평균) / 모표준편차`(0 이면 0). θ 갱신은 `θ += 0.3 × [ (1/8) Σ A_i (φ(c_i) - E_π φ) - 0.04 × Cov_π(φ) θ ]` 이다(뒤 항은 KL 의 기울기를 12개 위에서 정확히 센 것). 60걸음. 첫 묶음(후보, 보상, 이점)과 평균, 20걸음마다 E[r_A], 통과율, 평균 글자 수를 찍는다.
-3. **학습 도중 판정자 바꾸기.** 세 실행: A 만 120걸음, A 60걸음 뒤 B 60걸음, B 만 120걸음. 기울기는 `E_π[(φ - E_π φ)(r - 0.5 log(π/π_ref))]`(β 0.5 의 목적을 정확히 센 것), 학습률 0.05. 20걸음마다 걸음, 쓰는 판정자, 적힌 보상(쓰는 판정자로 잰 값), A 로 잰 값, B 로 잰 값, KL, 통과율, 평균 글자 수. 끝에 요약 셋: 바꾼 실행의 60걸음째 적힌 보상의 변화(정책은 그대로), 120걸음에 B 로 잰 두 실행의 차이, A 로 잰 값이 바꾼 뒤 줄어든 것.
+3. **학습 도중 판정자 바꾸기.** 세 실행: A 만 120걸음, A 60걸음 뒤 B 60걸음, B 만 120걸음. 기울기는 `E_π[(φ - E_π φ)(r - 0.5 log(π/π_ref))]`(β 0.5 의 목적을 정확히 센 것), 학습률 0.05. 20걸음마다 걸음, 쓰는 판정자, 적힌 보상(쓰는 판정자로 측정한 값), A 로 측정한 값, B 로 측정한 값, KL, 통과율, 평균 글자 수. 끝에 요약 셋: 바꾼 실행의 60걸음째 적힌 보상의 변화(정책은 그대로), 120걸음에 B 로 측정한 두 실행의 차이, A 로 측정한 값이 바꾼 뒤 줄어든 것.
 
 계획서가 미리 돌린 값:
 - 블록 1: `w_A` = (+2.79, +4.11, -5.51), 20쌍 모두 맞힘. `w_B` = (-0.32, +4.17, -4.42), 12쌍 모두 맞힘.
 - 블록 2: β 4/2/1/0.5/0.25 의 E[r_A] 8.76/11.63/15.56/17.54/17.77, KL 0.29/1.37/4.17/6.83/7.38, 통과율 0.522/0.732/0.506/0.042/0.000, 평균 글자 24.9/29.9/41.2/48.2/49.0, β 1 부터 가장 큰 후보 c06. GRPO 첫 묶음 평균 7.05, c03 이점 +1.75. 통과율 0.255 → 0.481(20) → 0.146(40) → 0.031(60), E[r_A] 6.58 → 17.38.
-- 블록 3: A 만은 통과율이 40걸음 0.497 에서 120걸음 0.173. 바꾼 실행은 60걸음째 적힌 보상이 14.95 에서 2.34, 120걸음 B 로 잰 값 2.40, 통과율 0.745, A 로 잰 값 14.95 → 10.70. B 만은 120걸음 B 3.19, 통과율 0.903.
-- 꼭 성립할 것: β 가 작을수록 E[r_A] 는 오르고 통과율은 한 번 오른 뒤 0.1 아래로 떨어진다. GRPO 60걸음 끝의 통과율이 처음보다 낮다. 바꾼 실행의 60걸음째 적힌 보상이 10 넘게 떨어지고, 120걸음 B 로 잰 값이 B 만 쓴 실행보다 낮다.
+- 블록 3: A 만은 통과율이 40걸음 0.497 에서 120걸음 0.173. 바꾼 실행은 60걸음째 적힌 보상이 14.95 에서 2.34, 120걸음 B 로 측정한 값 2.40, 통과율 0.745, A 로 측정한 값 14.95 → 10.70. B 만은 120걸음 B 3.19, 통과율 0.903.
+- 꼭 성립할 것: β 가 작을수록 E[r_A] 는 오르고 통과율은 한 번 오른 뒤 0.1 아래로 떨어진다. GRPO 60걸음 끝의 통과율이 처음보다 낮다. 바꾼 실행의 60걸음째 적힌 보상이 10 넘게 떨어지고, 120걸음 B 로 측정한 값이 B 만 쓴 실행보다 낮다.
 
 데크(`rw-`, 4장, 범례: 파랑 선호 쌍과 참조 정책, 벽돌색 학습하는 정책, 먹색 보상 모델(판정자 A, B), 회색 게이트에 걸린 카피, 점선 KL 항과 고정할 판정자 버전):
 - `loop` REWARD LOOP 「선호 쌍 → 보상 모델 → 정책」. 캡션 「보상 모델은 20쌍을 모두 맞혔고, 글자 10자에 2.79 를 더합니다. 판정자 쌍을 빼고 배우면 -0.32 입니다.」
 - `hack` REWARD HACKING 「KL 을 약하게 걸수록」. 캡션 「β 를 2 에서 0.25 로 내리자 보상은 11.63 에서 17.77 로 올랐습니다. 통과율은 0.732 에서 0.000 이 되었습니다.」
 - `grpo` GROUP ADVANTAGE 「묶음 평균을 기준으로」. 캡션 「카피 8개의 보상 평균은 7.05 이고, c03 의 이점은 +1.75 입니다. 60걸음 뒤 통과율은 0.255 에서 0.031 로 떨어졌습니다.」
-- `switch` JUDGE SWITCH 「학습 도중 판정자를 바꾸면」. 캡션 「60걸음째 정책은 그대로인데 적힌 보상이 14.95 에서 2.34 로 떨어졌습니다. 120걸음에 B 로 잰 값은 2.40 으로, 처음부터 B 를 쓴 3.19 보다 낮습니다.」
+- `switch` JUDGE SWITCH 「학습 도중 판정자를 바꾸면」. 캡션 「60걸음째 정책은 그대로인데 적힌 보상이 14.95 에서 2.34 로 떨어졌습니다. 120걸음에 B 로 측정한 값은 2.40 으로, 처음부터 B 를 쓴 3.19 보다 낮습니다.」
 
-절: 1 RLHF 는 선호 쌍으로 보상 모델을 먼저 만듭니다(표: SFT, 보상 모델, PPO 세 단계와 DPO 의 차이, 카드 loop) / 2 보상 모델은 판정자의 버릇까지 배웁니다(파이썬 1. RLAIF 는 선호 라벨을 사람 대신 LLM 판정자가 붙이는 것이고, 이 글의 judge 쌍이 그 자리다) / 3 KL 을 약하게 걸수록 보상 해킹이 커집니다(파이썬 2, 표: β 다섯, 카드 hack) / 4 GRPO 는 값 모델 없이 묶음 평균을 기준으로 씁니다(표: 첫 묶음 8개와 20걸음마다의 값, 카드 grpo) / 5 판정자를 학습 도중에 바꾸면 앞뒤 점수를 비교할 수 없습니다(파이썬 3, 표: 세 실행의 60, 120걸음, 카드 switch) / 6 판정자를 보상으로 쓸 때 고정할 것과 따로 잴 것(표: 판정자 모델, 채점표, temperature, 버전은 한 학습 동안 고정. 노출 전 게이트의 통과율은 보상과 따로 잰다. 체크포인트는 판정자 하나로 다시 잰다. 학습에 쓴 판정자 버전을 카피와 함께 남겨 사후 원인 귀속이 거슬러 가게 한다. 생성 문구 판정 체계 편의 세 겹으로 잇는다) / 7 두 무대(담장 안은 판정자, 정책, 게이트를 한 회사가 굴려 버전을 고정하고 같은 자로 다시 잴 수 있다, 열린 RTB 의 DSP 는 매체와 거래소의 심사를 따로 받아 그 기준이 DSP 밖에서 바뀔 수 있다) / 한눈 정리 / 헷갈리기 쉬운 점(보상이 오르면 좋아진 것이 아니다, RLAIF 의 판정자는 사람보다 덜 틀리는 것이 아니라 사람 대신 라벨을 붙인다, GRPO 의 묶음 평균은 보상 모델을 대신하지 않고 값 모델을 대신한다) / 더 깊이 보기(`:::deep` RLHF 목적과 닫힌 꼴의 최적 정책, 그 식에서 DPO 손실이 나오는 길(41주째 편 링크), GRPO 의 이점과 KL 항, Bradley-Terry 손실. 링크: SFT 와 DPO, LLM-as-a-Judge, 생성 문구 판정 체계, 데크) / 참고문헌.
+절: 1 RLHF 는 선호 쌍으로 보상 모델을 먼저 만듭니다(표: SFT, 보상 모델, PPO 세 단계와 DPO 의 차이, 카드 loop) / 2 보상 모델은 판정자의 버릇까지 배웁니다(파이썬 1. RLAIF 는 선호 라벨을 사람 대신 LLM 판정자가 붙이는 것이고, 이 글의 judge 쌍이 그 자리다) / 3 KL 을 약하게 걸수록 보상 해킹이 커집니다(파이썬 2, 표: β 다섯, 카드 hack) / 4 GRPO 는 값 모델 없이 묶음 평균을 기준으로 씁니다(표: 첫 묶음 8개와 20걸음마다의 값, 카드 grpo) / 5 판정자를 학습 도중에 바꾸면 앞뒤 점수를 비교할 수 없습니다(파이썬 3, 표: 세 실행의 60, 120걸음, 카드 switch) / 6 판정자를 보상으로 쓸 때 고정할 것과 따로 측정할 것(표: 판정자 모델, 채점표, temperature, 버전은 한 학습 동안 고정. 노출 전 게이트의 통과율은 보상과 따로 측정한다. 체크포인트는 판정자 하나로 다시 측정한다. 학습에 쓴 판정자 버전을 카피와 함께 남겨 사후 원인 귀속이 거슬러 가게 한다. 생성 문구 판정 체계 편의 세 겹으로 잇는다) / 7 두 무대(담장 안은 판정자, 정책, 게이트를 한 회사가 굴려 버전을 고정하고 같은 자로 다시 측정할 수 있다, 열린 RTB 의 DSP 는 매체와 거래소의 심사를 따로 받아 그 기준이 DSP 밖에서 바뀔 수 있다) / 한눈 정리 / 헷갈리기 쉬운 점(보상이 오르면 좋아진 것이 아니다, RLAIF 의 판정자는 사람보다 덜 틀리는 것이 아니라 사람 대신 라벨을 붙인다, GRPO 의 묶음 평균은 보상 모델을 대신하지 않고 값 모델을 대신한다) / 더 깊이 보기(`:::deep` RLHF 목적과 닫힌 꼴의 최적 정책, 그 식에서 DPO 손실이 나오는 길(41주째 편 링크), GRPO 의 이점과 KL 항, Bradley-Terry 손실. 링크: SFT 와 DPO, LLM-as-a-Judge, 생성 문구 판정 체계, 데크) / 참고문헌.
 
 도입: 42주째 월요일, 지난주 오래 학습한 모델이 긴 카피만 내놓는다. 판정자의 점수는 계속 올랐다. 서연 씨는 40자를 넘어 걸린 카피가 늘었다고 알린다. 지훈 씨는 점수를 준 쪽을 의심한다(개념어 없이).
 
@@ -264,7 +264,7 @@
 - [ ] **Step 3: 데크 4장** — `'reward-loop-cards'` 엔트리, 꼴은 Task 1 과 같다. Run: `node scripts/check-design.js demo-reward-loop-cards.html && node scripts/check-page-sentences.js` 와 데크 문장 명령. Expected: 통과, `80자 초과 0`.
 - [ ] **Step 4: 글 본문** — 블록 셋(이어서), 블록 1 이 두 리터럴을 글자 그대로 담는다. 블록 2 의 첫 주석과 3절 산문에 「통과율과 보상은 후보 12개에 둔 확률로 센 기댓값이고, GRPO 만 묶음을 뽑는다」를 한 번 적는다. 판정자 B 가 12쌍으로 배운 흉내라는 것을 5절에서 밝힌다.
 - [ ] **Step 5: 출력** — Run: `time python3 scripts/check-python-outputs.py --post rlhf-rlaif-grpo-reward-model && python3 scripts/check-python-outputs.py --post rlhf-rlaif-grpo-reward-model && python3 scripts/gen-training-data.py --check` Expected: 두 번 통과, real 10초 안, 「대조 3건(데이터 파일 1, 글 2)」.
-- [ ] **Step 6: 엔트리와 검사 전부** — Global Constraints 의 목록. 추가로 `grep -c "기댓값" posts/rlhf-rlaif-grpo-reward-model.md` 1 이상, `grep -c "post.html?id=llm-as-a-judge" posts/rlhf-rlaif-grpo-reward-model.md` 와 `grep -c "post.html?id=generated-copy-judging-system" posts/rlhf-rlaif-grpo-reward-model.md` 각 1 이상. 원인 문장과 근거 줄의 짝을 보고서에 적는다(출처별 글자 수, `w_A` 와 `w_B` 의 길이 가중치, β 표의 평균 글자 수, 세 실행의 A 와 B 로 잰 값).
+- [ ] **Step 6: 엔트리와 검사 전부** — Global Constraints 의 목록. 추가로 `grep -c "기댓값" posts/rlhf-rlaif-grpo-reward-model.md` 1 이상, `grep -c "post.html?id=llm-as-a-judge" posts/rlhf-rlaif-grpo-reward-model.md` 와 `grep -c "post.html?id=generated-copy-judging-system" posts/rlhf-rlaif-grpo-reward-model.md` 각 1 이상. 원인 문장과 근거 줄의 짝을 보고서에 적는다(출처별 글자 수, `w_A` 와 `w_B` 의 길이 가중치, β 표의 평균 글자 수, 세 실행의 A 와 B 로 측정한 값).
 - [ ] **Step 7: 커밋** — 글, posts.js, index.html, 데크 둘, demo-edu-content.js, 생성기. `feat(posts): RLHF, RLAIF, GRPO 와 보상 모델 — 판정자를 보상으로 쓰면 무엇을 배우나`.
 
 ---
@@ -331,7 +331,7 @@
 - Test: 「엔트리와 검사 전부」 + 옮긴 함수 대조(Step 5)
 
 **Interfaces:**
-- Consumes: 임베딩과 벡터 검색 편(23주째)의 `DIM` 과 `embed`(글자 그대로), Two-Tower 학습 편 3절의 `softmax` 와 `batch_loss`(글자 그대로, 손실 값을 그 함수로 한 번 잰다), 설계 4절의 장난감 임베딩 모델.
+- Consumes: 임베딩과 벡터 검색 편(23주째)의 `DIM` 과 `embed`(글자 그대로), Two-Tower 학습 편 3절의 `softmax` 와 `batch_loss`(글자 그대로, 손실 값을 그 함수로 한 번 측정한다), 설계 4절의 장난감 임베딩 모델.
 - Produces: 없음.
 
 낱말 50개(블록 1 의 리터럴 `GROUPS`, 묶음 이름과 낱말 다섯, 이 차례). 앞 여덟 묶음의 첫 셋은 23주째 편 `CATEGORIES` 의 낱말이다.
@@ -352,7 +352,7 @@
 
 파이썬 셋(이어서):
 1. 묶음 안 짝 100개 가운데 `embed` 의 겹친 칸이 0 인 짝 수, 다른 묶음끼리 겹친 칸이 있는 짝 수와 예 셋, 스니커즈와 운동화의 코사인, 쌍 수(200, 160, 40), 검증 40쌍 가운데 겹친 칸이 0 인 쌍 수(원인 줄: 글자 조각만 보는 임베딩은 이 쌍을 찾을 단서가 없다).
-2. `train(0.05, 0.02)`. 8에포크마다(0, 8, 16, 24, 32, 39) 평균 손실, 평균 정답 칸 확률, 검증 recall@5 와 @10, 학습 recall@5. 학습 전(초기 `W`)과 뒤의 검증 recall@5, @10, 스니커즈와 운동화의 코사인. 학습 뒤 첫 배치의 점수표를 `batch_loss(table, 0.05)` 로 잰 값과 학습 식으로 잰 값이 같다는 줄. 배치마다 묶음 10개가 한 번씩이라는 줄(logQ 를 넣지 않는 원인 줄).
+2. `train(0.05, 0.02)`. 8에포크마다(0, 8, 16, 24, 32, 39) 평균 손실, 평균 정답 칸 확률, 검증 recall@5 와 @10, 학습 recall@5. 학습 전(초기 `W`)과 뒤의 검증 recall@5, @10, 스니커즈와 운동화의 코사인. 학습 뒤 첫 배치의 점수표를 `batch_loss(table, 0.05)` 로 측정한 값과 학습 식으로 측정한 값이 같다는 줄. 배치마다 묶음 10개가 한 번씩이라는 줄(logQ 를 넣지 않는 원인 줄).
 3. 온도 셋: `{0.05: 0.02, 0.2: 0.08, 1.0: 0.4}`(학습률은 0.4τ, 점수를 τ 로 나누면 기울기도 1/τ 배가 되기 때문이다). τ 마다 마지막 에포크의 평균 손실과 평균 정답 칸 확률(원인 줄), 검증 recall@5, @10, 스니커즈와 운동화의 코사인, 묶음 안 짝 100개의 평균 코사인과 가장 작은 값, 다른 묶음 짝의 평균 코사인(묶음이 한 방향으로 모였는지의 근거 줄). τ 0.05 줄이 블록 2 의 마지막 값과 같아야 한다.
 
 계획서가 미리 돌린 값(블록 셋 이어서 약 1초):
@@ -416,7 +416,7 @@
 - [ ] **Step 4: 용어** — `js/glossary.js` 끝에 빠진 것만. Run: `node -e "const s=require('fs').readFileSync('js/glossary.js','utf8');for(const t of ['SFT','DPO','RLHF','RLAIF','GRPO','보상 모델','보상 해킹','LoRA','로짓 증류','contrastive 학습','in-batch negatives','recall@k','지식 증류'])console.log(t,s.split(\"term: '\"+t+\"'\").length-1)"` Expected: 열세 줄 모두 1. (2026-11-08 의 묶음 3 브랜치에서는 열둘이 0 이었다. 「지식 증류」는 묶음 3 의 마지막 Task 가 더한다.)
 - [ ] **Step 5: 표지와 README** — `index.html` 「글 140편 전체」와 태그별 수(바뀌지 않아야 한다), README 의 글 수 140. Run: `node scripts/validate-posts.js` Expected: 오류 없이 통과(아직 없는 글 id 가 더는 없다), 「표지 편수 10곳」 일치.
 - [ ] **Step 6: 놀이터 링크** — 글 1 과 글 2 의 더 깊이 보기 링크 글머리표에 `[DPO 손실 놀이터](demo-dpo-loss.html) — …` 한 줄씩(80자 이하).
-- [ ] **Step 7: 검사 전부** — Run: `( grep -E "^[[:space:]]+run: " .github/workflows/validate.yml | sed -E 's/^[[:space:]]*run: //; s/^python /python3 /' | while read -r c; do echo "== $c"; eval "$c" || exit 1; done ) && node scripts/check-content-standard.js sft-and-dpo rlhf-rlaif-grpo-reward-model knowledge-distillation embedding-model-finetuning && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ scripts/ *.html; echo "names grep exit=$?"` Expected: CI 의 단계가 모두 통과(`gen-training-data.py --check` 는 「대조 3건」), 네 글에 ⚠ 와 ✗ 없음, 마지막 grep 은 출력 없이 `exit=1`. 네 글의 참고문헌 줄을 손으로 재어 80자 초과가 원제뿐인지 본다.
+- [ ] **Step 7: 검사 전부** — Run: `( grep -E "^[[:space:]]+run: " .github/workflows/validate.yml | sed -E 's/^[[:space:]]*run: //; s/^python /python3 /' | while read -r c; do echo "== $c"; eval "$c" || exit 1; done ) && node scripts/check-content-standard.js sft-and-dpo rlhf-rlaif-grpo-reward-model knowledge-distillation embedding-model-finetuning && node scripts/build-search-index.js && grep -rnE "$(grep -v '^#' $NAMES_FILE | tr '\n' '|' | sed 's/|$//')" posts/ docs/ js/ data/ scripts/ *.html; echo "names grep exit=$?"` Expected: CI 의 단계가 모두 통과(`gen-training-data.py --check` 는 「대조 3건」), 네 글에 ⚠ 와 ✗ 없음, 마지막 grep 은 출력 없이 `exit=1`. 네 글의 참고문헌 줄을 손으로 측정해 80자 초과가 원제뿐인지 본다.
 - [ ] **Step 8: 화면 확인** — 헤드리스 크롬으로 글 4편을 1440 과 390 폭으로(카드 iframe 로드, 가로 스크롤 없음), 데크 4장과 놀이터를 라이트와 다크로(놀이터는 프리셋 하나를 누른 뒤도), `demos.html`, `topics.html`(LLM 주제와 LLM 학습 트랙), `ml-track.html`(6단계 열세 편), `index.html` 을 찍는다. 스크린샷은 저장소 밖 작업 폴더에.
 - [ ] **Step 9: 커밋** — 파일을 이름으로. `feat(demos): DPO 손실 놀이터와 LLM 학습 데모 절, 용어, 표지 140편`.
 

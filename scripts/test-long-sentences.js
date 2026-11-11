@@ -94,7 +94,7 @@ const CASES = [
   },
 ];
 
-// 글머리표 줄 시험. 보이는 글자 수로 재고, http 가 든 참고문헌 줄은 건너뛴다.
+// 글머리표 줄 시험. 보이는 글자 수로 측정하고, http 가 든 참고문헌 줄은 건너뛴다.
 const URL_ONLY = 'post.html?id=' + 'x'.repeat(60);
 const BULLET_CASES = [
   {
@@ -103,7 +103,7 @@ const BULLET_CASES = [
     flagged: false,
   },
   {
-    name: '글머리표 — 다음 줄로 이어진 항목은 이어 붙여 잰다',
+    name: '글머리표 — 다음 줄로 이어진 항목은 이어 붙여 측정한다',
     md: '- ' + '카'.repeat(50) + '\n  ' + '타'.repeat(40) + '.',
     flagged: true,
     count: 1,
@@ -120,13 +120,13 @@ const BULLET_CASES = [
     want: 85,
   },
   {
-    name: '글머리표 — 별표 글머리와 번호 글머리도 잰다',
+    name: '글머리표 — 별표 글머리와 번호 글머리도 측정한다',
     md: '* ' + '나'.repeat(84) + '.\n\n1. ' + '다'.repeat(84) + '.',
     flagged: true,
     count: 2,
   },
   {
-    name: '글머리표 — 굵게 표시는 벗기고 잰다',
+    name: '글머리표 — 굵게 표시는 벗기고 측정한다',
     md: '- **' + '라'.repeat(78) + '.**',
     flagged: false,
   },
@@ -141,7 +141,7 @@ const BULLET_CASES = [
     flagged: false,
   },
   {
-    name: '글머리표 — 참고문헌 절이 끝난 뒤의 글머리표는 다시 잰다',
+    name: '글머리표 — 참고문헌 절이 끝난 뒤의 글머리표는 다시 측정한다',
     md: '### 참고문헌\n\n- ' + '자'.repeat(90) + '.\n\n## 다음 절\n\n- ' + '차'.repeat(84) + '.',
     flagged: true,
     count: 1,

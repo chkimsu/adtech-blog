@@ -146,7 +146,7 @@ def 이분(a, t):
         else:             hi = mid - 1
     return -1
 
-# 2단계: 세 값을 두 방법으로 찾으며 시간을 잰다
+# 2단계: 세 값을 두 방법으로 찾으며 시간을 측정한다
 print(f"{'찾는 값':>10}{'스캔(ms)':>12}{'이분(ms)':>12}")
 for t in 찾을것:
     s = time.perf_counter(); 스캔(ARR, t); a = (time.perf_counter()-s)*1000

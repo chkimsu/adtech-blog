@@ -314,7 +314,7 @@ for pair in f"{TRADE} {BRAIN} {CROSS}".split():
     g.setdefault(a, set()).add(b)   # 이웃 관계는 양방향으로 담는다
     g.setdefault(b, set()).add(a)
 
-# 3단계: pCTR 에서 너비 우선 탐색으로 거리를 잰다
+# 3단계: pCTR 에서 너비 우선 탐색으로 거리를 측정한다
 # pCTR 에서 출발해 화살표 몇 개를 건너면 닿는지를 다리 수로 센다.
 dist, q = {"pctr": 0}, deque(["pctr"])  # 심장에서 출발하는 너비 우선 탐색
 while q:

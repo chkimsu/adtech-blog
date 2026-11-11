@@ -144,7 +144,7 @@ for c in GOLD:
         wrong.setdefault(f'{GOLD[c]} → {labels[c]}', []).append(c)
 print('틀린 답: ' + ' / '.join(f'{k} {", ".join(v)}' for k, v in wrong.items()))
 
-# 4단계: kappa 를 잰다
+# 4단계: kappa 를 측정한다
 # agreement_parts 와 cohen_kappa 는 LLM-as-a-Judge 편의 함수를 글자 그대로 옮겼다. 칸은 라벨 넷이다.
 def agreement_parts(a, b):
     n = len(a)
@@ -447,7 +447,7 @@ for key, name in (('list30', '목록 run 1'), ('list30|off|2', '목록 run 2')):
 # 목록 run 2: 입력 1,854 토큰, 출력 400 토큰, 27.8초
 ```
 
-run 1 은 30개를 한 번씩 다 적었고, 빠진 id 도 겹친 id 도 후보 밖의 id 도 없었습니다. 다만 라벨은 정답과 10/30 이 맞아, 포인트와이즈의 17/30 보다 적었습니다. 목록 하나에 30개를 넣으면 입력이 길어집니다. Liu 외(2023)는 필요한 정보가 긴 입력의 가운데에 있으면 정확도가 떨어진다고 보고했습니다. 이 글은 후보의 자리마다 정확도를 따로 재지는 않았습니다. 목록의 차례대로 high 5개, mid 4개, low 6개, exclude 15개가 한 덩어리씩 이어졌습니다. 같은 라벨 안에서는 대개 입력 차례를 그대로 따라, 이웃한 두 항목 26쌍 가운데 24쌍이 id 차례였습니다.
+run 1 은 30개를 한 번씩 다 적었고, 빠진 id 도 겹친 id 도 후보 밖의 id 도 없었습니다. 다만 라벨은 정답과 10/30 이 맞아, 포인트와이즈의 17/30 보다 적었습니다. 목록 하나에 30개를 넣으면 입력이 길어집니다. Liu 외(2023)는 필요한 정보가 긴 입력의 가운데에 있으면 정확도가 떨어진다고 보고했습니다. 이 글은 후보의 자리마다 정확도를 따로 측정하지는 않았습니다. 목록의 차례대로 high 5개, mid 4개, low 6개, exclude 15개가 한 덩어리씩 이어졌습니다. 같은 라벨 안에서는 대개 입력 차례를 그대로 따라, 이웃한 두 항목 26쌍 가운데 24쌍이 id 차례였습니다.
 
 포인트와이즈가 policy_risk 로 거른 a13 은 목록에서 3번째 high 였고, a04 는 mid 였습니다. 근거 id 는 30개 모두 s1 이라, a04 와 a13 에서는 주장을 적은 문장(s2, s3)을 가리키지 않았습니다. 이 라벨로 코드가 순위를 정하면 a13 이 13.20 으로 1위가 되고, mid 인 a04 도 7.00 으로 상위 5개에 듭니다. 목록 한 번으로 판정을 받으면, 포인트와이즈가 거른 근거 없는 광고 둘이 노출 자리에 들어오는 것입니다.
 
@@ -578,7 +578,7 @@ ranking 에는 받은 후보를 하나도 빠뜨리지 말고 한 번씩만 적�
 이 기록으로 말할 수 없는 것도 넷입니다. 질의 하나, 후보 30개, 기록 한 벌이라 다른 질의에서도 low 가 사라지는지는 모릅니다. 정답 라벨은 한 사람이 붙인 가상 값이라, 다른 사람은 GPS 시계나 러닝 반바지에 다른 라벨을 붙일 수 있습니다. 라벨 없이 정한 상위 5개와 비교해 4개가 바뀐 것은 손으로 정한 pCTR 과 입찰가에 기댄 수라, 그 값을 바꾸면 달라집니다. 목록이 포인트와이즈보다 덜 맞은 것도 이 모델의 한 번이고, 목록 방식 전체의 성질로 말할 수는 없습니다.
 :::
 
-- [LLM-as-a-Judge](post.html?id=llm-as-a-judge) — kappa 를 처음 잰 26주째 편입니다. 이 글의 두 함수는 그 편의 것을 옮겼습니다.
+- [LLM-as-a-Judge](post.html?id=llm-as-a-judge) — kappa 를 처음 측정한 26주째 편입니다. 이 글의 두 함수는 그 편의 것을 옮겼습니다.
 - [구조화 출력](post.html?id=structured-output) — 답을 스키마대로 읽고 읽지 못한 답을 센 22주째 편입니다.
 - [후보풀 여덟 질문](post.html?id=candidate-pool-questions) — 서연 씨 러닝화의 pCTR 1.2% 와 클릭당 600원이 나온 편입니다.
 - [관심사 사전 만들기](post.html?id=interest-audience-library) — 바로 앞 31주째 편입니다.
@@ -589,4 +589,4 @@ ranking 에는 받은 후보를 하나도 빠뜨리지 말고 한 번씩만 적�
 - Sun, W., Yan, L., Ma, X., et al. (2023). *Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents*. EMNLP 2023. arXiv:2304.09542. [arxiv.org](https://arxiv.org/abs/2304.09542). ChatGPT, GPT-4 같은 LLM 에게 후보를 주고 관련성 순서를 받는 방법을 다룹니다. 지시를 잘 주면 IR 벤치마크에서 지도 학습 방법과 겨룰 만하다고 보고했습니다. 저자들의 코드 저장소 이름이 RankGPT 이고, 슬라이딩 윈도우로 뒤에서 앞으로 순위를 매기는 방법도 적었습니다.
 - Qin, Z., Jagerman, R., Hui, K., et al. (2023). *Large Language Models are Effective Text Rankers with Pairwise Ranking Prompting*. arXiv:2306.17563. Findings of ACL: NAACL 2024, 1504–1518. [arxiv.org](https://arxiv.org/abs/2306.17563). 포인트와이즈와 리스트와이즈 프롬프트는 기성 LLM 이 다 알아듣지 못하는 꼴이라고 봅니다. 그래서 두 후보 가운데 나은 쪽을 묻는 짝 방식(PRP)을 내놓았습니다.
 - Thomas, P., Spielman, S., Craswell, N., Mitra, B. (2023). *Large language models can accurately predict searcher preferences*. arXiv:2309.10621. [arxiv.org](https://arxiv.org/abs/2309.10621). Bing 에서 LLM 으로 관련성 라벨을 붙인 일을 적었습니다. 실제 검색자의 판단으로 만든 라벨과 비교해 외부 크라우드 작업자보다 정확했고, 비용은 훨씬 적었다고 보고했습니다. 프롬프트의 문구만 바꿔도 정확도가 달라진다고 적었습니다.
-- Liu, N. F., Lin, K., Hewitt, J., et al. (2023). *Lost in the Middle: How Language Models Use Long Contexts*. TACL. arXiv:2307.03172. [arxiv.org](https://arxiv.org/abs/2307.03172). 필요한 정보가 긴 입력의 맨 앞이나 맨 뒤에 있으면 성능이 가장 높고, 가운데에 있으면 크게 떨어진다고 보고했습니다. 여러 문서 질의응답과 키-값 찾기 두 과제로 쟀습니다.
+- Liu, N. F., Lin, K., Hewitt, J., et al. (2023). *Lost in the Middle: How Language Models Use Long Contexts*. TACL. arXiv:2307.03172. [arxiv.org](https://arxiv.org/abs/2307.03172). 필요한 정보가 긴 입력의 맨 앞이나 맨 뒤에 있으면 성능이 가장 높고, 가운데에 있으면 크게 떨어진다고 보고했습니다. 여러 문서 질의응답과 키-값 찾기 두 과제로 측정했습니다.

@@ -36,7 +36,7 @@
 2. **CI 에 없는 라이브러리** — bid-shading-censored 첫째, 다섯째 블록(numpy, scipy)과 auto-bidding-pacing 둘째, 셋째 블록(numpy)은 CI 의 표준 라이브러리 파이썬에서 「라이브러리 없음」으로 건너뛴다. 실패가 아니라 건너뜀이어야 한다. 이 넷의 뜻 줄은 로컬 실행 검사만 본다. Task 1 Step 5 와 Task 4 Step 4 가 표준 라이브러리만 있는 venv 로 두 글을 돌리고, Task 6 Step 1 이 `통과 112, 건너뜀 8 (라이브러리 없음 7, 실행 안 됨 1)` 을 본다.
 3. **옛 출력과 다른 블록** — ecpm-ranking 세 블록과 ltv-ad-ranking 첫 블록은 도우미가 찍힌 줄을 옛 출력과 견주지 않는다(`old=run`). 이 넷의 찍힌 줄을 지키는 것은 실행 검사 하나다. ecpm-ranking 첫째, 둘째 블록은 출력 영역이 새로 생기고, ltv-ad-ranking 첫 블록은 13줄이 9줄로 준다. Task 3 Step 3 과 Task 4 Step 3 이 찍힌 줄 수를 세고, 같은 태스크의 Step 4 가 실행 검사를 돌린다.
 4. **마지막 코드 줄 뒤에 있던 주석** — bid-shading-censored 첫째, 다섯째, ecpm-ranking 첫째, 둘째 블록은 마지막 코드 줄 뒤에, ltv-ad-ranking 첫 블록은 옛 출력 끝에 해설 주석이 있었다. 그 내용은 뜻 줄이나 풀이로 옮겼다. 내용이 사라지거나 옛 주석이 출력 영역 앞에 홀로 남으면 안 된다. Task 1 Step 4, Task 3 Step 3, Task 4 Step 3 이 옮긴 말이 있고 옛 줄이 없는지 본다.
-5. **휴대폰 폭의 긴 찍힌 줄** — bid-shading-censored 넷째 블록의 화살표 줄, ab-test-vs-mab 의 신뢰구간 줄처럼 긴 찍힌 줄이 390 폭에서 옆으로 넘치거나 숫자 중간에서 끊기면 안 된다. Task 1 Step 7 이 첫 글을 390 폭으로 재고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
+5. **휴대폰 폭의 긴 찍힌 줄** — bid-shading-censored 넷째 블록의 화살표 줄, ab-test-vs-mab 의 신뢰구간 줄처럼 긴 찍힌 줄이 390 폭에서 옆으로 넘치거나 숫자 중간에서 끊기면 안 된다. Task 1 Step 7 이 첫 글을 390 폭으로 측정하고, Task 6 Step 2 가 글 전부를 390 폭으로 훑는다.
 
 ## 이 계획에서 정한 것
 
@@ -57,7 +57,7 @@
 | 블록 안에 새 비유를 넣지 않는다. 글이 이미 쓰는 말(「두뇌 층」, 「고리」)은 adtech-ecosystem-map 셋째 블록 풀이에 한 번 쓴다 | 사용자 결정 「비유는 쓰지마」 | 풀이 한 줄 |
 | 글 커밋 머리는 `feat(posts): 경매와 밴딧 글 —` 와 `fix(posts): 경매와 밴딧 글 —` 이고, 올리기 직전에 하나로 합친다 | 셋째 묶음과 같다 | 합치기를 건너뛰고 그대로 올린다 |
 | push 는 사용자가 `! git push origin main` 으로 한다 | 앞 묶음들에서 자동 권한 검사가 `git push` 를 막았다 | 사용자에게 부탁하는 줄 하나 |
-| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 잰다. 서버는 8772 포트다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다. 8771 은 셋째 묶음이 썼다 | 도구와 포트만 바뀐다 |
+| 화면 확인은 Chrome DevTools MCP 로 하고, 390 폭은 숨긴 iframe 으로 측정한다. 서버는 8772 포트다 | Playwright MCP 가 연결되지 않는다. 창은 500px 아래로 줄지 않는다. 8771 은 셋째 묶음이 썼다 | 도구와 포트만 바뀐다 |
 
 ## 파일 지도
 
@@ -143,7 +143,7 @@ def surplus(b, V, mu, sigma):
     return (V - b) * win_prob
 
 # 2단계: 입찰가 50개로 Surplus 가 가장 큰 곳을 찾는다
-# True Value 는 $5, 시장 가격은 Log-normal(μ=0.8, σ=0.5)이다. $0.1 에서 $4.9 까지 입찰가 50개를 잰다.
+# True Value 는 $5, 시장 가격은 Log-normal(μ=0.8, σ=0.5)이다. $0.1 에서 $4.9 까지 입찰가 50개를 측정한다.
 V, mu, sigma = 5.0, 0.8, 0.5
 bids = np.linspace(0.1, V - 0.1, 50)
 surpluses = [surplus(b, V, mu, sigma) for b in bids]
@@ -999,7 +999,7 @@ for pair in f"{TRADE} {BRAIN} {CROSS}".split():
     g.setdefault(a, set()).add(b)   # 이웃 관계는 양방향으로 담는다
     g.setdefault(b, set()).add(a)
 
-# 3단계: pCTR 에서 너비 우선 탐색으로 거리를 잰다
+# 3단계: pCTR 에서 너비 우선 탐색으로 거리를 측정한다
 # pCTR 에서 출발해 화살표 몇 개를 건너면 닿는지를 다리 수로 센다.
 dist, q = {"pctr": 0}, deque(["pctr"])  # 심장에서 출발하는 너비 우선 탐색
 while q:
@@ -1146,7 +1146,7 @@ print(f"  밴딧 (탐색 15%)      {bandit:>10,.0f}회   {(bandit/ab-1)*100:+.1f
 print(f"  진짜 1등 조합 #{best_i} (CTR {true_ctr[best_i]:.2%})"
       f" / 밴딧이 고른 조합 #{picked} (CTR {true_ctr[picked]:.2%})")
 print()
-print("→ 조합이 180개면 A/B로는 다 못 재본다. 시간이 안 된다.")
+print("→ 조합이 180개면 A/B로는 다 못 측정해 본다. 시간이 안 된다.")
 print("→ 밴딧은 '전부 검증'을 포기하고 '좋은 걸 빨리 쓰기'를 택한다.")
 print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 다음 학습을 오염시키지 않기 때문이다.")
 
@@ -1168,7 +1168,7 @@ print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 �
 #   밴딧 (탐색 15%)          87,027회   +40.1%
 #   진짜 1등 조합 #53 (CTR 3.40%) / 밴딧이 고른 조합 #132 (CTR 3.05%)
 #
-# → 조합이 180개면 A/B로는 다 못 재본다. 시간이 안 된다.
+# → 조합이 180개면 A/B로는 다 못 측정해 본다. 시간이 안 된다.
 # → 밴딧은 '전부 검증'을 포기하고 '좋은 걸 빨리 쓰기'를 택한다.
 # → 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 다음 학습을 오염시키지 않기 때문이다.
 ````
@@ -2838,7 +2838,7 @@ for alpha in (0.1, 1.0, 3.0):
 
 <!-- cb4 post=disjoint-LinUCB block=2 sha=66e1aced2a2c7088 -->
 ````python
-# 하는 일: 항등행렬에서 시작해 A 에 xx^T 를 5번 더하며, 역행렬을 매번 처음부터 구한 값과 Sherman-Morrison 으로 갱신한 값의 최대 오차를 잰다.
+# 하는 일: 항등행렬에서 시작해 A 에 xx^T 를 5번 더하며, 역행렬을 매번 처음부터 구한 값과 Sherman-Morrison 으로 갱신한 값의 최대 오차를 측정한다.
 import random
 
 # 1단계: 역행렬과 벡터 계산 함수를 둔다
@@ -3154,7 +3154,7 @@ Expected: `기준표를 다시 적었습니다 — 옛 형식 블록 166개, 글
 
 - [ ] **Step 7: 첫 글을 화면으로 본다**
 
-서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch4"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8772`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8772/post.html?id=bid-shading-censored` 를 새 캐시(`new_page` 에 `isolatedContext` 이름)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 잰다. 목록의 앞은 글 id, 뒤는 파일 이름이다.
+서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch4"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8772`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8772/post.html?id=bid-shading-censored` 를 새 캐시(`new_page` 에 `isolatedContext` 이름)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 측정한다. 목록의 앞은 글 id, 뒤는 파일 이름이다.
 
 ````js
 async () => {
@@ -3890,7 +3890,7 @@ SCRATCH="${TMPDIR:-/tmp}/code-steps-batch4"; python3 -m venv --without-pip "$SCR
 
 Expected: `21 통과, 0 실패` 와 `✓ 통과 112, 건너뜀 8 (라이브러리 없음 7, 실행 안 됨 1), 실패 0` (셋째 묶음의 셋에 이 묶음의 numpy, scipy 블록 4개가 더해졌다)
 
-- [ ] **Step 2: 숫자로 재고 그림을 찍는다**
+- [ ] **Step 2: 숫자로 측정하고 그림을 찍는다**
 
 서버 파일이 있는지 보고, 없으면 계획에서 뽑는다(저장소 루트에서).
 
@@ -4004,7 +4004,7 @@ async () => {
 }
 ````
 
-Expected: `{"posts":108,"numbers":2219,"overflow":[],"broken":[]}` (계획을 쓸 때 잰 값. 셋째 묶음의 마지막 리뷰가 블록을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
+Expected: `{"posts":108,"numbers":2219,"overflow":[],"broken":[]}` (계획을 쓸 때 측정한 값. 셋째 묶음의 마지막 리뷰가 블록을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
 
 그림을 `.playwright-mcp/batch4/` 에 찍는다. 20편을 1440 폭 라이트로 한 장씩(20장), 아래 표에서 390 이라 적은 6편은 390 폭 라이트로도(6장), bid-shading-censored 와 disjoint-LinUCB 는 1440 폭 다크로도(2장) 찍는다. 블록이 길면 머리와 출력 영역으로 나눠 찍고 이름에 `-top`, `-out` 을 붙인다. 담을 블록은 아래와 같다.
 

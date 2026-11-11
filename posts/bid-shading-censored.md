@@ -62,7 +62,7 @@ def surplus(b, V, mu, sigma):
     return (V - b) * win_prob
 
 # 2단계: 입찰가 50개로 Surplus 가 가장 큰 곳을 찾는다
-# True Value 는 $5, 시장 가격은 Log-normal(μ=0.8, σ=0.5)이다. $0.1 에서 $4.9 까지 입찰가 50개를 잰다.
+# True Value 는 $5, 시장 가격은 Log-normal(μ=0.8, σ=0.5)이다. $0.1 에서 $4.9 까지 입찰가 50개를 측정한다.
 V, mu, sigma = 5.0, 0.8, 0.5
 bids = np.linspace(0.1, V - 0.1, 50)
 surpluses = [surplus(b, V, mu, sigma) for b in bids]

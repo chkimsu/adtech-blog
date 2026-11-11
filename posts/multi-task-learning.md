@@ -422,7 +422,7 @@ WORLDS = {
 }
 
 
-# 3단계: 표 칸을 맞추고 LogLoss 를 재는 함수 둘을 만든다
+# 3단계: 표 칸을 맞추고 LogLoss 를 측정하는 함수 둘을 만든다
 def pad(s, w):
     """한글은 폭 2칸으로 세서 표를 맞춘다."""
     return s + " " * max(0, w - sum(2 if ord(c) > 0x2000 else 1 for c in s))
@@ -904,9 +904,9 @@ def train(w1, w2, epochs=5, lr=0.02):
     return ws, cs, u1, b1, u2, b2
 
 
-# 5단계: 태스크별 테스트 LogLoss 를 재는 함수를 만든다
+# 5단계: 태스크별 테스트 LogLoss 를 측정하는 함수를 만든다
 def losses(p):
-    """테스트셋 LogLoss를 태스크별로 잰다. 낮을수록 좋다."""
+    """테스트셋 LogLoss를 태스크별로 측정한다. 낮을수록 좋다."""
     ws, cs, u1, b1, u2, b2 = p
     l1 = n1 = l2 = n2 = 0.0
     for x, y, z in TEST:

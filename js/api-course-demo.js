@@ -178,7 +178,7 @@
   function drawRequest() {
     $('apc-req').textContent = S.requestText(state);
     // 배지는 본문만의 바이트다 — 위에 보이는 원문 전체(헤더 포함)보다 짧다.
-    // "본문"을 안 붙이면 6절의 같은 배지(그 자리는 줄 전체를 잰다)와 헷갈린다.
+    // "본문"을 안 붙이면 6절의 같은 배지(그 자리는 줄 전체를 측정한다)와 헷갈린다.
     $('apc-req-bytes').textContent = '본문 ' + S.byteLen(S.bodyText(state)) + ' B';
   }
 

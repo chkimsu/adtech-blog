@@ -23,7 +23,7 @@
         const w = Math.max(40, tw(label) + 12);
         return box(cx - w / 2, y, w, 17, label, cls, 10);
     }
-    // 글자 폭에 맞춘 채움 라벨 — 한글은 chip() 이 폭을 잘못 재므로 이것을 쓴다
+    // 글자 폭에 맞춘 채움 라벨 — 한글은 chip() 이 폭을 잘못 측정하므로 이것을 쓴다
     function tag(x, y, txt, cls) {
         return box(x, y, tw(txt) + 14, 18, txt, cls, 10);
     }

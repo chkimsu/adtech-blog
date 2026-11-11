@@ -75,7 +75,7 @@ node scripts/check-content-standard.js log-hops-to-kafka # 이 글만 상세
 node scripts/build-search-index.js                      # 검색 색인 재생성
 ```
 
-`check-content-standard.js` 가 재는 것:
+`check-content-standard.js` 가 측정하는 것:
 
 | 항목 | 기준 |
 |---|---|
@@ -412,7 +412,7 @@ log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
 #
 # 상황: 16:48:21.234 에 탭한 클릭 한 건이 홉을 차례로 지난다. 홉마다 머무는
 #   시간을 더해 Kafka 에 닿는 시각을 낸다. 그다음 Kafka 가 멈췄다고 하고,
-#   파일 경유와 프로세스 안 직행이 각각 얼마나 버티는지 잰다.
+#   파일 경유와 프로세스 안 직행이 각각 얼마나 버티는지 측정한다.
 # 하루 유입은 Kafka 글 값을 합친 것이다 — 노출 확인 2.28억 + 클릭 228만.
 # 홉별 밀리초, 디스크 100GB, 메모리 512MB 는 전부 지어낸 값이다.
 from unicodedata import east_asian_width
@@ -420,7 +420,7 @@ from unicodedata import east_asian_width
 TAP = 1786002501234                       # 2026-08-06 16:48:21.234 KST
 ROWS_DAY = 228_000_000 + 2_280_000
 PER_SEC = ROWS_DAY / 86_400               # 수집 서버가 초당 받는 줄
-LINE_TEXT, LINE_JSON = 169, 308           # 예제 2에서 잰 한 줄 바이트
+LINE_TEXT, LINE_JSON = 169, 308           # 예제 2에서 측정한 한 줄 바이트
 DISK, MEM = 100 * 10 ** 9, 512 * 10 ** 6
 
 # (홉 이름, 머무는 밀리초, 무슨 모양으로 있나)
@@ -628,9 +628,9 @@ git commit -m "feat(posts): 9홉 글 3~4절 — 수집 서버와 파일이냐 �
 | `collect_ts` | 16:48:21.402 | 수집 서버 | 서버 시계라 믿을 수 있다 |
 | `process_ts` | 16:48:22.310 | 변환기 | 재처리하면 값이 바뀐다 |
 
-**셋을 어디에 쓰는지가 갈림길이다.** 저장소 파티션(`dt=`·`hour=`)은 `collect_ts` 로 자르고, 조인 창 3시간(`kafka-log-pipeline` 7절)은 `event_ts` 로 잰다. 섞으면 하루치가 새거나 겹친다. 9절 지뢰로 다시 나온다.
+**셋을 어디에 쓰는지가 갈림길이다.** 저장소 파티션(`dt=`·`hour=`)은 `collect_ts` 로 자르고, 조인 창 3시간(`kafka-log-pipeline` 7절)은 `event_ts` 로 측정한다. 섞으면 하루치가 새거나 겹친다. 9절 지뢰로 다시 나온다.
 
-**보강이 밖을 부른다**는 것도 한 문단. `ad_id` → `campaign_id` 조회는 다른 저장소를 읽는 일이다. 그 저장소가 느려지면 변환이 밀리고, 그 밀림이 5절 파일에 쌓인다. 4절이 잰 61.7시간이 여기서 값을 낸다.
+**보강이 밖을 부른다**는 것도 한 문단. `ad_id` → `campaign_id` 조회는 다른 저장소를 읽는 일이다. 그 저장소가 느려지면 변환이 밀리고, 그 밀림이 5절 파일에 쌓인다. 4절이 측정한 61.7시간이 여기서 값을 낸다.
 
 - [ ] **Step 3: 파이썬 예제를 6절에 넣는다 (실행 검증 완료본)**
 
@@ -800,13 +800,13 @@ Offset:8412	r-8f21	\x00\x00\x00\x00\x11\x0cr-8f21\x0aclick\x96\x9b\x01\x10main_t
 
 ````markdown
 ```python
-# "Kafka 에 담기는 바이트가 표현마다 얼마나 다른가" — 같은 한 건을 다섯으로 만들어 잰다.
+# "Kafka 에 담기는 바이트가 표현마다 얼마나 다른가" — 같은 한 건을 다섯으로 만들어 측정한다.
 #
 # 상황: 클릭 한 건이 여러 모양을 지난다. 다섯을 나란히 놓고 바이트를 센다.
 #   ① 수집 서버 액세스 로그 텍스트   ② 변환 뒤 JSON 한 건
 #   ③ JSON 을 500건 묶어 gzip        ④ Avro 한 건   ⑤ Avro 를 500건 묶어 gzip
 # ③⑤ 가 Kafka 에 실제로 저장되는 모양이다. producer 는 배치 단위로 압축한다.
-# Avro 인코딩은 어느 구현의 것도 아니다. 바이트 수만 재려고 직접 짠 것이다
+# Avro 인코딩은 어느 구현의 것도 아니다. 바이트 수만 측정하려고 직접 짠 것이다
 #   (zigzag varint + 길이 접두 문자열, 앞에 매직 1B·스키마 번호 4B).
 # 하루 줄 수·복제·브로커는 Kafka 글에서 가져왔다 — ad.impression 2.28억,
 #   ad.click 228만, 복제 3벌, 브로커 6대, 대당 디스크 500GB, 보존 7일.

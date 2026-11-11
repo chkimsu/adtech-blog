@@ -164,7 +164,7 @@ const GLOSSARY = [
   {
     term: 'Discrimination',
     abbr: '순서를 맞히는 능력',
-    body: '누를 광고를 안 누를 광고보다 <strong>높은 점수로 세우는</strong> 능력. AUC 가 재는 것이 이것이다. 확률의 크기가 맞는지는 따로 재야 하고, 그것이 Calibration 이다.'
+    body: '누를 광고를 안 누를 광고보다 <strong>높은 점수로 세우는</strong> 능력. AUC 가 측정하는 것이 이것이다. 확률의 크기가 맞는지는 따로 측정해야 하고, 그것이 Calibration 이다.'
   },
   {
     term: 'Reliability Diagram',
@@ -234,7 +234,7 @@ const GLOSSARY = [
   {
     term: 'No-Fill',
     abbr: '빈 자리로 끝난 요청',
-    body: '채울 광고가 없어 <strong>아무것도 안 뜬</strong> 경우. 노출 로그에는 안 남으므로 요청 로그가 유일한 단서다. Fill Rate 를 재는 분모가 여기서 나온다.'
+    body: '채울 광고가 없어 <strong>아무것도 안 뜬</strong> 경우. 노출 로그에는 안 남으므로 요청 로그가 유일한 단서다. Fill Rate 를 측정하는 분모가 여기서 나온다.'
   },
   {
     term: 'Multi-Stage Ranking',
@@ -391,7 +391,7 @@ const GLOSSARY = [
   {
     term: 'pCVR 타겟팅',
     abbr: 'pCVR-based Targeting',
-    body: '세그먼트 번호 대신 <strong>모델이 매긴 전환 확률이 높은 순서로</strong> 보여 줄 사람을 고르는 방식. 표본에서 317 과 같은 2,290명을 이렇게 고르면 기대 전환이 1.55배가 되지만, 증분은 대조군으로 따로 잰다.'
+    body: '세그먼트 번호 대신 <strong>모델이 매긴 전환 확률이 높은 순서로</strong> 보여 줄 사람을 고르는 방식. 표본에서 317 과 같은 2,290명을 이렇게 고르면 기대 전환이 1.55배가 되지만, 증분은 대조군으로 따로 측정한다.'
   },
   {
     term: '의도 판정과 조건 추출',
@@ -416,7 +416,7 @@ const GLOSSARY = [
   {
     term: '임베딩',
     abbr: 'Embedding',
-    body: '글 한 줄을 <strong>정해진 길이의 숫자 목록으로 바꾼 것</strong>. 뜻이 가까운 글은 숫자도 가깝게 놓이게 만들고, 코사인으로 가까움을 잰다.'
+    body: '글 한 줄을 <strong>정해진 길이의 숫자 목록으로 바꾼 것</strong>. 뜻이 가까운 글은 숫자도 가깝게 놓이게 만들고, 코사인으로 가까움을 측정한다.'
   },
   {
     term: 'RAG',
@@ -426,7 +426,7 @@ const GLOSSARY = [
   {
     term: 'Context Recall 과 Precision',
     abbr: 'Context Recall, Context Precision',
-    body: 'RAG 의 <strong>검색이 정답 문서를 얼마나 가져왔나</strong>를 재는 두 값. Recall 은 정답 조각이 상위 k 에 든 질문의 몫이고, Precision 은 상위 k 가운데 정답 조각의 몫이다.'
+    body: 'RAG 의 <strong>검색이 정답 문서를 얼마나 가져왔나</strong>를 측정하는 두 값. Recall 은 정답 조각이 상위 k 에 든 질문의 몫이고, Precision 은 상위 k 가운데 정답 조각의 몫이다.'
   },
   {
     term: 'tool use',
@@ -441,7 +441,7 @@ const GLOSSARY = [
   {
     term: 'LLM-as-a-Judge',
     abbr: 'LLM-as-a-Judge',
-    body: '<strong>LLM 에게 채점을 맡기는</strong> 방법. 점수마다 뜻을 적은 채점표를 건네고, 그 점수가 사람 라벨과 얼마나 맞는지 재고 나서 쓴다.'
+    body: '<strong>LLM 에게 채점을 맡기는</strong> 방법. 점수마다 뜻을 적은 채점표를 건네고, 그 점수가 사람 라벨과 얼마나 맞는지 측정하고 나서 쓴다.'
   },
   {
     term: 'Cohen\'s kappa',

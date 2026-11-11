@@ -103,7 +103,7 @@
 처음에는 두 타워가 아무것도 몰라서 τ = 0.1 에서 손실이 1.390 입니다. 이 값은 네 칸을 똑같이 찍을 때 값인 log 4 = 1.386 과 거의 같습니다. 역전파(손실이 줄어드는 쪽으로 가중치를 고치는 계산) 한 번이 두 타워를 같이 고쳐 정답 칸 점수를 올리고 음성 칸 점수를 내리므로, 학습 뒤에는 정답 칸 확률이 0.979~0.998 로 올라 손실이 0.009 가 됩니다. 아래 코드는 학습 전과 학습 뒤의 가상 점수표 두 장으로 이 손실 값을 직접 계산합니다.
 
 ```python
-# 하는 일: 가상 점수표 두 장으로 학습 전과 학습 뒤의 배치 손실을 τ = 0.1 에서 재고, 회원 A 줄의 확률을 펼쳐 본다.
+# 하는 일: 가상 점수표 두 장으로 학습 전과 학습 뒤의 배치 손실을 τ = 0.1 에서 측정하고, 회원 A 줄의 확률을 펼쳐 본다.
 import math
 
 # 1단계: 점수표 두 장을 둔다
@@ -133,7 +133,7 @@ def batch_loss(table, tau):
     return sum(losses) / len(losses)
 
 
-# 3단계: 두 점수표의 손실을 잰다
+# 3단계: 두 점수표의 손실을 측정한다
 # 학습 전 손실은 네 칸을 똑같이 찍을 때의 값 log 4 와 비교한다.
 for name, table in [('처음', START), ('학습 뒤', AFTER)]:
     print(f'{name:4}  평균 손실 {batch_loss(table, 0.1):.3f}')
@@ -165,7 +165,7 @@ print('회원 A 줄 확률', ' '.join(f'{v:.3f}' for v in p), f' 손실 {-math.l
 τ 가 작을수록 점수가 높은 음성, 곧 정답과 헷갈리는 광고에 손실이 몰립니다. 너무 작으면 그 몇 칸에 끌려다녀 학습이 흔들립니다. 정해진 값이 없어서 검증 재현율을 보고 고릅니다. 이 글은 0.1 을 씁니다. 온도를 바꿔도 칸의 순서는 그대로이고 확률이 얼마나 벌어지느냐만 바뀝니다.
 
 ```python
-# 하는 일: 3절의 학습 뒤 점수표를 온도 τ 만 1, 0.1, 0.05 로 바꿔 다시 재고, 배치가 4,096줄일 때 정답 칸 확률이 오를 수 있는 끝을 구한다.
+# 하는 일: 3절의 학습 뒤 점수표를 온도 τ 만 1, 0.1, 0.05 로 바꿔 다시 측정하고, 배치가 4,096줄일 때 정답 칸 확률이 오를 수 있는 끝을 구한다.
 import math
 
 # 1단계: 3절의 학습 뒤 점수표와 소프트맥스를 다시 둔다
@@ -180,7 +180,7 @@ def softmax(xs):
     return [v / s for v in e]
 
 
-# 2단계: 온도만 바꿔 다시 잰다
+# 2단계: 온도만 바꿔 다시 측정한다
 # 같은 학습 뒤 점수표다. 순서(대각선이 가장 큼)는 셋 다 같고, 확률이 얼마나 벌어지느냐만 바뀐다.
 for tau in (1, 0.1, 0.05):
     ps = [softmax([c / tau for c in row])[i] for i, row in enumerate(AFTER)]
@@ -261,7 +261,7 @@ for tau in (1, 0.1):
 1~8절의 계산을 PyTorch 로 옮겼습니다. 광고 200개와 회원 정보를 가짜로 만들어 바로 돌아가게 했고 인기는 순위의 역수로 쏠리게 두었습니다. 숫자는 이 가짜 데이터에서 나온 값이라 본문의 예시 값과 다릅니다. 처음 손실이 log 256 = 5.55 보다 큰 데는 두 까닭이 있습니다. 학습 전 점수도 τ 로 나누면 고르지 않고 인기 보정이 그 위에 칸마다 다른 값을 더합니다.
 
 ```python
-# 하는 일: 가짜 광고 200개로 두 타워를 300번 학습하고, 학습에 안 쓴 클릭 2,000건으로 Recall@10 을 잰다.
+# 하는 일: 가짜 광고 200개로 두 타워를 300번 학습하고, 학습에 안 쓴 클릭 2,000건으로 Recall@10 을 측정한다.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -315,7 +315,7 @@ for step in range(301):
     if step % 100 == 0:
         print(f'step {step:3d}  손실 {loss.item():.3f}')
 
-# 5단계: 학습에 안 쓴 클릭으로 잰다
+# 5단계: 학습에 안 쓴 클릭으로 측정한다
 # 누른 광고가 상위 10개 안에 드는지 보고, 클릭 많은 순 10개를 모두에게 준 기준선과 비교한다.
 with torch.no_grad():                            # 학습에 안 쓴 클릭 2,000건으로 평가
     member_x, ad = clicks(2000)
@@ -345,7 +345,7 @@ print(f'Recall@10  two-tower {recall:.3f}  클릭 많은 순 {base:.3f}')
 후보 모델이 하는 일, 곧 정답을 위쪽 500개에 올리는 일을 그대로 측정하는 지표를 골라야 합니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-two-tower-training.html?embed=1&fig=7" height="330" loading="lazy" title="다음 날 클릭으로 재는 Recall@500 과 기준선"></iframe>
+<iframe class="demo-embed" src="demo-two-tower-training.html?embed=1&fig=7" height="330" loading="lazy" title="다음 날 클릭으로 측정하는 Recall@500 과 기준선"></iframe>
 <a class="demo-embed-open" href="demo-two-tower-training.html" target="_blank" rel="noopener">↗ 그림 여덟 장 전체로 열기</a>
 </div>
 

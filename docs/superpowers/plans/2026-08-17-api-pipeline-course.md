@@ -1877,7 +1877,7 @@ Run: `node scripts/test-course-logic.js`
     return { safe: lost === 0, lostDays: lost };
   }
 
-  // 되감는 속도의 상한은 partition 수다. 글이 재어 둔 두 점만 쓴다 —
+  // 되감는 속도의 상한은 partition 수다. 글이 측정해 둔 두 점만 쓴다 —
   // 공식을 새로 만들면 글의 14.1 과 1.1 이 안 나온다.
   const CATCHUP = [
     { consumers: 4, backlogDays: 3, days: 14.1 },
@@ -1916,7 +1916,7 @@ node scripts/check-design.js demo-pipeline-course.html
 git add js/pipeline-course-model.js js/pipeline-course-demo.js scripts/test-course-logic.js scripts/check-course-pages.js demo-pipeline-course.html
 git commit -m "feat(course): 2페이지 5~6절 — 보존과 수단
 
-보존을 줄여 보면 멈춘 학습이 무엇을 잃는지 보인다. 되감기는 글이 재어
+보존을 줄여 보면 멈춘 학습이 무엇을 잃는지 보인다. 되감기는 글이 측정해
 둔 두 점만 쓴다 — 공식을 새로 만들면 14.1 과 1.1 이 안 나온다."
 ```
 
@@ -1949,7 +1949,7 @@ Run: `node scripts/test-course-logic.js`
 ```js
   // 7절 — 노출과 클릭을 req_id 로 붙여야 라벨이 생긴다.
   // 표본 일곱 줄은 붙이는 방법만 보이려는 것이다. 실제 비율은 하루치로
-  // 재야 나오고 그 값이 1.00% 다 — 둘을 같은 문장에 두지 않는다.
+  // 측정해야 나오고 그 값이 1.00% 다 — 둘을 같은 문장에 두지 않는다.
   const IMP_SAMPLE = ['r-8f21', 'r-9d55', 'r-4a17', 'r-2e93', 'r-6b02', 'r-1c48'];
   const CLICK_SAMPLE = [{ req_id: 'r-8f21', afterHours: 0.67 }];
 

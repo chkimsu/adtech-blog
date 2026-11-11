@@ -241,15 +241,15 @@ def train(featfn, steps=3000, lr=2.0):
     return w, b
 
 # 5단계: AUC 와 LogLoss 로 채점하는 함수를 만든다
-# LogLoss 는 확률의 절대값을, AUC 는 순위만 잰다.
+# LogLoss 는 확률의 절대값을, AUC 는 순위만 측정한다.
 def evaluate(featfn, w, b):
     preds = []
     for a, h, y in rows:
         z = b + sum(w.get(nm, 0.0) for nm in featfn(a, h))
         preds.append((1 / (1 + math.exp(-z)), y))
-    # LogLoss: 확률의 '절대값'을 재는 지표. 낮을수록 좋다.
+    # LogLoss: 확률의 '절대값'을 측정하는 지표. 낮을수록 좋다.
     ll = -sum(y*math.log(p) + (1-y)*math.log(1-p) for p, y in preds) / len(preds)
-    # AUC: '순위'만 재는 지표. 순위합으로 계산하고, 동점은 평균 순위로 센다.
+    # AUC: '순위'만 측정하는 지표. 순위합으로 계산하고, 동점은 평균 순위로 센다.
     preds.sort(key=lambda t: t[0])
     i, rank_sum, npos = 0, 0.0, 0
     while i < len(preds):

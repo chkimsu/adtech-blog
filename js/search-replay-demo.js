@@ -60,7 +60,7 @@
             const st = q.stages;
             if (done('cut')) {
                 flow.textContent = `BM25 ${st.bm25.out}건 + kNN ${st.knn.out}건 = ${st.rrf.in}건 → 겹친 것을 합쳐 ${st.rrf.out}건 → 꺼진 것 ${st.rrf.out - st.cut.out}건을 빼고 ${st.cut.out}건 → 랭킹 모델로. ` +
-                    `API 안에서 ${ms1(p.end)}, 보내는 쪽에서 잰 왕복 ${ms1(q.round_trip_ms)}`;
+                    `API 안에서 ${ms1(p.end)}, 보내는 쪽에서 측정한 왕복 ${ms1(q.round_trip_ms)}`;
                 drop.innerHTML = q.dropped && q.dropped.length
                     ? `거르기에서 빠진 상품 예: ` + q.dropped.slice(0, 3).map((d) => `<span class="sr-tag off">꺼짐</span>${esc(d.title)}`).join(', ')
                     : '';

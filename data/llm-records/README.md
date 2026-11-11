@@ -31,7 +31,7 @@ LLM 글이 다시 보이는 진짜 출력을 둔다. `scripts/llm-record.py` 가
 
 요청 수는 항목 수 × think 수 × repeat 에 두 선택 필드가 더하는 만큼이다. 200건에 `"repeat_subset": {"ids": [40개], "repeat": 3}` 이면 200 + 120 = 320 이다. 50건에 `"think_subset": {"ids": [10개], "think": "on"}` 이면 50 + 10 = 60 이다.
 
-묶음의 `options` 는 맨 위 `options` 위에 얹히고, 그 묶음에 없는 키는 맨 위 값을 물려받는다. `seed` 를 적지 않았는데 `temperature` 가 0 보다 크면 run 마다 seed 를 7 + run 으로 보낸다(run 2 는 9, run 3 은 10). `think_subset` 의 요청도 같은 규칙을 따른다. 그래서 run 마다 뽑는 seed 가 다르다. 같은 기록 안에서는 temperature 0 의 10번이 글자까지 같았다. 같은 설정으로 다시 기록하면 답은 같아도 글자가 달라진 예가 하나 있다. 27주째 글의 p17 을 21주째 기록과 비교한 경우다. 같은 기록 안에서 num_predict 하나만 다르게 보낸 요청은 상한 없는 답의 앞부분이 아니었다. LLM 라벨과 코드 랭커 편의 리스트와이즈 기록에서 15번째 항목부터 달랐다. 잘린 답을 상한 없는 답의 앞부분으로 읽지 않는다. temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 흔들림은 temperature 0 만 되풀이해 재지 않고, temperature 0(같은 답)과 run 마다 seed 가 다른 temperature 0.7(바뀔 수 있는 답)을 나란히 두고 견준다.
+묶음의 `options` 는 맨 위 `options` 위에 얹히고, 그 묶음에 없는 키는 맨 위 값을 물려받는다. `seed` 를 적지 않았는데 `temperature` 가 0 보다 크면 run 마다 seed 를 7 + run 으로 보낸다(run 2 는 9, run 3 은 10). `think_subset` 의 요청도 같은 규칙을 따른다. 그래서 run 마다 뽑는 seed 가 다르다. 같은 기록 안에서는 temperature 0 의 10번이 글자까지 같았다. 같은 설정으로 다시 기록하면 답은 같아도 글자가 달라진 예가 하나 있다. 27주째 글의 p17 을 21주째 기록과 비교한 경우다. 같은 기록 안에서 num_predict 하나만 다르게 보낸 요청은 상한 없는 답의 앞부분이 아니었다. LLM 라벨과 코드 랭커 편의 리스트와이즈 기록에서 15번째 항목부터 달랐다. 잘린 답을 상한 없는 답의 앞부분으로 읽지 않는다. temperature 0.7 은 seed 를 고정해도 다시 기록할 때 답이 달라질 수 있다(자연어 오디언스 편에서 확인). 흔들림은 temperature 0 만 되풀이해 측정하지 않고, temperature 0(같은 답)과 run 마다 seed 가 다른 temperature 0.7(바뀔 수 있는 답)을 나란히 두고 견준다.
 
 ## 기록 파일 `<slug>.json`
 

@@ -32,7 +32,7 @@
 아래 블록은 n 을 1,000 에서 8,000 까지 두 배씩 키우며 두 방법의 시간을 측정하고 n 이 두 배가 될 때 시간이 몇 배가 되는지를 배수 칸에 찍습니다. 목록에 중복이 없게 해서 두 방법이 끝까지 순회하게 했으므로 가장 오래 걸리는 경우(최악의 경우)를 측정했습니다.
 
 ```python
-# 하는 일: 정수 목록에 같은 값이 두 번 나오는지를 두 방법으로 풀고, n 을 1,000 에서 8,000 까지 두 배씩 키우며 걸린 시간을 잰다.
+# 하는 일: 정수 목록에 같은 값이 두 번 나오는지를 두 방법으로 풀고, n 을 1,000 에서 8,000 까지 두 배씩 키우며 걸린 시간을 측정한다.
 
 import random
 from time import perf_counter
@@ -54,7 +54,7 @@ def dup_set(nums):                    # 한 번만 순회한다
         seen.add(x)
     return False
 
-# 2단계: 걸린 시간을 재는 함수를 만든다
+# 2단계: 걸린 시간을 측정하는 함수를 만든다
 def took(fn, nums, repeat=3):         # 가장 빨랐던 회차를 쓴다. 잡음을 줄이려고
     best = float('inf')
     for _ in range(repeat):
@@ -63,9 +63,9 @@ def took(fn, nums, repeat=3):         # 가장 빨랐던 회차를 쓴다. 잡�
         best = min(best, perf_counter() - t0)
     return best
 
-# 3단계: n 을 두 배씩 키우며 잰다
-# 가장 오래 걸리는 경우를 재려고 목록에 중복이 없게 해서 두 방법 다 끝까지 순회하게 했다.
-# 시간은 노트북 한 대에서 잰 값이라 기계마다 다르니, 절대 시간보다 n 이 두 배가 될 때 시간이 몇 배가 되는지를 본다.
+# 3단계: n 을 두 배씩 키우며 측정한다
+# 가장 오래 걸리는 경우를 측정하려고 목록에 중복이 없게 해서 두 방법 다 끝까지 순회하게 했다.
+# 시간은 노트북 한 대에서 측정한 값이라 기계마다 다르니, 절대 시간보다 n 이 두 배가 될 때 시간이 몇 배가 되는지를 본다.
 rng = random.Random(20260815)
 print(f"{'n':>7}{'짝 전부(ms)':>14}{'배수':>7}{'집합(ms)':>12}{'배수':>7}")
 pa = pb = None
@@ -175,7 +175,7 @@ from time import perf_counter
 N = 100_000
 LOOKUPS = 1_000
 
-# 1단계: 「안에 있나」를 list 와 set 으로 잰다
+# 1단계: 「안에 있나」를 list 와 set 으로 측정한다
 # list 는 앞에서부터 스캔하고, set 은 해시로 한 번에 간다. 찾는 값을 늘 맨 끝에 두어 list 가 끝까지 스캔하게 했다.
 data = list(range(N))
 as_list, as_set = data, set(data)
@@ -190,7 +190,7 @@ for i in range(LOOKUPS):
     (N - 1) in as_set
 set_in = (perf_counter() - t0) * 1000
 
-# 2단계: 「맨 앞을 뺀다」를 list 와 deque 로 잰다
+# 2단계: 「맨 앞을 뺀다」를 list 와 deque 로 측정한다
 # list 는 뺄 때마다 나머지를 전부 한 칸씩 당기고, deque 는 그냥 뗀다.
 lst = list(range(N))
 t0 = perf_counter()

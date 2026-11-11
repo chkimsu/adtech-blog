@@ -242,7 +242,7 @@ Context Recall 은 정답 문서의 조각이 상위 k 에 하나라도 든 질�
 # 하는 일: 질문 20개마다 코사인이 큰 조각 셋을 찾고, Context Recall 과 Context Precision 을 센다.
 
 # 1단계: 코사인과 검색을 둔다
-# cosine 은 임베딩과 벡터 검색 편의 것 그대로다. 조각 200개와 질문의 코사인을 다 재서 큰 순서로 정렬한다.
+# cosine 은 임베딩과 벡터 검색 편의 것 그대로다. 조각 200개와 질문의 코사인을 다 측정해서 큰 순서로 정렬한다.
 def cosine(a, b):
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))

@@ -368,9 +368,9 @@
         (main || document.body).appendChild(bar);
 
         // 부모 페이지로 콘텐츠 높이 전송 (iframe 자동 리사이즈)
-        // 높이는 documentElement.scrollHeight 로 재지 않는다. 그 값은 iframe 창 높이보다
+        // 높이는 documentElement.scrollHeight 로 측정하지 않는다. 그 값은 iframe 창 높이보다
         // 작아질 수 없어서, 글에 적어 둔 폴백 height 가 바닥이 되어 그림이 짧은 임베드
-        // 아래에 흰 여백이 남는다(하둡 카드 임베드에서 195px). 내용의 실제 바닥을 잰다.
+        // 아래에 흰 여백이 남는다(하둡 카드 임베드에서 195px). 내용의 실제 바닥을 측정한다.
         const contentHeight = () => {
             const main = document.querySelector('main');
             const nodes = [main, document.querySelector('.demo-embed-bar')].filter(Boolean);

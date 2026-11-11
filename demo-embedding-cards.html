@@ -47,9 +47,9 @@
         <p class="tg-cap">첫 상품은 숫자 <b>384개</b> 가운데 <b>19칸</b>만 0 이 아니고, 길이는 <b>1.000</b> 입니다.</p></section>
       <section class="tg-card" data-card="cosine"><h2>COSINE</h2><p class="tg-k">두 벡터의 각과 코사인</p><p class="tg-easy"><b>쉽게 말하면</b> 두 벡터가 같은 쪽을 가리킬수록 코사인이 1 에 가깝습니다. 길이를 1 로 맞춘 벡터끼리는 내적이 곧 코사인입니다.</p><div class="tg-fig" id="ev-cosine"></div>
         <p class="tg-cap">코사인은 각이 0 이면 <b>1</b>, 직각이면 <b>0</b>, 정반대면 <b>-1</b> 입니다.</p></section>
-      <section class="tg-card" data-card="bruteforce"><h2>BRUTE FORCE</h2><p class="tg-k">상품 3,000건 전수 검색과 해시 충돌</p><p class="tg-easy"><b>쉽게 말하면</b> 상품마다 코사인을 한 번씩 다 재서 큰 순서로 정렬합니다. 다른 조각이 같은 칸을 쓰면 엉뚱한 상품이 올라옵니다.</p><div class="tg-fig" id="ev-bruteforce"></div>
+      <section class="tg-card" data-card="bruteforce"><h2>BRUTE FORCE</h2><p class="tg-k">상품 3,000건 전수 검색과 해시 충돌</p><p class="tg-easy"><b>쉽게 말하면</b> 상품마다 코사인을 한 번씩 다 측정해서 큰 순서로 정렬합니다. 다른 조각이 같은 칸을 쓰면 엉뚱한 상품이 올라옵니다.</p><div class="tg-fig" id="ev-bruteforce"></div>
         <p class="tg-cap">검색어 하나에 거리 계산 <b>3,000번</b>, 곱셈 <b>1,152,000번</b>입니다.</p></section>
-      <section class="tg-card" data-card="ann"><h2>ANN</h2><p class="tg-k">해시 묶음만 보는 근사 검색과 재현율</p><p class="tg-easy"><b>쉽게 말하면</b> 상품을 해시 묶음에 나눠 두고 검색어 근처의 묶음만 잽니다. 덜 재는 대신 10위 점수 이상인 상품을 일부 놓칩니다.</p><div class="tg-fig" id="ev-ann"></div>
+      <section class="tg-card" data-card="ann"><h2>ANN</h2><p class="tg-k">해시 묶음만 보는 근사 검색과 재현율</p><p class="tg-easy"><b>쉽게 말하면</b> 상품을 해시 묶음에 나눠 두고 검색어 근처의 묶음만 측정합니다. 덜 측정하는 대신 10위 점수 이상인 상품을 일부 놓칩니다.</p><div class="tg-fig" id="ev-ann"></div>
         <p class="tg-cap">이웃 묶음까지 보면 거리 계산 <b>142~254번</b>에 재현율@10 <b>0.7~0.9</b> 입니다.</p></section>
     </div>
 

@@ -203,7 +203,7 @@
   }
 
   // hotSize: 쏠림으로 표시할 줄 수. 없으면 null. verdict() 가 정해 준 값을 그대로 받는다 —
-  // 여기서 다시 재지 않으므로 카드의 배지와 판정문이 어긋날 수가 없다.
+  // 여기서 다시 측정하지 않으므로 카드의 배지와 판정문이 어긋날 수가 없다.
   function renderGrid(bins, consumers, moved, hotSize) {
     $('kp-grid').innerHTML = bins.map(function (b, i) {
       var owner = ownerOf(i, consumers);

@@ -35,7 +35,7 @@
 
 ## Review Focus
 
-1. **이어서 돌리는 사슬과 실행 시간** — feedback-loop-remedies 둘째 블록은 실행 검사가 그 글의 첫째 블록과 feedback-loop-bias 세 블록을 먼저 돌린 뒤 돌린다. 로컬에서 블록 하나에 37초쯤 걸린다(첫째 블록 12초, feedback-loop-bias 셋째 12초). 다섯째 묶음에서 CI 의 실행 검사 단계는 로컬보다 2배 남짓 느렸다(로컬 48초, CI 111초). 블록 한도 120초에 가까울 수 있다. Task 5 Step 4 가 로컬 시간을 재고, Task 7 Step 7 이 CI 의 단계 시간을 적는다. CI 에서 시간 초과가 나면 코드를 바꾸지 말고 멈춰 알린다.
+1. **이어서 돌리는 사슬과 실행 시간** — feedback-loop-remedies 둘째 블록은 실행 검사가 그 글의 첫째 블록과 feedback-loop-bias 세 블록을 먼저 돌린 뒤 돌린다. 로컬에서 블록 하나에 37초쯤 걸린다(첫째 블록 12초, feedback-loop-bias 셋째 12초). 다섯째 묶음에서 CI 의 실행 검사 단계는 로컬보다 2배 남짓 느렸다(로컬 48초, CI 111초). 블록 한도 120초에 가까울 수 있다. Task 5 Step 4 가 로컬 시간을 측정하고, Task 7 Step 7 이 CI 의 단계 시간을 적는다. CI 에서 시간 초과가 나면 코드를 바꾸지 말고 멈춰 알린다.
 2. **블록 안으로 들어오는 별도 출력 블록 12개** — 인터뷰 3편은 파이썬 블록마다 바로 아래에 별도 출력 블록이 있다. 새 블록의 출력 영역으로 옮기고 별도 블록은 지운다(spec 8-3). 그 자리에 빈 코드 상자나 같은 출력이 두 번 남으면 안 된다. Task 6 Step 3 이 「파이썬 블록 바로 뒤 별도 출력 블록 0개」와 「블록 밖 글 같다」를 보고, Task 7 Step 2 의 넷째 값(바로 뒤 다른 코드 블록)이 0 이다.
 3. **새로 붙는 상태 표시 일곱** — audience-segmentation 첫째 `# (실무 파이프라인 — 그대로 실행되지 않습니다.)`(없는 파일을 읽는다), 둘째 `# (의사코드 — 그대로 실행되지 않습니다.)`, negative-sampling-bias 다섯째 `# (앞 블록에 이어서 돌린다.)`(첫 블록이 부른 numpy 를 쓴다), feedback-loop-bias 둘째와 셋째, feedback-loop-remedies 둘째 `# (앞 블록에 이어서 돌린다.)`, feedback-loop-remedies 첫째 `# (feedback-loop-bias 글의 코드에 이어서 돌린다.)`. 꼴이 틀리면 형식 검사가 잡고, 표시가 빠지면 실행 검사가 NameError 로 실패한다. Task 3 Step 4, Task 4 Step 4, Task 5 Step 4 가 글마다 건너뜀과 통과 수를 본다.
 4. **옛 출력과 다른 블록 둘(old=run)** — lookalike-modeling 둘째 블록은 적힌 `[82]` 대신 찍히는 `[83]` 을 받아 적었다(spec 8-1). 실행 검사로 돌리면 늘 `[83]` 이고, 파일로 돌리면 xgboost 가 콜백을 도는 순서 때문에 `[82]` 가 찍히기도 한다. negative-sampling-bias 일곱째 블록은 함수가 돌려주는 값을 「# 출력 예시:」로 적어 두었던 것을 메모 한 줄로 옮겨 출력 영역이 없다(spec 8-1). 도우미는 이 둘의 찍힌 줄 비교를 건너뛰므로 실행 검사가 본다. lookalike-modeling 둘은 xgboost, faiss 가 있는 로컬에서만 돈다.
@@ -114,7 +114,7 @@
 - 도우미는 sha, 코드 줄, 찍힌 줄이 하나라도 다르면 글을 그대로 두고 멈춘다(여섯째 묶음 도우미에 `sep` 처리만 더했다).
 - 네 폭에서 17편의 값 68개가 모두 「블록 수 true <출력 없는 블록> 0 false 0 0 0」이었다. 390 폭 훑기는 108편, 숫자 5,232개, 넘침 0, 끊김 0 이다. 17편을 열 때 콘솔 오류와 경고는 0이었다.
 - 본문 단락을 블록마다 읽어 숫자를 찍힌 줄과 맞췄다. 맞지 않는 여덟 곳을 「여쭤볼 것 후보」에 적었다. 그 밖에 반올림해 쓴 곳(「37TB」는 37,253 GB, 「5만 6천 배」는 56,818배, 「5,434억 번」은 543,360,000,000번, 「7,870만 건」은 78,722,689건, 「79일」은 78.7일, 「46배쯤」은 0.979 / 0.021)은 맞는 것으로 봤다. feedback-loop-bias 의 「B 와 C 가 각각 234,500건, E 가 208,500건, F 가 102,500건」은 찍히지 않는 값이라 사본에서 따로 셌고, 맞았다.
-- 블록마다 돈 시간을 쟀다(글마다 `--jobs 1`). feedback-loop-remedies 두 블록이 50.1초(둘째 블록 37초쯤), feedback-loop-bias 세 블록이 24.9초, lookalike-modeling 이 5.0초, 나머지 글은 3.2초 아래다. 실행 검사의 한도 120초와 CI 의 느림은 Review Focus 1 에 적었다.
+- 블록마다 돈 시간을 측정했다(글마다 `--jobs 1`). feedback-loop-remedies 두 블록이 50.1초(둘째 블록 37초쯤), feedback-loop-bias 세 블록이 24.9초, lookalike-modeling 이 5.0초, 나머지 글은 3.2초 아래다. 실행 검사의 한도 120초와 CI 의 느림은 Review Focus 1 에 적었다.
 
 ---
 
@@ -245,15 +245,15 @@ def train(featfn, steps=3000, lr=2.0):
     return w, b
 
 # 5단계: AUC 와 LogLoss 로 채점하는 함수를 만든다
-# LogLoss 는 확률의 절대값을, AUC 는 순위만 잰다.
+# LogLoss 는 확률의 절대값을, AUC 는 순위만 측정한다.
 def evaluate(featfn, w, b):
     preds = []
     for a, h, y in rows:
         z = b + sum(w.get(nm, 0.0) for nm in featfn(a, h))
         preds.append((1 / (1 + math.exp(-z)), y))
-    # LogLoss: 확률의 '절대값'을 재는 지표. 낮을수록 좋다.
+    # LogLoss: 확률의 '절대값'을 측정하는 지표. 낮을수록 좋다.
     ll = -sum(y*math.log(p) + (1-y)*math.log(1-p) for p, y in preds) / len(preds)
-    # AUC: '순위'만 재는 지표. 순위합으로 계산하고, 동점은 평균 순위로 센다.
+    # AUC: '순위'만 측정하는 지표. 순위합으로 계산하고, 동점은 평균 순위로 센다.
     preds.sort(key=lambda t: t[0])
     i, rank_sum, npos = 0, 0.0, 0
     while i < len(preds):
@@ -1112,7 +1112,7 @@ WORLDS = {
 }
 
 
-# 3단계: 표 칸을 맞추고 LogLoss 를 재는 함수를 만든다
+# 3단계: 표 칸을 맞추고 LogLoss 를 측정하는 함수를 만든다
 def pad(s, w):
     """한글은 폭 2칸으로 세서 표를 맞춘다."""
     return s + " " * max(0, w - sum(2 if ord(c) > 0x2000 else 1 for c in s))
@@ -1294,9 +1294,9 @@ def train(w1, w2, epochs=5, lr=0.02):
     return ws, cs, u1, b1, u2, b2
 
 
-# 5단계: 태스크별 테스트 LogLoss 를 재는 함수를 만든다
+# 5단계: 태스크별 테스트 LogLoss 를 측정하는 함수를 만든다
 def losses(p):
-    """테스트셋 LogLoss를 태스크별로 잰다. 낮을수록 좋다."""
+    """테스트셋 LogLoss를 태스크별로 측정한다. 낮을수록 좋다."""
     ws, cs, u1, b1, u2, b2 = p
     l1 = n1 = l2 = n2 = 0.0
     for x, y, z in TEST:
@@ -2376,7 +2376,7 @@ def allocate(est, total=N):
     return a
 
 
-# 3단계: 노출 쏠림을 재는 지니 함수를 만든다
+# 3단계: 노출 쏠림을 측정하는 지니 함수를 만든다
 def gini(vals):
     """노출이 한쪽으로 쏠린 정도. 0이면 8개가 똑같이 나눠 가진 상태다."""
     v = sorted(vals)
@@ -2451,7 +2451,7 @@ print('9931 누적 노출 %d건, 40세대 누적 클릭 %d건' % (imps[9931], su
 <!-- cb7 post=feedback-loop-bias block=2 sha=d63c5f3b6d6f6471 -->
 ````python
 # (앞 블록에 이어서 돌린다.)
-# 하는 일: 고리가 굳은 로그로 광고 8개를 똑같이 노출했을 때의 평균 CTR 을 되찾을 수 있는지, 로그 그대로와 IPS 가중 두 방법을 윈도우와 처방이 다른 설정 넷에서 시드 30개로 잰다.
+# 하는 일: 고리가 굳은 로그로 광고 8개를 똑같이 노출했을 때의 평균 CTR 을 되찾을 수 있는지, 로그 그대로와 IPS 가중 두 방법을 윈도우와 처방이 다른 설정 넷에서 시드 30개로 측정한다.
 import statistics
 
 # 1단계: 진짜 균등 평균 CTR 과 표 칸 너비를 맞추는 함수를 둔다
@@ -2463,9 +2463,9 @@ def pad(s, w):   # 한글은 터미널에서 두 칸을 먹는다 — 표를 맞
     return s + ' ' * max(0, w - sum(2 if ord(c) > 0x2000 else 1 for c in s))
 
 
-# 2단계: 윈도우 안의 로그로 평균 CTR 을 두 방법으로 재는 함수를 만든다
+# 2단계: 윈도우 안의 로그로 평균 CTR 을 두 방법으로 측정하는 함수를 만든다
 def measure(hist, window):
-    """윈도우(window) 안의 로그만으로 평균 CTR 을 두 가지 방법으로 잰다.
+    """윈도우(window) 안의 로그만으로 평균 CTR 을 두 가지 방법으로 측정한다.
     raw = 클릭 합 ÷ 노출 합. 로그를 그대로 믿는 값이다.
     ips = 광고마다 1/성향점수 로 가중. 성향점수가 0이면 나눌 수가 없어 빠진다."""
     win = hist[-window:] if window else hist
@@ -2480,7 +2480,7 @@ def measure(hist, window):
     return raw, ips, 8 - len(live)
 
 
-# 3단계: 설정 넷마다 시드 30개로 두 방법을 잰다
+# 3단계: 설정 넷마다 시드 30개로 두 방법을 측정한다
 print('진짜 균등 평균 CTR %.4f%%' % TRUE_MEAN)
 print(pad('설정', 26) + '로그 그대로      IPS 가중        성향점수 0')
 for label, kw, win in [('기본, 전체 이력', {}, None),
@@ -2516,7 +2516,7 @@ for label, kw, win in [('기본, 전체 이력', {}, None),
 import random
 
 
-# 1단계: 표 칸 너비를 맞추는 함수와 굳은 세대, 9931 이 돌아온 세대를 재는 함수를 만든다
+# 1단계: 표 칸 너비를 맞추는 함수와 굳은 세대, 9931 이 돌아온 세대를 측정하는 함수를 만든다
 # 앞 글의 TRUE, ADS, N, CAP, GENS, allocate, gini, run 을 그대로 쓴다. 그 글의 코드를 먼저 붙여 놓고 아래를 이어 붙이면 그대로 돌아간다.
 def pad(s, w):   # 한글은 터미널에서 두 칸을 먹는다 — 표를 맞추려고 센다
     return s + ' ' * max(0, w - sum(2 if ord(c) > 0x2000 else 1 for c in s))
@@ -2686,7 +2686,7 @@ for 기준 in (0.002, 0.01, 0.05):
 
 <!-- cb7 post=interview-experiment-metrics block=1 sha=0bc86d8c0651c126 sep -->
 ````python
-# 하는 일: 사용자 2만 명의 실험 전 지출과 실험 중 지출로 실험군이 3% 더 쓰는 효과를 그냥 비교와 CUPED 로 재고, 표준오차가 얼마나 줄어드는지 본다.
+# 하는 일: 사용자 2만 명의 실험 전 지출과 실험 중 지출로 실험군이 3% 더 쓰는 효과를 그냥 비교와 CUPED 로 측정하고, 표준오차가 얼마나 줄어드는지 본다.
 import random, statistics
 
 random.seed(5)
@@ -3574,7 +3574,7 @@ Expected: `기준표를 다시 적었습니다 — 옛 형식 블록 44개, 글 
 
 - [ ] **Step 7: 첫 글을 화면으로 본다**
 
-서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch7"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8776`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8776/post.html?id=deep-ctr-models` 를 새 캐시(`new_page` 에 `isolatedContext` 이름 `b7t1`)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 잰다.
+서버를 백그라운드로 띄우고(저장소 루트에서 `SCRATCH="${TMPDIR:-/tmp}/code-steps-batch7"; python3 "$SCRATCH/nocache_server.py" "$(pwd)" 8776`, 파일은 Step 2 가 뽑았다) `http://127.0.0.1:8776/post.html?id=deep-ctr-models` 를 새 캐시(`new_page` 에 `isolatedContext` 이름 `b7t1`)로 연다. 이후 브라우저 도구를 부를 때마다 그 페이지의 `pageId` 를 넘긴다. 아래 함수를 돌린다. 숨긴 iframe 을 네 폭으로 바꿔 가며 측정한다.
 
 ````js
 async () => {
@@ -4235,7 +4235,7 @@ feedback-loop-remedies: 코드 줄이 바뀐 블록 [], 블록 밖 글 같다, �
   2번째 블록: 옮긴 말 있다, 옛 주석 줄 없다
 ````
 
-- [ ] **Step 4: 실행 검사를 돌리고 시간을 잰다**
+- [ ] **Step 4: 실행 검사를 돌리고 시간을 측정한다**
 
 Run:
 
@@ -4249,7 +4249,7 @@ for p in doubly-robust feedback-loop-bias feedback-loop-remedies; do
 done
 ````
 
-Expected: 아홉 줄. 글마다 `✓ 통과 1, …`, `✓ 통과 3, …`, `✓ 통과 2, 건너뜀 0 (라이브러리 없음 0, 실행 안 됨 0), 실패 0` 이 로컬과 venv 에서 한 번씩 나오고, 그 사이에 시간 줄이 있다. 계획을 쓸 때 잰 로컬 시간은 doubly-robust 2초, feedback-loop-bias 25초, feedback-loop-remedies 50초다(블록 하나씩 돌려서). feedback-loop-remedies 가 90초를 넘으면 보고서에 적고 알린다. CI 의 블록 한도 120초에 닿을 수 있다(Review Focus 1). NameError 로 실패하면 이어서 돌리는 표시가 빠진 것이다. 멈추고 알린다.
+Expected: 아홉 줄. 글마다 `✓ 통과 1, …`, `✓ 통과 3, …`, `✓ 통과 2, 건너뜀 0 (라이브러리 없음 0, 실행 안 됨 0), 실패 0` 이 로컬과 venv 에서 한 번씩 나오고, 그 사이에 시간 줄이 있다. 계획을 쓸 때 측정한 로컬 시간은 doubly-robust 2초, feedback-loop-bias 25초, feedback-loop-remedies 50초다(블록 하나씩 돌려서). feedback-loop-remedies 가 90초를 넘으면 보고서에 적고 알린다. CI 의 블록 한도 120초에 닿을 수 있다(Review Focus 1). NameError 로 실패하면 이어서 돌리는 표시가 빠진 것이다. 멈추고 알린다.
 
 - [ ] **Step 5: 형식 검사, 말투 검사, 기준표**
 
@@ -4541,7 +4541,7 @@ SCRATCH="${TMPDIR:-/tmp}/code-steps-batch7"; test -x "$SCRATCH/venv/bin/python" 
 
 Expected: `21 통과, 0 실패` 와 `✓ 통과 222, 건너뜀 25 (라이브러리 없음 14, 실행 안 됨 11), 실패 0` (여섯째 묶음의 라이브러리 없음 10 에 negative-sampling-bias 둘과 lookalike-modeling 둘이 더해지고, 실행 안 됨 9 에 audience-segmentation 둘이 더해졌다)
 
-- [ ] **Step 2: 숫자로 재고 그림을 찍는다**
+- [ ] **Step 2: 숫자로 측정하고 그림을 찍는다**
 
 서버 파일이 있는지 보고, 없으면 계획에서 뽑는다(저장소 루트에서).
 
@@ -4640,7 +4640,7 @@ async () => {
 }
 ````
 
-Expected: `{"posts":108,"numbers":5232,"overflow":[],"broken":[]}` (계획을 쓸 때 잰 값. 이 묶음의 리뷰가 블록 글을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
+Expected: `{"posts":108,"numbers":5232,"overflow":[],"broken":[]}` (계획을 쓸 때 측정한 값. 이 묶음의 리뷰가 블록 글을 고쳤다면 `numbers` 만 조금 다를 수 있다. 보고서에 그대로 적는다)
 
 그림을 `.playwright-mcp/batch7/` 에 여섯 장 찍는다. 아래 세 편을 1440 폭 라이트와 390 폭 라이트로 한 장씩이다. 블록이 길면 머리와 출력 영역으로 나눠 찍고 이름에 `-top`, `-out` 을 붙인다. 390 폭에서 파란 메뉴 단추(`#sidebar-toggle`)가 코드를 가리면 감싸는 페이지의 iframe 문서에 `#sidebar-toggle{display:none !important}` 를 넣은 `<style>` 을 붙여 숨긴다. 문서에 `scroll-behavior: smooth` 가 있어 `scrollTo` 에는 `behavior: 'instant'` 를 준다.
 

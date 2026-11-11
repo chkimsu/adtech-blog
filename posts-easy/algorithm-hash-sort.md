@@ -136,7 +136,7 @@ class BadKey:
     def __hash__(self):    return 7                 # 전부 같은 번호
     def __eq__(self, o):   return self.v == o.v
 
-# 2단계: 키마다 5천 개를 담으며 시간을 잰다
+# 2단계: 키마다 5천 개를 담으며 시간을 측정한다
 print(f"{'키':<8}{'담는 데 걸린 시간(ms)':>22}")
 for name, K in (("좋은", GoodKey), ("나쁜", BadKey)):
     t = time.perf_counter()
@@ -623,5 +623,5 @@ print("\n답", 답)
 
 - 다음 편은 정렬해 둔 배열에서 구간을 절반씩 줄이는 이분 탐색입니다. 이 글의 정렬이 그 전제가 됩니다.
 - 해시로 자리를 계산하는 구조는 추천 모델의 임베딩 테이블에도 그대로 쓰입니다. [임베딩 테이블 운영](post.html?id=embedding-table-ops) 편에서 버킷이 모자랄 때 벌어지는 일을 다룹니다.
-- 세그먼트 겹침을 집합 연산으로 재는 이야기는 [오디언스 세그멘테이션](post.html?id=audience-segmentation) 편에 있습니다.
+- 세그먼트 겹침을 집합 연산으로 측정하는 이야기는 [오디언스 세그멘테이션](post.html?id=audience-segmentation) 편에 있습니다.
 - 두 겹 기준으로 광고의 순위를 매기는 실제 사례는 [eCPM 랭킹](post.html?id=ecpm-ranking) 편입니다.

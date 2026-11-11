@@ -58,7 +58,7 @@
 | 5 | `embeddings-vector-search` | 임베딩과 벡터 검색: 문장 하나가 384개 숫자가 되고 이웃을 찾기까지 | 23주째. 코사인, 전수 검색과 근사 검색, 작은 ANN 을 직접 짠다 | 파이썬 |
 | 6 | `rag-basics` | RAG: 검색한 문서를 넣고 답하게 하기, 근거 없는 문장 세기 | 24주째. 상품 문서 100건으로 청킹, 상위 k, 근거 대조, Context Recall 과 Precision | 파이썬, 기록 |
 | 7 | `tool-use-agent-loop` | Tool use 와 에이전트 루프: LLM 이 고르고 코드가 실행한다 | 25주째. 도구 셋, 멈춤 조건, 실패도 결과, 가드레일은 코드. 가짜 LLM 으로 한 바퀴 | 파이썬 |
-| 8 | `llm-as-a-judge` | LLM-as-a-Judge: 채점표로 채점하고 사람과 얼마나 맞는지 재기 | 26주째. 채점표 1~5, 순서 바꿔 재채점, Cohen's kappa, 자기 선호 편향 | 파이썬, 기록 |
+| 8 | `llm-as-a-judge` | LLM-as-a-Judge: 채점표로 채점하고 사람과 얼마나 맞는지 측정 | 26주째. 채점표 1~5, 순서 바꿔 재채점, Cohen's kappa, 자기 선호 편향 | 파이썬, 기록 |
 | 9 | `llm-cost-cache-nondeterminism` | 비용, 캐시, 비결정성: 하루 100만 요청의 값과 같은 입력에 다른 답 | 27주째. 토큰 단가, 프롬프트 캐시가 깎는 몫, temperature 0 에서 10번 돌려 바뀌는 비율 | 파이썬, 기록 |
 
 ### 3-3. 묶음 3, LLM 광고 응용 트랙 `llm-ads-track` (13편)

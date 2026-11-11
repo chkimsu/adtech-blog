@@ -798,8 +798,8 @@ const strip = md => md
 
 ```bash
 cd /Users/user/Downloads/adtech-blog
-# 임시: attribution-basics의 '4. 실제로 누가 재나' 헤딩에 마커 부착
-perl -pi -e 's/^## 4\. 실제로 누가 재나$/## 4. 실제로 누가 재나 [무대: 공통]/' posts/attribution-basics.md
+# 임시: attribution-basics의 '4. 실제로 누가 측정하나' 헤딩에 마커 부착
+perl -pi -e 's/^## 4\. 실제로 누가 측정하나$/## 4. 실제로 누가 측정하나 [무대: 공통]/' posts/attribution-basics.md
 ```
 스크린샷 `post.html?id=attribution-basics`: 해당 헤딩 옆 세이지 배지, 좌측 TOC에는 `[무대:` 텍스트 없음.
 ```bash

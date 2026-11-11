@@ -551,7 +551,7 @@ K = 10
 
 # 1단계: 세 방법을 만든다
 # 직접 짠 힙은 10칸만 들고 있다가 11개가 되면 가장 작은 것을 버린다.
-def 재기(fn):
+def 측정(fn):
     t = time.perf_counter()
     r = fn()
     return (time.perf_counter() - t) * 1000, r
@@ -570,14 +570,14 @@ def 힙K칸():
 def nlargest():
     return heapq.nlargest(K, 값)
 
-# 2단계: 세 방법을 재고 답을 비교한다
+# 2단계: 세 방법을 측정하고 답을 비교한다
 print(f"값 {len(값):,}개 중 큰 것 {K}개")
 print(f"{'방법':<16}{'시간(ms)':>10}{'들고 있는 칸':>14}")
 답 = []
 for 이름, fn, 칸 in (("전부 정렬", 전부정렬, f"{len(값):,}"),
                     ("힙 K칸 직접", 힙K칸, str(K)),
                     ("heapq.nlargest", nlargest, str(K))):
-    ms, r = 재기(fn)
+    ms, r = 측정(fn)
     답.append(r)
     print(f"{이름:<16}{ms:>10.1f}{칸:>14}")
 print(f"\n세 답이 모두 같나 {답[0] == 답[1] == 답[2]}")

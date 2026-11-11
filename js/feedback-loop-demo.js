@@ -263,7 +263,7 @@
     return 0;
   }
 
-  // 윈도우 안의 로그만으로 "모두 똑같이 띄웠다면 나왔을 평균 CTR" 을 잰다
+  // 윈도우 안의 로그만으로 "모두 똑같이 띄웠다면 나왔을 평균 CTR" 을 측정한다
   function measure() {
     const win = S.win ? S.hist.slice(-S.win) : S.hist;
     if (!win.length) return null;
@@ -539,7 +539,7 @@
         out += cell('IPS 가중', pct(m.ips, 3), gap < 0.0005 ? 'is-good' : gap < 0.002 ? 'is-warn' : 'is-bad',
           '진짜 값과 ' + (m.ips >= tm ? '+' : '−') + (100 * gap).toFixed(3) + '%p 차이');
       } else {
-        out += cell('IPS 가중', '꺼짐', 'is-off', '켜면 1÷성향점수 로 다시 잽니다');
+        out += cell('IPS 가중', '꺼짐', 'is-off', '켜면 1÷성향점수 로 다시 측정합니다');
       }
       out += cell('성향점수 0인 광고', m.dead + '개', m.dead ? 'is-bad' : 'is-good',
         m.dead ? '1÷0 을 못 해 계산에서 전부 빠집니다' : '모든 광고가 윈도우 안에 노출을 남겼습니다');

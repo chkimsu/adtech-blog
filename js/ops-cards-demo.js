@@ -15,7 +15,7 @@
     const { T, box, labelUnder, tag, srv, table, db, tool, clock, user, list, arrow, dots, burst, svg, hbar, lines } = window.CardKit;
     const has = id => !!document.getElementById(id);
 
-    // ---------- 1. 같은 요청을 네 자리에서 재면 (serving-latency-throughput 4절) ----------
+    // ---------- 1. 같은 요청을 네 자리에서 측정하면 (serving-latency-throughput 4절) ----------
     (function () {
         const S = 'op-fourplaces'; if (!has(S)) return; let s = '';
         s += T(40, 26, '요청 한 건이 지나는 자리와 시계 넷', 'lbl sm');
@@ -32,7 +32,7 @@
         s += clock(312, 44) + T(312, 30, '2', 'lbl k', 'middle');
         s += clock(230, 68) + T(230, 54, '3', 'lbl k', 'middle');
         s += clock(96, 54) + T(96, 40, '4', 'lbl k', 'middle');
-        s += T(40, 146, '재는 자리', 'lbl sm') + T(258, 146, '평균', 'lbl sm') + T(330, 146, '8ms 초과율', 'lbl sm');
+        s += T(40, 146, '측정하는 자리', 'lbl sm') + T(258, 146, '평균', 'lbl sm') + T(330, 146, '8ms 초과율', 'lbl sm');
         const rows = [
             ['1 추론 함수 안 (계산만)', '3.49ms', 3.72, 'a'],
             ['2 모델 서버 핸들러 (+ 자리 기다림)', '3.76ms', 4.62, 'a'],
@@ -47,7 +47,7 @@
             s += T(456, y + 13, r[2].toFixed(2) + '%', r[3] === 'b' ? 'lbl b' : 'lbl k');
         });
         s += T(330, 256, '막대는 초과율 (20% 가 끝)', 'lbl sm');
-        s += T(40, 270, '같은 요청이라도 재는 자리에 따라 초과율이 3.72% 에서 19.42% 가 됩니다', 'lbl');
+        s += T(40, 270, '같은 요청이라도 측정하는 자리에 따라 초과율이 3.72% 에서 19.42% 가 됩니다', 'lbl');
         svg(S, s);
     })();
 
@@ -82,7 +82,7 @@
         svg(S, s);
     })();
 
-    // ---------- 3. 네 층으로 재고 빠른 층부터 (model-monitoring 2절) ----------
+    // ---------- 3. 네 층으로 측정하고 빠른 층부터 (model-monitoring 2절) ----------
     (function () {
         const S = 'op-fourlayers'; if (!has(S)) return; let s = '';
         s += T(40, 26, '사고는 위에서 아래로 번지고, 신호는 그 순서로 늦어집니다', 'lbl sm');

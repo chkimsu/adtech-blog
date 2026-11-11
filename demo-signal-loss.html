@@ -438,9 +438,9 @@
           먼저 정하는 것은 <strong>어느 층이 얼마나 상했나</strong>입니다. 층마다 대응과 비용이 다릅니다.
         </p>
         <ul>
-          <li><strong>1층(피처)은 계측부터:</strong> 피처군을 하나씩 빼며 오프라인 AUC를 다시 잽니다.
+          <li><strong>1층(피처)은 계측부터:</strong> 피처군을 하나씩 빼며 오프라인 AUC를 다시 측정합니다.
             열린 RTB와 담장 안에서 폭이 다릅니다. 이 데모의 가데이터로는 -0.068과 -0.012로 5.7배 차이입니다.
-            AUC 하락폭이 매출 하락폭은 아닙니다 — 경쟁자도 같이 눈이 어두워지기 때문에 매출 영향은 실험으로만 잽니다.</li>
+            AUC 하락폭이 매출 하락폭은 아닙니다 — 경쟁자도 같이 눈이 어두워지기 때문에 매출 영향은 실험으로만 측정합니다.</li>
           <li><strong>2층(라벨)은 학습 방법을 바꿉니다:</strong> 줄마다 정답을 맞추는 손실 대신
             버킷(bag) 합계를 맞추는 손실로 갑니다. 다만 SKAN 라벨로 모델 전체를 학습하지는 않습니다.
             웹, 자사 앱의 개인 라벨로 본체를 학습하고 집계는 캠페인 단위 보정에만 씁니다.</li>
@@ -461,7 +461,7 @@
             <a href="post.html?id=privacy-signal-loss" class="demo-next-card">
               <span class="demo-next-label">이 데모의 짝 글</span>
               <span class="demo-next-title">신호가 사라진 자리에서 모델은 무엇을 잃나</span>
-              <span class="demo-next-excerpt">피처, 라벨, 제어 세 층으로 나눠 손실을 재는 글. 이 화면의 값이 전부 거기서 왔습니다</span>
+              <span class="demo-next-excerpt">피처, 라벨, 제어 세 층으로 나눠 손실을 측정하는 글. 이 화면의 값이 전부 거기서 왔습니다</span>
             </a>
             <a href="post.html?id=walled-garden" class="demo-next-card">
               <span class="demo-next-label">관련 포스트</span>

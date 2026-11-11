@@ -1069,7 +1069,7 @@ class BidLog:
 
 ```python
 # (Spark 예시 — 그대로 실행되지 않습니다.)
-# 하는 일: 하루치 노출, 클릭, 요청 로그로 노출 중복률, 노출 없는 클릭 비율, 요청 대비 노출 비율을 재서 로그 파이프라인이 건전한지 매일 배치로 본다.
+# 하는 일: 하루치 노출, 클릭, 요청 로그로 노출 중복률, 노출 없는 클릭 비율, 요청 대비 노출 비율을 측정해서 로그 파이프라인이 건전한지 매일 배치로 본다.
 import pyspark.sql.functions as F
 
 # 1단계: 하루치 로그 셋을 읽는다
@@ -1078,14 +1078,14 @@ impression = spark.read.parquet(f"s3://logs/impression/dt={dt}")
 click = spark.read.parquet(f"s3://logs/click/dt={dt}")
 request = spark.read.parquet(f"s3://logs/request/dt={dt}")
 
-# 2단계: 노출 중복률을 잰다
+# 2단계: 노출 중복률을 측정한다
 # 전체 노출 행 가운데 같은 impression_id 로 겹쳐 남은 행의 비율이다.
 total_imp = impression.count()
 unique_imp = impression.select("impression_id").distinct().count()
 dup_rate = 1 - unique_imp / total_imp
 print(f"Impression 중복률: {dup_rate:.4%}")  # 정상: < 0.1%
 
-# 3단계: 노출 없는 클릭(Orphan Click)의 비율을 잰다
+# 3단계: 노출 없는 클릭(Orphan Click)의 비율을 측정한다
 # 노출 로그에 짝이 없는 클릭의 비율이다.
 orphan_clicks = (
     click.join(impression, on="impression_id", how="left_anti")
@@ -1094,7 +1094,7 @@ orphan_clicks = (
 orphan_rate = orphan_clicks / click.count()
 print(f"Orphan Click 비율: {orphan_rate:.4%}")  # 정상: < 0.5%
 
-# 4단계: 요청 대비 노출 비율을 잰다
+# 4단계: 요청 대비 노출 비율을 측정한다
 # 요청 가운데 노출까지 간 비율로, Win Rate 를 어림한 값이다.
 req_count = request.count()
 imp_count = unique_imp

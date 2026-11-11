@@ -172,4 +172,4 @@ Spark 만 두 층에 걸쳐 있습니다. 엔진이면서 사람이 쓰는 Spark
 - 노드를 3차원 상자로 그린 판은 [하둡 상자 그림 여섯 장](demo-hadoop-boxes.html)입니다. 층이 나뉘는 구조는 그쪽이 더 잘 보입니다.
 - 접속 주소 한 줄이 어느 상자를 가리키는지는 [Hadoop 과 Hive](post.html?id=hadoop-hive-basics) 편입니다. ZooKeeper 와 HiveServer2 의 관계가 거기 있습니다.
 - 테이블을 다른 팀에 건네는 여덟 방법은 [데이터 건네기](post.html?id=data-handoff-methods) 편입니다. 첫 카드가 이 글 6절의 권한 이야기입니다.
-- 서빙 쪽에서 지연과 처리량을 재는 말은 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편에 있습니다.
+- 서빙 쪽에서 지연과 처리량을 측정하는 말은 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편에 있습니다.

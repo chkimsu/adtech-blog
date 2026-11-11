@@ -162,7 +162,7 @@ print(people)
 - 코딩테스트가 보는 것은 「정렬을 할 줄 아는가」가 아니라 「정렬된 데이터로 문제를 푸는가」입니다.
 - 비교 기반 정렬은 수학적으로 `O(N log N)` 보다 빠를 수 없습니다. 원소 N 개를 늘어놓는 순서는 N! 가지이고 비교 한 번으로는 후보를 많아야 절반으로 줄이므로, 답을 하나로 좁히려면 `log(N!)`, 곧 대략 `N log N` 번은 비교해야 하기 때문입니다.
 
-정렬과 해시를 직접 재 본 비교는 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에 있습니다.
+정렬과 해시를 직접 측정해 본 비교는 [해시와 정렬](post.html?id=algorithm-hash-sort) 편에 있습니다.
 
 ## 4. 힙은 heapq 로
 
@@ -411,7 +411,7 @@ print(bfs(1))
 
 ## 더 깊이 보기
 
-- 이 표의 도구마다 원리와 함정을 직접 재 본 글이 트랙 앞 여섯 편입니다. [복잡도와 배열 순회](post.html?id=algorithm-complexity-array)에서 시간 복잡도를 재는 법부터 시작합니다.
+- 이 표의 도구마다 원리와 함정을 직접 측정해 본 글이 트랙 앞 여섯 편입니다. [복잡도와 배열 순회](post.html?id=algorithm-complexity-array)에서 시간 복잡도를 측정하는 법부터 시작합니다.
 - 이진 탐색의 네 변형과 `lo = mid` 의 무한 루프는 [이분 탐색과 스택](post.html?id=algorithm-binary-search-stack) 편에 있습니다. [이진 탐색 데모](demo-binary-search.html)에서 `lo`, `hi`, `mid` 가 움직이는 것을 볼 수 있습니다.
 - 힙과 다익스트라는 [트리와 힙](post.html?id=algorithm-tree-heap) 편과 [그래프 탐색](post.html?id=algorithm-graph-search) 편에 있습니다. [DFS vs BFS 데모](demo-bfs-dfs.html)에서 방문 순서를 나란히 볼 수 있습니다.
 - 모든 경우를 다 보는 DFS 를 되돌리는 백트래킹과, 겹치는 계산을 적어 두는 동적 계획법은 [DP와 그리디](post.html?id=algorithm-dp-greedy) 편에 있습니다.

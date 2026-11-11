@@ -21,4 +21,5 @@ const EASY_POST_IDS = [
   'inference-server',
   'model-versioning-reproducibility',
   'container-ci-pipeline',
+  'model-deployment-rollback',
 ];

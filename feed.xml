@@ -30,7 +30,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=rlhf-rlaif-grpo-reward-model"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=rlhf-rlaif-grpo-reward-model</id>
     <updated>2026-12-03T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 42주째에, 판정자의 점수로 카피 모델을 학습하면 무엇을 배우는지 봅니다. 가상 선호 쌍 20개로 배운 선형 보상 모델 A 는 글자 수 피처에 +2.79 를 줍니다. 판정자 쌍 8개를 빼고 배운 B 는 -0.32 를 줍니다. A 에 KL 벌점을 건 최적 정책에서 β 를 2 에서 0.25 로 내리자, 보상은 11.63 에서 17.77 로 올랐습니다. 같은 사이 통과율은 0.732 에서 0.000 이 되었습니다. GRPO 는 묶음 8개의 보상 평균 7.05 를 기준으로 이점을 셌고, 60걸음 뒤 통과율은 0.031 이었습니다. A 로 60걸음 학습한 뒤 판정자를 B 로 바꾸자, 같은 정책의 적힌 보상이 14.95 에서 2.34 로 떨어졌습니다. 120걸음에 B 로 잰 값은 2.40 으로, 처음부터 B 를 쓴 3.19 보다 낮았습니다.</summary>
+    <summary>지훈 씨가 모델 팀 42주째에, 판정자의 점수로 카피 모델을 학습하면 무엇을 배우는지 봅니다. 가상 선호 쌍 20개로 배운 선형 보상 모델 A 는 글자 수 피처에 +2.79 를 줍니다. 판정자 쌍 8개를 빼고 배운 B 는 -0.32 를 줍니다. A 에 KL 벌점을 건 최적 정책에서 β 를 2 에서 0.25 로 내리자, 보상은 11.63 에서 17.77 로 올랐습니다. 같은 사이 통과율은 0.732 에서 0.000 이 되었습니다. GRPO 는 묶음 8개의 보상 평균 7.05 를 기준으로 이점을 셌고, 60걸음 뒤 통과율은 0.031 이었습니다. A 로 60걸음 학습한 뒤 판정자를 B 로 바꾸자, 같은 정책의 적힌 보상이 14.95 에서 2.34 로 떨어졌습니다. 120걸음에 B 로 측정한 값은 2.40 으로, 처음부터 B 를 쓴 3.19 보다 낮았습니다.</summary>
     <category term="LLM &amp; Agents"/>
     <category term="Measurement &amp; Modeling"/>
   </entry>
@@ -48,7 +48,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=coding-agent-experiments"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=coding-agent-experiments</id>
     <updated>2026-12-01T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 40주째에, 31주째 관심사 사전 실험을 맡긴 Claude Code 세션을 다시 봅니다. 계획서의 칸과 Task 마다의 순서는 스킬이 정했고, 구현자는 Task 4 의 브리프 하나만 받았습니다. 생성기는 투표 기록이 없으면 심판 프롬프트를 만들지 않았고, 투표 뒤에는 keep 이 다른 키워드 4개만 심판에게 보냈습니다. 모델 기록 셋은 기록 도구가 잰 662초였고, 시작에서 커밋까지는 약 44분이었습니다. git 규칙 넷을 PreToolUse 훅의 판단 함수로 옮기자 예시 다섯 가운데 셋이 종료 코드 2 로 막혔습니다. 사람은 계획서를 승인했고, 병합과 push 는 마지막 전체 검토 뒤로 미리 승인했습니다.</summary>
+    <summary>지훈 씨가 모델 팀 40주째에, 31주째 관심사 사전 실험을 맡긴 Claude Code 세션을 다시 봅니다. 계획서의 칸과 Task 마다의 순서는 스킬이 정했고, 구현자는 Task 4 의 브리프 하나만 받았습니다. 생성기는 투표 기록이 없으면 심판 프롬프트를 만들지 않았고, 투표 뒤에는 keep 이 다른 키워드 4개만 심판에게 보냈습니다. 모델 기록 셋은 기록 도구가 측정한 662초였고, 시작에서 커밋까지는 약 44분이었습니다. git 규칙 넷을 PreToolUse 훅의 판단 함수로 옮기자 예시 다섯 가운데 셋이 종료 코드 2 로 막혔습니다. 사람은 계획서를 승인했고, 병합과 push 는 마지막 전체 검토 뒤로 미리 승인했습니다.</summary>
     <category term="LLM &amp; Agents"/>
     <category term="Software Engineering"/>
   </entry>
@@ -169,7 +169,7 @@
     <category term="LLM &amp; Agents"/>
   </entry>
   <entry>
-    <title>LLM-as-a-Judge: 채점표로 채점하고 사람과 얼마나 맞는지 재기</title>
+    <title>LLM-as-a-Judge: 채점표로 채점하고 사람과 얼마나 맞는지 측정</title>
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=llm-as-a-judge"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=llm-as-a-judge</id>
     <updated>2026-11-17T00:00:00Z</updated>

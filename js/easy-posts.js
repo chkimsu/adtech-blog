@@ -40,4 +40,5 @@ const EASY_POST_IDS = [
   'feature-store-serving',
   'two-tower-retrieval',
   'model-serving-architecture',
+  'interview-ml-modeling',
 ];

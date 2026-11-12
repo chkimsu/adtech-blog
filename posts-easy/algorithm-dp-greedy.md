@@ -80,7 +80,7 @@ for n in (20, 25, 30):
 아래 그림은 `f(5)` 를 구하는 동안 불린 함수 호출을 나무 모양으로 그렸습니다. 동그라미로 그린 마디 하나가 호출 한 번이니 같은 값을 구하는 마디가 여러 갈래에서 되풀이해 나오는지 보면 됩니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 220" role="img" aria-label="피보나치 5를 구하는 재귀 호출을 나무 모양으로 그린 그림. 같은 값을 구하는 마디가 여러 번 나타나고, 그중 f2 는 세 번 f1 은 다섯 번 나타나는 것이 강조돼 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 220" role="img" aria-label="피보나치 5를 구하는 재귀 호출을 나무 모양으로 그린 그림. 같은 값을 구하는 마디가 여러 번 나타나고 그중 세 번 나타나는 f2 가 강조돼 있다. f1 은 네 번 나타난다(다섯 번째는 생략된 갈래에 있다)." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <text x="6" y="14" style="font-size:12px; fill:var(--text-secondary)">f(5) 를 구하는 동안 불린 것들 — 같은 값이 반복해서 나온다</text>
 <g style="stroke:var(--border-color); stroke-width:1.1">
 <line x1="250" y1="38" x2="160" y2="72"/><line x1="250" y1="38" x2="340" y2="72"/>
@@ -91,21 +91,19 @@ for n in (20, 25, 30):
 <line x1="300" y1="134" x2="276" y2="168"/><line x1="300" y1="134" x2="324" y2="168"/></g>
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.3">
 <circle cx="250" cy="30" r="14"/><circle cx="160" cy="78" r="14"/><circle cx="340" cy="78" r="14"/>
-<circle cx="100" cy="126" r="14"/></g>
-<g style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.8">
-<circle cx="220" cy="126" r="14"/><circle cx="300" cy="126" r="14"/><circle cx="66" cy="174" r="14"/>
-<circle cx="196" cy="174" r="14"/><circle cx="276" cy="174" r="14"/></g>
-<g style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8">
-<circle cx="380" cy="126" r="14"/><circle cx="134" cy="174" r="14"/><circle cx="244" cy="174" r="14"/>
+<circle cx="100" cy="126" r="14"/><circle cx="380" cy="126" r="14"/><circle cx="134" cy="174" r="14"/>
+<circle cx="196" cy="174" r="14"/><circle cx="244" cy="174" r="14"/><circle cx="276" cy="174" r="14"/>
 <circle cx="324" cy="174" r="14"/></g>
+<g style="fill:var(--bg-tertiary); stroke:var(--accent-secondary); stroke-width:1.8">
+<circle cx="220" cy="126" r="14"/><circle cx="300" cy="126" r="14"/><circle cx="66" cy="174" r="14"/></g>
 <g style="font-size:11px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">
 <text x="250" y="34">5</text><text x="160" y="82">4</text><text x="340" y="82">3</text>
 <text x="100" y="130">3</text><text x="220" y="130">2</text><text x="300" y="130">2</text><text x="380" y="130">1</text>
 <text x="66" y="178">2</text><text x="134" y="178">1</text><text x="196" y="178">1</text>
 <text x="244" y="178">0</text><text x="276" y="178">1</text><text x="324" y="178">0</text></g>
-<text x="6" y="212" style="font-size:11.5px; fill:var(--accent-secondary)">테두리가 진한 것이 f(2) — 세 번 나온다. 각각 아래로 또 두 개씩 뻗는다.</text>
+<text x="6" y="212" style="font-size:11.5px; fill:var(--accent-secondary)">테두리를 강조한 것이 f(2) — 세 번 나온다. 각각 아래로 또 두 개씩 뻗는다.</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">f(5) 하나만 구해도 f(2) 를 세 번, f(1) 을 다섯 번 계산합니다. 마디는 아래 층으로 내려갈수록 두 배씩 늘어납니다. 같은 값을 다시 구하는 마디가 나오면 그 아래의 계산은 모두 이미 한 계산을 되풀이하는 중복입니다. 나무 전체는 n 이 하나 커질 때마다 대략 1.6배씩 커집니다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">f(5) 하나만 구해도 f(2) 를 세 번, f(1) 을 다섯 번 계산합니다. 그림은 맨 왼쪽 아래 f(2) 의 두 갈래를 생략했습니다. 위쪽 층에서는 마디가 한 층 내려갈 때마다 두 배씩 늘어나지만 f(1) 과 f(0) 에서 갈래가 끝나므로 아래쪽 층은 그보다 덜 늘어납니다. 같은 값을 다시 구하는 마디가 나오면 그 아래의 계산은 모두 이미 한 계산을 되풀이하는 중복입니다. 나무 전체는 n 이 하나 커질 때마다 대략 1.6배씩 커집니다.</figcaption>
 </figure>
 
 ## 2. 적어 두기(메모이제이션) — 위에서 아래로 내려가는 방식
@@ -412,7 +410,7 @@ print(f"부른 횟수 {시도횟수[0]}회, 가지치기 없이 전부 놓으면
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 190" role="img" aria-label="위에서 아래로 갈라지는 탐색 나무 그림. 왼쪽에는 가지치기 없이 모든 갈래가 끝까지 뻗은 모습이, 오른쪽에는 중간에 잘린 갈래들이 점선으로 표시된 모습이 그려져 있다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <text x="6" y="14" style="font-size:12px; fill:var(--text-secondary)">다 놓고 확인 — 256가지</text>
-<text x="270" y="14" style="font-size:12px; fill:var(--accent-primary)">한 줄마다 확인 — 17번</text>
+<text x="270" y="14" style="font-size:12px; fill:var(--accent-primary)">한 줄마다 확인 — 호출 17번</text>
 <g style="stroke:var(--border-color); stroke-width:1">
 <line x1="110" y1="32" x2="50" y2="70"/><line x1="110" y1="32" x2="90" y2="70"/>
 <line x1="110" y1="32" x2="130" y2="70"/><line x1="110" y1="32" x2="170" y2="70"/>
@@ -586,7 +584,7 @@ for 동전, 금액 in (([500, 100, 50, 10], 1260), ([4, 3, 1], 6)):
 - **표의 칸 하나가 무엇을 뜻하는지 한 문장으로 적을 수 없다면 아직 문제를 풀지 못했다는 뜻입니다.** 코드부터 짜기 시작하면 거의 언제나 중간에 막힙니다.
 - **시작값을 잘못 두면 답이 모두 틀립니다.** 최솟값 문제에서는 `표[0]` 을 0 이 아닌 무한으로 두는 실수와, 무한으로 채워야 할 나머지 칸을 0으로 두는 실수가 흔합니다.
 - **백트래킹에서 `pop()` 을 빼먹으면 앞 갈래에서 넣은 값이 옆 갈래까지 남습니다.** 넣는 `append` 와 되돌리는 `pop` 은 언제나 짝으로 씁니다.
-- **가지치기를 늦게 하면 하지 않은 것과 다름없습니다.** 퀸을 다 놓은 뒤에 확인하면 256번, 한 줄 놓을 때마다 확인하면 17번입니다.
+- **가지치기를 늦게 하면 하지 않은 것과 다름없습니다.** 퀸을 다 놓은 뒤에 확인하면 배치 256가지를 모두 만들어야 하지만 한 줄 놓을 때마다 확인하면 함수 호출 17번으로 끝납니다.
 - **그리디는 예제에서 맞는 답을 내도 틀린 방법일 수 있습니다.** 동전 4, 3, 1 로 6원을 만드는 경우가 그 예입니다. 오류가 나지 않으니 더 위험합니다.
 - **`@lru_cache` 는 인자가 바뀔 수 있는 값이면 쓸 수 없습니다.** 리스트를 인자로 넘기면 오류가 나므로 튜플로 바꿔서 넘깁니다.
 - **적어 두기도 재귀라서 깊이에 한계가 있습니다.** n 이 아주 크면 아래에서 쌓기로 바꿔 씁니다.

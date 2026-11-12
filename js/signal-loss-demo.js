@@ -332,7 +332,7 @@
     if (!s.freq) {
       return '<strong>모델 밖 규칙이 먼저 멈췄다.</strong> 상한 5회를 못 걸어 iOS 노출 ' + num(FREQ.imp) +
         '건이 그대로 나간다. ' + pct((FREQ.imp - FREQ.capped) / FREQ.imp * 100) +
-        ' 는 이미 다섯 번 넘게 본 사람 몫이다. 학습은 멀쩡한데 예산이 샌다.';
+        ' 는 이미 다섯 번 이상 본 사람 몫이다. 학습은 멀쩡한데 예산이 샌다.';
     }
     if (!s.cookie) {
       return '<strong>피처만 줄었다.</strong> 열린 RTB AUC 가 ' + m.aucOpen.toFixed(3) + ' 로 ' +

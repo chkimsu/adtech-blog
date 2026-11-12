@@ -50,7 +50,7 @@
         <p class="tg-cap">평균 <b>3.366%p</b> 어긋나고, 심한 유저는 pCTR 3.4%가 14.2%로, 입찰가가 34원에서 142원이 됩니다. 활발해진 유저를 늘 낮게 봅니다.</p></section>
 
       <section class="tg-card" data-card="batch"><h2>BATCHING</h2><p class="tg-k">몇 건씩 묶어 한 번에</p><p class="tg-easy"><b>쉽게 말하면</b> 요청을 한 건씩 처리하면 서버가 많이 필요하고, 여러 건 모아 한 번에 처리하면 서버는 줄지만 모이기를 기다리는 시간이 붙습니다.</p><div class="tg-fig" id="mc-batch"></div>
-        <p class="tg-cap">배치 1이면 서버 41대, 32면 <b>3대</b>입니다. 128까지 키우면 p99 가 14.75ms 가 되어 10ms 예산에서 탈락합니다.</p></section>
+        <p class="tg-cap">배치 1이면 서버 41대, 32면 <b>3대</b>입니다. 128까지 키우면 p99 가 21.10ms 가 되어 10ms 예산에서 탈락합니다.</p></section>
 
       <section class="tg-card" data-card="hashing"><h2>HASHING IDS</h2><p class="tg-k">광고 ID 100만 개를 버킷 26만 개에</p><p class="tg-easy"><b>쉽게 말하면</b> 광고마다 임베딩 행을 하나씩 주면 표가 너무 커집니다. 그래서 ID 를 계산해 정해진 버킷 수 안에 밀어 넣는데, 서로 다른 광고가 같은 버킷을 쓰게 됩니다.</p><div class="tg-fig" id="mc-hashing"></div>
         <p class="tg-cap">배치 하나 3.8GB 가 테이블 <b>16MB</b>가 됩니다. 머리끼리 부딪친 200쌍만 오차 19.0%라, 상위 1만 개에 전용 버킷 0.6MB 를 주면 0%가 됩니다.</p></section>

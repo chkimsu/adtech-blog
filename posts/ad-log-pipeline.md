@@ -823,7 +823,7 @@ class BidLog:
 
 ## 7. 로그가 ML 모델을 만든다 — 학습 데이터 관점
 
-모든 ML 모델의 학습 데이터는 **로그의 잇기**으로 만들어집니다:
+모든 ML 모델의 학습 데이터는 **로그의 잇기**로 만들어집니다:
 
 <div class="chart-layer">
   <div class="chart-layer-title">RAW LOGS (수집)</div>

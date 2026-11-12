@@ -345,7 +345,7 @@ graph TB
 
 ### 경매 메커니즘: 1st Price vs 2nd Price
 
-광고 거래소 초기에는 **2nd 가격 경매(Price Auction)**이 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 참 가치(True Value) 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st 가격 경매**으로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
+광고 거래소 초기에는 **2nd 가격 경매(Price Auction)**가 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 참 가치(True Value) 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st 가격 경매**로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
 
 | 경매 방식 | 지불 금액 | DSP 전략 | 시기 |
 |-----------|----------|----------|------|

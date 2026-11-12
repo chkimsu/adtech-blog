@@ -33,4 +33,5 @@ const EASY_POST_IDS = [
   'doubly-robust',
   'feedback-loop-remedies',
   'feedback-loop-bias',
+  'uplift-incrementality',
 ];

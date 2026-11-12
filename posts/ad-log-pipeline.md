@@ -246,7 +246,7 @@ sequenceDiagram
 
 > [안 눌린 로그를 줄여 생기는 편향(Negative Sampling Bias) 포스트](post.html?id=negative-sampling-bias)에서 다룬 문제가 여기서 시작됩니다. 노출 로그의 **모든 행은 "이전 모델이 노출하기로 결정한 광고"에서만 생성**됩니다. 노출되지 않은 광고가 클릭되었을지는 영원히 알 수 없습니다. 이것이 Selection Bias의 근원입니다.
 
-**중요한 구분**: 노출 로그 ≠ 요청 로그. 요청이 100건이면 그 중 낙찰+실제노출된 건만 노출 로그에 남습니다 (낙찰률(Win Rate)에 따라 10~30건). 나머지 70~90건의 요청은 패찰되어 노출을 남기지 않습니다.
+**중요한 구분**: 노출 로그 ≠ 요청 로그. 요청이 100건이면 그 중 낙찰+실제노출된 건만 노출 로그에 남습니다 (낙찰률(Win Rate)에 따라 10~30건). 나머지 70~90건의 요청은 입찰하지 않았거나 패찰했거나 낙찰 뒤 노출되지 못해 노출을 남기지 않습니다.
 
 ### 2.4 클릭 로그 — pCTR 라벨의 원천
 
@@ -317,7 +317,7 @@ sequenceDiagram
 
 **기록 방식**:
 - **낙찰(Win) Notice (nurl)**: DSP가 낙찰되면 Exchange가 DSP의 낙찰 Notice URL을 호출. 이때 낙찰가(실제 지불 가격)가 포함
-- **패찰 통지(Loss Notice)**: 일부 Exchange(OpenRTB 2.6+)는 패찰 시에도 통보. 단, 낙찰가는 미공개
+- **패찰 통지(Loss Notice)**: 일부 Exchange(OpenRTB 2.5+)는 패찰 시에도 통보. 단, 낙찰가는 미공개
 
 **누가 기록하는가**: 광고 거래소 → DSP 입찰 서버 (낙찰/패찰 통지 수신 모듈)
 
@@ -546,7 +546,7 @@ training_data = (
 )
 ```
 
-> 이 잇기 구조에는 함정이 하나 있습니다. 노출 로그를 기준으로 negative sampling하면 Class Imbalance 문제가 생깁니다. CTR이 1%라면 y=0이 99%, y=1이 1%입니다. 이 불균형을 어떻게 다루는지는 [안 눌린 로그를 줄여 생기는 편향 포스트](post.html?id=negative-sampling-bias)에서 다룹니다.
+> 이 잇기 구조에는 함정이 하나 있습니다. 노출 로그를 기준으로 학습 데이터를 만들면 Class Imbalance 문제가 생깁니다. CTR이 1%라면 y=0이 99%, y=1이 1%입니다. 이 불균형을 어떻게 다루는지는 [안 눌린 로그를 줄여 생기는 편향 포스트](post.html?id=negative-sampling-bias)에서 다룹니다.
 
 ---
 
@@ -596,7 +596,7 @@ training_data = (
   </div>
 </div>
 
-노출, 클릭까지의 실시간 로그는 DSP 내부에서 동기적으로 기록할 수 있습니다. 하지만 전환, 어트리뷰션 같은 지연 로그는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [지연 피드백](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
+요청부터 입찰까지의 실시간 로그는 DSP 내부에서 동기적으로 기록할 수 있습니다. 하지만 전환, 어트리뷰션 같은 지연 로그는 외부 이벤트에 의존하므로 **도착 시점이 불확실**합니다. 이 불확실성이 [지연 피드백](post.html?id=online-learning-delayed-feedback)의 근본 원인입니다.
 
 ---
 
@@ -908,7 +908,7 @@ class BidLog:
 </div>
 
 핵심 공식:
-- **pCTR 학습 데이터** = 노출 로그 `LEFT JOIN` 클릭 로그 (on impression_id) + 피처 로그 (on request_id)
+- **pCTR 학습 데이터** = 노출 로그 `LEFT JOIN` 클릭 로그 (on impression_id) + 피처 로그 (on request_id, ad_id)
 - **pCVR 학습 데이터** = 클릭 로그 `LEFT JOIN` 전환 로그 (on click_id) + 피처 로그
 - **Bid Shading 학습 데이터** = 입찰 로그 `JOIN` 낙찰과 패찰 로그 (on request_id)
 - **[Calibration](post.html?id=calibration)** = 모델 점수 로그의 predicted pCTR vs 노출+클릭에서 계산한 actual CTR

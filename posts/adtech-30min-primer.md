@@ -324,7 +324,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 
 - **1st-party 데이터**: 광고주가 자기 서비스에서 직접 수집(회원 DB, 구매 이력).
 - **3rd-party 데이터**: 외부 브로커가 여러 사이트에서 긁어모은 데이터. 쿠키 기반이 많다.
-- Safari 와 Firefox 는 3rd-party 쿠키를 기본으로 막습니다. Chrome 은 없애겠다고 했다가 2025년에 계획을 접었습니다. 대안으로 만들던 **Privacy Sandbox** 의 광고용 기능도 2025년 10월에 거두었습니다. 거둔 기능은 Topics, Protected Audience, Attribution Reporting 입니다. 그래도 방향은 남았습니다. 개별 유저를 숨기고 집계 수준에서만 광고가 작동하는 쪽으로 규제와 플랫폼이 움직입니다.
+- Safari 와 Firefox 는 3rd-party 쿠키를 기본으로 막습니다. Chrome 은 없애겠다고 했다가 2024년 7월에 계획을 접었습니다. 대안으로 만들던 **Privacy Sandbox** 의 광고용 기능도 2025년 10월에 거두기로 했습니다. 거두기로 한 기능은 Topics, Protected Audience, Attribution Reporting 입니다. 그래도 방향은 남았습니다. 개별 유저를 숨기고 집계 수준에서만 광고가 작동하는 쪽으로 규제와 플랫폼이 움직입니다.
 
 ### 더 깊이 보기
 - 타겟팅이 어느 순간 어느 서버에서 일어나나: [타겟팅 기초](post.html?id=targeting-basics)
@@ -380,7 +380,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 5. 랭킹은 **후보 생성(Retrieval) → Ranking(정밀 스코어링)** 2단입니다. 모델은 LR 부터 DIN, DIEN(유저 행동의 변해 가는 관심을 읽는 구조) 까지 진화했습니다.
 6. 모델이 아무리 AUC 가 높아도 **Calibration** 이 안 되면 돈을 잃습니다.
 7. 새 광고/새 유저는 **탐색-활용 딜레마** → 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
-8. 측정은 **CTR, CVR, ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 거두어졌습니다.
+8. 측정은 **CTR, CVR, ROAS** 같은 핵심 지표 + **Attribution(공로 배분)**. iOS ATT 이후 개별 추적이 어려워져 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 종료가 발표됐습니다.
 9. 타겟팅은 **Demographic, Behavioral, Contextual, Retargeting** 네 갈래입니다. 1st-party 데이터와 Lookalike 의 중요성이 커지고 있습니다.
 10. 모든 것은 **Feature Store + Real-Time Serving + Online Learning** 인프라 위에서 돌아갑니다.
 

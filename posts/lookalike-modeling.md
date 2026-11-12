@@ -917,7 +917,7 @@ Open Web에서 활동하는 DSP(The Trade Desk, DV360 등)의 Lookalike는 가�
 
 **1st-party Data 강화**: 광고주가 직접 수집한 데이터(이메일, 전화번호 해시)를 기반으로 Seed를 구성합니다. Google의 Customer Match, Meta의 Custom Audience가 이 방향의 대표적 제품입니다.
 
-**Cohort 기반 Lookalike**: 개인이 아닌 유사 관심사 그룹(Cohort) 단위로 Lookalike를 수행합니다. Seed의 관심사 분포와 닮은 분포를 가진 Cohort를 고르는 방식입니다. Google의 Topics API가 이 방향의 시도였는데, 2025년 10월 종료됐습니다.
+**Cohort 기반 Lookalike**: 개인이 아닌 유사 관심사 그룹(Cohort) 단위로 Lookalike를 수행합니다. Seed의 관심사 분포와 닮은 분포를 가진 Cohort를 고르는 방식입니다. Google의 Topics API가 이 방향의 시도였는데, 2025년 10월 종료가 발표됐습니다.
 
 **Clean Room 활용**: 광고주와 플랫폼이 데이터를 직접 공유하지 않고, 암호화된 환경(Clean Room)에서 Seed 매칭과 Lookalike 확장을 수행합니다. AWS Clean Rooms, Snowflake Data Clean Room, Google Ads Data Hub가 대표적입니다.
 

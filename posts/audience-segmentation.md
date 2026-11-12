@@ -701,7 +701,7 @@ graph TB
 **소멸 원인**:
 - **Safari ITP (Intelligent Tracking Prevention)**: 2017년부터 외부 쿠키를 점진적으로 차단. 현재 완전 차단.
 - **Firefox ETP (Enhanced Tracking Protection)**: 2019년부터 외부 쿠키 기본 차단.
-- **Chrome**: 외부 쿠키 폐지를 추진했지만 2025년 4월 철회. 쿠키는 남았고, 대체용 광고 API(Topics, Protected Audience)는 2025년 10월 종료.
+- **Chrome**: 외부 쿠키 폐지를 추진했지만 2024년 7월 사용자 선택으로 방향을 바꿨고 2025년 4월 선택 창도 접음. 쿠키는 남았고 대체용 광고 API(Topics, Protected Audience)는 2025년 10월 종료 발표.
 - **GDPR/CCPA**: 명시적 동의(Consent) 없는 tracking이 법적으로 제한. DMP의 대규모 외부 data 수집이 점점 어려워짐.
 
 결과적으로, DMP 기반 세그먼트의 정확도와 도달 범위(Reach)가 크게 줄었습니다. Safari/Firefox 유저는 이미 DMP로 추적할 수 없습니다. Chrome은 쿠키를 남겼지만, 동의 없는 추적은 규제로 계속 좁아지고 있습니다.
@@ -787,7 +787,7 @@ user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 
 $$\text{noisy\_count}(\text{segment}) = \text{true\_count}(\text{segment}) + \text{Lap}\left(\frac{1}{\epsilon}\right)$$
 
-$\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 프라이버시를 보장하지만 통계의 정확도가 떨어집니다. Google의 Privacy Sandbox에 있던 Protected Audience API도 집계 결과에 노이즈를 더하는 방식을 썼습니다. 브라우저 안에서 세그먼트 기반 입찰을 돌리면서 유저 프라이버시를 지키는 구조였는데, 2025년 10월에 종료됐습니다.
+$\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 프라이버시를 보장하지만 통계의 정확도가 떨어집니다. Google의 Privacy Sandbox에 있던 Protected Audience API도 집계 결과에 노이즈를 더하는 방식을 썼습니다. 브라우저 안에서 세그먼트 기반 입찰을 돌리면서 유저 프라이버시를 지키는 구조였는데, 2025년 10월에 종료가 발표됐습니다.
 
 > 프라이버시 규제는 세그멘테이션의 "해상도 상한선"을 설정합니다. 아무리 정밀한 세그먼트를 만들 수 있더라도, 최소 크기 제한과 동의 관리로 인해 실제로 활용할 수 있는 해상도에는 한계가 있습니다. 이 제약을 설계 초기부터 반영해야, 나중에 규제 대응으로 시스템을 재설계하는 비용을 피할 수 있습니다.
 
@@ -834,7 +834,7 @@ DSP는 이 세그먼트 정보를 pCTR 모델의 피처로 사용하거나, 입�
 
 **닫힌 생태계에서의 세그먼트 활용**: 광고주는 닫힌 생태계의 광고 플랫폼에서 타겟팅 조건을 설정합니다. 네이버 광고 관리, Meta Ads Manager, Google Ads 같은 것입니다. "관심사: 패션, 연령: 25-34, 지역: 서울"과 같은 조건을 선택하면, 플랫폼 내부에서 해당 세그먼트에 매칭되는 유저에게 광고를 노출합니다. 유저 데이터는 플랫폼을 떠나지 않으며, 광고주는 유저 레벨 데이터에 접근할 수 없습니다.
 
-> 외부 쿠키가 줄어든 세계에서, 열린 RTB의 세그멘테이션 역량은 구조적으로 닫힌 생태계에 열위합니다. 이를 극복하려는 시도가 이어졌습니다. Google은 Privacy Sandbox(Topics API, Protected Audience)를 내놨다가 2025년 10월 종료했습니다. IAB는 Seller Defined Audiences를 정의했습니다. UID 2.0 같은 공유 ID 솔루션도 있습니다. 하지만 이들 중 어느 것도 닫힌 생태계의 자사 데이터 우위를 대체하지 못했습니다.
+> 외부 쿠키가 줄어든 세계에서, 열린 RTB의 세그멘테이션 역량은 구조적으로 닫힌 생태계에 열위합니다. 이를 극복하려는 시도가 이어졌습니다. Google은 Privacy Sandbox(Topics API, Protected Audience)를 내놨다가 2025년 10월 종료를 발표했습니다. IAB는 Seller Defined Audiences를 정의했습니다. UID 2.0 같은 공유 ID 솔루션도 있습니다. 하지만 이들 중 어느 것도 닫힌 생태계의 자사 데이터 우위를 대체하지 못했습니다.
 
 ---
 

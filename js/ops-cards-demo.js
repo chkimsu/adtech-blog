@@ -132,7 +132,7 @@
     // ---------- 5. 온라인 학습 한 바퀴 (online-learning-delayed-feedback 5절) ----------
     (function () {
         const S = 'op-onlineloop'; if (!has(S)) return; let s = '';
-        s += T(40, 26, '위로 갈수록 빠르고 가볍고, 아래로 갈수록 느리고 무겁습니다', 'lbl sm');
+        s += T(40, 26, '위 세 칸은 아래로 갈수록 느리고 무겁습니다. 맨 아래 서버는 실시간으로 예측합니다', 'lbl sm');
         s += tag(150, 40, '이벤트 스트림: 노출, 클릭 (수 초)', 'b');
         s += T(40, 84, '전환은 수 시간~수 일 뒤', 'lbl sm');
         s += tool(150, 78, 180, { label: '준실시간 보정 (수 분)', sub: '최근 1시간 예측 대 실제', clock: true });

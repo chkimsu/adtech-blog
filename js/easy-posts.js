@@ -42,4 +42,5 @@ const EASY_POST_IDS = [
   'model-serving-architecture',
   'interview-ml-modeling',
   'online-learning-delayed-feedback',
+  'interview-experiment-metrics',
 ];

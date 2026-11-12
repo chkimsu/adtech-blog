@@ -1,4 +1,4 @@
-pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 합니다. 그런데 그 노출 로그는 **정확히 언제, 어디서, 어떤 필드로** 기록되었을까요? 요청(Request) 로그, candidate 로그, 클릭(click) 로그는 어떨까요? 광고 시스템에서 하나의 ad 요청(request)가 발생하면, 그 요청이 시스템을 통과하면서 **최소 10종의 로그**를 남깁니다. 이 글은 그 10개의 로그를 시간순으로 추적하여, 각 로그가 언제 기록되고 어떻게 ML 학습 데이터로 합류하는지 해부합니다.
+pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 합니다. 그런데 그 노출 로그는 **정확히 언제, 어디서, 어떤 필드로** 기록되었을까요? 요청(Request) 로그, candidate 로그, 클릭(click) 로그는 어떨까요? 광고 시스템에서 하나의 ad 요청(request)이 발생하면, 그 요청이 시스템을 통과하면서 **최소 10종의 로그**를 남깁니다. 이 글은 그 10개의 로그를 시간순으로 추적하여, 각 로그가 언제 기록되고 어떻게 ML 학습 데이터로 합류하는지 해부합니다.
 
 > [생태계 전체 지도](post.html?id=adtech-ecosystem-map)는 이걸 "피드백 루프" 한 줄로 요약합니다.
 > [광고 서빙 흐름(Ad Serving Flow)](post.html?id=ad-serving-flow)는 입찰 요청(Bid Request)부터 노출까지만 봅니다.
@@ -309,7 +309,7 @@ sequenceDiagram
 
 <a href="demo-attribution-window.html" class="btn-demo">윈도우, 모델이 공로를 어떻게 바꾸는지 직접 눌러보기 →</a>
 
-> [온라인 학습(Online Learning) & 지연 피드백(Delayed Feedback) 포스트](post.html?id=online-learning-delayed-feedback)에도 같은 뼈대가 나옵니다. 전환 지연이 **가짜 음성(Fake Negative)를 만들어 pCVR을 과소추정**시킵니다. 클릭 후 3일 뒤에 전환이 발생했는데, 학습 데이터를 1일 뒤에 잘라버리면 이 전환은 "비전환(y=0)"으로 잘못 라벨링됩니다. 전환 로그의 도착 지연이 이 문제의 근원입니다.
+> [온라인 학습(Online Learning) & 지연 피드백(Delayed Feedback) 포스트](post.html?id=online-learning-delayed-feedback)에도 같은 뼈대가 나옵니다. 전환 지연이 **가짜 음성(Fake Negative)을 만들어 pCVR을 과소추정**시킵니다. 클릭 후 3일 뒤에 전환이 발생했는데, 학습 데이터를 1일 뒤에 잘라버리면 이 전환은 "비전환(y=0)"으로 잘못 라벨링됩니다. 전환 로그의 도착 지연이 이 문제의 근원입니다.
 
 ### 2.6 낙찰과 패찰 로그 — 경매의 결과
 

@@ -160,7 +160,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 
 ## 2. 한 번의 광고 요청에서 피처가 모이는 과정
 
-유저가 페이지를 열고 입찰 요청(Bid Request)가 도착한 순간부터, 피처가 조합되어 모델 추론이 완료되기까지의 타임라인입니다:
+유저가 페이지를 열고 입찰 요청(Bid Request)이 도착한 순간부터, 피처가 조합되어 모델 추론이 완료되기까지의 타임라인입니다:
 
 <div class="chart-timeline">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">

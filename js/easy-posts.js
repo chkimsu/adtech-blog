@@ -41,4 +41,5 @@ const EASY_POST_IDS = [
   'two-tower-retrieval',
   'model-serving-architecture',
   'interview-ml-modeling',
+  'online-learning-delayed-feedback',
 ];

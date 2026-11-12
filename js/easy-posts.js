@@ -37,4 +37,5 @@ const EASY_POST_IDS = [
   'privacy-signal-loss',
   'ad-log-pipeline',
   'ad-log-system',
+  'feature-store-serving',
 ];

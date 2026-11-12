@@ -32,4 +32,5 @@ const EASY_POST_IDS = [
   'offpolicy-evaluation',
   'doubly-robust',
   'feedback-loop-remedies',
+  'feedback-loop-bias',
 ];

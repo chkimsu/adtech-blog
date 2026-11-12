@@ -34,4 +34,5 @@ const EASY_POST_IDS = [
   'feedback-loop-remedies',
   'feedback-loop-bias',
   'uplift-incrementality',
+  'privacy-signal-loss',
 ];

@@ -39,4 +39,5 @@ const EASY_POST_IDS = [
   'ad-log-system',
   'feature-store-serving',
   'two-tower-retrieval',
+  'model-serving-architecture',
 ];

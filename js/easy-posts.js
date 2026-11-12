@@ -35,4 +35,5 @@ const EASY_POST_IDS = [
   'feedback-loop-bias',
   'uplift-incrementality',
   'privacy-signal-loss',
+  'ad-log-pipeline',
 ];

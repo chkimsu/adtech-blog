@@ -36,4 +36,5 @@ const EASY_POST_IDS = [
   'uplift-incrementality',
   'privacy-signal-loss',
   'ad-log-pipeline',
+  'ad-log-system',
 ];

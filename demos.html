@@ -477,7 +477,7 @@
       <div class="container">
         <div class="roadmap-header" style="text-align:center; margin-bottom:1.5rem;">
           <span class="learning-path-label">학습 로드맵</span>
-          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 106개 데모</h2>
+          <h2 style="font-size:1.5rem; margin:0.5rem 0 0.4rem;">난이도별 107개 데모</h2>
           <p style="color:var(--text-secondary); font-size:0.92rem;">입문 → 중급 → 고급 순서로 따라가면 각 단계가 다음 단계의 prerequisite이 됩니다.</p>
         </div>
         <div class="roadmap-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
@@ -499,6 +499,7 @@
               <a href="demo-kafka-partition.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ Kafka Partition 놀이터</a>
               <a href="demo-binary-search.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 이분 탐색 회차 보기</a>
               <a href="demo-bfs-dfs.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ DFS vs BFS 한 회차씩</a>
+              <a href="demo-sliding-window.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 슬라이딩 윈도우 단계별 시각화</a>
               <a href="demo-cart-pipeline.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 클릭 한 줄의 여섯 자리</a>
               <a href="demo-log-hops.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그 여섯 층 흐름</a>
                           <a href="demo-log-to-model.html" style="color:var(--text-primary); text-decoration:none; font-size:0.88rem;">→ 로그에서 모델까지</a>
@@ -694,12 +695,12 @@
       </div>
     </section>
 
-    <!-- 주제별 데모 106개 -->
+    <!-- 주제별 데모 107개 -->
     <section class="section">
       <div class="container">
         <div class="demos-section-title">
           <h2>주제별 데모</h2>
-          <span class="count">106개, 주제 13개</span>
+          <span class="count">107개, 주제 13개</span>
         </div>
 
         <div class="demos-jump" role="navigation" aria-label="주제로 바로 가기">
@@ -2205,9 +2206,9 @@
         <section class="demo-topic" id="demo-topic-algo">
           <div class="demo-topic-head">
             <h3>알고리즘 기초</h3>
-            <span class="demo-topic-count">2개</span>
+            <span class="demo-topic-count">3개</span>
           </div>
-          <p class="demo-topic-desc">코딩 테스트에 나오는 탐색 두 갈래를 한 회차씩 눌러 봅니다.</p>
+          <p class="demo-topic-desc">코딩 테스트에 나오는 탐색 두 갈래와 슬라이딩 윈도우를 한 회차씩 눌러 봅니다.</p>
 
           <div class="demos-grid">
             <div class="demo-card">
@@ -2234,6 +2235,19 @@
                 <span class="demo-card-meta-item">선수지식 없음</span>
               </div>
               <a href="demo-bfs-dfs.html" class="btn-try">체험하기</a>
+            </div>
+
+            <div class="demo-card">
+              <div class="demo-card-badges">
+                <span class="demo-card-level level-beginner">입문</span>
+              </div>
+              <h3>슬라이딩 윈도우 단계별 시각화</h3>
+              <p>합이 S 이상인 가장 짧은 연속 기간을 찾는 풀이를 한 동작씩 봅니다. 오른쪽 끝을 늘리고, 길이를 적고, 왼쪽 끝을 줄일 때마다 코드의 어느 줄이 실행되는지 함께 보입니다. 두 끝이 움직인 횟수를 세어 안쪽에 while 이 있어도 O(n) 인 이유를 확인합니다.</p>
+              <div class="demo-card-meta">
+                <span class="demo-card-meta-item">⏱ 4분</span>
+                <span class="demo-card-meta-item">선수지식 없음</span>
+              </div>
+              <a href="demo-sliding-window.html" class="btn-try">체험하기</a>
             </div>
           </div>
         </section>

@@ -38,6 +38,137 @@ UMPIRE 는 Understand, Match, Plan, Implement, Review, Evaluate 의 머리글자
 
 이 글은 지어낸 문제 하나를 이 순서로 처음부터 끝까지 풉니다. 2절에서 지문을 읽고 손으로 풀고, 3절에서 n 으로 목표 복잡도를 정하고, 4~5절에서 배열과 슬라이딩 윈도우를 고르고, 6절에서 코드를 돌려 확인합니다.
 
+아래 그림에 이 예제가 다섯 단계를 지나며 단계마다 얻는 것을 한 장으로 모았습니다. 가운데 칸은 그 단계에서 예제 데이터를 보는 방법을, 오른쪽 칸은 그 단계가 끝났을 때 손에 남는 것을 보여 줍니다. 앞 단계에서 얻은 것은 뒤 단계에서 다시 쓰입니다. 1단계에서 확인한 「값이 모두 1 이상」이 4단계에서 슬라이딩 윈도우를 고르는 근거가 되고, 1단계의 손 풀이 답 2 는 5단계에서 코드의 답을 맞춰 보는 기준이 됩니다.
+
+<div class="table-wrapper">
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 640 466" role="img" aria-label="예제 문제가 풀이 5단계를 위에서 아래로 지나는 그림입니다. 1 이해에서는 8일치 칸 위에 5~6일의 4 더하기 3 이 7 로 표시되고, 2 제약 보기에서는 모든 구간 50억 번의 긴 막대와 슬라이딩 윈도우 20만 번의 선 하나가 같은 눈금으로 놓입니다. 3 자료구조는 인덱스가 붙은 배열, 4 접근 방법은 1~4일을 감싼 기간과 오른쪽으로 가는 두 끝, 5 구현과 확인은 예제와 경계 입력 4개와 무작위 500개의 결과입니다. 오른쪽 칸에는 단계마다 손에 남는 것이 적혀 있습니다." style="width:100%; max-width:820px; height:auto; font-family:var(--font-sans)">
+<defs><marker id="ss1-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L7,4 L0,8 Z" style="fill:var(--text-muted)"/></marker></defs>
+<rect x="8" y="6" width="624" height="78" style="fill:var(--bg-primary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="26" y="52" style="font-size:22px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">1</text>
+<text x="44" y="51" style="font-size:14px; fill:var(--text-primary); text-anchor:start; font-weight:700">이해</text>
+<line x1="402" y1="16" x2="402" y2="74" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="414" y="32" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">손 풀이 답 2 (5~6일)</text>
+<text x="414" y="51" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">값은 1 이상, 답이 없으면 0</text>
+<text x="414" y="70" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">경계 입력 목록</text>
+<text x="153.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">1일</text>
+<rect x="140" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="153.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<text x="183.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">2일</text>
+<rect x="170" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="183.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<text x="213.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">3일</text>
+<rect x="200" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="213.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<text x="243.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">4일</text>
+<rect x="230" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="243.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<text x="273.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">5일</text>
+<rect x="260" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="273.0" y="45.5" style="font-size:12px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<text x="303.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">6일</text>
+<rect x="290" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--accent-primary); stroke-width:2"/>
+<text x="303.0" y="45.5" style="font-size:12px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<text x="333.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">7일</text>
+<rect x="320" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="333.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<text x="363.0" y="24" style="font-size:9.5px; fill:var(--text-muted); text-anchor:middle">8일</text>
+<rect x="350" y="30" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="363.0" y="45.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<text x="140" y="70" style="font-size:11.5px; fill:var(--accent-primary); text-anchor:start">5~6일: 4 + 3 = 7, 가장 짧은 이틀</text>
+<line x1="26" y1="86" x2="26" y2="92" style="stroke:var(--text-muted); stroke-width:1.4" marker-end="url(#ss1-arr)"/>
+<rect x="8" y="100" width="624" height="78" style="fill:var(--bg-primary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="26" y="146" style="font-size:22px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<text x="44" y="145" style="font-size:14px; fill:var(--text-primary); text-anchor:start; font-weight:700">제약 보기</text>
+<line x1="402" y1="110" x2="402" y2="168" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="414" y="126" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">n 은 최대 10만</text>
+<text x="414" y="145" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">1억 회를 1초로 어림</text>
+<text x="414" y="164" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">목표 O(n log n) 이하</text>
+<text x="140" y="120" style="font-size:11px; fill:var(--text-secondary); text-anchor:start">모든 구간</text>
+<text x="388" y="120" style="font-size:11px; fill:var(--text-secondary); text-anchor:end; font-family:var(--font-mono)">5,000,050,000번, 50초</text>
+<rect x="140" y="125" width="248" height="11" style="fill:var(--accent-secondary); stroke:none; stroke-width:0"/>
+<text x="140" y="154" style="font-size:11px; fill:var(--text-secondary); text-anchor:start">슬라이딩 윈도우</text>
+<text x="388" y="154" style="font-size:11px; fill:var(--text-secondary); text-anchor:end; font-family:var(--font-mono)">200,000번, 0.01초 미만</text>
+<rect x="140" y="159" width="1.5" height="11" style="fill:var(--accent-primary); stroke:none; stroke-width:0"/>
+<line x1="26" y1="180" x2="26" y2="186" style="stroke:var(--text-muted); stroke-width:1.4" marker-end="url(#ss1-arr)"/>
+<rect x="8" y="194" width="624" height="78" style="fill:var(--bg-primary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="26" y="240" style="font-size:22px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<text x="44" y="239" style="font-size:14px; fill:var(--text-primary); text-anchor:start; font-weight:700">자료구조</text>
+<line x1="402" y1="204" x2="402" y2="262" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="414" y="220" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">자주 하는 연산은</text>
+<text x="414" y="239" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">인덱스로 읽기</text>
+<text x="414" y="258" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">따로 만들 것 없이 배열</text>
+<rect x="140" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="153.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<text x="153.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">0</text>
+<rect x="170" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="183.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<text x="183.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="200" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="213.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<text x="213.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="230" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="243.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<text x="243.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="260" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="273.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<text x="273.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="290" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="303.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<text x="303.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="320" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="333.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<text x="333.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">6</text>
+<rect x="350" y="218" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="363.0" y="233.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<text x="363.0" y="254" style="font-size:10px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">7</text>
+<text x="140" y="209" style="font-size:11px; fill:var(--text-secondary); text-anchor:start">칸 아래 숫자가 인덱스 i, clicks[i] 읽기는 O(1)</text>
+<line x1="26" y1="274" x2="26" y2="280" style="stroke:var(--text-muted); stroke-width:1.4" marker-end="url(#ss1-arr)"/>
+<rect x="8" y="288" width="624" height="78" style="fill:var(--bg-primary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="26" y="334" style="font-size:22px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<text x="44" y="333" style="font-size:14px; fill:var(--text-primary); text-anchor:start; font-weight:700">접근 방법</text>
+<line x1="402" y1="298" x2="402" y2="356" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="414" y="314" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">신호: 연속한 구간, 양수</text>
+<text x="414" y="333" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">슬라이딩 윈도우</text>
+<text x="414" y="352" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">O(n), 2단계 목표 안</text>
+<rect x="140" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="153.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="170" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="183.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="200" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="213.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="230" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="243.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="260" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="273.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="290" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="303.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="320" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="333.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="350" y="312" width="26" height="22" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="363.0" y="327.5" style="font-size:12px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<text x="140" y="303" style="font-size:11px; fill:var(--text-secondary); text-anchor:start">연속 + 양수 → 두 끝이 오른쪽으로만 이동</text>
+<rect x="137" y="309" width="122" height="28" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="153.0" y="350" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">left →</text>
+<text x="243.0" y="350" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-family:var(--font-mono)">right →</text>
+<line x1="26" y1="368" x2="26" y2="374" style="stroke:var(--text-muted); stroke-width:1.4" marker-end="url(#ss1-arr)"/>
+<rect x="8" y="382" width="624" height="78" style="fill:var(--bg-primary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="26" y="428" style="font-size:22px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">5</text>
+<text x="44" y="427" style="font-size:14px; fill:var(--text-primary); text-anchor:start; font-weight:700">구현과 확인</text>
+<line x1="402" y1="392" x2="402" y2="450" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="414" y="408" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">통과한 코드</text>
+<text x="414" y="427" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">시간 O(n), 공간 O(1)</text>
+<text x="140" y="405" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">예제</text>
+<text x="236" y="405" style="font-size:11.5px; fill:var(--accent-primary); text-anchor:start; font-weight:600">답 2, 손 풀이와 같음</text>
+<text x="140" y="425" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">경계 입력 4개</text>
+<text x="236" y="425" style="font-size:11.5px; fill:var(--accent-primary); text-anchor:start; font-weight:600">두 풀이의 답이 같음</text>
+<text x="140" y="445" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">무작위 500개</text>
+<text x="236" y="445" style="font-size:11.5px; fill:var(--accent-primary); text-anchor:start; font-weight:600">다른 답 0개</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">그림의 숫자는 모두 2~6절의 계산에서 왔습니다. 2단계의 두 막대는 같은 눈금으로 그렸기 때문에 슬라이딩 윈도우의 막대는 선 하나로만 보입니다.</figcaption>
+</figure>
+</div>
+
 ## 2. 이해: 입력 범위, 빈 입력, 중복
 
 **코드를 쓰기 전에 「입력이 얼마나 크고, 비어 있을 수 있고, 같은 값이 있는가」를 확인하고, 작은 예제를 손으로 풀어 답 하나를 구해 둡니다.**
@@ -155,6 +286,138 @@ print(f'슬라이딩 윈도우 {2*n:>13,}번  {sec(2*n)}')
 
 이 글의 예제는 첫째 줄에 들어맞습니다. 클릭 수가 모두 1 이상이라 오른쪽 끝을 늘리면 합이 커지고 왼쪽 끝을 줄이면 합이 작아지는데, 이 한 방향 성질이 있어야 「합이 S 이상이면 왼쪽을 줄여 본다」는 규칙이 답을 놓치지 않습니다. 값에 음수가 섞이면 왼쪽을 줄였을 때 합이 커질 수도 있어서 이 규칙이 깨지고, 그때는 누적합과 덱을 쓰는 다른 방법이 필요합니다.
 
+이 규칙대로 예제 8일을 따라가면 합이 7 이상인 기간을 6번 만납니다. 아래 그림에 그 기간 6개를 만난 순서대로 위에서 아래로 쌓았습니다. 파란 테두리가 그때의 기간이고, 점선 칸은 왼쪽 끝을 줄이면서 이미 뺀 날입니다. 줄이 내려갈수록 테두리의 왼쪽 끝과 오른쪽 끝은 오른쪽으로만 움직이고 한 번도 되돌아가지 않는데, 이 성질 덕분에 6절의 풀이는 반복문 안에 반복문이 하나 더 있어도 O(n) 입니다.
+
+<div class="table-wrapper">
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 600 274" role="img" aria-label="8일치 클릭 수 위에 합이 7 이상이 된 기간 6개를 만난 순서대로 위에서 아래로 쌓은 그림입니다. 1~4일, 2~5일, 3~5일, 4~6일, 5~6일, 6~8일 순서이고 5번째 줄의 5~6일이 길이 2 로 가장 짧습니다. 기간을 감싼 테두리의 왼쪽 끝과 오른쪽 끝이 줄마다 오른쪽으로만 움직이고, 왼쪽에 점선으로 남은 칸은 이미 뺀 날입니다." style="width:100%; max-width:760px; height:auto; font-family:var(--font-sans)">
+<text x="111.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">1일</text>
+<text x="155.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">2일</text>
+<text x="199.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">3일</text>
+<text x="243.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">4일</text>
+<text x="287.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">5일</text>
+<text x="331.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">6일</text>
+<text x="375.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">7일</text>
+<text x="419.0" y="16" style="font-size:10.5px; fill:var(--text-muted); text-anchor:middle">8일</text>
+<text x="8" y="48" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">1~4일</text>
+<rect x="92" y="30" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="111.0" y="47.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<rect x="136" y="30" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="155.0" y="47.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<rect x="180" y="30" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="199.0" y="47.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">1</text>
+<rect x="224" y="30" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="243.0" y="47.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<rect x="268" y="30" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="287.0" y="47.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="312" y="30" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="331.0" y="47.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="356" y="30" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="375.0" y="47.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="400" y="30" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="419.0" y="47.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="89" y="27" width="176" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="450" y="48" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">합 8, 길이 4</text>
+<text x="8" y="88" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">2~5일</text>
+<rect x="92" y="70" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="111.0" y="87.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="136" y="70" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="155.0" y="87.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<rect x="180" y="70" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="199.0" y="87.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">1</text>
+<rect x="224" y="70" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="243.0" y="87.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<rect x="268" y="70" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="287.0" y="87.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<rect x="312" y="70" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="331.0" y="87.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="356" y="70" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="375.0" y="87.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="400" y="70" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="419.0" y="87.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="133" y="67" width="176" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="450" y="88" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">합 10, 길이 4</text>
+<text x="8" y="128" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">3~5일</text>
+<rect x="92" y="110" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="111.0" y="127.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="136" y="110" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="155.0" y="127.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="180" y="110" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="199.0" y="127.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">1</text>
+<rect x="224" y="110" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="243.0" y="127.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<rect x="268" y="110" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="287.0" y="127.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<rect x="312" y="110" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="331.0" y="127.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="356" y="110" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="375.0" y="127.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="400" y="110" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="419.0" y="127.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="177" y="107" width="132" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="450" y="128" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">합 7, 길이 3</text>
+<text x="8" y="168" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">4~6일</text>
+<rect x="92" y="150" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="111.0" y="167.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="136" y="150" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="155.0" y="167.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="180" y="150" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="199.0" y="167.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="224" y="150" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="243.0" y="167.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">2</text>
+<rect x="268" y="150" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="287.0" y="167.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<rect x="312" y="150" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="331.0" y="167.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<rect x="356" y="150" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="375.0" y="167.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="400" y="150" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="419.0" y="167.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="221" y="147" width="132" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="450" y="168" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">합 9, 길이 3</text>
+<text x="8" y="208" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">5~6일</text>
+<rect x="92" y="190" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="111.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="136" y="190" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="155.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="180" y="190" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="199.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="224" y="190" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="243.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="268" y="190" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="287.0" y="207.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">4</text>
+<rect x="312" y="190" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="331.0" y="207.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<rect x="356" y="190" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="375.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="400" y="190" width="38" height="26" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.2"/>
+<text x="419.0" y="207.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="265" y="187" width="88" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:3"/>
+<text x="450" y="208" style="font-size:12.5px; fill:var(--accent-primary); text-anchor:start; font-weight:700">합 7, 길이 2, 가장 짧은 기간</text>
+<text x="8" y="248" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start; font-family:var(--font-mono)">6~8일</text>
+<rect x="92" y="230" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="111.0" y="247.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="136" y="230" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="155.0" y="247.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="180" y="230" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="199.0" y="247.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="224" y="230" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="243.0" y="247.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="268" y="230" width="38" height="26" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="287.0" y="247.5" style="font-size:13px; fill:var(--text-muted); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="312" y="230" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="331.0" y="247.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">3</text>
+<rect x="356" y="230" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="375.0" y="247.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">1</text>
+<rect x="400" y="230" width="38" height="26" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="419.0" y="247.5" style="font-size:13px; fill:var(--text-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">5</text>
+<rect x="309" y="227" width="132" height="32" style="fill:none; stroke:var(--accent-primary); stroke-width:2"/>
+<text x="450" y="248" style="font-size:12.5px; fill:var(--text-secondary); text-anchor:start">합 9, 길이 3</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">6절 코드가 <code>trace=True</code> 로 찍는 6줄과 같은 기간입니다. 5번째 줄의 5~6일이 길이 2 로 가장 짧아서 답이 2 이고, 마지막 줄의 6~8일은 길이 3 이라 답을 바꾸지 않습니다.</figcaption>
+</figure>
+</div>
+
 신호표는 후보를 좁히는 데까지만 씁니다. 한 지문에 신호가 둘 이상 보이면 3절의 목표 복잡도에 맞는 쪽을 고르고, 도구별 표준 라이브러리 사용법은 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편에 있습니다.
 
 ## 6. 구현과 확인: 예제, 경계 입력, 복잡도
@@ -238,7 +501,144 @@ print(f'무작위 500개 중 다른 답 {diff}개')
 # 무작위 500개 중 다른 답 0개
 ```
 
+출력의 기간 6줄은 합이 7 이상이 된 순간에만 찍히므로, 그 사이에 오른쪽 끝을 늘리고 왼쪽 끝을 줄이는 동작은 출력에 나오지 않습니다. 아래 데모는 이 풀이를 한 동작씩 나눠 보여 줍니다. `Step` 을 한 번 누르면 코드가 오른쪽 끝을 한 칸 늘리거나, 합이 7 이상인 기간의 길이를 적거나, 왼쪽 끝을 한 칸 줄이고, 데모 위쪽의 코드에서 방금 실행한 줄이 굵게 표시됩니다.
+
+글의 예제는 시작 상태를 빼고 21단계입니다. 오른쪽 끝을 늘리는 동작이 8번, 길이를 적는 동작과 왼쪽 끝을 줄이는 동작이 6번씩이고, 마지막 단계에서 반복문이 끝납니다. 입력 칸에서 코드 4단계의 경계 입력 4개로 바꿔 볼 수도 있습니다. 빈 배열에서는 반복문이 한 번도 돌지 않고, `[2, 10, 1]` 에서는 1~2일의 길이 2 를 먼저 적은 뒤 왼쪽 끝을 줄여 2일 하나만 남았을 때 답을 1 로 바꿉니다.
+
+<div class="demo-embed-wrap">
+<iframe class="demo-embed" src="demo-sliding-window.html?embed=1" height="1400" loading="lazy" title="슬라이딩 윈도우 단계별 시각화"></iframe>
+<a class="demo-embed-open" href="demo-sliding-window.html" target="_blank" rel="noopener">↗ 전체 데모로 열기 (가이드 투어 포함)</a>
+</div>
+
+끝까지 돌리면 데모의 기록 칸에 위 출력과 같은 기간 6개가 같은 순서로 쌓이고, `best` 칸이 굵게 표시된 줄이 답이 짧아진 순간입니다. 움직인 횟수 칸에서는 오른쪽 끝 8번과 왼쪽 끝 6번을 더한 14번이 상한 2n 인 16번 안에 드는 것을 확인할 수 있고, 같은 입력에서 브루트 포스가 더한 22번과도 나란히 볼 수 있습니다.
+
 마지막으로 복잡도를 한 줄로 말합니다. 오른쪽 끝 `right` 는 n 번 움직이고 왼쪽 끝 `left` 도 전체를 통틀어 n 번을 넘지 못하므로, 안쪽에 `while` 이 있어도 시간은 O(n) 이고, 입력 말고는 변수 몇 개만 쓰므로 추가 공간은 O(1) 입니다. 면접에서는 「시간 O(n), 공간 O(1), 값이 양수라는 조건 덕분에 왼쪽 끝을 되돌릴 일이 없습니다」까지 말하면 Evaluate 단계가 끝납니다.
+
+브루트 포스와 나란히 놓으면 이 차이가 칸으로 보입니다. 아래 그림의 위쪽은 브루트 포스가 시작 날마다 처음부터 다시 더한 칸이고, 칸 안의 숫자는 그때까지의 누적 합입니다. 아래쪽은 슬라이딩 윈도우가 날마다 한 번 더하고 많아야 한 번 뺀 칸입니다.
+
+<div class="table-wrapper">
+<figure style="text-align:center; margin:2rem 0;">
+<svg viewBox="0 0 640 364" role="img" aria-label="같은 8일치 클릭 수에서 두 풀이가 합을 고친 횟수를 비교한 그림입니다. 위쪽 브루트 포스는 시작 날 1일부터 8일까지 줄마다 처음부터 다시 더하고 칸 안에 그때까지의 누적 합을 적었습니다. 합이 7 이상이 된 칸에서 멈추고, 7일부터와 8일부터는 끝까지 더해도 못 찾습니다. 모두 22번 더합니다. 아래쪽 슬라이딩 윈도우는 날마다 한 번 더하고 1일부터 6일까지 한 번씩 빼서 모두 14번입니다." style="width:100%; max-width:820px; height:auto; font-family:var(--font-sans)">
+<text x="8" y="18" style="font-size:13px; fill:var(--text-primary); text-anchor:start; font-weight:700">브루트 포스 (시작 날마다 처음부터 다시 더함)</text>
+<text x="124.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">1일</text>
+<text x="170.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">2일</text>
+<text x="216.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">3일</text>
+<text x="262.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">4일</text>
+<text x="308.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">5일</text>
+<text x="354.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">6일</text>
+<text x="400.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">7일</text>
+<text x="446.0" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">8일</text>
+<text x="480" y="38" style="font-size:10px; fill:var(--text-muted); text-anchor:start">더한 횟수</text>
+<text x="8" y="58.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">1일부터</text>
+<rect x="104" y="46" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="124.0" y="58.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="150" y="46" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="170.0" y="58.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<rect x="196" y="46" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="216.0" y="58.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">6</text>
+<rect x="242" y="46" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="262.0" y="58.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">8</text>
+<text x="480" y="58.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">4번</text>
+<text x="8" y="80.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">2일부터</text>
+<rect x="150" y="68" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="170.0" y="80.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="196" y="68" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="216.0" y="80.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="242" y="68" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="262.0" y="80.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">6</text>
+<rect x="288" y="68" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="308.0" y="80.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">10</text>
+<text x="480" y="80.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">4번</text>
+<text x="8" y="102.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">3일부터</text>
+<rect x="196" y="90" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="216.0" y="102.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="242" y="90" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="262.0" y="102.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="288" y="90" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="308.0" y="102.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">7</text>
+<text x="480" y="102.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">3번</text>
+<text x="8" y="124.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">4일부터</text>
+<rect x="242" y="112" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="262.0" y="124.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">2</text>
+<rect x="288" y="112" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="308.0" y="124.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">6</text>
+<rect x="334" y="112" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="354.0" y="124.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">9</text>
+<text x="480" y="124.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">3번</text>
+<text x="8" y="146.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">5일부터</text>
+<rect x="288" y="134" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="308.0" y="146.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="334" y="134" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="354.0" y="146.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">7</text>
+<text x="480" y="146.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">2번</text>
+<text x="8" y="168.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">6일부터</text>
+<rect x="334" y="156" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="354.0" y="168.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">3</text>
+<rect x="380" y="156" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="400.0" y="168.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">4</text>
+<rect x="426" y="156" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.8"/>
+<text x="446.0" y="168.5" style="font-size:10.5px; fill:var(--accent-primary); text-anchor:middle; font-weight:700; font-family:var(--font-mono)">9</text>
+<text x="480" y="168.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">3번</text>
+<text x="8" y="190.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">7일부터</text>
+<rect x="380" y="178" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="400.0" y="190.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">1</text>
+<rect x="426" y="178" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="446.0" y="190.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">6</text>
+<text x="480" y="190.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">2번, 못 찾음</text>
+<text x="8" y="212.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">8일부터</text>
+<rect x="426" y="200" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="446.0" y="212.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">5</text>
+<text x="480" y="212.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">1번, 못 찾음</text>
+<text x="480" y="236" style="font-size:12.5px; fill:var(--accent-secondary); text-anchor:start; font-weight:700">합계 22번</text>
+<line x1="8" y1="250" x2="632" y2="250" style="stroke:var(--rule2); stroke-width:1"/>
+<text x="8" y="266" style="font-size:13px; fill:var(--text-primary); text-anchor:start; font-weight:700">슬라이딩 윈도우 (날마다 한 번 더하고, 많아야 한 번 뺌)</text>
+<text x="124.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">1일</text>
+<text x="170.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">2일</text>
+<text x="216.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">3일</text>
+<text x="262.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">4일</text>
+<text x="308.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">5일</text>
+<text x="354.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">6일</text>
+<text x="400.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">7일</text>
+<text x="446.0" y="286" style="font-size:10px; fill:var(--text-muted); text-anchor:middle">8일</text>
+<text x="8" y="306.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">더한 날</text>
+<rect x="104" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="124.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+2</text>
+<rect x="150" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="170.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+3</text>
+<rect x="196" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="216.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+1</text>
+<rect x="242" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="262.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+2</text>
+<rect x="288" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="308.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+4</text>
+<rect x="334" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="354.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+3</text>
+<rect x="380" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="400.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+1</text>
+<rect x="426" y="294" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="446.0" y="306.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">+5</text>
+<text x="480" y="306.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">8번</text>
+<text x="8" y="330.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">뺀 날</text>
+<rect x="104" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="124.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-2</text>
+<rect x="150" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="170.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-3</text>
+<rect x="196" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="216.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-1</text>
+<rect x="242" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="262.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-2</text>
+<rect x="288" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="308.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-4</text>
+<rect x="334" y="318" width="40" height="17" style="fill:var(--bg-tertiary); stroke:var(--border-color); stroke-width:1"/>
+<text x="354.0" y="330.5" style="font-size:10.5px; fill:var(--text-primary); text-anchor:middle; font-family:var(--font-mono)">-3</text>
+<rect x="380" y="318" width="40" height="17" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<rect x="426" y="318" width="40" height="17" style="fill:none; stroke:var(--border-color); stroke-width:1; stroke-dasharray:3 2"/>
+<text x="480" y="330.5" style="font-size:11.5px; fill:var(--text-secondary); text-anchor:start">6번</text>
+<text x="480" y="354" style="font-size:12.5px; fill:var(--accent-primary); text-anchor:start; font-weight:700">합계 14번</text>
+</svg>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">브루트 포스는 4일과 5일의 값을 4번씩 다시 더합니다. 날이 8개뿐이라 차이가 22번과 14번에 그치지만, 답이 없는 입력에서는 브루트 포스가 모든 구간 n(n+1)/2 개의 합을 다 구하고 슬라이딩 윈도우는 2n 번을 넘지 않습니다. n 이 10만이면 3절의 계산대로 브루트 포스는 50억 번이 넘고 슬라이딩 윈도우는 20만 번 안쪽입니다.</figcaption>
+</figure>
+</div>
 
 ## 7. 입력 방식 두 가지
 

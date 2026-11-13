@@ -2450,6 +2450,46 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // 슬라이딩 윈도우 (알고리즘) — 코딩테스트 풀이 순서 글의 예제
+    // ==========================================
+    'sliding-window': {
+        analogy: '오른쪽 끝은 날을 하나씩 더하고, 합이 S 이상이면 길이를 적은 뒤 왼쪽 끝의 날을 뺀다. 두 끝이 되돌아가지 않아 O(n) 이다',
+        anchor: '.sw-controls',
+        embedKeep: ['.sw-controls', '.sw-code', '.sw-array', '.sw-legend', '.sw-markers', '.sw-verdict', '.sw-actions', '.sw-panels'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 입력을 바꾸면 그 입력에서 무엇을 보면 되는지. 문장은 데모 JS 가 같은 엔진으로 셈한 값으로 만든다.
+            '#sw-case': ({ el }) => (window.swDescribeCase ? window.swDescribeCase(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.sw-array',
+                title: '8일치 클릭 수',
+                body: '글의 가상 데이터입니다. 합이 <strong>7 이상</strong>인 연속한 기간 가운데 가장 짧은 것을 찾습니다. ' +
+                    '칸 아래의 <code>left</code>, <code>right</code> 는 코드의 변수 이름 그대로입니다.'
+            },
+            {
+                el: '#sw-step',
+                title: 'Step 을 눌러 봅니다',
+                body: '한 번 누를 때마다 코드가 한 동작을 합니다. 오른쪽 끝을 늘리거나, 길이를 적거나, 왼쪽 끝을 줄입니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '.sw-code',
+                title: '방금 실행한 줄',
+                body: '굵게 표시된 줄이 방금 실행한 코드입니다. 칸이 바뀐 모양과 코드 줄을 함께 보면 ' +
+                    '<code>while</code> 안의 두 줄이 왼쪽 끝을 줄이는 자리라는 것이 보입니다.'
+            },
+            {
+                el: '.sw-panels',
+                title: '기록과 횟수',
+                body: '합이 7 이상이 될 때마다 기록이 한 줄씩 쌓이고, 끝까지 가면 글의 코드가 찍은 기간 6개와 같아집니다. ' +
+                    '오른쪽에서는 두 끝이 움직인 횟수를 더해 <strong>2n 을 넘지 않는 것</strong>을 확인합니다.'
+            }
+        ]
+    },
+
+    // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================
     'http-methods': {

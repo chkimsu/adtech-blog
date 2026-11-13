@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sw-controls {
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .sw-control label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sw-control select {
+            width: 100%;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .sw-case-desc {
+            margin-top: 0.55rem;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .sw-code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.65;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.7rem 0;
+            margin: 0 0 1.25rem;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .sw-code .ln {
+            display: block;
+            padding: 0 1rem 0 0.8rem;
+            color: var(--text-secondary);
+            border-left: 3px solid transparent;
+        }
+
+        .sw-code .ln.is-on {
+            color: var(--text-primary);
+            font-weight: 700;
+            background: var(--bg-secondary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .sw-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 0.6rem;
+            min-height: 5.6rem;
+        }
+
+        .sw-array-empty {
+            align-self: center;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+        }
+
+        .sw-cell {
+            flex: 0 0 auto;
+            min-width: 58px;
+            text-align: center;
+            font-family: var(--font-mono);
+        }
+
+        .sw-cell-day {
+            display: block;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .sw-cell-box {
+            display: block;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            padding: 0.5rem 0.3rem;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .sw-cell-ptr {
+            display: block;
+            min-height: 1.3rem;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .sw-cell.is-window .sw-cell-box {
+            border: 2px solid var(--accent-primary);
+            background: var(--bg-tertiary);
+            font-weight: 700;
+        }
+
+        .sw-cell.is-gone .sw-cell-box {
+            border-style: dashed;
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .sw-cell.is-ahead .sw-cell-box {
+            color: var(--text-muted);
+        }
+
+        .sw-cell.is-new .sw-cell-box {
+            outline: 2px solid var(--accent-secondary);
+            outline-offset: 3px;
+        }
+
+        .sw-cell.is-drop .sw-cell-box {
+            outline: 2px dashed var(--accent-secondary);
+            outline-offset: 3px;
+        }
+
+        .sw-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.4rem;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.1rem;
+        }
+
+        .sw-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .sw-swatch {
+            display: inline-block;
+            width: 18px;
+            height: 14px;
+            margin: 0 4px 0 3px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .sw-swatch.is-window { border: 2px solid var(--accent-primary); background: var(--bg-tertiary); }
+        .sw-swatch.is-gone { border-style: dashed; background: transparent; }
+        .sw-swatch.is-new { outline: 2px solid var(--accent-secondary); outline-offset: 2px; }
+        .sw-swatch.is-drop { outline: 2px dashed var(--accent-secondary); outline-offset: 2px; }
+
+        .sw-markers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .sw-markers b {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-right: 0.4rem;
+        }
+
+        .sw-verdict {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-secondary);
+            background: var(--bg-secondary);
+            padding: 0.85rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+        }
+
+        .sw-verdict.is-done {
+            border-left-color: var(--accent-primary);
+        }
+
+        .sw-actions {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sw-actions button {
+            padding: 0.5rem 1.1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .sw-actions button:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .sw-step-count {
+            align-self: center;
+            margin-left: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.86rem;
+            color: var(--text-muted);
+        }
+
+        .sw-panels {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .sw-panels { grid-template-columns: 1fr; }
+        }
+
+        .sw-panel {
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            min-width: 0;
+        }
+
+        .sw-panel h3 {
+            font-size: 0.95rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.9rem;
+        }
+
+        .sw-log-wrap {
+            overflow-x: auto;
+        }
+
+        .sw-log {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.84rem;
+        }
+
+        .sw-log th,
+        .sw-log td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.4rem 0.55rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .sw-log th {
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--bg-tertiary);
+        }
+
+        .sw-log td.is-best {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .sw-log-empty {
+            text-align: center !important;
+            color: var(--text-muted);
+            padding: 1.2rem !important;
+            white-space: normal !important;
+        }
+
+        .sw-log-note {
+            margin-top: 0.8rem;
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .sw-cmp-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .sw-cmp-row:last-of-type { border-bottom: 0; }
+
+        .sw-cmp-row b {
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .sw-cmp-row.is-sub b {
+            color: var(--text-secondary);
+        }
+
+        .sw-cmp-note {
+            margin-top: 0.9rem;
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>Sliding Window</h1>
+        <p class="demo-subtitle">
+            합이 <strong>S 이상인 가장 짧은 연속 기간</strong>을 찾을 때 오른쪽 끝과 왼쪽 끝이 어떻게 움직이는지 한 동작씩 봅니다.
+            <a href="post.html?id=algorithm-solving-steps">코딩테스트 풀이 순서</a> 글의 8일치 가상 클릭 수와 경계 입력 4개를 그대로 씁니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              오른쪽 끝은 날을 하나씩 더하고, 합이 S 이상이면 길이를 적은 뒤 왼쪽 끝의 날을 뺍니다.
+              두 끝이 모두 <strong>오른쪽으로만</strong> 움직이므로 합을 고치는 횟수가 <strong>2n 을 넘지 않습니다</strong>.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">이 데모가 보여주는 것</span>코드의 <code>right</code>, <code>left</code>, <code>total</code>, <code>best</code> 가 한 동작마다 어떻게 바뀌는지, 방금 실행한 코드 줄이 어디인지, 합이 S 이상이 될 때마다 적은 기간이 무엇인지를 나란히 봅니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>반복문 안에 <code>while</code> 이 또 있어서 O(n^2) 처럼 보이지만 실제로는 O(n) 입니다. 두 끝이 몇 번 움직이는지 직접 세어 보면 그 이유가 보이고, 면접에서 복잡도를 말할 때 이 횟수가 근거가 됩니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">이렇게 해봅니다 — 3분</span>
+          <li><span class="step-text"><code>Step</code> 을 눌러 한 동작씩 봅니다. 오른쪽 끝을 늘리면 합이 커지고, 합이 7 이상이면 길이를 적은 뒤 왼쪽 끝을 줄입니다.</span></li>
+          <li><span class="step-text"><code>Play</code> 로 끝까지 돌린 뒤 <strong>찾은 기간 기록</strong>을 봅니다. 글의 코드가 찍은 기간 6개가 같은 순서로 나옵니다.</span></li>
+          <li><span class="step-text"><strong>움직인 횟수</strong>에서 두 끝의 이동 횟수를 더해 2n 과 비교합니다. 같은 입력에서 브루트 포스가 더한 횟수도 함께 봅니다.</span></li>
+          <li><span class="step-text">입력을 경계 입력으로 바꿔 봅니다. 빈 배열과 합이 S 에 못 미치는 입력은 0 을, 하루로 끝나는 입력은 1 을 돌려줍니다.</span></li>
+        </ol>
+
+        <div class="sw-controls">
+            <div class="sw-control">
+                <label for="sw-case">입력</label>
+                <select id="sw-case">
+                    <option value="main">글의 예제 [2, 3, 1, 2, 4, 3, 1, 5], S = 7</option>
+                    <option value="empty">경계 입력: 빈 배열 [], S = 7</option>
+                    <option value="short">경계 입력: 합이 S 에 못 미침 [1, 1, 1], S = 10</option>
+                    <option value="one">경계 입력: 하루로 끝남 [7], S = 7</option>
+                    <option value="one2">경계 입력: 하루로 끝남 [2, 10, 1], S = 7</option>
+                </select>
+                <div class="sw-case-desc" id="sw-case-desc"></div>
+            </div>
+        </div>
+
+        <pre class="sw-code" id="sw-code" aria-label="글 7절의 풀이 함수. 방금 실행한 줄이 굵게 표시됩니다."></pre>
+
+        <div class="sw-array" id="sw-array" aria-live="polite"></div>
+
+        <div class="sw-legend">
+            <span><i class="sw-swatch is-window"></i>지금 기간 (left 부터 right 까지)</span>
+            <span><i class="sw-swatch is-gone"></i>이미 뺀 날</span>
+            <span><i class="sw-swatch is-new"></i>방금 더한 날</span>
+            <span><i class="sw-swatch is-drop"></i>방금 뺀 날</span>
+        </div>
+
+        <div class="sw-markers">
+            <span><b>left</b><span id="sw-left">0</span></span>
+            <span><b>right</b><span id="sw-right">없음</span></span>
+            <span><b>total</b><span id="sw-total">0</span></span>
+            <span><b>S</b><span id="sw-s">7</span></span>
+            <span><b>best</b><span id="sw-best">0</span></span>
+        </div>
+
+        <div class="sw-verdict" id="sw-verdict"></div>
+
+        <div class="sw-actions">
+            <button id="sw-step">Step</button>
+            <button id="sw-play">Play</button>
+            <button id="sw-reset">Reset</button>
+            <span class="sw-step-count" id="sw-step-count"></span>
+        </div>
+
+        <div class="sw-panels">
+            <div class="sw-panel">
+                <h3>찾은 기간 기록</h3>
+                <div class="sw-log-wrap">
+                    <table class="sw-log">
+                        <thead>
+                            <tr><th>순서</th><th>기간</th><th>합</th><th>길이</th><th>best</th></tr>
+                        </thead>
+                        <tbody id="sw-log-body"></tbody>
+                    </table>
+                </div>
+                <div class="sw-log-note">
+                    합이 S 이상이 될 때마다 한 줄씩 쌓입니다. 글의 코드에서 <code>trace=True</code> 로 찍은 줄과 같은 기간입니다.
+                    <code>best</code> 칸이 지금까지 찾은 가장 짧은 길이이고, 굵게 표시된 줄에서 그 값이 바뀌었습니다.
+                </div>
+            </div>
+
+            <div class="sw-panel">
+                <h3>움직인 횟수</h3>
+                <div class="sw-cmp-row"><span>오른쪽 끝이 움직인 횟수</span><b id="sw-cmp-right">0번</b></div>
+                <div class="sw-cmp-row"><span>왼쪽 끝이 움직인 횟수</span><b id="sw-cmp-left">0번</b></div>
+                <div class="sw-cmp-row"><span>합을 고친 횟수 (두 횟수의 합)</span><b id="sw-cmp-total">0번</b></div>
+                <div class="sw-cmp-row is-sub"><span>상한 2n</span><b id="sw-cmp-bound">16번</b></div>
+                <div class="sw-cmp-row is-sub"><span>같은 입력에서 브루트 포스가 더한 횟수</span><b id="sw-cmp-brute">22번</b></div>
+                <div class="sw-cmp-note">
+                    오른쪽 끝은 날마다 한 번씩 움직여 n 번이고, 왼쪽 끝은 날을 뺄 때만 움직이는데 같은 날을 두 번 뺄 수 없어서 통틀어 n 번을 넘지 못합니다.
+                    그래서 안쪽에 <code>while</code> 이 있어도 합을 고치는 횟수는 2n 이하이고 O(n) 입니다.
+                    브루트 포스는 시작 날마다 처음부터 다시 더하므로, 답이 없는 입력에서는 n(n+1)/2 번을 모두 더합니다.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/sliding-window-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

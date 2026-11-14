@@ -289,7 +289,7 @@ for k, (l, r, total, gone) in enumerate(log, 1):           # 비교 하나씩
 
 ```python
 # 하는 일: LeetCode 1 처럼 원래 인덱스를 돌려줘야 할 때 (값, 인덱스) 쌍을 정렬한 뒤 투 포인터로 [11, 2, 15, 7], target 9 의 원래 인덱스를 찾는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: (값, 인덱스) 쌍을 정렬하는 풀이를 만든다
 # 정렬하면 값의 자리가 바뀌므로 원래 인덱스를 쌍에 함께 적어 둔다.
@@ -345,7 +345,7 @@ print(f'답 {answer}')                                       # 원래 배열의 
 
 ```python
 # 하는 일: LeetCode 167 을 투 포인터로 풀어 세 예제에서 1부터 센 답과 비교 횟수를 찍는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 2절의 투 포인터와 같고 답을 돌려줄 때만 두 인덱스에 1을 더한다.
@@ -452,7 +452,7 @@ for s in ("A man, a plan, a canal: Panama", "race a car", " "):   # LeetCode 의
 
 ```python
 # 하는 일: LeetCode 15 를 정렬과 투 포인터로 풀어 첫 예제에서 고정한 값마다 찾은 조합을 찍고, 세 예제의 답을 찍은 뒤, 같은 값 건너뛰기를 끄면 같은 조합이 두 번 담기는 것을 본다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 정렬한 뒤 nums[i] 를 고정하고 i 뒤의 구간에서 L 과 R 로 합이 -nums[i] 인 두 값을 찾는다.

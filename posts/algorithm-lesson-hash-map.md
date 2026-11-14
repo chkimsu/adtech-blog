@@ -29,7 +29,7 @@
 
 ```python
 # 하는 일: LeetCode 1 을 이중 for 문으로 풀어 값 8개에서 답과 비교 수를 찍고, 값이 10,000개일 때 조합의 수를 식으로 구한다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # j 를 i 뒤에서만 고르므로 같은 조합을 두 번 비교하지 않고 같은 칸을 두 번 쓰지도 않는다.
@@ -91,7 +91,7 @@ seen 에는 확인하는 순간까지 지나온 숫자만 들어 있습니다. i
 
 ```python
 # 하는 일: LeetCode 1 을 seen 한 번 순회로 풀어 [2, 11, 7, 15] 에서 값마다 짝과 확인할 때의 seen 을 찍고, 1절의 값 8개에서 seen 을 확인한 횟수를 이중 for 문의 비교 수와 나란히 찍는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 짝을 먼저 확인하고 없을 때만 지금 숫자를 적는다.
@@ -427,7 +427,7 @@ set 과 dict 의 `in` 은 같은 답을 내고 dict 만 깊이 1 을 꺼낼 수 
 
 ```python
 # 하는 일: LeetCode 217 을 set 으로 풀어 세 예제에서 답과 멈출 때까지 본 값 수를 찍고, 한 줄 풀이 len(set(nums)) != len(nums) 와 답이 같은지 본다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 이미 본 값은 seen 에 있다. 지금 값이 seen 에 있으면 두 번째로 나온 것이다.
@@ -474,7 +474,7 @@ for nums in ([1, 2, 3, 1], [1, 2, 3, 4], [1, 1, 1, 3, 3, 4, 3, 2, 4, 2]):   # Le
 ```python
 # 하는 일: LeetCode 49 를 정렬한 글자를 키로 쓰는 dict 로 풀어 첫 예제의 키와 세 예제의 그룹을 찍고, list 를 키로 넣으면 TypeError 가 나는 것을 본다.
 from collections import defaultdict                       # 없는 키를 처음 쓰면 빈 값을 만들어 주는 dict
-from typing import List                                    # LeetCode 화면의 List[str] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[str] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 애너그램끼리는 글자를 정렬하면 같은 문자열이 된다. 그 문자열을 키로 원래 문자열을 모은다.

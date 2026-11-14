@@ -252,7 +252,7 @@ for name, f in (('다 더하기', max_sum_resum), ('빼고 더하기', max_sum_s
 
 ```python
 # 하는 일: LeetCode 643 을 빼고 더하기로 풀어 첫 예제에서 윈도우마다 합을 찍고, 두 예제의 답을 찍는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 길이가 k 로 같으므로 합이 가장 큰 윈도우의 평균이 가장 크다. 나눗셈은 마지막에 한 번 한다.
@@ -412,7 +412,7 @@ LeetCode 3 은 같은 글자가 생길 때 l 을 줄였습니다. 7절의 문제
 
 ```python
 # 하는 일: LeetCode 209 를 크기가 바뀌는 윈도우로 풀어 첫 예제에서 합이 target 이상이 된 윈도우를 찍고, 세 예제의 답을 찍은 뒤, 음수가 섞인 입력에서는 답을 놓치는 것을 모든 구간을 확인한 답과 비교한다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 합이 target 이상인 동안 길이를 적고 왼쪽 끝 값을 뺀다. 값이 양수라 빼면 합이 줄어든다.

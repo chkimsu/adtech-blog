@@ -160,7 +160,7 @@ for n in (10, 1_000_000):                                  # 작은 리스트와
 ```python
 # 하는 일: LeetCode 215 를 크기 K 최소 힙으로 풀어 첫 예제에서 값마다 넣은 뒤와 꺼낸 뒤의 리스트를 찍고, 두 예제의 답을 찍는다.
 import heapq                                               # 힙에 넣고 꺼내는 함수
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 넣은 뒤 길이가 k 를 넘으면 맨 앞 값을 꺼내서 리스트에는 가장 큰 k개만 남는다.
@@ -460,7 +460,7 @@ sorted 는 K 와 상관없이 전체를 정렬하므로 두 K 에서 같은 횟�
 ```python
 # 하는 일: LeetCode 215 를 부호를 뒤집은 리스트의 heapify 와 k번 꺼내기로 풀어 첫 예제에서 heapify 가 도는 칸, heapify 뒤의 리스트, 꺼낸 값을 찍는다.
 import heapq                                               # 힙 함수
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 원래 가장 큰 값이 부호를 뒤집은 리스트에서는 가장 작은 값이라 맨 앞에 온다.
@@ -498,7 +498,7 @@ heapify 는 값 6개에서 2, 1, 0번 칸만 돌고 3~5번 칸은 건너뛰었�
 ```python
 # 하는 일: LeetCode 215 를 nums 의 heapify 와 작은 값 N - K 개 버리기로 풀어 첫 예제에서 heapify 뒤의 리스트, 버린 값, 남은 리스트를 찍는다.
 import heapq                                               # 힙 함수
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 작은 값부터 N - K 개를 버리면 남은 K개 가운데 가장 작은 맨 앞 값이 K번째로 큰 수다.
@@ -552,7 +552,7 @@ heapify 뒤의 `[1, 2, 3, 5, 6, 4]` 에서 작은 값 1, 2, 3, 4 를 버리자 `
 # 하는 일: LeetCode 347 을 Counter 와 (횟수, 값) 튜플의 크기 K 최소 힙으로 풀어 세 예제에서 센 횟수, 남은 튜플, 답을 찍는다.
 import heapq                                               # 힙 함수
 from collections import Counter                            # 값마다 나온 횟수를 센다
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 튜플은 첫 값인 횟수부터 비교하므로 맨 앞 튜플이 지금 남은 것 가운데 가장 적게 나온 값이다.
@@ -600,7 +600,7 @@ for nums, k in (([1, 1, 1, 2, 2, 3], 2), ([1], 1), ([1, 2, 1, 2, 1, 2, 3, 1, 3, 
 ```python
 # 하는 일: LeetCode 973 을 거리 제곱의 부호를 뒤집은 크기 K 최대 힙으로 풀어 두 예제에서 거리 제곱, 남은 튜플, 답을 찍고 heapq.nsmallest 와 같은지 본다.
 import heapq                                               # 힙 함수와 nsmallest
-from typing import List                                    # LeetCode 화면의 List[List[int]] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[List[int]] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 거리 제곱의 부호를 뒤집어 넣으면 맨 앞 튜플이 지금 남은 점 가운데 가장 먼 점이다.

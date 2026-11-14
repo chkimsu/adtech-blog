@@ -138,7 +138,7 @@ target 2 는 셋째 반복에서 left 와 right 가 모두 1 이라 남은 범�
 
 ```python
 # 하는 일: LeetCode 704 를 닫힌 구간 이진 탐색으로 풀어 target 9 와 2 에서 반복마다 left, right, mid 를 찍는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 남은 범위는 닫힌 구간 [left, right] 다. mid 는 이미 본 칸이라 옮길 때 남은 범위에서 뺀다.
@@ -470,7 +470,7 @@ except TypeError as e:                                     # 3.9 에는 key 인�
 ```python
 # 하는 일: LeetCode 34 를 bisect_left 와 bisect_right 로 풀어 세 예제에서 두 넣을 자리와 답을 찍는다.
 from bisect import bisect_left, bisect_right               # 5절의 두 함수
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 풀이를 만든다
 # 처음 자리는 bisect_left, 마지막 자리는 bisect_right 바로 앞 칸이다. 두 자리가 같으면 target 이 없다.
@@ -529,7 +529,7 @@ for nums, target in (([5, 7, 7, 8, 8, 10], 8), ([5, 7, 7, 8, 8, 10], 6), ([], 0)
 
 ```python
 # 하는 일: LeetCode 875 를 속도 1 ~ max(piles) 의 이진 탐색으로 풀어 첫 예제의 속도마다 걸리는 시간을 찍고, 반복마다 속도와 걸리는 시간을 따라간 뒤 세 예제의 답을 찍는다.
-from typing import List                                    # LeetCode 화면의 List[int] 주석에 쓴다
+from typing import List                                    # 함수 주석의 List[int] 에 쓴다
 
 # 1단계: 첫 예제의 속도마다 걸리는 시간을 찍는다
 # 더미 p 개를 속도 k 로 먹는 시간은 p / k 의 올림이고 (p + k - 1) // k 로 정수만 써서 구한다.

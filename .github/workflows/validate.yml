@@ -50,7 +50,7 @@ jobs:
       - name: 코스 순수 로직 시험
         run: node scripts/test-course-logic.js
       - name: 과외 데모 순수 로직 시험
-        run: node scripts/test-lesson-logic.js
+        run: for f in scripts/test-lesson-*.js; do node "$f" || exit 1; done
       - name: 코스 두 장 구조
         run: node scripts/check-course-pages.js
       - name: 코드 블록 형식 (하는 일, 단계, 뜻)

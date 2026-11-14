@@ -1,0 +1,413 @@
+/* 과외 데모 공용 틀 — js/lesson-kit.js 의 뼈대와 부품. 색은 토큰만 쓴다. */
+
+/* 칸 크기 — 12칸 배열이 56px 칸에 6px 틈이라 744px 로 글 안 iframe(790~1000px)에 들어간다 */
+.lk-board {
+  --lk-cell: 56px;
+  --lk-gap: 6px;
+}
+
+@media (min-width: 1200px) {
+  .lk-board { --lk-cell: 64px; }
+}
+
+.lk-controls {
+  display: grid;
+  gap: 0.9rem;
+  border: 1px solid var(--border-color);
+  padding: 1.1rem 1.25rem;
+  margin: 1.5rem 0 1.25rem;
+}
+
+html.is-embed .lk-controls {
+  margin-top: 0;
+}
+
+.lk-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+.lk-tabs {
+  display: inline-flex;
+  border: 1px solid var(--border-color);
+}
+
+.lk-tabs:empty {
+  display: none;
+}
+
+.lk-tab {
+  padding: 0.5rem 1.05rem;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lk-tab:last-child {
+  border-right: 0;
+}
+
+.lk-tab:hover {
+  color: var(--accent-primary);
+}
+
+.lk-tab[aria-pressed="true"] {
+  background: var(--accent-primary);
+  color: var(--paper);
+}
+
+.lk-preset {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 300px;
+  min-width: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lk-preset select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 400;
+}
+
+.lk-note {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lk-note:empty {
+  display: none;
+}
+
+.lk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lk-actions button {
+  padding: 0.5rem 1.15rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lk-actions button:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.lk-actions button:disabled {
+  color: var(--text-muted);
+  cursor: default;
+  opacity: 0.55;
+}
+
+.lk-actions #lk-group:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.lk-count {
+  margin-left: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* 1100px 이상은 보드 | 옆 칸 340px, 그 아래는 한 칸으로 쌓는다 */
+.lk-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .lk-stage { grid-template-columns: minmax(0, 1fr) 340px; }
+}
+
+.lk-board-col {
+  min-width: 0;
+  border: 1px solid var(--border-color);
+  padding: 1.1rem 1.25rem 1.2rem;
+}
+
+.lk-board {
+  overflow-x: auto;
+  padding: 2px;
+}
+
+/* 배열과 표는 보드 안의 자식 하나이고, 열 수는 JS 가 grid-template-columns 로 정한다 */
+.lk-array,
+.lk-grid {
+  display: grid;
+  gap: var(--lk-gap);
+  width: max-content;
+}
+
+.lk-axis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.lk-axis.is-row,
+.lk-axis.is-head {
+  justify-content: flex-end;
+  padding-right: 4px;
+  white-space: nowrap;
+}
+
+.lk-axis.is-head {
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.lk-ptr {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 1.3em;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  white-space: nowrap;
+}
+
+.lk-cell,
+.lk-gcell {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lk-cell);
+  height: var(--lk-cell);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lk-gcell.is-empty {
+  border-style: dotted;
+  background: transparent;
+}
+
+/* 상태 클래스 — 뜻은 js/lesson-kit.js 머리 주석 */
+.lk-cell.is-window,
+.lk-gcell.is-window,
+.lk-swatch.is-window {
+  border-top: 2px solid var(--navy-bd);
+  border-bottom: 2px solid var(--navy-bd);
+}
+
+.lk-cell.is-window-first,
+.lk-gcell.is-window-first {
+  border-left: 2px solid var(--navy-bd);
+}
+
+.lk-cell.is-window-last,
+.lk-gcell.is-window-last {
+  border-right: 2px solid var(--navy-bd);
+}
+
+.lk-swatch.is-window {
+  border-left: 2px solid var(--navy-bd);
+  border-right: 2px solid var(--navy-bd);
+}
+
+.lk-cell.is-in,
+.lk-gcell.is-in,
+.lk-chip.is-in,
+.lk-swatch.is-in {
+  background: var(--navy-bg);
+  color: var(--navy);
+}
+
+.lk-cell.is-out,
+.lk-gcell.is-out,
+.lk-chip.is-out,
+.lk-swatch.is-out {
+  background: var(--oxide-bg);
+  color: var(--oxide);
+}
+
+.lk-cell.is-dim,
+.lk-gcell.is-dim,
+.lk-chip.is-dim,
+.lk-swatch.is-dim {
+  background: var(--grey-bg);
+  border: 1px dashed var(--grey-bd);
+  color: var(--grey);
+}
+
+.lk-cell.is-hit,
+.lk-gcell.is-hit,
+.lk-chip.is-hit,
+.lk-swatch.is-hit {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--paper);
+}
+
+.lk-cell.is-bad,
+.lk-gcell.is-bad,
+.lk-chip.is-bad,
+.lk-swatch.is-bad {
+  background: var(--oxide);
+  border-color: var(--oxide);
+  color: var(--paper);
+}
+
+/* is-now 는 마지막에 둔다 — 창 테두리와 겹치면 이번 단계가 이긴다 */
+.lk-cell.is-now,
+.lk-gcell.is-now,
+.lk-swatch.is-now {
+  border: 2px solid var(--navy);
+}
+
+.lk-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.1rem;
+  margin-top: 1.1rem;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.lk-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lk-swatch {
+  box-sizing: border-box;
+  display: inline-block;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-color);
+  background: var(--paper);
+}
+
+.lk-side {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.lk-panel {
+  border: 1px solid var(--border-color);
+  padding: 0.85rem 1.1rem;
+}
+
+.lk-label {
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-primary);
+}
+
+.lk-result {
+  border-left: 3px solid var(--accent-primary);
+  background: var(--bg-secondary);
+}
+
+.lk-result-main {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.lk-result-sub {
+  margin-top: 0.3rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lk-result-sub:empty {
+  display: none;
+}
+
+.lk-now {
+  border-left: 3px solid var(--accent-secondary);
+  background: var(--bg-secondary);
+}
+
+.lk-now > div:last-child {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.lk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.2rem;
+}
+
+.lk-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--border-color);
+  background: var(--paper);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lk-chips-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.lk-state .lk-note {
+  margin-top: 0.7rem;
+}

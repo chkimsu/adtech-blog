@@ -69,7 +69,8 @@ function check(file) {
 
 const targets = process.argv.slice(2).length
   ? process.argv.slice(2).map(f => path.relative(root, path.resolve(f)))
-  : ['css/style.css', ...fs.readdirSync(root).filter(f => f.endsWith('.html')).sort()];
+  : [...fs.readdirSync(path.join(root, 'css')).filter(f => f.endsWith('.css')).sort().map(f => 'css/' + f),
+     ...fs.readdirSync(root).filter(f => f.endsWith('.html')).sort()];
 
 let fail = 0;
 const rows = targets.map(check);

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS 깊이별 확산 - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 칸 크기 — 글 안 iframe(폭 790~1000px)에서는 56px, 넓은 화면에서는 72px */
+        .lb-board {
+            --lb-cell: 64px;
+            --lb-gap: 8px;
+        }
+
+        @media (max-width: 1000px) {
+            .lb-board { --lb-cell: 56px; }
+        }
+
+        @media (min-width: 1200px) {
+            .lb-board { --lb-cell: 72px; }
+        }
+
+        .lb-controls {
+            display: grid;
+            gap: 0.9rem;
+            border: 1px solid var(--border-color);
+            padding: 1.1rem 1.25rem;
+            margin: 1.5rem 0 1.25rem;
+        }
+
+        html.is-embed .lb-controls {
+            margin-top: 0;
+        }
+
+        .lb-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem 1.5rem;
+        }
+
+        .lb-tabs {
+            display: inline-flex;
+            border: 1px solid var(--border-color);
+        }
+
+        .lb-tab {
+            padding: 0.5rem 1.05rem;
+            border: 0;
+            border-right: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .lb-tab:last-child {
+            border-right: 0;
+        }
+
+        .lb-tab:hover {
+            color: var(--accent-primary);
+        }
+
+        .lb-tab[aria-pressed="true"] {
+            background: var(--accent-primary);
+            color: var(--paper);
+        }
+
+        .lb-preset {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1 1 300px;
+            min-width: 0;
+        }
+
+        .lb-preset label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .lb-preset select {
+            flex: 1;
+            min-width: 0;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.92rem;
+        }
+
+        .lb-preset-note {
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .lb-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .lb-actions button {
+            padding: 0.5rem 1.15rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .lb-actions button:hover,
+        .lb-actions #lb-layer {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .lb-count {
+            margin-left: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        /* 격자 왼쪽, 결과와 큐 오른쪽 */
+        .lb-stage {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 720px) {
+            .lb-stage { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        /* 칸 폭은 격자가 정한다. 범례는 그 폭 안에서 줄을 바꾼다(아래 .lb-legend 의 width: 0) */
+        .lb-board-col {
+            border: 1px solid var(--border-color);
+            padding: 1.1rem 1.25rem 1.2rem;
+            min-width: 19rem;
+        }
+
+        .lb-board {
+            display: grid;
+            gap: var(--lb-gap);
+            justify-content: start;
+        }
+
+        .lb-axis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .lb-axis.is-row {
+            justify-content: flex-end;
+            padding-right: 2px;
+        }
+
+        .lb-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--lb-cell);
+            height: var(--lb-cell);
+            margin: 0;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            background: var(--paper);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            cursor: pointer;
+        }
+
+        .lb-cell:focus-visible {
+            outline: 2px dotted var(--accent-primary);
+            outline-offset: 3px;
+        }
+
+        .lb-cell-num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .lb-cell-tag {
+            position: absolute;
+            top: 3px;
+            left: 4px;
+            font-family: var(--font-sans);
+            font-size: 0.68rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--text-secondary);
+        }
+
+        /* 칸의 바탕 — 땅과 바다, 길과 벽 */
+        .lb-cell.is-land,
+        .lb-swatch.is-land {
+            background: var(--paper);
+            border: 2px solid var(--text-secondary);
+        }
+
+        .lb-cell.is-water,
+        .lb-swatch.is-water {
+            background: var(--navy-bg);
+            border-color: var(--navy-bd);
+        }
+
+        .lb-cell.is-road,
+        .lb-swatch.is-road {
+            background: var(--paper);
+        }
+
+        .lb-cell.is-wall,
+        .lb-swatch.is-wall {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: var(--paper);
+        }
+
+        .lb-cell.is-wall .lb-cell-num {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+        }
+
+        /* 큐에서 기다리는 칸, 큐에서 꺼낸 칸 */
+        .lb-cell.is-queued,
+        .lb-swatch.is-queued {
+            border: 2px dashed var(--accent-primary);
+        }
+
+        .lb-cell.is-visited {
+            background: var(--lb-fill);
+            border: 1px solid var(--lb-fill);
+            color: var(--paper);
+        }
+
+        .lb-cell.is-visited .lb-cell-tag {
+            color: var(--paper);
+        }
+
+        .lb-cell.is-current,
+        .lb-swatch.is-current {
+            outline: 3px solid var(--text-primary);
+            outline-offset: 2px;
+            z-index: 1;
+        }
+
+        .lb-cell.is-scan,
+        .lb-swatch.is-scan {
+            outline: 3px dashed var(--text-muted);
+            outline-offset: 2px;
+        }
+
+        /* 최단 거리의 경로 — 칸 테두리와, 칸 사이를 건너는 연결선 */
+        .lb-cell.is-path,
+        .lb-swatch.is-path {
+            outline: 3px solid var(--accent-secondary);
+            outline-offset: 2px;
+        }
+
+        .lb-cell.is-link-r::after,
+        .lb-cell.is-link-d::before {
+            content: '';
+            position: absolute;
+            z-index: 2;
+            background: var(--accent-secondary);
+        }
+
+        .lb-cell.is-link-r::after {
+            left: 100%;
+            top: calc(50% - 4px);
+            width: calc(var(--lb-gap) + 2px);
+            height: 8px;
+        }
+
+        .lb-cell.is-link-d::before {
+            top: 100%;
+            left: calc(50% - 4px);
+            width: 8px;
+            height: calc(var(--lb-gap) + 2px);
+        }
+
+        .lb-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem 1.1rem;
+            width: 0;
+            min-width: 100%;
+            margin-top: 1.1rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .lb-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lb-swatch {
+            display: inline-block;
+            flex: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--border-color);
+            background: var(--paper);
+        }
+
+        .lb-depths {
+            display: inline-flex;
+            gap: 3px;
+        }
+
+        .lb-depth {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: var(--lb-fill);
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        .lb-legend-note {
+            flex-basis: 100%;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .lb-side {
+            display: grid;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .lb-label {
+            margin-bottom: 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--accent-primary);
+        }
+
+        .lb-label span {
+            margin-left: 0.4rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0;
+            color: var(--text-muted);
+        }
+
+        .lb-result {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-primary);
+            background: var(--bg-secondary);
+            padding: 0.85rem 1.1rem;
+        }
+
+        .lb-result-main {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.55;
+            color: var(--text-primary);
+        }
+
+        .lb-seg {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .lb-chip {
+            display: inline-block;
+            flex: none;
+            width: 12px;
+            height: 12px;
+            background: var(--lb-fill);
+        }
+
+        .lb-result-sub {
+            margin-top: 0.3rem;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .lb-result-sub:empty {
+            display: none;
+        }
+
+        .lb-now {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-secondary);
+            background: var(--bg-secondary);
+            padding: 0.85rem 1.1rem;
+        }
+
+        .lb-now p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .lb-queue {
+            border: 1px solid var(--border-color);
+            padding: 0.85rem 1.1rem;
+        }
+
+        .lb-queue-list {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 2.2rem;
+        }
+
+        .lb-q-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.55rem;
+            border: 1px solid var(--border-color);
+            background: var(--paper);
+            font-size: 0.92rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .lb-q-item.is-front {
+            border: 2px solid var(--accent-primary);
+        }
+
+        .lb-q-end,
+        .lb-q-empty {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .lb-note {
+            margin: 0.7rem 0 0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>BFS 깊이별 확산</h1>
+        <p class="demo-subtitle">
+            격자에서 너비 우선 탐색(BFS)이 시작 칸부터 한 겹씩 퍼지는 순서를 칸마다 적힌 깊이 숫자로 봅니다.
+            섬 세기, 깊이별 확산, 최단 거리 세 모드가 같은 큐 동작으로 돕니다. 격자는 <a href="post.html?id=algorithm-lesson-bfs">섬의 개수와 미로 최단 거리</a> 글의 예시와 같습니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              BFS 는 시작 칸에서 깊이(움직인 횟수) 0 인 칸을 모두 방문한 뒤에 깊이 1, 그다음 깊이 2 인 칸을 방문하며 한 겹씩 퍼집니다.
+              그래서 출구에 처음 닿을 때의 깊이가 최단 이동 수입니다. 5×5 미로에서는 출구 (4, 4) 에 깊이 <strong>8</strong> 이 적힙니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">보여 주는 장면</span>시작 칸에서 몇 번 움직여야 닿는지를 그 칸의 <strong>깊이</strong>라고 하고, 깊이가 같은 칸들을 <strong>한 겹</strong>이라고 부릅니다. BFS 는 큐 맨 앞 칸을 꺼낼 때마다 아직 방문하지 않은 상하좌우 이웃을 꺼낸 칸보다 깊이가 1 큰 칸으로 큐 맨 뒤에 넣습니다. 큐는 넣은 순서대로 꺼내므로 칸이 시작 칸을 가운데 두고 동심원처럼 한 겹씩 칠해집니다. 깊이별 확산 모드의 5×5 십자 섬에서는 깊이 0 에 1칸, 깊이 1 에 4칸, 깊이 2 에 4칸이 차례로 칠해집니다.</div>
+            <div><span class="demo-intro-label">목적</span>미로 최단 거리 문제는 출구에 적히는 깊이를 답으로 냅니다. 같은 깊이의 칸을 모두 꺼낸 뒤에야 다음 깊이로 넘어가므로 출구를 처음 꺼낸 순간의 깊이가 가장 짧은 이동 수이고, 5×5 미로에서는 8 입니다. 섬의 개수 문제(LeetCode 200)는 같은 BFS 로 땅 한 덩어리를 한 번에 칠해서 같은 섬을 두 번 세지 않습니다.</div>
+            <div><span class="demo-intro-label">결과 읽는 법</span>칸 숫자는 깊이이고 깊이가 같으면 색도 같습니다. 색은 6가지라 깊이 6 부터는 깊이 0 의 색부터 다시 씁니다. 굵은 실선 테두리는 방금 큐에서 꺼낸 칸, 점선 테두리는 큐에서 기다리는 칸입니다. 최단 거리 모드에서 출구에 닿으면 시작부터 출구까지 지나온 칸을 붉은 테두리로 연결합니다. <strong>큐</strong> 칸은 왼쪽이 맨 앞이고 들어 있는 칸을 「(행, 열) 깊이 d」 꼴로 적습니다. <strong>결과</strong> 칸은 섬 세기에서 찾은 섬의 수, 깊이별 확산에서 깊이마다 꺼낸 칸 수, 최단 거리에서 출구까지 이동 수를 보입니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">따라 하는 순서</span>
+          <li><span class="step-text"><strong>「한 칸」</strong>은 동작 하나를 합니다. 섬 세기 모드에서는 (0, 0) 부터 오른쪽으로, 줄이 끝나면 다음 줄로 한 칸씩 살펴보다가 아직 세지 않은 땅을 만나면 섬을 하나 세고, 그다음부터는 큐 맨 앞 칸을 꺼내 이웃 땅을 큐에 넣습니다. <strong>이번 단계</strong> 칸이 방금 한 동작을 문장으로 적습니다.</span></li>
+          <li><span class="step-text"><strong>「끝까지」</strong>를 누르면 결과 칸에 찾은 섬 2개가 나옵니다. 두 섬 모두 처음 만난 칸이 깊이 0, 그 옆 칸이 깊이 1 입니다. <strong>「처음」</strong>은 같은 격자의 첫 상태로 돌아갑니다.</span></li>
+          <li><span class="step-text">모드 탭에서 <strong>깊이별 확산</strong>을 고릅니다. 격자는 5×5 십자 섬이고 가운데 (2, 2) 에서 시작합니다. <strong>「한 겹」</strong>은 깊이가 바뀔 때까지 칸을 꺼냅니다. 세 번 누르면 깊이 0, 1, 2 의 칸이 한 겹씩 칠해지고 결과 칸에 깊이 0 에 1칸, 깊이 1 에 4칸, 깊이 2 에 4칸이 나옵니다.</span></li>
+          <li><span class="step-text">모드 탭에서 <strong>최단 거리</strong>를 고르고 「끝까지」를 누릅니다. 출구 (4, 4) 에 깊이 8 이 적히고 시작부터 출구까지 9칸이 경로로 표시됩니다. 이동 수는 칸 사이를 건너는 횟수라 지나간 칸 수보다 1 작습니다.</span></li>
+          <li><span class="step-text">칸을 눌러 땅과 바다, 길과 벽을 바꿔 봅니다. 누르면 처음 상태로 돌아가므로 다시 「한 겹」이나 「끝까지」로 결과가 어떻게 바뀌는지 봅니다. 시작 칸과 출구 칸은 바뀌지 않습니다. 고친 칸은 다른 격자나 다른 모드를 고르면 원래대로 돌아갑니다.</span></li>
+        </ol>
+
+        <div class="lb-controls">
+            <div class="lb-toolbar">
+                <div class="lb-tabs" role="group" aria-label="모드">
+                    <button type="button" class="lb-tab" data-mode="islands" aria-pressed="true">섬 세기</button>
+                    <button type="button" class="lb-tab" data-mode="layers" aria-pressed="false">깊이별 확산</button>
+                    <button type="button" class="lb-tab" data-mode="path" aria-pressed="false">최단 거리</button>
+                </div>
+                <div class="lb-preset">
+                    <label for="lb-preset">격자</label>
+                    <select id="lb-preset"></select>
+                </div>
+            </div>
+            <p class="lb-preset-note" id="lb-preset-note"></p>
+            <div class="lb-actions">
+                <button type="button" id="lb-reset">처음</button>
+                <button type="button" id="lb-step">한 칸</button>
+                <button type="button" id="lb-layer">한 겹</button>
+                <button type="button" id="lb-end">끝까지</button>
+                <span class="lb-count" id="lb-count"></span>
+            </div>
+        </div>
+
+        <div class="lb-stage">
+            <div class="lb-board-col">
+                <div class="lb-board" id="lb-board" role="group" aria-label="격자. 칸을 누르면 땅과 바다, 길과 벽이 바뀝니다."></div>
+                <div class="lb-legend" id="lb-legend"></div>
+            </div>
+            <div class="lb-side">
+                <div class="lb-result">
+                    <div class="lb-label">결과</div>
+                    <div class="lb-result-main" id="lb-result-main"></div>
+                    <div class="lb-result-sub" id="lb-result-sub"></div>
+                </div>
+                <div class="lb-now">
+                    <div class="lb-label">이번 단계</div>
+                    <p id="lb-now" aria-live="polite"></p>
+                </div>
+                <div class="lb-queue">
+                    <div class="lb-label">큐<span id="lb-queue-size"></span></div>
+                    <div class="lb-queue-list" id="lb-queue"></div>
+                    <p class="lb-note">왼쪽이 맨 앞입니다. 「한 칸」은 맨 앞 칸을 꺼냅니다. 새로 찾은 이웃은 맨 뒤에 들어갑니다. 큐에는 지금 깊이와 다음 깊이의 칸만 있어서 칸이 한 겹씩 칠해집니다.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/lesson-bfs-model.js"></script>
+    <script src="js/lesson-bfs-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

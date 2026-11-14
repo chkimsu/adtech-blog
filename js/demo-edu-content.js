@@ -2490,6 +2490,47 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // 과외 BFS (알고리즘) — 섬 세기, 깊이별 확산, 최단 거리. 계산은 js/lesson-bfs-model.js
+    // ==========================================
+    'lesson-bfs': {
+        analogy: '시작 칸에서 한 겹씩 퍼지며 칸마다 깊이를 적는다. 십자 섬은 깊이 0, 1, 2 에 1칸, 4칸, 4칸이다',
+        anchor: '.lb-controls',
+        embedKeep: ['.lb-controls', '.lb-stage', '.lb-board', '.lb-legend', '.lb-result', '.lb-now', '.lb-queue'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 격자를 고르면 그 격자의 결과를 미리 적는다. 문장은 데모 JS 가 LessonBfs.describePreset 으로 만든다.
+            '#lb-preset': ({ el }) => (window.lessonBfsDescribe ? window.lessonBfsDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lb-board',
+                title: '격자',
+                body: '지도를 칸으로 나눈 격자입니다. 큐에서 꺼낸 칸에는 BFS 를 시작한 칸에서 몇 번 움직여 닿는지가 숫자(깊이)로 적힙니다. ' +
+                    '깊이가 같은 칸은 같은 색입니다. 칸을 누르면 땅과 바다, 최단 거리 모드에서는 길과 벽이 바뀝니다.'
+            },
+            {
+                el: '#lb-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 큐 맨 앞 칸 하나를 꺼내 깊이를 적고, 아직 방문하지 않은 상하좌우 이웃을 큐 맨 뒤에 넣습니다. ' +
+                    '섬 세기 모드에서는 다음 칸으로 넘어가 땅인지 살펴보는 동작도 한 번으로 셉니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lb-layer',
+                title: '「한 겹」 버튼',
+                body: '「한 겹」은 깊이가 바뀔 때까지 칸을 꺼냅니다. 누를 때마다 같은 색의 칸이 한 겹씩 칠해지므로 ' +
+                    '시작 칸에서 퍼지는 순서가 그대로 보입니다.'
+            },
+            {
+                el: '.lb-queue',
+                title: '큐',
+                body: '왼쪽이 맨 앞입니다. 칸마다 (행, 열) 과 깊이를 적습니다. 큐에는 지금 깊이와 다음 깊이의 칸만 들어 있습니다. ' +
+                    '지금 깊이의 칸이 모두 나가야 다음 깊이의 칸이 나오므로 칸이 한 겹씩 칠해집니다.'
+            }
+        ]
+    },
+
+    // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================
     'http-methods': {

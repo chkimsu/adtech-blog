@@ -25,7 +25,7 @@
 
   const LEGEND = {
     search: [['is-window', '남은 범위'], ['is-now', '이번 mid'], ['is-dim', '버린 칸'], ['is-hit', '답']],
-    bisect: [['is-window', '남은 범위 [lo, hi)'], ['is-now', 'mid'], ['is-dim', '배열 밖 자리'], ['is-hit', '같은 값이 놓인 칸']],
+    bisect: [['is-window', '남은 범위 [lo, hi)'], ['is-now', 'mid'], ['is-hit', '같은 값이 놓인 칸']],
     param: [['is-now', '이번 mid 속도'], ['is-in', '답 후보'], ['is-dim', '버린 속도'], ['is-hit', '답']],
   };
 
@@ -228,7 +228,7 @@
     const e = shown[shown.length - 1];
     const n = S.p.nums.length;
     const st = bisectState(shown);
-    const cls = { [n]: 'is-dim' };
+    const cls = {};
     const ptr = {};
     let range = null;
     if (done) {
@@ -251,6 +251,9 @@
       if (e.side === 'right' && st.left !== null) addPtr(ptr, st.left, `left ${st.left}`);
     }
     K.array($('lk-board'), S.p.nums.concat(['']), { cls, ptr, range });
+    // 배열 밖 자리(인덱스 n)는 버린 칸이 아니라 상태 클래스를 걸지 않고 테두리만 점선으로 둔다. 뜻은 note() 와 페이지의 결과 읽는 법이 적는다.
+    const outside = $('lk-board').querySelectorAll('.lk-cell')[n];
+    if (outside) outside.style.borderStyle = 'dashed';
   }
 
   function bisectChips(shown) {
@@ -349,8 +352,8 @@
     }
     K.chips($('lk-state'), items, '속도를 고르기 전입니다');
     $('lk-state-note').textContent = m
-      ? `속도 ${m.mid}에서 더미 하나는 올림(더미 / ${m.mid})시간이 걸리고, 합이 ${S.p.h}시간 이하여야 합니다.`
-      : `더미 하나는 올림(더미 / 속도)시간이 걸리고, 더미 ${S.p.piles.length}개의 합이 ${S.p.h}시간 이하여야 합니다.`;
+      ? `속도 ${m.mid}에서 더미 하나는 올림(더미의 바나나 수 / ${m.mid})시간이 걸리고, 합이 ${S.p.h}시간 이하여야 합니다.`
+      : `더미 하나는 올림(더미의 바나나 수 / 속도)시간이 걸리고, 더미 ${S.p.piles.length}개의 합이 ${S.p.h}시간 이하여야 합니다.`;
   }
 
   function paramResult(shown, done) {
@@ -366,7 +369,7 @@
     main.textContent = `가장 느린 속도 ${ans}`;
     lines(sub, [
       `반복 ${rounds}번. 속도를 1부터 하나씩 올려 확인하면 ${ans}번째에 찾습니다.`,
-      '속도가 올라도 걸리는 시간은 늘지 않아서 가운데 속도로 한쪽을 통째로 버릴 수 있습니다.',
+      '속도가 올라도 걸리는 시간은 늘지 않아서 가운데 속도 하나로 한쪽 속도를 한꺼번에 버릴 수 있습니다.',
     ]);
   }
 

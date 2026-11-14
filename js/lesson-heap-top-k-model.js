@@ -7,7 +7,7 @@
  *
  *   topkTrace    값마다 push 하고 길이가 k 를 넘으면 pop 한다. 끝의 heap[0] 이 k 번째로 큰 수다(크기 K 최소 힙).
  *   negateTrace  부호를 뒤집어 heapify 하고 k 번 pop 한다(최대 힙처럼 쓰는 풀이). 마지막으로 꺼낸 값이 답이다.
- *   dropTrace    통째로 heapify 하고 N - k 번 pop 해 작은 값을 버린다. 끝의 heap[0] 이 답이다.
+ *   dropTrace    리스트 전체를 heapify 하고 N - k 번 pop 해 작은 값을 버린다. 끝의 heap[0] 이 답이다.
  *
  * 이벤트 (group 은 「다음 값」 버튼이 한 번에 넘기는 번호. heap 은 그 단계 뒤 리스트의 복사본)
  *   { type: 'push', value, heap, group: i }            topk. 넣은 뒤의 리스트
@@ -151,7 +151,7 @@
       return head + `부호를 뒤집어 heapify 한 뒤 ${p.k}번 꺼냅니다. 마지막에 꺼낸 값 ${P(t.answer, '이', '가')} ${p.k}번째로 큰 수입니다. heapify 1번, heappop ${count(t, 'pop')}번이고 리스트는 ${t.maxSize}칸입니다.`;
     }
     const t = dropTrace(p.nums, p.k);
-    return head + `통째로 heapify 한 뒤 작은 값 ${p.nums.length - p.k}개를 꺼내 버립니다. 끝에 ${P(list(t.heap), '이', '가')} 남고 맨 앞 값 ${P(t.answer, '이', '가')} ${p.k}번째로 큰 수입니다. heapify 1번, heappop ${count(t, 'pop')}번이고 리스트는 ${t.maxSize}칸입니다.`;
+    return head + `리스트 전체를 heapify 한 뒤 작은 값 ${p.nums.length - p.k}개를 꺼내 버립니다. 끝에 ${P(list(t.heap), '이', '가')} 남고 맨 앞 값 ${P(t.answer, '이', '가')} ${p.k}번째로 큰 수입니다. heapify 1번, heappop ${count(t, 'pop')}번이고 리스트는 ${t.maxSize}칸입니다.`;
   }
 
   return { heappush, heappop, heapify, PRESETS, MODES, MODE_DEFAULT, PRESET_MODES, topkTrace, negateTrace, dropTrace, describe, list, count, P };

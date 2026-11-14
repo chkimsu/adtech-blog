@@ -29,7 +29,7 @@
 
   const LEGEND = {
     build: [['is-now', '읽는 칸, 따라가는 노드'], ['is-in', '방금 붙인 노드'], ['is-hit', '찾은 값'], ['is-bad', 'None 에서 난 오류']],
-    depth: [['is-now', '지금 부르는 노드'], ['is-hit', '높이를 돌려준 루트']],
+    depth: [['is-now', '지금 부르거나 돌려주는 노드'], ['is-hit', '높이를 돌려준 루트']],
     bst: [['is-now', '비교 중인 노드'], ['is-in', '방금 넣은 노드'], ['is-hit', '방문한 노드']],
     bstK: [['is-now', '비교 중인 노드'], ['is-in', '방금 넣은 노드, 지나간 방문'], ['is-hit', 'k 번째 방문']],
   };
@@ -50,8 +50,8 @@
   function note() {
     if (S.mode === 'build') return 'LeetCode 는 트리를 층별 순서의 배열로 주고, null 은 그 자리에 자식이 없다는 뜻입니다. 큐에서 부모를 하나 꺼내 배열의 다음 두 칸을 왼쪽, 오른쪽 자식으로 붙이는 일을 되풀이하면 한 층씩 트리가 자랍니다. 다 만든 뒤에는 root.right.left.val 같은 경로를 따라갑니다. 점선 노드는 None 자식입니다.';
     if (S.mode === 'depth') return '높이는 루트에서 가장 먼 잎까지의 층 수이고 LeetCode 104 의 maximum depth 입니다. maxDepth 는 왼쪽 자식을 먼저, 그다음 오른쪽 자식을 부르고 1 + max(왼쪽, 오른쪽)을 돌려줍니다. None 은 0을 돌려줍니다. 노드 아래 작은 숫자가 그 노드가 돌려준 값입니다.';
-    if (S.p.k) return '값을 차례로 넣을 때마다 루트에서 비교하며 내려가 빈자리에 둡니다. 다 넣은 뒤 중위 순회(왼쪽, 자기, 오른쪽)는 BST 를 작은 값부터 읽는 순서라, k 번째로 방문한 값이 k 번째로 작은 값입니다(LeetCode 230). k 번째에서 멈춥니다.';
-    return '값을 차례로 넣을 때마다 루트에서 비교하며 내려가 빈자리에 둡니다. 다 넣은 뒤 중위 순회(왼쪽, 자기, 오른쪽)로 읽으면 BST 가 정렬된 배열로 펼쳐집니다. 트리 밑의 칸이 펼친 배열이고 노드와 같은 열에 놓입니다.';
+    if (S.p.k) return '값을 차례로 넣을 때마다 루트에서 비교하며 내려가 빈자리(None 자식)에 둡니다. 다 넣은 뒤 중위 순회(왼쪽, 자기, 오른쪽)는 BST 를 작은 값부터 읽는 순서라, k 번째로 방문한 값이 k 번째로 작은 값입니다(LeetCode 230). k 번째에서 멈춥니다.';
+    return '값을 차례로 넣을 때마다 루트에서 비교하며 내려가 빈자리(None 자식)에 둡니다. 다 넣은 뒤 중위 순회(왼쪽, 자기, 오른쪽)로 읽으면 BST 가 정렬된 배열로 펼쳐집니다. 트리 밑의 칸이 펼친 배열이고 노드와 같은 열에 놓입니다.';
   }
 
   function retrace() {
@@ -206,7 +206,20 @@
     });
     clearEl('tb-top');
     drawTree(shown, { cls, hidden });
-    K.array($('tb-bottom'), unfolded, { cls: arrCls, head: '펼친 배열' });
+    drawUnfolded(unfolded, arrCls);
+  }
+
+  // 트리 밑의 펼친 배열. 칸 i 가 col i 의 노드와 같은 열에 서야 한다.
+  // 줄 이름을 배열 왼쪽(head)에 두면 이름 칸 폭만큼 칸이 오른쪽으로 밀리므로 이름은 배열 위 줄에 둔다.
+  // 노드는 열 폭 안에서 틈의 절반만큼 오른쪽에 앉으므로(공용 틀 .lk-tnode) 배열도 왼쪽을 틈의 절반만큼 띄운다.
+  function drawUnfolded(values, arrCls) {
+    const label = document.createElement('div');
+    label.className = 'lk-label';
+    label.textContent = '펼친 배열';
+    const row = document.createElement('div');
+    row.style.paddingLeft = 'calc(var(--lk-gap) / 2)';
+    K.array(row, values, { cls: arrCls });
+    $('tb-bottom').replaceChildren(label, row);
   }
 
   // ==========================================

@@ -40,5 +40,11 @@ const s3 = T.bstTrace(P['leetcode-230'].insert, P['leetcode-230'].k);
 eq('230 높이, 비교, 답', [s3.height, s3.compares, s3.answer], [4, 9, 3]);
 eq('230 중위 순회는 k 번째에서 멈춤', s3.events.filter((e) => e.type === 'visit').map((e) => e.value), [1, 2, 3]);
 
+// 해설 칸 문장 — 입력 목록 뒤 조사는 particle 로 고르고(팔십을, 일을), 경로와 .val 을 나눠 적는다
+eq('해설 BST 조사', ['balanced', 'sorted', 'leetcode-230'].map((k) => T.describe('bst', k).split(' 차례로')[0]), ['[50, 30, 70, 20, 40, 60, 80]을', '[20, 30, 40, 50, 60, 70, 80]을', '[5, 3, 6, 2, 4, 1]을']);
+eq('해설 예제 1 경로', T.describe('build', 'example-1').endsWith('root.right.left 까지 따라가 .val 을 읽으면 15 입니다.'), true);
+eq('해설 예제 2 경로', T.describe('build', 'example-2').endsWith("root.right.left 의 값이 None 이라 .val 을 읽을 때 AttributeError: 'NoneType' object has no attribute 'val' 오류가 납니다."), true);
+eq('해설 모드에 없는 입력', T.describe('bst', 'example-1'), '');
+
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

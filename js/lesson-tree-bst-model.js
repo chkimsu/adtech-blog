@@ -229,10 +229,11 @@
     if (mode === 'build') {
       const t = buildTrace(p.values, p.path);
       const head = `배열 ${list(p.values)} 입니다. 층별로 읽으며 트리를 만들고 null 은 자식이 없는 자리로 둡니다. 층은 ${t.levels.length}개이고 ${list(t.levels.map(list))} 입니다. `;
-      const expr = t.events[t.events.length - 1].expr;
+      // 마지막 이벤트의 expr 은 'root.right.left.val' 이다. 경로와 .val 을 나눠 None 을 만나는 곳을 경로 끝으로 적는다
+      const path = t.events[t.events.length - 1].expr.replace(/\.val$/, '');
       return head + (t.result.ok
-        ? `${expr} 을 따라가면 ${t.result.value} 입니다.`
-        : `${expr} 에서 None 을 만나 ${t.result.error} 오류가 납니다.`);
+        ? `${path} 까지 따라가 .val 을 읽으면 ${t.result.value} 입니다.`
+        : `${path} 의 값이 None 이라 .val 을 읽을 때 ${t.result.error} 오류가 납니다.`);
     }
     if (mode === 'depth') {
       const t = depthTrace(p.values);
@@ -240,7 +241,7 @@
       return `배열 ${list(p.values)} 입니다. 왼쪽 먼저 maxDepth 를 부르면 높이 ${P(t.answer, '이', '가')} 나오고, 호출은 ${count(t, 'call') + nones}번(노드 ${count(t, 'call')}개, None 자식 ${nones}개)입니다.`;
     }
     const t = bstTrace(p.insert, p.k);
-    const head = `${list(p.insert)} 를 차례로 넣습니다. 높이 ${t.height}, 넣을 때 비교 ${t.compares}번입니다. `;
+    const head = `${P(list(p.insert), '을', '를')} 차례로 넣습니다. 높이 ${t.height}, 넣을 때 비교 ${t.compares}번입니다. `;
     if (p.k) return head + `중위 순회가 ${p.k}번째에서 멈추고 ${p.k}번째로 작은 값 ${P(t.answer, '이', '가')} 나옵니다.`;
     const last = p.insert[p.insert.length - 1];
     return head + `중위 순회로 펼치면 ${list(t.inorder)} 입니다. ${P(last, '을', '를')} 찾으면 비교 ${searchCompares(p.insert, last)}번입니다.`;

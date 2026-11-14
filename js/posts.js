@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-heap-top-k',
+    world: 'na',
+    title: '힙과 Top K: 가장 큰 K개를 고를 때 크기 K 최소 힙을 쓰는 이유',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 이진 탐색 다음 시간에 heapq 를 설명해 달라고 하고 Top K 에서 heapq 를 어떻게 쓰는지 물은 데서 시작합니다. heapq 의 힙은 맨 앞 값 heap[0] 이 가장 작은 최소 힙이라 가장 큰 K개를 고를 때는 값을 하나씩 넣고 넣은 뒤 길이가 K 를 넘으면 맨 앞 값을 꺼내는 크기 K 최소 힙을 씁니다. 리스트는 많아야 K + 1칸이라 값 N개에 O(N log K) 시간과 O(K) 메모리가 들고 모든 값을 넣은 뒤의 맨 앞 값이 K번째로 큰 수입니다. LeetCode 215 의 nums = [3, 2, 1, 5, 6, 4], k = 2 에서 값마다 바뀌는 리스트를 따라가고 가장 작은 K개에 부호를 뒤집은 최대 힙을 쓰는 까닭, Python 3.14 에서 생긴 최대 힙 함수, 값이 모두 있을 때의 정렬과 heapify 풀이를 봅니다. 값 100,000개에서 직접 센 비교 횟수로는 K = 5 에서 크기 K 힙이 정렬보다 적고 K = 1,000 에서는 많으며 맨 앞 값과 먼저 비교하는 방법과 nlargest 가 두 K 에서 모두 가장 적습니다. Top K Frequent Elements, K Closest Points to Origin 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-heap-top-k.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-binary-search',
     world: 'na',
     title: '이진 탐색: 가운데 값과 비교해 절반을 버리는 법과 답의 범위를 좁히는 파라메트릭 서치',
@@ -2003,7 +2014,8 @@ const series = {
             'algorithm-practical-live-coding', 'algorithm-think-aloud',
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
-            'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search'],
+            'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search',
+            'algorithm-lesson-heap-top-k'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

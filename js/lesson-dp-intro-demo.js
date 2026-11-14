@@ -102,8 +102,8 @@
     ['dp-tree', 'dp-nums', 'dp-table'].forEach((id) => $(id).replaceChildren());
     if (isTable()) {
       K.legend($('lk-legend'), S.p.n
-        ? [['is-now', '지금 채우는 칸'], ['is-in', '채운 칸'], ['is-window', '직전 두 칸'], ['is-hit', '답']]
-        : [['is-now', '지금 채우는 칸'], ['is-in', '채운 칸'], ['is-window', '직전 두 칸'], ['is-hit', '답과 턴 집']]);
+        ? [['is-now', '지금 채우는 칸'], ['is-in', '채운 칸'], ['is-in is-window', '직전 두 칸'], ['is-hit', '답']]
+        : [['is-now', '지금 채우는 칸'], ['is-in', '채운 칸'], ['is-in is-window', '직전 두 칸'], ['is-hit', '답과 턴 집']]);
     }
     S.player.restart();
   }

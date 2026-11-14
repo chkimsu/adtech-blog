@@ -94,7 +94,10 @@
  *   .is-out     나간 값                   --oxide-bg 바탕, --oxide 글자
  *   .is-bad     틀린 답                   --oxide 바탕, --paper 글자
  *   .is-dim     버린 칸                   --grey-bg 바탕, --grey 글자, --grey-bd 점선 테두리
- *   .is-window  윈도우 안의 칸            --navy-bd 위아래 테두리, 첫 칸과 끝 칸(.is-window-first, .is-window-last)에 좌우 테두리
+ *   .is-window  윈도우 안의 칸            --navy 두 줄 테두리(3px double) 위아래, 첫 칸과 끝 칸(.is-window-first, .is-window-last)에 좌우
+ *               두 줄 테두리는 .is-now 의 한 줄 2px 실선, .is-dim 의 점선과 모양이 다르다. 칸 바탕이 무엇이든(is-in 과 겹쳐도) 같은 색, 같은 모양이라
+ *               윈도우가 한 모양으로 이어진다. 윈도우 안의 칸이 .is-now 이기도 하면 그 칸은 .is-now 모양이 이긴다.
+ *               범례 견본도 보드와 같은 클래스를 건다(DP 표의 직전 두 칸은 채운 칸이라 'is-in is-window').
  * 색은 뜻에만 쓴다. 한 칸에 둘 이상 걸어도 된다(예: is-window 와 is-in).
  *
  * ---- 주소 약속 ----

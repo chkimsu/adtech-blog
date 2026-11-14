@@ -3,8 +3,8 @@
 /* 칸 크기 — 12칸 배열은 56px 칸에 6px 틈이면 12 × 56 + 11 × 6 = 738px 이다. 보드 안쪽 폭은 페이지 폭보다 86px 좁다
    (본문 여백 20 × 2, 보드 칸 테두리 1 × 2 와 안쪽 여백 20 × 2, 보드 여백 2 × 2).
    830px 아래에서는 52px 칸, 4px 틈으로 줄인다. 12칸 배열은 12 × 52 + 11 × 4 = 668px 이고 12열 트리는 열 폭(칸 + 틈)에 마지막 열의 틈까지 들어가 12 × 56 = 672px 라서 둘 다 보드 안쪽 폭 679px(폭 765px) 안에 든다.
-   틈이 5px 이면 트리가 684px 라 765px 에서 넘친다. 폭 762px 에서는 넘친다. 글 안 iframe 폭은 1440px 창 962px, 1280px 창 802px, 1024px 창 826px 이고
-   900px 창의 754px 에서는 12칸이 넘친다.
+   틈이 5px 이면 트리가 684px 라 765px 에서 넘친다. 폭 762px(960px 창)에서는 둘 다 들어가고 폭 754px(900px 창)에서는 12열 트리가 2px 넘친다.
+   글 안 iframe 폭은 1440px 창 962px, 1280px 창 802px, 1024px 창 826px 이다.
    옆 칸이 서는 폭은 아래 .lk-stage 에서 보드 안쪽 폭이 738px 를 넘도록 잡았다 */
 .lk-board {
   --lk-cell: 56px;
@@ -265,46 +265,6 @@ html.is-embed .lk-controls {
 }
 
 /* 상태 클래스 — 뜻은 js/lesson-kit.js 머리 주석 */
-.lk-cell.is-window,
-.lk-gcell.is-window,
-.lk-swatch.is-window {
-  border-top: 2px solid var(--navy-bd);
-  border-bottom: 2px solid var(--navy-bd);
-}
-
-.lk-cell.is-window-first,
-.lk-gcell.is-window-first {
-  border-left: 2px solid var(--navy-bd);
-}
-
-.lk-cell.is-window-last,
-.lk-gcell.is-window-last {
-  border-right: 2px solid var(--navy-bd);
-}
-
-.lk-swatch.is-window {
-  border-left: 2px solid var(--navy-bd);
-  border-right: 2px solid var(--navy-bd);
-}
-
-/* 이미 채운 칸(is-in)이 윈도우에도 들면 바탕이 같아 연한 테두리(navy-bd)로는 구분되지 않는다(대비 라이트 1.43, 다크 1.57).
-   윈도우를 두르는 변만 짙은 navy 로 준다(대비 라이트 6.78, 다크 6.60) */
-.lk-cell.is-in.is-window,
-.lk-gcell.is-in.is-window {
-  border-top-color: var(--navy);
-  border-bottom-color: var(--navy);
-}
-
-.lk-cell.is-in.is-window-first,
-.lk-gcell.is-in.is-window-first {
-  border-left-color: var(--navy);
-}
-
-.lk-cell.is-in.is-window-last,
-.lk-gcell.is-in.is-window-last {
-  border-right-color: var(--navy);
-}
-
 .lk-cell.is-in,
 .lk-gcell.is-in,
 .lk-chip.is-in,
@@ -351,6 +311,30 @@ html.is-embed .lk-controls {
   background: var(--oxide);
   border-color: var(--oxide);
   color: var(--paper);
+}
+
+/* 윈도우는 두 줄 테두리(3px double --navy)다. is-now 의 한 줄 2px 실선과 모양이 다르고 is-dim 의 점선과도 다르다.
+   선 색은 칸 바탕과 상관없이 --navy 하나라 채운 칸(is-in)이 섞여도 윈도우가 한 모양으로 이어진다.
+   바탕과의 대비는 라이트 7.76(흰 칸), 6.78(채운 칸), 다크 8.24, 6.60 이다. 예전 --navy-bd 는 라이트 1.64, 1.43 이었다.
+   is-in, is-hit, is-dim 의 테두리를 덮도록 그 뒤에 두고, is-now 는 이 뒤에 두어 윈도우 안의 지금 칸은 is-now 모양이 이긴다 */
+.lk-cell.is-window,
+.lk-gcell.is-window {
+  border-top: 3px double var(--navy);
+  border-bottom: 3px double var(--navy);
+}
+
+.lk-cell.is-window-first,
+.lk-gcell.is-window-first {
+  border-left: 3px double var(--navy);
+}
+
+.lk-cell.is-window-last,
+.lk-gcell.is-window-last {
+  border-right: 3px double var(--navy);
+}
+
+.lk-swatch.is-window {
+  border: 3px double var(--navy);
 }
 
 /* is-now 는 마지막에 둔다 — 창 테두리와 겹치면 이번 단계가 이긴다 */

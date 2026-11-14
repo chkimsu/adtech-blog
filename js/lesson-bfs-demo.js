@@ -465,9 +465,8 @@
             if (cell) toggle(Number(cell.dataset.r), Number(cell.dataset.c));
         });
 
-        // demo-edu 는 고르기의 첫 input 에서 바뀐 뒤의 값을 바뀌기 전 값으로 읽어 첫 해설을 건너뛴다
-        // (select 에는 defaultValue 가 없다). 지금 값으로 한 번 알려 두면 첫 변경부터 해설이 나온다.
-        // 이 이벤트는 값이 그대로라 위 load 도, 해설도 돌지 않는다.
+        // 지금 값으로 input 을 한 번 보낸다. 값이 그대로라 위 load 도, demo-edu 해설도 돌지 않는다.
+        // 첫 변경의 이전 값은 demo-edu 가 문서를 다 읽은 뒤 고르기의 지금 값으로 직접 적어 두므로 이 이벤트가 없어도 맞게 나온다.
         sel.dispatchEvent(new Event('input', { bubbles: true }));
     }
 

@@ -603,10 +603,10 @@
 
   render();
 
-  // demo-edu.js 는 <select> 의 첫 변경을 놓친다 — 초기값을 "변경된 뒤"에 읽어
-  // 이전 값과 같다고 보고 해설을 건너뛴다. 이 파일은 demo-edu.js 보다 먼저
-  // 로드되므로, 리스너가 걸린 다음 tick 에 값이 안 바뀌는 input 을 한 번
-  // 흘려 초기값을 등록시킨다. 화면에는 아무 변화가 없다.
+  // 다음 tick 에 값이 안 바뀌는 input 을 한 번 흘린다. 이전 값과 같아 해설이
+  // 나오지 않고, render 는 change 에만 걸려 있어 화면에도 아무 변화가 없다.
+  // 첫 변경의 이전 값은 demo-edu.js 가 문서를 다 읽은 뒤 이 select 의 지금 값
+  // (hmac)으로 직접 적어 두므로 이 이벤트가 없어도 맞게 나온다.
   setTimeout(function () {
     authSel.dispatchEvent(new Event('input', { bubbles: true }));
   }, 0);

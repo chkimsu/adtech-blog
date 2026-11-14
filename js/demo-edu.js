@@ -63,8 +63,6 @@
     }
 
     function initialVal(input) {
-        // select 에는 defaultValue 가 없어 첫 변경 때 이미 바뀐 값을 이전 값으로 적는다. null 로 두어 첫 변경부터 해설을 쓴다
-        if (input instanceof HTMLSelectElement) return null;
         const v = 'defaultValue' in input && input.defaultValue !== '' ? input.defaultValue : input.value;
         const n = parseFloat(v);
         return Number.isNaN(n) ? v : n;
@@ -157,6 +155,20 @@
             if (value !== prev) runRule(m.sel, { value, prev, el: m.hit });
         }, 300);
     });
+
+    // select 에는 defaultValue 가 없어, 첫 input 때 읽은 값은 이미 바뀐 값이다. 그래서 문서를 다 읽은 뒤
+    // (데모 스크립트가 고르기 값을 정한 뒤) 규칙에 걸리는 select 의 지금 값을 이전 값으로 적어 둔다.
+    // 첫 변경은 맞는 이전 값으로 해설이 나오고, 값이 그대로인 input 은 아무 일도 하지 않는다.
+    function recordSelects() {
+        document.querySelectorAll('select').forEach((s) => {
+            const m = matchRule(s);
+            if (m && m.hit === s && !sliderState.has(s)) {
+                sliderState.set(s, { last: readVal(s), timer: null, burstStart: null });
+            }
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', recordSelects);
+    else recordSelects();
 
     document.addEventListener('click', (e) => {
         const t = e.target;

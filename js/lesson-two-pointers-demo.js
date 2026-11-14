@@ -81,7 +81,7 @@
     const big = e.verdict === 'big';
     const last = e === S.events[S.events.length - 1];
     const gone = `${P(big ? b : a, '과', '와')} 짝이 되는 ${e.removed.length}개를 버립니다.`;
-    return `${head}${P(eq, '이', '가')} ${S.target}보다 ${big ? '커서 R을 왼쪽으로' : '작아서 L을 오른쪽으로'} 옮깁니다. ${gone}` +
+    return `${head}${P(eq, '이', '가')} ${S.target}보다 ${big ? '커서 R 을 왼쪽으로' : '작아서 L 을 오른쪽으로'} 옮깁니다. ${gone}` +
       (last ? ' L 과 R 이 만나 비교를 마칩니다.' : '');
   }
 
@@ -109,14 +109,19 @@
     const dim = new Set();
     shown.forEach((ev) => ev.removed.forEach(([i, j]) => dim.add(`${i},${j}`)));
     const n = S.nums.length;
-    K.grid($('lk-grid'), n, n, (r, c) => {
+    const answers = new Set(T.pairsAll(S.nums, S.target).map(([i, j]) => `${i},${j}`));
+    // i < j 라 마지막 행(인덱스 n - 1)과 첫 열(인덱스 0)은 늘 비어 그리지 않는다. 행 r 은 인덱스 r, 열 c0 은 인덱스 c0 + 1
+    K.grid($('lk-grid'), n - 1, n - 1, (r, c0) => {
+      const c = c0 + 1;
       if (r >= c) return null;
       const c1 = [];
       if (dim.has(`${r},${c}`)) c1.push('is-dim');
       if (e && e.l === r && e.r === c) c1.push('is-now');
       if (e && e.verdict === 'hit' && e.l === r && e.r === c) c1.push('is-hit');
-      return { text: String(S.nums[r] + S.nums[c]), cls: c1.join(' '), title: `인덱스 ${r}와 ${c}, ${S.nums[r]} + ${S.nums[c]}` };
-    }, { rowHead: (r) => String(S.nums[r]), colHead: (c) => String(S.nums[c]) });
+      // 합이 target 인 짝은 버렸어도 title 에 「답 짝」을 적어 표에서 찾을 수 있게 한다
+      const mark = answers.has(`${r},${c}`) ? ', 답 짝' : '';
+      return { text: String(S.nums[r] + S.nums[c]), cls: c1.join(' '), title: `인덱스 ${P(r, '과', '와')} ${c}, ${S.nums[r]} + ${S.nums[c]}${mark}` };
+    }, { rowHead: (r) => String(S.nums[r]), colHead: (c0) => String(S.nums[c0 + 1]) });
   }
 
   // ---- 상태 칸 ----
@@ -127,10 +132,32 @@
       cls: ev.verdict === 'hit' ? 'is-hit' : '',
     })), '아직 비교하지 않았습니다');
     const dimCount = shown.reduce((n, ev) => n + ev.removed.length, 0);
-    const reason = isSorted(S.nums)
-      ? '정렬돼 있어 L 보다 오른쪽 값은 모두 L 의 값 이상입니다. 합이 target 보다 큰 R 은 L 이후의 어느 값과 더해도 target 보다 커서 R 이 들어간 짝을 모두 버려도 됩니다.'
-      : '정렬돼 있지 않아 L 보다 오른쪽 값이 L 의 값보다 작을 수 있습니다. 그래서 합이 크다는 사실로 R 이 들어간 짝을 모두 버리면 답까지 버릴 수 있습니다.';
-    $('lk-state-note').textContent = `버린 짝은 지금까지 ${dimCount}개입니다. ${reason}`;
+    $('lk-state-note').textContent = `버린 짝은 지금까지 ${dimCount}개입니다. ${reasonText(shown)}`;
+  }
+
+  // 상태 칸 근거 문장 — 마지막 비교의 판정(큼, 작음, 같음)과 정렬 여부로 고른다
+  function reasonText(shown) {
+    const e = shown[shown.length - 1];
+    const sorted = isSorted(S.nums);
+    if (!e) {
+      return sorted
+        ? '정렬돼 있어 L 과 R 사이의 값은 모두 L 의 값 이상이고 R 의 값 이하입니다.'
+        : '정렬돼 있지 않아 L 과 R 사이에 L 의 값보다 작은 값이나 R 의 값보다 큰 값이 있을 수 있습니다.';
+    }
+    if (e.verdict === 'hit') {
+      const hits = shown.reduce((n, ev) => n + ev.removed.filter(([i, j]) => S.nums[i] + S.nums[j] === S.target).length, 0);
+      return hits
+        ? `버린 짝 가운데 합이 target 인 짝이 ${hits}개 있습니다.`
+        : '버린 짝 가운데 합이 target 인 짝은 없어서 답을 놓치지 않았습니다.';
+    }
+    if (e.verdict === 'big') {
+      return sorted
+        ? '합이 target 보다 크면 R 의 값은 L 부터 R 바로 앞까지의 어느 값과 더해도 target 보다 커서 R 이 들어간 짝을 모두 버려도 됩니다.'
+        : '정렬돼 있지 않아 L 보다 오른쪽 값이 L 의 값보다 작을 수 있습니다. 그래서 합이 크다는 사실로 R 이 들어간 짝을 모두 버리면 답까지 버릴 수 있습니다.';
+    }
+    return sorted
+      ? '합이 target 보다 작으면 L 의 값은 L 바로 뒤부터 R 까지의 어느 값과 더해도 target 보다 작아서 L 이 들어간 짝을 모두 버려도 됩니다.'
+      : '정렬돼 있지 않아 R 보다 왼쪽 값이 R 의 값보다 클 수 있습니다. 그래서 합이 작다는 사실로 L 이 들어간 짝을 모두 버리면 답까지 버릴 수 있습니다.';
   }
 
   // ---- 결과 칸 ----

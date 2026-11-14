@@ -43,6 +43,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-lesson-dp-intro</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-lesson-dfs-backtracking</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-lesson-heap-internals</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/post.html?id=algorithm-lesson-tree-bst</loc>
     <lastmod>2026-11-15</lastmod>
     <changefreq>monthly</changefreq>
@@ -1303,7 +1321,25 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-lesson-dfs-backtracking.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-lesson-dp-intro.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://chkimsu.github.io/adtech-blog/demo-lesson-hash-map.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chkimsu.github.io/adtech-blog/demo-lesson-heap-internals.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

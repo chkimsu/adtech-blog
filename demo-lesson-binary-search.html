@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이진 탐색: 버린 칸, bisect 의 두 자리, 답의 범위 - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/lesson-kit.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>이진 탐색: 버린 칸, bisect 의 두 자리, 답의 범위</h1>
+        <p class="demo-subtitle">
+            정렬된 배열의 가운데 값을 보고 한쪽 칸을 통째로 버리는 이진 탐색을 세 장면으로 한 단계씩 따라갑니다.
+            첫 탭은 값의 인덱스를 찾는 닫힌 구간 탐색, 둘째 탭은 같은 값이 여럿일 때 bisect_left 와 bisect_right 가 돌려주는 넣을 자리, 셋째 탭은 배열이 아니라 답의 범위를 좁히는 탐색입니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              정렬된 배열은 가운데 값 하나를 보면 한쪽 칸이 모두 답이 아니라는 것을 알 수 있어서, 반복마다 남은 범위가 절반으로 줄어듭니다. nums = [-1, 0, 3, 5, 9, 12] 에서 9를 찾는 데 반복 <strong>2번</strong>이면 되고, 앞에서부터 찾으면 비교 <strong>5번</strong>입니다.
+              정렬된 배열이면 값이 100만 개여도 반복은 많아야 <strong>20번</strong>입니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">보여 주는 장면</span>과외에서 지훈 씨가 물은 세 장면입니다. 정렬된 배열에서 target 의 인덱스를 찾을 때 반복마다 어느 칸을 버리는지, 같은 값이 여럿인 배열에서 bisect_left 와 bisect_right 가 돌려주는 넣을 자리가 어디인지, 배열 대신 가능한 속도의 범위를 이진 탐색해 가장 느린 속도를 찾는 방법입니다. 입력은 값 6개, 값 7개, 더미 4개로 작아서 단계를 모두 따라갈 수 있습니다.</div>
+            <div><span class="demo-intro-label">목적</span>첫 탭에서는 mid 를 볼 때마다 left 나 right 가 어디로 옮겨 가고 어느 칸이 버려지는지 확인합니다. 둘째 탭에서는 같은 값 4가 놓인 칸의 앞 자리 bisect_left 2 와 뒤 자리 bisect_right 5 를 구하고, 개수가 5 - 2 = 3 이라는 것을 확인합니다. 셋째 탭에서는 속도 1~11 을 이진 탐색해 8시간 안에 다 먹는 가장 느린 속도 4 를 찾습니다. 입력은 여덟 가지입니다. 첫 탭은 nums = [-1, 0, 3, 5, 9, 12] 에 target 9(LeetCode 704 의 예제), 12(마지막 한 칸), 2(배열에 없는 값)입니다. 둘째 탭은 nums = [1, 2, 4, 4, 4, 5, 8] 에 x 4 와 x 3 입니다. 셋째 탭은 piles = [3, 6, 7, 11] 에 h 8(LeetCode 875 의 예제 풀이), 5, 4 입니다.</div>
+            <div><span class="demo-intro-label">결과 읽는 법</span><strong>결과</strong> 칸은 첫 탭에서 찾은 인덱스(없으면 -1), 둘째 탭에서 bisect_left 와 bisect_right 의 넣을 자리, 셋째 탭에서 가장 느린 속도입니다. 아랫줄에는 첫 탭의 반복 수와 앞에서부터 찾을 때의 비교 수, 둘째 탭의 같은 값 개수, 셋째 탭의 반복 수가 나옵니다. 배열에서 파란 테두리 안이 남은 범위, 점선 회색 칸이 버린 칸, 진한 파란 칸이 답입니다. L, M, R 은 left, mid, right 가 가리키는 칸입니다. 둘째 탭 맨 오른쪽의 점선 칸은 인덱스 7 로, 배열 밖이고 hi 가 처음 가리키는 자리입니다. 셋째 탭 표의 윗줄은 속도이고 아랫줄은 그 속도를 mid 로 본 뒤에만 채워지는 걸리는 시간입니다. 값을 정확히 찾는 한 가지 방식과 두 경계를 찾는 변형은 <a href="demo-binary-search.html">Binary Search</a> 데모에서 따로 봅니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">따라 하는 순서</span>
+          <li><span class="step-text">탭 <strong>닫힌 구간 탐색</strong>에서 입력은 nums [-1, 0, 3, 5, 9, 12], target 9 입니다. <strong>「한 칸」</strong>을 처음 누르면 left 0, right 5, mid 2 이고 nums[2] = 3 이 9보다 작아 답이 될 수 없다고 적힙니다. 한 번 더 누르면 0~2번 칸이 점선 회색으로 바뀌고 left 가 3으로 옮겨 가며, 세 번째에는 mid 4 에서 9를 찾아 단계가 3 / 3 이 됩니다. 결과 칸에 인덱스 4 가 나오고 4번 칸이 진한 파란 바탕이 됩니다.</span></li>
+          <li><span class="step-text"><strong>「다음 반복」</strong>은 mid 를 보고 칸을 버리는 동작 하나를 한 번에 넘깁니다. 「처음」을 누른 뒤 한 번 누르면 단계 2 / 3 으로 0~2번 칸이 버려지고, 한 번 더 누르면 3 / 3 입니다. <strong>「끝까지」</strong>는 남은 단계를 한 번에 넘깁니다. 입력 목록에서 target 12 를 고르고 「끝까지」를 누르면 mid 가 2, 4, 5 로 세 번 반복해 5번 칸을 찾고, 앞에서부터 찾으면 비교 6번이라고 나옵니다. target 2 를 고르고 「끝까지」를 누르면 mid 2, 0, 1 을 본 뒤 남은 범위가 비어 결과 칸에 「2는 배열에 없어 -1」이 나오고 여섯 칸이 모두 점선 회색이 됩니다.</span></li>
+          <li><span class="step-text">탭 <strong>bisect_left 와 bisect_right</strong>에서 입력은 nums [1, 2, 4, 4, 4, 5, 8], x 4 입니다. 「다음 반복」을 한 번 누르면 bisect_left 의 첫 반복으로 lo 0, hi 7, mid 3 이고 nums[3] = 4 가 4와 같아 hi 를 3으로 옮긴다고 적힙니다. 「끝까지」를 누르면 결과 칸에 「bisect_left 2, bisect_right 5」가 나오고 2~4번 칸이 진한 파란 바탕이 되며, 아랫줄에 「4의 개수 5 - 2 = 3」이 나옵니다. 입력 목록에서 x 3 을 고르고 「끝까지」를 누르면 두 자리가 모두 2 라서 「3은 없어 개수 0」이 나옵니다.</span></li>
+          <li><span class="step-text">탭 <strong>답의 범위를 좁히는 탐색</strong>에서 입력은 piles [3, 6, 7, 11], h 8 입니다. 「한 칸」을 처음 누르면 left 1, right 11, mid 6 이고 속도 6이면 1 + 1 + 2 + 2 = 6시간이라 8시간 안이라고 적히며, 표 아랫줄의 6번 열에 6 이 채워집니다. 한 번 더 누르면 답 후보를 6으로 두고 속도 7~11을 버립니다. 「끝까지」를 누르면 아랫줄에 6, 10, 8 이 채워지고 나머지 열은 빈칸으로 남으며, 결과 칸에 「가장 느린 속도 4」가 나옵니다. 탭이나 입력을 바꾸면 처음 상태로 돌아갑니다.</span></li>
+        </ol>
+
+        <div class="lk-controls">
+            <div class="lk-toolbar">
+                <div class="lk-tabs" id="lk-tabs" role="group" aria-label="모드"></div>
+                <label class="lk-preset">입력 <select id="lk-preset"></select></label>
+            </div>
+            <p class="lk-note" id="lk-note"></p>
+            <div class="lk-actions">
+                <button type="button" id="lk-reset">처음</button>
+                <button type="button" id="lk-step">한 칸</button>
+                <button type="button" id="lk-group">다음 반복</button>
+                <button type="button" id="lk-end">끝까지</button>
+                <span class="lk-count" id="lk-count"></span>
+            </div>
+        </div>
+
+        <div class="lk-stage">
+            <div class="lk-board-col">
+                <div class="lk-board" id="lk-board" role="group" aria-label="배열 또는 속도 표. 남은 범위, 버린 칸, 답을 보입니다."></div>
+                <div class="lk-legend" id="lk-legend"></div>
+            </div>
+            <div class="lk-side">
+                <div class="lk-panel lk-result">
+                    <div class="lk-label">결과</div>
+                    <div class="lk-result-main" id="lk-result-main"></div>
+                    <div class="lk-result-sub" id="lk-result-sub"></div>
+                </div>
+                <div class="lk-panel lk-now">
+                    <div class="lk-label">이번 단계</div>
+                    <div id="lk-now" aria-live="polite"></div>
+                </div>
+                <div class="lk-panel lk-state">
+                    <div class="lk-label" id="lk-state-label">상태</div>
+                    <div class="lk-chips" id="lk-state"></div>
+                    <p class="lk-note" id="lk-state-note"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/lesson-kit.js"></script>
+    <script src="js/lesson-binary-search-model.js"></script>
+    <script src="js/lesson-binary-search-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

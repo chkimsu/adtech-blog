@@ -2644,6 +2644,41 @@ window.DEMO_EDU = {
         ]
     },
 
+    // 과외 이진 탐색 (알고리즘) — 닫힌 구간 탐색, bisect 의 두 자리, 답의 범위. 계산은 js/lesson-binary-search-model.js
+    'lesson-binary-search': {
+        analogy: '정렬된 배열은 가운데 값 하나로 한쪽 칸을 통째로 버릴 수 있다. 6개 배열에서 9를 찾는 데 반복 2번, 앞에서부터는 비교 5번이다. 정렬된 배열이면 값이 100만 개여도 반복은 많아야 20번이다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonBinarySearch.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonBinarySearchDescribe ? window.lessonBinarySearchDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '배열 또는 속도 표',
+                body: '닫힌 구간 탐색과 bisect 탭에서는 칸마다 인덱스와 값이 있고, 파란 테두리 안이 남은 범위입니다. 점선 회색 칸은 버린 칸이거나 배열 밖 자리이고, 진한 파란 칸이 답입니다. 답의 범위를 좁히는 탐색 탭에서는 윗줄이 속도이고 아랫줄은 그 속도를 mid 로 본 뒤에 걸리는 시간이 채워집니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 닫힌 구간 탐색 탭에서는 mid 를 보는 일과 칸을 버리는 일이 각각 한 단계이고, bisect 탭에서는 반복 하나가 한 단계입니다. 답의 범위를 좁히는 탐색 탭에서는 속도의 걸리는 시간을 구하는 일과 속도를 버리는 일이 각각 한 단계입니다. 이번 단계 칸에 방금 한 계산이 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 반복」 버튼',
+                body: '반복 하나를 한 번에 넘깁니다. 닫힌 구간 탐색 탭과 답의 범위를 좁히는 탐색 탭에서는 mid 를 보는 일과 범위를 줄이는 일을 같이 넘기고, bisect 탭에서는 lo 나 hi 를 한 번 옮기는 일을 넘깁니다.'
+            },
+            {
+                el: '.lk-result',
+                title: '결과 칸',
+                body: '닫힌 구간 탐색 탭에서는 찾은 인덱스(없으면 -1)와 앞에서부터 찾을 때의 비교 수, bisect 탭에서는 넣을 자리 둘과 같은 값의 개수, 답의 범위를 좁히는 탐색 탭에서는 가장 느린 속도와 반복 수가 나옵니다. 끝까지 돌린 뒤에 읽습니다.'
+            }
+        ]
+    },
+
     // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================

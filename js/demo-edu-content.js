@@ -2531,13 +2531,13 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
-    // 과외 해시 맵 (알고리즘) — seen 한 번 순회, 이중 for 문, 미리 다 적기. 계산은 js/lesson-hash-map-model.js
+    // 과외 해시 맵 (알고리즘) — seen 한 번 순회, 이중 for 문, 먼저 다 적는 풀이. 계산은 js/lesson-hash-map-model.js
     // ==========================================
     'lesson-hash-map': {
         analogy: 'seen 에 지나온 숫자와 인덱스를 적어 두면 짝 확인이 값마다 한 번이다. 8개 입력에서 이중 for 문 28번이 seen 8번이 된다',
         anchor: '.lk-controls',
         embedKeep: ['.lk-controls', '.lk-stage'],
-        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
         explain: {
             // 입력을 고르면 그 입력의 결과를 지금 모드로 미리 적는다. 문장은 데모 JS 가 LessonHashMap.describe 로 만든다.
             '#lk-preset': ({ el }) => (window.lessonHashMapDescribe ? window.lessonHashMapDescribe(el.value) : ''),
@@ -2559,12 +2559,12 @@ window.DEMO_EDU = {
             {
                 el: '#lk-group',
                 title: '「다음 값」 버튼',
-                body: '값 하나(이중 for 문에서는 i 하나)의 단계를 끝까지 보입니다. 미리 다 적기 탭에서는 첫 번째 누름이 값을 모두 적는 단계입니다.'
+                body: '값 하나(이중 for 문에서는 i 하나)의 단계를 끝까지 보입니다. 먼저 다 적는 풀이 탭에서는 첫 번째 누름이 값을 모두 적는 단계입니다.'
             },
             {
                 el: '.lk-state',
                 title: '상태 칸',
-                body: 'seen 에 적힌 「숫자 → 인덱스」입니다. 짝을 찾은 순간 그 짝의 칸이 진한 파란색으로 바뀝니다. ' +
+                body: 'seen 에 적힌 「숫자 → 인덱스」입니다. 짝을 찾은 순간 그 짝의 칸이 진한 파란색으로 바뀝니다. 먼저 다 적는 풀이 탭에서 자기 자신을 찾으면 붉은색입니다. ' +
                     '이중 for 문 탭에서는 이 칸이 지금 i 의 짝 비교를 보입니다.'
             }
         ]
@@ -2574,10 +2574,10 @@ window.DEMO_EDU = {
     // 과외 투 포인터 (알고리즘) — 양 끝에서 좁히기와 버린 짝. 계산은 js/lesson-two-pointers-model.js
     // ==========================================
     'lesson-two-pointers': {
-        analogy: '정렬된 배열이면 합 하나로 짝 여러 개를 한꺼번에 버린다. 6개 입력에서 짝 15개 가운데 비교 5번이고, 정렬하지 않으면 첫 이동에서 답을 버린다',
+        analogy: '정렬된 배열이면 합 하나로 짝 여러 개를 한꺼번에 버린다. 6개 입력에서 짝 15개 가운데 비교 5번이고, 정렬하지 않으면 첫 비교에서 답을 버린다',
         anchor: '.lk-controls',
         embedKeep: ['.lk-controls', '.lk-stage'],
-        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
         explain: {
             // 입력을 고르면 그 입력에서 투 포인터가 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonTwoPointers.describe 로 만든다.
             '#lk-preset': ({ el }) => (window.lessonTwoPointersDescribe ? window.lessonTwoPointersDescribe(el.value) : ''),
@@ -2591,18 +2591,18 @@ window.DEMO_EDU = {
             {
                 el: '#lk-step',
                 title: '「한 칸」 버튼',
-                body: '「한 칸」을 눌러 봅니다. L 과 R 의 합을 target 과 견줘 크면 R 을 왼쪽으로, 작으면 L 을 오른쪽으로 옮기는 비교 하나가 한 단계입니다.',
+                body: '「한 칸」을 눌러 봅니다. L 과 R 의 합을 target 과 비교해 크면 R 을 왼쪽으로, 작으면 L 을 오른쪽으로 옮기는 비교 하나가 한 단계입니다.',
                 waitFor: 'click'
             },
             {
                 el: '#lk-grid',
                 title: '짝 표',
-                body: '행 i 와 열 j 의 칸에 두 값의 합이 적혀 있습니다. 지금 비교하는 짝은 파란 테두리이고, 이동할 때마다 답이 될 수 없다고 버린 짝이 회색 점선 칸으로 바뀝니다.'
+                body: '행과 열의 머리는 nums 의 값이고 칸에는 두 값의 합이 적혀 있습니다. 지금 비교하는 짝은 파란 테두리이고, 이동할 때마다 답이 될 수 없다고 버린 짝이 회색 점선 칸으로 바뀝니다.'
             },
             {
                 el: '.lk-result',
                 title: '결과 칸',
-                body: '찾은 두 값과 인덱스, 그리고 짝 15개 가운데 비교 몇 번이었는지가 나옵니다. 정렬하지 않은 입력에서는 짝을 찾지 못했다는 말과 함께 버려진 답이 적힙니다.'
+                body: '찾은 두 값과 인덱스, 그리고 모든 짝의 수와 비교 횟수가 나옵니다. 정렬하지 않은 입력에서는 짝을 찾지 못했다는 말과 함께 버린 답 짝이 적힙니다.'
             }
         ]
     },
@@ -2611,10 +2611,10 @@ window.DEMO_EDU = {
     // 과외 슬라이딩 윈도우 (알고리즘) — 빼고 더하기, 다 더하기, 중복 없는 부분 문자열. 계산은 js/lesson-sliding-window-model.js
     // ==========================================
     'lesson-sliding-window': {
-        analogy: '창을 옮길 때 나간 값 하나를 빼고 들어온 값 하나를 더하면 연산이 2번이다. 6개 입력에서 다 더하기 12번이 빼고 더하기 9번이 되고, 데이터 10만 개에 창 5만이면 2,500,050,000번이 150,000번이 된다',
+        analogy: '윈도우를 옮길 때 나간 값 하나를 빼고 들어온 값 하나를 더하면 연산이 2번이다. 6개 입력에서 다 더하기 12번이 빼고 더하기 9번이 되고, 데이터 10만 개에 윈도우 5만이면 2,500,050,000번이 150,000번이 된다',
         anchor: '.lk-controls',
         embedKeep: ['.lk-controls', '.lk-stage'],
-        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
         explain: {
             // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonSlidingWindow.describe 로 만든다.
             '#lk-preset': ({ el }) => (window.lessonSlidingWindowDescribe ? window.lessonSlidingWindowDescribe(el.value) : ''),
@@ -2622,24 +2622,24 @@ window.DEMO_EDU = {
         tour: [
             {
                 el: '.lk-board',
-                title: '배열과 창',
-                body: '배열의 칸마다 인덱스와 값이 있습니다. 파란 테두리 안이 지금 창이고, 들어온 값은 옅은 파란 바탕, 나간 값은 붉은 바탕입니다.'
+                title: '배열과 윈도우',
+                body: '배열의 칸마다 인덱스와 값이 있습니다. 파란 테두리 안이 지금 윈도우이고, 들어온 값은 옅은 파란 바탕, 나간 값은 붉은 바탕입니다.'
             },
             {
                 el: '#lk-step',
                 title: '「한 칸」 버튼',
-                body: '「한 칸」을 눌러 봅니다. 첫 창에서는 값 하나를 더하는 것이, 그다음부터는 창을 옮기는 일이 한 단계입니다. 이번 단계 칸에 방금 한 계산이 적힙니다.',
+                body: '「한 칸」을 눌러 봅니다. 빼고 더하기 탭에서는 첫 윈도우의 덧셈 하나나 윈도우 옮기기 하나, 다 더하기 탭에서는 덧셈 하나, 중복 없는 부분 문자열 탭에서는 글자 하나를 빼거나 넣는 일이 한 단계입니다. 이번 단계 칸에 방금 한 계산이 적힙니다.',
                 waitFor: 'click'
             },
             {
                 el: '#lk-group',
-                title: '「다음 창」 버튼',
-                body: '창 하나를 만들거나 옮기는 데 필요한 동작을 한 번에 넘깁니다. 빼고 더하기는 옮길 때마다 빼기 1번과 더하기 1번이고, 다 더하기 탭에서는 창 안의 값을 처음부터 다시 더합니다.'
+                title: '「다음 윈도우」 버튼',
+                body: '윈도우 하나를 만들거나 옮기는 데 필요한 동작을 한 번에 넘깁니다. 빼고 더하기는 옮길 때마다 빼기 1번과 더하기 1번이고, 다 더하기 탭에서는 윈도우 안의 값을 처음부터 다시 더합니다.'
             },
             {
                 el: '.lk-state',
-                title: '창 합과 연산 수',
-                body: '창 합은 지금까지 더한 값이고 연산 수는 처음부터의 누적입니다. 같은 입력을 빼고 더하기와 다 더하기 탭에서 끝까지 돌려 두 연산 수를 비교해 봅니다.'
+                title: '상태 칸',
+                body: '빼고 더하기와 다 더하기 탭에서는 윈도우 합과 연산 수가 나옵니다. 윈도우 합은 지금까지 더한 값이고 연산 수는 처음부터의 누적이라, 같은 입력을 두 탭에서 끝까지 돌려 두 연산 수를 비교해 봅니다. 중복 없는 부분 문자열 탭에서는 윈도우 안의 글자 set 이 나옵니다.'
             }
         ]
     },

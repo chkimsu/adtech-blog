@@ -11,7 +11,7 @@ const posts = [
     id: 'algorithm-lesson-bfs',
     world: 'na',
     title: 'BFS: 섬의 개수와 미로 최단 거리를 깊이별로 구하는 법',
-    excerpt: '코딩테스트를 준비하는 지훈 씨가 BFS 를 쓰려면 트리를 직접 짜야 하느냐고 물은 데서 시작합니다. BFS 는 트리 없이 문제가 주는 격자에서 바로 씁니다. 큐에서 꺼낸 칸의 상하좌우 이웃을 큐 맨 뒤에 넣기만 하면 시작 칸에서 0번, 1번, 2번 움직여 닿는 칸 순서로 한 겹씩 퍼집니다. 섬의 개수(LeetCode 200)는 땅을 만날 때마다 그 섬 전체를 BFS 로 칠해 같은 섬을 두 번 세지 않습니다. 미로 최단 거리는 출구에 처음 닿은 순간의 이동 수가 답이라 5×5 미로에서 8번 이동, 경로 9칸이 나옵니다. visited 가 필요한 경우와 필요 없는 경우, 이동 수와 지나간 칸 수가 1 다른 이유, Flood Fill, Max Area of Island, Shortest Path in Binary Matrix, Rotting Oranges 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 BFS 를 쓰려면 트리를 직접 짜야 하느냐고 물은 데서 시작합니다. BFS 는 트리 없이 문제가 주는 격자에서 바로 씁니다. 큐에서 꺼낸 칸의 상하좌우에서 아직 넣지 않은 이웃만 큐 맨 뒤에 넣으면 시작 칸에서 0번, 1번, 2번 움직여 닿는 칸 순서로 한 겹씩 퍼집니다. 섬의 개수(LeetCode 200)는 땅을 만날 때마다 그 섬 전체를 BFS 로 칠해 같은 섬을 두 번 세지 않습니다. 미로 최단 거리는 출구에 처음 닿은 순간의 이동 수가 답이라 5×5 미로에서 8번 이동, 경로 9칸이 나옵니다. visited 가 필요한 경우와 필요 없는 경우, 이동 수와 지나간 칸 수가 1 다른 이유, Flood Fill, Max Area of Island, Shortest Path in Binary Matrix, Rotting Oranges 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
     date: '2026-11-14',
     categories: ['Interview & Algorithms'],
     tags: ['Algorithm', 'Data Structure', 'Coding Test'],

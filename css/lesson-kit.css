@@ -2,7 +2,8 @@
 
 /* 칸 크기 — 12칸 배열은 56px 칸에 6px 틈이면 12 × 56 + 11 × 6 = 738px 이다. 보드 안쪽 폭은 페이지 폭보다 86px 좁다
    (본문 여백 20 × 2, 보드 칸 테두리 1 × 2 와 안쪽 여백 20 × 2, 보드 여백 2 × 2).
-   830px 아래에서는 52px 칸, 5px 틈(12 × 52 + 11 × 5 = 679px)으로 줄여 폭 765px 이상에서 가로 스크롤 없이 들어간다(762px 에서는 넘친다). 글 안 iframe 폭은 1440px 창 962px, 1280px 창 802px, 1024px 창 826px 이고
+   830px 아래에서는 52px 칸, 4px 틈으로 줄인다. 12칸 배열은 12 × 52 + 11 × 4 = 668px 이고 12열 트리는 열 폭(칸 + 틈)에 마지막 열의 틈까지 들어가 12 × 56 = 672px 라서 둘 다 보드 안쪽 폭 679px(폭 765px) 안에 든다.
+   틈이 5px 이면 트리가 684px 라 765px 에서 넘친다. 폭 762px 에서는 넘친다. 글 안 iframe 폭은 1440px 창 962px, 1280px 창 802px, 1024px 창 826px 이고
    900px 창의 754px 에서는 12칸이 넘친다.
    옆 칸이 서는 폭은 아래 .lk-stage 에서 보드 안쪽 폭이 738px 를 넘도록 잡았다 */
 .lk-board {
@@ -11,7 +12,11 @@
 }
 
 @media (max-width: 830px) {
-  .lk-board { --lk-cell: 52px; --lk-gap: 5px; }
+  .lk-board { --lk-cell: 52px; --lk-gap: 4px; }
+
+  /* 짝 표의 이름 칸(「걸리는 시간」)까지 더한 12열 표(67 + 11 × 52 + 11 × 4 = 683px)가 보드 안쪽 폭 679px 보다 넓어 글자를 줄인다 */
+  .lk-axis.is-row,
+  .lk-axis.is-head { font-size: 0.72rem; padding-right: 2px; }
 }
 
 /* 64px 칸 12개는 12 × 64 + 11 × 6 = 834px 라 옆 칸 340px 가 서는 폭에서 보드 안쪽 폭(창 폭 - 498px)이 834px 이상인 1340px 부터 쓴다 */
@@ -280,6 +285,24 @@ html.is-embed .lk-controls {
 .lk-swatch.is-window {
   border-left: 2px solid var(--navy-bd);
   border-right: 2px solid var(--navy-bd);
+}
+
+/* 이미 채운 칸(is-in)이 윈도우에도 들면 바탕이 같아 연한 테두리(navy-bd)로는 구분되지 않는다(대비 라이트 1.43, 다크 1.57).
+   윈도우를 두르는 변만 짙은 navy 로 준다(대비 라이트 6.78, 다크 6.60) */
+.lk-cell.is-in.is-window,
+.lk-gcell.is-in.is-window {
+  border-top-color: var(--navy);
+  border-bottom-color: var(--navy);
+}
+
+.lk-cell.is-in.is-window-first,
+.lk-gcell.is-in.is-window-first {
+  border-left-color: var(--navy);
+}
+
+.lk-cell.is-in.is-window-last,
+.lk-gcell.is-in.is-window-last {
+  border-right-color: var(--navy);
 }
 
 .lk-cell.is-in,

@@ -29,6 +29,21 @@ eq('끝에서', K.nextGroupEnd(ev, 5), 5);
 eq('clamp 음수', K.clamp(-1, 5), 0);
 eq('clamp 넘침', K.clamp(9, 5), 5);
 
+console.log('\n공용 틀 — 조사 고르기(particle)');
+eq('목록 뒤 을', K.particle('[6, 7]', '을', '를'), '[6, 7]을');
+eq('목록 뒤 를', K.particle('[0, 2]', '을', '를'), '[0, 2]를');
+eq('영문 n 은 받침', K.particle('seen', '이', '가'), 'seen이');
+eq('7 은 ㄹ 받침이라 로', K.particle('7', '으로', '로'), '7로');
+eq('3 은 으로', K.particle('3', '으로', '로'), '3으로');
+eq('한글 받침 은', K.particle('창', '은', '는'), '창은');
+eq('한글 겹받침 과', K.particle('값', '과', '와'), '값과');
+eq('받침 없는 한글 와', K.particle('키', '과', '와'), '키와');
+eq('2 는 받침 없음', K.particle('2', '이', '가'), '2가');
+eq('0 은 받침 있음', K.particle('0', '을', '를'), '0을');
+eq('괄호와 따옴표는 건너뜀', K.particle('(3)', '을', '를'), '(3)을');
+eq('한글 ㄹ 받침 으로', K.particle('물', '으로', '로'), '물로');
+eq('빈 글자', K.particle('', '을', '를'), '를');
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

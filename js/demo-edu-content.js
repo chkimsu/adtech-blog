@@ -2714,6 +2714,41 @@ window.DEMO_EDU = {
         ]
     },
 
+    // 과외 트리와 BST (알고리즘) — 배열 입력과 None, 높이를 구하는 재귀, BST 와 중위 순회. 계산은 js/lesson-tree-bst-model.js
+    'lesson-tree-bst': {
+        analogy: 'BST 를 중위 순회로 읽으면 작은 값부터 나오는 정렬된 배열이 되고, 비교 횟수는 트리의 높이가 정한다. 값 7개를 균형 순서로 넣으면 높이 3에 비교 10번이고, 정렬 순서로 넣으면 높이 7에 비교 21번이다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonTreeBst.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonTreeBstDescribe ? window.lessonTreeBstDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '트리 그림',
+                body: '트리는 마지막 모양으로 한 번 배치해서, 노드가 생겨도 다른 노드가 움직이지 않습니다. 점선 노드는 None 자식입니다. 배열 입력 탭에서는 위의 배열 칸과 아래의 트리가 짝이고, BST 탭에서는 트리 밑의 펼친 배열 칸이 같은 열의 노드와 짝입니다. 높이를 구하는 재귀 탭에서는 노드 아래 작은 숫자가 그 노드가 돌려준 값입니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 배열 입력 탭에서는 배열 한 칸을 읽어 노드 하나를 붙이고, 높이를 구하는 재귀 탭에서는 maxDepth 호출 하나나 반환 하나가 한 단계입니다. BST 탭에서는 노드 하나와의 비교, 자리에 두는 일, 중위 순회에서 값 하나를 방문하는 일이 각각 한 단계입니다. 이번 단계 칸에 방금 한 일이 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 층」 버튼',
+                body: '이 버튼의 글자는 탭마다 바뀝니다. 배열 입력 탭에서는 「다음 층」이라 한 층을 한 번에 붙이고(LeetCode 배열이 층별 순서라서 층이 보입니다), 높이를 구하는 재귀 탭에서는 「다음 반환」이라 다음 return 하나까지 넘기며, BST 탭에서는 「다음 값」이라 값 하나를 넣거나 값 하나를 방문하는 일까지 넘깁니다.'
+            },
+            {
+                el: '.lk-result',
+                title: '결과 칸',
+                body: '배열 입력 탭에서는 경로를 따라간 값이나 None 에서 난 오류 문장, 높이를 구하는 재귀 탭에서는 높이, BST 탭에서는 펼친 배열(230 입력은 k번째로 작은 값)이 나옵니다. 아랫줄에는 층별 값, maxDepth 를 부른 횟수, BST 의 높이와 비교 횟수가 나옵니다.'
+            }
+        ]
+    },
+
     // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================

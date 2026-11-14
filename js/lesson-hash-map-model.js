@@ -20,6 +20,12 @@
 })(typeof self !== 'undefined' ? self : globalThis, function () {
   'use strict';
 
+  // 조사는 공용 틀의 particle 로 고른다 (node 에서는 require, 브라우저에서는 전역 LessonKit)
+  const K = typeof module === 'object' && module.exports
+    ? require('./lesson-kit.js')
+    : (typeof self !== 'undefined' ? self : globalThis).LessonKit;
+  const P = (text, withFinal, withoutFinal) => K.particle(String(text), withFinal, withoutFinal);
+
   const PRESETS = {
     'two-sum': { nums: [2, 11, 7, 15], target: 9 },
     'late-pair': { nums: [4, 9, 1, 7, 12, 3, 10, 8], target: 18 },
@@ -84,11 +90,6 @@
   }
 
   // ---- 문장 도구 ----
-  // 조사는 숫자를 읽은 소리의 받침으로 고른다 (2, 4, 5, 9 로 끝나면 받침이 없다. 0 은 「영」이라 받침이 있다)
-  const hasBatchim = (n) => ![2, 4, 5, 9].includes(Math.abs(n) % 10);
-  const 이가 = (n) => (hasBatchim(n) ? '이' : '가');
-  const 와과 = (n) => (hasBatchim(n) ? '과' : '와');
-  const 을를 = (n) => (hasBatchim(n) ? '을' : '를');
   const list = (a) => `[${a.join(', ')}]`;
   const pairText = (a) => (a.length ? list(a) : '[]');
 
@@ -106,11 +107,11 @@
       const f = prefillTrace(p.nums, p.target);
       const self = f.answer.length === 2 && f.answer[0] === f.answer[1];
       return head + (self
-        ? `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. ${f.answer[0]}번 칸의 ${p.nums[f.answer[0]]} ${을를(p.nums[f.answer[0]])} 두 번 쓴 틀린 답입니다. 순서대로 확인한 뒤 적으면 ${pairText(s.answer)} 입니다.`
-        : `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. 짝이 자기 자신이 아니라서 순서대로 확인했을 때와 같은 두 칸을 씁니다.`);
+        ? `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. ${f.answer[0]}번 칸의 ${P(p.nums[f.answer[0]], '을', '를')} 두 번 쓴 틀린 답입니다. 순서대로 확인한 뒤 적으면 ${pairText(s.answer)} 입니다.`
+        : `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. 서로 다른 두 칸이라 맞는 답이고, 순서대로 확인한 뒤 적으면 ${pairText(s.answer)} 입니다.`);
     }
     return head + `seen 은 값을 ${s.checks}번 확인하고 답은 ${pairText(s.answer)} 입니다. 이중 for 문은 ${b.comparisons}번 더해 봅니다.`;
   }
 
-  return { PRESETS, MODES, MODE_DEFAULT, seenTrace, bruteTrace, prefillTrace, describe, list, 이가, 을를, 와과 };
+  return { PRESETS, MODES, MODE_DEFAULT, seenTrace, bruteTrace, prefillTrace, describe, list };
 });

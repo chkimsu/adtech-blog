@@ -17,7 +17,8 @@
   if (!H || !K) return;
 
   const $ = (id) => document.getElementById(id);
-  const { list, 이가, 을를, 와과 } = H;
+  const { list } = H;
+  const P = (text, withFinal, withoutFinal) => K.particle(String(text), withFinal, withoutFinal);
 
   const MODE_LABEL = { seen: 'seen 한 번 순회', brute: '이중 for 문', prefill: '미리 다 적기' };
 
@@ -97,17 +98,17 @@
     if (e.type === 'pair') {
       const eq = `${S.nums[e.i]} + ${S.nums[e.j]} = ${e.sum}`;
       return e.hit
-        ? `i = ${e.i}, j = ${e.j}. ${eq}, target ${T} ${와과(T)} 같아 ${list([e.i, e.j])} 를 돌려줍니다.`
-        : `i = ${e.i}, j = ${e.j}. ${eq}, target ${T} ${와과(T)} 다릅니다.`;
+        ? `i = ${e.i}, j = ${e.j}. ${eq}, target ${P(T, '과', '와')} 같아 ${P(list([e.i, e.j]), '을', '를')} 돌려줍니다.`
+        : `i = ${e.i}, j = ${e.j}. ${eq}, target ${P(T, '과', '와')} 다릅니다.`;
     }
-    if (e.type === 'fill') return `i = ${e.i}, num = ${e.num}. seen 에 ${e.num} → ${e.i} ${을를(e.i)} 적습니다.`;
-    if (e.type === 'store') return `seen 에 ${e.num} → ${e.i} ${을를(e.i)} 적습니다.`;
-    const q = `i = ${e.i}, num = ${e.num}. 짝 ${T} - ${e.num} = ${e.need}`;
-    if (!e.hit) return `${q} ${이가(e.need)} seen 에 없습니다.`;
+    if (e.type === 'fill') return `i = ${e.i}, num = ${e.num}. seen 에 ${e.num} → ${P(e.i, '을', '를')} 적습니다.`;
+    if (e.type === 'store') return `seen 에 ${e.num} → ${P(e.i, '을', '를')} 적습니다.`;
+    const head = `i = ${e.i}, num = ${e.num}. 짝 ${T} - ${e.num} = `;
+    if (!e.hit) return `${head}${P(e.need, '이', '가')} seen 에 없습니다.`;
     const at = e.seen.find(([k]) => k === e.need)[1];
-    const ans = list([at, e.i]);
     const self = S.mode === 'prefill' && at === e.i;
-    return `${q} ${이가(e.need)} seen 에 있어 ${ans} 를 돌려줍니다.` + (self ? ` ${at}번 칸의 ${e.num} ${을를(e.num)} 두 번 쓴 틀린 답입니다.` : '');
+    return `${head}${P(e.need, '이', '가')} seen 에 있어 ${P(list([at, e.i]), '을', '를')} 돌려줍니다.` +
+      (self ? ` ${at}번 칸의 ${P(e.num, '을', '를')} 두 번 쓴 틀린 답입니다.` : '');
   }
 
   // ---- 보드 ----
@@ -190,8 +191,8 @@
     if (S.mode !== 'prefill') { sub.textContent = counts; return; }
     const right = H.seenTrace(p.nums, p.target).answer;
     sub.textContent = self
-      ? `${ans[0]}번 칸의 ${p.nums[ans[0]]} ${을를(p.nums[ans[0]])} 두 번 썼습니다. 순서대로 확인한 뒤 적으면 ${list(right)} 입니다.`
-      : `짝이 다른 칸이라 순서대로 확인한 뒤 적을 때와 같은 두 칸을 씁니다.`;
+      ? `${ans[0]}번 칸의 ${P(p.nums[ans[0]], '을', '를')} 두 번 썼으므로 틀린 답입니다. 순서대로 확인한 뒤 적으면 ${list(right)} 입니다.`
+      : `서로 다른 두 칸이라 맞는 답입니다. 순서대로 확인한 뒤 적으면 ${list(right)} 입니다.`;
   }
 
   function render(at) {

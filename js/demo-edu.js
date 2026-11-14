@@ -63,6 +63,8 @@
     }
 
     function initialVal(input) {
+        // select 에는 defaultValue 가 없어 첫 변경 때 이미 바뀐 값을 이전 값으로 적는다. null 로 두어 첫 변경부터 해설을 쓴다
+        if (input instanceof HTMLSelectElement) return null;
         const v = 'defaultValue' in input && input.defaultValue !== '' ? input.defaultValue : input.value;
         const n = parseFloat(v);
         return Number.isNaN(n) ? v : n;

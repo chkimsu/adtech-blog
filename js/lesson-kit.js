@@ -77,7 +77,8 @@
  *     sub 는 노드 아래 작은 글자 .lk-tsub(힙의 인덱스, 재귀가 돌려준 값). hidden 노드와 그 노드로 가는 선은 그리지 않지만
  *     자리는 비워 둔다. 그래서 노드가 하나씩 생겨도 다른 노드가 움직이지 않게 마지막 트리를 nodes 로 넘긴다.
  *     선은 .lk-tree-edges svg 안의 line 이고 edge 에 is-now 가 걸린 선은 --navy 다.
- *     자리는 CSS 가 --lk-cell, --lk-gap 으로 정한다(열 폭 = 칸 + 틈, 층 높이 = 칸 + 30px). JS 는 --lk-tcols, --lk-trows 만 넘긴다.
+ *     자리는 CSS 가 --lk-cell, --lk-gap 으로 정한다(열 폭 = 칸 + 틈, 층 높이 = 칸 + 30px). JS 는 트리에 --lk-tcols, --lk-trows 를, 노드마다 --lk-tcol, --lk-trow 를 넘긴다.
+ *     열이 7개 이하인 트리에는 .lk-tree-narrow 가 붙고, CSS 가 그 트리가 든 .lk-stage 를 800~1239px 에서 보드 | 옆 칸 260px 로 세운다.
  * legend(el, items)                   items = [[cls, label]]. 칸과 같은 상태 클래스로 견본을 그린다.
  *
  * ---- 상태 클래스 (칸 .lk-cell, .lk-gcell 과 범례 견본 .lk-swatch 에 같이 건다) ----
@@ -96,7 +97,7 @@
  *   mode 와 preset 은 parseParams 가 정리한다(위 규칙).
  *
  * ---- 달라진 점 ----
- * 약속에서 벗어난 것은 없다. 덧붙인 것만 적는다: treeLayout, arrayTree, tree 와 .lk-tree 부품(트리 그림), 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
+ * 약속에서 벗어난 것은 노드 자리 하나다. 브리프는 left = col × 열 폭 이었으나 노드는 열 폭 안에서 틈의 절반, 층 높이 안에서 15px 띄워 놓아 노드 가운데가 선 끝 (col + 0.5, row + 0.5) 과 맞는다. 덧붙인 것: treeLayout, arrayTree, tree 와 .lk-tree 부품(트리 그림), 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
  * 값 줄 왼쪽 이름 칸(head), 보드 안에 .lk-array 또는 .lk-grid 자식 하나를 그린다(보드 자체는 가로 스크롤 상자).
  */
 (function (root, factory) {
@@ -303,6 +304,7 @@
     const wrap = node('div', 'lk-tree');
     wrap.style.setProperty('--lk-tcols', String(L.cols));
     wrap.style.setProperty('--lk-trows', String(L.rows));
+    if (L.cols <= 7) wrap.classList.add('lk-tree-narrow');
 
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');

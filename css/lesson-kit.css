@@ -2,7 +2,8 @@
 
 /* 칸 크기 — 12칸 배열은 56px 칸에 6px 틈이면 12 × 56 + 11 × 6 = 738px 이다. 보드 안쪽 폭은 페이지 폭보다 86px 좁다
    (본문 여백 20 × 2, 보드 칸 테두리 1 × 2 와 안쪽 여백 20 × 2, 보드 여백 2 × 2).
-   830px 아래에서는 52px 칸, 5px 틈(12 × 52 + 11 × 5 = 679px)으로 줄여 폭 765px 까지 가로 스크롤 없이 들어간다.
+   830px 아래에서는 52px 칸, 5px 틈(12 × 52 + 11 × 5 = 679px)으로 줄여 폭 762px(960px 창)까지 가로 스크롤 없이 들어간다. 글 안 iframe 폭은 1440px 창 962px, 1280px 창 802px, 1024px 창 826px 이고
+   900px 창의 754px 에서는 12칸이 넘친다.
    옆 칸이 서는 폭은 아래 .lk-stage 에서 보드 안쪽 폭이 738px 를 넘도록 잡았다 */
 .lk-board {
   --lk-cell: 56px;
@@ -171,6 +172,13 @@ html.is-embed .lk-controls {
 @media (min-width: 800px) and (max-width: 1239px) {
   .lk-stage:has(#lk-grid) { grid-template-columns: minmax(0, 1fr) 300px; }
   .lk-stage:has(#lk-grid) .lk-side { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 트리 열이 7개 이하(.lk-tree-narrow)인 데모도 같은 꼴로 보드 | 옆 칸 260px 로 세운다. 트리가 작아 한 칸으로 쌓으면
+   「한 칸」 버튼과 결과 칸이 한 화면에 안 들어온다. 300px 는 글 안 iframe 폭 826px 에서 보드가 넘쳐 260px 로 잡았다 */
+@media (min-width: 800px) and (max-width: 1239px) {
+  .lk-stage:has(.lk-tree-narrow) { grid-template-columns: minmax(0, 1fr) 260px; }
+  .lk-stage:has(.lk-tree-narrow) .lk-side { grid-template-columns: minmax(0, 1fr); }
 }
 
 .lk-board-col {
@@ -443,7 +451,7 @@ html.is-embed .lk-controls {
 
 /* ---- 트리 그림 (LessonKit.tree) ----
    열 폭은 칸 + 틈, 층 높이는 칸 + 30px 이다. 11열은 56px 칸에서 11 × 62 = 682px, 52px 칸에서 11 × 57 = 627px 라
-   글 안 iframe 폭 765px 에 들어간다. 노드는 열 폭 안에서 틈의 절반만큼, 층 높이 안에서 위아래 15px 씩 띄워 앉히므로
+   글 안 iframe 폭 826px(1024px 창)과 962px(1440px 창)에 들어간다. 노드는 열 폭 안에서 틈의 절반만큼, 층 높이 안에서 위아래 15px 씩 띄워 앉히므로
    노드 가운데가 (col + 0.5, row + 0.5) 칸 단위의 한 점이 된다. 선은 그 점끼리 잇는다 */
 .lk-tree {
   --lk-tcolw: calc(var(--lk-cell) + var(--lk-gap));

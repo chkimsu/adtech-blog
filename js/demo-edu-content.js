@@ -2749,6 +2749,41 @@ window.DEMO_EDU = {
         ]
     },
 
+    // 과외 힙의 내부 (알고리즘) — 부모와 자식 규칙, heappush 의 자리 이동, 교과서 방식과 CPython 방식 heappop. 계산은 js/lesson-heap-internals-model.js
+    'lesson-heap-internals': {
+        analogy: '힙 리스트는 부모 칸의 값이 자식 칸의 값보다 크지 않다는 규칙(힙 규칙) 하나로 정해지고, heappush 와 heappop 은 이 규칙을 되살리는 자리 이동이다. 값이 모두 다른 12칸 리스트에서 맨 앞 값을 한 번 꺼낼 때 비교는 교과서 방식이 6번, CPython 방식이 4번이고 남는 리스트는 같다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonHeapInternals.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonHeapInternalsDescribe ? window.lessonHeapInternalsDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '리스트와 트리',
+                body: '위쪽은 힙 리스트이고 아래쪽은 같은 리스트를 트리로 그린 것입니다. 리스트의 i번 칸이 트리의 어디인지 보여 주며, 노드 아래 작은 숫자가 인덱스입니다. 부모 칸은 (i - 1) // 2, 왼쪽 자식 칸은 2i + 1, 오른쪽 자식 칸은 2i + 2 입니다. 파란 테두리 칸이 지금 보는 칸이고, 점선 칸은 heappop 도중 값이 없는 빈칸입니다. 리스트가 줄어도 트리의 다른 노드는 움직이지 않습니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 부모와 자식 규칙 탭에서는 쌍 하나를 확인하고, heappush 탭에서는 붙이기, 부모와 비교 하나, 자리 잡기가 각각 한 단계입니다. 두 heappop 탭에서는 꺼내기, 마지막 값 떼어 내기, 자식과 비교해 한 칸 움직이기가 각각 한 단계입니다. 이번 단계 칸에 방금 한 일과 값이 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 쌍」, 「다음 값」, 「다음 층」 버튼',
+                body: '이 버튼의 글자는 탭마다 바뀝니다. 부모와 자식 규칙 탭에서는 「다음 쌍」이라 쌍 하나씩, heappush 탭에서는 「다음 값」이라 값 하나를 끝까지 올려 자리 잡을 때까지, 두 heappop 탭에서는 「다음 층」이라 트리의 한 층만큼 움직이는 일까지 넘깁니다. 처음 누르면 맨 앞 값을 꺼내고 마지막 값을 떼어 내는 준비를 한 번에 넘깁니다(교과서 방식은 마지막 값을 0번 칸에 두는 일까지).'
+            },
+            {
+                el: '.lk-result',
+                title: '결과 칸',
+                body: '부모와 자식 규칙 탭에서는 규칙을 지키는 쌍의 수와 두 번째 값, heappush 탭에서는 넣은 뒤의 리스트와 값마다의 비교 횟수, 두 heappop 탭에서는 꺼낸 값과 남은 리스트, 비교 횟수가 나옵니다. 같은 입력의 두 heappop 탭은 남은 리스트가 같고, 값 12개 입력에서는 비교가 6번과 4번으로 다릅니다.'
+            }
+        ]
+    },
+
     // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================

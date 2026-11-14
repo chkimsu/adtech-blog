@@ -8,17 +8,6 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/lesson-kit.css">
-    <style>
-        /* 한 칸으로 쌓이는 폭(1100px 미만)에서 이번 단계와 상태 칸을 나란히 두어 글 안 iframe 높이를 줄인다 */
-        /* 12칸 배열이 790px 폭 iframe 에서도 가로 스크롤 없이 들어가도록 칸을 조금 줄인다(12 × 52 + 11 × 5 = 679px) */
-        @media (max-width: 830px) {
-            .lk-board { --lk-cell: 52px; --lk-gap: 5px; }
-        }
-        @media (min-width: 700px) and (max-width: 1099px) {
-            .lk-side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-            .lk-side .lk-result { grid-column: 1 / -1; }
-        }
-    </style>
 </head>
 
 <body>

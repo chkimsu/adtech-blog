@@ -1,12 +1,20 @@
 /* 과외 데모 공용 틀 — js/lesson-kit.js 의 뼈대와 부품. 색은 토큰만 쓴다. */
 
-/* 칸 크기 — 12칸 배열이 56px 칸에 6px 틈이라 744px 로 글 안 iframe(790~1000px)에 들어간다 */
+/* 칸 크기 — 12칸 배열은 56px 칸에 6px 틈이면 12 × 56 + 11 × 6 = 738px 이다. 보드 안쪽 폭은 페이지 폭보다 86px 좁다
+   (본문 여백 20 × 2, 보드 칸 테두리 1 × 2 와 안쪽 여백 20 × 2, 보드 여백 2 × 2).
+   830px 아래에서는 52px 칸, 5px 틈(12 × 52 + 11 × 5 = 679px)으로 줄여 폭 765px 까지 가로 스크롤 없이 들어간다.
+   옆 칸이 서는 폭은 아래 .lk-stage 에서 보드 안쪽 폭이 738px 를 넘도록 잡았다 */
 .lk-board {
   --lk-cell: 56px;
   --lk-gap: 6px;
 }
 
-@media (min-width: 1200px) {
+@media (max-width: 830px) {
+  .lk-board { --lk-cell: 52px; --lk-gap: 5px; }
+}
+
+/* 64px 칸 12개는 12 × 64 + 11 × 6 = 834px 라 옆 칸 340px 가 서는 폭에서 보드 안쪽 폭(창 폭 - 498px)이 834px 이상인 1340px 부터 쓴다 */
+@media (min-width: 1340px) {
   .lk-board { --lk-cell: 64px; }
 }
 
@@ -141,7 +149,7 @@ html.is-embed .lk-controls {
   color: var(--text-muted);
 }
 
-/* 1100px 이상은 보드 | 옆 칸 340px, 그 아래는 한 칸으로 쌓는다 */
+/* 1240px 이상은 보드 | 옆 칸 340px, 그 아래는 한 칸으로 쌓는다. 보드 안쪽 폭이 창 폭 - 498px 라 56px 칸 12개(738px)는 1236px 부터 들어간다 */
 .lk-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -149,8 +157,20 @@ html.is-embed .lk-controls {
   align-items: start;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1240px) {
   .lk-stage { grid-template-columns: minmax(0, 1fr) 340px; }
+}
+
+/* 한 칸으로 쌓이는 700~1239px(글 안 iframe 폭 포함)에서는 이번 단계와 상태 칸을 나란히 두고 결과 칸은 두 칸에 걸쳐 높이를 줄인다 */
+@media (min-width: 700px) and (max-width: 1239px) {
+  .lk-side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lk-side .lk-result { grid-column: 1 / -1; }
+}
+
+/* 짝 표(#lk-grid)가 있는 데모는 배열이 6칸 안팎이라 800~1239px 에서도 보드 | 옆 칸 300px 로 세운다. 한 칸으로 쌓으면 「한 칸」 버튼과 이번 단계 칸이 1,000px 가까이 떨어져 한 화면에 안 들어온다 */
+@media (min-width: 800px) and (max-width: 1239px) {
+  .lk-stage:has(#lk-grid) { grid-template-columns: minmax(0, 1fr) 300px; }
+  .lk-stage:has(#lk-grid) .lk-side { grid-template-columns: minmax(0, 1fr); }
 }
 
 .lk-board-col {
@@ -260,6 +280,11 @@ html.is-embed .lk-controls {
 .lk-swatch.is-in {
   background: var(--navy-bg);
   color: var(--navy);
+}
+
+.lk-swatch.is-in,
+.lk-cell.is-in {
+  border-color: var(--navy-bd);
 }
 
 .lk-cell.is-out,

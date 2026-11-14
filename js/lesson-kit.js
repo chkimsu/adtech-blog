@@ -42,8 +42,8 @@
  * clamp(at, total) -> number          0 과 total 사이로.
  * particle(text, withFinal, withoutFinal) -> string
  *     text 뒤에 붙일 조사를 읽은 소리의 받침으로 골라 text + 조사 를 돌려준다(사이에 공백 없음). 입력에 따라 바뀌는 값
- *     뒤에 조사가 오는 문장에 쓴다. 맨 끝의 ] ) 따옴표 공백은 건너뛰고 그 앞 글자로 정한다. 한글은 그 글자의 받침,
- *     숫자는 읽는 소리(0 영, 1 일, 3 삼, 6 육, 7 칠, 8 팔은 받침 있음, 2 이, 4 사, 5 오, 9 구는 없음), 영문은 l, m, n, r 만 받침 있음.
+ *     뒤에 조사가 오는 문장에 쓴다. 맨 끝의 ] ) } 따옴표 공백은 건너뛰고 그 앞 글자로 정한다. 한글은 그 글자의 받침,
+ *     숫자는 읽는 소리(0 영, 1 일, 3 삼, 6 육, 7 칠, 8 팔은 받침 있음, 2 이, 4 사, 5 오, 9 구는 없음), 영문은 글자 하나(L, M, N, R 은 받침 있음)에만 쓰고 낱말에는 쓰지 않는다.
  *     쌍은 ('을','를'), ('이','가'), ('은','는'), ('과','와'), ('으로','로'). 으로/로 는 받침이 ㄹ(숫자 1, 7, 8, 영문 l, r)이면 '로'.
  *     예: particle('[6, 7]', '을', '를') = '[6, 7]을', particle('3', '으로', '로') = '3으로'.
  * player({ total, events, render }) -> { go(at), at(), restart() }
@@ -120,7 +120,7 @@
 
   // 조사 고르기 — 끝 글자의 받침 유무와 ㄹ 받침 여부
   function finalInfo(text) {
-    const t = String(text).replace(/[\]\)\s'"\u2019\u201d\u300d\u300f]+$/, '');
+    const t = String(text).replace(/[\]\)\}\s'"\u2019\u201d\u300d\u300f]+$/, '');
     const ch = t.charAt(t.length - 1);
     if (!ch) return { has: false, rieul: false };
     const code = ch.charCodeAt(0);

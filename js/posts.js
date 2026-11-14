@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-binary-search',
+    world: 'na',
+    title: '이진 탐색: 가운데 값과 비교해 절반을 버리는 법과 답의 범위를 좁히는 파라메트릭 서치',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 투 포인터 다음 시간에 이진 탐색을 배우자고 한 데서 시작합니다. 이진 탐색은 정렬된 배열에서 가운데 값과 비교해 찾는 값이 있을 수 없는 절반을 버리는 방법이라, 값 하나를 비교하는 데 O(1) 이면 값이 100만 개여도 반복은 많아야 floor(log2 N) + 1 = 20번입니다. 닫힌 구간 [left, right] 에서 while left <= right 를 쓰는 이유, mid 를 빼지 않고 right = mid 로 두면 같은 남은 범위가 되풀이되는 자리, int 가 32비트인 언어에서 두 인덱스의 합이 넘치는 계산을 LeetCode 704 의 nums = [-1, 0, 3, 5, 9, 12] 로 따라갑니다. 같은 값이 여럿일 때 bisect_left 와 bisect_right 가 돌려주는 넣을 자리와 그 차로 세는 개수, 배열 대신 속도의 범위를 좁히는 파라메트릭 서치까지 Find First and Last Position of Element in Sorted Array, Koko Eating Bananas 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-14',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-binary-search.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-sliding-window',
     world: 'na',
     title: '슬라이딩 윈도우: 나간 값을 빼고 들어온 값을 더해 구간 합을 O(N) 에 구하는 법',
@@ -1992,7 +2003,7 @@ const series = {
             'algorithm-practical-live-coding', 'algorithm-think-aloud',
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
-            'algorithm-lesson-sliding-window'],
+            'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

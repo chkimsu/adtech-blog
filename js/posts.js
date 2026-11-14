@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-tree-bst',
+    world: 'na',
+    title: '트리와 BST: root 하나로 받는 트리와 중위 순회가 정렬 배열이 되는 이유',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 힙 다음 시간에 트리의 종류를 묻고 트리 구조와 순회를 코드로 직접 구현하는지 물은 데서 시작합니다. LeetCode 는 트리를 층별 순서에 null 을 넣은 배열로 보여 주고 그 배열로 만든 트리의 root 하나를 함수에 넘기므로 풀이는 트리를 만들지 않고 root.left 와 root.right 로 내려가는 순회만 씁니다. 예제 [1, null, 2] 에서 root.right.left.val 이 AttributeError 를 내는 자리와 재귀의 if not root 가 잎이 아니라 None 에서만 참이 되는 까닭을 따라가고, 이진 탐색 트리(BST)를 중위 순회하면 정렬된 배열이 나오는 까닭을 부모와 자식이 아니라 부분 트리 전체에 걸리는 규칙으로 봅니다. BST 의 비용은 높이 h 에 비례해서 균형이면 O(log N), 정렬된 순서로 넣으면 O(N) 이라 같은 값 7개도 넣는 순서에 따라 80 을 찾는 비교가 3번과 7번으로 다릅니다. Maximum Depth of Binary Tree, Invert Binary Tree, Binary Tree Level Order Traversal, Kth Smallest Element in a BST 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-tree-bst.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-heap-top-k',
     world: 'na',
     title: '힙과 Top K: 가장 큰 K개를 고를 때 크기 K 최소 힙을 쓰는 이유',
@@ -23,7 +34,7 @@ const posts = [
     world: 'na',
     title: '이진 탐색: 가운데 값과 비교해 절반을 버리는 법과 답의 범위를 좁히는 파라메트릭 서치',
     excerpt: '코딩테스트를 준비하는 지훈 씨가 투 포인터 다음 시간에 이진 탐색을 배우자고 한 데서 시작합니다. 이진 탐색은 정렬된 배열에서 가운데 값과 비교해 찾는 값이 있을 수 없는 절반을 버리는 방법이라, 값 하나를 비교하는 데 O(1) 이면 값이 100만 개여도 반복은 많아야 floor(log2 N) + 1 = 20번입니다. 닫힌 구간 [left, right] 에서 while left <= right 를 쓰는 이유, mid 를 빼지 않고 right = mid 로 두면 같은 남은 범위가 되풀이되는 자리, int 가 32비트인 언어에서 두 인덱스의 합이 넘치는 계산을 LeetCode 704 의 nums = [-1, 0, 3, 5, 9, 12] 로 따라갑니다. 같은 값이 여럿일 때 bisect_left 와 bisect_right 가 돌려주는 넣을 자리와 그 차로 세는 개수, 배열 대신 속도의 범위를 좁히는 파라메트릭 서치까지 Find First and Last Position of Element in Sorted Array, Koko Eating Bananas 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
-    date: '2026-11-14',
+    date: '2026-11-15',
     categories: ['Interview & Algorithms'],
     tags: ['Algorithm', 'Coding Test'],
     contentUrl: 'posts/algorithm-lesson-binary-search.md',
@@ -2015,7 +2026,7 @@ const series = {
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
             'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search',
-            'algorithm-lesson-heap-top-k'],
+            'algorithm-lesson-heap-top-k', 'algorithm-lesson-tree-bst'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

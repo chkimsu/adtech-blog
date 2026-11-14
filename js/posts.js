@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-heap-internals',
+    world: 'na',
+    title: '힙의 내부: 리스트 칸 번호로 부모를 찾고 꺼낸 자리를 마지막 값으로 채우는 이유',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 트리와 BST 다음 시간에 완전 이진 트리의 규칙과 heapq 의 관계를 물은 데서 시작합니다. heapq 의 힙은 i번 칸의 부모 칸이 (i - 1) // 2, 자식 칸이 2i + 1 과 2i + 2 인 리스트이고 모든 부모와 자식 사이에서 부모 ≤ 자식을 지켜서 맨 앞 값이 가장 작지만 층끼리는 정렬돼 있지 않습니다. heappush 는 끝에 붙인 값을 부모보다 작은 동안 올리고 heappop 은 리스트가 끝에서만 O(1) 에 줄어들므로 꺼낸 빈칸을 리스트 끝의 마지막 값으로 채웁니다. 마지막 값을 0번 칸에서 내리는 교과서 방식과 빈칸을 잎까지 내린 뒤 마지막 값을 올리는 CPython 3.9 의 방식은 값이 모두 다를 때 같은 리스트를 남기지만 서로 다른 값 1,000개를 모두 꺼내는 비교는 15,003번과 8,650번으로 다릅니다. 최대 힙에서 두 번째로 큰 값, Last Stone Weight, Kth Largest Element in a Stream, Sort an Array 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-heap-internals.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-tree-bst',
     world: 'na',
     title: '트리와 BST: root 하나로 받는 트리와 중위 순회가 정렬 배열이 되는 이유',
@@ -2026,7 +2037,8 @@ const series = {
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
             'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search',
-            'algorithm-lesson-heap-top-k', 'algorithm-lesson-tree-bst'],
+            'algorithm-lesson-heap-top-k', 'algorithm-lesson-tree-bst',
+            'algorithm-lesson-heap-internals'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

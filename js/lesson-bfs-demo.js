@@ -231,7 +231,9 @@
                 }
                 if (queued.has(k)) cls.push('is-queued');
                 if (last && last.r === r && last.c === c) {
-                    if (last.type === 'scan') cls.push('is-scan');
+                    // 섬 개수 모드에서 땅을 만난 칸(found)은 아직 꺼내지 않았다. 살펴보는 칸(scan)과 같은 표시로 그리고,
+                    // 「지금 꺼낸 칸」 테두리는 visit 에만 붙인다.
+                    if (last.type === 'scan' || last.type === 'found') cls.push('is-scan');
                     else if (!showPath) cls.push('is-current');
                     if (last.type === 'found') tag = `섬 ${last.island}`;
                 }

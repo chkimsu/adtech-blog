@@ -27,6 +27,11 @@ eq('미로 이동 수', m.moves, 8);
 eq('미로 경로 칸 수', m.path.length, 9);
 eq('경로 시작과 끝', [m.path[0], m.path[8]], [[0,0],[4,4]]);
 eq('마지막 방문 깊이', m.events[m.events.length - 1].depth, 8);
+// 출구를 꺼내면 이웃을 넣기 전에 멈춘다(글의 코드와 같은 순서). 마지막 visit 의 큐에 출구의 이웃이 없어야 한다.
+const lastQueue = (rows, goal) => { const t = B.pathTrace(rows, [0,0], goal); return t.events[t.events.length - 1].queue; };
+const walled = B.toggleCell(B.toggleCell(P['maze-5x5'].rows, 3, 3, 'path'), 4, 2, 'path');
+eq('벽 둘 더한 미로 마지막 큐', lastQueue(walled, [4,4]), []);
+eq('대화 미로 마지막 큐', lastQueue(['...','##.','...'], [2,2]), []);
 eq('대화 미로 이동 수', B.pathTrace(['...','##.','...'], [0,0], [2,2]).moves, 4);
 eq('막힌 출구', B.pathTrace(['.#','#.'], [0,0], [1,1]).moves, -1);
 eq('막힌 출구 경로', B.pathTrace(['.#','#.'], [0,0], [1,1]).path, []);

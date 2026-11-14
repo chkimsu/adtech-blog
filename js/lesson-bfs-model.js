@@ -35,8 +35,9 @@
 
   const key = (r, c) => r + ',' + c;
 
-  // 큐에 넣을 때 방문 표시를 한다. 꺼낼 때마다 visit 이벤트 하나를 남기고,
-  // goal 이 있으면 그 칸의 visit 을 남긴 직후 멈춘다.
+  // 큐에 넣을 때 방문 표시를 한다. 꺼낼 때마다 visit 이벤트 하나를 남긴다.
+  // goal 이 있으면 그 칸을 꺼낸 순간 이웃을 넣지 않고 visit 을 남긴 뒤 멈춘다.
+  // 글의 코드(꺼낸 칸이 출구인지 먼저 보고 돌려준다)와 같은 순서라 마지막 visit 의 큐에 출구의 이웃이 없다.
   function bfsTrace(rows, start, openChar, goal) {
     const R = rows.length;
     const C = R ? rows[0].length : 0;
@@ -48,20 +49,23 @@
     let head = 0;
     while (head < queue.length) {
       const [r, c, d] = queue[head++];
-      for (const [dr, dc] of DIRS) {
-        const nr = r + dr, nc = c + dc;
-        if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
-        if (rows[nr][nc] !== openChar || seen.has(key(nr, nc))) continue;
-        seen.add(key(nr, nc));
-        parent[key(nr, nc)] = [r, c];
-        queue.push([nr, nc, d + 1]);
+      const atGoal = !!goal && r === goal[0] && c === goal[1];
+      if (!atGoal) {
+        for (const [dr, dc] of DIRS) {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+          if (rows[nr][nc] !== openChar || seen.has(key(nr, nc))) continue;
+          seen.add(key(nr, nc));
+          parent[key(nr, nc)] = [r, c];
+          queue.push([nr, nc, d + 1]);
+        }
       }
       (layers[d] = layers[d] || []).push([r, c]);
       events.push({
         type: 'visit', r, c, depth: d,
         queue: queue.slice(head).map((q) => q.slice()),
       });
-      if (goal && r === goal[0] && c === goal[1]) break;
+      if (atGoal) break;
     }
     return { layers, events, parent };
   }
@@ -130,7 +134,7 @@
     }
     if (p.mode === 'layers') {
       const sizes = bfsTrace(p.rows, p.start, '1').layers.map((l) => l.length);
-      return `시작 칸에서 한 겹씩 퍼지면 거리 0부터 ${sizes.length - 1}까지 칸 수가 차례로 ${sizes.join(', ')}개입니다.`;
+      return `시작 칸에서 한 겹씩 퍼지면 깊이 0부터 ${sizes.length - 1}까지 칸 수가 차례로 ${sizes.join(', ')}개입니다.`;
     }
     const t = pathTrace(p.rows, p.start, p.goal);
     return t.moves < 0

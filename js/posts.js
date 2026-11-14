@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-sliding-window',
+    world: 'na',
+    title: '슬라이딩 윈도우: 나간 값을 빼고 들어온 값을 더해 구간 합을 O(N) 에 구하는 법',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 Two Sum 풀이를 보고 슬라이딩 윈도우 방식이냐고 물은 데서 시작합니다. 슬라이딩 윈도우는 배열에서 연속한 구간(윈도우)을 한 칸씩 옮기며 그 구간의 값을 구하는 방법이라 떨어져 있어도 되는 두 값을 짝짓는 Two Sum 과 다릅니다. 크기가 k 인 연속한 구간의 합은 첫 윈도우만 k 개를 다 더하고 그 뒤로는 옮길 때마다 나간 값을 빼고 들어온 값을 더하므로 nums = [2, 1, 5, 1, 3, 2], k = 3 에서 최대 합 9 를 연산 9번에 구하고 매번 다 더하면 12번이 듭니다. 값이 10만 개이고 윈도우 크기가 5만이면 다 더하기는 (N - k + 1) × k = 2,500,050,000번, 빼고 더하기는 k + 2(N - k) = 150,000번입니다. 오른쪽 끝을 늘리고 왼쪽 끝을 조건에 맞춰 줄이는 크기가 바뀌는 윈도우와 Maximum Average Subarray I, Longest Substring Without Repeating Characters, Minimum Size Subarray Sum 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-14',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-sliding-window.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-two-pointers',
     world: 'na',
     title: '투 포인터: 정렬된 배열의 양 끝에서 좁혀 와도 답을 놓치지 않는 이유',
@@ -1980,7 +1991,8 @@ const series = {
             'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
             'algorithm-practical-live-coding', 'algorithm-think-aloud',
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
-            'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers'],
+            'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
+            'algorithm-lesson-sliding-window'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

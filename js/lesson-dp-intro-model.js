@@ -130,7 +130,7 @@
     if (mode === 'table') {
       if (p.n) {
         const t = tableClimb(p.n);
-        return `계단 ${p.n}칸을 오르는 방법은 ${t.answer}가지입니다. dp[1] 과 dp[2] 에서 시작해 칸 ${p.n - 2}개를 한 번씩 채웁니다.`;
+        return `계단 ${p.n}칸을 오르는 방법은 ${t.answer}가지입니다. 기저 칸 dp[1], dp[2] 를 적은 뒤 나머지 칸 ${p.n - 2}개를 점화식으로 한 번씩 계산합니다.`;
       }
       const t = tableRob(p.nums);
       const sum = t.houses.map((h) => p.nums[h]).join(' + ');

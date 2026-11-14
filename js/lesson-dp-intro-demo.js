@@ -24,7 +24,8 @@
 
   const MODE_LABEL = { calls: '그냥 재귀', memo: '메모 재귀', table: '표를 채우는 풀이' };
   const GROUP_LABEL = { calls: '다음 반환', memo: '다음 반환', table: '다음 칸' };
-  const STATE_LABEL = { calls: '호출 중', memo: '메모', table: '직전 두 칸' };
+  // 표 탭의 상태 칸은 계단이면 climb_two 의 a, b 자리(다음 칸이 읽을 두 칸), 집 털기면 털 경우와 쉴 경우다
+  const STATE_LABEL = { calls: '호출 중', memo: '메모', table: '다음 칸이 읽을 두 칸', rob: '두 경우' };
   const START = {
     calls: '「한 칸」이나 「다음 반환」을 누르면 시작합니다.',
     table: '「한 칸」이나 「다음 칸」을 누르면 시작합니다.',
@@ -52,8 +53,8 @@
   };
 
   function note() {
-    if (S.mode === 'calls') return '70번처럼 계단 n 칸을 한 번에 1칸이나 2칸씩 오르는 방법의 수를 dfs(step) 으로 셉니다. dfs(step) 은 dfs(step - 1) 과 dfs(step - 2) 를 더하는데, 구한 값을 적어 두지 않아 같은 호출이 여러 번 나옵니다.';
-    if (S.mode === 'memo') return '같은 dfs 에 메모(dict)를 붙입니다. 계산한 값은 memo[step] 에 적고, 이미 있으면 더 부르지 않고 꺼내 씁니다. 호출 수가 줄어드는 것을 그냥 재귀와 비교해 봅니다.';
+    if (S.mode === 'calls') return '70번처럼 계단 n 칸을 한 번에 1칸이나 2칸씩 오르는 방법의 수를 dfs(step) 으로 셉니다. dfs(step) 은 dfs(step - 1) 과 dfs(step - 2) 를 더하는데 구한 값을 적어 두지 않아 같은 호출이 여러 번 나옵니다.';
+    if (S.mode === 'memo') return '같은 dfs 에 메모(dict)를 붙입니다. 계산한 값은 memo[step] 에 적고 이미 있으면 더 부르지 않고 꺼내 씁니다. 호출 수가 줄어드는 것을 그냥 재귀와 비교해 봅니다.';
     return S.p.n
       ? '작은 칸부터 dp 리스트를 채웁니다. dp[1] = 1, dp[2] = 2 에서 시작해 dp[i] = dp[i - 1] + dp[i - 2] 를 한 번씩만 계산하고 재귀 호출은 없습니다.'
       : '198번처럼 이웃한 집은 털 수 없을 때 dp[i] 는 i번 집까지 훔칠 수 있는 최대 금액입니다. i번 집을 털면 nums[i] + dp[i - 2], 쉬면 dp[i - 1] 이고 둘 중 큰 쪽을 적습니다.';
@@ -97,7 +98,7 @@
     $('dp-hint').textContent = isTable() ? '' : '노드 안 숫자는 dfs 에 넘긴 계단 수, 아래 숫자는 돌려준 값';
     if (isTable()) $('lk-legend').replaceChildren();
     else K.legend($('lk-legend'), LEGEND[S.mode]);
-    $('lk-state-label').textContent = STATE_LABEL[S.mode];
+    $('lk-state-label').textContent = STATE_LABEL[isTable() && !S.p.n ? 'rob' : S.mode];
     ['dp-tree', 'dp-nums', 'dp-table'].forEach((id) => $(id).replaceChildren());
     if (isTable()) {
       K.legend($('lk-legend'), S.p.n
@@ -195,15 +196,15 @@
         return `${q(e.step, '을', '를')} 부릅니다. 기저 조건에 걸리지 않아 ${kids}`;
       }
       const head = `${q(e.step, '을', '를')} 부릅니다. 기저 조건에 걸리지 않아 메모를 먼저 봅니다. `;
-      if (nx && nx.type === 'hit') return `${head}메모에 ${e.step}: ${nx.value} 이 있습니다.`;
-      return `${head}메모에 ${e.step} 이 없어 ${kids}`;
+      if (nx && nx.type === 'hit') return `${head}메모에 ${P(`${e.step}: ${nx.value}`, '이', '가')} 있습니다.`;
+      return `${head}메모에 ${P(e.step, '이', '가')} 없어 ${kids}`;
     }
     if (e.type === 'base') return `${q(e.step, '은', '는')} 기저 조건 step <= 2 에 걸려 ${P(e.value, '을', '를')} 돌려줍니다.`;
-    if (e.type === 'hit') return `메모에 ${e.step}: ${e.value} 이 있어 ${q(e.step, '은', '는')} 더 부르지 않고 ${P(e.value, '을', '를')} 돌려줍니다.`;
+    if (e.type === 'hit') return `메모에 ${P(`${e.step}: ${e.value}`, '이', '가')} 있어 ${q(e.step, '은', '는')} 더 부르지 않고 ${P(e.value, '을', '를')} 돌려줍니다.`;
     const n = nodes[e.id];
     const a = v.done[n.left].value, b = v.done[n.right].value;
     const sum = `${q(e.step, '은', '는')} ${q(e.step - 1, '이', '가')} 돌려준 ${P(a, '과', '와')} ${q(e.step - 2, '이', '가')} 돌려준 ${P(b, '을', '를')} 더해 ${P(e.value, '을', '를')} 돌려줍니다.`;
-    return S.mode === 'memo' ? `${sum} 메모에 ${e.step}: ${e.value} 을 적습니다.` : sum;
+    return S.mode === 'memo' ? `${sum} 메모에 ${P(`${e.step}: ${e.value}`, '을', '를')} 적습니다.` : sum;
   }
 
   function callState(shown, v) {
@@ -259,12 +260,8 @@
   function tableView(shown) {
     const n = S.p.n ? S.p.n + 1 : S.p.nums.length;
     const dp = new Array(n).fill(null);
-    let last = null, fills = 0;
-    shown.forEach((e) => {
-      dp[e.i] = e.value;
-      if (e.type === 'fill') { fills++; last = e; }
-    });
-    return { dp, last, fills, filled: dp.filter((x) => x !== null).length };
+    shown.forEach((e) => { dp[e.i] = e.value; });
+    return { dp, filled: dp.filter((x) => x !== null).length };
   }
 
   function tableBoard(shown, v, done) {
@@ -291,10 +288,15 @@
   function tableNow(shown, v) {
     const e = shown[shown.length - 1];
     if (!e) return START.table;
+    // 기저 칸은 「한 칸」마다 하나씩 적힌다. 문장도 그 칸 하나만 말하고, 둘째 칸에서 두 칸을 함께 정리한다(「다음 칸」은 둘을 한 번에 넘긴다).
     if (e.type === 'base') {
-      if (S.p.n) return '1칸과 2칸은 계산하지 않고 dp[1] = 1, dp[2] = 2 를 먼저 적습니다. 계단 1칸은 1가지, 2칸은 1 + 1 과 2 로 2가지입니다.';
+      if (S.p.n) {
+        if (e.i === 1) return 'dp[1] = 1을 적습니다. 계단 1칸은 1칸 한 번으로 1가지라 점화식 없이 적는 기저 칸입니다.';
+        return 'dp[2] = 2를 적습니다. 계단 2칸은 1 + 1 과 2 로 2가지입니다. 기저 칸 dp[1], dp[2] 는 점화식 없이 이렇게 먼저 적습니다.';
+      }
       const nums = S.p.nums;
-      return `집이 하나뿐이면 그 집을 털어 dp[0] = nums[0] = ${nums[0]}, 둘이면 둘 중 큰 쪽이라 dp[1] = max(${nums[0]}, ${nums[1]}) = ${v.dp[1]}. 이 두 칸을 먼저 적습니다.`;
+      if (e.i === 0) return `0번 집까지만 보면 그 집을 털어 dp[0] = nums[0] = ${P(e.value, '을', '를')} 적습니다.`;
+      return `1번 집까지 보면 둘 중 큰 쪽을 털어 dp[1] = max(${nums[0]}, ${nums[1]}) = ${P(e.value, '을', '를')} 적습니다. 기저 칸 dp[0], dp[1] 은 점화식 없이 이렇게 먼저 적습니다.`;
     }
     if (S.p.n) {
       const a = v.dp[e.i - 1], b = v.dp[e.i - 2];
@@ -304,11 +306,23 @@
     return `${e.i}번 집: 털면 ${nums[e.i]} + dp[${e.i - 2}] = ${e.take}, 쉬면 dp[${e.i - 1}] = ${P(e.skip, '이라', '라')} ${P(e.value, '을', '를')} 적습니다.`;
   }
 
-  function tableState(v) {
-    const e = v.last;
+  function tableState(shown, v) {
+    const e = shown[shown.length - 1];
     if (!e) {
       K.chips($('lk-state'), [], '아직 채운 칸이 없습니다');
       $('lk-state-note').textContent = '';
+      return;
+    }
+    // 기저 칸만 적은 동안 — 계단은 dp[2] 까지 적으면 dp[3] 이 읽을 두 칸이 생기고, 집 털기는 두 경우가 2번 집부터 나온다
+    if (e.type === 'base') {
+      const first = S.p.n ? 1 : 0;
+      if (S.p.n && e.i === first + 1) {
+        K.chips($('lk-state'), [{ text: `dp[i - 1] ${v.dp[1]}` }, { text: `dp[i] ${v.dp[2]}`, cls: 'is-in' }], '');
+        $('lk-state-note').textContent = 'i = 2. 다음 칸은 이 두 값만 있으면 구할 수 있습니다.';
+        return;
+      }
+      K.chips($('lk-state'), [], S.p.n ? '다음 칸 dp[2] 도 기저 칸입니다' : '2번 집부터 나옵니다');
+      $('lk-state-note').textContent = e.i === first ? `기저 칸 dp[${first}] 을 적었습니다.` : `기저 칸 dp[${first}], dp[${e.i}] 을 적었습니다.`;
       return;
     }
     if (S.p.n) {
@@ -350,7 +364,7 @@
     if (isTable()) {
       const v = tableView(shown);
       tableBoard(shown, v, done);
-      tableState(v);
+      tableState(shown, v);
       tableResult(shown, v, done);
       $('lk-now').textContent = tableNow(shown, v);
     } else {

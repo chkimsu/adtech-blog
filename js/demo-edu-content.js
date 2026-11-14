@@ -2571,6 +2571,43 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // 과외 투 포인터 (알고리즘) — 양 끝에서 좁히기와 버린 짝. 계산은 js/lesson-two-pointers-model.js
+    // ==========================================
+    'lesson-two-pointers': {
+        analogy: '정렬된 배열이면 합 하나로 짝 여러 개를 한꺼번에 버린다. 6개 입력에서 짝 15개 가운데 비교 5번이고, 정렬하지 않으면 첫 이동에서 답을 버린다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 입력을 고르면 그 입력에서 투 포인터가 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonTwoPointers.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonTwoPointersDescribe ? window.lessonTwoPointersDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '배열',
+                body: 'nums 의 칸마다 인덱스와 값이 있고 아래에 L 과 R 이 서 있는 칸이 표시됩니다. 지금 비교하는 두 칸은 파란 테두리, 답이 되면 진한 파란 바탕입니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. L 과 R 의 합을 target 과 견줘 크면 R 을 왼쪽으로, 작으면 L 을 오른쪽으로 옮기는 비교 하나가 한 단계입니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-grid',
+                title: '짝 표',
+                body: '행 i 와 열 j 의 칸에 두 값의 합이 적혀 있습니다. 지금 비교하는 짝은 파란 테두리이고, 이동할 때마다 답이 될 수 없다고 버린 짝이 회색 점선 칸으로 바뀝니다.'
+            },
+            {
+                el: '.lk-result',
+                title: '결과 칸',
+                body: '찾은 두 값과 인덱스, 그리고 짝 15개 가운데 비교 몇 번이었는지가 나옵니다. 정렬하지 않은 입력에서는 짝을 찾지 못했다는 말과 함께 버려진 답이 적힙니다.'
+            }
+        ]
+    },
+
+    // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================
     'http-methods': {

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투 포인터: 양 끝에서 좁히기와 버린 짝 - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/lesson-kit.css">
+    <style>
+        .lk-grid-title { margin: 1.1rem 0 0.5rem; font-weight: 600; color: var(--text-primary); }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>투 포인터: 양 끝에서 좁히기와 버린 짝</h1>
+        <p class="demo-subtitle">
+            정렬된 배열에서 합이 target 인 두 값을 양 끝의 L 과 R 로 찾는 과정을 비교 하나씩 따라갑니다.
+            비교할 때마다 어떤 짝이 답이 될 수 없다고 버려지는지를 짝 표로 보고, 정렬하지 않은 배열에서는 같은 규칙이 답까지 버리는 것을 확인합니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              정렬된 배열이면 두 값의 합 하나로 짝 여러 개를 한꺼번에 버릴 수 있습니다. nums = [1, 3, 4, 6, 8, 11], target = 10 에서 짝 <strong>15개</strong> 가운데 비교는 <strong>5번</strong>이고 답 [2, 3] 이 나옵니다.
+              같은 값을 정렬하지 않은 nums = [11, 3, 8, 1, 6, 4] 로 하면 첫 이동에서 답 [4, 5] 를 버려 <strong>짝을 찾지 못합니다</strong>.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">보여 주는 장면</span>합이 target 인 두 칸을 찾을 때 모든 짝을 더해 보면 n 이 6 일 때 짝이 15개입니다. 투 포인터는 L 을 맨 왼쪽, R 을 맨 오른쪽에 두고 두 값의 합 하나만 봅니다. 합이 target 보다 크면 R 이 들어간 짝은 모두 답이 될 수 없어서 R 을 왼쪽으로 한 칸 옮기고, 작으면 L 이 들어간 짝은 모두 답이 될 수 없어서 L 을 오른쪽으로 한 칸 옮깁니다. 이렇게 버릴 수 있는 까닭은 배열이 정렬돼 있어 L 보다 오른쪽 값이 모두 L 의 값 이상이기 때문입니다.</div>
+            <div><span class="demo-intro-label">목적</span>비교 한 번이 짝을 몇 개 버리는지 눈으로 세고, 정렬이라는 조건이 빠지면 같은 규칙이 왜 틀리는지 봅니다. 입력은 세 가지입니다. nums = [1, 3, 4, 6, 8, 11], target = 10 은 정렬된 배열이고 비교 5번에 짝 14개를 버린 뒤 5번째 비교에서 답을 찾습니다. nums = [11, 3, 8, 1, 6, 4], target = 10 은 같은 값을 섞은 배열이고 인덱스 4 와 5(6 + 4)가 답인데 첫 비교에서 버립니다. nums = [2, 7, 11, 15], target = 9 는 LeetCode 167 의 예제 입력으로 비교 3번에 답 [0, 1] 이 나옵니다.</div>
+            <div><span class="demo-intro-label">결과 읽는 법</span><strong>결과</strong> 칸은 찾은 두 값의 합과 인덱스이고 아랫줄은 모든 짝의 수와 실제 비교 횟수입니다. 정렬된 입력은 「짝 15개 가운데 비교 5번」처럼 둘의 차이가 투 포인터가 줄여 준 양입니다. 정렬하지 않은 입력은 「짝을 찾지 못했습니다」가 나오고 아랫줄에 놓친 답이 몇 번째 이동에서 버려졌는지 적힙니다. <strong>짝 표</strong>는 행 i 와 열 j 의 칸에 두 값의 합을 적고, 파란 테두리가 지금 비교하는 짝, 회색 점선 칸이 버린 짝, 진한 파란 칸이 답입니다. 표의 행과 열 머리는 nums 의 값입니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">따라 하는 순서</span>
+          <li><span class="step-text">입력은 nums = [1, 3, 4, 6, 8, 11], target = 10 입니다. <strong>「한 칸」</strong>은 비교 하나를 보입니다. 첫 번째 누름에서 L = 0, R = 5 의 합 1 + 11 = 12 가 10 보다 커서 R 을 왼쪽으로 옮기고, 11 이 들어간 짝 5개가 짝 표에서 회색이 됩니다. <strong>이번 단계</strong> 칸이 이 내용을 문장으로 적습니다.</span></li>
+          <li><span class="step-text"><strong>「끝까지」</strong>를 누르면 남은 비교가 한 번에 진행되고 5번째 비교에서 4 + 6 = 10 으로 끝납니다. 결과 칸에 「인덱스 2와 3」과 「짝 15개 가운데 비교 5번」이 나오고, 짝 표에서 회색 칸은 14개, 진한 파란 칸은 (2, 3) 하나입니다. 짝 표의 회색 칸이 어느 비교에서 늘었는지는 「처음」으로 돌아가 「한 칸」을 다시 눌러 보면 알 수 있습니다.</span></li>
+          <li><span class="step-text">입력 목록에서 nums = [11, 3, 8, 1, 6, 4] 를 고르고 「한 칸」을 한 번 누릅니다. 11 + 4 = 15 가 10 보다 커서 R 을 옮기며 4 가 들어간 짝 5개를 버리는데, 여기에 답 (4, 5) 가 들어 있습니다. 짝 표의 (4, 5) 칸이 첫 단계부터 회색입니다. <strong>「끝까지」</strong>를 누르면 결과 칸에 「짝을 찾지 못했습니다」가 나오고 아랫줄에 인덱스 4 와 5(6 + 4)가 첫 이동에서 버려졌다고 적힙니다.</span></li>
+          <li><span class="step-text">세 번째 입력 nums = [2, 7, 11, 15], target = 9 에서 「끝까지」를 누르면 비교 3번에 2 + 7 = 9, 인덱스 0 과 1 이 나옵니다. 입력을 바꾸면 처음 상태로 돌아갑니다. 정렬된 입력과 정렬하지 않은 입력에서 <strong>비교한 짝</strong> 칸 아래 글이 어떻게 달라지는지 읽어 봅니다.</span></li>
+        </ol>
+
+        <div class="lk-controls">
+            <div class="lk-toolbar">
+                <div class="lk-tabs" id="lk-tabs" role="group" aria-label="모드"></div>
+                <label class="lk-preset">입력 <select id="lk-preset"></select></label>
+            </div>
+            <p class="lk-note" id="lk-note"></p>
+            <div class="lk-actions">
+                <button type="button" id="lk-reset">처음</button>
+                <button type="button" id="lk-step">한 칸</button>
+                <button type="button" id="lk-group" hidden>다음 값</button>
+                <button type="button" id="lk-end">끝까지</button>
+                <span class="lk-count" id="lk-count"></span>
+            </div>
+        </div>
+
+        <div class="lk-stage">
+            <div class="lk-board-col">
+                <div class="lk-board" id="lk-board" role="group" aria-label="nums 배열. 인덱스와 값, L 과 R 의 자리를 보입니다."></div>
+                <p class="lk-note lk-grid-title">짝 표: 행 i, 열 j, 칸의 값은 두 값의 합</p>
+                <div class="lk-board" id="lk-grid" role="group" aria-label="짝 표. 행 i 와 열 j 의 합을 보입니다."></div>
+                <div class="lk-legend" id="lk-legend"></div>
+            </div>
+            <div class="lk-side">
+                <div class="lk-panel lk-result">
+                    <div class="lk-label">결과</div>
+                    <div class="lk-result-main" id="lk-result-main"></div>
+                    <div class="lk-result-sub" id="lk-result-sub"></div>
+                </div>
+                <div class="lk-panel lk-now">
+                    <div class="lk-label">이번 단계</div>
+                    <div id="lk-now" aria-live="polite"></div>
+                </div>
+                <div class="lk-panel lk-state">
+                    <div class="lk-label" id="lk-state-label">상태</div>
+                    <div class="lk-chips" id="lk-state"></div>
+                    <p class="lk-note" id="lk-state-note"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/lesson-kit.js"></script>
+    <script src="js/lesson-two-pointers-model.js"></script>
+    <script src="js/lesson-two-pointers-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

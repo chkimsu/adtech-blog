@@ -72,7 +72,7 @@ show('heapify(nums) 뒤', nums)                             # 맨 앞 값만 가
 # heapify(nums) 뒤: [1, 2, 5, 9, 7], 힙 조건 True, 정렬됨 False
 ```
 
-넣을 때마다 맨 앞 값이 그때까지 넣은 값 가운데 가장 작은 값이었고 마지막에 넣은 5 는 0번 칸으로 올라갔습니다. 그 결과 `[5, 10, 30, 40]` 은 정렬돼 있어 힙이 정렬된 리스트처럼 보이지만 우연입니다. 5 를 꺼낸 `[10, 40, 30]` 은 1번 칸의 40 이 2번 칸의 30 보다 크고 heapify 한 `[1, 2, 5, 9, 7]` 은 3번 칸의 9 가 4번 칸의 7 보다 크지만 부모가 자식보다 크지 않아 둘 다 힙 조건은 지킵니다. 넣은 값이 부모 칸과 자리를 바꾸며 올라가는 과정은 힙의 내부 글에서 다룹니다.
+넣을 때마다 맨 앞 값이 그때까지 넣은 값 가운데 가장 작은 값이었고 마지막에 넣은 5 는 0번 칸으로 올라갔습니다. 그 결과 `[5, 10, 30, 40]` 은 정렬돼 있어 힙이 정렬된 리스트처럼 보이지만 우연입니다. 5 를 꺼낸 `[10, 40, 30]` 은 1번 칸의 40 이 2번 칸의 30 보다 크고 heapify 한 `[1, 2, 5, 9, 7]` 은 3번 칸의 9 가 4번 칸의 7 보다 크지만 부모가 자식보다 크지 않아 둘 다 힙 조건은 지킵니다. 넣은 값이 부모 칸과 자리를 바꾸며 올라가는 과정은 [힙의 내부 글](post.html?id=algorithm-lesson-heap-internals)에서 다룹니다.
 
 heap[0] 은 칸 하나를 읽으므로 O(1) 입니다. heappush 와 heappop 은 비교가 많아야 트리의 층 수에 비례해서 값이 N개면 O(log N) 이고 heapify 는 공식 문서가 「in linear time」이라고 적는 대로 O(N) 입니다.
 
@@ -660,6 +660,7 @@ for points, k in (([[1, 3], [-2, 2]], 1), ([[3, 3], [5, -1], [-2, 4]], 2)):   # 
 - 지문 낱말로 힙을 고르는 표와 heapq 함수의 비용 표는 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편 맨 앞 절과 4절에 있습니다.
 - 정렬된 리스트에서 넣을 자리를 찾는 bisect 는 [이진 탐색](post.html?id=algorithm-lesson-binary-search) 편 5절에 있습니다.
 - 이진 탐색, BST, 힙의 규칙과 값 찾기, 넣기 비용을 한 표로 비교한 것은 [트리와 BST](post.html?id=algorithm-lesson-tree-bst) 편 10절에 있습니다.
+- heappush 가 넣은 값을 부모 칸과 바꾸며 올리는 순서와 heappop 이 꺼낸 자리를 마지막 값으로 채우는 두 방식은 [힙의 내부](post.html?id=algorithm-lesson-heap-internals) 편 4~6절에 있습니다.
 - 이 글의 데모는 [힙과 Top K: 크기 K 힙과 heapify 두 풀이](demo-lesson-heap-top-k.html) 한 페이지에서 탭과 입력을 바꿔 가며 볼 수 있고 값 12개를 heapify 하는 입력도 있습니다.
 - 예시 문제는 [Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/)(215), [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/)(347), [K Closest Points to Origin](https://leetcode.com/problems/k-closest-points-to-origin/)(973) 이고 값이 하나씩 들어오는 경우는 [Kth Largest Element in a Stream](https://leetcode.com/problems/kth-largest-element-in-a-stream/)(703) 입니다.
 - heapq 의 정의와 3.14 의 최대 힙 함수는 [공식 문서](https://docs.python.org/3/library/heapq.html)에, CPython 3.9 의 heapify, nlargest, `_heapify_max` 는 [heapq.py](https://github.com/python/cpython/blob/3.9/Lib/heapq.py) 에 있습니다.

@@ -47,7 +47,7 @@
 | 힙 | 규칙 | 완전 이진 트리이고 최소 힙은 부모 ≤ 자식, 최대 힙은 부모 ≥ 자식 | 힙과 Top K 편 |
 | 자가 균형 BST | 규칙 | 넣고 뺄 때 회전으로 높이를 O(log N) 으로 지키는 BST | AVL 트리, 레드-블랙 트리 |
 
-완전 이진 트리는 과외의 「위에서 아래로, 왼쪽부터 빈틈없이」가 교과서 정의와 같아서 A 도 완전 이진 트리이고 마지막 층의 맨 왼쪽 자리가 빈 C 는 아닙니다. 영어 full binary tree 는 책에 따라 포화 이진 트리를 뜻하기도 하고 모든 노드의 자식이 0개나 2개인 트리를 뜻하기도 해서 이 글은 쓰지 않습니다. 과외의 BST 규칙 「왼쪽 자식 < 나 < 오른쪽 자식」은 BST 가 아닌 트리도 통과시켜서 7절의 반례로 고칩니다. 힙 규칙 「부모 > 자식」은 heapq [공식 문서](https://docs.python.org/3/library/heapq.html)의 `heap[k] <= heap[2*k+1]` 처럼 같은 값도 되므로 표처럼 고칩니다. 힙을 리스트에 담는 방법은 힙의 내부 글에서 다룹니다. 자가 균형 BST 를 구현하라는 문제는 절대 나오지 않는다는 과외의 말은 출처가 없어 지웁니다.
+완전 이진 트리는 과외의 「위에서 아래로, 왼쪽부터 빈틈없이」가 교과서 정의와 같아서 A 도 완전 이진 트리이고 마지막 층의 맨 왼쪽 자리가 빈 C 는 아닙니다. 영어 full binary tree 는 책에 따라 포화 이진 트리를 뜻하기도 하고 모든 노드의 자식이 0개나 2개인 트리를 뜻하기도 해서 이 글은 쓰지 않습니다. 과외의 BST 규칙 「왼쪽 자식 < 나 < 오른쪽 자식」은 BST 가 아닌 트리도 통과시켜서 7절의 반례로 고칩니다. 힙 규칙 「부모 > 자식」은 heapq [공식 문서](https://docs.python.org/3/library/heapq.html)의 `heap[k] <= heap[2*k+1]` 처럼 같은 값도 되므로 표처럼 고칩니다. 힙을 리스트에 담는 방법은 [힙의 내부 글](post.html?id=algorithm-lesson-heap-internals)에서 다룹니다. 자가 균형 BST 를 구현하라는 문제는 절대 나오지 않는다는 과외의 말은 출처가 없어 지웁니다.
 
 높이는 LeetCode 104 가 maximum depth 라고 부르는 값이고 문제는 이 값을 루트에서 가장 먼 잎까지 가는 길에 있는 노드 수로 정의합니다. 그림의 네 트리는 모두 높이 3 입니다. 교과서 가운데는 높이를 그 길의 간선(두 노드를 연결하는 선) 수로 세는 책도 있어 그 값은 층 수보다 1 작고 이 시리즈의 [트리와 힙](post.html?id=algorithm-tree-heap) 편도 간선 수로 셉니다. 이 글의 높이는 LeetCode 와 같은 층 수입니다.
 
@@ -743,7 +743,7 @@ print(f'BST: 비교한 노드 {path}, 비교 {len(path)}번, 연결 1번')  # �
 
 BST 칸의 O(h) 는 균형이면 O(log N), 정렬된 순서로 넣으면 O(N) 입니다. 과외의 표는 힙에서 특정 값을 찾는 일을 「불가능, 전부 다 뒤져야 함」이라고 적었는데 리스트를 처음부터 끝까지 보면 찾으므로 불가능이 아니라 O(N) 입니다. 과외의 힙 규칙 「부모 > 자식」은 1절에서 고쳤습니다. 넣고 꺼내는 비용을 직접 센 값은 [힙과 Top K](post.html?id=algorithm-lesson-heap-top-k) 편 2절에 있습니다.
 
-정렬된 배열에서 값이나 넣을 자리를 찾을 때는 이진 탐색을, 가장 작은 값이나 가장 큰 K개만 필요할 때는 힙을, 값을 넣고 빼면서 정렬된 순서도 유지해야 할 때는 BST 를 고릅니다. 지훈 씨가 푼 문제의 트리가 최대 힙 규칙을 지키는 완전 이진 트리였다면 그 트리에서 두 번째로 큰 값을 찾는 방법은 힙의 내부 글에서 다룹니다.
+정렬된 배열에서 값이나 넣을 자리를 찾을 때는 이진 탐색을, 가장 작은 값이나 가장 큰 K개만 필요할 때는 힙을, 값을 넣고 빼면서 정렬된 순서도 유지해야 할 때는 BST 를 고릅니다. 지훈 씨가 푼 문제의 트리가 최대 힙 규칙을 지키는 완전 이진 트리였다면 그 트리에서 두 번째로 큰 값을 찾는 방법은 [힙의 내부 글](post.html?id=algorithm-lesson-heap-internals)에서 다룹니다.
 
 ## 한눈 정리
 
@@ -773,6 +773,7 @@ BST 칸의 O(h) 는 균형이면 O(log N), 정렬된 순서로 넣으면 O(N) �
 - 전위, 중위, 후위 순회 세 가지는 [트리와 힙](post.html?id=algorithm-tree-heap) 편 2절에, 트리가 깊으면 파이썬 재귀가 기본 한계 1000 에서 RecursionError 를 내는 문제는 4절에, 값 9개를 두 순서로 넣어 13 을 찾는 데 4회와 8회가 걸리는 예는 5~6절에 있습니다(높이는 간선 수로 셉니다).
 - 층별 순회와 BFS 가 같은 순서라는 설명은 [BFS](post.html?id=algorithm-lesson-bfs) 편 6절에 있습니다.
 - 정렬된 배열의 가운데 값과 비교해 절반을 버리는 방법과 bisect 는 [이진 탐색](post.html?id=algorithm-lesson-binary-search) 편에, 최소 힙과 크기 K 힙은 [힙과 Top K](post.html?id=algorithm-lesson-heap-top-k) 편에 있습니다.
+- 힙을 리스트에 담는 칸 번호 계산은 [힙의 내부](post.html?id=algorithm-lesson-heap-internals) 편 1절에, 최대 힙에서 두 번째로 큰 값을 비교 1번으로 찾는 법은 같은 글 7절에 있습니다.
 - 이 글의 데모는 [트리와 BST: 배열 입력, 높이 재귀, 중위 순회](demo-lesson-tree-bst.html) 한 페이지에서 탭과 입력을 바꿔 가며 볼 수 있습니다.
 - 예시 문제는 [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/)(104), [Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)(226), [Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)(102), [Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/)(230) 이고 정렬된 배열로 높이가 균형 잡힌 BST 를 만드는 문제는 [Convert Sorted Array to Binary Search Tree](https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)(108) 입니다.
 - TreeNode 의 속성이 들어 있는 `__dict__` 는 [데이터 모델 문서](https://docs.python.org/3/reference/datamodel.html#object.__dict__)에, vars() 는 [내장 함수 문서](https://docs.python.org/3/library/functions.html#vars)에, `if not root` 가 기대는 참과 거짓 규칙은 [Truth Value Testing](https://docs.python.org/3/library/stdtypes.html#truth-value-testing)에 있습니다.

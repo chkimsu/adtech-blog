@@ -633,6 +633,7 @@ visited 를 둘지는 같은 칸이나 같은 값을 다시 만날 수 있느냐
 - 스택으로 도는 DFS 와 큐로 도는 BFS 의 비교는 [그래프 탐색](post.html?id=algorithm-graph-search) 편 3절에, 같은 그래프를 스택과 큐로 순회하는 차이는 [DFS vs BFS](demo-bfs-dfs.html) 데모에 있습니다.
 - N-Queen 에서 한 줄 놓을 때마다 확인해 256가지 대신 17번 부르고 끝내는 백트래킹과 가지치기는 [DP, 백트래킹, 그리디](post.html?id=algorithm-dp-greedy) 편 6~7절에 있습니다.
 - 재귀 한도와 깊은 트리의 RecursionError 는 [트리와 힙](post.html?id=algorithm-tree-heap) 편 4절에, LeetCode 104 의 높이를 재귀로 구하는 순서는 [트리와 BST](post.html?id=algorithm-lesson-tree-bst) 편 4절에, visited 를 둘지 정하는 표는 [BFS](post.html?id=algorithm-lesson-bfs) 편 5절에 있습니다.
+- 494 의 dfs(i, total) 에 (i, total) 메모를 붙여 `[1] * 20`, target 0 의 호출을 421번으로 줄이는 DP 는 [DP 입문](post.html?id=algorithm-lesson-dp-intro) 편 8절에 있습니다.
 - 이 글의 데모는 [DFS와 백트래킹: 단어 탐색, 부호 선택 트리, 가지치기](demo-lesson-dfs-backtracking.html) 한 페이지에서 탭과 입력을 바꿔 가며 볼 수 있습니다.
 - 재귀 한도는 [sys.getrecursionlimit](https://docs.python.org/3/library/sys.html#sys.getrecursionlimit) 문서에, 겹친 for 문을 대신하는 함수는 [itertools.product](https://docs.python.org/3/library/itertools.html#itertools.product) 문서에 있습니다.
 - 예시 문제는 [Word Search](https://leetcode.com/problems/word-search/)(79), [Target Sum](https://leetcode.com/problems/target-sum/)(494), [Permutations](https://leetcode.com/problems/permutations/)(46) 입니다.

@@ -1,6 +1,6 @@
-지훈 씨는 힙과 Top K(값 N개에서 가장 큰 K개를 고르는 문제)를 배운 뒤 트리로 넘어가며 말했습니다. 「트리는 종류가 너무 많던데 어떤 종류의 트리가 있는지 말해 줘.」 코딩테스트에 나오는 트리 문제의 유형을 들은 뒤에는 이렇게 물었습니다. 「이런 순회나 트리 구조를 코드로 직접 구현하나?」
+지훈 씨는 힙과 Top K(값 N개에서 가장 큰 K개를 고르는 문제)를 배운 뒤 트리로 넘어가며 말했습니다. 「트리는 종류가 너무 많던데 어떤 종류의 트리가 있는지 말해 주세요.」 코딩테스트에 나오는 트리 문제의 유형을 들은 뒤에는 이렇게 물었습니다. 「이런 순회나 트리 구조를 코드로 직접 구현하나요?」
 
-순회는 직접 짜고 트리 구조는 만들지 않습니다. 트리(tree)는 맨 위 노드인 루트(root)에서 아래로만 갈라지는 자료구조이고 이진 트리(binary tree)는 노드마다 자식이 많아야 2개인 트리입니다. LeetCode 는 트리를 배열로 보여 주고 채점할 때는 그 배열로 만든 트리의 루트 하나를 함수에 넘깁니다.
+순회(traversal, 모든 노드를 정해진 차례로 한 번씩 방문하는 일)는 직접 짜고 트리 구조는 만들지 않습니다. 트리(tree)는 맨 위 노드인 루트(root)에서 아래로만 갈라지는 자료구조이고 이진 트리(binary tree)는 노드마다 자식이 많아야 2개인 트리입니다. LeetCode 는 트리를 배열로 보여 주고 채점할 때는 그 배열로 만든 트리의 루트 하나를 함수에 넘깁니다.
 
 **root 하나만 받은 함수는 트리를 어떻게 따라 내려가고 어디서 멈출까요?**
 
@@ -55,9 +55,9 @@
 
 **LeetCode 는 트리를 층별 순서(위층부터, 같은 층은 왼쪽부터)로 적고 자식이 없는 자리에 null 을 넣은 배열로 보여 주며 채점할 때 그 배열로 TreeNode 를 만들어 연결하고 루트 하나를 root 로 넘깁니다. TreeNode 는 val, left, right 를 속성으로 담는 객체라 dict 처럼 키로 읽지 않습니다.**
 
-LeetCode 의 트리 문제는 화면 위쪽에 `TreeNode` 클래스가 주석으로 적혀 있고 풀 함수는 `def maxDepth(self, root: Optional[TreeNode]) -> int:` 처럼 root 하나를 받습니다. 과외의 「LeetCode 나 프로그래머스 같은 플랫폼」은 LeetCode 로 좁힙니다. 채점 쪽이 예제 배열 `[3,9,20,null,null,15,7]` 을 트리로 바꾸므로 LeetCode 에 내는 코드에는 트리를 만드는 줄이 없습니다. 이 글의 블록은 내 컴퓨터에서 돌리려고 같은 일을 하는 `build_tree` 를 둡니다.
+LeetCode 의 트리 문제는 화면 위쪽에 `TreeNode` 클래스가 주석으로 적혀 있고 풀 함수는 `def maxDepth(self, root: TreeNode | None) -> int:` 처럼 root 하나를 받습니다. `X | None` 꼴은 Python 3.10 에 들어온 문법이라([공식 문서](https://docs.python.org/3/library/stdtypes.html#types-union)의 「Added in version 3.10」) 3.9 에서는 함수를 정의하는 순간 TypeError 가 납니다. 그래서 이 글의 블록은 같은 뜻의 `Optional[TreeNode]` 로 적습니다. 과외의 「LeetCode 나 프로그래머스 같은 플랫폼」은 LeetCode 로 좁힙니다. 채점 쪽이 예제 배열 `[3,9,20,null,null,15,7]` 을 트리로 바꾸므로 LeetCode 에 내는 코드에는 트리를 만드는 줄이 없습니다. 이 글의 블록은 내 컴퓨터에서 돌리려고 같은 일을 하는 `build_tree` 를 둡니다.
 
-지훈 씨가 다시 물었습니다. 「그럼 이진 탐색 트리나 이런 트리들은 모두 구현을 해서 주나?」 BST 문제도 root 로 받습니다(8절의 230 은 `kthSmallest(self, root, k)`). 다만 정렬된 배열로 높이가 균형 잡힌 BST 를 만드는 LeetCode 108 처럼 트리를 만들어 돌려 달라는 문제는 풀이가 TreeNode 를 직접 만듭니다. 과외에서 108 을 「유일하게」 직접 만드는 예외라고 하며 붙인 비율은 출처가 없어 지웁니다.
+지훈 씨가 다시 물었습니다. 「그럼 이진 탐색 트리나 이런 트리들은 모두 구현을 해서 주나요?」 BST 문제도 root 로 받습니다(8절의 230 은 `kthSmallest(self, root, k)`). 다만 정렬된 배열로 높이가 균형 잡힌 BST 를 만드는 LeetCode 108 처럼 트리를 만들어 돌려 달라는 문제는 풀이가 TreeNode 를 직접 만듭니다. 과외에서 108 을 「유일하게」 직접 만드는 예외라고 하며 붙인 비율은 출처가 없어 지웁니다.
 
 배열은 이렇게 트리가 됩니다. 0번 칸으로 루트를 만들어 큐에 넣고 큐에서 노드를 하나 꺼낼 때마다 배열의 다음 두 칸을 그 노드의 왼쪽 자식과 오른쪽 자식으로 붙입니다. 칸이 null 이면 그 자리는 None 자식이고 큐에도 넣지 않습니다. 아래 코드는 LeetCode 104 의 예제 1 배열로 트리를 만들어 값을 읽습니다.
 
@@ -105,7 +105,7 @@ print(f'root.left.left = {root.left.left}, root.left.right = {root.left.right}')
 # root.left.left = None, root.left.right = None
 ```
 
-함수가 받는 root 는 TreeNode 하나였고 배열 3, 4번 칸의 null 은 9 의 None 자식이 됐습니다. 지훈 씨는 이 코드를 보고 물었습니다. 「아, 트리 노드들이 모두 구현이 되어 있는 게 아니고 값이 할당되어 있다는 거야?」 맞습니다. 지훈 씨의 말을 다시 하면 TreeNode 는 스스로 찾거나 계산하는 부품이 아니라 값 세 개가 할당된 객체이며 실제로 메서드는 `__init__` 하나뿐입니다. TreeNode 객체를 값 세 개가 든 바구니로 떠올리면 `vars(TreeNode(3))` 가 돌려주는 `{'val': 3, 'left': None, 'right': None}` 이 그 안의 값입니다. 공식 문서의 [데이터 모델](https://docs.python.org/3/reference/datamodel.html#object.__dict__)은 `object.__dict__` 를 객체의 (쓸 수 있는) 속성을 담는 사전이나 다른 매핑 객체로 적고 [vars()](https://docs.python.org/3/library/functions.html#vars) 는 이 `__dict__` 를 돌려줍니다.
+함수가 받는 root 는 TreeNode 하나였고 배열 3, 4번 칸의 null 은 9 의 None 자식이 됐습니다. 지훈 씨는 이 코드를 보고 물었습니다. 「아, 트리 노드들이 모두 구현이 되어 있는 게 아니고 값이 할당되어 있다는 거예요?」 맞습니다. 지훈 씨의 말을 다시 하면 TreeNode 는 스스로 찾거나 계산하는 부품이 아니라 값 세 개가 할당된 객체이며 실제로 메서드는 `__init__` 하나뿐입니다. TreeNode 객체를 값 세 개가 든 바구니로 떠올리면 `vars(TreeNode(3))` 가 돌려주는 `{'val': 3, 'left': None, 'right': None}` 이 그 안의 값입니다. 공식 문서의 [데이터 모델](https://docs.python.org/3/reference/datamodel.html#object.__dict__)은 `object.__dict__` 를 객체의 (쓸 수 있는) 속성을 담는 사전이나 다른 매핑 객체로 적고 [vars()](https://docs.python.org/3/library/functions.html#vars) 는 이 `__dict__` 를 돌려줍니다.
 
 과외에서 저는 TreeNode 가 dict 와 완전히 같다고 했는데 값 세 개를 담는다는 점만 같습니다. TreeNode 는 `node.val` 처럼 속성(`.`)으로 읽고 dict 는 `d['val']` 처럼 키(`[]`)로 읽어서 둘을 바꿔 쓰면 오류가 납니다.
 
@@ -146,7 +146,7 @@ TreeNode 를 키로 읽으면 TypeError, dict 를 속성으로 읽으면 Attribu
 아래 데모는 같은 배열이 트리가 되는 순서를 보여 줍니다. 「다음 층」을 한 번 누르면 이번 단계 칸에 「배열 0번 칸 3으로 루트를 만듭니다.」가 나오고 상태 칸에 `0층 [3]` 이 생깁니다. 두 번째에는 `1층 [9, 20]` 이, 세 번째에는 null 두 칸이 9 의 None 자식(점선 노드)이 되며 `2층 [15, 7]` 이 생깁니다. 네 번째에는 root.right.left 까지 경로를 따라가 결과 칸에 「root.right.left.val = 15」가 나옵니다. 「한 칸」은 이 경로를 한 노드씩 따라갑니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=build&preset=example-1" height="1070" loading="lazy" title="LeetCode 배열이 트리가 되는 순서 미니 데모"></iframe>
+<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=build&preset=example-1" height="820" loading="lazy" title="LeetCode 배열이 트리가 되는 순서 미니 데모"></iframe>
 <a class="demo-embed-open" href="demo-lesson-tree-bst.html?mode=build&preset=example-1" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
@@ -154,7 +154,7 @@ TreeNode 를 키로 읽으면 TypeError, dict 를 속성으로 읽으면 Attribu
 
 **`root.right.left.val` 은 LeetCode 104 의 예제 1 에서 15 이지만 예제 2 `[1, null, 2]` 에서는 root.right.left 가 None 이라 .val 을 읽다 `AttributeError: 'NoneType' object has no attribute 'val'` 가 납니다. 재귀 풀이의 첫 줄 `if not root` 는 root 가 None 일 때만 참이라 잎 노드에서는 걸리지 않습니다.**
 
-지훈 씨는 104 화면에서 예제 1 의 그림을 보며 `print(root.right.left.val)` 을 넣고 실행했다가 오류를 보고 물었습니다. 「왜 여기서 에러가 생기지?」 LeetCode 가 예제 2 `[1, null, 2]` 로도 코드를 돌렸고 그 트리에는 root.right.left 가 없기 때문입니다. 화면 아래의 Last Executed Input 이 `root = [1,null,2]` 였습니다. 예제 2 는 루트 1 의 왼쪽이 None 자식이고 오른쪽 자식 2 는 두 자식이 모두 None 이라서 root.right.left 가 None 이고 None 에는 val 속성이 없습니다.
+지훈 씨는 104 화면에서 예제 1 의 그림을 보며 `print(root.right.left.val)` 을 넣고 실행했다가 오류를 보고 물었습니다. 「왜 여기서 에러가 생기죠?」 LeetCode 가 예제 2 `[1, null, 2]` 로도 코드를 돌렸고 그 트리에는 root.right.left 가 없기 때문입니다. 화면 아래의 Last Executed Input 이 `root = [1,null,2]` 였습니다. 예제 2 는 루트 1 의 왼쪽이 None 자식이고 오른쪽 자식 2 는 두 자식이 모두 None 이라서 root.right.left 가 None 이고 None 에는 val 속성이 없습니다.
 
 과외에서 마침표를 이어 찍으면 오류가 난다며 붙인 비율은 출처가 없어 지웁니다. 테스트 예제마다 트리 모양이 달라서 고정된 경로로 .val 을 읽는 코드는 그 경로에 None 이 있는 입력에서 오류가 납니다. 아래 코드는 두 예제의 트리를 `TreeNode(값, 왼쪽, 오른쪽)` 으로 직접 연결해(예제 2 는 `TreeNode(1, None, TreeNode(2))`) 같은 경로를 읽고 `not` 이 참이 되는 값을 찍습니다.
 
@@ -188,20 +188,20 @@ for text, node in (('잎 노드 15', leaf), ('15 의 왼쪽 자식', leaf.left),
 # 2단계 뜻: 예제 1 은 15 를 읽고 예제 2 는 root.right.left 가 None 이라 .val 에서 오류가 난다.
 # 예제 1: root.right.left.val = 15
 # 예제 2: root.right.left = None, AttributeError: 'NoneType' object has no attribute 'val'
-# 3단계 뜻: not 이 참인 것은 None 자식뿐이고 잎 노드와 값이 0 인 노드는 거짓이다.
+# 3단계 뜻: not 은 None 자식에서만 참이고 잎 노드와 값이 0 인 노드에서는 거짓이다.
 # 잎 노드 15: not node = False
 # 15 의 왼쪽 자식: not node = True
 # 값이 0 인 노드: not node = False
 ```
 
-3단계에서 `not node` 가 True 인 것은 None 자식뿐이었습니다. [공식 문서](https://docs.python.org/3/library/stdtypes.html#truth-value-testing)는 클래스가 False 를 돌려주는 `__bool__()` 이나 0 을 돌려주는 `__len__()` 을 두지 않으면 객체를 참으로 본다고 적고 TreeNode 는 둘 다 없어서 잎 노드도 값이 0 인 노드도 참입니다. 그래서 `if not root:` 는 「root 가 None 이면」과 같은 뜻입니다.
+3단계에서 `not node` 는 None 자식에서만 True 였습니다. [공식 문서](https://docs.python.org/3/library/stdtypes.html#truth-value-testing)는 클래스가 False 를 돌려주는 `__bool__()` 이나 0 을 돌려주는 `__len__()` 을 두지 않으면 객체를 참으로 본다고 적고 TreeNode 는 둘 다 없어서 잎 노드도 값이 0 인 노드도 참입니다. 그래서 `if not root:` 는 「root 가 None 이면」과 같은 뜻입니다.
 
 과외에서 104 풀이의 첫 줄에 단 주석 「노드가 없거나, 자식이 없는 바닥에 도달하면 깊이는 0」은 뒤쪽이 틀렸습니다. 잎은 None 이 아니라서 그 줄을 지나 두 None 자식에서 0 을 받고 1 을 돌려줍니다(4절).
 
 아래 데모는 예제 2 를 같은 경로로 따라갑니다. 「끝까지」를 누르면 root.right.left 인 2 의 None 자식(점선 노드)이 붉게 칠해지고 결과 칸에 `AttributeError: 'NoneType' object has no attribute 'val'` 이 붉은 글자로 나옵니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=build&preset=example-2" height="1070" loading="lazy" title="예제 2 에서 None 의 val 을 읽는 오류 미니 데모"></iframe>
+<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=build&preset=example-2" height="870" loading="lazy" title="예제 2 에서 None 의 val 을 읽는 오류 미니 데모"></iframe>
 <a class="demo-embed-open" href="demo-lesson-tree-bst.html?mode=build&preset=example-2" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
@@ -211,7 +211,7 @@ for text, node in (('잎 노드 15', leaf), ('15 의 왼쪽 자식', leaf.left),
 
 [LeetCode 104. Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/) 는 이진 트리의 root 를 주고 높이를 돌려 달라고 합니다. 첫 예제 `root = [3, 9, 20, null, null, 15, 7]` 은 3, 20, 15 를 지나는 길이 가장 길어 3 이 답이고 둘째 예제 `root = [1, null, 2]` 는 2 입니다. 노드는 0개 이상 10,000개 이하입니다.
 
-지훈 씨가 이 풀이를 보고 물었습니다. 「위에 코드에서 root 랑 트리 구조가 어떻게 코드에서 사용된 거야?」 root 는 노드 하나이고 코드는 그 노드의 두 자식을 같은 함수에 다시 넘깁니다. 노드의 높이는 두 자식을 루트로 하는 부분 트리의 높이 가운데 큰 값에 자기 층 1 을 더한 값이고 None 자식은 노드가 없어 높이가 0 입니다.
+지훈 씨가 이 풀이를 보고 물었습니다. 「위에 코드에서 root 랑 트리 구조가 어떻게 코드에서 사용된 거예요?」 root 는 노드 하나이고 코드는 그 노드의 두 자식을 같은 함수에 다시 넘깁니다. 노드의 높이는 두 자식을 루트로 하는 부분 트리의 높이 가운데 큰 값에 자기 층 1 을 더한 값이고 None 자식은 노드가 없어 높이가 0 입니다.
 
 1. root 가 None 이면 0 을 돌려줍니다.
 2. `self.maxDepth(root.left)` 로 왼쪽 부분 트리의 높이를 받습니다.
@@ -221,7 +221,7 @@ for text, node in (('잎 노드 15', leaf), ('15 의 왼쪽 자식', leaf.left),
 ```python
 # 하는 일: LeetCode 104 를 재귀로 풀어 예제 1 에서 노드마다 받은 값과 돌려준 값, maxDepth 를 부른 횟수를 찍고 예제 2 와 빈 트리의 답을 찍는다.
 from collections import deque  # 배열을 층별 순서로 읽는 큐
-from typing import Optional  # LeetCode 화면의 Optional[TreeNode] 주석에 쓴다
+from typing import Optional  # LeetCode 화면의 TreeNode | None 을 3.9 에서 쓰는 꼴
 
 # 1단계: TreeNode 와 build_tree 를 만든다
 # 2절과 같은 코드다.
@@ -313,7 +313,7 @@ for values in ([1, None, 2], []):  # 노드 2개와 0개
 ```python
 # 하는 일: LeetCode 226 을 재귀로 풀어 세 예제의 답을 층별 배열로 찍고, 104 의 마지막 줄만 맞바꾸기로 바꾼 함수가 무엇을 돌려주는지 본다.
 from collections import deque  # 배열과 트리를 층별 순서로 읽는 큐
-from typing import Optional  # LeetCode 화면의 Optional[TreeNode] 주석에 쓴다
+from typing import Optional  # LeetCode 화면의 TreeNode | None 을 3.9 에서 쓰는 꼴
 
 # 1단계: TreeNode, build_tree, to_list 를 만든다
 # build_tree 는 2절과 같고 to_list 는 거꾸로 트리를 층별 배열로 바꾼다.
@@ -356,7 +356,7 @@ def to_list(root):  # 트리를 LeetCode 화면과 같은 층별 배열로 바�
 # 2단계: 풀이를 만든다
 # 두 부분 트리를 먼저 뒤집고 맞바꿔 넣은 뒤 root 를 돌려준다.
 class Solution:  # LeetCode 가 정해 둔 클래스 이름 그대로 둔다
-    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:  # 화면의 함수 모양 그대로
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:  # 함수 이름과 인자는 화면 그대로
         if not root:  # None 이면
             return None  # 뒤집을 노드가 없다
         left = self.invertTree(root.left)  # 왼쪽 부분 트리를 뒤집은 루트
@@ -390,7 +390,7 @@ print(f'빈 트리에서 돌려준 값 {max_depth_swapped(build_tree([]))}')  # 
 # 빈 트리에서 돌려준 값 0
 ```
 
-세 예제는 LeetCode 의 답과 같았습니다. 4단계의 함수도 두 자식을 먼저 부른 뒤 맞바꾸므로 트리는 그 자리에서 뒤집혔지만 return 줄이 없어 None 을, 빈 트리에서는 0 을 돌려줬습니다. LeetCode 는 돌려받은 값을 답으로 읽으므로 이 함수는 첫 예제의 답으로 빈 트리를 냅니다. 226 은 맞바꾸기 뒤에 `return root` 가 있고 첫 줄도 `return None` 이라 104 와 두 줄이 다릅니다. 노드마다 한 번씩 맞바꾸므로 시간 복잡도는 O(N), 호출이 많아야 높이 + 1 개 쌓이므로 공간 복잡도는 O(h) 입니다.
+세 예제는 LeetCode 의 답과 같았습니다. 4단계의 함수도 두 자식을 먼저 부른 뒤 맞바꾸므로 트리는 그 자리에서 뒤집혔지만 return 줄이 없어 None 을, 빈 트리에서는 0 을 돌려줬습니다. LeetCode 는 돌려받은 값을 답으로 읽으므로 이 함수는 첫 예제의 답으로 빈 트리를 냅니다. 4단계 함수와 비교하면 226 은 root 가 None 일 때 `return 0` 대신 `return None` 을 하고 맞바꾸기 뒤에 `return root` 가 더 있습니다. 노드마다 한 번씩 맞바꾸므로 시간 복잡도는 O(N), 호출이 많아야 높이 + 1 개 쌓이므로 공간 복잡도는 O(h) 입니다.
 
 ## 6. Binary Tree Level Order Traversal (LeetCode 102, Medium)
 
@@ -408,7 +408,7 @@ print(f'빈 트리에서 돌려준 값 {max_depth_swapped(build_tree([]))}')  # 
 ```python
 # 하는 일: LeetCode 102 를 큐로 풀어 세 예제의 층별 값과 층 수를 찍는다.
 from collections import deque  # 배열과 트리를 층별 순서로 읽는 큐
-from typing import List, Optional  # LeetCode 화면의 타입 주석에 쓴다
+from typing import Optional  # LeetCode 화면의 TreeNode | None 을 3.9 에서 쓰는 꼴
 
 # 1단계: TreeNode 와 build_tree 를 만든다
 # 2절과 같은 코드다.
@@ -438,7 +438,7 @@ def build_tree(values):  # LeetCode 배열로 트리를 만든다
 # 2단계: 풀이를 만든다
 # 반복을 시작할 때 큐에 든 노드가 한 층이다.
 class Solution:  # LeetCode 가 정해 둔 클래스 이름 그대로 둔다
-    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:  # 화면의 함수 모양 그대로
+    def levelOrder(self, root: Optional[TreeNode]) -> list[list[int]]:  # 함수 이름과 인자는 화면 그대로
         if not root:  # 빈 트리면
             return []  # 층이 없다
         result, queue = [], deque([root])  # 층별 리스트와 0층의 루트
@@ -474,7 +474,7 @@ for values in ([3, 9, 20, None, None, 15, 7], [1], []):  # LeetCode 의 세 예�
 
 **중위 순회(in-order traversal)는 노드마다 왼쪽 부분 트리, 노드, 오른쪽 부분 트리의 차례로 값을 읽는 순회이고 BST 를 중위 순회하면 어느 모양이든 작은 값부터 정렬된 배열이 나옵니다. 이 글은 이 배열을 펼친 배열이라고 부릅니다. BST 에서 값을 찾는 경로는 정렬된 배열의 가운데 값부터 넣은 BST 에서만 이진 탐색이 비교하는 가운데 값의 순서와 같습니다.**
 
-트리 종류를 들은 지훈 씨가 물었습니다. 「이진 탐색 트리를 펼치면 이진 탐색과 똑같은 건가?」 반은 맞습니다. 펼친 배열은 늘 정렬돼 있지만 BST 에서 값을 찾는 경로가 이진 탐색과 같은 값을 비교하는지는 넣은 순서에 달렸습니다. 과외에서 저는 둘이 「완전히 같은 알고리즘」이고 이진 탐색이 고르는 mid 값을 그리면 「정확히 BST」라고 했는데 이 절에서 두 말을 좁히고 질문에 붙인 칭찬은 지웁니다.
+트리 종류를 들은 지훈 씨가 물었습니다. 「이진 탐색 트리를 펼치면 이진 탐색과 똑같은 건가요?」 반은 맞습니다. 펼친 배열은 늘 정렬돼 있지만 BST 에서 값을 찾는 경로가 이진 탐색과 같은 값을 비교하는지는 넣은 순서에 달렸습니다. 과외에서 저는 둘이 「완전히 같은 알고리즘」이고 이진 탐색이 고르는 mid 값을 그리면 「정확히 BST」라고 했는데 이 절에서 두 말을 좁히고 질문에 붙인 칭찬은 지웁니다.
 
 펼친 배열이 정렬되는 까닭은 BST 규칙이 부분 트리 전체에 걸리기 때문입니다. 노드마다 먼저 읽는 왼쪽 부분 트리의 모든 값이 노드보다 작고 나중에 읽는 오른쪽 부분 트리의 모든 값은 노드보다 크며 같은 일이 부분 트리 안에서도 되풀이되므로 읽는 값이 늘 커집니다. 아래 코드는 과외에서 쓴 값 7개로 만든 BST, 부모와 자식만 보면 규칙을 지키는 `[5, 4, 6, null, null, 3, 7]`, 104 의 예제 1 트리를 펼쳐 정렬됐는지 봅니다.
 
@@ -489,7 +489,7 @@ class TreeNode:  # LeetCode 화면의 주석과 같은 클래스
 
 # 2단계: BST 에 넣기, 중위 순회, 부모와 자식만 보는 검사를 만든다
 def insert(root, val):  # BST 에 값을 넣고 루트를 돌려준다
-    if root is None:  # 빈자리에 닿으면
+    if root is None:  # None 자식에 닿으면
         return TreeNode(val)  # 새 노드가 그 자리에 붙는다
     if val < root.val:  # 노드보다 작으면
         root.left = insert(root.left, val)  # 왼쪽 부분 트리에 넣는다
@@ -525,20 +525,20 @@ for name, root in trees:  # 트리마다
     print(f'{name}: 펼친 배열 {flat}, 정렬됨 {flat == sorted(flat)}, 부모와 자식 규칙 {child_rule(root)}')  # 두 검사
 
 # 출력:
-# 3단계 뜻: 펼친 배열이 정렬된 것은 BST 뿐이고 부모와 자식만 보는 검사는 BST 가 아닌 트리도 통과시킨다.
+# 3단계 뜻: BST 만 펼친 배열이 정렬되고 부모와 자식만 보는 검사는 BST 가 아닌 트리도 통과시킨다.
 # 넣은 BST: 펼친 배열 [20, 30, 40, 50, 60, 70, 80], 정렬됨 True, 부모와 자식 규칙 True
 # [5, 4, 6, null, null, 3, 7]: 펼친 배열 [4, 5, 3, 6, 7], 정렬됨 False, 부모와 자식 규칙 True
 # 104 예제 1: 펼친 배열 [9, 3, 15, 20, 7], 정렬됨 False, 부모와 자식 규칙 False
 ```
 
-펼친 배열이 정렬된 것은 넣은 BST 하나였습니다. `[5, 4, 6, null, null, 3, 7]` 은 부모와 자식만 보면 규칙을 지키지만 6 의 왼쪽 자식 3 이 5 의 오른쪽 부분 트리에 있어서 5 보다 작은 값이 5 뒤에 나와 `[4, 5, 3, 6, 7]` 이 됐습니다. 104 예제 1 트리는 20 의 오른쪽 자식 7 이 20 보다 작아 `[9, 3, 15, 20, 7]` 이었습니다. 어떤 트리가 BST 인지 보려면 노드마다 부분 트리 전체의 값 범위를 봐야 하고 LeetCode 98(Validate Binary Search Tree)이 그 검사를 묻습니다.
+넣은 BST 하나만 펼친 배열이 정렬됐습니다. `[5, 4, 6, null, null, 3, 7]` 은 부모와 자식만 보면 규칙을 지키지만 6 의 왼쪽 자식 3 이 5 의 오른쪽 부분 트리에 있어서 5 보다 작은 값이 5 뒤에 나와 `[4, 5, 3, 6, 7]` 이 됐습니다. 104 예제 1 트리는 20 의 오른쪽 자식 7 이 20 보다 작아 `[9, 3, 15, 20, 7]` 이었습니다. 어떤 트리가 BST 인지 보려면 노드마다 부분 트리 전체의 값 범위를 봐야 하고 LeetCode 98(Validate Binary Search Tree)이 그 검사를 묻습니다.
 
 질문의 나머지 반은 찾는 경로입니다. 펼친 배열에서 80 을 이진 탐색하면 mid 가 (0 + 6) // 2 = 3, (4 + 6) // 2 = 5, (6 + 6) // 2 = 6 이라 50, 70, 80 과 비교합니다. 넣는 순서 `[50, 30, 70, 20, 40, 60, 80]` 은 배열의 가운데 값 50, 양쪽 절반의 가운데 값 30 과 70, 그다음 가운데 값들의 차례라서 이 BST 에서 80 을 찾는 경로도 50, 70, 80 입니다. 작은 값부터 넣으면 펼친 배열은 같아도 BST 가 한 줄이 되어 경로가 20 부터 80 까지 7개입니다(9절). 이진 탐색 자체는 [이진 탐색](post.html?id=algorithm-lesson-binary-search) 편 2절에 있습니다.
 
-아래 데모는 가운데 값부터 넣는 순서로 BST 를 만들고 펼칩니다. 「다음 값」을 다섯 번 누르면 이번 단계 칸에 「40을 넣습니다. 50보다 작아 왼쪽, 30보다 커서 오른쪽 빈자리에 둡니다.」가 나옵니다. 두 번 더 누르면 값 7개가 다 들어가고 그다음부터는 누를 때마다 중위 순회로 한 값씩 방문해 트리 밑의 펼친 배열 칸이 왼쪽부터 채워집니다. 「끝까지」를 누르면 결과 칸에 「펼친 배열 [20, 30, 40, 50, 60, 70, 80]」, 아랫줄에 「높이 3, 넣을 때 비교 10번, 80을 찾으면 비교 3번」이 나옵니다.
+아래 데모는 가운데 값부터 넣는 순서로 BST 를 만들고 펼칩니다. 「다음 값」을 다섯 번 누르면 이번 단계 칸에 「40을 넣습니다. 50보다 작아 왼쪽, 30보다 커서 오른쪽 빈자리에 둡니다.」가 나옵니다. 이 빈자리가 30 의 오른쪽 None 자식입니다. 두 번 더 누르면 값 7개가 다 들어가고 그다음부터는 누를 때마다 중위 순회로 한 값씩 방문해 트리 밑의 펼친 배열 칸이 왼쪽부터 채워집니다. 「끝까지」를 누르면 결과 칸에 「펼친 배열 [20, 30, 40, 50, 60, 70, 80]」, 아랫줄에 「높이 3, 넣을 때 비교 10번, 80을 찾으면 비교 3번」이 나옵니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=bst&preset=balanced" height="1050" loading="lazy" title="가운데 값부터 넣은 BST 와 중위 순회 미니 데모"></iframe>
+<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=bst&preset=balanced" height="860" loading="lazy" title="가운데 값부터 넣은 BST 와 중위 순회 미니 데모"></iframe>
 <a class="demo-embed-open" href="demo-lesson-tree-bst.html?mode=bst&preset=balanced" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
@@ -558,7 +558,7 @@ for name, root in trees:  # 트리마다
 ```python
 # 하는 일: LeetCode 230 을 스택으로 하는 중위 순회로 풀어 둘째 예제에서 방문할 때마다 스택을 찍고, 첫 예제의 답도 찍는다.
 from collections import deque  # 배열을 층별 순서로 읽는 큐
-from typing import Optional  # LeetCode 화면의 Optional[TreeNode] 주석에 쓴다
+from typing import Optional  # LeetCode 화면의 TreeNode | None 을 3.9 에서 쓰는 꼴
 
 # 1단계: TreeNode 와 build_tree 를 만든다
 # 2절과 같은 코드다.
@@ -626,7 +626,7 @@ print(f'[3, 1, 4, None, 2], k = 1 → {Solution().kthSmallest(build_tree([3, 1, 
 
 과외에서 저는 BST 의 값 찾기, 넣기, 빼기와 두 번째로 큰 값 찾기를 모두 O(log N) 이라 적고 정렬된 배열과 비교한 표에 「압도적 승리」를 붙였는데, 이 절에서 O(h) 로 고칩니다. BST 에서 값을 찾으면 비교 한 번에 한 층씩 내려가므로 비교 횟수는 많아야 높이이고 높이는 넣은 순서가 정합니다.
 
-같은 과외에서 저는 펼친 배열에 35 를 넣으려면 40 부터 80 까지 밀어야 하고 값이 100만 개면 100만 번 밀어야 하지만 BST 는 포인터만 연결하면 되니 O(log N) 이라고 했습니다. BST 에서 가장 큰 값은 루트에서 오른쪽으로만 내려간 끝의 노드입니다. 1절에서 지훈 씨가 말한 두 번째로 큰 값은 그 노드에 왼쪽 부분 트리가 없으면 부모, 있으면 그 왼쪽 부분 트리의 가장 큰 값입니다. 아래 코드는 7절의 값 7개를 두 순서로 넣어 높이와 비교 횟수를 셉니다. 이어서 80 아래에 왼쪽 부분 트리가 생기는 순서 `[50, 30, 80, 70, 60, 75]` 까지 세 BST 에서 두 번째로 큰 값을 찾고 35 를 정렬된 리스트와 BST 에 넣습니다.
+같은 과외에서 저는 펼친 배열에 35 를 넣으려면 40 부터 80 까지 밀어야 하고 값이 100만 개면 100만 번 밀어야 하지만 BST 는 포인터만 연결하면 되니 O(log N) 이라고 했습니다. BST 에서 가장 큰 값은 루트에서 오른쪽으로만 내려간 끝의 노드입니다. 1절에서 지훈 씨가 말한 두 번째로 큰 값은 BST 에서는 그 노드에 왼쪽 부분 트리가 없을 때 부모, 있을 때 그 왼쪽 부분 트리의 가장 큰 값입니다. 아래 코드는 7절의 값 7개를 두 순서로 넣어 높이와 비교 횟수를 셉니다. 이어서 80 아래에 왼쪽 부분 트리가 생기는 순서 `[50, 30, 80, 70, 60, 75]` 까지 세 BST 에서 두 번째로 큰 값을 찾고 35 를 정렬된 리스트와 BST 에 넣습니다.
 
 ```python
 # 하는 일: 같은 값 7개를 가운데 값부터와 작은 값부터 BST 에 넣어 높이와 비교 횟수를 세고, 세 BST 에서 두 번째로 큰 값을 찾고, 35 를 정렬된 리스트와 BST 에 넣는 비용을 비교한다.
@@ -640,14 +640,14 @@ class TreeNode:  # LeetCode 화면의 주석과 같은 클래스
         self.left = left  # 왼쪽 자식. 없으면 None
         self.right = right  # 오른쪽 자식. 없으면 None
 
-def path_to(root, target):  # target 을 찾거나 빈자리에 닿을 때까지 비교한 노드의 값
+def path_to(root, target):  # target 을 찾거나 None 자식에 닿을 때까지 비교한 노드의 값
     path, parent = [], None  # 비교한 값과 마지막에 비교한 노드
     while root:  # None 자식에 닿기 전까지
         path.append(root.val)  # 이 노드와 비교한다
         if target == root.val:  # 찾았으면
             break  # 멈춘다
         parent, root = root, (root.left if target < root.val else root.right)  # 작으면 왼쪽, 크면 오른쪽
-    return path, parent  # 경로와 빈자리의 부모
+    return path, parent  # 경로와 None 자식의 부모
 
 def build_bst(order):  # order 의 순서로 넣은 BST 와 넣을 때 비교한 횟수
     root, compares = None, 0  # 빈 트리와 비교 횟수
@@ -655,7 +655,7 @@ def build_bst(order):  # order 의 순서로 넣은 BST 와 넣을 때 비교한
         if root is None:  # 첫 값은
             root = TreeNode(v)  # 비교 없이 루트가 된다
             continue  # 다음 값
-        path, parent = path_to(root, v)  # 빈자리까지 비교한다
+        path, parent = path_to(root, v)  # None 자식까지 비교한다
         compares += len(path)  # 비교한 노드 수
         if v < parent.val:  # 부모보다 작으면
             parent.left = TreeNode(v)  # 왼쪽 자식으로 연결한다
@@ -697,7 +697,7 @@ point = bisect.bisect_left(nums, 35)  # 35 를 넣을 자리
 bisect.insort(nums, 35)  # 넣을 자리를 이진 탐색으로 찾고 insert 로 넣는다
 print(f'정렬된 리스트: 넣을 자리 {point}, 뒤로 민 칸 {len(nums) - 1 - point}칸, 넣은 뒤 {nums}')  # 넣을 자리 뒤의 값이 한 칸씩 밀린다
 root, _ = build_bst([50, 30, 70, 20, 40, 60, 80])  # 가운데 값부터 넣은 BST
-path, parent = path_to(root, 35)  # 빈자리까지 비교한 노드
+path, parent = path_to(root, 35)  # None 자식까지 비교한 노드
 parent.left = TreeNode(35)  # 35 < 40 이라 40 의 왼쪽 자식으로 연결한다
 print(f'BST: 비교한 노드 {path}, 비교 {len(path)}번, 연결 1번')  # 자리를 찾는 데 높이만큼, 연결은 한 번
 
@@ -718,12 +718,12 @@ print(f'BST: 비교한 노드 {path}, 비교 {len(path)}번, 연결 1번')  # �
 
 값이 N개일 때 작은 값부터 넣으면 높이가 N 이라 넣기 전체에 비교가 0 + 1 + … + (N - 1) = N(N - 1)/2 번, 값 하나를 찾는 데 많아야 N번이 듭니다. 가운데 값부터 넣어 층을 꽉 채우면 높이가 floor(log2 N) + 1 이라 값 하나에 O(log N) 입니다. 넣는 순서와 상관없이 높이를 O(log N) 으로 지키려면 1절의 자가 균형 BST 를 씁니다. [트리와 힙](post.html?id=algorithm-tree-heap) 편 5~6절은 다른 값 9개로 같은 차이(13 을 찾는 데 4회와 8회)를 보이고 높이를 간선 수로 세서 한 줄로 이어진 트리의 높이를 8 로 적습니다.
 
-4단계에서 35 를 넣을 자리는 2 였고 그 뒤의 40, 50, 60, 70, 80 5칸이 밀렸으니 과외의 「40 부터 80 까지」는 맞습니다. 값이 100만 개면 맨 앞에 넣을 때 가장 많이 밀어 많아야 100만 칸이고 넣을 자리가 뒤일수록 적습니다. BST 는 50, 30, 40 과 비교해 40 의 왼쪽 빈자리를 찾았고 연결은 한 번이었습니다. 그래서 BST 에 넣는 비용은 자리를 찾는 O(h) 에 연결 O(1) 이고 작은 값부터 넣어 높이가 N 이 되면 자리를 찾는 데 O(N) 이 듭니다.
+4단계에서 35 를 넣을 자리는 2 였고 그 뒤의 40, 50, 60, 70, 80 5칸이 밀렸으니 과외의 「40 부터 80 까지」는 맞습니다. 값이 100만 개면 맨 앞에 넣을 때 가장 많이 밀어 많아야 100만 칸이고 넣을 자리가 뒤일수록 적습니다. BST 는 50, 30, 40 과 비교해 40 의 왼쪽 None 자식을 찾았고 연결은 한 번이었습니다. 그래서 BST 에 넣는 비용은 자리를 찾는 O(h) 에 연결 O(1) 이고 작은 값부터 넣어 높이가 N 이 되면 자리를 찾는 데 O(N) 이 듭니다.
 
 아래 데모는 작은 값부터 넣는 순서를 보여 줍니다. 「끝까지」를 누르면 트리가 오른쪽으로만 이어진 7층이 되고 결과 칸은 7절 데모와 같은 「펼친 배열 [20, 30, 40, 50, 60, 70, 80]」인데 아랫줄은 「높이 7, 넣을 때 비교 21번, 80을 찾으면 비교 7번」입니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=bst&preset=sorted" height="1380" loading="lazy" title="작은 값부터 넣어 높이 7 이 된 BST 미니 데모"></iframe>
+<iframe class="demo-embed" src="demo-lesson-tree-bst.html?embed=1&mode=bst&preset=sorted" height="1120" loading="lazy" title="작은 값부터 넣어 높이 7 이 된 BST 미니 데모"></iframe>
 <a class="demo-embed-open" href="demo-lesson-tree-bst.html?mode=bst&preset=sorted" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 
@@ -731,7 +731,7 @@ print(f'BST: 비교한 노드 {path}, 비교 {len(path)}번, 연결 1번')  # �
 
 **이진 탐색은 정렬된 배열에서 쓰는 방법이고 BST 와 힙은 자료구조입니다. BST 는 부분 트리 전체에 대소 규칙을 지켜 값을 O(h) 에 찾고 넣으며 힙은 부모와 자식 사이의 규칙만 지켜 가장 작은 값(최대 힙은 가장 큰 값)만 O(1) 에 읽습니다.**
 
-트리의 종류와 BST 를 들은 지훈 씨가 말했습니다. 「잠깐잠깐, BST, 힙, binary search 관계 다시 정리해 줘.」 세 이름에 모두 「이진」이나 「탐색」이 들어가지만 이진 탐색은 배열 위에서 도는 방법이고 BST 와 힙은 값을 담는 모양과 규칙입니다. 과외에서 이 셋을 「전산과 전공생들도 가장 많이 헷갈려하는」 3형제라고 부른 말과 표의 일상 비유 칸(국어사전, 도서관 서가, 응급실)은 지웁니다. 표의 비용은 값 하나를 비교하는 데 O(1) 일 때입니다.
+트리의 종류와 BST 를 들은 지훈 씨가 말했습니다. 「잠깐잠깐, BST, 힙, binary search 관계 다시 정리해 주세요.」 이진 탐색과 이진 탐색 트리는 이름에 「이진」과 「탐색」이 같이 들어가고 힙도 이진 트리 모양이라 헷갈립니다. 이진 탐색은 배열 위에서 도는 방법이고 BST 와 힙은 값을 담는 모양과 규칙입니다. 과외에서 이 셋을 「전산과 전공생들도 가장 많이 헷갈려하는」 3형제라고 부른 말과 표의 일상 비유 칸(국어사전, 도서관 서가, 응급실)은 지웁니다. 표의 비용은 값 하나를 비교하는 데 O(1) 일 때입니다.
 
 | 항목 | 이진 탐색 | BST | 힙 (heapq 의 최소 힙) |
 |---|---|---|---|
@@ -739,11 +739,11 @@ print(f'BST: 비교한 노드 {path}, 비교 {len(path)}번, 연결 1번')  # �
 | 규칙 | 배열이 정렬돼 있다 | 왼쪽 부분 트리의 모든 값 < 노드의 값 < 오른쪽 부분 트리의 모든 값 | 부모 ≤ 자식. 형제끼리는 순서가 없다 |
 | 값 찾기 | 많아야 floor(log2 N) + 1 번 비교라 O(log N) | 한 층씩 내려가 O(h) | 버릴 쪽을 정할 규칙이 없어 O(N) |
 | 최솟값과 최댓값 | 배열의 양 끝이라 O(1) | 왼쪽 끝과 오른쪽 끝까지 내려가 O(h) | 최솟값은 heap[0] 이라 O(1), 최댓값은 O(N) |
-| 넣기와 빼기 | 자리는 O(log N) 에 찾지만 뒤의 값을 밀어 많아야 O(N) | 자리를 찾는 데 O(h), 연결은 한 번 | 넣기와 맨 앞 값 꺼내기가 많아야 O(log N) |
+| 넣기와 빼기 | 자리는 O(log N) 에 찾지만 뒤의 값을 밀어 많아야 O(N) | 넣기와 빼기 모두 O(h). 넣기는 None 자식을 찾아 연결 한 번, 두 자식이 있는 노드를 빼면 오른쪽 부분 트리의 가장 작은 값을 찾아(O(h)) 그 자리로 옮긴다 | 넣기와 맨 앞 값 꺼내기가 많아야 O(log N) |
 
 BST 칸의 O(h) 는 균형이면 O(log N), 정렬된 순서로 넣으면 O(N) 입니다. 과외의 표는 힙에서 특정 값을 찾는 일을 「불가능, 전부 다 뒤져야 함」이라고 적었는데 리스트를 처음부터 끝까지 보면 찾으므로 불가능이 아니라 O(N) 입니다. 과외의 힙 규칙 「부모 > 자식」은 1절에서 고쳤습니다. 넣고 꺼내는 비용을 직접 센 값은 [힙과 Top K](post.html?id=algorithm-lesson-heap-top-k) 편 2절에 있습니다.
 
-정렬된 배열에서 값이나 넣을 자리를 찾을 때는 이진 탐색을, 가장 작은 값이나 가장 큰 K개만 필요할 때는 힙을, 값을 넣고 빼면서 정렬된 순서도 유지해야 할 때는 BST 를 고릅니다. 1절에서 지훈 씨가 말한 문제처럼 최대 힙 규칙을 지키는 완전 이진 트리에서 두 번째로 큰 값을 찾는 방법은 힙의 내부 글에서 다룹니다.
+정렬된 배열에서 값이나 넣을 자리를 찾을 때는 이진 탐색을, 가장 작은 값이나 가장 큰 K개만 필요할 때는 힙을, 값을 넣고 빼면서 정렬된 순서도 유지해야 할 때는 BST 를 고릅니다. 지훈 씨가 푼 문제의 트리가 최대 힙 규칙을 지키는 완전 이진 트리였다면 그 트리에서 두 번째로 큰 값을 찾는 방법은 힙의 내부 글에서 다룹니다.
 
 ## 한눈 정리
 

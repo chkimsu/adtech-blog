@@ -2531,6 +2531,46 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // 과외 해시 맵 (알고리즘) — seen 한 번 순회, 이중 for 문, 미리 다 적기. 계산은 js/lesson-hash-map-model.js
+    // ==========================================
+    'lesson-hash-map': {
+        analogy: 'seen 에 지나온 숫자와 인덱스를 적어 두면 짝 확인이 값마다 한 번이다. 8개 입력에서 이중 for 문 28번이 seen 8번이 된다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 입력을 고르면 그 입력의 결과를 지금 모드로 미리 적는다. 문장은 데모 JS 가 LessonHashMap.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonHashMapDescribe ? window.lessonHashMapDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '배열',
+                body: 'nums 의 칸마다 인덱스와 값이 있습니다. 지금 보는 값은 파란 테두리, seen 에 적힌 값은 옅은 파란 바탕, 찾은 짝은 진한 파란 바탕입니다. ' +
+                    '이중 for 문 탭에서는 i 와 j 두 칸이 함께 움직입니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. seen 탭에서는 짝 target - num 이 seen 에 있는지 확인하는 동작과 num → i 를 적는 동작이 따로 한 번씩입니다. ' +
+                    '이중 for 문 탭에서는 짝 하나를 더해 target 과 비교합니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 값」 버튼',
+                body: '값 하나(이중 for 문에서는 i 하나)의 단계를 끝까지 보입니다. 미리 다 적기 탭에서는 첫 번째 누름이 값을 모두 적는 단계입니다.'
+            },
+            {
+                el: '.lk-state',
+                title: '상태 칸',
+                body: 'seen 에 적힌 「숫자 → 인덱스」입니다. 짝을 찾은 순간 그 짝의 칸이 진한 파란색으로 바뀝니다. ' +
+                    '이중 for 문 탭에서는 이 칸이 지금 i 의 짝 비교를 보입니다.'
+            }
+        ]
+    },
+
+    // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================
     'http-methods': {

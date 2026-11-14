@@ -785,6 +785,7 @@ print(f'답 {Solution().orangesRotting([[0, 2]])}')         # 싱싱한 오렌�
 ## 더 깊이 보기
 
 - BFS 와 DFS 를 스택과 큐로 비교하고 방문 표시를 꺼낼 때 하면 큐가 얼마나 커지는지와 가중치가 있을 때의 다익스트라까지 다룬 글은 [그래프 탐색](post.html?id=algorithm-graph-search) 편입니다.
+- LeetCode 가 트리를 층별 순서 배열로 주고 root 하나를 넘기는 방식은 [트리와 BST](post.html?id=algorithm-lesson-tree-bst) 편 2절에, 이 글 6절의 겹마다 꺼내는 순회로 푸는 LeetCode 102(Binary Tree Level Order Traversal)는 같은 글 6절에 있습니다.
 - 이 글의 세 데모는 [BFS: 섬의 개수, 깊이별 확산, 최단 거리](demo-lesson-bfs.html) 한 페이지에서 모드와 격자를 바꿔 가며 볼 수 있습니다. 같은 그래프를 스택과 큐로 순회하는 차이는 [DFS vs BFS](demo-bfs-dfs.html) 데모에 있습니다.
 - 예시 문제는 [Number of Islands](https://leetcode.com/problems/number-of-islands/)(200), [Flood Fill](https://leetcode.com/problems/flood-fill/)(733), [Max Area of Island](https://leetcode.com/problems/max-area-of-island/)(695), [Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/)(1091), [Rotting Oranges](https://leetcode.com/problems/rotting-oranges/)(994) 입니다.
 - 파이썬 `deque` 의 메서드와 복잡도는 [collections 문서](https://docs.python.org/3/library/collections.html#collections.deque)에 있습니다.

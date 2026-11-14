@@ -544,6 +544,7 @@ print(f'건너뛰기를 끄면 {Solution().threeSum([-1, 0, 1, 2, -1, -4], skip_
 - 정렬한 뒤 한 번 순회하는 다른 문제인 구간 병합과 세 수의 합은 [해시와 정렬](post.html?id=algorithm-hash-sort) 편 10절이 다룹니다. 구간 병합은 정렬하지 않으면 모든 구간 쌍을 비교해 O(N²) 입니다.
 - 정렬되지 않은 배열에서 dict 로 Two Sum 을 푸는 법과 해시의 비용은 [해시 맵](post.html?id=algorithm-lesson-hash-map) 편에 있습니다.
 - 정렬된 배열에서 절반씩 버리는 이진 탐색은 [이분 탐색과 스택](post.html?id=algorithm-binary-search-stack) 편 1절부터 다룹니다.
+- 같은 이진 탐색을 닫힌 구간의 `<=` 와 `mid ± 1`, bisect 의 넣을 자리, 답의 범위를 좁히는 파라메트릭 서치로 따라가는 과외는 [이진 탐색](post.html?id=algorithm-lesson-binary-search) 편에 있습니다.
 - 이 글의 데모는 [투 포인터: 양 끝에서 좁히기와 버린 짝](demo-lesson-two-pointers.html) 한 페이지에서 입력 세 가지를 바꿔 가며 볼 수 있습니다.
 - 예시 문제는 [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/)(167), [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)(125), [3Sum](https://leetcode.com/problems/3sum/)(15) 입니다.
 - CPython 3.9 의 정렬이 쓰는 임시 배열은 [listsort.txt](https://github.com/python/cpython/blob/3.9/Objects/listsort.txt) 에 있습니다.

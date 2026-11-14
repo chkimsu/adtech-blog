@@ -652,6 +652,7 @@ for points, k in (([[1, 3], [-2, 2]], 1), ([[3, 3], [5, -1], [-2, 4]], 2)):   # 
 - 힙이 트리이면서 배열이라는 설명과 실전 heapq(최대 힙, 튜플, 상위 K)는 [트리와 힙](post.html?id=algorithm-tree-heap) 편 7~9절에 있습니다.
 - 지문 낱말로 힙을 고르는 표와 heapq 함수의 비용 표는 [코딩테스트 핵심 도구](post.html?id=algorithm-coding-test-toolkit) 편 맨 앞 절과 4절에 있습니다.
 - 정렬된 리스트에서 넣을 자리를 찾는 bisect 는 [이진 탐색](post.html?id=algorithm-lesson-binary-search) 편 5절에 있습니다.
+- 이진 탐색, BST, 힙의 규칙과 값 찾기, 넣기 비용을 한 표로 비교한 것은 [트리와 BST](post.html?id=algorithm-lesson-tree-bst) 편 10절에 있습니다.
 - 이 글의 데모는 [힙과 Top K: 크기 K 힙과 heapify 두 풀이](demo-lesson-heap-top-k.html) 한 페이지에서 탭과 입력을 바꿔 가며 볼 수 있고 값 12개를 heapify 하는 입력도 있습니다.
 - 예시 문제는 [Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/)(215), [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/)(347), [K Closest Points to Origin](https://leetcode.com/problems/k-closest-points-to-origin/)(973) 이고 값이 하나씩 들어오는 경우는 [Kth Largest Element in a Stream](https://leetcode.com/problems/kth-largest-element-in-a-stream/)(703) 입니다.
 - heapq 의 정의와 3.14 의 최대 힙 함수는 [공식 문서](https://docs.python.org/3/library/heapq.html)에, CPython 3.9 의 heapify, nlargest, `_heapify_max` 는 [heapq.py](https://github.com/python/cpython/blob/3.9/Lib/heapq.py) 에 있습니다.

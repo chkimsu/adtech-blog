@@ -1,6 +1,6 @@
 지훈 씨는 지난 시간에 투 포인터(정렬된 배열의 양 끝에 둔 인덱스 두 개를 좁혀 오며 답을 찾는 방법)를 배웠고 과외를 마치며 다음 진도를 정했습니다. 「그럼 그다음 이진 탐색, 그다음은 트리에 대해서 해 보자.」
 
-이진 탐색(binary search, 이분 탐색이라고도 부릅니다)은 정렬된 배열의 가운데 값과 찾는 값(target)을 비교해 target 이 있을 수 없는 절반을 버리는 방법입니다. 투 포인터에 이어 정렬된 배열에서 쓰는 두 번째 도구입니다. 트리 글에서 다룰 이진 탐색 트리(BST)도 같은 비교로 한쪽을 버립니다.
+이진 탐색(binary search, 이분 탐색이라고도 부릅니다)은 정렬된 배열의 가운데 값과 찾는 값(target)을 비교해 target 이 있을 수 없는 절반을 버리는 방법입니다. 투 포인터에 이어 정렬된 배열에서 쓰는 두 번째 도구입니다. [트리 글](post.html?id=algorithm-lesson-tree-bst)에서 다룰 이진 탐색 트리(BST)도 같은 비교로 한쪽을 버립니다.
 
 **가운데 값 하나만 보고 절반을 버려도 답을 놓치지 않으려면 무엇이 필요할까요?**
 
@@ -616,6 +616,7 @@ print(f'[30, 11, 23, 4, 20], h 6 → {Solution().minEatingSpeed([30, 11, 23, 4, 
 - 값 자체를 찾는 변형과 경계를 찾는 세 변형을 배열 [1, 3, 3, 3, 7] 하나에서 비교하는 예는 [이분 탐색과 스택](post.html?id=algorithm-binary-search-stack) 편 2절에, 나무를 같은 높이에서 잘라 원하는 양을 얻는 가장 높은 높이를 찾는 파라메트릭 서치는 4절에, 회전된 정렬 배열에서 값을 찾는 탐색은 5절에 있습니다.
 - 정확히 찾기, 왼쪽 경계, 오른쪽 경계를 같은 배열에서 바꿔 가며 보는 데모는 [이분 탐색 회차 보기](demo-binary-search.html) 입니다.
 - 정렬 여부에 따라 값 하나 찾기, Two Sum, 3Sum 에 쓰는 도구를 나란히 놓은 표는 [투 포인터](post.html?id=algorithm-lesson-two-pointers) 편 1절에 있습니다.
+- 펼친 배열이 정렬되는 이진 탐색 트리(BST)와 그 탐색 경로가 이진 탐색의 mid 순서와 같아지는 경우는 [트리와 BST](post.html?id=algorithm-lesson-tree-bst) 편 7절에 있습니다.
 - 이 글의 데모는 [이진 탐색: 버린 칸, bisect 의 두 자리, 답의 범위](demo-lesson-binary-search.html) 한 페이지에서 탭과 입력을 바꿔 가며 볼 수 있습니다.
 - 예시 문제는 [Binary Search](https://leetcode.com/problems/binary-search/)(704), [Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)(34), [Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/)(875) 입니다.
 - bisect 의 정의와 key 인자는 [공식 문서](https://docs.python.org/3/library/bisect.html)에, CPython 3.9 의 구현은 [bisect.py](https://github.com/python/cpython/blob/3.9/Lib/bisect.py) 에 있습니다.

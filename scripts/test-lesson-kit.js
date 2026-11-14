@@ -58,6 +58,21 @@ const L6 = K.treeLayout('0', K.arrayTree(6));
 eq('리스트 트리 배치', [L6.pos['0'], L6.pos['5'], L6.pos['2']], [{ col: 3, row: 0 }, { col: 4, row: 2 }, { col: 5, row: 1 }]);
 eq('리스트 트리 크기', [L6.cols, L6.rows], [6, 3]);
 
+const F5 = K.leafLayout('a', n5);
+eq('잎 배치 위치', F5.pos, { a: { col: 0.75, row: 0 }, b: { col: 0, row: 1 }, c: { col: 1.5, row: 1 }, d: { col: 1, row: 2 }, e: { col: 2, row: 2 } });
+eq('잎 배치 크기', [F5.cols, F5.rows], [3, 3]);
+eq('잎 배치 키는 전위 순서', Object.keys(F5.pos), ['a', 'b', 'c', 'd', 'e']);
+eq('한쪽 자식만 있는 사슬', K.leafLayout('x', { x: { left: null, right: 'y' }, y: { left: 'z', right: null }, z: { left: null, right: null } }), { pos: { x: { col: 0, row: 0 }, y: { col: 0, row: 1 }, z: { col: 0, row: 2 } }, cols: 1, rows: 3 });
+eq('잎 배치 빈 트리', K.leafLayout(null, {}), { pos: {}, cols: 0, rows: 0 });
+const F7 = K.leafLayout('0', K.arrayTree(7));
+eq('잎 배치 포화 7칸', [F7.pos['0'], F7.pos['1'], F7.pos['2'], F7.pos['6'], F7.cols], [{ col: 1.5, row: 0 }, { col: 0.5, row: 1 }, { col: 2.5, row: 1 }, { col: 3, row: 2 }, 4]);
+const F6 = K.leafLayout('0', K.arrayTree(6));
+eq('잎 배치 리스트 6칸', [F6.pos['0'].col, F6.pos['1'].col, F6.pos['2'].col, F6.cols], [1.25, 0.5, 2, 3]);
+const full = {};
+(function mk(id, d) { full[id] = { left: d < 3 ? id + '+' : null, right: d < 3 ? id + '-' : null }; if (d < 3) { mk(id + '+', d + 1); mk(id + '-', d + 1); } })('r', 0);
+const FF = K.leafLayout('r', full);
+eq('노드 15개 선택 트리', [FF.cols, FF.rows, FF.pos.r.col, FF.pos['r+'].col, FF.pos['r--'].col], [8, 4, 3.5, 1.5, 6.5]);
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

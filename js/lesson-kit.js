@@ -3,7 +3,7 @@
  *   js/lesson-kit.js  +  css/lesson-kit.css  (시험: scripts/test-lesson-kit.js)
  *
  * 브라우저에서는 전역 LessonKit, node 에서는 require('../js/lesson-kit.js') 다.
- * parseParams, nextGroupEnd, clamp, particle, treeLayout, arrayTree 는 DOM 을 모른다. 나머지(player, tabs, array, grid, tree, chips, legend)는
+ * parseParams, nextGroupEnd, clamp, particle, treeLayout, leafLayout, arrayTree 는 DOM 을 모른다. 나머지(player, tabs, array, grid, tree, chips, legend)는
  * 브라우저 전용이고 document 를 함수 안에서만 쓴다. 글자는 모두 textContent 로 넣는다.
  *
  * 데모 한 장의 모양 — 각 페이지는 <link rel="stylesheet" href="css/lesson-kit.css"> 와
@@ -68,14 +68,20 @@
  * treeLayout(root, nodes) -> { pos: { [id]: { col, row } }, cols, rows }      (순수 함수)
  *     nodes = { [id]: { left: id | null, right: id | null } }. col 은 중위 순회 차례(0부터)라 BST 는 펼친 배열의 자리와 같고,
  *     row 는 루트에서의 층(0부터)이다. pos 의 키는 중위 순회 차례로 들어 있다. root 가 null 이면 { pos: {}, cols: 0, rows: 0 }.
+ * leafLayout(root, nodes) -> { pos: { [id]: { col, row } }, cols, rows }      (순수 함수)
+ *     treeLayout 과 같은 입력과 출력이다. 잎만 왼쪽부터 0, 1, 2 정수 열을 차지하고(cols 는 잎 수), 자식이 있는 노드는 첫 자식과
+ *     마지막 자식 열의 가운데에 서서 열이 소수가 된다. 자식이 하나뿐이면 그 자식 열과 같다. pos 의 키는 전위 순서다.
+ *     노드가 15개인 완전 이진 트리가 15열 대신 8열이 된다. root 가 null 이면 { pos: {}, cols: 0, rows: 0 }.
  * arrayTree(n) -> nodes                (순수 함수)
  *     길이 n 인 리스트를 완전 이진 트리로 본 nodes. 키 '0' ~ String(n - 1), i 의 왼쪽 2i + 1, 오른쪽 2i + 2(n 이상이면 null).
  * tree(el, root, nodes, opts)
  *     opts = { text(id), cls: { [id]: '상태 클래스' }, sub: { [id]: '글자' }, none: { [id]: true }, hidden: { [id]: true },
- *              edge: { [childId]: '상태 클래스' } }. el 안에 .lk-tree 하나를 그린다(다시 부르면 지우고 다시 그린다).
+ *              edge: { [childId]: '상태 클래스' }, layout: 'leaves' }. el 안에 .lk-tree 하나를 그린다(다시 부르면 지우고 다시 그린다).
  *     노드는 .lk-cell.lk-tnode 이고 상태 클래스가 그대로 걸린다. none 노드는 .lk-tnode.is-none(점선, 글자 None, 작게)이고 cls 의 상태 클래스(is-now, is-hit, is-bad 등)도 걸린다.
  *     sub 는 노드 아래 작은 글자 .lk-tsub(힙의 인덱스, 재귀가 돌려준 값). hidden 노드와 그 노드로 가는 선은 그리지 않지만
  *     자리는 비워 둔다. 그래서 노드가 하나씩 생겨도 다른 노드가 움직이지 않게 마지막 트리를 nodes 로 넘긴다.
+ *     layout 이 'leaves' 면 leafLayout 으로, 없거나 다른 값이면 treeLayout 으로 놓는다. 호출 트리와 선택 트리처럼 잎이 많은 이진 트리는 'leaves' 가 좁다.
+ *     선 좌표와 --lk-tcol 에 소수 열이 그대로 들어가고 CSS 는 그대로 쓴다.
  *     선은 .lk-tree-edges svg 안의 line 이고 edge 에 is-now 가 걸린 선은 --navy 다.
  *     자리는 CSS 가 --lk-cell, --lk-gap 으로 정한다(열 폭 = 칸 + 틈, 층 높이 = 칸 + 30px). JS 는 트리에 --lk-tcols, --lk-trows 를, 노드마다 --lk-tcol, --lk-trow 를 넘긴다.
  *     열이 7개 이하인 트리에는 .lk-tree-narrow 가 붙고, CSS 가 그 트리가 든 .lk-stage 를 800~1239px 에서 보드 | 옆 칸 260px 로 세운다.
@@ -97,7 +103,7 @@
  *   mode 와 preset 은 parseParams 가 정리한다(위 규칙).
  *
  * ---- 달라진 점 ----
- * 약속에서 벗어난 것은 노드 자리 하나다. 브리프는 left = col × 열 폭 이었으나 노드는 열 폭 안에서 틈의 절반, 층 높이 안에서 15px 띄워 놓아 노드 가운데가 선 끝 (col + 0.5, row + 0.5) 과 맞는다. 덧붙인 것: treeLayout, arrayTree, tree 와 .lk-tree 부품(트리 그림), 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
+ * 약속에서 벗어난 것은 노드 자리 하나다. 브리프는 left = col × 열 폭 이었으나 노드는 열 폭 안에서 틈의 절반, 층 높이 안에서 15px 띄워 놓아 노드 가운데가 선 끝 (col + 0.5, row + 0.5) 과 맞는다. 덧붙인 것: treeLayout, leafLayout(잎 배치, tree 의 opts.layout), arrayTree, tree 와 .lk-tree 부품(트리 그림), 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
  * 값 줄 왼쪽 이름 칸(head), 보드 안에 .lk-array 또는 .lk-grid 자식 하나를 그린다(보드 자체는 가로 스크롤 상자).
  */
 (function (root, factory) {
@@ -172,6 +178,23 @@
       if (n.right !== null && n.right !== undefined) walk(n.right, row + 1);
     })(rootId, 0);
     return { pos, cols: col, rows };
+  }
+
+  // 잎 배치 — 잎만 왼쪽부터 정수 열을 차지하고, 자식이 있는 노드는 첫 자식과 마지막 자식 열의 가운데에 선다(소수 열)
+  function leafLayout(rootId, nodes) {
+    const pos = {};
+    if (rootId === null || rootId === undefined) return { pos, cols: 0, rows: 0 };
+    let leaves = 0, rows = 0;
+    (function walk(id, row) {
+      pos[id] = null; // 키를 전위 순서로 먼저 잡아 둔다
+      if (row + 1 > rows) rows = row + 1;
+      const n = nodes[id];
+      const kids = [n.left, n.right].filter(k => k !== null && k !== undefined);
+      if (kids.length === 0) { pos[id] = { col: leaves++, row }; return; }
+      kids.forEach(k => walk(k, row + 1));
+      pos[id] = { col: (pos[kids[0]].col + pos[kids[kids.length - 1]].col) / 2, row };
+    })(rootId, 0);
+    return { pos, cols: leaves, rows };
   }
 
   // 리스트를 완전 이진 트리로 본다 — i 의 왼쪽은 2i+1, 오른쪽은 2i+2
@@ -300,7 +323,7 @@
     const hidden = opts.hidden || {};
     const edge = opts.edge || {};
     const textOf = typeof opts.text === 'function' ? opts.text : id => id;
-    const L = treeLayout(rootId, nodes);
+    const L = (opts.layout === 'leaves' ? leafLayout : treeLayout)(rootId, nodes);
     const wrap = node('div', 'lk-tree');
     wrap.style.setProperty('--lk-tcols', String(L.cols));
     wrap.style.setProperty('--lk-trows', String(L.rows));
@@ -361,5 +384,5 @@
     });
   }
 
-  return { parseParams, nextGroupEnd, clamp, particle, treeLayout, arrayTree, player, tabs, array, grid, tree, chips, legend };
+  return { parseParams, nextGroupEnd, clamp, particle, treeLayout, leafLayout, arrayTree, player, tabs, array, grid, tree, chips, legend };
 });

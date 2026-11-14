@@ -41,6 +41,9 @@ eq('hole 교과서', [H.bookTrace(P.hole.heap).heap, H.bookTrace(P.hole.heap).co
 const b3 = H.bookTrace(P.twelve.heap), c3 = H.popTrace(P.twelve.heap);
 eq('twelve 두 방식 같은 리스트', [b3.heap, c3.heap], [[2, 3, 7, 4, 6, 9, 8, 15, 11, 10, 12], [2, 3, 7, 4, 6, 9, 8, 15, 11, 10, 12]]);
 eq('twelve 비교 수', [b3.compares, c3.compares, b3.path, c3.lifts], [6, 4, [0, 1, 3, 8], [1, 3, 8]]);
+eq('마지막 값이 멈춘 칸 (six, hole, twelve)', [[c1.leaf, c1.final], [c2.leaf, c2.final], [c3.leaf, c3.final]], [[2, 2], [3, 1], [8, 8]]);
+eq('hole 해설 문장은 올라간 칸까지', H.describe('pop', 'hole'), '[10, 15, 20, 40, 50, 30]에서 heappop 하면 10을 꺼내고 [15, 30, 20, 40, 50]이 남습니다. CPython 방식은 비교 4번이고 빈칸이 3번 칸 잎까지 내려간 뒤 마지막 값 30으로 채우고 1번 칸으로 올립니다.');
+eq('six 해설 문장은 잎에서 끝', H.describe('pop', 'six'), '[10, 20, 15, 40, 50, 30]에서 heappop 하면 10을 꺼내고 [15, 20, 30, 40, 50]이 남습니다. CPython 방식은 비교 2번이고 빈칸이 2번 칸 잎까지 내려간 뒤 마지막 값 30으로 채웁니다.');
 
 console.log(`\n${pass} 통과, ${fail} 실패`);
 process.exit(fail ? 1 : 0);

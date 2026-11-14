@@ -32,7 +32,7 @@
     rule: [['is-now', '지금 보는 칸'], ['is-bad', '규칙을 어긴 자식'], ['is-hit', '답']],
     push: [['is-in', '넣은 값'], ['is-now', '비교하는 부모']],
     book: [['is-out', '꺼낸 값'], ['is-in', '움직이는 값'], ['is-now', '비교한 자식'], ['is-dim', '빈칸']],
-    pop: [['is-out', '꺼낸 값'], ['is-in', '움직이는 값'], ['is-now', '비교한 자식'], ['is-dim', '빈칸']],
+    pop: [['is-out', '꺼낸 값'], ['is-in', '움직이는 값'], ['is-now', '비교한 값'], ['is-dim', '빈칸']],
   };
 
   const SPEC = { modes: H.MODES, modeDefault: H.MODE_DEFAULT, presetModes: H.PRESET_MODES };
@@ -44,6 +44,10 @@
 
   const kindOf = () => S.p.kind || 'min';
   const sign = () => (kindOf() === 'max' ? '≥' : '≤');
+  // 쌍의 실제 크기 관계 — 규칙을 어긴 쌍은 최소 힙이면 부모 > 자식, 최대 힙이면 부모 < 자식이다
+  const relation = (ok) => (ok ? sign() : kindOf() === 'max' ? '<' : '>');
+  // 같은 부모를 둔 다른 자식 칸
+  const sibling = (c) => (c % 2 ? c + 1 : c - 1);
 
   const presetLabel = (key) => {
     const p = H.PRESETS[key];
@@ -124,7 +128,7 @@
     return S.mode === 'push' ? [] : S.p.heap;
   }
 
-  // push 와 pop 의 올림 단계가 같은 표시: 올라가는 값은 is-in, 비교한 부모는 is-now
+  // push 와 pop 의 올림 단계가 같은 표시: 올라가는 값은 is-in, 비교한 부모는 is-now. 표시는 바꾼 뒤 그 값이 있는 칸을 따라간다
   function markUp(e, mark, edge) {
     if (e.move) { mark(e.parent, 'is-in'); mark(e.at, 'is-now'); }
     else { mark(e.at, 'is-in'); mark(e.parent, 'is-now'); }
@@ -157,7 +161,9 @@
     } else if (S.mode === 'book') {
       if (e.type === 'root') mark(0, 'is-in');
       else if (e.type === 'swap') {
-        [2 * e.at + 1, 2 * e.at + 2].filter((c) => c < heap.length).forEach((c) => mark(c, 'is-now'));
+        // 비교한 자식 값이 지금 있는 칸: 올라간 작은 자식은 e.at, 다른 자식은 제자리. 내려간 마지막 값은 e.child
+        mark(e.at, 'is-now');
+        if (e.compared === 2) mark(sibling(e.child), 'is-now');
         mark(e.child, 'is-in');
         edge[e.child] = 'is-now';
       } else if (e.type === 'stop') {
@@ -166,10 +172,11 @@
       }
     } else {
       if (e.type === 'lift') {
-        [2 * e.to + 1, 2 * e.to + 2].filter((c) => c < heap.length).forEach((c) => mark(c, 'is-now'));
+        // 올린 자식은 e.to 로 올라갔고 빈칸은 e.from 으로 내려갔다. 두 자식을 비교했으면 두 값이 지금 있는 칸에 is-now
         mark(e.to, 'is-in');
+        if (e.compared) { mark(e.to, 'is-now'); mark(sibling(e.from), 'is-now'); }
         edge[e.from] = 'is-now';
-      } else if (e.type === 'leaf') mark(e.at, 'is-now');
+      } else if (e.type === 'leaf') edge[e.at] = 'is-now';
       else if (e.type === 'fill') mark(e.at, 'is-in');
       else markUp(e, mark, edge);
     }
@@ -312,8 +319,8 @@
     if (S.mode === 'rule') {
       const h = S.p.heap;
       const pairs = shown.filter((e) => e.type === 'pair');
-      K.chips($('lk-state'), pairs.map((e) => ({ text: `${h[e.parent]} ${sign()} ${h[e.child]}`, cls: e.ok ? '' : 'is-bad' })), '아직 확인한 쌍이 없습니다');
-      note.textContent = `확인한 쌍 ${pairs.length} / ${h.length - 1}. 칩은 부모 값 ${sign()} 자식 값을 적은 것이고 붉은 칩은 규칙을 어긴 쌍입니다.`;
+      K.chips($('lk-state'), pairs.map((e) => ({ text: `${h[e.parent]} ${relation(e.ok)} ${h[e.child]}`, cls: e.ok ? '' : 'is-bad' })), '아직 확인한 쌍이 없습니다');
+      note.textContent = `확인한 쌍 ${pairs.length} / ${h.length - 1}. 칩은 부모 값과 자식 값을 실제 크기 관계로 적습니다. 붉은 칩은 규칙을 어긴 쌍입니다.`;
       return;
     }
     if (S.mode === 'push') {
@@ -333,13 +340,6 @@
     if (last) items.push({ text: `마지막 값 ${last.value}`, cls: 'is-in' });
     K.chips($('lk-state'), items, '아직 꺼낸 값이 없습니다');
     note.textContent = shown.length ? `지금까지 비교 ${comparesSoFar(shown)}번.` : '';
-  }
-
-  function finalPos() {
-    const fill = S.events.find((e) => e.type === 'fill');
-    let pos = fill.at;
-    S.events.filter((e) => e.type === 'up' && e.move).forEach((e) => { pos = e.parent; });
-    return pos;
   }
 
   function result(shown, done) {
@@ -382,7 +382,7 @@
       lines(sub, [`비교 ${t.compares}번. ` + (end === 0 ? `마지막 값 ${lv}${J(lv, '은', '는')} 0번 칸에 그대로 남았습니다` : `마지막 값 ${lv}${J(lv, '이', '가')} 0번 칸에서 ${end}번 칸으로 내려갔습니다`)]);
       return;
     }
-    const fp = finalPos();
+    const fp = t.final;
     lines(sub, [`비교 ${t.compares}번. ` + (fp === t.leaf ? `빈칸이 ${t.leaf}번 칸 잎까지 내려간 뒤 ${lv}${J(lv, '으로', '로')} 채웠습니다` : `빈칸이 ${t.leaf}번 칸 잎에 닿아 ${lv}${J(lv, '으로', '로')} 채우고 ${fp}번 칸으로 올렸습니다`)]);
   }
 

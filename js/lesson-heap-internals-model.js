@@ -9,6 +9,7 @@
  *   pushTrace  CPython 3.9 heapq.heappush(_siftdown). 값마다 끝에 붙이고 부모와 비교하며 올린다.
  *   bookTrace  교과서 방식 heappop. 마지막 값을 0번 칸에 두고 작은 자식과 바꾸며 내린다(자식이 더 크거나 없으면 멈춘다).
  *   popTrace   CPython 3.9 heapq.heappop(_siftup 이 빈칸을 잎까지 내리고 _siftdown 이 올린다). 빈칸은 null 이다.
+ *              돌려주는 leaf 는 빈칸이 닿은 잎 칸, final 은 마지막 값이 올라가 멈춘 칸이다.
  * 두 heappop 방식은 값이 모두 다를 때 같은 리스트를 만든다.
  *
  * 이벤트 (group 은 「다음 값」, 「다음 쌍」, 「다음 층」 버튼이 한 번에 넘기는 번호. heap 은 그 단계 뒤 리스트의 복사본)
@@ -163,7 +164,7 @@
     const m = heap.length;
     let compares = 0;
     const lifts = [];
-    if (m === 0) return { value, heap: [], compares, lifts, leaf: null, events };
+    if (m === 0) return { value, heap: [], compares, lifts, leaf: null, final: null, events };
     let pos = 0, layer = 1;
     for (;;) {
       let child = 2 * pos + 1;
@@ -195,7 +196,7 @@
         break;
       }
     }
-    return { value, heap: heap.slice(), compares, lifts, leaf, events };
+    return { value, heap: heap.slice(), compares, lifts, leaf, final: pos, events };
   }
 
   // 해설 칸 문장 — 지금 mode 에서 그 입력이 어떻게 끝나나. mode 에서 쓸 수 없는 입력이면 ''
@@ -221,8 +222,11 @@
     }
     const t = mode === 'book' ? bookTrace(p.heap) : popTrace(p.heap);
     const head = `${list(p.heap)}에서 heappop 하면 ${p.heap[0]}${J(p.heap[0], '을', '를')} 꺼내고 ${list(t.heap)}${J(list(t.heap), '이', '가')} 남습니다. `;
-    if (mode === 'book') return head + `교과서 방식은 비교 ${t.compares}번이고 마지막 값 ${p.heap[p.heap.length - 1]}${J(p.heap[p.heap.length - 1], '이', '가')} 0번 칸에서 ${t.path[t.path.length - 1]}번 칸으로 내려갑니다.`;
-    return head + `CPython 방식은 비교 ${t.compares}번이고 빈칸이 ${t.leaf}번 칸 잎까지 내려간 뒤 마지막 값 ${p.heap[p.heap.length - 1]}${J(p.heap[p.heap.length - 1], '으로', '로')} 채웁니다.`;
+    const lv = p.heap[p.heap.length - 1];
+    if (mode === 'book') return head + `교과서 방식은 비교 ${t.compares}번이고 마지막 값 ${lv}${J(lv, '이', '가')} 0번 칸에서 ${t.path[t.path.length - 1]}번 칸으로 내려갑니다.`;
+    // 마지막 값이 잎에서 더 올라가면 올라간 칸까지 적는다(결과 칸 아랫줄과 같은 내용)
+    const pop = `CPython 방식은 비교 ${t.compares}번이고 빈칸이 ${t.leaf}번 칸 잎까지 내려간 뒤 마지막 값 ${lv}${J(lv, '으로', '로')}`;
+    return head + (t.final === t.leaf ? `${pop} 채웁니다.` : `${pop} 채우고 ${t.final}번 칸으로 올립니다.`);
   }
 
   return { J, PRESETS, MODES, MODE_DEFAULT, PRESET_MODES, ruleTrace, pushTrace, bookTrace, popTrace, describe, list, P };

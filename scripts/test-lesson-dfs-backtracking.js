@@ -18,6 +18,10 @@ eq('ABCCED 찾음, 호출, 시작 칸', [w1.found, w1.calls, w1.starts], [true, 
 eq('ABCCED 표시한 칸 순서', w1.events.filter((e) => e.type === 'mark').map((e) => [e.r, e.c]), [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 1]]);
 eq('ABCCED 막힌 시도', [w1.events.filter((e) => e.result === 'out').length, w1.events.filter((e) => e.result === 'miss').length], [5, 5]);
 eq('ABCCED 이벤트 수와 마지막 그룹', [w1.events.length, w1.events[w1.events.length - 1].group], [23, 12]);
+// 재귀 깊이는 한 번에 쌓인 dfs 호출 수다. 글 1절처럼 표시 깊이 1~6, 확인 호출 7, 막힌 호출은 많아야 6.
+const maxDepth = (t, f) => Math.max(...t.events.filter(f).map((e) => e.depth));
+eq('ABCCED 재귀 깊이(표시, 전체 최대, 막힌 호출 최대)', [w1.events.filter((e) => e.type === 'mark').map((e) => e.depth), maxDepth(w1, () => true), maxDepth(w1, (e) => e.type === 'probe')], [[1, 2, 3, 4, 5, 6], 7, 6]);
+eq('ABCCED 단계 17 확인 호출과 단계 23 되돌리기의 깊이', [w1.events[16].type, w1.events[16].depth, w1.events[22].type, w1.events[22].depth], ['done', 7, 'restore', 1]);
 const w2 = D.wordTrace(P.see.board, P.see.word);
 eq('SEE 찾음, 호출, 시작 칸', [w2.found, w2.calls, w2.starts], [true, 16, [[1, 0], [1, 3]]]);
 eq('SEE 표시와 되돌림', sigs(w2).map((e) => [e.type, e.r, e.c]), [['mark', 1, 0], ['restore', 1, 0], ['mark', 1, 3], ['mark', 0, 3], ['restore', 0, 3], ['mark', 2, 3], ['mark', 2, 2], ['done', 1, 2], ['restore', 2, 2], ['restore', 2, 3], ['restore', 1, 3]]);
@@ -26,6 +30,7 @@ eq('SEE 표시한 칸을 # 로 읽음', w2.events.filter((e) => e.type === 'prob
 const w3 = D.wordTrace(P.abcb.board, P.abcb.word);
 eq('ABCB 못 찾음', [w3.found, w3.calls, w3.starts, sigs(w3).length], [false, 18, [[0, 0], [2, 0]], 8]);
 eq('ABCB 이미 쓴 칸을 # 로 만남', w3.events.filter((e) => e.letter === '#').map((e) => [e.r, e.c, e.k]), [[0, 0, 2], [0, 1, 3]]);
+eq('ABCB 단계 2~4 막힌 호출과 SEE 단계 6 되돌리기의 깊이', [w3.events.slice(1, 4).map((e) => [e.type, e.depth]), [w2.events[5].type, w2.events[5].depth]], [[['probe', 2], ['probe', 2], ['probe', 2]], ['restore', 1]]);
 const t1 = D.targetTrace(P.t1.nums, P.t1.target, false);
 eq('t1 방법, 호출, 잎', [t1.ways, t1.calls, t1.leaves, t1.pruned], [3, 15, 8, 0]);
 eq('t1 맞은 잎', t1.events.filter((e) => e.type === 'leaf' && e.hit).map((e) => e.id), ['r++-', 'r+-+', 'r-++']);

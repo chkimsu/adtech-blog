@@ -22,7 +22,7 @@
   const { list, J } = D;
   const P = (text, withFinal, withoutFinal) => K.particle(String(text), withFinal, withoutFinal);
 
-  const MODE_LABEL = { word: '단어를 잇는 탐색', target: '부호를 고르는 탐색', prune: '가지치기한 탐색' };
+  const MODE_LABEL = { word: '단어를 만드는 탐색', target: '부호를 고르는 탐색', prune: '가지치기한 탐색' };
   const GROUP_LABEL = { word: '다음 칸', target: '다음 반환', prune: '다음 반환' };
   const STATE_LABEL = { word: '지금 경로', target: '호출 중', prune: '호출 중' };
   const START = { word: '「한 칸」이나 「다음 칸」을 누르면 시작합니다.', target: '「한 칸」이나 「다음 반환」을 누르면 시작합니다.' };
@@ -50,7 +50,7 @@
   };
 
   function note() {
-    if (isWord()) return '79번처럼 판의 칸을 위, 아래, 왼쪽, 오른쪽 순서로 이어 단어를 만듭니다. 쓰는 칸은 # 로 바꿔 표시하고, 네 방향이 모두 막히면 원래 글자로 되돌려 다른 길에서 다시 쓸 수 있게 합니다.';
+    if (isWord()) return '79번처럼 판의 칸을 위, 아래, 왼쪽, 오른쪽 순서로 연결해 단어를 만듭니다. 쓰는 칸은 # 로 바꿔 표시하고 네 방향이 모두 막히면 원래 글자로 되돌려 다른 길에서 다시 쓸 수 있게 합니다.';
     if (S.mode === 'target') return '494번처럼 숫자마다 + 와 - 를 골라 합이 목표가 되는 방법을 셉니다. 고를 때마다 노드가 생기고 끝까지 간 잎에서 합을 목표와 비교합니다. 이 탭은 가지치기를 하지 않습니다.';
     return '같은 선택 트리에서 지금까지의 합이 남은 숫자를 모두 더하거나 빼도 목표에 닿지 않으면 그 노드에서 더 들어가지 않고 0 을 돌려줍니다(가지치기).';
   }
@@ -178,13 +178,30 @@
     if (e.type === 'done') return `다음 글자를 찾을 차례인데 k 가 단어 길이 ${P(w.length, '과', '와')} 같아 단어를 모두 찾았습니다. 이 검사가 판 밖 검사보다 먼저라 True 를 바로 돌려줍니다.`;
     const back = top2(v);
     if (e.found) return `${P(cell(e.r, e.c), '을', '를')} ${P(e.letter, '으로', '로')} 되돌립니다. 아래에서 True 가 올라와 이 호출도 True 를 돌려줍니다.`;
-    return `네 방향 모두 막혀 ${P(cell(e.r, e.c), '을', '를')} ${P(e.letter, '으로', '로')} 되돌리고 ${back ? `${P(cell(back.r, back.c), '으로', '로')} 돌아갑니다. 다른 길에서 이 칸을 다시 쓸 수 있습니다.` : '시작 칸을 도는 반복문으로 돌아갑니다. 다음 시작 칸을 찾습니다.'}`;
+    // 시작 칸의 호출이 끝나면 반복문으로 돌아간다. 마지막 이벤트면 남은 시작 칸이 없어 exist 가 False 로 끝난다.
+    const loop = shown.length === S.events.length
+      ? '시작 칸을 도는 반복문으로 돌아갑니다. 남은 시작 칸이 없어 False 를 돌려줍니다.'
+      : '시작 칸을 도는 반복문으로 돌아갑니다. 다음 시작 칸을 찾습니다.';
+    return `네 방향 모두 막혀 ${P(cell(e.r, e.c), '을', '를')} ${P(e.letter, '으로', '로')} 되돌리고 ${back ? `${P(cell(back.r, back.c), '으로', '로')} 돌아갑니다. 다른 길에서 이 칸을 다시 쓸 수 있습니다.` : loop}`;
   }
   const top2 = (v) => v.path[v.path.length - 1];
 
-  function wordState(v) {
+  // 재귀 깊이는 글 1절의 정의대로 한 번에 쌓인 dfs 호출 수(이벤트의 depth)다. 칩은 표시한 칸이라
+  // mark 에서만 칩 수와 같고 막힌 호출, 확인 호출, 되돌리는 호출에서는 칩 위에 호출 하나가 더 쌓여 있다.
+  // 문장은 1440px 와 1024px 글 안에서 한 줄에 들어가는 길이로 둔다(두 줄이면 iframe 높이 폴백을 넘는다).
+  const EXTRA_CALL = { probe: '막힌 호출', done: '확인 호출', restore: '되돌리는 호출' };
+  function wordState(shown, v) {
     K.chips($('lk-state'), v.path.map((x, i) => ({ text: `${x.letter} ${cell(x.r, x.c)}`, cls: i === v.path.length - 1 ? 'is-in' : '' })), '표시한 칸이 없습니다');
-    $('lk-state-note').textContent = `재귀 깊이 ${v.path.length}. 칩은 표시한 칸을 부른 순서대로 적었습니다.`;
+    const e = shown[shown.length - 1];
+    let text = '재귀 깊이 0. 아직 부른 dfs 호출이 없습니다.';
+    if (e && e.type === 'mark') text = `재귀 깊이 ${e.depth}. 칩은 표시한 칸을 부른 순서대로 적었습니다.`;
+    else if (e) {
+      const extra = EXTRA_CALL[e.type];
+      text = v.path.length
+        ? `재귀 깊이 ${e.depth}. 칩 ${v.path.length}개 위에 ${extra}${J(extra, '이', '가')} 하나 있습니다.`
+        : `재귀 깊이 ${e.depth}. ${extra} 하나만 있습니다.`;
+    }
+    $('lk-state-note').textContent = text;
   }
 
   function wordResult(shown, v, done) {
@@ -316,7 +333,7 @@
     if (isWord()) {
       const v = wordView(shown);
       wordBoard(shown, v, done);
-      wordState(v);
+      wordState(shown, v);
       wordResult(shown, v, done);
       $('lk-now').textContent = wordNow(shown, v);
     } else {

@@ -9,8 +9,9 @@
  *   targetTrace  글의 494 코드와 같다. 호출마다 + 와 - 를 고르고, prune 이면 |target - sum| > rest[i] 인 노드에서 더 들어가지 않는다.
  *
  * 이벤트 (group 은 「다음 칸」, 「다음 반환」 버튼이 한 번에 넘기는 번호)
- *   wordTrace    { type: 'probe', r, c, k, result: 'out' | 'miss', letter: 그 칸의 지금 글자(# 일 수 있다) | null, group },
- *                { type: 'mark', r, c, k, letter, group }, { type: 'done', r, c, k, group }, { type: 'restore', r, c, k, letter, found, group }
+ *   wordTrace    { type: 'probe', r, c, k, depth, result: 'out' | 'miss', letter: 그 칸의 지금 글자(# 일 수 있다) | null, group },
+ *                { type: 'mark', r, c, k, depth, letter, group }, { type: 'done', r, c, k, depth, group }, { type: 'restore', r, c, k, depth, letter, found, group }
+ *                depth 는 그 이벤트를 낸 호출까지 한 번에 쌓인 dfs 호출 수(재귀 깊이)다. 시작 칸의 호출이 1 이다.
  *                group 은 mark, done, restore 마다 1 씩 오른다. probe 는 다음 mark 나 restore 와 한 그룹이다.
  *   targetTrace  { type: 'call', id, i, sum, group }, { type: 'leaf', id, sum, hit, count, group },
  *                { type: 'prune', id, i, sum, rest, count: 0, group }, { type: 'return', id, count, group }
@@ -54,17 +55,18 @@
     const starts = [];
     let g = 0, calls = 0;
     const sig = (e) => { events.push(Object.assign(e, { group: g })); g++; };
-    function dfs(r, c, k) {
+    function dfs(r, c, k, depth) {
       calls++;
-      if (k === word.length) { sig({ type: 'done', r, c, k }); return true; }
-      if (r < 0 || r >= rows || c < 0 || c >= cols) { events.push({ type: 'probe', r, c, k, result: 'out', letter: null, group: g }); return false; }
-      if (board[r][c] !== word[k]) { events.push({ type: 'probe', r, c, k, result: 'miss', letter: board[r][c], group: g }); return false; }
+      if (k === word.length) { sig({ type: 'done', r, c, k, depth }); return true; }
+      if (r < 0 || r >= rows || c < 0 || c >= cols) { events.push({ type: 'probe', r, c, k, depth, result: 'out', letter: null, group: g }); return false; }
+      if (board[r][c] !== word[k]) { events.push({ type: 'probe', r, c, k, depth, result: 'miss', letter: board[r][c], group: g }); return false; }
       const letter = board[r][c];
       board[r][c] = '#';
-      sig({ type: 'mark', r, c, k, letter });
-      const found = dfs(r - 1, c, k + 1) || dfs(r + 1, c, k + 1) || dfs(r, c - 1, k + 1) || dfs(r, c + 1, k + 1);
+      sig({ type: 'mark', r, c, k, depth, letter });
+      const d = depth + 1;
+      const found = dfs(r - 1, c, k + 1, d) || dfs(r + 1, c, k + 1, d) || dfs(r, c - 1, k + 1, d) || dfs(r, c + 1, k + 1, d);
       board[r][c] = letter;
-      sig({ type: 'restore', r, c, k, letter, found });
+      sig({ type: 'restore', r, c, k, depth, letter, found });
       return found;
     }
     let found = false;
@@ -72,7 +74,7 @@
       for (let c = 0; c < cols; c++) {
         if (board[r][c] === word[0]) {
           starts.push([r, c]);
-          if (dfs(r, c, 0)) { found = true; break outer; }
+          if (dfs(r, c, 0, 1)) { found = true; break outer; }
         }
       }
     }

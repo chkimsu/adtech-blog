@@ -11,7 +11,7 @@ function eq(name, got, want) {
   console.log(`   ${ok ? '✓' : '✗'} ${name}${ok ? '' : `\n       기대 ${JSON.stringify(want)}\n       실제 ${JSON.stringify(got)}`}`);
 }
 
-console.log('해시 맵 — seen 한 번 순회, 이중 for 문, 미리 다 적기');
+console.log('해시 맵 — seen 한 번 순회, 이중 for 문, 먼저 다 적는 풀이');
 const P = H.PRESETS;
 const s = H.seenTrace(P['two-sum'].nums, 9);
 eq('two-sum 답', s.answer, [0, 2]);
@@ -22,7 +22,9 @@ eq('late-pair seen 확인 수', H.seenTrace(P['late-pair'].nums, 18).checks, 8);
 eq('late-pair 이중 for 문 비교 수', H.bruteTrace(P['late-pair'].nums, 18).comparisons, 28);
 eq('late-pair 이중 for 문 답', H.bruteTrace(P['late-pair'].nums, 18).answer, [6, 7]);
 eq('two-sum 이중 for 문 비교 수', H.bruteTrace(P['two-sum'].nums, 9).comparisons, 2);
-eq('미리 다 적기 답', H.prefillTrace(P['self-pair'].nums, 6).answer, [0, 0]);
+eq('먼저 다 적는 풀이 self-pair 답', H.prefillTrace(P['self-pair'].nums, 6).answer, [0, 0]);
+eq('먼저 다 적는 풀이 two-sum 답', H.prefillTrace(P['two-sum'].nums, 9).answer, [2, 0]);
+eq('먼저 다 적는 풀이 late-pair 답', H.prefillTrace(P['late-pair'].nums, 18).answer, [1, 1]);
 eq('순서대로 적기 답', H.seenTrace(P['self-pair'].nums, 6).answer, [1, 2]);
 eq('답 없음', H.seenTrace([1, 2], 10).answer, []);
 eq('답 없음 확인 수', H.seenTrace([1, 2], 10).checks, 2);

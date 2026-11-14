@@ -20,11 +20,11 @@
   const { list } = H;
   const P = (text, withFinal, withoutFinal) => K.particle(String(text), withFinal, withoutFinal);
 
-  const MODE_LABEL = { seen: 'seen 한 번 순회', brute: '이중 for 문', prefill: '미리 다 적기' };
+  const MODE_LABEL = { seen: 'seen 한 번 순회', brute: '이중 for 문', prefill: '먼저 다 적는 풀이' };
 
   const NOTE = {
     seen: '값마다 짝 target - num 이 seen 에 있나 확인하고, 없으면 num → i 를 seen 에 적습니다.',
-    brute: '두 인덱스 i < j 의 모든 조합을 골라 nums[i] + nums[j] 가 target 인지 봅니다.',
+    brute: '두 인덱스 i < j 의 조합을 앞에서부터 하나씩 골라 nums[i] + nums[j] 가 target 인지 보고, 답을 찾으면 멈춥니다.',
     prefill: '순서를 바꿉니다. 먼저 모든 값을 seen 에 적고, 그다음 값마다 짝을 확인합니다. 짝이 자기 자신이면 같은 칸을 두 번 씁니다.',
   };
 
@@ -87,7 +87,7 @@
     drawTabs();
     $('lk-note').textContent = NOTE[S.mode];
     K.legend($('lk-legend'), LEGEND[S.mode]);
-    $('lk-state-label').textContent = S.mode === 'brute' ? '비교한 짝' : 'seen (숫자 → 인덱스)';
+    $('lk-state-label').textContent = S.mode === 'brute' ? '비교한 조합' : 'seen (숫자 → 인덱스)';
     S.player.restart();
   }
 
@@ -152,12 +152,14 @@
         text: `${S.nums[ev.i]} + ${S.nums[ev.j]} = ${ev.sum}`,
         cls: ev.hit ? 'is-hit' : '',
       })), '아직 비교하지 않았습니다');
-      note.textContent = `지금까지 비교한 짝은 ${shown.length}개입니다. 칸에는 지금 i 의 짝만 보입니다.`;
+      note.textContent = `지금까지 비교한 조합은 ${shown.length}개입니다. 칸에는 지금 i 로 만든 조합만 보입니다.`;
       return;
     }
+    // 찾은 짝의 칩은 답(is-hit)이고, 먼저 다 적는 풀이에서 자기 자신을 찾았으면 틀린 답(is-bad)이다
+    const at = e && e.type === 'look' && e.hit ? e.seen.find(([kk]) => kk === e.need)[1] : -1;
     const items = e ? e.seen.map(([k, v]) => {
       let c = '';
-      if (e.type === 'look' && e.hit && k === e.need) c = 'is-hit';
+      if (e.type === 'look' && e.hit && k === e.need) c = (S.mode === 'prefill' && at === e.i) ? 'is-bad' : 'is-hit';
       else if ((e.type === 'store' || e.type === 'fill') && k === e.num) c = 'is-in';
       return { text: `${k} → ${v}`, cls: c };
     }) : [];
@@ -183,7 +185,7 @@
     const counts = `seen 확인 ${sCount}번, 이중 for 문 비교 ${bCount}번`;
     if (!ans.length) {
       K.chips(main, [{ text: '[]', cls: 'is-dim' }]);
-      sub.textContent = `짝이 없어 빈 목록을 돌려줍니다. ${counts}`;
+      sub.textContent = `답이 없어 빈 목록을 돌려줍니다. ${counts}`;
       return;
     }
     const self = S.mode === 'prefill' && ans[0] === ans[1];

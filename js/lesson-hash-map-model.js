@@ -6,7 +6,7 @@
  * 브라우저에서는 전역 LessonHashMap, node 에서는 require 다. DOM 을 모른다.
  *
  *   seenTrace    값마다 짝(target - num)이 seen 에 있나 확인하고, 없으면 그 값을 적는다.
- *   bruteTrace   모든 짝(i < j)을 차례로 더해 본다.
+ *   bruteTrace   두 인덱스 i < j 의 조합을 차례로 더해 보고 합이 target 이면 멈춘다.
  *   prefillTrace 먼저 모든 값을 seen 에 적고 나서 값마다 짝을 확인한다. 자기 자신과 짝이 되는 틀린 답이 나올 수 있다.
  *
  * 이벤트의 seen 은 [[숫자, 인덱스], ...] 이고 파이썬 dict 처럼 같은 숫자를 다시 적으면 인덱스만 바뀐다.
@@ -101,7 +101,7 @@
     const s = seenTrace(p.nums, p.target);
     const b = bruteTrace(p.nums, p.target);
     if (mode === 'brute') {
-      return head + `이중 for 문은 ${b.comparisons}번 더해 본 뒤 답은 ${pairText(b.answer)} 입니다. seen 은 값을 ${s.checks}번 확인하고 답은 ${pairText(s.answer)} 입니다.`;
+      return head + `이중 for 문은 조합 ${b.comparisons}개를 더해 본 뒤 ${P(pairText(b.answer), '을', '를')} 돌려줍니다. seen 은 값을 ${s.checks}번 확인한 뒤 ${P(pairText(s.answer), '을', '를')} 돌려줍니다.`;
     }
     if (mode === 'prefill') {
       const f = prefillTrace(p.nums, p.target);
@@ -110,7 +110,7 @@
         ? `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. ${f.answer[0]}번 칸의 ${P(p.nums[f.answer[0]], '을', '를')} 두 번 쓴 틀린 답입니다. 순서대로 확인한 뒤 적으면 ${pairText(s.answer)} 입니다.`
         : `먼저 모두 적고 확인하면 답은 ${pairText(f.answer)} 입니다. 서로 다른 두 칸이라 맞는 답이고, 순서대로 확인한 뒤 적으면 ${pairText(s.answer)} 입니다.`);
     }
-    return head + `seen 은 값을 ${s.checks}번 확인하고 답은 ${pairText(s.answer)} 입니다. 이중 for 문은 ${b.comparisons}번 더해 봅니다.`;
+    return head + `seen 은 값을 ${s.checks}번 확인한 뒤 ${P(pairText(s.answer), '을', '를')} 돌려줍니다. 이중 for 문은 조합 ${b.comparisons}개를 더해 봅니다.`;
   }
 
   return { PRESETS, MODES, MODE_DEFAULT, seenTrace, bruteTrace, prefillTrace, describe, list };

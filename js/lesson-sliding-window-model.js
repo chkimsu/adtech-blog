@@ -2,23 +2,23 @@
  * 과외 슬라이딩 윈도우 데모 — 계산
  *   js/lesson-sliding-window-model.js  (시험: scripts/test-lesson-sliding-window.js)
  *
- * 크기가 k 로 정해진 창의 합을 구하는 두 방식(빼고 더하기, 매번 다 더하기)과, 크기가 변하는 창으로
+ * 크기가 k 로 정해진 윈도우의 합을 구하는 두 방식(빼고 더하기, 매번 다 더하기)과, 크기가 변하는 윈도우로
  * 중복 없는 가장 긴 부분 문자열을 찾는 방식을 이벤트로 쌓는다. 브라우저에서는 전역 LessonSlidingWindow,
  * node 에서는 require 다. DOM 을 모른다.
  *
- *   slideTrace    첫 창은 값 k 개를 더하고, 그다음 창부터 나간 값 하나를 빼고 들어온 값 하나를 더한다.
- *   resumTrace    창마다 k 개를 처음부터 다시 더한다.
- *   opsCount      n 개 배열, 크기 k 창의 연산 수를 식대로 센다.
- *   distinctTrace 오른쪽 r 을 늘리고, 새 글자가 창에 있으면 왼쪽 l 에서 글자를 빼 중복이 사라질 때까지 줄인다.
+ *   slideTrace    첫 윈도우는 값 k 개를 더하고, 그다음 윈도우부터 나간 값 하나를 빼고 들어온 값 하나를 더한다.
+ *   resumTrace    윈도우마다 k 개를 처음부터 다시 더한다.
+ *   opsCount      n 개 배열, 크기 k 윈도우의 연산 수를 식대로 센다.
+ *   distinctTrace 오른쪽 r 을 늘리고, 새 글자가 윈도우에 있으면 왼쪽 l 에서 글자를 빼 중복이 사라질 때까지 줄인다.
  *
- * 이벤트 (ops 는 그 이벤트까지의 누적 연산 수, group 은 「다음 창」 버튼이 한 번에 넘기는 묶음 번호)
- *   slideTrace   { type: 'add',  start: 0, idx, partial, ops, group: 0 }          첫 창의 값 하나를 더함(k 번)
- *                { type: 'move', start, out, in, sum, best, ops, group: start }   창을 옮김. out, in 은 값(인덱스가 아니다)
- *   resumTrace   { type: 'add',  start, idx, partial, ops, group: start }         창 하나를 처음부터 더하는 덧셈(창마다 k 번)
+ * 이벤트 (ops 는 그 이벤트까지의 누적 연산 수, group 은 「다음 윈도우」 버튼이 한 번에 넘기는 그룹 번호)
+ *   slideTrace   { type: 'add',  start: 0, idx, partial, ops, group: 0 }          첫 윈도우의 값 하나를 더함(k 번)
+ *                { type: 'move', start, out, in, sum, best, ops, group: start }   윈도우를 옮김. out, in 은 값(인덱스가 아니다)
+ *   resumTrace   { type: 'add',  start, idx, partial, ops, group: start }         윈도우 하나를 처음부터 더하는 덧셈(윈도우마다 k 번)
  *   distinctTrace
- *                { type: 'drop', l, ch, set, group: r }   l 은 뺀 글자의 인덱스, ch 는 그 글자, set 은 뺀 뒤 창 안의 글자(왼쪽부터)
- *                { type: 'add',  r, ch, l, set, best, group: r }  새 글자를 넣음. l 은 지금 창의 왼쪽 끝, set 은 넣은 뒤, best 는 그때까지의 최대 길이
- *   best 와 bestRange 는 창이 더 길 때만 바꾼다. 같은 길이는 먼저 나온 창이 남는다.
+ *                { type: 'drop', l, ch, set, group: r }   l 은 뺀 글자의 인덱스, ch 는 그 글자, set 은 뺀 뒤 윈도우 안의 글자(왼쪽부터)
+ *                { type: 'add',  r, ch, l, set, best, group: r }  새 글자를 넣음. l 은 지금 윈도우의 왼쪽 끝, set 은 넣은 뒤, best 는 그때까지의 최대 길이
+ *   best 와 bestRange 는 윈도우가 더 길 때만 바꾼다. 같은 길이는 먼저 나온 윈도우가 남는다.
  */
 (function (root, factory) {
   const api = factory();
@@ -52,7 +52,7 @@
 
   const sum = (a) => a.reduce((x, y) => x + y, 0);
 
-  // 창 합 전부와 첫 최대 창 (같은 합은 먼저 나온 창)
+  // 윈도우 합 전부와 첫 최대 윈도우 (같은 합은 먼저 나온 윈도우)
   function windowSums(nums, k) {
     const sums = [];
     for (let s = 0; s + k <= nums.length; s++) sums.push(sum(nums.slice(s, s + k)));
@@ -132,7 +132,7 @@
     }
     const sl = slideTrace(p.nums, p.k);
     const rs = resumTrace(p.nums, p.k);
-    const head = `nums = ${list(p.nums)}, k = ${p.k} 입니다. 창은 ${sl.sums.length}개이고 최대 합은 ${sl.best}입니다. `;
+    const head = `nums = ${list(p.nums)}, k = ${p.k} 입니다. 윈도우는 ${sl.sums.length}개이고 최대 합은 ${sl.best}입니다. `;
     if (mode === 'slide') return head + `빼고 더하기는 연산 ${sl.ops}번이 듭니다. 다 더하기는 ${rs.ops}번입니다.`;
     return head + `다 더하기는 연산 ${rs.ops}번이 듭니다. 빼고 더하기는 ${sl.ops}번입니다.`;
   }

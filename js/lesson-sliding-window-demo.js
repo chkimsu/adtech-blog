@@ -4,7 +4,7 @@
  *
  * 계산은 js/lesson-sliding-window-model.js 의 LessonSlidingWindow, 단계 재생과 부품은 js/lesson-kit.js 의 LessonKit 이 한다.
  * 화면 상태는 「이벤트를 몇 개까지 보였나」(at) 하나이고, render(at) 가 그때마다 이벤트를 처음부터 다시 쌓아 그린다.
- * 「다음 창」 버튼(#lk-group)은 이벤트의 group 이 같은 동안을 한 번에 넘긴다.
+ * 「다음 윈도우」 버튼(#lk-group)은 이벤트의 group 이 같은 동안을 한 번에 넘긴다.
  *
  * 주소 약속 — demo-lesson-sliding-window.html?embed=1&mode=<slide|resum|distinct>&preset=<PRESETS 키>
  *   인자가 없으면 slide 모드의 max-sum 이다. 입력 목록은 지금 모드에서 쓸 수 있는 입력만 보인다.
@@ -23,12 +23,12 @@
   const fmt = (v) => (v < 0 ? `(${v})` : String(v));
   const comma = (n) => n.toLocaleString('en-US');
 
-  const MODE_LABEL = { slide: '나간 값 빼고 들어온 값 더하기', resum: '매번 다 더하기', distinct: '중복 없는 부분 문자열' };
+  const MODE_LABEL = { slide: '빼고 더하는 풀이', resum: '매번 다 더하는 풀이', distinct: '중복 없는 부분 문자열' };
 
   const LEGEND = {
-    slide: [['is-window', '창'], ['is-in', '들어온 값'], ['is-out', '나간 값'], ['is-hit', '최대 합 창']],
-    resum: [['is-window', '창'], ['is-in', '방금 더한 값'], ['is-hit', '최대 합 창']],
-    distinct: [['is-window', '창'], ['is-now', '지금 보는 글자'], ['is-in', '넣은 글자'], ['is-out', '뺀 글자'], ['is-hit', '가장 긴 창']],
+    slide: [['is-window', '윈도우'], ['is-in', '들어온 값'], ['is-out', '나간 값'], ['is-hit', '최대 합 윈도우']],
+    resum: [['is-window', '윈도우'], ['is-in', '방금 더한 값'], ['is-hit', '최대 합 윈도우']],
+    distinct: [['is-window', '윈도우'], ['is-now', '지금 보는 글자'], ['is-in', '넣은 글자'], ['is-out', '뺀 글자'], ['is-hit', '가장 긴 윈도우']],
   };
 
   const SPEC = { modes: W.MODES, modeDefault: W.MODE_DEFAULT, presetModes: W.PRESET_MODES };
@@ -44,9 +44,9 @@
   };
 
   const note = () => {
-    if (S.mode === 'slide') return `크기가 ${S.k}인 창을 한 칸 옮길 때 나간 값 하나를 빼고 들어온 값 하나를 더합니다. 첫 창만 ${S.k}개를 모두 더합니다.`;
-    if (S.mode === 'resum') return `크기가 ${S.k}인 창을 한 칸 옮길 때마다 창 안의 ${S.k}개를 처음부터 다시 더합니다.`;
-    return '오른쪽 끝 r 을 한 칸씩 늘립니다. 새 글자가 창에 이미 있으면 왼쪽 끝 l 의 글자를 중복이 사라질 때까지 뺍니다. 창이 지금까지보다 길 때만 best 를 바꿉니다.';
+    if (S.mode === 'slide') return `크기가 ${S.k}인 윈도우를 한 칸 옮길 때 나간 값 하나를 빼고 들어온 값 하나를 더합니다. 첫 윈도우만 ${S.k}개를 모두 더합니다.`;
+    if (S.mode === 'resum') return `크기가 ${S.k}인 윈도우를 한 칸 옮길 때마다 윈도우 안의 ${S.k}개를 처음부터 다시 더합니다.`;
+    return '오른쪽 끝 r 을 한 칸씩 늘립니다. 새 글자가 윈도우에 이미 있으면 왼쪽 끝 l 의 글자를 중복이 사라질 때까지 뺍니다. 윈도우가 지금까지보다 길 때만 best 를 바꿉니다.';
   };
 
   function retrace() {
@@ -91,13 +91,13 @@
     drawTabs();
     $('lk-note').textContent = note();
     K.legend($('lk-legend'), LEGEND[S.mode]);
-    $('lk-state-label').textContent = S.mode === 'distinct' ? '창 안의 글자 set' : '창 합과 연산 수';
+    $('lk-state-label').textContent = S.mode === 'distinct' ? '윈도우 안의 글자 set' : '윈도우 합과 연산 수';
     S.player.restart();
   }
 
   const win = (start) => S.nums.slice(start, start + S.k);
 
-  // 지금 이벤트까지 보였을 때 최대 합 (아직 완성된 창이 없으면 null)
+  // 지금 이벤트까지 보였을 때 최대 합 (아직 완성된 윈도우가 없으면 null)
   function bestSoFar(shown) {
     const done = shown.filter((ev) => (S.mode === 'slide'
       ? (ev.type === 'move' || ev.idx === S.k - 1)
@@ -108,7 +108,7 @@
 
   // ---- 이번 단계 문장 ----
   function nowText(e, shown) {
-    if (!e) return '「한 칸」이나 「다음 창」을 누르면 시작합니다.';
+    if (!e) return '「한 칸」이나 「다음 윈도우」를 누르면 시작합니다.';
     if (S.mode === 'distinct') return distinctNow(e, shown);
     const before = bestSoFar(shown.slice(0, -1));
     const after = bestSoFar(shown);
@@ -117,7 +117,7 @@
       const bestText = e.sum > before
         ? `최대 합이 ${before}에서 ${P(e.sum, '으로', '로')} 바뀝니다.`
         : `최대 합은 ${before} 그대로입니다.`;
-      return `창이 ${list(win(e.start - 1))}에서 ${P(list(win(e.start)), '으로', '로')} 옮겨 갑니다. ` +
+      return `윈도우가 ${list(win(e.start - 1))}에서 ${P(list(win(e.start)), '으로', '로')} 옮겨 갑니다. ` +
         `나간 ${P(e.out, '을', '를')} 빼고 들어온 ${P(e.in, '을', '를')} 더해 ${prev} - ${fmt(e.out)} + ${fmt(e.in)} = ${e.sum}입니다. ` +
         `이 한 번에 연산이 2번 듭니다. ${bestText}`;
     }
@@ -126,19 +126,19 @@
     const plus = `${prevPartial} + ${fmt(v)} = ${e.partial}`;
     const last = e.idx === e.start + S.k - 1;
     if (S.mode === 'slide') {
-      return `첫 창을 만듭니다. 인덱스 ${e.idx}의 ${P(v, '을', '를')} 더해 ${plus}입니다.` +
-        (last ? ` 첫 창 ${list(win(0))}의 합이 ${P(e.partial, '으로', '로')} 정해졌습니다. 연산은 ${S.k}번 들었습니다.` : '');
+      return `첫 윈도우를 만듭니다. 인덱스 ${e.idx}의 ${P(v, '을', '를')} 더해 ${plus}입니다.` +
+        (last ? ` 첫 윈도우 ${list(win(0))}의 합이 ${P(e.partial, '으로', '로')} 정해졌습니다. 연산은 ${S.k}번 들었습니다.` : '');
     }
     let tail = '';
     if (last) {
-      tail = ` 창 합은 ${e.partial}이고 이 창에 연산이 ${S.k}번 들었습니다.`;
+      tail = ` 윈도우 합은 ${e.partial}이고 이 윈도우에 연산이 ${S.k}번 들었습니다.`;
       if (e.start > 0) {
         tail += e.partial > before
           ? ` 최대 합이 ${before}에서 ${P(e.partial, '으로', '로')} 바뀝니다.`
           : ` 최대 합은 ${after} 그대로입니다.`;
       }
     }
-    return `창 ${list(win(e.start))}의 합을 처음부터 다시 더합니다. 인덱스 ${e.idx}의 ${P(v, '을', '를')} 더해 ${plus}입니다.${tail}`;
+    return `윈도우 ${list(win(e.start))}의 합을 처음부터 ${e.start > 0 ? '다시 ' : ''}더합니다. 인덱스 ${e.idx}의 ${P(v, '을', '를')} 더해 ${plus}입니다.${tail}`;
   }
 
   function distinctNow(e, shown) {
@@ -147,17 +147,17 @@
     const nw = S.s[r];
     if (e.type === 'drop') {
       const left = e.set.includes(nw)
-        ? `창에 ${P(nw, '이', '가')} 아직 남아 있어 더 뺍니다.`
+        ? `윈도우에 ${P(nw, '이', '가')} 아직 남아 있어 더 뺍니다.`
         : '이제 중복이 사라졌습니다.';
-      return `r = ${r}, 새 글자 ${P(nw, '이', '가')} 창에 이미 있습니다. 맨 왼쪽의 ${P(e.ch, '을', '를')} 빼고 l 을 ${e.l}에서 ${P(e.l + 1, '으로', '로')} 옮깁니다. ${left}`;
+      return `r = ${r}, 새 글자 ${P(nw, '이', '가')} 윈도우에 이미 있습니다. 맨 왼쪽의 ${P(e.ch, '을', '를')} 빼고 l 을 ${e.l}에서 ${P(e.l + 1, '으로', '로')} 옮깁니다. ${left}`;
     }
     const len = e.set.length;
     const dup = shown.length > 1 && shown[shown.length - 2].type === 'drop' && shown[shown.length - 2].group === r;
     const bestText = len > prevBest
       ? `best 가 ${prevBest}에서 ${P(len, '으로', '로')} 바뀝니다.`
       : `best 는 ${e.best} 그대로입니다.`;
-    const put = dup ? `중복이 사라져 새 글자 ${P(nw, '을', '를')} 넣습니다.` : `새 글자 ${P(nw, '은', '는')} 창에 없어 그대로 넣습니다.`;
-    return `r = ${r}, ${put} 창은 "${e.set.join('')}", 길이는 ${len}입니다. ${bestText}`;
+    const put = dup ? `중복이 사라져 새 글자 ${P(nw, '을', '를')} 넣습니다.` : `새 글자 ${P(nw, '은', '는')} 윈도우에 없어 그대로 넣습니다.`;
+    return `r = ${r}, ${put} 윈도우는 "${e.set.join('')}", 길이는 ${len}입니다. ${bestText}`;
   }
 
   // ---- 보드 ----
@@ -167,7 +167,7 @@
     const ptr = {};
     let range = null;
     if (done) {
-      // 끝에서는 답인 창을 보인다
+      // 끝에서는 답인 윈도우를 보인다
       if (S.mode === 'distinct') {
         const [l, r] = S.trace.bestRange;
         if (r >= l) range = [l, r];
@@ -211,20 +211,20 @@
       const items = e ? e.set.map((c, i) => ({ text: c, cls: e.type === 'add' && i === e.set.length - 1 ? 'is-in' : '' })) : [];
       K.chips($('lk-state'), items, '비어 있음');
       const best = shown.reduce((b, ev) => (ev.type === 'add' ? ev.best : b), 0);
-      stateNote.textContent = `창 안에 같은 글자가 둘 들어가지 않게 set 으로 중복을 확인합니다. 지금 창 길이는 ${e ? e.set.length : 0}, best 는 ${best}입니다.`;
+      stateNote.textContent = `윈도우 안에 같은 글자가 둘 들어가지 않게 set 으로 중복을 확인합니다. 지금 윈도우 길이는 ${e ? e.set.length : 0}, best 는 ${best}입니다.`;
       return;
     }
     const best = bestSoFar(shown);
     const items = [];
     if (e) {
-      items.push({ text: `창 합 ${e.type === 'move' ? e.sum : e.partial}` });
+      items.push({ text: `윈도우 합 ${e.type === 'move' ? e.sum : e.partial}` });
       items.push({ text: `연산 수 ${e.ops}번` });
       if (best !== null) items.push({ text: `최대 합 ${best}` });
     }
     K.chips($('lk-state'), items, '아직 더하지 않았습니다');
     stateNote.textContent = S.mode === 'slide'
-      ? `첫 창에만 연산이 ${S.k}번 들고, 창을 한 번 옮길 때마다 빼기 1번과 더하기 1번, 모두 2번입니다.`
-      : `창을 한 번 옮길 때마다 창 안의 ${S.k}개를 처음부터 더하므로 연산이 ${S.k}번씩 듭니다.`;
+      ? `첫 윈도우에만 연산이 ${S.k}번 들고, 윈도우를 한 번 옮길 때마다 빼기 1번과 더하기 1번, 모두 2번입니다.`
+      : `윈도우를 한 번 옮길 때마다 윈도우 안의 ${S.k}개를 처음부터 더하므로 연산이 ${S.k}번씩 듭니다.`;
   }
 
   // ---- 결과 칸 ----
@@ -257,7 +257,7 @@
       main.textContent = `best ${best}`;
       lines(sub, [
         `가장 긴 중복 없는 부분 문자열은 인덱스 ${l}부터 ${r}까지의 "${S.s.slice(l, r + 1)}"입니다.`,
-        ties ? `길이 ${best}의 창이 ${ties}개 더 나왔지만 더 길지 않아 best 를 바꾸지 않았습니다.` : '',
+        ties ? `길이 ${best}의 윈도우가 ${ties}개 더 나왔지만 더 길지 않아 best 를 바꾸지 않았습니다.` : '',
         `r 은 ${S.s.length}번, l 은 ${drops}번 움직였습니다. 둘 다 앞으로만 가서 합이 글자 수 ${S.s.length}의 두 배를 넘지 않습니다.`,
       ].filter(Boolean));
       return;
@@ -269,10 +269,19 @@
     const same = sums.filter((v) => v === best).length - 1;
     main.textContent = S.key === 'leetcode-643' ? `최대 합 ${best}, 평균 ${best} / ${S.k} = ${best / S.k}` : `최대 합 ${best}`;
     lines(sub, [
-      `최대 합 창은 인덱스 ${bestStart}부터 ${bestStart + S.k - 1}까지의 ${list(win(bestStart))}입니다.` + (same ? ` 같은 합의 창이 ${same}개 더 있어 먼저 나온 창을 보입니다.` : ''),
+      `최대 합 윈도우는 인덱스 ${bestStart}부터 ${bestStart + S.k - 1}까지의 ${list(win(bestStart))}입니다.` + (same ? ` 같은 합의 윈도우가 ${same}개 더 있어 먼저 나온 윈도우를 보입니다.` : ''),
       `같은 입력에서 빼고 더하기 ${slideOps}번, 다 더하기 ${resumOps}번입니다.`,
-      `데이터 10만 개, 창 5만이면 다 더하기 ${comma(big.resum)}번, 빼고 더하기 ${comma(big.slide)}번입니다.`,
+      `데이터 10만 개, 윈도우 크기 5만이면 다 더하기 ${comma(big.resum)}번, 빼고 더하기 ${comma(big.slide)}번입니다.`,
     ]);
+  }
+
+  // 끝에서는 보드가 마지막 단계 대신 답인 윈도우를 칠하므로, 마지막 단계 문장 뒤에 그것을 적는다
+  function doneText() {
+    if (S.mode === 'distinct') {
+      const [l, r] = S.trace.bestRange;
+      return ` 마지막 글자라 여기서 끝납니다. 배열에는 가장 긴 윈도우 ${P(`"${S.s.slice(l, r + 1)}"`, '을', '를')} 표시했습니다.`;
+    }
+    return ` 마지막 윈도우라 여기서 끝납니다. 배열에는 최대 합 윈도우 ${P(list(win(S.trace.bestStart)), '을', '를')} 표시했습니다.`;
   }
 
   function render(at) {
@@ -282,7 +291,7 @@
     drawBoard(shown, done);
     drawState(shown);
     drawResult(shown, done);
-    $('lk-now').textContent = nowText(e, shown);
+    $('lk-now').textContent = nowText(e, shown) + (done ? doneText() : '');
   }
 
   // ==========================================

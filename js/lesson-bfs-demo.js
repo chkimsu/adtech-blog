@@ -408,8 +408,8 @@
         render();
     }
 
-    // 깊이가 바뀔 때까지 넘긴다. visit 을 하나 보인 뒤 다음 이벤트가 같은 깊이(섬 세기는 같은 섬)의
-    // visit 이 아니면 멈춘다. 섬 세기의 scan 과 found 는 깊이가 없으니 지나간다.
+    // 깊이가 바뀔 때까지 넘긴다. visit 을 하나 보인 뒤 다음 이벤트가 같은 깊이(섬 개수 모드는 같은 섬)의
+    // visit 이 아니면 멈춘다. 섬 개수 모드의 scan 과 found 는 깊이가 없으니 지나간다.
     function stepLayer() {
         let at = S.at;
         while (at < S.events.length) {

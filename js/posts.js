@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-two-pointers',
+    world: 'na',
+    title: '투 포인터: 정렬된 배열의 양 끝에서 좁혀 와도 답을 놓치지 않는 이유',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 정렬된 배열에서 쓰는 방법과 아닌 방법이 따로 있느냐고 물은 데서 시작합니다. 정렬된 배열에서 합이 target 인 두 값을 찾을 때 L 은 맨 왼쪽, R 은 맨 오른쪽에서 출발해 두 값의 합이 target 보다 크면 R 을 왼쪽으로, 작으면 L 을 오른쪽으로 한 칸 옮깁니다. 합이 크면 R 의 값은 L 부터 R 바로 앞까지의 어느 값과 더해도 target 보다 커서 R 이 들어간 짝을 모두 버려도 답을 놓치지 않으며, nums = [1, 3, 4, 6, 8, 11], target = 10 에서 짝 15개 가운데 5번만 비교해 답을 찾습니다. 같은 값을 섞은 [11, 3, 8, 1, 6, 4] 에 같은 규칙을 쓰면 첫 이동에서 답을 버립니다. 정렬 비용, 원래 인덱스를 돌려줄 때 드는 메모리와 해시 맵을 고르는 기준, Two Sum II, Valid Palindrome, 3Sum 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-14',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Data Structure', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-two-pointers.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-hash-map',
     world: 'na',
     title: '해시 맵: Two Sum 에서 지나온 숫자를 dict 에 적어 짝을 한 번에 찾는 법',
@@ -1969,7 +1980,7 @@ const series = {
             'algorithm-coding-test-toolkit', 'algorithm-solving-steps',
             'algorithm-practical-live-coding', 'algorithm-think-aloud',
             'algorithm-more-structures', 'algorithm-ml-coding', 'algorithm-lesson-bfs',
-            'algorithm-lesson-hash-map'],
+            'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

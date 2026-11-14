@@ -2679,6 +2679,41 @@ window.DEMO_EDU = {
         ]
     },
 
+    // 과외 힙과 Top K (알고리즘) — 크기 K 최소 힙, 부호를 뒤집는 풀이, N - K 개를 버리는 풀이. 계산은 js/lesson-heap-top-k-model.js
+    'lesson-heap-top-k': {
+        analogy: '크기 K 힙은 길이가 K 를 넘을 때마다 맨 앞 값을 꺼내서 리스트가 많아야 K + 1칸이다. 6개 값에서 K = 2 이면 heappush 6번, heappop 4번, 리스트는 많아야 3칸이고 남은 [5, 6] 의 맨 앞 값 5가 2번째로 큰 수다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonHeapTopK.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonHeapTopKDescribe ? window.lessonHeapTopKDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '리스트와 트리',
+                body: '위쪽은 힙 리스트이고 아래쪽은 같은 리스트를 트리로 그린 것입니다. 리스트의 i번 칸이 트리의 어디인지만 보여 주며, 노드 아래 작은 숫자가 인덱스입니다. 연한 파란 칸이 방금 넣은 값, 파란 테두리 칸이 맨 앞 값(트리의 루트 칸), 진한 파란 칸이 답입니다. 부호를 뒤집는 풀이 탭에서는 부호를 뒤집은 값이 그대로 그려집니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 크기 K 최소 힙 탭에서는 값 하나를 넣는 일과 맨 앞 값을 꺼내는 일이 각각 한 단계이고, 부호를 뒤집는 풀이 탭에서는 부호를 뒤집는 일, heapify, 꺼내기 하나가 각각 한 단계입니다. N - K 개를 버리는 풀이 탭에서는 heapify 와 꺼내기 하나가 각각 한 단계입니다. 이번 단계 칸에 방금 한 일과 리스트가 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 값」 버튼',
+                body: '크기 K 최소 힙 탭에서는 값 하나를 넣고 필요하면 꺼내는 일까지 한 번에 넘깁니다. 부호를 뒤집는 풀이와 N - K 개를 버리는 풀이 탭에서는 처음에 리스트를 만드는 일 전체를 한 번에, 그다음에는 꺼내기 하나씩 넘깁니다.'
+            },
+            {
+                el: '.lk-state',
+                title: '상태 칸의 꺼낸 값',
+                body: '꺼낸 값이 차례로 쌓입니다. 크기 K 최소 힙 탭에서는 K 번째로 큰 수보다 작은 값이 쌓이고, 부호를 뒤집는 풀이 탭에서는 큰 값부터 원래 부호로 쌓여 마지막 값이 답입니다. N - K 개를 버리는 풀이 탭에서는 작은 값부터 쌓이고 답은 리스트의 맨 앞 값입니다. 아래 설명 줄에는 지금 리스트 길이와 K 가 나옵니다.'
+            }
+        ]
+    },
+
     // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================

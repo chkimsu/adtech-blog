@@ -23,16 +23,18 @@ eq('4×5 섬 수', B.islandTrace(P['islands-4x5'].rows).count, 3);
 eq('4×5 섬 넓이', B.islandTrace(P['islands-4x5'].rows).areas, [4,1,2]);
 eq('땅 없음', B.islandTrace(['00','00']).count, 0);
 const m = B.pathTrace(P['maze-5x5'].rows, [0,0], [4,4]);
-eq('미로 이동 수', m.moves, 8);
-eq('미로 경로 칸 수', m.path.length, 9);
-eq('경로 시작과 끝', [m.path[0], m.path[8]], [[0,0],[4,4]]);
-eq('마지막 방문 깊이', m.events[m.events.length - 1].depth, 8);
-// 출구를 꺼내면 이웃을 넣기 전에 멈춘다(글의 코드와 같은 순서). 마지막 visit 의 큐에 출구의 이웃이 없어야 한다.
+eq('미로 이동 수', m.moves, 12);
+eq('미로 경로 칸 수', m.path.length, 13);
+eq('경로 시작과 끝', [m.path[0], m.path[12]], [[0,0],[4,4]]);
+eq('마지막 방문 깊이', m.events[m.events.length - 1].depth, 12);
+// 출구를 꺼내면 이웃을 넣기 전에 멈춘다(글의 코드와 같은 순서). 마지막 visit 의 큐에는 출구를 꺼낸 뒤 새로 넣은 이웃이 없어야 한다.
 const lastQueue = (rows, goal) => { const t = B.pathTrace(rows, [0,0], goal); return t.events[t.events.length - 1].queue; };
-const walled = B.toggleCell(B.toggleCell(P['maze-5x5'].rows, 3, 3, 'path'), 4, 2, 'path');
-eq('벽 둘 더한 미로 마지막 큐', lastQueue(walled, [4,4]), []);
+eq('새 미로 마지막 큐', lastQueue(P['maze-5x5'].rows, [4,4]), []);
+eq('가운데 출구 마지막 큐', B.bfsTrace(['...','...','...'], [0,0], '.', [1,1]).events.slice(-1)[0].queue, [[0,2,2],[2,1,3]]);
 eq('대화 미로 마지막 큐', lastQueue(['...','##.','...'], [2,2]), []);
 eq('대화 미로 이동 수', B.pathTrace(['...','##.','...'], [0,0], [2,2]).moves, 4);
+eq('(4, 1) 을 길로 바꾼 미로', B.pathTrace(B.toggleCell(P['maze-5x5'].rows, 4, 1, 'path'), [0,0], [4,4]).moves, 8);
+eq('(4, 3) 을 벽으로 바꾼 미로', B.pathTrace(B.toggleCell(P['maze-5x5'].rows, 4, 3, 'path'), [0,0], [4,4]).moves, -1);
 eq('막힌 출구', B.pathTrace(['.#','#.'], [0,0], [1,1]).moves, -1);
 eq('막힌 출구 경로', B.pathTrace(['.#','#.'], [0,0], [1,1]).path, []);
 eq('땅 토글', B.toggleCell(['10'], 0, 1, 'islands'), ['11']);

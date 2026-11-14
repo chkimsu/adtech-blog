@@ -2608,6 +2608,43 @@ window.DEMO_EDU = {
     },
 
     // ==========================================
+    // 과외 슬라이딩 윈도우 (알고리즘) — 빼고 더하기, 다 더하기, 중복 없는 부분 문자열. 계산은 js/lesson-sliding-window-model.js
+    // ==========================================
+    'lesson-sliding-window': {
+        analogy: '창을 옮길 때 나간 값 하나를 빼고 들어온 값 하나를 더하면 연산이 2번이다. 6개 입력에서 다 더하기 12번이 빼고 더하기 9번이 되고, 데이터 10만 개에 창 5만이면 2,500,050,000번이 150,000번이 된다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonSlidingWindow.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonSlidingWindowDescribe ? window.lessonSlidingWindowDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '배열과 창',
+                body: '배열의 칸마다 인덱스와 값이 있습니다. 파란 테두리 안이 지금 창이고, 들어온 값은 옅은 파란 바탕, 나간 값은 붉은 바탕입니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 첫 창에서는 값 하나를 더하는 것이, 그다음부터는 창을 옮기는 일이 한 단계입니다. 이번 단계 칸에 방금 한 계산이 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 창」 버튼',
+                body: '창 하나를 만들거나 옮기는 데 필요한 동작을 한 번에 넘깁니다. 빼고 더하기는 옮길 때마다 빼기 1번과 더하기 1번이고, 다 더하기 탭에서는 창 안의 값을 처음부터 다시 더합니다.'
+            },
+            {
+                el: '.lk-state',
+                title: '창 합과 연산 수',
+                body: '창 합은 지금까지 더한 값이고 연산 수는 처음부터의 누적입니다. 같은 입력을 빼고 더하기와 다 더하기 탭에서 끝까지 돌려 두 연산 수를 비교해 봅니다.'
+            }
+        ]
+    },
+
+    // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================
     'http-methods': {

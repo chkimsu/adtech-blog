@@ -33,7 +33,7 @@ const posts = [
     id: 'algorithm-lesson-hash-map',
     world: 'na',
     title: '해시 맵: Two Sum 에서 지나온 숫자를 dict 에 적어 짝을 한 번에 찾는 법',
-    excerpt: '코딩테스트를 준비하는 지훈 씨가 Two Sum(LeetCode 1)을 풀고 어떤 방법을 쓴 것인지 물은 데서 시작합니다. 값마다 짝(target - num)이 지나온 숫자를 적어 둔 dict seen 에 있는지 먼저 확인하고 짝이 없을 때만 지금 숫자와 인덱스를 적으면 배열을 한 번 순회하며 짝을 찾습니다. 모든 숫자를 먼저 적어 두고 확인하면 nums = [3, 2, 4], target = 6 에서 0번 칸의 3 이 자기 자신과 짝이 되어 틀린 답 [0, 0] 이 나옵니다. 이중 for 문은 많아야 짝의 수 N(N-1)/2 만큼 비교하므로 답이 마지막 짝이면 값 10,000개에서 49,995,000번입니다. key in dict 가 키만 보는 이유, 해시 테이블이 차면 더 큰 테이블을 만들어 키를 모두 옮기는 비용, set 과 dict 를 고르는 기준, Contains Duplicate 와 Group Anagrams 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 Two Sum(LeetCode 1)을 풀고 어떤 방법을 쓴 것인지 물은 데서 시작합니다. 값마다 짝(target - num)이 지나온 숫자를 적어 둔 dict seen 에 있는지 먼저 확인하고 짝이 없을 때만 지금 숫자와 인덱스를 적으면 배열을 한 번 순회하며 짝을 찾습니다. 모든 숫자를 먼저 적어 두고 확인하면 nums = [3, 2, 4], target = 6 에서 0번 칸의 3 이 자기 자신과 짝이 되어 틀린 답 [0, 0] 이 나옵니다. 이중 for 문은 많아야 두 인덱스 조합의 수 N(N-1)/2 만큼 비교하므로 답이 마지막 조합이면 값 10,000개에서 49,995,000번입니다. key in dict 가 키만 보는 이유, 해시 테이블이 차면 더 큰 테이블을 만들어 키를 모두 옮기는 비용, set 과 dict 를 고르는 기준, Contains Duplicate 와 Group Anagrams 풀이까지 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
     date: '2026-11-14',
     categories: ['Interview & Algorithms'],
     tags: ['Algorithm', 'Data Structure', 'Coding Test'],

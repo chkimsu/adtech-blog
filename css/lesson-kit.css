@@ -436,3 +436,62 @@ html.is-embed .lk-controls {
 .lk-state .lk-note {
   margin-top: 0.7rem;
 }
+
+/* ---- 트리 그림 (LessonKit.tree) ----
+   열 폭은 칸 + 틈, 층 높이는 칸 + 30px 이다. 11열은 56px 칸에서 11 × 62 = 682px, 52px 칸에서 11 × 57 = 627px 라
+   글 안 iframe 폭 765px 에 들어간다. 노드는 열 폭 안에서 틈의 절반만큼, 층 높이 안에서 위아래 15px 씩 띄워 앉히므로
+   노드 가운데가 (col + 0.5, row + 0.5) 칸 단위의 한 점이 된다. 선은 그 점끼리 잇는다 */
+.lk-tree {
+  --lk-tcolw: calc(var(--lk-cell) + var(--lk-gap));
+  --lk-trowh: calc(var(--lk-cell) + 30px);
+  position: relative;
+  width: calc(var(--lk-tcols) * var(--lk-tcolw));
+  height: calc(var(--lk-trows) * var(--lk-trowh));
+}
+
+.lk-tree-edges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lk-tedge {
+  stroke: var(--border-color);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.lk-tedge.is-now {
+  stroke: var(--navy);
+}
+
+.lk-tnode {
+  position: absolute;
+  left: calc(var(--lk-tcol) * var(--lk-tcolw) + var(--lk-gap) / 2);
+  top: calc(var(--lk-trow) * var(--lk-trowh) + 15px);
+}
+
+.lk-tnode.is-none {
+  border: 1px dashed var(--grey-bd);
+  background: var(--paper);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.lk-tsub {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-muted);
+  white-space: nowrap;
+}

@@ -3,7 +3,7 @@
  *   js/lesson-kit.js  +  css/lesson-kit.css  (시험: scripts/test-lesson-kit.js)
  *
  * 브라우저에서는 전역 LessonKit, node 에서는 require('../js/lesson-kit.js') 다.
- * parseParams, nextGroupEnd, clamp, particle 은 DOM 을 모른다. 나머지(player, tabs, array, grid, chips, legend)는
+ * parseParams, nextGroupEnd, clamp, particle, treeLayout, arrayTree 는 DOM 을 모른다. 나머지(player, tabs, array, grid, tree, chips, legend)는
  * 브라우저 전용이고 document 를 함수 안에서만 쓴다. 글자는 모두 textContent 로 넣는다.
  *
  * 데모 한 장의 모양 — 각 페이지는 <link rel="stylesheet" href="css/lesson-kit.css"> 와
@@ -27,6 +27,9 @@
  *     <div class="lk-panel lk-state"><div class="lk-label" id="lk-state-label">상태</div><div class="lk-chips" id="lk-state"></div><p class="lk-note" id="lk-state-note"></p></div>
  *   </div>
  * </div>
+ *
+ * 보드에 배열과 트리를 같이 그리는 데모는 #lk-board 안에 자식 div 둘을 두고 각각에 array 와 tree 를 부른다:
+ *   <div class="lk-board" id="lk-board"><div id="<접두>-array"></div><div id="<접두>-tree"></div></div>
  *
  * <head> 첫 줄에는 임베드 표시 스크립트를 둔다(demo-lesson-bfs.html 4행과 같다). 테마와 html.is-embed 를 거기서 건다.
  *
@@ -62,6 +65,19 @@
  *     cell(r, c) -> { text, cls?, title? } | null (null 은 빈칸). opts = { rowHead(r), colHead(c) }, 둘 다 선택.
  * chips(el, items, emptyText)
  *     items = [{ text, cls? }]. 상태 칸(dict 항목, set 원소). 비면 emptyText 를 흐리게 보인다.
+ * treeLayout(root, nodes) -> { pos: { [id]: { col, row } }, cols, rows }      (순수 함수)
+ *     nodes = { [id]: { left: id | null, right: id | null } }. col 은 중위 순회 차례(0부터)라 BST 는 펼친 배열의 자리와 같고,
+ *     row 는 루트에서의 층(0부터)이다. pos 의 키는 중위 순회 차례로 들어 있다. root 가 null 이면 { pos: {}, cols: 0, rows: 0 }.
+ * arrayTree(n) -> nodes                (순수 함수)
+ *     길이 n 인 리스트를 완전 이진 트리로 본 nodes. 키 '0' ~ String(n - 1), i 의 왼쪽 2i + 1, 오른쪽 2i + 2(n 이상이면 null).
+ * tree(el, root, nodes, opts)
+ *     opts = { text(id), cls: { [id]: '상태 클래스' }, sub: { [id]: '글자' }, none: { [id]: true }, hidden: { [id]: true },
+ *              edge: { [childId]: '상태 클래스' } }. el 안에 .lk-tree 하나를 그린다(다시 부르면 지우고 다시 그린다).
+ *     노드는 .lk-cell.lk-tnode 이고 상태 클래스가 그대로 걸린다. none 노드는 .lk-tnode.is-none(점선, 글자 None, 작게).
+ *     sub 는 노드 아래 작은 글자 .lk-tsub(힙의 인덱스, 재귀가 돌려준 값). hidden 노드와 그 노드로 가는 선은 그리지 않지만
+ *     자리는 비워 둔다. 그래서 노드가 하나씩 생겨도 다른 노드가 움직이지 않게 마지막 트리를 nodes 로 넘긴다.
+ *     선은 .lk-tree-edges svg 안의 line 이고 edge 에 is-now 가 걸린 선은 --navy 다.
+ *     자리는 CSS 가 --lk-cell, --lk-gap 으로 정한다(열 폭 = 칸 + 틈, 층 높이 = 칸 + 30px). JS 는 --lk-tcols, --lk-trows 만 넘긴다.
  * legend(el, items)                   items = [[cls, label]]. 칸과 같은 상태 클래스로 견본을 그린다.
  *
  * ---- 상태 클래스 (칸 .lk-cell, .lk-gcell 과 범례 견본 .lk-swatch 에 같이 건다) ----
@@ -80,7 +96,7 @@
  *   mode 와 preset 은 parseParams 가 정리한다(위 규칙).
  *
  * ---- 달라진 점 ----
- * 약속에서 벗어난 것은 없다. 덧붙인 것만 적는다: 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
+ * 약속에서 벗어난 것은 없다. 덧붙인 것만 적는다: treeLayout, arrayTree, tree 와 .lk-tree 부품(트리 그림), 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
  * 값 줄 왼쪽 이름 칸(head), 보드 안에 .lk-array 또는 .lk-grid 자식 하나를 그린다(보드 자체는 가로 스크롤 상자).
  */
 (function (root, factory) {
@@ -140,6 +156,31 @@
     const f = finalInfo(text);
     const useFinal = withFinal === '으로' ? f.has && !f.rieul : f.has;
     return String(text) + (useFinal ? withFinal : withoutFinal);
+  }
+
+  // 트리 배치 — col 은 중위 순회 차례, row 는 루트에서의 층
+  function treeLayout(rootId, nodes) {
+    const pos = {};
+    if (rootId === null || rootId === undefined) return { pos, cols: 0, rows: 0 };
+    let col = 0, rows = 0;
+    (function walk(id, row) {
+      const n = nodes[id];
+      if (n.left !== null && n.left !== undefined) walk(n.left, row + 1);
+      pos[id] = { col: col++, row };
+      if (row + 1 > rows) rows = row + 1;
+      if (n.right !== null && n.right !== undefined) walk(n.right, row + 1);
+    })(rootId, 0);
+    return { pos, cols: col, rows };
+  }
+
+  // 리스트를 완전 이진 트리로 본다 — i 의 왼쪽은 2i+1, 오른쪽은 2i+2
+  function arrayTree(n) {
+    const nodes = {};
+    for (let i = 0; i < n; i++) {
+      const l = 2 * i + 1, r = 2 * i + 2;
+      nodes[String(i)] = { left: l < n ? String(l) : null, right: r < n ? String(r) : null };
+    }
+    return nodes;
   }
 
   // ==========================================
@@ -250,6 +291,55 @@
     el.replaceChildren(wrap);
   }
 
+  function tree(el, rootId, nodes, opts) {
+    opts = opts || {};
+    const cls = opts.cls || {};
+    const sub = opts.sub || {};
+    const none = opts.none || {};
+    const hidden = opts.hidden || {};
+    const edge = opts.edge || {};
+    const textOf = typeof opts.text === 'function' ? opts.text : id => id;
+    const L = treeLayout(rootId, nodes);
+    const wrap = node('div', 'lk-tree');
+    wrap.style.setProperty('--lk-tcols', String(L.cols));
+    wrap.style.setProperty('--lk-trows', String(L.rows));
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'lk-tree-edges');
+    svg.setAttribute('viewBox', `0 0 ${L.cols} ${L.rows}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('aria-hidden', 'true');
+    Object.keys(L.pos).forEach(id => {
+      [nodes[id].left, nodes[id].right].forEach(child => {
+        if (child === null || child === undefined || hidden[id] || hidden[child]) return;
+        const a = L.pos[id], b = L.pos[child];
+        const line = document.createElementNS(NS, 'line');
+        line.setAttribute('class', 'lk-tedge' + (edge[child] ? ' ' + edge[child] : ''));
+        line.setAttribute('x1', String(a.col + 0.5));
+        line.setAttribute('y1', String(a.row + 0.5));
+        line.setAttribute('x2', String(b.col + 0.5));
+        line.setAttribute('y2', String(b.row + 0.5));
+        svg.appendChild(line);
+      });
+    });
+    wrap.appendChild(svg);
+
+    Object.keys(L.pos).forEach(id => {
+      if (hidden[id]) return;
+      const p = L.pos[id];
+      const c = ['lk-cell', 'lk-tnode'];
+      if (none[id]) c.push('is-none');
+      else if (cls[id]) c.push(cls[id]);
+      const d = node('div', c.join(' '), none[id] ? 'None' : String(textOf(id)));
+      d.style.setProperty('--lk-tcol', String(p.col));
+      d.style.setProperty('--lk-trow', String(p.row));
+      if (sub[id] !== undefined && sub[id] !== null && sub[id] !== '') d.appendChild(node('span', 'lk-tsub', String(sub[id])));
+      wrap.appendChild(d);
+    });
+    el.replaceChildren(wrap);
+  }
+
   function chips(el, items, emptyText) {
     el.replaceChildren();
     if (!items.length) {
@@ -269,5 +359,5 @@
     });
   }
 
-  return { parseParams, nextGroupEnd, clamp, particle, player, tabs, array, grid, chips, legend };
+  return { parseParams, nextGroupEnd, clamp, particle, treeLayout, arrayTree, player, tabs, array, grid, tree, chips, legend };
 });

@@ -45,6 +45,19 @@ eq('괄호와 따옴표는 건너뜀', K.particle('(3)', '을', '를'), '(3)을'
 eq('한글 ㄹ 받침 으로', K.particle('물', '으로', '로'), '물로');
 eq('빈 글자', K.particle('', '을', '를'), '를');
 
+const n5 = { a: { left: 'b', right: 'c' }, b: { left: null, right: null }, c: { left: 'd', right: 'e' }, d: { left: null, right: null }, e: { left: null, right: null } };
+const L5 = K.treeLayout('a', n5);
+eq('트리 배치 루트', L5.pos.a, { col: 1, row: 0 });
+eq('트리 배치 오른쪽 아래', [L5.pos.d, L5.pos.e], [{ col: 2, row: 2 }, { col: 4, row: 2 }]);
+eq('트리 배치 크기', [L5.cols, L5.rows], [5, 3]);
+eq('오른쪽으로만 늘어진 트리', K.treeLayout('x', { x: { left: null, right: 'y' }, y: { left: null, right: 'z' }, z: { left: null, right: null } }).pos, { x: { col: 0, row: 0 }, y: { col: 1, row: 1 }, z: { col: 2, row: 2 } });
+eq('빈 트리', K.treeLayout(null, {}), { pos: {}, cols: 0, rows: 0 });
+eq('리스트 트리 2번 칸', K.arrayTree(6)['2'], { left: '5', right: null });
+eq('빈 리스트 트리', K.arrayTree(0), {});
+const L6 = K.treeLayout('0', K.arrayTree(6));
+eq('리스트 트리 배치', [L6.pos['0'], L6.pos['5'], L6.pos['2']], [{ col: 3, row: 0 }, { col: 4, row: 2 }, { col: 5, row: 1 }]);
+eq('리스트 트리 크기', [L6.cols, L6.rows], [6, 3]);
+
 const allPass = fail === 0;
 console.log(`\n${allPass ? `✓ 전부 통과 (${pass}건)` : `✗ ${fail}건 실패 / ${pass + fail}건`}`);
 process.exit(allPass ? 0 : 1);

@@ -71,7 +71,7 @@
  *   .is-out     나간 값                   --oxide-bg 바탕, --oxide 글자
  *   .is-bad     틀린 답                   --oxide 바탕, --paper 글자
  *   .is-dim     버린 칸                   --grey-bg 바탕, --grey 글자, --grey-bd 점선 테두리
- *   .is-window  창 안의 칸                --navy-bd 위아래 테두리, 첫 칸과 끝 칸(.is-window-first, .is-window-last)에 좌우 테두리
+ *   .is-window  윈도우 안의 칸            --navy-bd 위아래 테두리, 첫 칸과 끝 칸(.is-window-first, .is-window-last)에 좌우 테두리
  * 색은 뜻에만 쓴다. 한 칸에 둘 이상 걸어도 된다(예: is-window 와 is-in).
  *
  * ---- 주소 약속 ----
@@ -80,7 +80,7 @@
  *   mode 와 preset 은 parseParams 가 정리한다(위 규칙).
  *
  * ---- 달라진 점 ----
- * 약속에서 벗어난 것은 없다. 덧붙인 것만 적는다: 칸 클래스 .is-window-first, .is-window-last(창 양 끝 테두리용),
+ * 약속에서 벗어난 것은 없다. 덧붙인 것만 적는다: 칸 클래스 .is-window-first, .is-window-last(윈도우 양 끝 테두리용),
  * 값 줄 왼쪽 이름 칸(head), 보드 안에 .lk-array 또는 .lk-grid 자식 하나를 그린다(보드 자체는 가로 스크롤 상자).
  */
 (function (root, factory) {

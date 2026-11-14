@@ -184,7 +184,7 @@ print(f'N = {n:,}, k = {k:,}: 윈도우 {n - k + 1:,}개, 다 더하기 {(n - k 
 아래 데모의 탭 「매번 다 더하는 풀이」는 12칸 입력을 다 더하기로 보여 줍니다. 「다음 윈도우」를 한 번 누르면 첫 윈도우 [3, 1, 4, 1, 5, 9] 를 처음부터 더해 이번 단계 칸에 「윈도우 [3, 1, 4, 1, 5, 9]의 합을 처음부터 더합니다. 인덱스 5의 9를 더해 14 + 9 = 23입니다. 윈도우 합은 23이고 이 윈도우에 연산이 6번 들었습니다.」가 나옵니다. 한 번 더 누르면 다음 윈도우 [1, 4, 1, 5, 9, 2] 도 처음부터 다시 더해 결과 칸 아랫줄이 「지금까지 연산 12번」이 됩니다. 「끝까지」를 누르면 단계 42 / 42 에서 결과 칸에 「최대 합 30」과 「같은 합의 윈도우가 1개 더 있어 먼저 나온 윈도우를 보입니다.」, 「같은 입력에서 빼고 더하기 18번, 다 더하기 42번입니다.」가 나오고 그 아랫줄에 「데이터 10만 개, 윈도우 크기 5만이면 다 더하기 2,500,050,000번, 빼고 더하기 150,000번입니다.」가 함께 나옵니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-lesson-sliding-window.html?embed=1&mode=resum&preset=longer" height="880" loading="lazy" title="12칸 배열의 매번 다 더하기 미니 데모"></iframe>
+<iframe class="demo-embed" src="demo-lesson-sliding-window.html?embed=1&mode=resum&preset=longer" height="880" loading="lazy" title="12칸 배열의 매번 다 더하는 풀이 미니 데모"></iframe>
 <a class="demo-embed-open" href="demo-lesson-sliding-window.html?mode=resum&preset=longer" target="_blank" rel="noopener">↗ 전체 데모로 열기</a>
 </div>
 

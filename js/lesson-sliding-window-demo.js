@@ -279,7 +279,7 @@
   function doneText() {
     if (S.mode === 'distinct') {
       const [l, r] = S.trace.bestRange;
-      return ` 마지막 글자라 여기서 끝납니다. 배열에는 가장 긴 윈도우 ${P(`"${S.s.slice(l, r + 1)}"`, '을', '를')} 표시했습니다.`;
+      return ` 마지막 글자라 여기서 끝납니다. 문자열에는 가장 긴 윈도우 ${P(`"${S.s.slice(l, r + 1)}"`, '을', '를')} 표시했습니다.`;
     }
     return ` 마지막 윈도우라 여기서 끝납니다. 배열에는 최대 합 윈도우 ${P(list(win(S.trace.bestStart)), '을', '를')} 표시했습니다.`;
   }

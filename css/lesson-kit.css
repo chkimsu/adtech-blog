@@ -385,6 +385,10 @@ html.is-embed .lk-controls {
   color: var(--text-primary);
 }
 
+.lk-result-main.is-bad {
+  color: var(--oxide);
+}
+
 .lk-result-sub {
   margin-top: 0.3rem;
   font-size: 0.92rem;
@@ -480,6 +484,29 @@ html.is-embed .lk-controls {
   color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.lk-tnode.is-none.is-now {
+  border: 2px solid var(--navy);
+  color: var(--navy);
+}
+
+.lk-tnode.is-none.is-in {
+  border: 1px dashed var(--navy-bd);
+  background: var(--navy-bg);
+  color: var(--navy);
+}
+
+.lk-tnode.is-none.is-hit {
+  border: 1px solid var(--navy);
+  background: var(--navy);
+  color: var(--paper);
+}
+
+.lk-tnode.is-none.is-bad {
+  border: 1px solid var(--oxide);
+  background: var(--oxide);
+  color: var(--paper);
 }
 
 .lk-tsub {

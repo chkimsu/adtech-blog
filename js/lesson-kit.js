@@ -73,7 +73,7 @@
  * tree(el, root, nodes, opts)
  *     opts = { text(id), cls: { [id]: '상태 클래스' }, sub: { [id]: '글자' }, none: { [id]: true }, hidden: { [id]: true },
  *              edge: { [childId]: '상태 클래스' } }. el 안에 .lk-tree 하나를 그린다(다시 부르면 지우고 다시 그린다).
- *     노드는 .lk-cell.lk-tnode 이고 상태 클래스가 그대로 걸린다. none 노드는 .lk-tnode.is-none(점선, 글자 None, 작게).
+ *     노드는 .lk-cell.lk-tnode 이고 상태 클래스가 그대로 걸린다. none 노드는 .lk-tnode.is-none(점선, 글자 None, 작게)이고 cls 의 상태 클래스(is-now, is-hit, is-bad 등)도 걸린다.
  *     sub 는 노드 아래 작은 글자 .lk-tsub(힙의 인덱스, 재귀가 돌려준 값). hidden 노드와 그 노드로 가는 선은 그리지 않지만
  *     자리는 비워 둔다. 그래서 노드가 하나씩 생겨도 다른 노드가 움직이지 않게 마지막 트리를 nodes 로 넘긴다.
  *     선은 .lk-tree-edges svg 안의 line 이고 edge 에 is-now 가 걸린 선은 --navy 다.
@@ -330,7 +330,7 @@
       const p = L.pos[id];
       const c = ['lk-cell', 'lk-tnode'];
       if (none[id]) c.push('is-none');
-      else if (cls[id]) c.push(cls[id]);
+      if (cls[id]) c.push(cls[id]);
       const d = node('div', c.join(' '), none[id] ? 'None' : String(textOf(id)));
       d.style.setProperty('--lk-tcol', String(p.col));
       d.style.setProperty('--lk-trow', String(p.row));

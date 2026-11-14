@@ -2819,6 +2819,41 @@ window.DEMO_EDU = {
         ]
     },
 
+    // 과외 DP 입문 (알고리즘) — 계단 오르기의 그냥 재귀와 메모 재귀의 호출 수, dp 표 채우기와 집 털기. 계산은 js/lesson-dp-intro-model.js
+    'lesson-dp-intro': {
+        analogy: '같은 값을 여러 번 구하던 재귀는 구한 값을 메모에 적어 두면 호출이 줄고, 작은 칸부터 표로 채우면 재귀 없이 한 번씩만 계산한다. 계단 5칸에서 dfs 호출은 그냥 재귀 9번, 메모 재귀 7번이고 표는 칸 5개를 한 번씩 채운다',
+        anchor: '.lk-controls',
+        embedKeep: ['.lk-controls', '.lk-stage'],
+        embedHide: ['.demo-prereq', '.demo-tldr-analogy', '.demo-intro', '.demo-steps', '.demo-tldr', '.demo-next', '.demo-practice', '#demo-edu-explain'],
+        explain: {
+            // 입력을 고르면 지금 탭에서 그 입력이 어떻게 끝나는지 미리 적는다. 문장은 데모 JS 가 LessonDpIntro.describe 로 만든다.
+            '#lk-preset': ({ el }) => (window.lessonDpIntroDescribe ? window.lessonDpIntroDescribe(el.value) : ''),
+        },
+        tour: [
+            {
+                el: '.lk-board',
+                title: '호출 트리나 dp 표',
+                body: '첫 두 탭의 보드는 dfs 호출 트리이고 노드 안 숫자는 dfs 에 넘긴 계단 수, 노드 아래 작은 숫자는 그 호출이 돌려준 값입니다. 아직 부르지 않은 노드는 나중에 생기며 다른 노드는 움직이지 않습니다. 셋째 탭의 보드는 dp 표(집 털기에서는 nums 도 함께)이고 파란 테두리가 지금 채우는 칸, 연한 파란 칸이 채운 칸입니다.'
+            },
+            {
+                el: '#lk-step',
+                title: '「한 칸」 버튼',
+                body: '「한 칸」을 눌러 봅니다. 재귀 탭에서는 함수 부르기와 값 돌려주기(메모에서 꺼내기)가 각각 한 단계이고, 표 탭에서는 칸 하나를 채우는 일이 한 단계입니다. 이번 단계 칸에 방금 한 일과 값이 적힙니다.',
+                waitFor: 'click'
+            },
+            {
+                el: '#lk-group',
+                title: '「다음 반환」, 「다음 칸」 버튼',
+                body: '이 버튼의 글자는 탭마다 바뀝니다. 재귀 탭에서는 「다음 반환」이라 호출이 값을 돌려줄 때까지 내려가는 호출을 함께 넘기고, 표 탭에서는 「다음 칸」이라 칸 하나를 채울 때까지 넘깁니다. 표 탭에서 처음 한 번은 기저 칸 둘을 함께 채웁니다.'
+            },
+            {
+                el: '.lk-result',
+                title: '결과 칸',
+                body: '재귀 탭에서는 dfs(n) 이 돌려준 값과 호출 수가 나오고, 메모 재귀 탭에서는 그냥 재귀의 호출 수와 메모에 적힌 값도 함께 나옵니다. 표 탭에서는 dp 의 마지막 칸 값이 나오고, 집 털기에서는 턴 집의 번호도 나옵니다.'
+            }
+        ]
+    },
+
     // ==========================================
     // 메서드별 요청과 응답 보기 (입문)
     // ==========================================

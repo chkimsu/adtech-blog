@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+
+<head><script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'light';d.setAttribute('data-theme',t);}catch(e){}if(location.search.indexOf('embed=1')>-1)document.documentElement.classList.add('is-embed');})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DP 입문: 그냥 재귀와 메모 재귀의 호출 수, 표 채우기 - AdTech Blog</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/lesson-kit.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">AdTech Blog</a>
+            <div class="nav-content">
+                <div class="nav-actions">
+                    <a href="posts-browse.html" class="btn-demo">Posts</a>
+                    <a href="ecosystem.html" class="btn-demo">Ecosystem</a>
+                    <a href="demos.html" class="btn-demo btn-demo-active">데모</a>
+                    <a href="ml-track.html" class="btn-demo btn-ml">▸ ML 트랙</a>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="테마 선택"></button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container section">
+        <a href="demos.html" class="back-link">&larr; Demos</a>
+        <h1>DP 입문: 그냥 재귀와 메모 재귀의 호출 수, 표 채우기</h1>
+        <p class="demo-subtitle">
+            계단 오르기(LeetCode 70)를 세 가지로 풀며 호출이 몇 번 일어나는지 한 단계씩 따라갑니다.
+            첫 탭은 구한 값을 적어 두지 않는 그냥 재귀, 둘째 탭은 같은 재귀에 메모를 붙인 메모 재귀, 셋째 탭은 작은 칸부터 dp 표를 채우는 풀이이고, 표 탭에서는 집 털기(LeetCode 198)도 같은 방식으로 풉니다.
+            트리를 깊이 우선으로 도는 재귀 자체는 <a href="demo-lesson-dfs-backtracking.html">DFS와 백트래킹 데모</a>에서 따로 봅니다.
+        </p>
+
+        <div class="demo-tldr-analogy">
+          <div class="demo-tldr-analogy-body">
+            <div class="demo-tldr-analogy-label">한 줄 요약</div>
+            <div class="demo-tldr-analogy-text">
+              같은 값을 여러 번 구하던 재귀는 구한 값을 메모에 적어 두면 호출이 줄고, 작은 칸부터 표로 채우면 재귀 없이 한 번씩만 계산합니다. 계단 5칸에서 dfs 호출은 그냥 재귀 <strong>9번</strong>, 메모 재귀 <strong>7번</strong>이고 표는 칸 <strong>5개</strong>를 한 번씩 채웁니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-intro">
+            <div><span class="demo-intro-label">보여 주는 장면</span>과외에서 지훈 씨가 물은 DP 입문 장면 셋입니다. 계단 n 칸을 1칸이나 2칸씩 오르는 방법의 수를 dfs(step - 1) + dfs(step - 2) 로 구할 때 같은 dfs(3) 이 여러 번 불리는 일, 그 값을 메모에 적어 두고 꺼내 쓰는 일, 재귀 없이 dp[1], dp[2] 에서 시작해 칸을 하나씩 채우는 일을 봅니다. 표 탭에서는 이웃한 집을 털 수 없는 집 털기에서 털 경우와 쉬는 경우 중 큰 쪽을 적는 모습도 봅니다.</div>
+            <div><span class="demo-intro-label">목적</span>첫 탭에서는 계단 5칸의 호출 9번 가운데 dfs(3) 이 2번, dfs(2) 가 3번, dfs(1) 이 2번 나와 같은 값을 다시 구한다는 것을 확인합니다. 둘째 탭에서는 같은 입력에서 메모에 3: 3 이 있어 호출이 7번으로 줄어든다는 것을 확인합니다. 셋째 탭에서는 칸 다섯 개를 한 번씩 채우면 같은 답 8 이 나오고 직전 두 칸만 읽는다는 것을 확인합니다. 입력은 계단 5칸과 6칸이고, 표 탭에서는 집 털기 nums [2, 7, 9, 3, 1]과 [1, 2, 3, 1]도 고를 수 있습니다.</div>
+            <div><span class="demo-intro-label">결과 읽는 법</span><strong>결과</strong> 칸은 재귀 탭에서 dfs(n) 이 돌려준 값과 호출 수, 표 탭에서 dp 의 마지막 칸 값입니다. 재귀 탭의 노드 안 숫자는 dfs 에 넘긴 계단 수이고 노드 아래 작은 숫자는 그 호출이 돌려준 값입니다. 파란 테두리가 지금 보는 호출이나 칸이고, 연한 파란 칸이 메모에서 꺼낸 호출이나 채운 칸이며, 진한 파란 칸이 답입니다. 표 탭에서 위아래 테두리만 있는 두 칸은 지금 칸을 채우려고 읽는 직전 두 칸입니다. 파이썬 코드와 비용은 글에서 이어서 봅니다.</div>
+        </div>
+
+        <ol class="demo-steps">
+          <span class="demo-steps-title">따라 하는 순서</span>
+          <li><span class="step-text">탭 <strong>그냥 재귀</strong>에서 입력은 계단 5칸입니다. <strong>「다음 반환」</strong>을 한 번 누르면 dfs(5), dfs(4), dfs(3), dfs(2) 를 차례로 부르고 맨 아래 dfs(2) 가 2를 돌려주는 단계 5 / 18 입니다. 「끝까지」를 누르면 노드 9개가 모두 나오고 결과 칸에 「dfs(5) = 8」과 「호출 9번」이 나옵니다.</span></li>
+          <li><span class="step-text">탭 <strong>메모 재귀</strong>에서 「다음 반환」을 여섯 번 누르면 dfs(3) 을 두 번째로 부르지만 메모에서 3 을 꺼내 더 부르지 않는 단계 13 / 14 입니다. 한 번 더 누르면 끝이고 노드는 7개이며 결과 칸에 「호출 7번(그냥 재귀는 9번)」이 나옵니다.</span></li>
+          <li><span class="step-text">탭 <strong>표를 채우는 풀이</strong>에서 입력은 계단 5칸입니다. <strong>「다음 칸」</strong>을 누를 때마다 dp 한 칸이 채워지고 직전 두 칸이 표시됩니다. 입력 목록에서 집 털기 nums [2, 7, 9, 3, 1]을 고르고 「다음 칸」을 네 번 누르면 dp 가 [2, 7, 11, 11, 12] 가 되고 턴 집 0, 2, 4번의 nums 칸이 진한 파란색이 됩니다. 탭이나 입력을 바꾸면 처음 상태로 돌아갑니다.</span></li>
+        </ol>
+
+        <div class="lk-controls">
+            <div class="lk-toolbar">
+                <div class="lk-tabs" id="lk-tabs" role="group" aria-label="모드"></div>
+                <label class="lk-preset">입력 <select id="lk-preset"></select></label>
+            </div>
+            <p class="lk-note" id="lk-note"></p>
+            <div class="lk-actions">
+                <button type="button" id="lk-reset">처음</button>
+                <button type="button" id="lk-step">한 칸</button>
+                <button type="button" id="lk-group">다음 반환</button>
+                <button type="button" id="lk-end">끝까지</button>
+                <span class="lk-count" id="lk-count"></span>
+            </div>
+        </div>
+
+        <div class="lk-stage">
+            <div class="lk-board-col">
+                <p class="lk-note" id="dp-hint" style="margin-bottom:0.7rem"></p>
+                <div class="lk-board" id="lk-board" role="group" aria-label="호출 트리, 또는 집 털기의 nums 와 dp 표. 지금 보는 호출이나 칸, 메모에서 꺼낸 호출, 채운 칸, 답을 보입니다."><div id="dp-tree"></div><div id="dp-nums"></div><div id="dp-table"></div></div>
+                <div class="lk-legend" id="lk-legend"></div>
+            </div>
+            <div class="lk-side">
+                <div class="lk-panel lk-result">
+                    <div class="lk-label">결과</div>
+                    <div class="lk-result-main" id="lk-result-main"></div>
+                    <div class="lk-result-sub" id="lk-result-sub"></div>
+                </div>
+                <div class="lk-panel lk-now">
+                    <div class="lk-label">이번 단계</div>
+                    <div id="lk-now" aria-live="polite"></div>
+                </div>
+                <div class="lk-panel lk-state">
+                    <div class="lk-label" id="lk-state-label">상태</div>
+                    <div class="lk-chips" id="lk-state"></div>
+                    <p class="lk-note" id="lk-state-note"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2026 Ad Tech Blog. 한국어로 읽는 애드테크 기술 블로그.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/lesson-kit.js"></script>
+    <script src="js/lesson-dp-intro-model.js"></script>
+    <script src="js/lesson-dp-intro-demo.js"></script>
+    <script src="js/demo-edu-content.js"></script>
+    <script src="js/demo-edu.js"></script>
+</body>
+
+</html>

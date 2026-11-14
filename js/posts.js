@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-dp-intro',
+    world: 'na',
+    title: 'DP 입문: 같은 계산을 되풀이하는 재귀에 메모를 붙이고 표로 채우는 법',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 DFS와 백트래킹 다음 시간에 LeetCode Easy~Medium 에 나오는 DP(Dynamic Programming, 동적 계획법)가 많이 어려운지 물은 데서 시작합니다. 계단 오르기를 dfs(step - 1) + dfs(step - 2) 로 푸는 재귀는 같은 dfs(3) 을 두 번 불러 계단 5칸에서 호출이 9번이고 45칸에서는 2,269,806,339번입니다. 구한 답을 dict 에 적어 두고 다시 물으면 꺼내는 메모이제이션은 같은 부분 문제가 겹칠 때 호출을 줄여서 계단 5칸의 9번이 7번, 45칸은 87번이 됩니다. 같은 점화식을 dp[1] 부터 작은 칸 순서로 채우는 표 채우기는 재귀 깊이가 없어 메모 재귀가 RecursionError 를 내는 계단 2,000칸에서도 돌고 직전 두 칸만 남기면 공간이 O(1) 입니다. visited 와 memo 의 차이, DP 로 풀 문제를 알아보는 두 조건, Climbing Stairs, Min Cost Climbing Stairs, House Robber 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-dp-intro.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-dfs-backtracking',
     world: 'na',
     title: 'DFS와 백트래킹: 끝까지 들어갔다가 표시를 지우며 되돌아오는 탐색',
@@ -2049,7 +2060,8 @@ const series = {
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
             'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search',
             'algorithm-lesson-heap-top-k', 'algorithm-lesson-tree-bst',
-            'algorithm-lesson-heap-internals', 'algorithm-lesson-dfs-backtracking'],
+            'algorithm-lesson-heap-internals', 'algorithm-lesson-dfs-backtracking',
+            'algorithm-lesson-dp-intro'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

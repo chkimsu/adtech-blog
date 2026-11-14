@@ -8,6 +8,17 @@
 
 const posts = [
   {
+    id: 'algorithm-lesson-dfs-backtracking',
+    world: 'na',
+    title: 'DFS와 백트래킹: 끝까지 들어갔다가 표시를 지우며 되돌아오는 탐색',
+    excerpt: '코딩테스트를 준비하는 지훈 씨가 BFS 다음 시간에 DFS(Depth-First Search, 깊이 우선 탐색)도 그림으로 볼 수 있게 예시 문제와 함께 내 달라고 한 데서 시작합니다. DFS 는 재귀 호출로 한 갈래를 갈 수 있는 데까지 들어갔다가 막히면 바로 전 호출로 돌아와 남은 갈래로 가는 탐색이고 백트래킹은 돌아올 때 들어가며 바꾼 표시를 원래대로 돌려 다른 길에서 그 칸을 다시 쓰게 합니다. LeetCode 79 의 판에서 칸을 # 로 표시하고 되돌리는 순서를 ABCCED 와 SEE 로 따라가고 되돌리기 한 줄을 빼면 판에 있는 CCB 를 못 찾는 자리를 봅니다. 숫자마다 + 와 - 를 고르는 Target Sum 은 for 문을 겹친 완전 탐색과 경우의 수가 그대로 같은 지수라 숫자 N개에서 잎 2^N 개를 다 봅니다. 가지치기는 남은 숫자를 모두 더하거나 빼도 target 에 못 닿는 노드처럼 잘라 낼 갈래가 있을 때만 호출을 줄여서 첫 예제 [1, 1, 1, 1, 1], target 3 의 호출 63번이 31번이 됩니다. 과외에서 쓴 「합이 target 을 넘으면 버린다」는 뒤에서 빼는 수가 있어 답을 5 에서 4 로 잃습니다. DFS 가 처음 찾은 길이 가장 짧지 않은 3×3 격자, 파이썬의 재귀 한도, Word Search, Target Sum, Permutations 풀이를 줄마다 주석을 단 코드와 버튼 데모로 따라갑니다.',
+    date: '2026-11-15',
+    categories: ['Interview & Algorithms'],
+    tags: ['Algorithm', 'Coding Test'],
+    contentUrl: 'posts/algorithm-lesson-dfs-backtracking.md',
+    series: 'algorithm-track'
+  },
+  {
     id: 'algorithm-lesson-heap-internals',
     world: 'na',
     title: '힙의 내부: 리스트 칸 번호로 부모를 찾고 꺼낸 자리를 마지막 값으로 채우는 이유',
@@ -2038,7 +2049,7 @@ const series = {
             'algorithm-lesson-hash-map', 'algorithm-lesson-two-pointers',
             'algorithm-lesson-sliding-window', 'algorithm-lesson-binary-search',
             'algorithm-lesson-heap-top-k', 'algorithm-lesson-tree-bst',
-            'algorithm-lesson-heap-internals'],
+            'algorithm-lesson-heap-internals', 'algorithm-lesson-dfs-backtracking'],
   },
   'engineering-foundations': {
     title: '엔지니어링 기초 트랙',

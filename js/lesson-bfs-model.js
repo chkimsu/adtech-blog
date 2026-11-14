@@ -70,7 +70,7 @@
     return { layers, events, parent };
   }
 
-  // 행 우선으로 훑고, 새 땅을 만나면 그 섬 전체를 BFS 로 센다.
+  // 행 우선으로 순회하고, 새 땅을 만나면 그 섬 전체를 BFS 로 센다.
   function islandTrace(rows) {
     const counted = new Set();
     const events = [];

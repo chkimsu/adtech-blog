@@ -565,7 +565,7 @@ $S$ 는 최고, 최초, 1위, 유일, 가장, 국내 최대의 여섯 낱말입�
 :::
 
 - [RAG](post.html?id=rag-basics) — 답의 값이 검색한 조각에 있는지 코드로 대조한 24주째 편입니다.
-- [구조화 출력](post.html?id=structured-output) — 답을 스키마대로 읽고 읽지 못한 답을 센 22주째 편입니다.
+- [구조화 출력](post.html?id=structured-output) — 스키마로 답을 읽고 검증하는 법이 나온 22주째 편입니다.
 - [LLM 라벨과 코드 랭커](post.html?id=llm-labels-code-ranker) — 근거를 문장 id 로 받은 32주째 편입니다.
 - [LLM 유저 임베딩을 pCTR 피처로](post.html?id=llm-user-embedding-features) — 바로 앞 34주째 편입니다.
 - [광고 카피 생성 카드 네 장](demo-copy-gen-cards.html) — 이 글의 카드 전체입니다. 카드를 누르면 헷갈리는 것 하나가 더 나옵니다.

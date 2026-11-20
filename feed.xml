@@ -84,7 +84,7 @@
     <link href="https://chkimsu.github.io/adtech-blog/post.html?id=generated-copy-judging-system"/>
     <id>https://chkimsu.github.io/adtech-blog/post.html?id=generated-copy-judging-system</id>
     <updated>2026-11-27T00:00:00Z</updated>
-    <summary>지훈 씨가 모델 팀 36주째에 지난주 게이트를 지난 카피 35개를 판정합니다. qwen3.5:27b 에게 채점표로 다섯 번씩 채점하게 하자 28개는 다섯 번 모두 같은 점수였고 7개가 흔들렸습니다. 판정자는 거의 4 점과 5 점만 썼는데, 그 둘이 사람 라벨과 상관없이 나뉘어 중앙값과 가상 사람 라벨의 kappa 는 -0.00 이었습니다. 같은 자산의 카피 20쌍을 좌우를 바꿔 두 번씩 물으니 6쌍은 두 번 다 A 자리가 이겼습니다. 흔들린 카피 1개와 바뀐 6쌍, 항목 13/75 만 thinking 을 켠 비싼 판정자에게 넘기자 4쌍의 승자가 정해졌습니다. 캐스케이드는 3,054.6초로, 비싼 판정자로 다 볼 때를 평균 × 75개로 어림한 16,444.1초보다 훨씬 짧았습니다.</summary>
+    <summary>지훈 씨가 모델 팀 36주째에 지난주 게이트를 지난 카피 35개를 판정합니다. qwen3.5:27b 에게 채점표로 다섯 번씩 채점하게 하자 28개는 다섯 번 모두 같은 점수였고 7개가 흔들렸습니다. 판정자는 거의 4 점과 5 점만 썼는데, 그 둘이 사람 라벨과 상관없이 나뉘어 중앙값과 가상 사람 라벨의 kappa 는 -0.00 이었습니다. 같은 자산의 카피 20쌍을 좌우를 바꿔 두 번씩 물으니 6쌍은 두 번 다 A 자리가 이겼습니다. 2 점 흔들린 카피 1개와 바뀐 6쌍, 항목 13/75 만 thinking 을 켠 비싼 판정자에게 넘기자 4쌍의 승자가 정해졌습니다. 캐스케이드는 3,054.6초로, 비싼 판정자로 다 볼 때를 평균 × 75개로 어림한 16,444.1초보다 훨씬 짧았습니다.</summary>
     <category term="LLM &amp; Agents"/>
     <category term="Measurement &amp; Modeling"/>
   </entry>

@@ -293,7 +293,7 @@ for qid, e in review.items():
 #   review q10: enum reason_code=other
 ```
 
-q09 는 {"reason_code": "none"} 을 받아 합치자 검증을 통과했습니다. q10 은 빠진 두 필드를 받았지만, reason_code 가 other 였습니다. other 는 reason_code 의 enum 에 없는 낱말입니다. 규칙의 맞는 답은 none 이라서, q10 은 다시 물어도 쓸 수 없었습니다.
+q09 는 {"reason_code": "none"} 을 받아 합치자 검증을 통과했습니다. q10 은 빠진 두 필드를 받았지만, reason_code 가 other 였습니다. other 는 reason_code 의 enum 에 없는 낱말입니다. 규칙의 맞는 답은 none 인데 enum 밖의 낱말이 왔으므로, q10 은 다시 물어도 쓸 수 없었습니다.
 
 요청은 첫 요청 12건에 다시 묻기 2건을 더해 14건이 나갔습니다. 다시 묻기는 빠진 필드만 받으니 답이 짧습니다. 틀린 답을 요청부터 전부 다시 보내는 재시도와는 다릅니다. 재시도는 맞게 온 필드까지 다시 받고, 그 값이 처음과 달라질 수도 있습니다.
 

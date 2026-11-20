@@ -64,7 +64,7 @@ from collections import Counter
 
 # 1단계: 필드 10개, 요청 30개와 정답, oneshot 기록을 둔다
 # 필드와 비교와 enum 은 18주째 글의 시스템 메시지 그대로다. 요청마다 (id, 요청, 정답 판정, 정답 reason_code, 정답 조건) 이다.
-# 정답은 가상 값이고, 조건은 (필드, 비교, 값) 묶음의 목록이다. 앞 세 요청은 18주째 글의 요청 셋이다.
+# 정답은 가상 값이고, 조건은 (필드, 비교, 값) 튜플의 목록이다. 앞 세 요청은 18주째 글의 요청 셋이다.
 # USAGE 의 네 값은 입력 토큰, 출력 토큰, 걸린 ms, thinking 글자 수다. 뒤 블록이 RECORD 와 USAGE 를 다시 쓰므로 옮겨 둔다.
 KEYS = ['search_running_shoes', 'sports_app_days', 'running_posts', 'sports_goods_buy',
         'travel_posts', 'cafe_posts', 'camping_posts', 'camping_search']
@@ -150,7 +150,7 @@ one = {rid: read_oneshot(RECORD[rid]) for rid in GOLD}
 print(f'읽지 못한 답 {sum(a is None for a in one.values())}개')
 
 # 3단계: 판정과 reason_code 와 조건을 정답과 비교한다
-# 조건은 필드 단위로 센다. 한 필드에 걸린 (비교, 값) 묶음 전체가 정답과 같으면 그 필드가 맞다. 30대의 age 조건 둘은 필드 하나다.
+# 조건은 필드 단위로 센다. 한 필드에 걸린 (비교, 값) 튜플 전체가 정답과 같으면 그 필드가 맞다. 30대의 age 조건 둘은 필드 하나다.
 # 정답에 없는 필드를 낸 것은 더한 필드로 따로 센다. 판정이 불가라 조건이 빈 답은 그 요청의 정답 필드를 모두 놓친다.
 def by_field(conds):
     out = {}

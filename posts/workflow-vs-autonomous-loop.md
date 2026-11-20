@@ -598,7 +598,7 @@ for way in ('loop', 'workflow'):
           f' runs given the first two values {first_two}')
 
 # 3단계: 10번의 최종 입찰가가 몇 가지인지 센다
-# 최종 입찰가는 run 이 끝났을 때 서버에 남은 c1, c2, c3 의 입찰가다. 같은 묶음끼리 모아 run 번호와 멈춘 까닭을 적는다.
+# 최종 입찰가는 run 이 끝났을 때 서버에 남은 c1, c2, c3 의 입찰가다. 같은 입찰가 조합끼리 모아 run 번호와 멈춘 까닭을 적는다.
 for way in ('loop', 'workflow'):
     groups = collections.defaultdict(list)
     for n, r in enumerate(RUNS[way], 1):

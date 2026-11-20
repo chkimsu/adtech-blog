@@ -498,7 +498,7 @@ def auc(scored):
     scored = sorted(scored)                  # 점수가 낮은 쪽부터
     pos, neg = sum(c for p, s, c in scored), sum(s - c for p, s, c in scored)
     wins, below, i = 0.0, 0, 0
-    while i < len(scored):                   # 점수가 같은 줄을 한 묶음으로 센다
+    while i < len(scored):                   # 점수가 같은 줄을 한 그룹으로 센다
         j, tie_pos, tie_neg = i, 0, 0
         while j < len(scored) and scored[j][0] == scored[i][0]:
             tie_pos += scored[j][2]

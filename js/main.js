@@ -479,7 +479,7 @@ function renderPostCard(post) {
     </div>
   `;
 
-  // 쉬운 판 링크는 그 판으로만 간다 — 카드 클릭(원래 판으로 이동)이 같이 일어나지 않게 막는다.
+  // 쉬운 판 링크를 누르면 링크만 따라간다 — 카드 클릭이 같이 일어나 두 번 이동하지 않게 막는다.
   const easyLink = card.querySelector('.card-easy');
   if (easyLink) easyLink.addEventListener('click', e => e.stopPropagation());
 
@@ -543,11 +543,14 @@ function renderCover() {
 // 첫 화면 도구 — 쉬운 판 표시, 읽은 수, 검색창, 목적별 시작 카드 (2026-11-10)
 // ========================================
 
-// 쉬운 판이 있는 글인가. 목록은 js/easy-posts.js 의 EASY_POST_IDS 다(그 파일을 안 읽은 페이지는 늘 false).
+// 쉬운 판으로 읽을 수 있는 글인가. 쉬운 판 파일이 있는 글(EASY_POST_IDS)과 처음부터 쉽게 쓴 글(EASY_NATIVE_IDS)이다.
+// 목록은 js/easy-posts.js 다(그 파일을 안 읽은 페이지는 늘 false).
 function hasEasyVersion(id) {
-  return typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(id);
+  return (typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(id))
+    || (typeof EASY_NATIVE_IDS !== 'undefined' && EASY_NATIVE_IDS.includes(id));
 }
-function easyHref(id) { return `post.html?id=${encodeURIComponent(id)}&v=easy`; }
+// 쉬운 판은 글 주소를 그대로 열면 먼저 나온다. 원래 판만 &v=original 을 붙인다.
+function easyHref(id) { return `post.html?id=${encodeURIComponent(id)}`; }
 // 읽기 상태(js/reading-state.js)가 없는 페이지에서는 모두 안 읽은 것으로 본다.
 function readSafe(id) { return typeof ReadingState !== 'undefined' && ReadingState.isRead(id); }
 function mlTrackPostIds() {
@@ -1418,11 +1421,14 @@ async function renderPostDetail() {
 
     try {
       let content = '';
-      // 쉬운 판 — post.html?id=<id>&v=easy. 목록은 js/easy-posts.js 의 EASY_POST_IDS 이고 파일은 posts-easy/<id>.md 다.
+      // 쉬운 판이 있는 글은 post.html?id=<id> 로 열면 쉬운 판(posts-easy/<id>.md)이 먼저 나온다.
+      // 원래 판은 &v=original 로 연다. 예전 주소의 &v=easy 도 쉬운 판을 연다. 목록은 js/easy-posts.js 다.
+      // 처음부터 쉽게 쓴 글(EASY_NATIVE_IDS)은 원래 글이 곧 쉬운 판이라 &v=easy 로 열어도 그 글이 나온다.
       const hasEasy = typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(post.id);
-      const wantEasy = urlParams.get('v') === 'easy';
-      const showEasy = hasEasy && wantEasy;
-      if (wantEasy && !hasEasy) {
+      const nativeEasy = typeof EASY_NATIVE_IDS !== 'undefined' && EASY_NATIVE_IDS.includes(post.id);
+      const versionParam = urlParams.get('v');
+      const showEasy = hasEasy && versionParam !== 'original';
+      if (versionParam === 'easy' && !hasEasy && !nativeEasy) {
         contentContainer.innerHTML = `
           <div class="easy-note">
             <p>이 글의 쉬운 판은 아직 없습니다.</p>
@@ -1509,12 +1515,12 @@ async function renderPostDetail() {
         contentContainer.innerHTML = content;
       }
 
-      // 쉬운 판이 있는 글은 맨 위에 판 바꾸기 링크를 둔다
+      // 쉬운 판이 있는 글은 맨 위에 판 바꾸기 링크를 둔다. 쉬운 판이 기본이고 원래 판은 &v=original 이다.
       if (hasEasy) {
         const base = `post.html?id=${encodeURIComponent(post.id)}`;
         contentContainer.insertAdjacentHTML('afterbegin', showEasy
-          ? `<div class="easy-note"><span class="tag">쉬운 판</span> 이 글을 쉽게 다시 쓴 판입니다. <a href="${base}">원래 판으로 보기</a></div>`
-          : `<div class="easy-note"><a href="${base}&v=easy">쉬운 판으로 보기</a></div>`);
+          ? `<div class="easy-note"><span class="tag">쉬운 판</span> 이 글을 쉽게 다시 쓴 판입니다. <a href="${base}&v=original">원래 판으로 보기</a></div>`
+          : `<div class="easy-note"><span class="tag">원래 판</span> 쉽게 다시 쓰기 전의 원래 글입니다. <a href="${base}">쉬운 판으로 보기</a></div>`);
       }
 
       // 섹션 무대 배지 — [무대: …] 마커를 배지로 (TOC 생성보다 먼저)

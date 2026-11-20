@@ -1,5 +1,6 @@
-// 쉬운 판이 있는 글의 id 목록. 파일은 posts-easy/<id>.md 이고 post.html?id=<id>&v=easy 로 연다.
-// 여기 없는 id 는 쉬운 판 링크가 보이지 않는다. 글 목록, 검색, 사이트맵에는 들어가지 않는다.
+// 쉬운 판이 있는 글의 id 목록. 파일은 posts-easy/<id>.md 이고 post.html?id=<id> 로 열면 이 판이 먼저 나온다.
+// 원래 판은 post.html?id=<id>&v=original 로 연다. 예전 주소의 &v=easy 도 쉬운 판을 연다.
+// 여기 없는 글은 원래 판만 있다. 쉬운 판 파일은 글 목록, 검색, 사이트맵에 따로 들어가지 않는다.
 const EASY_POST_IDS = [
   'sft-and-dpo', 'rag-basics', 'two-tower-training',
   'algorithm-complexity-array',
@@ -43,4 +44,24 @@ const EASY_POST_IDS = [
   'interview-ml-modeling',
   'online-learning-delayed-feedback',
   'interview-experiment-metrics',
+];
+
+// 처음부터 쉬운 판 말투로 쓴 글. 원래 글이 곧 쉬운 판이라 posts-easy 파일도, 판을 바꾸는 링크도 없다.
+// 카드와 검색의 「쉬운 판」 표시, 탐색 페이지의 「쉬운 판 있는 글만」 에는 함께 든다.
+const EASY_NATIVE_IDS = [
+  'algorithm-solving-steps',
+  'algorithm-think-aloud',
+  'algorithm-more-structures',
+  'algorithm-ml-coding',
+  'algorithm-practical-live-coding',
+  'algorithm-lesson-bfs',
+  'algorithm-lesson-hash-map',
+  'algorithm-lesson-two-pointers',
+  'algorithm-lesson-sliding-window',
+  'algorithm-lesson-binary-search',
+  'algorithm-lesson-heap-top-k',
+  'algorithm-lesson-tree-bst',
+  'algorithm-lesson-heap-internals',
+  'algorithm-lesson-dfs-backtracking',
+  'algorithm-lesson-dp-intro',
 ];

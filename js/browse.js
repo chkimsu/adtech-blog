@@ -4,8 +4,8 @@
 (function () {
   const PAGE = 12;
   const state = { search: '', categories: new Set(), tags: new Set(), sort: 'newest', easy: false, shown: PAGE };
-  // 쉬운 판이 있는 글만 — 목록은 js/easy-posts.js 의 EASY_POST_IDS
-  const hasEasy = p => typeof EASY_POST_IDS !== 'undefined' && EASY_POST_IDS.includes(p.id);
+  // 쉬운 판으로 읽을 수 있는 글만 — main.js 의 hasEasyVersion(쉬운 판 파일이 있는 글과 처음부터 쉽게 쓴 글)
+  const hasEasy = p => typeof hasEasyVersion === 'function' && hasEasyVersion(p.id);
   let TAG_COLLAPSED = true;
   const $ = id => document.getElementById(id);
 

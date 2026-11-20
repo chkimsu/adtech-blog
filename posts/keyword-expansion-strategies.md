@@ -284,7 +284,7 @@ reason_words = [len(v[2].split()) for picks in PICKS.values() for v in picks.val
 print(f'네 설정의 reason {len(reason_words)}개, 낱말 수 {min(reason_words)}~{max(reason_words)}')
 
 # 3단계: 전략 사이에 겹친 id 를 센다
-# 두 전략 이상이 고른 id 다. 네 설정을 나란히 놓고, 겹친 id 를 고른 전략의 묶음마다 모아 적는다.
+# 두 전략 이상이 고른 id 다. 네 설정을 나란히 놓고, 겹친 id 를 고른 전략의 조합마다 모아 적는다.
 def overlaps(picks):
     seen = {}
     for s in STRATEGIES:

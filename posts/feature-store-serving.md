@@ -239,20 +239,23 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 ```bash
 # 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
 
-# 2a. 유저 피처 조회 (Hash)
+# 2a. 유저 피처 조회 (Hash 두 개 — Batch Key 와 Streaming Key)
 HGETALL user:U98712
 # → {
 #     "ctr_7d": "0.023",         ← 최근 7일 CTR
-#     "click_count_5m": "3",     ← 최근 5분 클릭 수 (Streaming)
 #     "interest": "auto,finance", ← 관심사 세그먼트
 #     "embedding": "[0.12, -0.34, ...]"  ← 유저 임베딩 (128차원)
 #   }
+HGETALL user:U98712:rt
+# → { "click_count_5m": "3", "last_click_cat": "auto" }  ← 최근 5분 클릭 수 (Streaming, 별도 Key)
 
 # 2b. 광고 피처 일괄 조회 (Pipeline)
 HGETALL ad:A001
 HGETALL ad:A002
 HGETALL ad:A003
-# → 각 광고별 { "historical_ctr": "0.045", "creative_emb": "[...]", "budget_remain": "0.73" }
+# → 각 광고별 { "historical_ctr": "0.045", "creative_emb": "[...]" }
+HGET campaign:C01 budget_remain   # A001 이 속한 캠페인 (Streaming, 별도 Key)
+# → "0.73"
 
 # 2c. 지면 피처 조회
 HGETALL slot:S50
@@ -1017,7 +1020,11 @@ TTL: 피처 갱신 주기의 2배 (안전 마진)
 │  ┌──────────────────┬────────────────────────────┐   │
 │  │ historical_ctr   │ 0.045                      │   │
 │  │ creative_emb     │ [0.08, 0.21, -0.15, ...]   │   │
-│  │ budget_remain    │ 0.73                        │   │
+│  └──────────────────┴────────────────────────────┘   │
+├──────────────────────────────────────────────────────┤
+│  Key: campaign:C01         TTL: 30m (Streaming 피처) │
+│  ┌──────────────────┬────────────────────────────┐   │
+│  │ budget_remain    │ 0.73                       │   │
 │  └──────────────────┴────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
 ```

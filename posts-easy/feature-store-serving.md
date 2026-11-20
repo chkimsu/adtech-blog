@@ -261,20 +261,23 @@
 ```bash
 # 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
 
-# 2a. 유저 피처 조회 (Hash)
+# 2a. 유저 피처 조회 (Hash 두 개 — Batch Key 와 Streaming Key)
 HGETALL user:U98712
 # → {
 #     "ctr_7d": "0.023",         ← 최근 7일 CTR
-#     "click_count_5m": "3",     ← 최근 5분 클릭 수 (Streaming)
 #     "interest": "auto,finance", ← 관심사 세그먼트
 #     "embedding": "[0.12, -0.34, ...]"  ← 유저 임베딩 (128차원)
 #   }
+HGETALL user:U98712:rt
+# → { "click_count_5m": "3", "last_click_cat": "auto" }  ← 최근 5분 클릭 수 (Streaming, 별도 Key)
 
 # 2b. 광고 피처 일괄 조회 (Pipeline)
 HGETALL ad:A001
 HGETALL ad:A002
 HGETALL ad:A003
-# → 각 광고별 { "historical_ctr": "0.045", "creative_emb": "[...]", "budget_remain": "0.73" }
+# → 각 광고별 { "historical_ctr": "0.045", "creative_emb": "[...]" }
+HGET campaign:C01 budget_remain   # A001 이 속한 캠페인 (Streaming, 별도 Key)
+# → "0.73"
 
 # 2c. 지면 피처 조회
 HGETALL slot:S50
@@ -284,7 +287,7 @@ HGETALL slot:S50
 # device=mobile, os=iOS, hour=14, weekday=Fri, geo=KR
 ```
 
-주석의 → 뒤가 명령마다 돌아오는 값입니다. 유저 키 `user:U98712` 에서는 최근 7일 CTR 0.023, 스트리밍으로 갱신하는 최근 5분 클릭 수 3, 관심사 세그먼트 auto,finance, 128차원 유저 임베딩이 나옵니다. 광고 키마다 과거 CTR(예: 0.045), 소재 임베딩, 잔여 예산 비율(예: 0.73)이 나오고 지면 키 `slot:S50` 에서는 카테고리 news, 평균 CTR 0.031, 위치 `above_fold`(스크롤하지 않아도 보이는 화면 윗부분)가 나옵니다. 컨텍스트 피처(device=mobile, os=iOS, hour=14, weekday=Fri, geo=KR)는 Redis 를 조회하지 않고 요청 데이터에서 바로 파싱합니다.
+주석의 → 뒤가 명령마다 돌아오는 값입니다. 유저 키 `user:U98712` 에서는 최근 7일 CTR 0.023, 관심사 세그먼트 auto,finance, 128차원 유저 임베딩이 나오고 스트리밍으로 갱신하는 최근 5분 클릭 수 3 은 별도 키 `user:U98712:rt` 에서 나옵니다. 광고 키마다 과거 CTR(예: 0.045)과 소재 임베딩이 나오고 스트리밍으로 갱신하는 캠페인 잔여 예산 비율(예: 0.73)은 그 광고가 속한 캠페인의 키 `campaign:C01` 에서 나옵니다. 지면 키 `slot:S50` 에서는 카테고리 news, 평균 CTR 0.031, 위치 `above_fold`(스크롤하지 않아도 보이는 화면 윗부분)가 나옵니다. 컨텍스트 피처(device=mobile, os=iOS, hour=14, weekday=Fri, geo=KR)는 Redis 를 조회하지 않고 요청 데이터에서 바로 파싱합니다.
 
 이렇게 모은 피처는 아래처럼 피처 벡터 하나로 이어 붙입니다(concat). 이 블록은 합친 모양을 간략히 보여 주기만 하므로 돌려도 아무것도 찍지 않습니다.
 
@@ -1083,7 +1086,11 @@ TTL: 피처 갱신 주기의 2배 (안전 마진)
 │  ┌──────────────────┬────────────────────────────┐   │
 │  │ historical_ctr   │ 0.045                      │   │
 │  │ creative_emb     │ [0.08, 0.21, -0.15, ...]   │   │
-│  │ budget_remain    │ 0.73                        │   │
+│  └──────────────────┴────────────────────────────┘   │
+├──────────────────────────────────────────────────────┤
+│  Key: campaign:C01         TTL: 30m (Streaming 피처) │
+│  ┌──────────────────┬────────────────────────────┐   │
+│  │ budget_remain    │ 0.73                       │   │
 │  └──────────────────┴────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
 ```

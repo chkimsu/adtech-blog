@@ -2376,7 +2376,7 @@ function renderChartJsCharts(container) {
             'rgba(154, 125, 56, 1)', 'rgba(154, 125, 56, 1)', 'rgba(154, 125, 56, 1)'
           ],
           borderWidth: 1,
-          borderRadius: 6
+          borderRadius: 0
         }]
       },
       options: {
@@ -2406,6 +2406,8 @@ function renderChartJsCharts(container) {
         scales: {
           x: {
             type: 'logarithmic',
+            // 로그 축이 만드는 눈금에는 5와 1440 이 없어 「5분」, 「1일」 이름이 빠졌다. 이름을 붙일 값만 눈금으로 둔다.
+            afterBuildTicks: (axis) => { axis.ticks = [0.01, 1, 5, 60, 1440].map(v => ({ value: v })); },
             title: { display: true, text: '갱신 주기 (분, 로그 스케일)', color: textColor },
             grid: { color: gridColor },
             ticks: {

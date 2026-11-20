@@ -440,7 +440,7 @@ print(f"부른 횟수 {시도횟수[0]}회, 가지치기 없이 전부 놓으면
 <g style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1"><circle cx="110" cy="26" r="8"/></g>
 <g style="fill:var(--bg-tertiary); stroke:var(--accent-primary); stroke-width:1.6">
 <circle cx="370" cy="26" r="8"/><circle cx="316" cy="156" r="8"/><circle cx="424" cy="156" r="8"/></g>
-<text x="270" y="184" style="font-size:11.5px; fill:var(--text-muted)">점선으로 끊긴 갈래가 한 줄 놓자마자 버려진 것들이다</text>
+<text x="494" y="184" text-anchor="end" style="font-size:11.5px; fill:var(--text-muted)">점선으로 끊긴 갈래가 한 줄 놓자마자 버려진 것들이다</text>
 </svg>
 <figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽은 갈래를 끝까지 다 뻗어 봐야 답인지 알 수 있는 모양입니다. 오른쪽은 위쪽 단계에서 갈래가 잘려 그 아래 갈래가 모두 사라진 모양입니다. 위에서 자를수록 함께 지워지는 갈래가 많으므로 <strong>가지치기 조건은 되도록 이른 단계에서 확인해야 합니다.</strong></figcaption>
 </figure>

@@ -139,9 +139,9 @@ print(f"최선의 고정가 ₩{best[1]:,}조차 경매의 {best[0]/auc:.0%}밖�
 
 손실 두 열을 봅니다. 고정가를 올리면 헐값 손실은 줄지만 유찰 손실이 커지고, 내리면 그 반대입니다. 값이 하나뿐이라 둘을 같이 줄일 수 없습니다. ₩1,101은 수수료를 뺀 상한이라 실제로 이만큼은 아닙니다. 방향만 봅니다. **쪼갤수록 매체가 받는 값은 올라갑니다.**
 
-### 순차 호출: 순차 호출의 비효율
+### Waterfall: 순차 호출의 비효율
 
-매체는 수익을 극대화하기 위해 여러 광고 네트워크에 동시에 등록합니다. 이때 **순차 호출(폭포수)** 방식으로 Network를 순차 호출합니다:
+매체는 수익을 극대화하기 위해 여러 광고 네트워크에 동시에 등록합니다. 이때 **Waterfall(폭포수)** 방식으로 Network를 순차 호출합니다:
 
 ```mermaid
 graph TD
@@ -170,10 +170,10 @@ graph TD
 
 | 문제 | 설명 |
 |------|------|
-| **순서 고정** | 우선순위는 과거 평균 CPM 기준으로 설정. 특정 impression에서 Network B가 $5.00을 지불할 의사가 있어도, Network A가 먼저 호출됨 |
+| **순서 고정** | 우선순위는 과거 평균 CPM 기준으로 설정. 특정 impression에서 Network B가 `$5.00`을 지불할 의사가 있어도, Network A가 먼저 호출됨 |
 | **레이턴시 누적** | Network A가 No Fill을 반환할 때까지 대기 → B 호출 → 대기... 사용자 경험 악화 |
 | **가격 최적화 불가** | Network A가 Fill하면 거기서 끝. B, C가 더 높은 가격을 제시할 기회조차 없음 |
-| **불투명한 마진** | Network이 매체에 $2.00을 지불하면서 광고주에게 $5.00을 청구해도, 매체는 알 수 없음 |
+| **불투명한 마진** | Network이 매체에 `$2.00`을 지불하면서 광고주에게 `$5.00`을 청구해도, 매체는 알 수 없음 |
 
 이 비효율성이 광고 거래소 등장의 직접적 원인입니다.
 
@@ -262,9 +262,9 @@ print(f"하루 1,000만 노출이면 사라지는 노출 "
 
 ### 역할과 동작 원리
 
-순차 호출은 순차 호출로 첫 번째 응답을 채택하는 방식이었습니다. **광고 거래소**는 이것을 **모든 바이어에게 동시에 입찰 기회를 주고 경매로 최고가를 고르는 방식**으로 바꿨습니다.
+Waterfall 은 순차 호출로 첫 번째 응답을 채택하는 방식이었습니다. **광고 거래소**는 이것을 **모든 바이어에게 동시에 입찰 기회를 주고 경매로 최고가를 고르는 방식**으로 바꿨습니다.
 
-핵심 기술은 **RTB(Real-Time 입찰(Bidding))**: 유저가 페이지를 로딩하는 100ms 안에 수십~수백 개의 DSP가 동시에 입찰하고, 경매를 통해 낙찰자를 결정합니다.
+핵심 기술은 **RTB(Real-Time Bidding)**: 유저가 페이지를 로딩하는 100ms 안에 수십~수백 개의 DSP가 동시에 입찰하고, 경매를 통해 낙찰자를 결정합니다.
 
 ```mermaid
 sequenceDiagram
@@ -345,12 +345,12 @@ graph TB
 
 ### 경매 메커니즘: 1st Price vs 2nd Price
 
-광고 거래소 초기에는 **2nd 가격 경매(Price Auction)**가 표준이었습니다. 2등 가격 + $0.01을 지불하므로 광고주는 참 가치(True Value) 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 이후 **1st 가격 경매**로 전환됐습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
+광고 거래소 초기에는 **2nd Price Auction**이 표준이었습니다. 2등 가격 + `$0.01`을 지불하므로 광고주는 참 가치(True Value) 그대로 입찰하면 됩니다(Truthful Bidding). 하지만 2017년 무렵부터 거래소들이 차례로 **1st Price Auction**으로 옮겨 갔고 2019년 Google AdX 가 합류했습니다. 그러면서 DSP는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. 규칙 자체는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다.
 
 | 경매 방식 | 지불 금액 | DSP 전략 | 시기 |
 |-----------|----------|----------|------|
-| 2nd Price | 2등 가격 + $0.01 | Truthful Bidding ($b = V$) | ~2017 |
-| 1st Price | 내 입찰이 그대로 | Bid Shading ($b < V$) | 2017~ |
+| 2nd Price | 2등 가격 + `$0.01` | Truthful Bidding ($b = V$) | ~2017 |
+| 1st Price | 내 입찰가 그대로 | Bid Shading ($b < V$) | 2017~ |
 
 ---
 
@@ -445,16 +445,16 @@ graph LR
 | **1996** | DoubleClick 설립 | 최초의 대형 광고 네트워크. 배너 광고 서빙 + 리포팅 |
 | **2005** | Right Media 출시 | **최초의 광고 거래소**. Impression 단위 실시간 거래 도입 |
 | **2007** | DoubleClick 광고 거래소 출시. 같은 해 Google 이 DoubleClick 인수를 발표(2008년 완료) | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
-| **2009** | Google AdX 로 재출시 | 세계 최대 Exchange. RTB 프로토콜 표준화 선도 |
+| **2009** | Google AdX 로 재출시 | 세계 최대 Exchange |
 | **2010** | OpenRTB 1.0 표준 발표 | 입찰 요청/Response 포맷 표준화 → DSP-Exchange 연동 비용 감소 |
 | **2014** | 헤더비딩 등장 | 순차 호출 우회. 모든 Exchange에 동시 입찰 요청 |
-| **2017~** | 1st 가격 경매 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
-| **2019** | Google Open 입찰 | Server-to-Server 헤더비딩. 레이턴시 최적화 |
+| **2017~** | 1st Price Auction 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
+| **2019** | Google Open Bidding 으로 이름 바꿈(2016년 EBDA 로 시작) | Server-to-Server 헤더비딩. 레이턴시 최적화 |
 | **현재** | SSP-Exchange 경계 소멸 | Magnite, PubMatic 등 SSP가 Exchange 기능 통합 |
 
 ### 헤더비딩: 순차 호출을 없앤 전환점
 
-순차 호출의 근본적 문제는 **"순차 호출"**이었습니다. 헤더비딩은 이를 **"병렬 호출"**로 바꿨습니다:
+Waterfall의 근본적 문제는 **"순차 호출"**이었습니다. 헤더비딩은 이를 **"병렬 호출"**로 바꿨습니다:
 
 ```mermaid
 graph TB
@@ -489,7 +489,7 @@ graph TB
 |------|-----------|----------------|
 | **입찰 기회** | 순차 (앞 Network이 거절해야 다음으로) | 동시 (모든 Exchange가 동시 입찰) |
 | **가격 발견** | 불완전 (첫 Fill에서 종료) | 완전 (전체 시장 수요 반영) |
-| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰이 선택) |
+| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰가 선택) |
 | **레이턴시** | 순차 누적 (최악 N x timeout) | 병렬 (최대 1 x timeout) |
 | **Network/Exchange 구분** | 명확 (순서대로 호출) | 모호 (모두 같은 경매에 참여) |
 
@@ -519,8 +519,8 @@ graph TB
 
 | 유형 | 예시 | 특징 |
 |------|------|------|
-| **Audience Network** | Meta Audience Network, TikTok for Business | 자사 광고주 수요를 외부 매체에 확장. Network의 핵심 역할(수요 애그리게이션) 유지 |
-| **Vertical Network** | Criteo (리타겟팅 특화), AdMob (모바일 특화) | 특정 도메인에 특화된 수요와 인벤토리 매칭 |
+| **Audience Network** | Meta Audience Network, TikTok Pangle | 자사 광고주 수요를 외부 매체에 확장. Network의 핵심 역할(수요 애그리게이션) 유지 |
+| **Vertical Network** | AdMob (모바일 특화) | 특정 도메인에 특화된 수요와 인벤토리 매칭 |
 | **닫힌 생태계(Walled Garden)** | Google, Meta, Amazon, 네이버, 카카오 | DSP + Exchange + Network + Publisher를 모두 자사 내에서 운영. [닫힌 생태계 상세 분석](post.html?id=walled-garden) 참고 |
 
 ### 통합의 흐름
@@ -560,7 +560,7 @@ graph TB
 | 차원 | Network 경유 트래픽 | Exchange(RTB) 트래픽 |
 |------|---------------------|---------------------|
 | **입찰 요청 정보** | 제한적 (카테고리, 사이즈 정도) | 풍부 (URL, 유저 ID, 디바이스, 위치 등) |
-| **가격 피드백** | 고정 가격 (시장 가격 정보 없음) | Winning Price, Clearing Price 관측 가능 |
+| **가격 피드백** | 고정 가격 (시장 가격 정보 없음) | 낙찰 시 Winning Price, Clearing Price 관측 (패찰 시 미관측) |
 | **유저 피처** | 세그먼트 레벨 (25-34세 남성) | 유저 레벨 (실시간 브라우징 이력) |
 | **모델 학습 영향** | Feature sparse → 모델 정확도 한계 | Feature rich → 개인화 정밀 예측 가능 |
 
@@ -578,9 +578,9 @@ Exchange(RTB) 환경에서는 입찰 요청에 포함된 **실시간 피처**를
 - **유저 컨텍스트**: 디바이스, OS, 브라우저, IP 기반 위치
 - **지면 컨텍스트**: URL, 도메인, 카테고리, 광고 사이즈, 위치(above/below fold)
 - **시간 컨텍스트**: 시간대, 요일, 계절성
-- **경매 컨텍스트**: Exchange ID, 최저가(이보다 낮으면 안 판다는 최저가), 경매 유형(1st/2nd Price)
+- **경매 컨텍스트**: Exchange ID, Floor Price(이보다 낮으면 안 판다는 최저가), 경매 유형(1st/2nd Price)
 
-이 피처들이 pCTR 모델의 정확도를 결정합니다. 정확한 pCTR이 참 가치를 정확하게 만들고, 참 가치가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 선순환 구조입니다.
+이 피처들이 pCTR 모델의 정확도를 결정합니다. 정확한 pCTR이 참 가치를 정확하게 만들고, 참 가치가 입찰 최적화의 성패를 좌우합니다. **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**이라는 흐름입니다.
 
 ---
 
@@ -606,7 +606,7 @@ Exchange(RTB) 환경에서는 입찰 요청에 포함된 **실시간 피처**를
 
 ### 참고 자료
 
-- Mintegral. (2023). *Ad Tech 101: 광고 네트워크 vs. 광고 거래소*. YouTube.
+- Mintegral. (2023). *Ad Tech 101: Ad Network vs. Ad Exchange*. YouTube.
 - IAB Tech Lab. *OpenRTB Specification*. https://iabtechlab.com/standards/openrtb/
-- Google Ad Manager Help. *How 광고 거래소 works*.
-- Prebid.org. *헤더비딩 Overview*.
+- Google Ad Manager Help. *How Ad Exchange works*.
+- Prebid.org. *Header Bidding Overview*.

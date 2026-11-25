@@ -192,10 +192,10 @@ graph TD
 
 | 문제 | 설명 |
 |------|------|
-| **순서 고정** | 우선순위는 과거 평균 CPM 기준으로 설정. 특정 impression에서 Network B가 $5.00을 지불할 의사가 있어도, Network A가 먼저 호출됨 |
+| **순서 고정** | 우선순위는 과거 평균 CPM 기준으로 설정. 특정 impression에서 Network B가 `$5.00`을 지불할 의사가 있어도, Network A가 먼저 호출됨 |
 | **레이턴시 누적** | Network A가 No Fill을 반환할 때까지 대기 → B 호출 → 대기... 사용자 경험 악화 |
 | **가격 최적화 불가** | Network A가 Fill하면 거기서 끝. B, C가 더 높은 가격을 제시할 기회조차 없음 |
-| **불투명한 마진** | Network이 매체에 $2.00을 지불하면서 광고주에게 $5.00을 청구해도, 매체는 알 수 없음 |
+| **불투명한 마진** | Network이 매체에 `$2.00`을 지불하면서 광고주에게 `$5.00`을 청구해도, 매체는 알 수 없음 |
 
 앞의 3가지 문제는 모두 우선순위를 미리 정해 두고 한 곳씩 묻는 방식에서 생깁니다. 순서가 매체의 수입을 얼마나 바꾸는지는 바로 아래 계산이, 기다리는 시간이 얼마나 쌓이는지는 그 뒤의 더 깊이 상자가 숫자로 보여 줍니다.
 
@@ -381,12 +381,12 @@ Network 는 자기와 거래하는 광고주들의 수요를 모아 광고 거�
 
 광고 거래소가 처음 생겼을 무렵의 표준은 2nd Price 경매(2등 가격 경매)였습니다. 참 가치(True Value)는 2절의 진짜 가치처럼 광고주가 그 노출에 낼 수 있는 최대 금액입니다. 2nd Price 경매에서 낙찰자는 자기가 부른 값이 아니라 2등이 부른 값에 0.01달러를 더한 금액을 내므로 광고주는 참 가치를 그대로 부르면 됩니다. 이렇게 참 가치를 그대로 부르는 전략을 Truthful Bidding 이라고 합니다.
 
-하지만 2017년 이후 경매가 1st Price 경매(낙찰자가 자기가 부른 값을 그대로 내는 방식)로 바뀌면서 DSP 는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. Bid Shading 은 아래 표처럼 입찰가 b 를 참 가치 V 보다 낮게 부르는 기법이고 2nd Price 의 Truthful Bidding 에서는 b 를 V 와 같게 부릅니다. 두 경매 규칙이 어떻게 다른지는 [2등 가격 경매](post.html?id=second-price-auction) 글이 자세히 다룹니다.
+하지만 2017년 무렵부터 거래소들이 차례로 1st Price 경매(낙찰자가 자기가 부른 값을 그대로 내는 방식)로 옮겨 갔고 2019년 Google 의 광고 거래소인 AdX 가 합류했습니다. 경매가 1st Price 로 바뀌면서 DSP 는 [Bid Shading](post.html?id=bid-shading-censored)이라는 최적화 기법을 도입해야 했습니다. Bid Shading 은 아래 표처럼 입찰가 b 를 참 가치 V 보다 낮게 부르는 기법이고 2nd Price 의 Truthful Bidding 에서는 b 를 V 와 같게 부릅니다. 두 경매 규칙이 어떻게 다른지는 [2등 가격 경매](post.html?id=second-price-auction) 글이 자세히 다룹니다.
 
 | 경매 방식 | 지불 금액 (낙찰자가 내는 값) | DSP 전략 | 시기 |
 |-----------|----------|----------|------|
-| 2nd Price | 2등 가격 + $0.01 | Truthful Bidding ($b = V$) | ~2017 |
-| 1st Price | 내 입찰이 그대로 | Bid Shading ($b < V$) | 2017~ |
+| 2nd Price | 2등 가격 + `$0.01` | Truthful Bidding ($b = V$) | ~2017 |
+| 1st Price | 내 입찰가 그대로 | Bid Shading ($b < V$) | 2017~ |
 
 ---
 
@@ -495,14 +495,14 @@ graph LR
 | **1996** | DoubleClick 설립 | 최초의 대형 광고 네트워크. 배너 광고 서빙 + 리포팅 |
 | **2005** | Right Media 출시 | **최초의 광고 거래소**. Impression 단위 실시간 거래 도입 |
 | **2007** | DoubleClick 광고 거래소 출시. 같은 해 Google 이 DoubleClick 인수를 발표(2008년 완료) | 검색 광고를 넘어 디스플레이 광고 시장 진입 |
-| **2009** | Google AdX 로 재출시 | 세계 최대 Exchange. RTB 프로토콜 표준화 선도 |
+| **2009** | Google AdX 로 재출시 | 세계 최대 Exchange |
 | **2010** | OpenRTB 1.0 표준 발표 | 입찰 요청/Response 포맷 표준화 → DSP-Exchange 연동 비용 감소 |
 | **2014** | 헤더비딩 등장 | 순차 호출 우회. 모든 Exchange에 동시 입찰 요청 |
-| **2017~** | 1st 가격 경매 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
-| **2019** | Google Open 입찰 | Server-to-Server 헤더비딩. 레이턴시 최적화 |
+| **2017~** | 1st Price Auction 전환 | AppNexus, Index Exchange, Google AdX 순차 전환 |
+| **2019** | Google Open Bidding 으로 이름 바꿈(2016년 EBDA 로 시작) | Server-to-Server 헤더비딩. 레이턴시 최적화 |
 | **현재** | SSP-Exchange 경계 소멸 | Magnite, PubMatic 등 SSP가 Exchange 기능 통합 |
 
-2010년 OpenRTB 1.0 은 입찰 요청과 응답(Response)의 형식을 표준으로 정해 DSP 와 광고 거래소를 연결하는 비용을 줄였습니다. 2019년 행의 Server-to-Server 는 서버와 서버가 직접 주고받는다는 뜻입니다.
+2010년 OpenRTB 1.0 은 입찰 요청과 응답(Response)의 형식을 표준으로 정해 DSP 와 광고 거래소를 연결하는 비용을 줄였습니다. 2019년 행은 Google 이 2016년에 EBDA 라는 이름으로 시작한 헤더비딩 서비스의 이름을 Google Open Bidding 으로 바꾼 일입니다. 같은 행의 Server-to-Server 는 서버와 서버가 직접 주고받는다는 뜻입니다.
 
 ### 순차 호출을 없앤 전환점, 헤더비딩
 
@@ -543,7 +543,7 @@ graph TB
 |------|-----------|----------------|
 | **입찰 기회** | 순차 (앞 Network이 거절해야 다음으로) | 동시 (모든 Exchange가 동시 입찰) |
 | **가격 발견** | 불완전 (첫 Fill에서 종료) | 완전 (전체 시장 수요 반영) |
-| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰이 선택) |
+| **매체 수익** | 과소 (잠재적 최고가 미발견) | 극대화 (최고 입찰가 선택) |
 | **레이턴시** | 순차 누적 (최악 N x timeout) | 병렬 (최대 1 x timeout) |
 | **Network/Exchange 구분** | 명확 (순서대로 호출) | 모호 (모두 같은 경매에 참여) |
 
@@ -579,11 +579,11 @@ SSP 는 매체 편에서 지면을 파는 플랫폼이고 광고 거래소는 �
 
 | 유형 | 예시 | 특징 |
 |------|------|------|
-| **Audience Network** | Meta Audience Network, TikTok for Business | 자사 광고주 수요를 외부 매체에 확장. Network의 핵심 역할(수요 애그리게이션) 유지 |
-| **Vertical Network** | Criteo (리타겟팅 특화), AdMob (모바일 특화) | 특정 도메인에 특화된 수요와 인벤토리 매칭 |
+| **Audience Network** | Meta Audience Network, TikTok Pangle | 자사 광고주 수요를 외부 매체에 확장. Network의 핵심 역할(수요 애그리게이션) 유지 |
+| **Vertical Network** | AdMob (모바일 특화) | 특정 도메인에 특화된 수요와 인벤토리 매칭 |
 | **닫힌 생태계(Walled Garden)** | Google, Meta, Amazon, 네이버, 카카오 | DSP + Exchange + Network + Publisher를 모두 자사 내에서 운영. [닫힌 생태계 상세 분석](post.html?id=walled-garden) 참고 |
 
-Audience Network 는 자기 플랫폼 광고주의 수요를 외부 매체로 넓혀 그 매체의 지면에 광고를 내보내는 형태로, Network 가 원래 하던 수요 애그리게이션(광고주 수요를 모으는 일)을 그대로 합니다. Vertical Network 는 리타겟팅(이미 사이트에 다녀간 사람에게 다시 광고를 보여 주는 방식)이나 모바일처럼 한 분야에 맞춘 수요와 인벤토리를 연결합니다.
+Audience Network 는 자기 플랫폼 광고주의 수요를 외부 매체로 넓혀 그 매체의 지면에 광고를 내보내는 형태로, Network 가 원래 하던 수요 애그리게이션(광고주 수요를 모으는 일)을 그대로 합니다. Vertical Network 는 모바일처럼 한 분야에 맞춘 수요와 인벤토리를 연결합니다.
 
 ### 통합의 흐름
 
@@ -628,11 +628,11 @@ graph TB
 | 차원 | Network 경유 트래픽 | Exchange(RTB) 트래픽 |
 |------|---------------------|---------------------|
 | **입찰 요청 정보** | 제한적 (카테고리, 사이즈 정도) | 풍부 (URL, 유저 ID, 디바이스, 위치 등) |
-| **가격 피드백** | 고정 가격 (시장 가격 정보 없음) | Winning Price, Clearing Price 관측 가능 |
+| **가격 피드백** | 고정 가격 (시장 가격 정보 없음) | 낙찰 시 Winning Price, Clearing Price 관측 (패찰 시 미관측) |
 | **유저 피처** | 세그먼트 레벨 (25-34세 남성) | 유저 레벨 (실시간 브라우징 이력) |
 | **모델 학습 영향** | Feature sparse → 모델 정확도 한계 | Feature rich → 개인화 정밀 예측 가능 |
 
-Network 경유 트래픽은 입찰 요청에 카테고리와 사이즈 정도만 담기고 사용자도 25-34세 남성 같은 세그먼트로만 보여 피처가 희소(sparse)합니다. Exchange 트래픽에는 URL, 유저 ID, 디바이스, 위치와 실시간 브라우징 이력까지 담겨 피처가 풍부합니다. 그래서 Network 경유 트래픽으로 학습한 모델은 정확도에 한계가 있고 Exchange 트래픽으로는 사용자 한 명 단위의 정밀한 예측을 할 수 있습니다. 가격 피드백 행은 거래가 끝난 뒤 시장 가격을 알 수 있는지를 말합니다. Network 경유 트래픽은 값이 고정이라 시장 가격 정보가 없고 Exchange 트래픽에서는 Winning Price 와 Clearing Price(경매에서 실제로 낙찰된 값)를 볼 수 있습니다.
+Network 경유 트래픽은 입찰 요청에 카테고리와 사이즈 정도만 담기고 사용자도 25-34세 남성 같은 세그먼트로만 보여 피처가 희소(sparse)합니다. Exchange 트래픽에는 URL, 유저 ID, 디바이스, 위치와 실시간 브라우징 이력까지 담겨 피처가 풍부합니다. 그래서 Network 경유 트래픽으로 학습한 모델은 정확도에 한계가 있고 Exchange 트래픽으로는 사용자 한 명 단위의 정밀한 예측을 할 수 있습니다. 가격 피드백 행은 거래가 끝난 뒤 시장 가격을 알 수 있는지를 말합니다. Network 경유 트래픽은 값이 고정이라 시장 가격 정보가 없습니다. Exchange 트래픽에서는 낙찰했을 때 Winning Price 와 Clearing Price(경매에서 실제로 낙찰된 값)를 볼 수 있고 패찰(경매에서 지는 일)하면 경쟁자가 부른 값을 볼 수 없습니다.
 
 두 트래픽의 피처가 이렇게 다르므로 같은 pCTR 모델이라도 두 트래픽을 나눠서 학습하거나 트래픽이 어디서 왔는지(트래픽 소스)를 피처로 넣어야 합니다.
 
@@ -652,7 +652,7 @@ Exchange(RTB) 트래픽에서는 입찰 요청에 담겨 오는 실시간 피처
 - **시간 컨텍스트**: 요청이 들어온 시간대, 요일과 계절성(계절에 따라 되풀이되는 변화)
 - **경매 컨텍스트**: 어느 광고 거래소에서 온 요청인지 가리키는 Exchange ID, 1절에서 본 최저가(Floor Price), 경매 유형(1st Price 인지 2nd Price 인지)
 
-pCTR 모델이 얼마나 정확한지는 이 피처들에 달려 있습니다. pCTR 이 정확해야 4절의 참 가치 V(pCTR × pCVR × 전환 가치)가 정확해지고 참 가치의 정확도가 입찰 최적화의 성패를 좌우합니다. 그래서 **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**로 이어지는 선순환 구조가 만들어집니다.
+pCTR 모델이 얼마나 정확한지는 이 피처들에 달려 있습니다. pCTR 이 정확해야 4절의 참 가치 V(pCTR × pCVR × 전환 가치)가 정확해지고 참 가치의 정확도가 입찰 최적화의 성패를 좌우합니다. 그래서 **Exchange → 풍부한 피처 → 정확한 모델 → 효율적 입찰**로 이어집니다.
 
 ---
 
@@ -678,7 +678,7 @@ pCTR 모델이 얼마나 정확한지는 이 피처들에 달려 있습니다. p
 
 ### 참고 자료
 
-- Mintegral. (2023). *Ad Tech 101: 광고 네트워크 vs. 광고 거래소*. YouTube.
+- Mintegral. (2023). *Ad Tech 101: Ad Network vs. Ad Exchange*. YouTube.
 - IAB Tech Lab. *OpenRTB Specification*. https://iabtechlab.com/standards/openrtb/
-- Google Ad Manager Help. *How 광고 거래소 works*.
-- Prebid.org. *헤더비딩 Overview*.
+- Google Ad Manager Help. *How Ad Exchange works*.
+- Prebid.org. *Header Bidding Overview*.

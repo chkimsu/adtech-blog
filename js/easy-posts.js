@@ -83,6 +83,7 @@ const EASY_POST_IDS = [
   'adtech-30min-primer',
   'ad-network-vs-exchange',
   'ecpm-ranking',
+  'adtech-dev-layers',
 ];
 
 // 처음부터 쉬운 판 말투로 쓴 글. 원래 글이 곧 쉬운 판이라 posts-easy 파일도, 판을 바꾸는 링크도 없다.

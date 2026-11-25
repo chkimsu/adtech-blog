@@ -188,7 +188,7 @@ sequenceDiagram
 - **예산 페이싱(Budget Pacing) 분모**: 전체 요청 수 대비 입찰 비율 계산
 - **트래픽 분석**: Exchange별, 매체별, 시간대별 트래픽 분포
 
-> 입찰 요청의 상세 구조는 [광고 서빙 흐름](post.html?id=ad-serving-flow)에 있습니다.
+> 이 요청이 서버 안에서 응답이 되기까지 지나가는 여덟 단계는 [광고 서빙 흐름](post.html?id=ad-serving-flow)에 있습니다.
 
 ### 2.2 후보 로그 — 후보 깔때기의 기록
 

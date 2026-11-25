@@ -316,7 +316,7 @@ for k in ('r1', 'r2', 'r2|on|1', 'r3'):
     print(f'    조건을 하나씩 더하면 {len(rows):,}명 → ' + ' → '.join(f'{x:,}명' for x in steps))
 
 # 4단계: temperature 0.7 로 다섯 번 더 보낸 답을 기준 답과 비교한다
-# 조건은 (field, op, value) 묶음의 집합으로 비교해 차례는 보지 않는다. 판정이 바뀐 답과 명단 크기도 센다.
+# 조건은 (field, op, value) 튜플의 집합으로 비교해 차례는 보지 않는다. 판정이 바뀐 답과 명단 크기도 센다.
 def cond_set(a):
     return frozenset((c['field'], c['op'], c['value']) for c in a['conditions'])
 
@@ -343,7 +343,7 @@ if off is None or on is None:
     print('r2 의 기준 답이나 thinking 을 켠 답을 읽지 못해 판정을 비교하지 않는다')
 else:
     same = [cond_set(on) == cond_set(a) for a in partial]
-    print(f'thinking 끔 {off["verdict"]}, 켬 {on["verdict"]}. 켠 답의 조건 묶음이 0.7 의 일부 지원 답 {len(same)}개와 같은가 {same}')
+    print(f'thinking 끔 {off["verdict"]}, 켬 {on["verdict"]}. 켠 답의 조건 세트가 0.7 의 일부 지원 답 {len(same)}개와 같은가 {same}')
 for name, k in (('끔', 'r2'), ('켬', 'r2|on|1')):
     tin, tout, ms, chars = USAGE[k]
     print(f'thinking {name}: 입력 {tin:,} 토큰, 출력 {tout:,} 토큰, {ms / 1000:.1f}초, 풀이 {chars:,}자')
@@ -419,7 +419,7 @@ print('판정과 나머지 필드가 어긋난 답:', [k for k, a in answers.ite
 #     run 5: unsupported, sensitive_attribute, [없음], 빠진 부분 ['health status'], 명단 없음
 #     run 6: unsupported, sensitive_attribute, [없음], 빠진 부분 ['health status'], 명단 없음
 # 5단계 뜻: thinking 을 켜고 한 번 물은 캠핑 요청의 답은 0.7 의 일부 지원 답과 같은 조건 셋이지만, 출력 토큰은 114배, 걸린 시간은 118배다.
-# thinking 끔 unsupported, 켬 partial. 켠 답의 조건 묶음이 0.7 의 일부 지원 답 2개와 같은가 [True, True]
+# thinking 끔 unsupported, 켬 partial. 켠 답의 조건 세트가 0.7 의 일부 지원 답 2개와 같은가 [True, True]
 # thinking 끔: 입력 643 토큰, 출력 35 토큰, 2.6초, 풀이 0자
 # thinking 켬: 입력 641 토큰, 출력 3,974 토큰, 305.0초, 풀이 14,536자
 # 켜면 출력 토큰 114배, 걸린 시간 118배

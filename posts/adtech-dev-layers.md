@@ -32,8 +32,8 @@
 ```mermaid
 graph LR
     A["유저 방문"] --> B["타겟팅<br/><small>후보 필터</small>"]
-    B --> C["서빙<br/><small>Retrieval, 랭킹</small>"]
-    C --> D["예측 모델<br/><small>pCTR, pCVR</small>"]
+    B --> C["서빙<br/><small>Retrieval</small>"]
+    C --> D["예측 모델<br/><small>pCTR, pCVR, 랭킹</small>"]
     D --> E["입찰 결정<br/><small>eCPM, 입찰가</small>"]
     E --> F["소재 결정<br/><small>DCO, MAB</small>"]
     F --> G["광고 노출"]
@@ -47,9 +47,9 @@ graph LR
 
 각 단계에서 내려지는 핵심 결정:
 
-1. **타겟팅**: 수천만 유저 중 이 광고를 볼 자격이 있는 후보군 필터링
-2. **서빙**: 수백만 광고 후보에서 수백 개를 검색(Retrieval)하고, 랭킹으로 정렬
-3. **예측 모델**: 각 후보 광고의 클릭 확률(pCTR)과 전환 확률(pCVR)을 스코어링
+1. **타겟팅**: 이 요청의 유저에게 타겟 조건이 맞는 광고만 후보로 남김
+2. **서빙**: 수백만 광고 후보에서 수백 개를 검색(Retrieval)
+3. **예측 모델**: 각 후보 광고의 클릭 확률(pCTR)과 전환 확률(pCVR)을 스코어링하고 그 점수로 랭킹
 4. **입찰 결정**: 예측값 기반으로 eCPM을 계산하고, 경매에서 최적 입찰가를 결정
 5. **소재 결정**: 낙찰된 광고의 어떤 소재 조합(제목 × 이미지 × CTA)을 보여줄지 결정
 6. **측정**: 노출/클릭/전환 로그를 수집하여 모델 학습 데이터로 피드백
@@ -76,13 +76,11 @@ graph LR
 | **Lookalike 확장** | 전환 유저(시드)와 유사한 신규 유저를 임베딩 유사도로 발굴. Facebook Lookalike이 대표적 |
 | **리타겟팅** | 사이트 방문/장바구니 이탈 유저를 추적하여 재노출. 가장 높은 전환율을 보이는 전략 |
 | **컨텍스트 타겟팅** | 유저가 아닌 콘텐츠(기사/영상)의 맥락을 분석하여 매칭. 쿠키리스 시대에 부상 |
-| **Position Bias 보정** | 광고 위치에 따른 클릭률 편향을 제거하여 공정한 랭킹 보장 |
 
 **관련 포스트:**
 - [타겟팅 기초](post.html?id=targeting-basics) — 광고주의 조건과 유저 정보가 만나는 자리. 기초 4편의 첫 글
 - [오디언스 세그멘테이션](post.html?id=audience-segmentation) — Demographic, Behavioral, RFM, ML Clustering 기반 세그먼트 설계
 - [Lookalike Modeling](post.html?id=lookalike-modeling) — Seed에서 유사 유저를 발굴하는 Embedding/Propensity/Graph 접근법
-- [Position Bias](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
 - [Two-Tower Retrieval](post.html?id=two-tower-retrieval) — 유저-광고 매칭의 기반 기술
 
 ---
@@ -133,7 +131,8 @@ graph LR
 | **pCTR 예측** | 클릭 확률 예측. LR → FM → DeepFM → DIN으로 진화. 광고 수익의 직접적 근거 |
 | **pCVR 예측** | 전환(구매/가입) 확률 예측. 지연 피드백(Delayed Feedback) 처리가 핵심 난제 |
 | **Calibration** | 모델의 예측 확률을 실제 확률에 맞게 보정. AUC가 높아도 보정 없으면 돈을 잃음 |
-| **Multi-Task Learning** | pCTR + pCVR을 동시 학습하여 Sample Selection Bias 해결 (ESMM, MMoE, PLE) |
+| **Position Bias 보정** | 광고 위치에 따른 클릭률 편향을 제거하여 공정한 랭킹 보장 |
+| **Multi-Task Learning** | pCTR + pCVR을 동시 학습 (ESMM, MMoE, PLE). Sample Selection Bias 는 ESMM 이 해결 |
 | **Feature Store** | Batch/Streaming/Real-Time 피처를 통합 관리하여 10ms 안에 모델에 공급 |
 
 광고에서 eCPM(수익 기대값)은, 전환당 과금(CPA) 캠페인이라면 다음과 같이 계산됩니다:
@@ -145,6 +144,7 @@ $$\text{eCPM} = \text{pCTR} \times \text{pCVR} \times \text{Bid} \times 1000$$
 **관련 포스트:**
 - [Deep CTR 모델의 진화: LR에서 DIN까지](post.html?id=deep-ctr-models)
 - [Calibration: AUC가 높아도 돈을 잃는 이유](post.html?id=calibration)
+- [Position Bias](post.html?id=position-bias-ultr) — 위치 편향 보정 기법
 - [Multi-Task Learning: pCTR과 pCVR을 같이 배우면 왜 더 좋은가](post.html?id=multi-task-learning)
 - [Feature Store](post.html?id=feature-store-serving)
 
@@ -263,8 +263,7 @@ def run_bandit(impressions, explore_share=0.15):
     per = explore // combos
     clicks = sum(true_ctr[i] * per for i in range(combos))
     # 탐색 구간의 관측으로 1등을 고른다(노출이 적으면 잘못 고를 수도 있다)
-    observed = {i: random.binomialvariate(per, true_ctr[i]) if hasattr(random, 'binomialvariate')
-                   else sum(1 for _ in range(per) if random.random() < true_ctr[i])
+    observed = {i: sum(1 for _ in range(per) if random.random() < true_ctr[i])
                 for i in range(combos)}
     picked = max(observed, key=observed.get)
     clicks += true_ctr[picked] * (impressions - explore)
@@ -283,7 +282,7 @@ print(f"  진짜 1등 조합 #{best_i} (CTR {true_ctr[best_i]:.2%})"
 print()
 print("→ 조합이 180개면 A/B로는 다 못 측정해 본다. 시간이 안 된다.")
 print("→ 밴딧은 '전부 검증'을 포기하고 '좋은 걸 빨리 쓰기'를 택한다.")
-print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 다음 학습을 오염시키지 않기 때문이다.")
+print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는 소재가 틀려도 그 손해가 다른 레이어로 번지지 않기 때문이다.")
 
 # 출력:
 # 1단계 뜻: 요소 넷을 곱하면 만들 수 있는 조합이 180개다.
@@ -305,7 +304,7 @@ print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 �
 #
 # → 조합이 180개면 A/B로는 다 못 측정해 본다. 시간이 안 된다.
 # → 밴딧은 '전부 검증'을 포기하고 '좋은 걸 빨리 쓰기'를 택한다.
-# → 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 다음 학습을 오염시키지 않기 때문이다.
+# → 소재 레이어에서 밴딧이 잘 통하는 이유는 소재가 틀려도 그 손해가 다른 레이어로 번지지 않기 때문이다.
 ```
 
 두 가지가 드러납니다.
@@ -314,7 +313,7 @@ print("→ 소재 레이어에서 밴딧이 잘 통하는 이유는, 실패가 �
 
 둘째, **밴딧이 이깁니다.** 같은 노출 300만 회로 클릭이 6.2만에서 8.7만으로 40.1% 늘었습니다. 흥미로운 건 밴딧이 **진짜 1등을 못 찾았다는 점**입니다. 진짜 1등은 CTR 3.40%인 53번인데 밴딧은 3.05%인 132번을 골랐습니다. 그런데도 A/B를 크게 이겼습니다. **"최고를 찾는 것"보다 "나쁜 걸 빨리 접는 것"이 이득의 대부분이기 때문입니다.**
 
-여기서 이 레이어의 성격이 나옵니다. 소재는 **틀려도 되돌아오지 않습니다.** 나쁜 소재를 보여준 손해는 그 노출에서 끝나고, 다음 모델 학습을 오염시키지 않습니다. 그래서 마음껏 실험할 수 있고, 그게 밴딧이 여기서 특히 잘 통하는 이유입니다.
+여기서 이 레이어의 성격이 나옵니다. 소재가 **틀려도 그 손해는 다른 레이어로 번지지 않습니다.** 그래서 마음껏 실험할 수 있고, 그게 밴딧이 여기서 특히 잘 통하는 이유입니다. 다만 보여준 소재만 로그에 남으므로 탐색을 멈추면 밀려난 소재는 다시 측정되지 않습니다.
 
 **관련 포스트:**
 - [탐색과 활용(Exploration & Exploitation): 새 소재에 노출 몇 번을 걸까](post.html?id=exploration-exploitation) — MAB 기반 소재 최적화의 이론적 배경
@@ -352,7 +351,7 @@ graph LR
     style E stroke:#8a6a3a
 ```
 
-이 루프가 빠르게 돌수록(모델이 빨리 업데이트될수록) 시스템 성능이 향상됩니다. 이것이 [Online Learning](post.html?id=online-learning-delayed-feedback)이 중요한 이유입니다.
+이 루프가 빠르게 돌수록(모델이 빨리 업데이트될수록) 시스템 성능이 향상됩니다. 이것이 [Online Learning](post.html?id=online-learning-delayed-feedback)이 중요한 이유입니다. 다만 전환은 늦게 오므로 너무 빨리 돌리면 아직 오지 않은 전환이 음성으로 학습됩니다.
 
 ---
 
@@ -374,7 +373,7 @@ graph LR
 
 | 컴포넌트 | 역할 |
 |---------|------|
-| **쿠키리스 대응** | 쿠키 없이 타겟팅하고 측정하는 대안 — 1st-party 데이터, 집계 리포팅(SKAdNetwork 류), 컨텍스트 타겟팅. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 종료가 발표됨 |
+| **쿠키리스 대응** | 쿠키 없이 타겟팅하고 측정하는 대안 — 1st-party 데이터, 사용자 식별자 없는 포스트백(SKAdNetwork), 컨텍스트 타겟팅. Chrome 의 Privacy Sandbox 광고 기능은 2025년에 종료가 발표됨 |
 | **동의 관리 (CMP)** | GDPR/CCPA 준수를 위한 유저 동의 수집, 관리 |
 | **차등 프라이버시** | 집계 데이터에 노이즈를 추가하여 개인 식별 방지 |
 
@@ -434,12 +433,12 @@ print()
 # 타겟팅이 틀리면 잘못된 유저에게 노출된다. 그 노출로 만든 클릭, 전환 로그가
 # 다시 모델 학습 데이터가 되므로, 오차가 다음 학습에 반영되어 되돌아온다.
 # pCTR이 틀리면 입찰가가 틀리고, 낙찰 결과가 다시 로그가 된다.
-# 소재는 그 라운드에서만 손해가 나고 다음 학습을 오염시키지 않는다.
+# 소재가 틀려도 그 손해는 다른 레이어로 번지지 않는다.
 CASCADE = {
     "타겟팅":   3,   # 서빙 → 예측 학습 → 입찰. 세 층으로 번진다
     "예측":     2,   # 입찰 → 측정
     "입찰":     1,   # 낙찰 결과에만
-    "소재":     0,   # 그 라운드에서 끝
+    "소재":     0,   # 다른 레이어로 번지지 않는다
     "측정":     3,   # 모든 판단의 근거라, 틀리면 위 전부를 잘못 고친다
 }
 print("같은 10% 오차가 몇 개 층으로 번지나 (1라운드 뒤 누적 영향)")
@@ -452,7 +451,7 @@ print()
 print("→ 매출 감소만 보면 모든 레이어가 같아 보인다.")
 print("→ 하지만 타겟팅, 측정 오차는 다음 학습을 오염시켜 몇 배로 되돌아온다.")
 print("→ 그래서 '먼저 고칠 곳'은 사슬 앞쪽(타겟팅)과 판단 근거(측정)다.")
-print("→ 소재는 되돌아오지 않으니 마음껏 실험해도 된다 — 그래서 밴딧을 쓴다.")
+print("→ 소재는 틀려도 그 손해가 다른 레이어로 번지지 않으니 마음껏 실험해도 된다 — 그래서 밴딧을 쓴다.")
 
 # 출력:
 # 1단계 뜻: 도달 1,000,000명에 pCTR 2.0%, pCVR 5.0%, 전환가치 30,000원을 곱하면 기준 기대매출은 30,000,000원이다.
@@ -480,7 +479,7 @@ print("→ 소재는 되돌아오지 않으니 마음껏 실험해도 된다 —
 # → 매출 감소만 보면 모든 레이어가 같아 보인다.
 # → 하지만 타겟팅, 측정 오차는 다음 학습을 오염시켜 몇 배로 되돌아온다.
 # → 그래서 '먼저 고칠 곳'은 사슬 앞쪽(타겟팅)과 판단 근거(측정)다.
-# → 소재는 되돌아오지 않으니 마음껏 실험해도 된다 — 그래서 밴딧을 쓴다.
+# → 소재는 틀려도 그 손해가 다른 레이어로 번지지 않으니 마음껏 실험해도 된다 — 그래서 밴딧을 쓴다.
 ```
 
 결과를 두 덩이로 읽어야 합니다.
@@ -491,9 +490,9 @@ print("→ 소재는 되돌아오지 않으니 마음껏 실험해도 된다 —
 
 측정도 마찬가지입니다. 측정이 틀리면 모든 판단의 근거가 틀립니다. 잘못된 숫자를 보고 잘못된 곳을 고치게 되니, 노력이 오히려 상황을 나쁘게 만듭니다.
 
-반대로 소재는 그 라운드에서 끝납니다. 10%가 10%로 남습니다.
+반대로 소재 오차는 다른 레이어로 번지지 않습니다. 10%가 10%로 남습니다.
 
-**그래서 순서는 이렇습니다.** 사슬 앞쪽(타겟팅)과 판단 근거(측정)를 먼저 잡습니다. 그다음이 예측, 그다음이 입찰입니다. 소재는 되돌아오지 않으니 마음껏 실험합니다 — 6절에서 밴딧을 쓰는 이유가 여기 있습니다.
+**그래서 순서는 이렇습니다.** 사슬 앞쪽(타겟팅)과 판단 근거(측정)를 먼저 잡습니다. 그다음이 예측, 그다음이 입찰입니다. 소재는 틀려도 그 손해가 다른 레이어로 번지지 않으니 마음껏 실험합니다 — 6절에서 밴딧을 쓰는 이유가 여기 있습니다.
 
 :::deep 더 깊이 — 왜 곱셈 사슬이면 "가장 약한 칸"을 먼저 봐야 하나
 

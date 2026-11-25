@@ -123,7 +123,7 @@
     'ssp': {
       x: 440, y: 210, w: 130, h: 64, cat: 'sell',
       name: 'SSP', sub: '공급 측 플랫폼',
-      def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price, Header Bidding으로 수익 최적화.',
+      def: 'Publisher 대신 광고 지면을 Ad Exchange에 팔아주는 플랫폼. Floor Price로 수익 최적화. Header Bidding은 매체 페이지가 여러 SSP를 동시에 부르는 방식.',
       demos: [{ name: 'Header Bidding', url: 'demo-header-bidding.html' }],
       posts: [{ id: 'dsp-ssp-exchange', title: 'DSP, SSP, Exchange가 각각 뭐 하나' }, { id: 'header-bidding', title: '헤더비딩 쉽게' }, { id: 'ad-serving-flow', title: '광고 서빙 플로우' }]
     },

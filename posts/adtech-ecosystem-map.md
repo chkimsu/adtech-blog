@@ -49,12 +49,12 @@ graph TB
   subgraph SSP_System["SSP (Supply-Side Platform)"]
     SSP(["SSP<br/>매체 수익 최적화"])
     FLOOR(["Floor Price 설정"])
-    HB(["Header Bidding<br/>병렬 경매"])
   end
 
   subgraph Publisher["매체 (Publisher)"]
     PUB(["웹사이트 / 앱"])
     SLOT(["광고 지면 (Ad Slot)"])
+    HB(["Header Bidding<br/>병렬 경매"])
   end
 
   subgraph User_Side["유저 (Consumer)"]
@@ -73,10 +73,10 @@ graph TB
   SEGMENT -->|유저 프로필| TARGETING
 
   USER -->|페이지 방문| PUB
-  PUB -->|광고 요청| SSP
+  PUB --> HB
+  HB -->|광고 요청| SSP
   SSP --> FLOOR
-  SSP --> HB
-  HB ==>|Bid Request| ADEX
+  SSP ==>|Bid Request| ADEX
   ADEX ==>|Bid Request 전달| BIDDER
 
   BIDDER --> FEAT
@@ -184,7 +184,7 @@ graph TB
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.7);"></div>
-<span>5. DSP: Feature 추출 → pCTR=0.032 → pCVR=0.15 → V=$0.24 (ROAS 기준, 4절) → b*=$0.17</span>
+<span>5. DSP: Feature 추출 → pCTR=0.032 → pCVR=0.15 → V=<code>$0.24</code> (ROAS 기준, 4절) → b*=<code>$0.17</code></span>
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(176,38,255,0.5);"></div>
@@ -200,8 +200,8 @@ graph TB
 ### pCTR 모델러가 주목할 포인트
 
 - **5단계 안의 추론**: pCTR 추론이 **~1ms 이내**에 완료되어야 합니다. 모델 복잡도 vs 레이턴시 트레이드오프
-- **5단계 안의 가치 계산**: pCTR 의 작은 오차가 참 가치(True Value) 에 증폭됩니다. pCTR이 0.032가 아니라 0.050이었다면 참 가치는 $0.24 → $0.375로 56% 뛰고, 입찰가도 그만큼 올라갑니다
-- **11-12**: 클릭 피드백은 수 초 내 도착하지만, 전환 피드백은 **수 시간~수 일 지연**(지연 피드백(Delayed Feedback))될 수 있습니다. 지연 피드백은 라벨이 늦게 도착하는 것입니다. 이것이 pCVR 모델의 핵심 난관입니다
+- **5단계 안의 가치 계산**: pCTR 의 작은 오차가 참 가치(True Value) 에 그대로 전파됩니다. pCTR이 0.032가 아니라 0.050이었다면 참 가치는 `$0.24` → `$0.375`로 56% 뛰고 입찰가도 그만큼 올라갑니다
+- **11-12**: 클릭 피드백은 수 초 내 도착하지만 전환 피드백은 **수 시간~수 일 지연**될 수 있습니다. 이렇게 라벨이 늦게 도착하는 것을 지연 피드백(Delayed Feedback)이라 합니다. 이것이 pCVR 모델의 핵심 난관입니다
 
 ### 이 100ms가 지금 몇 번 겹쳐서 벌어지고 있나
 
@@ -287,8 +287,8 @@ pCTR 모델의 정확도가 최종 광고주 ROI까지 어떤 경로로 영향�
 | pCTR 상태 | 참 가치 | 입찰 결과 | 비즈니스 영향 |
 |-----------|-----------|---------|-------------|
 | **과대추정** (pCTR > 실제 CTR) | V 과대 → 과다 입찰 | 낙찰률 ↑ but 비용 ↑↑ | ROI 하락, 예산 조기 소진 |
-| **과소추정** (pCTR < 실제 CTR) | V 과소 → 과소 입찰 | Win Rate ↓↓ | 기회 손실, 노출 부족 |
-| **정확** (pCTR ≈ 실제 CTR) | V 정확 → 최적 shading 가능 | Win Rate 적정 + 비용 효율 | **ROI 극대화** |
+| **과소추정** (pCTR < 실제 CTR) | V 과소 → 과소 입찰 | 낙찰률 ↓↓ | 기회 손실, 노출 부족 |
+| **정확** (pCTR ≈ 실제 CTR) | V 정확 → 최적 shading 가능 | 낙찰률 적정 + 비용 효율 | **ROI 극대화** |
 | **판별력 부족** (AUC 낮음) | 좋은 지면/나쁜 지면 구분 실패 | 나쁜 지면에 과다입찰 | 전환 없는 노출에 예산 낭비 |
 
 ### 지도가 pCTR/pCVR을 심장으로 그린 이유
@@ -399,11 +399,11 @@ for k in range(max(dist.values()) + 1):
 <div class="chart-arch-grid">
 <div class="chart-arch-node">
 <div class="chart-arch-node-name">CPA 기반</div>
-<div class="chart-arch-node-desc">V = 0.0048 &times; $10 = $0.048</div>
+<div class="chart-arch-node-desc">V = 0.0048 &times; <code>$10</code> = <code>$0.048</code></div>
 </div>
 <div class="chart-arch-node">
 <div class="chart-arch-node-name">ROAS 기반</div>
-<div class="chart-arch-node-desc">V = 0.0048 &times; $50 = $0.24</div>
+<div class="chart-arch-node-desc">V = 0.0048 &times; <code>$50</code> = <code>$0.24</code></div>
 </div>
 </div>
 </div>
@@ -447,13 +447,13 @@ $$\text{eCPM} = \text{1,000 노출당 기대 수익}$$
 
 | 과금 모델 | eCPM 변환 공식 | 예시 |
 |----------|--------------|------|
-| **CPM** | $\text{eCPM} = \text{CPM}$ | CPM $5.00 → eCPM $5.00 |
-| **CPC** | $\text{eCPM} = pCTR \times CPC \times 1{,}000$ | pCTR 2%, CPC $0.50 → eCPM $10.00 |
-| **CPA** | $\text{eCPM} = pCTR \times pCVR \times CPA \times 1{,}000$ | pCTR 2%, pCVR 10%, CPA $20 → eCPM $40.00 |
+| **CPM** | $\text{eCPM} = \text{CPM}$ | CPM `$5.00` → eCPM `$5.00` |
+| **CPC** | $\text{eCPM} = pCTR \times CPC \times 1{,}000$ | pCTR 2%, CPC `$0.50` → eCPM `$10.00` |
+| **CPA** | $\text{eCPM} = pCTR \times pCVR \times CPA \times 1{,}000$ | pCTR 2%, pCVR 10%, CPA `$20` → eCPM `$40.00` |
 
 **pCTR 모델의 정확도가 eCPM에 직결되는 이유**: CPC/CPA 캠페인의 eCPM은 pCTR을 곱해서 산출됩니다. pCTR 이 2%인데 모델이 4%로 과대추정하면 eCPM 이 두 배로 커져, 실제 가치보다 훨씬 높은 가격에 입찰하게 됩니다. 반대로 과소추정하면 경쟁에서 밀려 노출 기회를 잃습니다.
 
-**SSP/Exchange 관점**: Exchange는 모든 입찰을 eCPM으로 변환한 뒤 비교하여 낙찰자를 결정합니다. 따라서 DSP가 보내는 입찰가는 이미 eCPM 기반이며, 앞서 본 참 가치 계산이 바로 이 eCPM 산출 과정입니다.
+**SSP/Exchange 관점**: 열린 RTB 에서 Exchange는 각 DSP가 보낸 최종 CPM 입찰가만 비교하여 낙찰자를 결정합니다. eCPM 환산은 DSP 안에서 끝나므로 DSP가 보내는 입찰가는 이미 eCPM 기반이며 앞서 본 참 가치 계산이 바로 이 eCPM 산출 과정입니다.
 
 ### 두 가지 가치 산정 방식
 
@@ -548,9 +548,9 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 <div class="chart-layer-group">
 <div class="chart-layer-group-label">! 난관 (Challenges)</div>
 <div class="chart-layer-items">
-<span class="chart-layer-item orange">고른 것만 보이는 편향(Selection Bias)</span>
+<span class="chart-layer-item orange">선택 편향(Selection Bias)</span>
 <span class="chart-layer-item orange">지연 피드백</span>
-<span class="chart-layer-item orange">분포가 달라지는 것(Distribution Shift)</span>
+<span class="chart-layer-item orange">분포 변화(Distribution Shift)</span>
 <span class="chart-layer-item orange">숨겨진 데이터(Censored Data)</span>
 </div>
 </div>
@@ -561,9 +561,9 @@ $$V = pCTR(x) \times pCVR(x) \times \underbrace{\text{Avg Revenue}}_{\text{평�
 
 | 난관 | 원인 | 영향 | 대응 |
 |------|------|------|------|
-| **고른 것만 보이는 편향** | 낙찰한 광고만 클릭/전환 데이터 수집 | 못 이긴 경매의 잠재 성과를 모름 | ESMM, Inverse Propensity Weighting |
+| **선택 편향** | 낙찰한 광고만 클릭/전환 데이터 수집 | 못 이긴 경매의 잠재 성과를 모름 | Inverse Propensity Weighting |
 | **지연 피드백** | 전환은 클릭 후 수 시간~수 일 후 발생 | 최신 데이터에 전환 라벨 누락 | Attribution Window, FSIW |
-| **분포가 달라지는 것** | 유저 행동, 시즌, 경쟁 환경 변화 | 어제의 모델이 오늘 부정확 | 온라인 학습, 주기적 재학습 |
+| **분포 변화** | 유저 행동, 시즌, 경쟁 환경 변화 | 어제의 모델이 오늘 부정확 | 온라인 학습, 주기적 재학습 |
 | **숨겨진 데이터** | 패찰 시 경쟁자 가격 미관측 | 시장 분포 과소추정 → 과도한 shading | Censored Regression, Survival Analysis |
 
 ### 두뇌 층은 한 바퀴 도는 데 몇 시간 걸리나
@@ -636,7 +636,7 @@ for n in (1, 4, 24):
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.8);"></div>
-<span><strong>노출 전 (~10ms)</strong> &mdash; pCTR 모델: 클릭 확률은? + Bid Shading: 얼마에 입찰?</span>
+<span><strong>노출 전 (~10ms)</strong> &mdash; pCTR, pCVR 모델: 클릭 확률과 전환 확률은? + Bid Shading: 얼마에 입찰?</span>
 </div>
 <div class="chart-timeline-legend-item">
 <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.8);"></div>
@@ -652,7 +652,7 @@ for n in (1, 4, 24):
 | 유저 행동 | 시점 | 개입 모델 | 모델러 관심사 |
 |----------|------|---------|-------------|
 | 페이지 방문 | 입찰 요청 발생 | **타겟팅 모델** | 이 유저가 캠페인 타겟에 맞는가? |
-| 광고 노출 전 | 입찰 결정 (~10ms) | **pCTR** + **Bid Shading** | 클릭 확률 → 참 가치 → 최적 입찰가 |
+| 광고 노출 전 | 입찰 결정 (~10ms) | **pCTR** + **pCVR** + **Bid Shading** | 클릭 확률, 전환 확률 → 참 가치 → 최적 입찰가 |
 | 클릭 | 수 초 내 | **pCVR** (사후 분석) | 클릭 피드백으로 pCTR 모델 업데이트 |
 | 전환 | 수 시간~수 일 후 | **어트리뷰션 모델** | 어떤 노출/클릭이 전환에 기여했는가? |
 
@@ -713,7 +713,7 @@ for n in (1, 4, 24):
 
 ### 상자 여럿이 한 회사 안에 있을 때 [무대: 닫힌 생태계]
 
-담장 안(네이버, 카카오)에서는 매체, SSP, Exchange, DSP가 대부분 한 회사입니다. 위 표의 수수료 칸과 정보 단절 칸이 함께 사라집니다. 열린 RTB에서 어려운 건 가로 화살표(회사 사이)이고, 담장 안에서는 세로선(두 층 사이)이 거의 전부입니다. 비교는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에서 다룹니다.
+담장 안(네이버, 카카오)의 자사 지면에서는 매체, SSP, Exchange, DSP가 대부분 한 회사입니다. 위 표의 수수료 칸과 정보 단절 칸이 함께 사라집니다. 열린 RTB에서 어려운 건 가로 화살표(회사 사이)이고, 담장 안에서는 세로선(두 층 사이)이 거의 전부입니다. 비교는 [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)에서 다룹니다.
 
 ---
 
@@ -723,11 +723,11 @@ for n in (1, 4, 24):
 
 2. **모델링은 입찰의 시작일 뿐입니다.** pCTR → 참 가치 → Bid Shading → 예산 페이싱까지 end-to-end 파이프라인을 이해해야 합니다. 그래야 모델 개선의 방향을 잡을 수 있습니다.
 
-3. **피드백 루프의 함정에 주의해야 합니다.** 고른 것만 보이는 편향, 지연 피드백, 숨겨진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
+3. **피드백 루프의 함정에 주의해야 합니다.** 선택 편향, 지연 피드백, 숨겨진 데이터는 모델 학습 데이터 자체를 오염시킵니다. 이 구조적 문제를 모르면 모델 정확도를 올려도 비즈니스 성과가 안 따라옵니다.
 
 4. **캘리브레이션이 AUC보다 중요할 수 있습니다.** 입찰 시스템에서는 "얼마나 정확한 확률인가"(calibration)가 "순서를 잘 맞추는가"(AUC)보다 직접적으로 비용에 영향을 미칩니다.
 
-5. **시장은 살아있다.** 경쟁 DSP의 전략 변화, 시즌 효과, SSP의 floor price 조정 등 외부 요인이 끊임없이 변합니다. 모델 재학습 주기와 모니터링이 필수입니다.
+5. **시장은 살아 있습니다.** 경쟁 DSP의 전략 변화, 시즌 효과, SSP의 floor price 조정 등 외부 요인이 끊임없이 변합니다. 모델 재학습 주기와 모니터링이 필수입니다.
 
 ---
 

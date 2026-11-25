@@ -339,7 +339,7 @@ sequenceDiagram
 - **Budget 차감**: 낙찰 시 win_price만큼 예산에서 차감
 - **Exchange별 경쟁 분석**: Exchange마다 다른 가격 분포와 경쟁 강도 파악
 
-> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 담깁니다. 그래서 censored regression(중도절단 회귀)이 필요합니다. 보이지 않는 절반을 감안해 맞추는 회귀입니다.
+> [Bid Shading 포스트](post.html?id=bid-shading-censored)에서 다뤘듯이, **패찰(loss) 시에는 경쟁자 가격이 관측되지 않습니다**(Right-Censored Data). "내가 `$1.20`에 입찰했는데 졌다"는 것은 낙찰가가 `$1.20` 이상이라는 것만 알려줄 뿐, 정확한 가격은 모릅니다. 낙찰과 패찰 로그는 이렇게 한쪽만 값이 담깁니다. 그래서 censored regression(중도절단 회귀)이 필요합니다. 내 입찰가보다 높다는 것만 아는 값까지 감안해 맞추는 회귀입니다.
 
 ---
 

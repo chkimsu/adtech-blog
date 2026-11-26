@@ -1,6 +1,6 @@
 광고주가 보유한 전환 유저는 1,000명입니다. 이 1,000명과 "비슷한" 유저 10만~100만 명을 찾아 타겟팅하면 어떨까요? 이것이 **Lookalike 모델링(Lookalike Modeling)**의 핵심 질문입니다. 리타겟팅 다음으로 ROI 가 가장 높은 타겟팅 전략입니다. "알려진 좋은 유저(Seed)"에서 출발해 "아직 발견되지 않은 좋은 유저"로 넓히는 일입니다. 개념은 단순합니다. 하지만 구현은 까다롭습니다. 임베딩 공간의 기하학, 분류 모델의 편향, 그래프 전파의 수렴 조건까지 얽혀 있습니다.
 
-시드(Seed)는 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower 모델(Two-Tower Model)](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 다룹니다. Embedding 유사도, 성향 모델(Propensity Model), 그래프 확장(Graph Expansion)입니다. 성향 모델은 살 것 같은 정도를 점수로 매기는 모델입니다. 시드 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
+시드(Seed)는 광고주가 올린 고객 목록이나 [오디언스 세그멘테이션](post.html?id=audience-segmentation)에서 만든 세그먼트입니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서는 타겟팅 레이어의 핵심 모듈로 나옵니다. 유사도 계산의 기반인 유저 임베딩은 [Two-Tower 모델(Two-Tower Model)](post.html?id=two-tower-retrieval)이 만듭니다. 이 글은 세 가지 핵심 접근법을 다룹니다. Embedding 유사도, 성향 모델(Propensity Model), 그래프 확장(Graph Expansion)입니다. 성향 모델은 살 것 같은 정도를 점수로 매기는 모델입니다. 시드 구성부터 프로덕션 파이프라인까지, 엔지니어 관점에서 전체 스펙트럼을 다룹니다.
 
 ---
 
@@ -14,7 +14,7 @@ Lookalike 모델링에는 크게 세 가지 접근법이 있습니다. 각각의
 |--------|-------------|-----------|--------|-------------|-----------|
 | **Embedding 유사도** | 시드 중심(Centroid)과 ANN 거리 | 유저 임베딩 (128~256-dim) | 매우 높음 (ANN으로 수억 유저 처리) | 높음 | 중간 |
 | **성향 모델** | 시드 vs 시드 아닌 사람(Non-Seed) 이진 분류 | 유저 피처 전체 (수백~수천 차원) | 높음 (배치 스코어링) | 매우 높음 | 중간 |
-| **그래프 확장** | 관계 그래프 라벨 퍼뜨리기(Label Propagation) | 소셜/행동 그래프 | 중간 (그래프 크기 제약) | 높음 | 높음 |
+| **그래프 확장** | 관계 그래프 Label Propagation | 소셜/행동 그래프 | 중간 (그래프 크기 제약) | 높음 | 높음 |
 
 ### 멀티 플랫폼 Lookalike 비교
 
@@ -52,7 +52,7 @@ Lookalike의 위치를 다른 타겟팅 전략과 비교하면 그 가치가 더
 | **Interest Targeting** | 특정 관심사 유저 | 넓음 | 낮~중간 | 중간~높음 | 관심사 ≠ 구매 의도 |
 | **넓은 타겟팅(Broad Targeting)** | 전체 모집단 | 매우 넓음 | 낮음 | 높음 | 비효율적 지출 |
 
-Retargeting은 가장 높은 전환율을 보이지만 **규모 확장이 불가능**합니다 — 이미 사이트를 방문한 유저만 대상이기 때문입니다. Lookalike는 Retargeting의 높은 전환율을 유지하면서 **신규 유저로 확장**할 수 있는 대표적인 전략입니다. 이것이 Lookalike가 "리타겟팅 다음으로 가장 높은 ROI"라 불리는 이유입니다.
+Retargeting은 가장 높은 전환율을 보이지만 **규모 확장이 불가능**합니다 — 이미 사이트를 방문한 유저만 대상이기 때문입니다. Lookalike는 Retargeting 다음으로 높은 전환율을 내면서 **신규 유저로 확장**할 수 있는 대표적인 전략입니다. 이것이 Lookalike가 "리타겟팅 다음으로 가장 높은 ROI"라 불리는 이유입니다.
 
 ```mermaid
 graph LR
@@ -85,7 +85,7 @@ Lookalike의 성능은 모델 아키텍처보다 **시드의 품질**에 더 크
 
 **최적 시드 크기**: 최소 1,000명이 필요하며, **Sweet Spot은 1만~10만 명**입니다.
 
-- **너무 작은 시드 (< 500명)**: 노이즈에 오버피팅합니다. 소수 유저의 우연한 공통점(예: 특정 시간대 접속)을 패턴으로 학습할 위험이 높습니다.
+- **너무 작은 시드 (< 1,000명)**: 노이즈에 오버피팅합니다. 소수 유저의 우연한 공통점(예: 특정 시간대 접속)을 패턴으로 학습할 위험이 높습니다.
 - **너무 큰 Seed (> 100만 명)**: 시그널이 희석됩니다. "전환 유저"라는 레이블이 너무 다양한 행동 패턴을 포함하게 됩니다. 그러면 중심점(Centroid)은 아무 유저도 대표하지 못하는 "평균의 함정"에 빠집니다.
 - **1만~10만 명**: 충분한 통계적 안정성을 확보하면서도, 전환 유저의 핵심 패턴이 살아 있는 구간입니다.
 
@@ -113,13 +113,13 @@ $$\text{Signal Strength} = \frac{\text{CVR}_{\text{seed}}}{\text{CVR}_{\text{pop
 |-----------|-----------|---------|----------|
 | Intra-similarity | > 0.3 | < 0.15 | 이질적 유저 혼합 (LTV 편차 큼) |
 | CVR Uplift | > 3x | < 1.5x | 시그널 약함 (정의 기준 느슨) |
-| Size | 10K ~ 100K | < 500 or > 1M | 너무 작거나 너무 큼 |
+| Size | 10K ~ 100K | < 1,000 or > 1M | 너무 작거나 너무 큼 |
 | 피처 Variance | 낮음 (집중된 분포) | 높음 (분산 분포) | 정의 기준 불명확 / 프로모션 유저 포함 |
 
 **Bad 시드 진단 시 조치**:
 - Intra-similarity < 0.15 → Seed를 K-Means로 서브클러스터링하여 각 클러스터를 별도 Seed로 분리
 - CVR Uplift < 1.5x → 전환 기준을 강화 (예: 1회 구매 → 2회 이상 재구매)
-- Size < 500 → 시간 윈도우 확장 (30일 → 90일) 또는 이벤트 기준 완화
+- Size < 1,000 → 시간 윈도우 확장 (30일 → 90일) 또는 이벤트 기준 완화
 - Feature Variance 높음 → 이상치 유저 필터링 또는 Sub-seed 분리
 
 ### 2-3. Value-Based Seed (가치 가중)
@@ -130,7 +130,7 @@ $$c_{\text{weighted}} = \frac{\sum_{i \in S} w_i \cdot u_i}{\sum_{i \in S} w_i}$
 
 여기서 $w_i$는 유저 $i$의 LTV(Lifetime Value) 또는 구매 금액입니다. 고가치 유저의 임베딩에 더 높은 가중치를 부여하므로, Centroid가 고가치 유저 쪽으로 편향됩니다. 이는 "전환 유저와 유사한 유저"가 아니라 "**고가치 전환 유저**와 유사한 유저"를 찾는 것으로, ROAS 최적화 캠페인에서 특히 효과적입니다.
 
-가중치는 [LTV(Long Term Value)](post.html?id=ltv-ad-ranking)의 예측 출력을 씁니다. LTV 예측이 정확할수록 Value-Based Lookalike도 정확해집니다. 그래서 LTV 모델을 개선하면 Lookalike 성능도 함께 올라가는 선순환이 생깁니다.
+가중치는 [고객 LTV(Lifetime Value)](post.html?id=ltv-ad-ranking) 예측값을 씁니다. LTV 예측이 정확할수록 Value-Based Lookalike도 정확해집니다. 그래서 LTV 모델을 개선하면 Lookalike 성능도 함께 올라가는 선순환이 생깁니다.
 
 **Propensity 모델에서의 Value-Based 접근**:
 
@@ -335,7 +335,7 @@ graph LR
   PROP_SCORE --> FINAL["최종 Lookalike<br/>(Top 50K)"]
 ```
 
-ANN이 후보를 10M에서 100K로 빠르게 줄입니다. 그다음 성향이 100K에서 50K로 정밀하게 순위를 매깁니다. 속도와 정밀도를 함께 얻는 구조입니다.
+ANN이 후보를 10M에서 100K로 빠르게 줄입니다. 그다음 성향 모델이 100K에서 50K로 정밀하게 순위를 매깁니다. 속도와 정밀도를 함께 얻는 구조입니다.
 
 ---
 
@@ -445,7 +445,7 @@ model = xgb.train(
 )
 
 # 3단계: 전체 유저를 점수 매긴다
-all_features = population_features
+all_features = np.vstack([seed_features, population_features])  # 앞 3,000행이 Seed
 dall = xgb.DMatrix(all_features)
 propensity_scores = model.predict(dall)
 
@@ -463,9 +463,9 @@ print(f"Lookalike top propensity: {propensity_scores[lookalike_indices[0]]:.4f}"
 # [0]	val-auc:0.82460
 # [50]	val-auc:0.93412
 # [83]	val-auc:0.93408
-# 4단계 뜻: 검증 AUC 는 0.9341 이고, Seed 를 뺀 맨 위 유저의 성향 점수는 0.9900 이다.
+# 4단계 뜻: 검증 AUC 는 0.9341 이고, Seed 를 뺀 맨 위 유저의 성향 점수는 0.9910 이다.
 # AUC: 0.9341
-# Lookalike top propensity: 0.9900
+# Lookalike top propensity: 0.9910
 ```
 
 **코드 설명**:
@@ -514,7 +514,7 @@ Graph 기반 Lookalike는 유저 간의 **관계(Edge)**를 통해 시드의 레
 - **행동 Edge**: 같은 시간대 앱 사용, 같은 상품 조회
 - **구매 Edge**: 같은 상품 구매, 같은 브랜드 구매
 
-**라벨 퍼뜨리기(아는 사람의 표를 이웃에게 퍼뜨리는 방법)**: 시드 노드에 레이블 1을 부여하고, 그래프를 따라 반복적으로 전파합니다:
+**Label Propagation(아는 사람의 표를 이웃에게 퍼뜨리는 방법)**: 시드 노드에 레이블 1을 부여하고, 그래프를 따라 반복적으로 전파합니다:
 
 $$f^{(t+1)} = \alpha S f^{(t)} + (1-\alpha) y$$
 
@@ -524,7 +524,7 @@ $$f^{(t+1)} = \alpha S f^{(t)} + (1-\alpha) y$$
 - $\alpha$: 전파 강도 (0.5~0.8이 일반적)
 - $f^{(t)}$: t번째 반복에서의 각 노드의 Seed-similarity 스코어
 
-수렴 후 $f^*_i$는 노드 $i$가 시드와 얼마나 "가까운지"를 나타냅니다. 높은 값을 가진 노드가 Lookalike 후보입니다.
+이 반복 식의 출처는 Zhou 외(2003)입니다. 수렴 후 $f^*_i$는 노드 $i$가 시드와 얼마나 "가까운지"를 나타냅니다. 높은 값을 가진 노드가 Lookalike 후보입니다.
 
 ```mermaid
 graph TD
@@ -533,8 +533,8 @@ graph TD
     S2["Seed 2<br/>f=1.0"]
   end
   subgraph Hop1["Hop 1"]
-    A["User A<br/>f=0.72"]
-    B["User B<br/>f=0.65"]
+    A["User A<br/>f=0.65"]
+    B["User B<br/>f=0.72"]
     C["User C<br/>f=0.58"]
   end
   subgraph Hop2["Hop 2"]
@@ -550,22 +550,23 @@ graph TD
   C --> E
 ```
 
-User B가 시드 1과 시드 2 모두와 연결되어 있으므로 f=0.65로 높은 스코어를 받습니다. User D는 Hop 2이지만 A와 B 두 경로를 통해 시드와 연결되므로 f=0.41을 받습니다. **다중 경로(Multi-path)**로 연결된 유저는 단일 경로 유저보다 높은 스코어를 받습니다. 이것이 라벨 퍼뜨리기의 핵심 특성입니다.
+User B가 시드 1과 시드 2 모두와 연결되어 있으므로 f=0.72로 높은 스코어를 받습니다. User D는 Hop 2이지만 A와 B 두 경로를 통해 시드와 연결되므로 f=0.41을 받습니다. 같은 Hop이라면 **다중 경로(Multi-path)**로 연결된 유저는 단일 경로 유저보다 높은 스코어를 받습니다. 이것이 Label Propagation의 핵심 특성입니다.
 
 **Meta(Facebook) Lookalike가 강력한 이유**: Meta는 그래프 셋을 갖고 있습니다. 소셜 그래프(친구 연결), 관심사 그래프(페이지 좋아요, 그룹 멤버십), 인게이지먼트 그래프(포스트 반응, 댓글)입니다. 이 다층적 그래프 구조가 전파 경로를 풍부하게 만들어, 단일 채널 데이터로는 발견할 수 없는 유사 유저를 찾아냅니다. [닫힌 생태계](post.html?id=walled-garden)에서 다룬 것처럼, 이 그래프 데이터는 플랫폼 밖으로 나가지 않습니다. 그래서 Meta의 Lookalike 품질은 외부에서 복제할 수 없습니다.
 
 ### 5-2. GNN Embedding + Lookalike
 
-전통적 라벨 퍼뜨리기에는 한계가 있습니다. **Graph Neural Network(GNN)**를 쓰면 그래프 구조와 노드 피처를 함께 쓰는 임베딩을 학습할 수 있습니다.
+전통적 Label Propagation에는 한계가 있습니다. **Graph Neural Network(GNN)**를 쓰면 그래프 구조와 노드 피처를 함께 쓰는 임베딩을 학습할 수 있습니다.
 
 **GraphSAGE** (대표적 GNN 아키텍처):
 
-$$h_v^{(l+1)} = \sigma\left(W^{(l)} \cdot \text{AGGREGATE}\left(\{h_u^{(l)} : u \in \mathcal{N}(v)\}\right)\right)$$
+$$h_v^{(l+1)} = \sigma\left(W^{(l)} \cdot \text{CONCAT}\left(h_v^{(l)}, \text{AGGREGATE}\left(\{h_u^{(l)} : u \in \mathcal{N}(v)\}\right)\right)\right)$$
 
 여기서:
 - $h_v^{(l)}$: 노드 $v$의 $l$번째 레이어 임베딩
 - $\mathcal{N}(v)$: 노드 $v$의 이웃 집합
 - $\text{AGGREGATE}$: 이웃 임베딩 집계 함수 (mean, max-pool, LSTM 등)
+- $\text{CONCAT}$: 노드 자신의 임베딩 $h_v^{(l)}$와 이웃 집계 결과를 이어 붙이는 연산
 - $W^{(l)}$: 학습 가능한 가중치 행렬
 
 Multi-hop 이웃 집계를 통해 **커뮤니티 구조(Community Structure)**를 임베딩에 인코딩합니다. 같은 커뮤니티에 속한 유저는 유사한 GNN 임베딩을 가지며, 이는 Two-Tower 임베딩이 포착하지 못하는 "관계 기반 유사성"을 표현합니다.
@@ -591,7 +592,7 @@ $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 3. **Embedding 부재**: Two-Tower 모델이 없는 초기 시스템에서 관계 데이터만으로 Lookalike 구현
 4. **Cross-domain**: 여러 서비스 간 유저 관계를 통합할 때 (카카오톡 + 카카오쇼핑 + 카카오맵)
 
-> Graph 기반 Lookalike의 현실적 장벽은 **"그래프 데이터 확보"**입니다. Meta처럼 소셜 그래프를 직접 가진 플랫폼은 극소수입니다. 나머지는 행동 기반 공동 출현(Co-occurrence) 그래프를 직접 만들어야 합니다. 이 구축 비용이 Embedding/성향보다 높습니다. 그래서 Graph 기반은 **플랫폼 사업자가 아닌 한 ROI가 낮은 접근법**일 수 있습니다.
+> Graph 기반 Lookalike의 현실적 장벽은 **"그래프 데이터 확보"**입니다. Meta처럼 소셜 그래프를 직접 가진 플랫폼은 극소수입니다. 나머지는 행동 기반 공동 출현(Co-occurrence) 그래프를 직접 만들어야 합니다. 이 구축 비용이 Embedding/성향 기반보다 높습니다. 그래서 Graph 기반은 **플랫폼 사업자가 아닌 한 ROI가 낮은 접근법**일 수 있습니다.
 
 ---
 
@@ -618,7 +619,7 @@ $$u_{\text{combined}} = [u_{\text{two-tower}} \| h_{\text{GNN}}]$$
 > 확장을 1%에서 10%로 늘리면 도달(Reach)은 **10배 증가**하지만, 증분 리프트는 **1/6로 감소**합니다. 이것이 Lookalike의 근본적 트레이드오프입니다. "더 넓게 확장하면 더 좋은 것 아닌가?"라는 직관은 틀렸습니다. 확장할수록 시드와의 유사성이 급격히 떨어집니다. 결국 넓은 타겟팅과 구분이 없어집니다.
 
 :::deep 더 깊이 — 반경이 1.8%만 늘어도 품질이 크게 떨어지는 이유
-1% 확장은 중심점에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 128차원 공간에서 볼륨은 $r^{128}$에 비례합니다. 그래서 10배 많은 유저를 담으려면 반경은 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역 유저가 대량으로 들어옵니다. 그래서 평균 품질이 크게 하락합니다.
+1% 확장은 중심점에서 반경 $r_1$ 내의 유저, 10% 확장은 반경 $r_{10}$ 내의 유저를 포함합니다. 유저가 공간에 고르게 퍼져 있다고 가정하면 128차원 공간에서 볼륨은 $r^{128}$에 비례합니다. 그래서 10배 많은 유저를 담으려면 반경은 $10^{1/128} \approx 1.018$배만 늘어나면 됩니다. 하지만 이 작은 반경 증가에도 유사도 분포의 꼬리(tail) 영역 유저가 대량으로 들어옵니다. 그래서 평균 품질이 크게 하락합니다.
 :::
 
 ### 6-2. 광고주 목표별 최적 확장
@@ -643,7 +644,7 @@ Expansion 5% → CPA $9.5 (목표 초과) → 3%로 롤백
 
 ### 6-3. Tiered Lookalike 전략
 
-하나의 확장을 고르는 대신 **여러 확장 레벨을 동시에 운영**하는 방법입니다. 각 레벨에 다른 입찰, 예산 전략을 적용합니다.
+확장 비율 하나를 고르는 대신 **여러 확장 레벨을 동시에 운영**하는 방법입니다. 각 레벨에 다른 입찰, 예산 전략을 적용합니다.
 
 | 단계(Tier) | 확장 | 입찰 전략 | 일 예산 비중 | 목적 |
 |------|-----------|---------|------------|------|
@@ -674,7 +675,7 @@ Lookalike 기능은 대부분의 주요 광고 플랫폼에서 제공하지만, 
 
 같은 확장 비율이어도 두 무대의 정확도가 다릅니다. 담장 안(닫힌 생태계)은 로그인 ID로 시드를 결정론적으로 붙입니다. 열린 RTB는 쿠키, MAID 같은 확률적 신호에 기댑니다. 그래서 같은 5% 확장에서도 열린 RTB의 정확도가 더 빨리 떨어집니다.
 
-> Google은 2023년 **유사 오디언스를 폐지**하고 Performance Max의 자동 타겟팅으로 대체했습니다. 이는 Lookalike의 "수동 제어"가 "알고리즘 자동화"로 전환되는 업계 트렌드를 반영합니다. 광고주가 직접 확장 비율을 조절하는 대신, 플랫폼 알고리즘이 캠페인 목표(전환, ROAS)에 맞춰 자동으로 오디언스를 확장합니다. 이 전환은 광고주의 제어권을 축소하지만, 동시에 "잘못된 확장 설정"으로 인한 성능 저하를 방지하는 효과도 있습니다.
+> Google은 2023년 **유사 오디언스를 폐지**하고 최적화 타겟팅, 오디언스 확장, 스마트 입찰 같은 자동화로 대체했습니다. 이는 Lookalike의 "수동 제어"가 "알고리즘 자동화"로 전환되는 업계 트렌드를 반영합니다. 광고주가 직접 확장 비율을 조절하는 대신, 플랫폼 알고리즘이 캠페인 목표(전환, ROAS)에 맞춰 자동으로 오디언스를 확장합니다. 이 전환은 광고주의 제어권을 축소하지만, 동시에 "잘못된 확장 설정"으로 인한 성능 저하를 방지하는 효과도 있습니다.
 
 **한국 플랫폼 특수성**:
 
@@ -694,9 +695,9 @@ $$\text{Incremental Lift} = \frac{\text{CVR}_{\text{exposed}} - \text{CVR}_{\tex
 
 **측정 방법론**:
 
-1. **유령 광고(Ghost Ad) (Gold Standard)**: Lookalike 오디언스를 Treatment와 대조군(Control)으로 랜덤 분할합니다. Treatment는 실제 광고 노출, 대조군은 "광고가 노출될 수 있었던 시점"을 기록만 하고 실제 노출은 하지 않습니다. 두 그룹의 전환율 차이가 순수한 Incremental 효과입니다.
+1. **유령 광고(Ghost Ad, Gold Standard)**: Lookalike 오디언스를 Treatment와 대조군(Control)으로 랜덤 분할합니다. Treatment는 실제 광고 노출, 대조군은 "광고가 노출될 수 있었던 시점"을 기록만 하고 실제 노출은 하지 않습니다. 두 그룹의 전환율 차이가 순수한 Incremental 효과입니다.
 
-2. **PSA (Public Service Announcement) 대조군**: 대조군 그룹에 공익 광고를 노출합니다. 실제 광고 노출 그룹과의 전환율 차이를 측정합니다. 유령 광고보다 구현이 쉽지만, PSA 광고 자체가 약간의 영향을 줄 수 있습니다.
+2. **PSA (Public Service Announcement) 대조군**: 대조군에 공익 광고를 노출합니다. 실제 광고 노출 그룹과의 전환율 차이를 측정합니다. 유령 광고보다 구현이 쉽지만, PSA 광고 자체가 약간의 영향을 줄 수 있습니다.
 
 3. **Geo-holdout**: 특정 지역은 Lookalike 타겟팅을 끄고, 나머지 지역은 켠 상태에서 비교합니다. 개인 수준 실험이 어려울 때의 대안입니다.
 
@@ -713,7 +714,7 @@ $$\text{Incremental Lift} = \frac{\text{CVR}_{\text{exposed}} - \text{CVR}_{\tex
 | Selection Bias | Lookalike CVR이 높지만 Lift는 낮음 | 원래 전환할 유저를 타겟팅 | 유령 광고 / PSA 대조군으로 순수 Lift 측정 |
 | Seasonal Effect | Lift가 갑자기 급등/급락 | 프로모션, 시즌 이벤트 영향 | 충분한 기간(2주+) 평균, 전년 동기 비교 |
 | Attribution Window | 같은 캠페인인데 측정 기간에 따라 Lift가 달라짐 | 전환 지연(attribution window) | View-through + Click-through 통합, 7~14일 윈도우 |
-| Contamination | 대조군 그룹도 높은 CVR | 대조군 유저가 다른 채널에서 노출 | Cross-channel holdout, Geo-level 실험 |
+| Contamination | 대조군도 높은 CVR | 대조군 유저가 다른 채널에서 노출 | Cross-channel holdout, Geo-level 실험 |
 
 ### 8-2. Overlap 분석과 카니발리제이션
 
@@ -727,7 +728,7 @@ $$\text{Overlap Rate} = \frac{|\text{Lookalike} \cap \text{Retargeting}|}{|\text
 |----------|--------------|----------|------|
 | Lookalike vs Retargeting | < 15% | > 30% | 시드에서 기존 전환자 제외, Retargeting 유저 Blocklist 적용 |
 | Lookalike vs 넓은 타겟팅 | < 40% | > 60% | 확장 비율 축소, 시드 특화 |
-| Lookalike 1% vs 5% | ~70% 포함 | N/A (정상) | 점진적 확장이 정상 작동 확인 |
+| Lookalike 1% vs 5% | ~100% 포함 | N/A (정상) | 점진적 확장이 정상 작동 확인 |
 
 **카니발리제이션(Cannibalization) 진단**:
 
@@ -791,7 +792,7 @@ WHERE ltv_quintile = 1;  -- 상위 20%
 이 SQL의 핵심 설계 의도:
 - `HAVING COUNT(*) >= 2`: 1회성 구매자 제외 → 시드 품질 향상
 - `NTILE(5) ... ltv_quintile = 1`: 상위 20% LTV 유저만 선택 → High-value 시드
-- `30일 윈도우`: 최신성 확보. [LTV(Long Term Value)](post.html?id=ltv-ad-ranking)에서 다룬 LTV 정의와 연결됩니다.
+- `30일 윈도우`: 최신성 확보. [LTV 편](post.html?id=ltv-ad-ranking) 5절의 고객 LTV와 연결됩니다.
 
 **전체 배치 파이프라인 실행 순서**:
 
@@ -800,7 +801,7 @@ WHERE ltv_quintile = 1;  -- 상위 20%
 | 1 | 시드 SQL 추출 | ~5분 | 전환 데이터 ETL 완료 |
 | 2 | Two-Tower 유저 임베딩 추론 | ~30분 (GPU) | User Tower 모델 배포 |
 | 3 | FAISS 인덱스 빌드 | ~10분 | 임베딩 추론 완료 |
-| 4 | 중심점 계산 / 성향 학습 | ~5분 / ~20분 | 시드 + 임베딩/피처 |
+| 4 | 중심점 계산 / 성향 모델 학습 | ~5분 / ~20분 | 시드 + 임베딩/피처 |
 | 5 | 전체 유저 스코어링 | ~15분 | 모델 + 인덱스 |
 | 6 | DMP/CDP 동기화 | ~10분 | 오디언스 목록 생성 |
 | **전체** | | **~1~1.5시간** | |
@@ -883,7 +884,7 @@ graph TD
 |------|------|---------|------|
 | 시드 급감 | Audience 크기 50%↓ | 전환 추적 코드 장애, ETL 실패 | 이전 빌드 롤백, 전환 파이프라인 점검 |
 | Similarity 급락 | Avg sim 0.1↓ | 임베딩 모델 배포 오류, 피처 드리프트 | 임베딩 버전 확인, 이전 인덱스 롤백 |
-| AUC 급락 | 성향 AUC 0.6 | 피처 스키마 변경, 데이터 누락 | 피처 스토어 점검, 피처 값 분포 확인 |
+| AUC 급락 | 성향 모델 AUC 0.6 | 피처 스키마 변경, 데이터 누락 | 피처 스토어 점검, 피처 값 분포 확인 |
 | CVR Lift 소멸 | Lookalike CVR ≈ Broad CVR | 시드 품질 저하, 시장 변화 | 시드 재정의, 전환 기준 강화 |
 
 **A/B 테스트 프레임워크**:
@@ -937,7 +938,7 @@ Lookalike 모델링은 "알려진 좋은 유저"에서 "아직 모르는 좋은 
 
 4. **확장 비율은 "높을수록 좋다"가 아니라 "목표에 맞는 최적점"이다.** 퍼포먼스 캠페인은 1~3%, 브랜드 캠페인은 5~10%. 점진적 확장(1% → 3% → 5%)으로 최적점을 탐색하고, CPA가 목표를 초과하는 지점에서 멈춰야 합니다.
 
-5. **Lookalike는 "만들고 끝"이 아니다.** 시드 Refresh(일 1회)와 Overlap 모니터링(vs 리타겟팅 < 15%)이 지속적으로 필요합니다. Incremental Lift 측정(Ghost Ad / PSA Control)도 마찬가지입니다. 갱신 없이 30일이 지나면 CVR이 30% 이상 하락할 수 있습니다.
+5. **Lookalike는 "만들고 끝"이 아니다.** 시드 Refresh(일 1회)와 Overlap 모니터링(vs 리타겟팅 < 15%)이 지속적으로 필요합니다. Incremental Lift 측정(유령 광고 / PSA 대조군)도 마찬가지입니다. 갱신 없이 30일이 지나면 CVR이 30% 이상 하락할 수 있습니다.
 
 > Lookalike 모델링의 본질은 "알려진 좋은 유저"에서 "아직 모르는 좋은 유저"로의 확장입니다. 확장의 품질은 세 가지가 함께 결정합니다. 첫째 [세그멘테이션](post.html?id=audience-segmentation)의 정밀도. 둘째 [임베딩](post.html?id=two-tower-retrieval)의 표현력. 셋째 확장 비율의 절제입니다. 셋 중 하나라도 부족하면 Lookalike는 비싼 넓은 타겟팅이 됩니다. "비슷한 유저"가 아니라 "그냥 아무 유저"를 타겟팅하게 됩니다.
 
@@ -958,3 +959,5 @@ Lookalike 모델링은 "알려진 좋은 유저"에서 "아직 모르는 좋은 
 6. Zhu, X. & Ghahramani, Z. (2002). "Learning from Labeled and Unlabeled Data with Label Propagation." *CMU Technical Report*. — Label Propagation 알고리즘의 이론적 기반. Graph 기반 Lookalike에서 Seed 레이블을 전파하는 수학적 프레임워크.
 
 7. Chen, T. & Guestrin, C. (2016). "XGBoost: A Scalable Tree Boosting System." *KDD*. — Propensity 기반 Lookalike에서 가장 널리 사용되는 모델의 핵심 논문.
+
+8. Zhou, D. et al. (2003). "Learning with Local and Global Consistency." *NIPS*. — 5-1 전파 식의 출처(알고리즘 3단계). 반복마다 이웃에게서 받은 값과 처음 레이블을 α 대 1−α 로 섞는다.

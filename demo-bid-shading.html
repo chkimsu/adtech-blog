@@ -382,7 +382,7 @@
 
         <div class="demo-intro">
             <div><span class="demo-intro-label">이 데모가 보여주는 것</span>1st Price 경매에서 진짜 가치(True Value) 그대로 입찰하면 왜 이익이 0이 되는지, 그리고 얼마나 깎아 불러야(Shading) 이익이 최대가 되는지를 2,000회 모의 경매로 확인합니다.</div>
-            <div><span class="demo-intro-label">왜 알아야 하나</span>업계가 1st Price로 전환한 뒤 모든 주요 DSP가 <strong>Bid Shading</strong>을 기본 탑재했습니다. pCTR 모델의 정확도가 이 전략의 성패를 좌우하기 때문에, 모델을 만드는 사람이라면 꼭 알아야 하는 구조입니다.</div>
+            <div><span class="demo-intro-label">왜 알아야 하나</span>광고 거래소들이 1st Price로 옮긴 뒤 주요 DSP 대부분이 <strong>Bid Shading</strong>을 기본 탑재했습니다. pCTR, pCVR 모델의 정확도가 이 전략의 성패를 좌우하기 때문에, 모델을 만드는 사람이라면 꼭 알아야 하는 구조입니다.</div>
         </div>
 
         <ol class="demo-steps">
@@ -556,14 +556,14 @@
         </div>
 
         <div class="insight-box info" style="margin-top: 1rem;">
-            <strong>pCTR 모델러에게 이것이 중요한 이유</strong><br>
-            pCTR 모델의 정확도가 True Value의 정확도를 결정하고, True Value가 정확해야
+            <strong>pCTR, pCVR 모델러에게 이것이 중요한 이유</strong><br>
+            pCTR, pCVR 모델의 정확도가 True Value의 정확도를 결정하고 True Value가 정확해야
             최적 shading이 가능합니다. pCTR이 과대추정되면 과다입찰로 손실, 과소추정되면
-            낙찰 기회를 놓칩니다. <strong>Bid Shading의 효과는 pCTR 모델 품질에 정비례합니다.</strong>
+            낙찰 기회를 놓칩니다. <strong>Bid Shading의 효과는 pCTR, pCVR 모델 품질에 정비례합니다.</strong>
         </div>
 
         <div class="insight-box warning" style="margin-top: 1rem;">
-            <strong>Censored Data 문제: 시장의 절반은 안 보인다</strong><br>
+            <strong>Censored Data 문제: 패찰한 경매의 가격은 안 보인다</strong><br>
             위 차트에서 <strong>"Censored View"</strong>를 켜봅니다. 패찰한 경매의 경쟁자 가격은
             관측이 불가능하므로, 내 입찰가 이상의 분포는 "???"입니다.
             관측된 데이터만으로 분포를 추정하면(벽돌색 점선) 시장가를 <strong>체계적으로 과소추정</strong>하게 됩니다.
@@ -578,15 +578,15 @@
                 이익을 극대화하는 전략</strong>입니다.
             </p>
             <p>
-                2017년 이후 디스플레이 광고 시장이 2nd Price에서 1st Price으로 전환되면서,
-                모든 주요 DSP가 bid shading 알고리즘을 도입했습니다. Google, The Trade Desk, MediaMath 등이
+                2017년 무렵부터 광고 거래소들이 2nd Price에서 1st Price로 옮겨 가기 시작해 2019년 Google AdX까지 합류하면서
+                주요 DSP 대부분이 bid shading 알고리즘을 도입했습니다. Google DV360, The Trade Desk, Yahoo DSP, Amazon DSP 등이
                 대표적입니다.
             </p>
 
             <h2>수식으로 보는 직관</h2>
 
             <div class="formula-block">
-                True Value = pCTR × Conversion Value<br><br>
+                True Value = pCTR × pCVR × Conversion Value<br><br>
                 Shaded Bid = True Value × (1 - Shading Factor)<br><br>
                 Profit per Win = True Value - Paid Price<br>
                 &nbsp;&nbsp;- 1st Price: Paid = Shaded Bid (내 입찰가 그대로)<br>
@@ -697,8 +697,8 @@
         <section class="demo-practice">
             <h2>현업에서는 이렇게 씁니다</h2>
             <p>
-                Bid Shading은 더 이상 선택이 아니라 기본 장착 기능입니다. 1st Price 전환이 완료된 2019년 이후,
-                주요 DSP는 모두 ML 기반 Shading 모듈을 입찰 경로에 내장하고 있습니다.
+                Bid Shading은 더 이상 선택이 아니라 기본 장착 기능입니다. Google AdX까지 1st Price로 옮긴 2019년 이후,
+                주요 DSP 대부분이 ML 기반 Shading 모듈을 입찰 경로에 내장하고 있습니다.
             </p>
             <ul>
                 <li><strong>DSP의 기본 기능화:</strong> Google DV360, The Trade Desk, Amazon DSP 등은 광고주가 따로 설정하지

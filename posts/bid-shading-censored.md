@@ -1,4 +1,4 @@
-2017년 무렵부터 디지털 광고 시장의 경매 방식이 **2nd Price에서 1st Price로** 대전환되었습니다. AppNexus, Index Exchange, OpenX, Rubicon Project 같은 거래소가 먼저 움직였습니다. 2019년 무렵 Google Ad Manager(AdX)까지 합류하며 사실상 업계 표준이 됐습니다. 규칙이 왜 바뀌었는지는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다. 이 글은 그 다음 질문만 파고듭니다: **"내 진짜 가치(True Value)보다 얼마나 깎아서 입찰해야 하는가?"**
+2017년 무렵부터 광고 거래소들의 경매 방식이 **2nd Price에서 1st Price로** 대전환되었습니다. AppNexus, Index Exchange, OpenX, Rubicon Project 같은 거래소가 먼저 움직였습니다. 2019년 무렵 Google Ad Manager(AdX)까지 합류하며 사실상 디스플레이 RTB 의 표준이 됐습니다. 규칙이 왜 바뀌었는지는 [2등 가격 경매](post.html?id=second-price-auction)에서 다룹니다. 이 글은 그 다음 질문만 파고듭니다: **"내 진짜 가치(True Value)보다 얼마나 깎아서 입찰해야 하는가?"**
 
 이 글에서는 두 편의 논문을 중심으로 Bid Shading의 이론과 실무를 해부합니다:
 
@@ -13,13 +13,13 @@
 
 ### ① 1st Price vs 2nd Price: 경매 규칙이 바뀌었다
 
-2nd Price 경매에서 DSP의 최적 전략은 간단했습니다: **참 가치(True Value) 그대로 입찰**(정직 입찰(Truthful Bidding)). 어차피 2등 가격을 지불하므로, 높게 입찰해도 손해 볼 일이 없었습니다. 하지만 1st Price에서는 **내 입찰가 그대로 지불**합니다. 참 가치로 입찰하면 이겨도 남는 게 없습니다.
+2nd Price 경매에서 DSP의 최적 전략은 간단했습니다: **참 가치(True Value) 그대로 입찰**(정직 입찰, Truthful Bidding). 어차피 2등 가격을 지불하므로, 참 가치까지 높게 불러도 손해 볼 일이 없었습니다. 하지만 1st Price에서는 **내 입찰가 그대로 지불**합니다. 참 가치로 입찰하면 이겨도 남는 게 없습니다.
 
-| 구분 | 2nd 가격 경매(Price Auction) | 1st 가격 경매 |
+| 구분 | 2nd Price 경매 | 1st Price 경매 |
 |------|-------------------|-------------------|
 | 지불 금액 | 2등 입찰가 (= 시장가) | **내 입찰가 그대로** |
 | 최적 전략 | 정직 입찰 ($b = V$) | **Bid Shading ($b < V$)** |
-| 시장 가격 정보 | 낙찰 시 Clearing Price 관측 | 패찰 시 경쟁자 가격 **미관측** |
+| 시장 가격 정보 | 낙찰 시 Clearing Price 관측 | 거래소가 알려 주지 않으면 낙찰, 패찰 모두 경쟁자 가격 **미관측** |
 | DSP 복잡도 | 낮음 (가치 계산만) | 높음 (분포 추정 + 최적화 필요) |
 
 이 전환의 배경에는 두 가지 동기가 있었습니다:
@@ -35,7 +35,7 @@ Bid Shading의 목표는 **기대 남는 몫을 극대화**하는 것입니다. 
 
 $$s(b; V, x) = \underbrace{(V - b)}_{\text{낙찰 시 이익 (Surplus)}} \cdot \underbrace{\Pr(\hat{b} < b \mid x)}_{\text{낙찰 확률 (Win Rate)}}$$
 
-- $V$ : True Value (= pCTR × Conversion Value). pCTR 모델이 결정하는 값
+- $V$ : True Value (= pCTR × pCVR × Conversion Value). pCTR, pCVR 모델이 결정하는 값
 - $b$ : 실제 입찰가 (DSP가 결정하는 변수)
 - $\hat{b}$ : 시장의 Minimum Winning Price (경쟁자 최고 입찰가)
 - $x$ : 컨텍스트 피처 벡터 (유저 특성, 지면, 시간대, 디바이스 등)
@@ -96,7 +96,7 @@ print(f"  Shading 비율  = {(1 - bids[best_idx]/V)*100:.0f}% 할인")
 # 하는 일: 가치 1,000원인 노출에서 입찰가를 0% 부터 50% 까지 깎으며, 평상시와 경쟁 과열 시장의 승률과 기대이익을 비교한다.
 import random
 
-V = 1000  # 이 노출의 진짜 가치(원). pCTR x 전환가치로 계산된 값.
+V = 1000  # 이 노출의 진짜 가치(원). pCTR x pCVR x 전환가치로 계산된 값.
 
 # 1단계: 가상의 시장 분포를 만든다
 # 가상 데이터: 경쟁자 최고가를 20,000번 뽑아 '진짜 시장 분포'를 만든다.
@@ -171,7 +171,7 @@ graph LR
     end
 
     subgraph Step2["Step 2: 최적 입찰"]
-        TV["True Value V<br/>(pCTR × ConvValue)"] --> OPT["Surplus<br/>Maximizer"]
+        TV["True Value V<br/>(pCTR × pCVR × ConvValue)"] --> OPT["Surplus<br/>Maximizer"]
         DIST --> OPT
         OPT --> BID["Optimal Bid b*"]
     end
@@ -189,7 +189,7 @@ graph LR
 
 ---
 
-## 2. Censored data 문제: 시장의 절반은 보이지 않는다 [무대: 열린 RTB]
+## 2. Censored data 문제: 패찰한 경매의 가격은 보이지 않는다 [무대: 열린 RTB]
 
 ### ① Right-Censoring이란?
 
@@ -200,7 +200,9 @@ DSP 입장에서 경매 결과 데이터는 **비대칭적**입니다:
 | **낙찰 (Win)** | 실제 Clearing Price $w_i$ | $w_i$ 직접 관측 |
 | **패찰 (Lose)** | "내 입찰가 $b_i$보다 높았다"는 사실만 | $W_i > b_i$ (하한만 알 수 있음) |
 
-패찰한 경매에서는 경쟁자가 $2.01을 불렀는지 $10.00을 불렀는지 알 수 없습니다. 오직 "내 $2.00보다는 높았다"는 것만 압니다. 내 입찰가 **오른쪽(이상)**의 분포가 잘려있으므로 이를 **Right-Censoring**이라 부릅니다.
+이 표는 낙찰가가 곧 경쟁자 최고가인 2nd Price 경매의 데이터입니다(Ghosh et al. 의 iPinYou 가 이 경우입니다). 1st Price 경매에서는 이겨도 내 입찰가를 내므로 SSP 가 경매 뒤 winning price 를 알려 주는 open auction(5절②)이 아니면 낙찰한 경매에서도 「경쟁자 최고가 < 내 입찰가」만 압니다.
+
+패찰한 경매에서는 경쟁자가 `$2.01`을 불렀는지 `$10.00`을 불렀는지 알 수 없습니다. 오직 "내 `$2.00`보다는 높았다"는 것만 압니다. 내 입찰가 **오른쪽(이상)**의 분포가 잘려있으므로 이를 **Right-Censoring**이라 부릅니다.
 
 이것은 의학의 **생존 분석(Survival Analysis)**과 정확히 같은 구조입니다. "관찰 기간 내 사망하지 않은 환자의 실제 수명을 모른다"와 "패찰한 경매의 실제 시장 가격을 모른다"는 수학적으로 동치입니다.
 
@@ -380,17 +382,17 @@ God View에서 Engineer View로 전환해 보면 위 계산이 눈으로 보입�
 
 ### ④ Censored Regression(중도절단 회귀)의 핵심 아이디어
 
-Censored data 를 올바르게 다루는 핵심은 **Win 데이터와 Lose 데이터를 다르게 취급**하는 것입니다. 두 논문 모두 다음 형태의 손실 함수를 사용합니다:
+Censored data 를 올바르게 다루는 핵심은 **Win 데이터와 Lose 데이터를 다르게 취급**하는 것입니다. Ghosh et al. 은 다음 형태의 로그 우도(log-likelihood)를 최대화합니다(손실로 쓸 때는 부호를 바꿔 최소화합니다):
 
 $$\mathcal{L} = \underbrace{\sum_{i \in \mathcal{W}} \log P(w_i \mid x_i)}_{\text{낙찰: PDF 직접 사용}} + \underbrace{\sum_{i \in \mathcal{L}} \log \Pr(W_i > b_i \mid x_i)}_{\text{패찰: Survival Function 사용}}$$
 
-- $\mathcal{W}$ : 낙찰(Win) 경매 집합, $\mathcal{L}$ : 패찰(Lose) 경매 집합
+- $\mathcal{W}$ : 낙찰(Win) 경매 집합, $\mathcal{L}$ : 패찰(Lose) 경매 집합 (식 왼쪽의 $\mathcal{L}$ 은 식 전체)
 - $P(w_i \mid x_i)$ : 시장 가격의 PDF (확률 밀도)
 - $\Pr(W_i > b_i \mid x_i) = 1 - F(b_i \mid x_i)$ : 시장 가격이 내 입찰가를 초과할 확률 (Survival Function)
 
-**직관적 해석**: 낙찰한 경매에서는 실제 관측된 시장 가격 $w_i$의 likelihood를 최대화합니다. 패찰한 경매에서는 "시장 가격이 내 입찰가보다 높다"는 **부분 정보**의 likelihood를 최대화합니다. 이렇게 하면 Lose 데이터의 하한(lower bound)도 학습에 쓰입니다. 그래서 Naive의 과소추정이 보정됩니다.
+**직관적 해석**: 낙찰한 경매에서는 실제 관측된 시장 가격 $w_i$의 likelihood를 최대화합니다. 패찰한 경매에서는 "시장 가격이 내 입찰가보다 높다"는 **부분 정보**의 likelihood를 최대화합니다. 이렇게 하면 Lose 데이터의 하한(lower bound)도 학습에 쓰입니다. 그래서 Naive의 과소추정이 보정됩니다. Zhou et al. 은 winning price 를 알려 주는 경매에서는 모든 경매에 PDF 항을 쓰고 알려 주지 않는 경매에서는 1st Price 라 이겨도 경쟁자 최고가를 모르므로 낙찰에 PDF 대신 $\log F(b_i \mid x_i)$ 를 씁니다.
 
-이것이 censored regression(보이지 않는 절반을 감안해 맞추는 회귀)의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
+이것이 censored regression(패찰한 경매의 낙찰가처럼 내 입찰가보다 높다는 것만 아는 값까지 감안해 맞추는 회귀)의 핵심이고 두 논문의 출발점입니다. 차이는 **분포 가정**에 있습니다.
 
 ---
 
@@ -443,20 +445,20 @@ $$P(w \mid x) = \sum_{k=1}^{K} \underbrace{\pi_k(x)}_{\text{혼합 가중치}} \
 
 Zhou et al.은 다른 전략을 씁니다. 혼합 모델 대신 **단일 파라메트릭 분포**를 쓰되 **네트워크를 강화**합니다. 4가지 분포를 비교 실험한 결과:
 
-| 분포 | Log-loss | 남는 몫 증가(Surplus Lift) (vs 프로덕션) | 특징 |
+| 분포 | Log-loss | 프로덕션 대비 남는 몫 증가(Surplus Lift) | 특징 |
 |------|----------|--------------------------|------|
 | Truncated Normal | 0.87 | +1.45% | 음수 허용 안 함, 양쪽 꼬리 제한 |
 | Exponential | 0.68 | +5.12% | 단순, 무기억 성질 |
 | Gamma | 0.58 | +6.85% | 유연한 형태, 양수 지지 |
 | **Log-normal** | **0.56** | **+9.65%** | **오른쪽 긴 꼬리, 양수 지지** |
 
-**Log-normal이 압도적**입니다. 이유는 명확합니다: RTB 입찰가는 양수이고, 대부분 중간 가격대에 몰리지만 가끔 매우 높은 입찰이 있습니다. 이 **양수 + 오른쪽 긴 꼬리(right-skewed)** 특성을 log-normal이 가장 잘 포착합니다.
+**Log-normal이 압도적**입니다. 논문은 그 이유를 이렇게 봅니다: RTB 입찰가는 양수이고, 대부분 중간 가격대에 몰리지만 가끔 매우 높은 입찰이 있습니다. 이 **양수 + 오른쪽 긴 꼬리(right-skewed)** 특성을 log-normal이 가장 잘 포착합니다.
 
 네트워크 구조도 비교했습니다 (log-normal 분포 기준):
 
 | 네트워크 구조 | Log-loss | 남는 몫 증가 | 특징 |
 |-------------|----------|-------------|------|
-| Logistic 회귀(Regression) | 0.718 | baseline | 선형, Feature Interaction 없음 |
+| 로지스틱 회귀(Logistic Regression) | 0.718 | baseline | 선형, Feature Interaction 없음 |
 | FM | 0.569 | +4.52% | 2차 Feature Interaction |
 | FwFM | 0.558 | +4.70% | 가중 FM |
 | Wide & Deep | 0.522 | +6.36% | 선형 + DNN 결합 |
@@ -466,11 +468,11 @@ Zhou et al.은 다른 전략을 씁니다. 혼합 모델 대신 **단일 파라�
 
 ---
 
-## 4. 최적 입찰가 계산: 남는 몫 Maximization
+## 4. 최적 입찰가 계산: 남는 몫 최대화
 
 분포 $F(b \mid x)$를 학습했다면, 이제 $b^*$를 찾아야 합니다.
 
-### ① 남는 몫 Unimodality 증명
+### ① 남는 몫 함수의 단봉성(Unimodality) 증명
 
 Zhou et al.의 핵심 이론적 기여는 **surplus 함수의 단봉성(unimodality) 증명**입니다. Log-normal 분포의 경우:
 
@@ -479,7 +481,7 @@ $$s(b) = (V - b) \cdot \Phi\!\left(\frac{\ln b - \mu(x)}{\sigma(x)}\right)$$
 - $\Phi$ : 표준 정규분포 CDF
 - $\mu(x), \sigma(x)$ : 네트워크가 출력한 log-normal 파라미터
 
-**Theorem 1 (Zhou et al.)**: Truncated-normal, Exponential, Gamma, Log-normal 분포 모두에서 같은 성질이 성립한다. surplus 함수 $s(b)$는 구간 $(0, V)$에서 **극대값(global maximum)을 정확히 하나** 갖고 극소값은 없다.
+**Theorem 1 (Zhou et al.)**: Truncated-normal, Exponential, Gamma, Log-normal 분포 모두에서 같은 성질이 성립한다. surplus 함수 $s(b)$는 구간 $(0, V)$에서 **극대값을 정확히 하나** 갖고 극소값은 없어서 그 극대값이 최댓값(global maximum)이다.
 
 :::deep 더 깊이 — 단봉성은 어떻게 증명하는가
 
@@ -487,7 +489,7 @@ $$s(b) = (V - b) \cdot \Phi\!\left(\frac{\ln b - \mu(x)}{\sigma(x)}\right)$$
 
 $$s''(b) = \frac{f_{\ln}(b)}{b\sigma^2} \left[(\mu - \sigma^2 - \ln b)(V - b) - 2\sigma^2 b\right]$$
 
-대괄호 안의 함수가 $b$에 대해 볼록(convex)이므로 최대 하나의 근을 가집니다. 근이 하나면 $s'(b)$의 부호는 한 번만 바뀝니다. 그래서 봉우리가 하나로 확정됩니다.
+대괄호 안의 함수는 $b$에 대해 볼록(convex)이고 $b = V$ 에서 $-2\sigma^2 V < 0$ 이므로 $(0, V)$ 에서 근을 최대 하나 가집니다. 그래서 $s''(b)$ 는 구간 전체에서 음수이거나 근 하나를 사이에 두고 양수에서 음수로 바뀝니다. 어느 경우든 $s(0) = s(V) = 0$ 이고 그 사이에서 $s(b) > 0$ 이라 극대값은 하나뿐이고 극소값은 없으므로 봉우리가 하나로 확정됩니다.
 :::
 
 **이것이 중요한 이유**: 극대값이 하나뿐이면 **어떤 탐색 알고리즘이든 최적해를 찾습니다**. Grid Search도 되지만 훨씬 효율적인 방법이 있습니다.
@@ -535,7 +537,7 @@ b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
 #   b* = $2.6788  (13회 반복, 구간 < $0.01)
 ```
 
-**수렴 속도**: 매 반복마다 탐색 구간이 $1/\phi \approx 0.618$배로 줄어듭니다. $V = \$5.00$, $\varepsilon = \$0.01$일 때 **13회 반복**이면 충분합니다. Grid Search($N = 500$개 그리드)보다 20배 가까이 빠릅니다.
+**수렴 속도**: 매 반복마다 탐색 구간이 황금 비율(약 1.618)의 역수인 0.618배로 줄어듭니다. $V$ 가 `$5.00`, $\varepsilon$ 이 `$0.01` 일 때 **13회 반복**이면 충분합니다. Grid Search($N = 500$개 그리드)보다 20배 가까이 빠릅니다.
 
 이 효율성이 **수십억 건/일의 실시간 서빙**을 가능하게 합니다. CDF 평가($F(b \mid x)$)만 빠르면 bid 최적화가 $O(\log(1/\varepsilon))$에 끝납니다.
 
@@ -546,7 +548,7 @@ b_star = golden_section_search(V=5.0, mu=0.8, sigma=0.5, tol=0.01)
 
 한 걸음씩 눌러 보면 위 코드가 하는 일이 그대로 보입니다. 탐색 구간의 양 끝이 안쪽으로 좁혀지고, 매번 **구간이 0.618배로 줄어듭니다.** 새 두 점 가운데 하나는 앞 반복의 점과 같은 자리라, 그 값을 다시 쓰면 평가는 한 번이면 됩니다. 위 코드는 두 점을 매번 새로 계산하고, 13회 반복에서 구간이 0.01보다 작아져 멈췄습니다.
 
-눈여겨볼 것은 **버리는 쪽**입니다. 두 지점을 비교해 낮은 쪽이 있는 구간을 전부 버립니다. 단봉이라는 전제가 있어서 이 과격한 버리기가 안전합니다. 만약 극대값이 둘이면 잘못된 봉우리에 갇힙니다 — 앞 절의 단봉성 증명이 왜 필요했는지가 여기서 드러납니다.
+눈여겨볼 것은 **버리는 쪽**입니다. 두 지점을 비교해 낮은 쪽이 있는 구간을 전부 버립니다. 단봉이라는 전제가 있어서 이 과격한 버리기가 안전합니다. 만약 극대값이 둘이면 잘못된 봉우리에 갇힐 수 있습니다 — 앞 절의 단봉성 증명이 왜 필요했는지가 여기서 드러납니다.
 
 ### ③ 실시간 서빙 아키텍처
 
@@ -561,13 +563,13 @@ sequenceDiagram
 
     AX->>DSP: Bid Request (user, slot, context)
     DSP->>DSP: Feature 추출 → x
-    DSP->>DSP: True Value 계산: V = pCTR × ConvValue
-    DSP->>DN: x → α(x) 추론
+    DSP->>DSP: True Value 계산: V = pCTR × pCVR × ConvValue
+    DSP->>DN: x → (μ(x), σ(x)) 추론
     DN-->>DSP: Log-normal 파라미터 (μ, σ)
     DSP->>GSS: V, μ(x), σ(x) → b* 탐색
     GSS-->>DSP: Optimal Bid b*
     DSP->>AX: Bid Response (b*)
-    Note over DSP,GSS: 전체 레이턴시 ~10ms 이내
+    Note over DSP,GSS: 엄격한 레이턴시 제약 안에서 실행
 ```
 
 핵심 포인트:
@@ -583,7 +585,7 @@ sequenceDiagram
 
 공개 데이터셋 iPinYou (53M 샘플, win rate 22.87%)에서의 실험:
 
-- **MCNet**(혼합 밀도 네트워크)을 Standard Censored Regression, Kaplan-Meier 추정과 비교. **NLL(Negative Log-Likelihood)과 분포 캘리브레이션** 모두에서 유의미한 개선
+- **MCNet**(혼합 밀도 네트워크)을 Standard Censored Regression, Kaplan-Meier 추정과 비교. **NLL(Negative Log-Likelihood, 논문의 ANLP)**에서 유의미한 개선
 - 특히 **다봉 분포 구간**에서 MCNet의 강점이 두드러짐: 단일 가우시안으로는 포착할 수 없는 복수 피크를 정확히 모델링
 - Adobe Adcloud(Adobe 자사 DSP) 데이터에서도 동일한 경향 확인
 
@@ -596,7 +598,7 @@ VerizonMedia DSP의 실제 입찰 데이터에서:
 - **Non-censored**(open auction, winning price 제공): Log-normal이 **+9.65% surplus lift**
 - **Censored**(closed auction, winning price 비제공): Log-normal이 **+5.32% surplus lift**
 
-Non-censored 와 censored 의 차이는 9.65% vs 5.32%입니다. 이 격차가 곧 **winning price 정보의 값**입니다. SSP가 winning price를 공개하는 Open Auction은 DSP에게 약 **4%p의 추가 최적화 여지**를 줍니다.
+Non-censored 와 censored 의 차이는 9.65% vs 5.32%입니다. 논문은 winning price 없이 학습하면 분포 4가지 모두에서 lift 가 줄어드는 것을 **winning price 정보가 중요하다**는 근거로 듭니다. 다만 두 lift 는 비교 기준인 프로덕션 알고리즘이 서로 달라 차이 약 4%p 를 정보의 값으로 그대로 읽을 수는 없습니다.
 
 ### ③ Online A/B 테스트 — Zhou et al.
 
@@ -606,10 +608,10 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 |------------------|-------------------|--------------------------|-----------|
 | CPA (전환) | -3.5% | 62.3% | **+8.57%** |
 | CPC (클릭) | -0.9% | 54.5% | +2.35% |
-| CPM (노출) | -6.2% | 71.8% | +2.35% |
+| CPM (노출) | -6.2% | 81.6% | +2.35% |
 
 - eCPX 감소 = 같은 성과를 더 싼 비용으로 달성 → 광고주 ROI 개선
-- 목표에 따라 **캠페인의 54.5~71.8%**에서 비용 효율이 개선됨
+- 목표에 따라 **캠페인의 54.5~81.6%**에서 비용 효율이 개선됨
 - **수십억 bid request/일**을 처리하는 세계 최대 규모 DSP 중 하나에서 프로덕션 검증
 
 ### ④ 두 논문의 포지셔닝
@@ -695,7 +697,7 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 
 ## 8. 보론: 품질 지수(Quality Index)가 존재할 때의 시장 가격 재정의
 
-앞선 섹션들에서는 입찰가 자체가 경매 순위를 결정하는 순수 CPM 경매를 가정했습니다. 하지만 실제 RTB 경매에서는 SSP가 입찰가에 **품질 지수(QI)**를 곱합니다. QI는 광고 품질 점수나 Viewability 예측치 같은 보정 계수입니다. 그 곱이 **순위 지수(Rank Index)(RI)**이고, 순위는 이 값으로 매깁니다. 순위 계산이 왜 이렇게 생겼는지는 [eCPM 랭킹](post.html?id=ecpm-ranking)에 정리돼 있습니다. 이때 자연스러운 의문이 생깁니다: "낙찰자의 원래 입찰가(Raw Bid)가 내 입찰가보다 **낮은데** 내가 졌다면? 섹션 2에서 정의한 censored data 의 전제(시장 가격 > 내 입찰가)가 깨지는 것 아닌가?"
+앞선 섹션들에서는 입찰가 자체가 경매 순위를 결정하는 순수 CPM 경매를 가정했습니다. 하지만 품질을 함께 보는 경매에서는 입찰가에 **품질 지수(QI)**를 곱해 순위를 매깁니다(열린 RTB 의 거래소는 입찰가만 봅니다). QI는 광고 품질 점수나 Viewability 예측치 같은 보정 계수입니다. 그 곱이 **순위 지수(Rank Index, RI)**이고, 순위는 이 값으로 매깁니다. 순위 계산이 왜 이렇게 생겼는지는 [eCPM 랭킹](post.html?id=ecpm-ranking)에 정리돼 있습니다. 이때 자연스러운 의문이 생깁니다: "낙찰자의 원래 입찰가(Raw Bid)가 내 입찰가보다 **낮은데** 내가 졌다면? 섹션 2에서 정의한 censored data 의 전제(시장 가격 > 내 입찰가)가 깨지는 것 아닌가?"
 
 결론부터 말하면, **깨지지 않습니다.** 핵심은 "시장 가격"의 정의를 원래 입찰가가 아닌 **필요 입찰가(Required Bid)**로 변환하는 것입니다.
 
@@ -708,21 +710,21 @@ VerizonMedia DSP에서 3일간 Online A/B 테스트를 진행한 결과:
 | **나 (패찰)** | $80 | 1.0 | 80 | Lose |
 | **경쟁자 (낙찰)** | $60 | 2.0 | 120 | Win |
 
-경쟁자의 원래 입찰가($60)는 내 Raw Bid($80)보다 **낮습니다.** 그런데 내가 졌습니다. QI가 2배 높은 경쟁자가 더 적은 돈으로도 더 높은 순위 지수를 확보했기 때문입니다.
+경쟁자의 원래 입찰가(`$60`)는 내 원래 입찰가(`$80`)보다 **낮습니다.** 그런데 내가 졌습니다. QI가 2배 높은 경쟁자가 더 적은 돈으로도 더 높은 순위 지수를 확보했기 때문입니다.
 
 **필요 입찰가**는 내가 이기려면 필요했던 최소 입찰가입니다. 계산하면:
 
 $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0} = \$120$$
 
-이제 관계가 역전됩니다: **필요 입찰가($120) > My Bid($80)**. Censored regression 의 전제가 성립합니다. 섹션 2의 Right-Censoring 프레임워크와 섹션 4의 남는 몫 공식을 그대로 쓸 수 있습니다. "시장 가격"만 필요 입찰가로 치환하면 됩니다.
+이제 관계가 역전됩니다: **필요 입찰가(`$120`) > 내 입찰가(`$80`)**. Censored regression 의 전제가 성립합니다. 섹션 2의 Right-Censoring 프레임워크와 섹션 4의 남는 몫 공식을 그대로 쓸 수 있습니다. "시장 가격"만 필요 입찰가로 치환하면 됩니다.
 
-### 같은 표를 필요 입찰가 로 다시 읽기
+### 같은 표를 필요 입찰가로 다시 읽기
 
-- **경쟁자**는 QI 가 2.0 이라 $60 만 불러도 순위 지수 120 을 얻습니다.
-- **나**는 QI 가 1.0 이라 같은 120 을 얻으려면 $120 을 불러야 합니다. $80 으로는 모자랍니다.
-- 경쟁자가 "덜 불렀다(원래 입찰가가 낮다)"는 사실은 중요하지 않습니다. **내가 넘어야 했던 값(필요 입찰가 $120)이 내 입찰가($80)를 넘었다**는 사실이 핵심입니다.
+- **경쟁자**는 QI 가 2.0 이라 `$60` 만 불러도 순위 지수 120 을 얻습니다.
+- **나**는 QI 가 1.0 이라 같은 120 을 얻으려면 `$120` 을 불러야 합니다. `$80` 으로는 모자랍니다.
+- 경쟁자가 "덜 불렀다(원래 입찰가가 낮다)"는 사실은 중요하지 않습니다. **내가 넘어야 했던 값(필요 입찰가 `$120`)이 내 입찰가(`$80`)를 넘었다**는 사실이 핵심입니다.
 
-따라서 "필요 입찰가 > $80(내 입찰가)" -- 즉 시장 가격이 내 입찰가보다 높다 -- 는 유효한 관측입니다.
+따라서 "필요 입찰가 > `$80`(내 입찰가)" -- 즉 시장 가격이 내 입찰가보다 높다 -- 는 유효한 관측입니다.
 
 ### 핵심 통찰
 
@@ -746,7 +748,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 ## 마무리
 
-1. **1st 가격 경매에서 Bid Shading은 선택이 아니라 필수** — 참 가치 그대로 입찰하면 이익이 0. 1절③ 표의 첫 줄과 [데모](demo-bid-shading.html)의 No Shade가 같은 얘기입니다.
+1. **1st Price 경매에서 Bid Shading은 선택이 아니라 필수** — 참 가치 그대로 입찰하면 이익이 0. 1절③ 표의 첫 줄과 [데모](demo-bid-shading.html)의 No Shade가 같은 얘기입니다.
 
 2. **Censored data 를 무시하면 시장 가격을 체계적으로 과소추정** — Naive 추정의 위험성. 반드시 censored regression 또는 Survival Analysis 기법이 필요합니다.
 
@@ -756,7 +758,7 @@ $$\text{Required Bid} = \frac{\text{Winner's RI}}{\text{My QI}} = \frac{120}{1.0
 
 5. **End-to-End가 핵심** — 분포 추정만 잘해서는 부족합니다. 최적 입찰가 계산 + 서빙 레이턴시까지 고려해야 프로덕션에서 성과가 납니다.
 
-이 기술은 **주요 DSP 대부분**이 프로덕션으로 돌립니다. Google DV360, The Trade Desk, Yahoo DSP, Amazon DSP가 그 예입니다. pCTR 모델의 정확도가 참 가치를 결정합니다. 참 가치가 정확해야 Bid Shading이 먹힙니다. 그래서 **pCTR 모델러와 Bidding 엔지니어의 협업**이 성패를 좌우합니다.
+이 기술은 **주요 DSP 대부분**이 프로덕션으로 돌립니다. Google DV360, The Trade Desk, Yahoo DSP, Amazon DSP가 그 예입니다. pCTR, pCVR 모델의 정확도가 참 가치를 결정합니다. 참 가치가 정확해야 Bid Shading이 먹힙니다. 그래서 **pCTR, pCVR 모델러와 Bidding 엔지니어의 협업**이 성패를 좌우합니다.
 
 ---
 

@@ -134,7 +134,7 @@
       <section class="dh-card" data-card="log"><h2>LOG PIPELINE</h2><p class="dh-k">행동 기록을 수집기에 태운다</p><p class="dh-easy"><b>쉽게 말하면</b> 서비스가 무슨 일이 있을 때마다 한 줄씩 기록을 남기면, 그 기록이 자동으로 웨어하우스까지 전달되는 길입니다. 서비스 팀은 한 줄 남기는 것만 합니다.</p><div class="dh-fig" id="dh-log"></div>
         <p class="dh-cap">서비스 팀에 오는 요청은 <b>「이 로그 한 줄 남겨 주세요」</b> 모양입니다. 한 번 남기면 뒤 자리들은 이미 깔려 있습니다.</p></section>
       <section class="dh-card" data-card="reverse"><h2>REVERSE ETL</h2><p class="dh-k">웨어하우스 결과를 서비스로 되돌린다</p><p class="dh-easy"><b>쉽게 말하면</b> 웨어하우스에서 계산한 결과(이 사용자는 어느 그룹인가)를 서비스가 빨리 읽을 수 있는 DB 에 매일 옮겨 두는 것입니다. 서비스는 그 DB 만 봅니다.</p><div class="dh-fig" id="dh-reverse"></div>
-        <p class="dh-cap">웨어하우스는 느리고 서비스는 1ms 안에 답해야 합니다. 그래서 결과를 <b>서비스 옆 DB 에 옮겨 두고</b> 건별로 읽게 합니다.</p></section>
+        <p class="dh-cap">웨어하우스는 느리고 서비스는 건별로 1ms 안에 읽어야 합니다. 그래서 결과를 <b>서비스 옆 DB 에 옮겨 두고</b> 건별로 읽게 합니다.</p></section>
     </div>
 
     <section class="dh-real">
@@ -142,7 +142,7 @@
       <ul>
         <li><b>데이터 엔지니어에게 세 가지만 물으면</b> 카드 하나로 좁혀집니다. 지금 어디에 어떤 모양으로 있나, 얼마나 자주 새로 와야 하나, 누가 옮기나(우리가 당겨 가나, 그쪽이 밀어 주나).</li>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 방법의 함정 하나가 더 나옵니다.</li>
-        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=data-handoff-methods">데이터 건네기 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=data-handoff-methods">데이터 건네기 글</a>의 2절부터 9절까지 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
       </ul>
     </section>
   </main>

@@ -2981,7 +2981,7 @@ window.DEMO_EDU = {
                     case 'grant': return '함정은 <strong>권한이 곧 전달</strong>이라는 것입니다. 팀 B 가 테이블을 지우거나 바꿀 수 있는 권한까지 받으면 팀 A 의 데이터가 흔들립니다. SELECT 만 줍니다.';
                     case 'batch': return '함정은 <strong>운영 DB 가 느려지는 것</strong>입니다. 새벽에 전체를 읽으면 서비스가 같은 DB 를 쓰는 동안 느려집니다. 증분 복사에는 갱신 시각 컬럼이 있어야 합니다.';
                     case 'cdc': return '함정은 <strong>순서와 중복</strong>입니다. 같은 행이 두 번 바뀌면 메시지도 둘이고, 받는 쪽이 마지막 것만 남겨야 합니다. 배치보다 설정할 것이 많습니다.';
-                    case 'file': return '함정은 <strong>「다 썼다」는 신호</strong>입니다. 파일을 쓰는 중에 읽으면 반쪽만 읽습니다. _SUCCESS 표시 파일이나 파티션 이름으로 끝났음을 알립니다.';
+                    case 'file': return '함정은 <strong>「다 썼다」는 신호</strong>입니다. 파일을 쓰는 중에 읽으면 반쪽만 읽습니다. _SUCCESS 표시 파일로 끝났음을 알립니다.';
                     case 'topic': return '함정은 <strong>보존 기간</strong>입니다. 7일 보존이면 8일 멈춘 소비자는 앞 하루치를 영영 못 받습니다. 그래서 파일과 같이 두는 팀이 많습니다.';
                     case 'api': return '함정은 <strong>호출 수</strong>입니다. 리포트 화면이 한 줄에 한 번씩 부르면 화면 하나에 요청 수백 번이 됩니다. 목록은 한 번에 나눠 받는 방식이어야 합니다.';
                     case 'log': return '함정은 <strong>남기는 쪽이 서비스 팀</strong>이라는 것입니다. 로그 한 줄이 빠지면 뒤의 모든 자리가 빕니다. 요청서에 필드와 언제 남기는지를 적어 둡니다.';

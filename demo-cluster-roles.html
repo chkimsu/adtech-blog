@@ -125,7 +125,7 @@
       <section class="cr-card" data-card="spark"><h2>SPARK PATH</h2><p class="cr-k">작업 한 건이 지나는 길</p>
         <p class="cr-easy"><b>쉽게 말하면</b> Spark 는 내 작업마다 driver 라는 계획 담당을 하나 띄우고, driver 가 자리를 받아 워커에 executor 를 띄운 뒤 조각을 시키고 결과를 모읍니다.</p>
         <div class="cr-fig" id="cr-spark"></div>
-        <p class="cr-cap">HiveServer2 처럼 늘 켜진 서버 대신 <b>작업마다 driver 하나</b>입니다. 계산은 워커의 executor 에서 일어나고, 중간 결과를 메모리에 둡니다.</p></section>
+        <p class="cr-cap">spark-submit 으로 낸 작업에서는 HiveServer2 처럼 늘 켜진 서버 대신 <b>작업마다 driver 하나</b>입니다. 계산은 워커의 executor 에서 일어나고, 중간 결과를 메모리에 둡니다.</p></section>
       <section class="cr-card" data-card="shared"><h2>SHARED</h2><p class="cr-k">셋이 만나는 자리는 목록과 파일</p>
         <p class="cr-easy"><b>쉽게 말하면</b> Hive, Spark, Trino 는 같은 Metastore 목록을 보고 같은 HDFS 파일을 읽습니다. 그래서 「Hive 테이블」을 Spark 로도 Trino 로도 읽을 수 있습니다.</p>
         <div class="cr-fig" id="cr-shared"></div>
@@ -141,7 +141,7 @@
       <ul>
         <li><b>「그 쿼리는 Spark 로 돌리세요」</b>는 3층의 프로그램만 바꾸라는 말입니다. 테이블 이름도 파일도 그대로이고, 자리를 받는 곳도 같은 YARN 입니다.</li>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 자주 헷갈리는 것 하나가 더 나옵니다.</li>
-        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=hadoop-hive-spark-roles">Hadoop, Hive, Spark 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다. 상자 그림 판은 <a href="demo-hadoop-boxes.html">하둡 상자 그림 여섯 장</a>입니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=hadoop-hive-spark-roles">Hadoop, Hive, Spark 글</a>에 이 카드들이 3절과 7절을 뺀 여섯 절에 한 장씩 들어 있습니다. 상자 그림 판은 <a href="demo-hadoop-boxes.html">하둡 상자 그림 여섯 장</a>입니다.</li>
       </ul>
     </section>
   </main>

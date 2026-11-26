@@ -6,9 +6,9 @@
 
 노드를 넷으로 나누고 워커 노드 한 대를 세로로 잘라 보면 답이 보입니다. 층이 셋입니다. 1층 저장과 2층 자리 배분은 둘이 같이 쓰고, 다른 것은 3층에서 도는 프로그램뿐입니다. 이것을 알면 「Hive 로 돌린다」와 「Spark 로 돌린다」가 무엇을 바꾸는 말인지 알게 됩니다. 데이터 팀이 하는 말의 절반이 그림으로 들립니다.
 
-> **한 줄 요약:** Hadoop 은 아래 두 층(HDFS 저장, YARN 자리 배분)의 이름이고, Hive 와 Spark 는 그 위 3층에서 도는 프로그램입니다. 둘은 같은 워커 노드에서 같은 조각을 읽습니다. 만나는 자리는 Metastore 목록과 HDFS 파일입니다.
+> **한 줄 요약:** Hadoop 은 아래 두 층(HDFS 저장, YARN 자리 배분)의 이름이고, Hive 와 Spark 는 그 위에서 도는 프로그램입니다. 둘은 같은 워커 노드에서 같은 조각을 읽습니다. 만나는 자리는 Metastore 목록과 HDFS 파일입니다.
 
-> **골라 읽는 법** — 절이 8개인 글입니다. 절마다 카드 한 장이 들어 있어 카드만 보고 넘어가도 됩니다.
+> **골라 읽는 법** — 절이 8개인 글입니다. 3절과 7절을 뺀 여섯 절에 카드가 한 장씩, 3절과 7절에는 표가 있어 카드와 표만 보고 넘어가도 됩니다.
 >
 > - 노드 넷과 층 셋만 → 1~2절
 > - Hadoop 이 무엇인지 → 3절
@@ -26,14 +26,14 @@
 
 쉽게 말하면 클러스터는 서버 수십에서 수백 대이고, 그 서버 한 대를 노드라고 부릅니다. Hadoop, Hive, Spark 는 프로그램 이름이고, 노드는 그 프로그램이 도는 자리입니다. 어떤 프로그램이 도는지에 따라 노드를 넷으로 나눕니다.
 
-엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터도 계산도 없습니다. 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 앞은 파일이 어디에 있는지 적어 둔 서버이고, 뒤는 일감을 어느 서버에 줄지 정하는 서버입니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. 앞은 질의를 받아 주는 문 역할의 서버이고, 뒤는 표가 어디에 어떤 모양으로 있는지 적어 둔 곳입니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있습니다. 앞은 파일 조각을 담고 뒤는 일감을 돌립니다. 그래서 데이터를 갖고 있는 자리에서 계산합니다.
+엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터가 없고 조각을 세는 계산도 돌지 않습니다(5절의 driver 는 여기 뜨기도 합니다). 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 앞은 파일이 어디에 있는지 적어 둔 서버이고, 뒤는 일감을 어느 서버에 줄지 정하는 서버입니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. 앞은 질의를 받아 주는 문 역할의 서버이고, 뒤는 표가 어디에 어떤 모양으로 있는지 적어 둔 곳입니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있습니다. 앞은 파일 조각을 담고 뒤는 일감을 돌립니다. 그래서 데이터를 갖고 있는 자리에서 계산합니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=nodes" height="480" loading="lazy" title="노드는 넷으로 나뉜다"></iframe>
 <a class="demo-embed-open" href="demo-cluster-roles.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-지훈 씨가 「Hive 로 돌린다」고 할 때 실제로 일어나는 일은 이렇습니다. 엣지 노드에서 서비스 노드로 SQL 이 갑니다. 서비스 노드가 마스터 노드에 자리를 받아 워커 노드에서 계산합니다. 「Spark 로 돌린다」도 이 넷을 지납니다. 다른 것은 서비스 노드 자리에 무엇이 서느냐입니다.
+지훈 씨가 「Hive 로 돌린다」고 할 때 실제로 일어나는 일은 이렇습니다. 엣지 노드에서 서비스 노드로 SQL 이 갑니다. 서비스 노드가 마스터 노드에 자리를 받아 워커 노드에서 계산합니다. 「Spark 로 돌린다」도 이 넷을 지납니다. 다른 것은 HiveServer2 가 하던 일을 무엇이 맡느냐입니다.
 
 ## 2. 워커 한 대를 잘라 보면 층이 셋입니다
 
@@ -41,7 +41,7 @@
 
 쉽게 말하면 맨 아래 디스크에 데이터 조각이 있고, 그 위에서 YARN 이 CPU 와 메모리 자리를 내줍니다. 맨 위에서 Hive 조각과 Spark 조각이 그 자리를 받아 돕니다. 1층과 2층은 늘 켜져 있고, 3층은 작업이 있을 때만 생기고 끝나면 사라집니다.
 
-1층은 DataNode 입니다. 하루치 클릭 로그 705 MB 가 128 MB 조각 여섯 개로 나뉘어 여러 워커의 디스크에 세 벌씩 놓여 있습니다. 2층은 NodeManager 입니다. 이 서버의 CPU 와 메모리를 칸으로 나눠 위층에 내줍니다. 그 칸을 컨테이너라고 부릅니다. 3층은 컨테이너 안에서 도는 프로그램입니다. Hive 쿼리의 조각은 Tez 컨테이너로, Spark 작업의 조각은 executor 로 뜹니다. 둘이 같은 워커 위에 나란히 뜰 수 있습니다.
+1층은 DataNode 입니다. 하루치 클릭 로그를 압축 전 크기 705 MB 로 놓으면 128 MB 조각 여섯 개로 나뉘어 여러 워커의 디스크에 세 벌씩 놓여 있습니다. parquet 으로 압축한 실제 파일은 이보다 작습니다. 2층은 NodeManager 입니다. ResourceManager 가 정한 만큼 이 서버의 CPU 와 메모리를 칸으로 떼어 위층에 내줍니다. 그 칸을 컨테이너라고 부릅니다. 3층은 컨테이너 안에서 도는 프로그램입니다. Hive 쿼리의 조각은 Tez 컨테이너로, Spark 작업의 조각은 executor 로 뜹니다. 둘이 같은 워커 위에 나란히 뜰 수 있습니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=layers" height="480" loading="lazy" title="워커 한 대의 단면은 층이 셋"></iframe>
@@ -81,22 +81,22 @@ Hadoop 에는 원래 계산 엔진이 하나 들어 있었습니다. MapReduce �
 <a class="demo-embed-open" href="demo-cluster-roles.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-여기서 「Hive 는 엔진이 아니다」가 나옵니다. HiveServer2 는 SQL 을 읽고 계획을 세우는 프로그램이고, 세는 일은 Tez 가 합니다. 설정 하나로 엔진을 Spark 로 바꿀 수도 있습니다. 그래도 지훈 씨가 붙는 곳은 HiveServer2 이고 SQL 도 그대로입니다. ZooKeeper 는 서버들이 서로 누가 살아 있는지 맞추는 조정 서비스입니다. 접속 주소와 ZooKeeper 가 어떻게 얽히는지는 [Hadoop 과 Hive](post.html?id=hadoop-hive-basics) 편에 있습니다.
+여기서 「Hive 는 엔진이 아니다」가 나옵니다. HiveServer2 는 SQL 을 읽고 계획을 세우는 프로그램이고, 세는 일은 Tez 가 합니다. Hive 3 까지는 설정 하나로 엔진을 Spark 로 바꿀 수도 있었습니다(Hive 4 에서 빠졌습니다). 그래도 지훈 씨가 붙는 곳은 HiveServer2 이고 SQL 도 그대로입니다. ZooKeeper 는 서버들이 서로 누가 살아 있는지 맞추는 조정 서비스입니다. 접속 주소와 ZooKeeper 가 어떻게 얽히는지는 [Hadoop 과 Hive](post.html?id=hadoop-hive-basics) 편에 있습니다.
 
 ## 5. Spark 는 엔진이면서 코드로 씁니다
 
-**Spark 는 작업마다 driver 하나를 띄우고, driver 가 자리를 받아 워커에 executor 를 띄웁니다. 늘 켜진 SQL 서버 대신 내 작업이 곧 서버입니다.**
+**Spark 는 작업마다 driver 하나를 띄우고, driver 가 자리를 받아 워커에 executor 를 띄웁니다. spark-submit 으로 낸 작업에서는 늘 켜진 SQL 서버 대신 내 작업이 곧 서버입니다.**
 
 쉽게 말하면 spark-submit 을 치면 driver 라는 계획 담당 프로세스가 하나 뜹니다. driver 가 목록을 묻고 자리를 받아 워커에 executor 를 띄우고, 조각을 시키고, 결과를 모읍니다. 작업이 끝나면 driver 도 executor 도 사라집니다.
 
-Hive 와 다른 점이 둘 있습니다. 첫째, 상주 서버가 없습니다. HiveServer2 는 여러 사람의 SQL 을 받는 하나의 서버이지만, Spark 는 지훈 씨의 작업마다 driver 가 따로 뜹니다. driver 는 클라이언트 모드면 엣지 노드에, 클러스터 모드면 워커의 컨테이너 하나에 뜹니다. 둘째, SQL 만이 아닙니다. Spark SQL 로 같은 SQL 을 쓸 수도 있고, DataFrame 코드로 변환과 모델 학습까지 이어 쓸 수 있습니다.
+Hive 와 다른 점이 둘 있습니다. 첫째, spark-submit 으로 낸 작업에는 상주 서버가 없습니다. HiveServer2 는 여러 사람의 SQL 을 받는 하나의 서버이지만, Spark 는 지훈 씨의 작업마다 driver 가 따로 뜹니다. driver 는 클라이언트 모드면 엣지 노드에, 클러스터 모드면 워커의 컨테이너 하나에 뜹니다. Kyuubi 처럼 여러 사람의 SQL 을 받아 YARN 위에 Spark driver 를 띄워 주는 상주 서버를 앞에 두는 구성도 있습니다. 둘째, SQL 만이 아닙니다. Spark SQL 로 같은 SQL 을 쓸 수도 있고, DataFrame 코드로 변환과 모델 학습까지 이어 쓸 수 있습니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=spark" height="500" loading="lazy" title="Spark 작업 한 건이 지나는 길"></iframe>
 <a class="demo-embed-open" href="demo-cluster-roles.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-지훈 씨의 쿼리가 3분에 끝난 이유도 여기 있습니다. Spark 는 단계 사이의 중간 결과를 메모리에 둡니다. 광고별로 세고 합치는 두 단계 사이에서 디스크를 거치지 않습니다. 다만 늘 Spark 가 빠른 것은 아닙니다. 메모리가 모자라면 디스크로 내려가고, driver 를 띄우는 데도 수십 초가 듭니다. 작은 쿼리는 Hive 쪽이 먼저 끝나는 일도 흔합니다.
+단계가 많은 일에서 Spark 가 유리한 이유가 여기 있습니다. Spark 는 중간 결과를 되도록 메모리에 둡니다. 광고별로 세고 합치는 두 단계 사이(셔플)에서는 Spark 도 중간 결과를 워커의 로컬 디스크에 썼다가 읽습니다. 다만 늘 Spark 가 빠른 것은 아닙니다. 메모리가 모자라면 디스크로 내려가고, driver 를 띄우는 데도 수십 초가 듭니다. 작은 쿼리는 Hive 쪽이 먼저 끝나는 일도 흔합니다.
 
 ## 6. 셋이 만나는 자리는 Metastore 와 HDFS 입니다
 
@@ -104,7 +104,7 @@ Hive 와 다른 점이 둘 있습니다. 첫째, 상주 서버가 없습니다. 
 
 쉽게 말하면 테이블 이름과 파일 위치는 Metastore 한 곳에만 적혀 있고, 파일은 HDFS 한 곳에만 있습니다. 엔진 셋은 그 목록을 읽고 그 파일을 읽습니다. 데이터를 두 벌 갖는 것이 아니라 읽는 프로그램이 셋인 것입니다.
 
-지훈 씨가 Hive 에서 Spark 로 바꿨을 때 테이블 이름 `adlog.ad_click` 을 그대로 썼습니다. Spark 가 같은 Metastore 에 물어 같은 HDFS 경로를 받았기 때문입니다. Trino 도 같습니다. 다만 Trino 는 YARN 자리를 받지 않습니다. 자기 워커 서버가 따로 있고, Metastore 목록과 HDFS 파일만 빌려 씁니다. 그래서 Trino 에는 큐 이름이 없습니다.
+지훈 씨가 Hive 에서 Spark 로 바꿨을 때 테이블 이름 `adlog.ad_click` 을 그대로 썼습니다. Spark 가 같은 Metastore 에 물어 같은 HDFS 경로를 받았기 때문입니다. Trino 도 같습니다. 다만 Trino 는 YARN 자리를 받지 않습니다. 자기 워커 서버가 따로 있고, Metastore 목록과 HDFS 파일만 빌려 씁니다. 그래서 Trino 에는 YARN 큐 이름이 없습니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=shared" height="500" loading="lazy" title="셋이 만나는 자리는 목록과 파일"></iframe>
@@ -140,31 +140,31 @@ Hive 와 다른 점이 둘 있습니다. 첫째, 상주 서버가 없습니다. 
 <a class="demo-embed-open" href="demo-cluster-roles.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-Spark 만 두 층에 걸쳐 있습니다. 엔진이면서 사람이 쓰는 Spark SQL 과 DataFrame 도 갖습니다. Hive 는 엔진이 없어서 Tez 나 Spark 를 빌립니다. 그래서 「Hive on Spark」라는 말도 있고, 「Spark 로 Hive 테이블을 읽는다」는 말도 있습니다. 앞은 Hive 의 3층 엔진을 Spark 로 바꾼 것이고, 뒤는 Spark 가 Metastore 목록을 읽는 것입니다. 같은 낱말 둘이 다른 칸을 가리킵니다.
+Spark 만 두 층에 걸쳐 있습니다. 엔진이면서 사람이 쓰는 Spark SQL 과 DataFrame 도 갖습니다. Hive 는 엔진이 없어서 Tez 를 빌립니다(Hive 3 까지는 Spark 도). 그래서 「Hive on Spark」라는 말도 있고 6절의 공통 Metastore 덕분에 「Spark 로 Hive 테이블을 읽는다」는 말도 있습니다. 앞은 Hive 의 3층 엔진을 Spark 로 바꾼 것이고, 뒤는 Spark 가 Metastore 목록을 읽는 것입니다. 같은 낱말 둘이 다른 칸을 가리킵니다.
 
 ## 한눈 정리
 
 | 질문 | 한 줄 답 |
 |---|---|
 | Hadoop 이 무엇인가 | HDFS 저장과 YARN 자리 배분, 아래 두 층의 이름 |
-| Hive 와 Spark 는 Hadoop 의 일부인가 | 아닙니다. 그 위 3층에서 도는 프로그램입니다 |
+| Hive 와 Spark 는 Hadoop 의 일부인가 | 아닙니다. 그 위에서 도는 프로그램입니다 |
 | 노드는 어떻게 나뉘나 | 엣지, 마스터, 서비스, 워커 넷 |
 | 워커 한 대에 무엇이 있나 | 1층 DataNode, 2층 NodeManager, 3층 작업 동안만 뜨는 컨테이너 |
 | Hive 는 계산을 하나 | 아닙니다. HiveServer2 가 계획을 세우고 Tez 컨테이너가 셉니다 |
 | Spark 의 driver 는 무엇인가 | 내 작업마다 하나 뜨는 계획 담당. executor 를 띄우고 결과를 모읍니다 |
 | Hive 테이블을 Spark 로 읽는다는 것은 | Spark 가 같은 Metastore 목록을 읽어 같은 HDFS 파일을 읽는 것 |
-| Trino 는 어디가 다른가 | YARN 자리를 안 받고 자기 워커에서 돕니다. 큐 이름이 없습니다 |
+| Trino 는 어디가 다른가 | YARN 자리를 안 받고 자기 워커에서 돕니다. YARN 큐 이름이 없습니다 |
 | Spark 가 늘 빠른가 | 아닙니다. 단계가 많을 때 유리하고, 작은 쿼리는 Hive 가 먼저 끝나기도 합니다 |
 
 ## 헷갈리기 쉬운 점
 
 - **Hadoop 과 HDFS 는 같은 말이 아닙니다.** HDFS 는 Hadoop 의 1층입니다. Hadoop 에는 YARN 도 들어 있습니다.
 - **Hive 가 테이블을 소유하는 것이 아닙니다.** 목록은 Metastore 에 있고 파일은 HDFS 에 있습니다. Hive 는 그것을 처음 적었을 뿐입니다.
-- **NodeManager 와 executor 는 다릅니다.** NodeManager 는 늘 켜진 자리 배분 담당이고, executor 는 자리를 받아 작업 동안만 도는 프로세스입니다.
+- **NodeManager 와 executor 는 다릅니다.** NodeManager 는 늘 켜져 있으면서 ResourceManager 가 배분한 자리(컨테이너)를 자기 서버에 띄우는 담당이고 executor 는 자리를 받아 작업 동안만 도는 프로세스입니다.
 - **driver 가 뜨는 자리를 먼저 확인합니다.** 클라이언트 모드면 엣지 노드에 뜹니다. 그 터미널을 닫으면 작업이 같이 죽습니다.
 - **「Hive on Spark」와 「Spark 로 Hive 테이블 읽기」는 다른 말입니다.** 앞은 Hive 의 엔진을 바꾼 것이고, 뒤는 Spark 가 목록을 읽는 것입니다.
 - **느린 원인을 엔진에서만 찾지 않습니다.** 큐가 가득 차서 자리를 못 받은 시간일 수 있습니다. ResourceManager 화면에서 ACCEPTED 로 서 있었는지 봅니다.
-- **Trino 에는 큐 이름을 넣지 않습니다.** YARN 을 안 쓰니 큐가 없습니다.
+- **Trino 에는 YARN 큐 이름을 넣지 않습니다.** YARN 을 안 쓰니 YARN 큐가 없습니다.
 
 ## 더 깊이 보기
 

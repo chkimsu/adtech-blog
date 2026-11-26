@@ -2217,7 +2217,7 @@ window.DEMO_EDU = {
                     return c[3] === 'dist'
                         ? '유통 층을 세웠습니다. 연결이 <strong>' + jobs + ' × ' + dests + ' = ' + (jobs * dests) + '개</strong> 에서 ' +
                           '<strong>' + jobs + ' + ' + dests + ' = ' + (jobs + dests) + '개</strong> 로 줍니다. ' +
-                          '값은 topic 왕복 200 ms 입니다 — 대시보드 예산 888 ms 의 22%입니다.'
+                          '값은 topic 왕복 200 ms 입니다 — 대시보드 예산 888 ms 의 23%입니다.'
                         : '유통 층을 껐습니다. 연결이 <strong>' + (jobs + dests) + '개에서 ' + (jobs * dests) + '개</strong>, ' +
                           '설정 자리가 ' + ((jobs + dests) * 4) + '개에서 ' + (jobs * dests * 4) + '개가 됩니다. ' +
                           '목적지를 하나 더 붙일 때 손대는 처리 잡이 0개에서 ' + jobs + '개입니다.';

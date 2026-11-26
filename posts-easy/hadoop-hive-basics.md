@@ -230,5 +230,5 @@ jdbc:hive2://zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181,zk4.
 
 - 그림 여섯 장을 한 페이지에서 보려면 [하둡 상자 그림 여섯 장](demo-hadoop-boxes.html)과 [하둡 카드 여섯 장](demo-hadoop-cards.html)이 있습니다. 카드 쪽은 점이 흘러가며 순서를 보여 줍니다.
 - 이 테이블의 파일이 어떻게 여기까지 왔는지는 [데이터 유통 층](post.html?id=data-distribution-layer) 편과 [데이터 파이프라인 설계](post.html?id=data-pipeline-design) 편에 있습니다.
-- 그 파일이 되기 전, 클릭 한 건이 Kafka 에 놓이기까지는 [Kafka 로그 파이프라인](post.html?id=kafka-log-pipeline) 편입니다.
+- 그 파일이 되기 전, 클릭 한 건이 Kafka 에 놓이기까지는 [Kafka 기초](post.html?id=kafka-log-pipeline) 편입니다.
 - 접속 주소의 요청과 응답이 어떤 모양인지는 [API 기초](post.html?id=api-basics) 편에서 다룹니다.

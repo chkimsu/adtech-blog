@@ -247,7 +247,7 @@ DSP 의 노출과 클릭과 재생 이벤트는 매체의 페이지나 앱에서
 
 ## 더 깊이 보기
 
-- topic, partition, offset, consumer group 의 정의는 [Kafka 공식 문서의 소개](https://kafka.apache.org/documentation/#intro_concepts_and_terms)가 가장 짧습니다. 로그 한 줄이 브로커에 놓이기까지는 [Kafka 로그 파이프라인](post.html?id=kafka-log-pipeline) 편이 이 글의 1번과 2번 자리를 더 자세히 봅니다.
+- topic, partition, offset, consumer group 의 정의는 [Kafka 공식 문서의 소개](https://kafka.apache.org/documentation/#intro_concepts_and_terms)가 가장 짧습니다. 로그 한 줄이 브로커에 놓이기까지는 [Kafka 기초](post.html?id=kafka-log-pipeline) 편이 이 글의 1번과 2번 자리를 더 자세히 봅니다.
 - 3절의 hold 를 시간 창으로 넓히면 윈도우 집계가 됩니다. 「최근 1시간 클릭 수」를 누가 어떻게 세는지는 [스트림 집계](post.html?id=stream-window-aggregation) 편에 있습니다.
 - Redis 의 Hash, Set, ZSet 이 각각 어떤 명령을 갖는지는 [Redis 공식 문서의 자료형 소개](https://redis.io/docs/latest/develop/data-types/)에 있습니다. 학습 때의 피처와 서빙 때의 피처가 어긋나는 문제는 [Feature Store](post.html?id=feature-store-serving) 편입니다.
 - 6절의 모델 서버 왕복을 더 나눠 보려면 [BentoML](post.html?id=bentoml-model-serving) 편의 동적 배칭과, 요청 하나의 예산을 나누는 [모델 API](post.html?id=model-api-from-training-script) 편 3절을 봅니다. 피크 때 지연이 어떻게 자라는지는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편입니다.

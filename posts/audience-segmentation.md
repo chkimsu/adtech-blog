@@ -592,7 +592,7 @@ $$e_{\text{segment}} = W_{\text{seg}} \cdot \text{one\_hot}(\text{segment\_id})$
 
 이러한 interaction을 학습하면, 세그먼트 정보가 pCTR 예측에 가장 효과적으로 반영됩니다. 단순히 `seg_high_value=1`을 feature로 넣는 방법도 있습니다. 하지만 embedding으로 다른 feature와의 interaction을 학습하면 AUC에서 유의미한 개선이 나옵니다.
 
-**Multi-Segment 유저의 처리**: GMM의 확률로 나눠 넣기를 사용하면 유저가 여러 세그먼트에 확률적으로 속합니다. 이 경우 세그먼트 피처를 인코딩하는 두 가지 방법이 있습니다.
+**Multi-Segment 유저의 처리**: GMM의 Soft Assignment를 사용하면 유저가 여러 세그먼트에 확률적으로 속합니다. 이 경우 세그먼트 피처를 인코딩하는 두 가지 방법이 있습니다.
 
 1. **Weighted Sum**: 각 세그먼트 embedding을 해당 확률로 가중 합산
    $$e_{\text{user\_seg}} = \sum_{k=1}^{K} p_k \cdot e_{\text{seg}_k}$$

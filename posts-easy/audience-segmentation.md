@@ -367,7 +367,7 @@ K-Means 는 클러스터를 중심에서 모든 방향으로 고르게 퍼진 �
 
 ### 4-2. GMM (Gaussian Mixture Model)
 
-K-Means 의 가장 큰 한계는 유저를 반드시 클러스터 하나에만 넣는 **Hard Assignment** 입니다. 두 클러스터의 경계에 있는 유저도 한쪽으로만 들어가 어느 쪽인지 불확실하다는 사실을 표현할 수 없는데, 광고 세그멘테이션에서는 한 유저가 「패션」과 「스포츠」에 함께 관심이 있는 경우가 흔하기 때문에 이 한계가 심각한 문제가 됩니다. GMM(Gaussian Mixture Model)은 유저 한 명을 여러 클러스터에 확률로 나눠 넣는 클러스터링입니다. 이 글은 이 방식을 **확률로 나눠 넣기(Soft Assignment)** 라고 부릅니다.
+K-Means 의 가장 큰 한계는 유저를 반드시 클러스터 하나에만 넣는 **Hard Assignment** 입니다. 두 클러스터의 경계에 있는 유저도 한쪽으로만 들어가 어느 쪽인지 불확실하다는 사실을 표현할 수 없는데, 광고 세그멘테이션에서는 한 유저가 「패션」과 「스포츠」에 함께 관심이 있는 경우가 흔하기 때문에 이 한계가 심각한 문제가 됩니다. GMM(Gaussian Mixture Model)은 유저 한 명을 여러 클러스터에 확률로 나눠 넣는 클러스터링입니다. 이 방식을 **Soft Assignment** 라고 부릅니다.
 
 :::deep 더 깊이 — GMM의 혼합 분포와 EM 알고리즘
 
@@ -646,7 +646,7 @@ $$e_{\text{segment}} = W_{\text{seg}} \cdot \text{one\_hot}(\text{segment\_id})$
 
 모델이 이런 interaction 을 학습하면 세그먼트 정보가 pCTR 예측에 가장 효과적으로 반영됩니다. `seg_high_value=1` 을 피처 하나로 그냥 넣는 방법도 있지만 embedding 으로 다른 피처와의 interaction 까지 학습하면 AUC 에서 유의미한 개선이 나옵니다. AUC 는 모델이 클릭할 광고와 클릭하지 않을 광고의 순서를 얼마나 잘 매기는지 나타내는 지표로 1 에 가까울수록 좋습니다.
 
-**Multi-Segment 유저의 처리**: GMM 의 확률로 나눠 넣기를 쓰면 유저 한 명이 여러 세그먼트에 확률로 속하므로 세그먼트 피처를 인코딩하는 방법이 두 가지로 나뉩니다.
+**Multi-Segment 유저의 처리**: GMM 의 Soft Assignment 를 쓰면 유저 한 명이 여러 세그먼트에 확률로 속하므로 세그먼트 피처를 인코딩하는 방법이 두 가지로 나뉩니다.
 
 1. **Weighted Sum**: 세그먼트 embedding 마다 그 세그먼트의 확률 $p_k$ 를 곱해 모두 더합니다.
    $$e_{\text{user\_seg}} = \sum_{k=1}^{K} p_k \cdot e_{\text{seg}_k}$$

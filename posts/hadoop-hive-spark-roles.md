@@ -26,7 +26,7 @@
 
 쉽게 말하면 클러스터는 서버 수십에서 수백 대이고, 그 서버 한 대를 노드라고 부릅니다. Hadoop, Hive, Spark 는 프로그램 이름이고, 노드는 그 프로그램이 도는 자리입니다. 어떤 프로그램이 도는지에 따라 노드를 넷으로 나눕니다.
 
-엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터가 없고 조각을 세는 계산도 돌지 않습니다(5절의 driver 는 여기 뜨기도 합니다). 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 앞은 파일이 어디에 있는지 적어 둔 서버이고, 뒤는 일감을 어느 서버에 줄지 정하는 서버입니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. 앞은 질의를 받아 주는 문 역할의 서버이고, 뒤는 표가 어디에 어떤 모양으로 있는지 적어 둔 곳입니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있습니다. 앞은 파일 조각을 담고 뒤는 일감을 돌립니다. 그래서 데이터를 갖고 있는 자리에서 계산합니다.
+엣지 노드는 지훈 씨가 접속해 명령을 치는 서버입니다. beeline 이나 spark-submit 을 여기서 칩니다. 데이터가 없고 조각을 세는 계산도 돌지 않습니다(5절의 driver 는 여기 뜨기도 합니다). 마스터 노드에는 HDFS 의 NameNode 와 YARN 의 ResourceManager 가 돕니다. 앞은 파일이 어디에 있는지 적어 둔 서버이고, 뒤는 일감을 어느 서버에 줄지 정하는 서버입니다. 파일 조각이 어디 있나, 자원을 누구에게 주나를 정합니다. 서비스 노드에는 HiveServer2 와 Metastore 가 돕니다. 앞은 질의를 받아 주는 문 역할의 서버이고, 뒤는 표가 어디에 어떤 모양으로 있는지 적어 둔 곳입니다. SQL 을 받고 테이블 목록을 듭니다. 워커 노드는 가장 많습니다. 한 대에 DataNode 와 NodeManager 두 역할이 같이 있습니다. 앞은 파일 조각을 담고 뒤는 계산 조각을 띄웁니다. 그래서 데이터를 갖고 있는 자리에서 계산합니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-cluster-roles.html?embed=1&card=nodes" height="480" loading="lazy" title="노드는 넷으로 나뉜다"></iframe>

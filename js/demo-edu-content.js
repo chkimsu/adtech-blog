@@ -2950,9 +2950,9 @@ window.DEMO_EDU = {
         explain: {
             '.hc-card': ({ el }) => {
                 switch (el.dataset.card) {
-                    case 'cluster': return '워커 상자의 두 색 칸이 두 역할입니다. 파랑 칸이 저장(DataNode), 벽돌색 칸이 계산(NodeManager)입니다. 같은 상자라서 <strong>데이터 있는 자리에서 계산</strong>합니다.';
+                    case 'cluster': return '워커 상자의 두 색 칸이 두 역할입니다. 파랑 칸이 저장(DataNode), 벽돌색 칸이 계산 조각을 띄우는 NodeManager 입니다. 같은 상자라서 <strong>데이터 있는 자리에서 계산</strong>합니다.';
                     case 'hdfs': return '점이 세 갈래로 흘러가는 것이 세 벌 복제입니다. DataNode 하나가 꺼져도 같은 번호 조각이 <strong>다른 두 대</strong>에 남아 있습니다.';
-                    case 'yarn': return '벽돌색 네모(T)가 워커로 내려가는 것이 계산 조각 배치입니다. 어느 워커로 가는지는 <strong>데이터 조각이 어디 있나</strong>로 정해집니다.';
+                    case 'yarn': return '벽돌색 네모(T)가 워커로 내려가는 것이 계산 조각 배치입니다. 어느 워커로 갈지 정할 때 <strong>데이터 조각이 있는 워커</strong>를 먼저 찾습니다.';
                     case 'hive': return '점이 1 부터 5 까지 순서대로 한 바퀴 돕니다. 2 에서 Metastore 가 돌려주는 답은 데이터가 아니라 <strong>HDFS 경로</strong>입니다.';
                     case 'zookeeper': return 'HiveServer2 가 켜질 때 올라가는 점이 <strong>등록</strong>입니다. 그래서 주소에 HiveServer2 이름을 적지 않아도 찾아갈 수 있습니다.';
                     case 'jdbc': return '주소 조각 다섯 개가 상자 셋으로 갑니다. 회색은 ZooKeeper, 먹색 둘은 HiveServer2, 벽돌색 하나만 <strong>YARN 큐</strong>입니다.';

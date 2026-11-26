@@ -113,11 +113,11 @@
 
     <div class="hc-grid">
       <section class="hc-card" data-card="cluster"><h2>CLUSTER</h2><p class="hc-k">클러스터 = 서버 여러 대, 역할은 프로그램</p><div class="hc-fig" id="hc-cluster"></div>
-        <p class="hc-cap">위 줄은 역할이 하나씩인 서버들입니다. 아래 줄 <b>워커</b>는 한 대에 저장(DN)과 계산(NM) 두 역할이 같이 있습니다.</p></section>
+        <p class="hc-cap">위 줄은 역할이 하나씩인 서버들입니다. 아래 줄 <b>워커</b>는 한 대에 데이터를 담는 DN 과 계산 조각을 띄우는 NM 두 역할이 같이 있습니다.</p></section>
       <section class="hc-card" data-card="hdfs"><h2>HDFS</h2><p class="hc-k">파일을 조각내어 여러 상자에 세 벌씩</p><div class="hc-fig" id="hc-hdfs"></div>
         <p class="hc-cap"><b>NameNode 는 목록만</b> 듭니다. 조각은 DataNode 에 세 벌씩 있어서 한 대가 꺼져도 파일은 살아 있습니다.</p></section>
       <section class="hc-card" data-card="yarn"><h2>YARN</h2><p class="hc-k">계산할 자리를 나눠 줍니다</p><div class="hc-fig" id="hc-yarn"></div>
-        <p class="hc-cap"><b>큐는 서버가 아닙니다.</b> ResourceManager 안에서 자원을 나누는 줄입니다. 계산 조각은 데이터 조각이 있는 워커로 갑니다.</p></section>
+        <p class="hc-cap"><b>큐는 서버가 아닙니다.</b> ResourceManager 안에서 자원을 나누는 줄입니다. 계산 조각은 데이터 조각이 있는 워커로 먼저 갑니다.</p></section>
       <section class="hc-card" data-card="hive"><h2>HIVE</h2><p class="hc-k">쿼리 한 건이 지나는 길</p><div class="hc-fig" id="hc-hive"></div>
         <p class="hc-cap">내가 직접 말하는 상대는 <b>HiveServer2</b> 하나입니다. 그 서버가 Metastore 에 위치를 묻고, YARN 에서 자원을 받아, 워커에서 세고, 결과를 돌려줍니다.</p></section>
       <section class="hc-card" data-card="zookeeper"><h2>ZOOKEEPER</h2><p class="hc-k">살아 있는 서버 목록을 다섯 벌</p><div class="hc-fig" id="hc-zookeeper"></div>
@@ -131,7 +131,7 @@
       <ul>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 카드가 놓친 한 가지가 더 나옵니다.</li>
         <li><b>같은 그림을 상자 그림으로</b> 보고 싶으면 <a href="demo-hadoop-boxes.html">하둡 상자 그림 여섯 장</a>이 있습니다. 층이 나뉘는 구조는 그쪽이 더 잘 보입니다.</li>
-        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=hadoop-hive-basics">하둡과 Hive 글</a>에 이 카드들이 절마다 한 장씩 들어 있습니다.</li>
+        <li><b>글로 이어 읽으려면</b> <a href="post.html?id=hadoop-hive-basics">하둡과 Hive 글</a>에 이 카드 가운데 HDFS, YARN, Hive, ZooKeeper 네 장이 2절부터 5절까지 한 장씩 들어 있습니다.</li>
       </ul>
     </section>
   </main>

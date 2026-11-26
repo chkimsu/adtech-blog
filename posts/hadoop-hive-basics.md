@@ -8,7 +8,7 @@
 
 > **한 줄 요약:** 클러스터는 서버 여러 대이고, 접속 주소에 적힌 다섯 상자는 Hive 서버가 아니라 ZooKeeper 입니다. 내가 직접 말하는 상자는 ZooKeeper 와 HiveServer2 둘뿐이고, 나머지 상자들은 서로 알고 있습니다.
 
-> **골라 읽는 법** — 절이 8개인 글입니다. 그림이 절마다 한 장씩 들어 있어 그림만 보고 넘어가도 됩니다.
+> **골라 읽는 법** — 절이 8개인 글입니다. 1절부터 7절까지 그림이 한 장씩, 8절에는 표가 있어 그림과 표만 보고 넘어가도 됩니다.
 >
 > - 상자 읽는 규칙만 → 1절
 > - 저장과 계산이 어떻게 나뉘나 → 2~3절
@@ -16,7 +16,7 @@
 > - 주소 한 줄 해부와 쿼리가 가는 길 → 6~7절
 > - 안 될 때 어디를 보나 → 8절
 
-이 글의 서버 이름, 파일 크기, 큐 이름은 전부 설명을 위한 가상 값입니다. 그림 속 상자 색은 넷입니다. 파랑은 저장(HDFS), 벽돌색은 계산(YARN), 먹색은 Hive 서버, 회색은 ZooKeeper 입니다.
+이 글의 서버 이름, 파일 크기, 큐 이름은 전부 설명을 위한 가상 값입니다. 카드 그림(2~5절)의 색은 넷입니다. 파랑은 저장(HDFS), 벽돌색은 계산(YARN), 먹색은 Hive 서버, 회색은 ZooKeeper 입니다. 상자 그림(1, 6, 7절)에서는 파란 상자가 내 접속 주소가 직접 가리키는 서버이고 워커 상자 안의 회색 네모는 데이터 조각, 벽돌색 네모는 계산 조각입니다.
 
 ---
 
@@ -26,7 +26,7 @@
 
 하둡 클러스터라는 말은 서버 한 대를 가리키는 말이 아닙니다. 상자가 수십에서 수백 개 놓인 서버 무리를 가리킵니다. 상자 하나가 서버 한 대이고, 상자마다 돌아가는 프로그램이 다릅니다. NameNode 가 도는 상자, ResourceManager 가 도는 상자, HiveServer2 가 도는 상자가 따로 있습니다. NameNode 는 파일이 어디에 있는지 적어 둡니다. ResourceManager 는 일감을 어느 서버에 줄지 정합니다.
 
-역할이 하나뿐인 상자는 몇 대 안 됩니다. 나머지 대부분은 워커라고 부르는 상자이고, 워커 한 대에는 역할이 둘 붙어 있습니다. DataNode 는 데이터를 담고, NodeManager 는 계산을 합니다. 앞은 파일 조각을 실제로 담는 서버이고, 뒤는 서버 한 대에서 일감을 돌리는 담당입니다. 둘을 같은 상자에 두는 이유는 하나입니다. 데이터가 있는 자리에서 바로 계산하면 384 MB 파일을 네트워크로 옮길 필요가 없습니다.
+역할이 하나뿐인 상자는 몇 대 안 됩니다. 나머지 대부분은 워커라고 부르는 상자이고, 워커 한 대에는 역할이 둘 붙어 있습니다. DataNode 는 데이터를 담고, NodeManager 는 계산 조각을 띄웁니다. 앞은 파일 조각을 실제로 담는 서버이고, 뒤는 ResourceManager 가 배분한 자원으로 자기 서버에 계산 조각을 띄우고 지켜보는 담당입니다. 둘을 같은 상자에 두는 이유는 하나입니다. 데이터가 있는 자리에서 바로 계산하면 384 MB 파일을 네트워크로 옮길 필요가 없습니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-hadoop-boxes.html?embed=1&fig=1" height="620" loading="lazy" title="하둡 클러스터 상자 그림"></iframe>
@@ -74,14 +74,14 @@
 
 384 MB 파일의 줄 수를 세는 쿼리를 보냈다고 하겠습니다. 이 일은 조각 셋을 각각 세고 합치는 일로 나뉩니다. 조각 하나를 세는 일이 계산 조각 하나입니다. 계산 조각을 어느 상자에서 돌릴지 정하는 것이 YARN 이고, 그 머리가 ResourceManager 상자입니다.
 
-ResourceManager 는 클러스터 전체의 CPU 와 메모리를 큐라는 줄로 나눠 둡니다. 큐는 서버가 아닙니다. 팀마다, 용도마다 자원을 얼마나 쓸 수 있는지 정한 줄입니다. 지훈 씨가 받은 주소의 마지막 조각 `tez.queue.name=analytics` 가 이 줄 이름입니다. 클러스터 CPU 가 1,000개이고 analytics 줄이 30% 라면, 이 줄에 선 쿼리들은 300개 안에서 나눠 씁니다. 300개가 다 쓰이는 중이면 새 쿼리는 줄에서 기다립니다.
+ResourceManager 는 클러스터 전체의 CPU 와 메모리를 큐라는 줄로 나눠 둡니다. 큐는 서버가 아닙니다. 팀마다, 용도마다 자원을 얼마나 쓸 수 있는지 정한 줄입니다. 지훈 씨가 받은 주소의 마지막 조각 `tez.queue.name=analytics` 가 이 줄 이름입니다. 클러스터 CPU 가 1,000개이고 analytics 줄이 30% 이고 최대치(maximum-capacity)도 30% 라면, 이 줄에 선 쿼리들은 300개 안에서 나눠 씁니다. 300개가 다 쓰이는 중이면 새 쿼리는 줄에서 기다립니다.
 
 <div class="demo-embed-wrap">
 <iframe class="demo-embed" src="demo-hadoop-cards.html?embed=1&card=yarn" height="520" loading="lazy" title="YARN 카드"></iframe>
 <a class="demo-embed-open" href="demo-hadoop-cards.html" target="_blank" rel="noopener">↗ 카드 여섯 장 전체로 열기</a>
 </div>
 
-계산 조각은 아무 상자에나 가지 않습니다. 조각 1 을 세는 일은 조각 1 이 있는 워커 1, 3, 5 중 한 대로 갑니다. 2절에서 데이터를 세 벌 둔 것이 여기서 두 번째로 값을 합니다. 세 대 중 한가한 대를 고를 수 있습니다.
+계산 조각은 데이터가 있는 상자를 먼저 찾습니다. 조각 1 을 세는 일은 조각 1 이 있는 워커 1, 3, 5 중 한 대로 먼저 갑니다. 2절에서 데이터를 세 벌 둔 것이 여기서 두 번째로 값을 합니다. 세 대 중 한가한 대를 고를 수 있습니다.
 
 ## 4. Hive: SQL 을 받는 서버와 목록을 가진 서버
 
@@ -139,13 +139,13 @@ jdbc:hive2://zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181,zk4.
 <a class="demo-embed-open" href="demo-hadoop-boxes.html" target="_blank" rel="noopener">↗ 상자 그림 여섯 장 전체로 열기</a>
 </div>
 
-그림에서 화살표가 나가는 상자는 셋뿐입니다. 회색 조각 하나가 ZooKeeper 로 갑니다. 먹색 조각 둘은 HiveServer2 로 가고, 물음표 뒤 조각 하나가 ResourceManager 의 큐로 갑니다. Metastore 와 HDFS 로 가는 화살표는 없습니다. 그 둘의 주소는 내 주소에 없고 HiveServer2 가 알고 있습니다.
+그림에서 화살표가 나가는 상자는 셋뿐입니다. 서버 다섯 개가 적힌 조각은 ZooKeeper 다섯 대로, zooKeeperNamespace 조각은 그 안의 목록으로 갑니다. 말하는 방식(transportMode)과 계정 조각 둘은 HiveServer2 로 가고 물음표 뒤 조각 하나가 ResourceManager 의 큐로 갑니다. Metastore 와 HDFS 로 가는 화살표는 없습니다. 그 둘의 주소는 내 주소에 없고 HiveServer2 가 알고 있습니다.
 
 물음표 자리를 틀리면 조용히 무시됩니다. 큐 이름을 세미콜론 쪽에 적으면 접속 조건으로 읽혀 큐가 default 로 잡힙니다. 쿼리는 돌아가는데 남의 팀 자원을 쓰는 상태가 됩니다.
 
 ## 7. 쿼리 한 건이 지나는 길
 
-**내가 직접 가는 곳은 ZooKeeper 와 HiveServer2 두 자리입니다. 나머지 다섯 자리는 HiveServer2 가 대신 다닙니다.**
+**내가 직접 가는 곳은 ZooKeeper 와 HiveServer2 두 곳(1~3)이고 4 부터 7 까지는 HiveServer2 가 대신 다닙니다.**
 
 지훈 씨가 `SELECT count(*) FROM adlog.ad_click` 을 보내면 일곱 자리를 지납니다. 1 내 컴퓨터가 ZooKeeper 에 「HiveServer2 어디 있어」를 묻습니다. 2 ZooKeeper 가 목록에서 살아 있는 hs2-a 를 알려 줍니다. 3 내 컴퓨터가 hs2-a 에 계정과 SQL 을 보냅니다. 여기까지가 접속입니다.
 
@@ -168,12 +168,12 @@ jdbc:hive2://zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181,zk4.
 |---|---|---|
 | ZooKeeper 연결 실패, Connection timed out | 1 ZooKeeper | 사내망인지, 포트가 열려 있는지, 다섯 주소에 오타가 없는지 |
 | HiveServer2 configs from ZooKeeper 를 못 읽음, 목록이 비어 있음 | 2 목록 | 폴더 이름 오타인지, HiveServer2 가 하나도 안 떠 있는지 |
-| Error validating the login | 3 HiveServer2 | 계정과 비밀번호. 비밀번호에 특수 문자가 있으면 따옴표로 감쌌는지 |
+| Error validating the login | 3 HiveServer2 | 계정과 비밀번호. 비밀번호에 특수 문자가 있으면 작은따옴표로 감쌌는지 |
 | Table not found, Database does not exist | 4 Metastore | 데이터베이스 이름을 `adlog.ad_click` 처럼 붙였는지 |
 | Queue does not exist, 오래 ACCEPTED 로 대기 | 5 YARN | 큐 이름 오타인지, 큐에 낼 권한이 있는지, 큐가 가득 찼는지 |
 | Permission denied, access=READ, inode= | 6과 7 HDFS | 테이블 파일에 읽기 권한이 있는지. 목록은 보여도 파일은 못 읽는 경우입니다 |
 
-세 번째 줄은 지훈 씨가 첫날 겪은 것입니다. 비밀번호에 느낌표가 있었는데 셸이 그것을 먹어 버렸습니다. 주소 전체를 따옴표로 감싸니 붙었습니다. 다섯 번째 줄의 ACCEPTED 는 오류가 아닙니다. 줄에 서 있다는 뜻이라 기다리면 돌아갑니다. 큐가 늘 가득 차 있으면 큐 이름을 잘못 적어 default 로 들어간 것이 아닌지부터 봅니다.
+세 번째 줄은 지훈 씨가 첫날 겪은 것입니다. 비밀번호에 느낌표가 있었는데 셸이 그것을 먹어 버렸습니다. 주소 전체를 작은따옴표(')로 감싸니 붙었습니다. 다섯 번째 줄의 ACCEPTED 는 오류가 아닙니다. 줄에 서 있다는 뜻이라 기다리면 돌아갑니다. 큐가 늘 가득 차 있으면 큐 이름을 잘못 적어 default 로 들어간 것이 아닌지부터 봅니다.
 
 ## 한눈 정리
 
@@ -194,7 +194,7 @@ jdbc:hive2://zk1.example.com:2181,zk2.example.com:2181,zk3.example.com:2181,zk4.
 - **Metastore 에는 데이터가 없습니다.** 목록만 있습니다. 테이블 정의가 보여도 파일 권한이 없으면 읽지 못합니다.
 - **큐는 서버 이름으로 찾지 않습니다.** 큐는 ResourceManager 안의 줄입니다. 웹 화면(포트 8088)에서 줄 상태를 봅니다.
 - **큐 이름은 세미콜론 쪽에 적지 않습니다.** 접속 조건으로 읽혀 조용히 무시되고 default 큐로 들어갑니다.
-- **ACCEPTED 는 오류가 아닙니다.** 줄에 서 있다는 뜻입니다. 오래 서 있으면 큐가 가득 찬 것입니다.
+- **ACCEPTED 는 오류가 아닙니다.** 줄에 서 있다는 뜻입니다. 오래 서 있으면 큐가 가득 찼을 수 있습니다.
 - **DROP TABLE 이 파일까지 지운다고 단정하지 않습니다.** 테이블이 managed 인지 external 인지에 따라 다릅니다. external 은 목록만 지워집니다.
 - **비밀번호가 든 주소는 그대로 공유하지 않습니다.** 주소 한 줄에 계정과 비밀번호가 함께 들어 있습니다.
 

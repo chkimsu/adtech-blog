@@ -107,9 +107,9 @@
         s += T(54, 100, '128 MB 씩 조각', 'lbl sm', 'middle');
         [0, 1, 2].forEach(i => { s += blk(104, 118 + i * 32, String(i + 1), 'a', 18); });
         s += srv(200, 10, { cls: 'a', label: 'NameNode' });
-        s += list(262, 12, 160, 58, [{ t: '조각 1 →  A, C', cls: 'mono' }, { t: '조각 2 →  B, C', cls: 'mono' }, { t: '조각 3 →  A, B', cls: 'mono' }]);
+        s += list(262, 12, 160, 58, [{ t: '조각 1 →  A, B, C', cls: 'mono' }, { t: '조각 2 →  A, B, C', cls: 'mono' }, { t: '조각 3 →  A, B, C', cls: 'mono' }]);
         s += T(262, 84, '어디에 있나 목록만 든다', 'lbl sm');
-        const ys = [96, 170, 244], names = ['A', 'B', 'C'], have = [['1', '3'], ['2', '3'], ['1', '2']];
+        const ys = [96, 170, 244], names = ['A', 'B', 'C'], have = [['1', '2', '3'], ['1', '2', '3'], ['1', '2', '3']];
         ys.forEach((y, i) => {
             s += srv(340, y, { cls: 'a', label: 'DataNode ' + names[i] });
             have[i].forEach((b, k) => { s += blk(398 + k * 20, y + 14, b, 'a', 16); });

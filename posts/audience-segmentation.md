@@ -1,6 +1,6 @@
 "누구에게 보여줄 것인가?" — 광고가 노출되기 전, 시스템이 가장 먼저 답해야 할 질문입니다. 아무리 정교한 pCTR 모델을 만들고, 최적의 입찰 전략을 설계하더라도, **적절한 오디언스에게 도달하지 못하면** 모든 것이 무의미합니다. 오디언스 세그멘테이션은 수백만~수억 명의 유저를 **행동 가능한 그룹(Actionable Audience)**으로 묶는 일입니다. 이 그룹이 리타겟팅과 모든 타겟팅 전략의 출발점입니다. [Lookalike 모델링(Lookalike Modeling)](post.html?id=lookalike-modeling)의 시드 오디언스도 여기서 나옵니다.
 
-세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [피처 스토어(Feature Store)](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)과 열린 RTB(Open RTB)가 그렇습니다. 이 글이 다루는 범위는 넓습니다. 규칙 기반(Rule-based) SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 정리합니다.
+세그멘테이션은 데이터 레이어와 모델링 레이어의 교차점에 있습니다. [Ad Tech 개발 레이어](post.html?id=adtech-dev-layers)에서 그 자리를 확인할 수 있습니다. 이벤트 로그는 [피처 스토어(Feature Store)](post.html?id=feature-store-serving)를 통해 실시간으로 서빙됩니다. 오디언스를 정의하고 활성화하는 방식은 무대마다 다릅니다. [닫힌 생태계(Walled Garden)](post.html?id=walled-garden)와 열린 RTB(Open RTB)가 그렇습니다. 이 글이 다루는 범위는 넓습니다. 규칙 기반(Rule-based) SQL 세그먼트, ML 기반 클러스터링, 실시간 스트리밍 할당, pCTR 모델 연동까지 이어집니다. 세그멘테이션 전체를 엔지니어 관점에서 정리합니다.
 
 > **골라 읽는 법** — 절이 12개인 긴 글입니다. 처음부터 다 읽지 않아도 됩니다.
 >
@@ -22,7 +22,7 @@
 | **규칙 기반 (SQL)** | 이벤트 로그, 프로필 | 시간~일 (배치) | 중간 (조건 조합) | 매우 높음 | 낮음 |
 | **RFM Scoring** | 거래 데이터 | 일 1회 (배치) | 중간 (5×5×5 = 125셀) | 높음 | 낮음 |
 | **K-Means 클러스터링(K-Means Clustering)** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 높음 (K개 클러스터) | 중간 (라벨링 필요) | 중간 |
-| **GMM (확률로 나눠 넣기(Soft Assignment))** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 매우 높음 (확률적) | 낮음 (확률 분포) | 높음 |
+| **GMM (Soft Assignment)** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 매우 높음 (확률적) | 낮음 (확률 분포) | 높음 |
 | **Streaming (CEP)** | 실시간 이벤트 스트림 | 초~분 | 낮음 (단순 규칙) | 매우 높음 | 높음 (인프라) |
 
 ### DMP vs CDP 비교
@@ -35,7 +35,7 @@
 | **식별자** | 쿠키(Cookie) ID, MAID (비결정론적) | 로그인 ID, 이메일 해시 (결정론적) |
 | **데이터 지속성** | 90일 (쿠키 수명) | 무제한 (고객 동의 기반) |
 | **주요 용도** | 프로그래매틱 광고 타겟팅 | 전 채널 개인화 + 광고 |
-| **대표 서비스** | Lotame, Oracle BlueKai(2024년 사업 종료) | Treasure Data, 세그먼트(Segment) (Twilio), mParticle |
+| **대표 서비스** | Lotame, Oracle BlueKai(2024년 사업 종료) | Treasure Data, Segment (Twilio), mParticle |
 | **현재 추세** | 축소 (Safari, Firefox의 쿠키 차단) | 성장 (자사 데이터 중심) |
 
 > **핵심 전환**: Safari와 Firefox가 외부 쿠키를 차단하고 GDPR/CCPA 규제도 세졌습니다. 그래서 세그멘테이션의 기반이 "외부 데이터 구매(DMP)"에서 "자사 데이터 구축(CDP)"으로 옮겨 가고 있습니다. 이 전환에 실패한 광고주는 타겟팅 정밀도에서 구조적 열위에 놓입니다.
@@ -348,7 +348,7 @@ $$P(x) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$$
 2. **M-step (Maximization)**: $\gamma_{ik}$를 가중치로 사용하여 $\pi_k$, $\mu_k$, $\Sigma_k$를 업데이트합니다.
 :::
 
-**확률로 나눠 넣기(한 사람을 여러 무리에 확률로 나눠 넣는 것)의 광고 활용**: GMM의 출력은 각 유저가 각 클러스터에 속할 **확률 벡터**입니다. 유저 A가 "패션" 클러스터에 70%, "스포츠" 클러스터에 30% 확률로 할당된다면:
+**Soft Assignment(한 사람을 여러 무리에 확률로 나눠 넣는 것)의 광고 활용**: GMM의 출력은 각 유저가 각 클러스터에 속할 **확률 벡터**입니다. 유저 A가 "패션" 클러스터에 70%, "스포츠" 클러스터에 30% 확률로 할당된다면:
 - 패션 광고 캠페인에서 유저 A의 입찰 가중치를 0.7로 설정
 - 스포츠 광고 캠페인에서도 0.3 가중치로 입찰 가능
 - K-Means였다면 유저 A는 "패션"에만 할당되어 스포츠 광고 기회를 놓침
@@ -373,7 +373,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 # 1단계: 유저 임베딩을 읽는다
-# Two-Tower User Tower 의 출력이다. 자기 임베딩 파일이 있어야 그대로 돌아간다. K 선택 기준과 라벨 붙이는 순서를 보는 게 이 코드의 목적이다.
+# Two-Tower User Tower 의 출력이다. 자기 임베딩 파일이 있어야 그대로 돌아간다.
 user_embeddings = np.load('user_embeddings.npy')  # shape: (N, 128)
 user_ids = np.load('user_ids.npy')                # shape: (N,)
 
@@ -534,7 +534,7 @@ class SegmentAssigner(ProcessFunction):
 
 ---
 
-## 6. 세그먼트 as Feature: pCTR 모델 연동
+## 6. Segment as Feature: pCTR 모델 연동
 
 세그먼트를 만드는 것 자체는 절반에 불과합니다. 세그먼트의 **실질적 가치**는 pCTR 모델에 피처로 투입되어 입찰 결정에 영향을 미칠 때 실현됩니다.
 
@@ -570,7 +570,7 @@ graph LR
 - **단점**: 세그먼트 수가 증가하면 sparse해지고, 세그먼트 간 의미적 유사성을 포착하지 못함
 - **적용 시점**: 세그먼트 수가 50개 미만일 때 적합
 
-**2. 세그먼트 Embedding**
+**2. Segment Embedding**
 
 각 세그먼트에 대해 dense embedding vector를 학습합니다. pCTR 모델의 embedding table에 segment_id를 추가합니다. 그리고 다른 피처 embedding과 함께 interaction을 학습합니다.
 
@@ -635,7 +635,7 @@ PSI는 세그먼트 내 유저의 **피처 분포**에도 적용합니다. 예�
 
 $$J(A, B) = \frac{|A \cap B|}{|A \cup B|}$$
 
-$J(A, B) > 0.5$이면 두 세그먼트는 높은 중복을 보이며, 병합하거나 정의를 세분화하는 것을 검토해야 합니다. 반대로 세그먼트를 일부러 계층적으로 설계했다면 높은 Jaccard가 정상입니다. 예를 들어 "구매자" ⊃ "고빈도 구매자" ⊃ "Champions" 같은 구조입니다. 이때는 포함 관계(Containment)를 따로 측정합니다.
+$J(A, B) > 0.5$이면 두 세그먼트는 높은 중복을 보이며, 병합하거나 정의를 세분화하는 것을 검토해야 합니다. 반대로 세그먼트를 일부러 계층적으로 설계했다면 하위 세그먼트가 상위 세그먼트 안에 모두 드는 것이 정상입니다. 예를 들어 "구매자" ⊃ "고빈도 구매자" ⊃ "Champions" 같은 구조입니다. 이때는 포함 관계(Containment)를 따로 측정합니다.
 
 $$\text{Containment}(A, B) = \frac{|A \cap B|}{|A|}$$
 
@@ -645,10 +645,10 @@ Containment가 높고 Jaccard가 낮다면, A가 B의 부분집합인 계층 구
 
 | 메트릭 | 설명 | 경고 임계값 | 모니터링 주기 |
 |--------|------|-----------|-------------|
-| **세그먼트 Size** | 세그먼트 유저 수 | ±30% 이상 급변 | 일 1회 |
+| **Segment Size** | 세그먼트 유저 수 | ±30% 이상 급변 | 일 1회 |
 | **PSI** | 분포 안정성 지수 | > 0.25 | 주 1회 |
 | **Overlap (Jaccard)** | 세그먼트 간 중복도 | > 0.5 | 월 1회 |
-| **P/O Ratio** | 예측/실제 전환율 비 | ±20% 이상 괴리 | 일 1회 |
+| **P/O Ratio** | 예측/실제 CTR 비 | ±20% 이상 괴리 | 일 1회 |
 | **Coverage** | 전체 유저 중 세그먼트 할당 비율 | < 70% | 주 1회 |
 | **Freshness** | 마지막 갱신으로부터 경과 시간 | SLA 초과 | 실시간 |
 
@@ -718,11 +718,11 @@ graph TB
 | **Cross-device** | 확률론적 매칭 (60-70% 정확도) | 결정론적 매칭 (로그인 기반, 95%+) |
 | **세그먼트 구축** | 외부 데이터 구매 | 자체 데이터로 직접 구축 |
 
-**CDP의 핵심 가치**: "세그먼트 Buying"에서 "세그먼트 Building"으로의 전환입니다. 외부에서 세그먼트를 구매하는 대신, 자사 데이터를 통합하여 더 정확하고 풍부한 세그먼트를 직접 구축합니다.
+**CDP의 핵심 가치**: "Segment Buying"에서 "Segment Building"으로의 전환입니다. 외부에서 세그먼트를 구매하는 대신, 자사 데이터를 통합하여 더 정확하고 풍부한 세그먼트를 직접 구축합니다.
 
 **대표 CDP 서비스**:
 - **Treasure Data**: 엔터프라이즈 CDP. 일본/한국 시장에서 강세.
-- **세그먼트 (Twilio)**: 개발자 친화적 CDP. API-first 설계. 300+ 통합.
+- **Segment (Twilio)**: 개발자 친화적 CDP. API-first 설계. 300+ 통합.
 - **mParticle**: 모바일 앱 중심 CDP. SDK 기반 실시간 데이터 수집.
 - **Adobe Real-Time CDP**: 마케팅 클라우드 통합. 대기업 중심.
 
@@ -730,7 +730,7 @@ graph TB
 
 ### 8-3. 닫힌 생태계의 세그먼트 전략
 
-[닫힌 생태계](post.html?id=walled-garden)은 쿠키 차단의 영향을 상대적으로 적게 받습니다. 네이버, 카카오, Meta, Google이 여기 속합니다. 이들은 처음부터 **로그인 기반 자사 데이터**를 보유하고 있기 때문입니다.
+[닫힌 생태계](post.html?id=walled-garden)는 쿠키 차단의 영향을 상대적으로 적게 받습니다. 네이버, 카카오, Meta, Google이 여기 속합니다. 이들은 처음부터 **로그인 기반 자사 데이터**를 보유하고 있기 때문입니다.
 
 **닫힌 생태계의 세그멘테이션 우위**:
 
@@ -738,11 +738,11 @@ graph TB
 
 2. **Cross-service 데이터**: 네이버는 검색, 쇼핑, 뉴스, 블로그, 페이를 연결. 카카오는 톡, 페이, 쇼핑, 지도를 연결. 이 데이터의 결합은 외부 DMP/CDP가 도달할 수 없는 수준의 세그멘테이션을 가능하게 합니다.
 
-3. **실시간 행동 신호**: 유저가 플랫폼 내에서 행동하는 순간 세그먼트에 반영. 외부 CDP는 이벤트 수집과 세그먼트 동기화에 수분~수시간 지연이 발생하지만, 닫힌 생태계는 내부 시스템이므로 사실상 실시간.
+3. **실시간 행동 신호**: 실시간 세그먼트(5절)는 유저가 플랫폼 내에서 행동한 지 초~분 안에 반영. 외부 CDP는 이벤트 수집과 세그먼트 동기화에 수분~수시간 지연이 발생하지만 닫힌 생태계는 내부 시스템이므로 실시간 반영이 가능. 관심사 같은 집계 세그먼트는 닫힌 생태계도 배치로 갱신(11-2절).
 
-4. **Privacy-safe Targeting**: 유저 데이터가 플랫폼을 떠나지 않음. 광고주는 세그먼트를 직접 만지지 않고, 플랫폼이 제공하는 타겟팅 옵션(연령, 관심사, Lookalike 등)을 선택. 프라이버시 규제에 구조적으로 유리.
+4. **Privacy-safe Targeting**: 유저 데이터가 플랫폼을 떠나지 않음. 광고주는 세그먼트의 회원 목록을 직접 만지지 않고 플랫폼이 제공하는 타겟팅 옵션(연령, 관심사, Lookalike 등)을 고르거나 고객 목록(이메일 해시)을 올림. 프라이버시 규제에 구조적으로 유리.
 
-**광고주의 딜레마**: 닫힌 생태계는 가장 정밀한 타겟팅을 제공하지만, 광고주의 **통제권(Control)**이 제한됩니다. 세그먼트 정의를 직접 수정할 수 없고, 유저 레벨 데이터를 추출할 수 없으며, 플랫폼의 알고리즘(블랙박스)에 의존해야 합니다. 열린 RTB에서는 DSP를 통해 세그먼트를 직접 정의하고 입찰 전략을 완전히 통제할 수 있습니다. 대신 데이터 품질은 닫힌 생태계에 미치지 못합니다.
+**광고주의 딜레마**: 닫힌 생태계는 가장 정밀한 타겟팅을 제공하지만, 광고주의 **통제권(Control)**이 제한됩니다. 플랫폼이 만든 세그먼트의 정의를 직접 수정할 수 없고 유저 레벨 데이터를 추출할 수 없으며 플랫폼의 알고리즘(블랙박스)에 의존해야 합니다. 열린 RTB에서는 DSP를 통해 세그먼트를 직접 정의하고 입찰 전략을 완전히 통제할 수 있습니다. 대신 데이터 품질은 닫힌 생태계에 미치지 못합니다.
 
 ---
 
@@ -761,11 +761,11 @@ graph TB
 - **Opt-out 권리**: 유저가 개인 정보 판매를 거부할 수 있음. 외부 DMP에 세그먼트 데이터를 공유하는 것이 "판매"에 해당할 수 있음.
 - **Do Not Sell**: CCPA opt-out 유저는 외부 세그먼트 공유 대상에서 제외.
 
-**기술적 구현**: 유저의 동의(Consent) 상태를 세그먼트 파이프라인 전체에 전파해야 합니다. OpenRTB 2.6에서는 TCF 2.0 consent string이 bid request에 담깁니다. 필드는 `regs.ext.gdpr` 와 `user.ext.consent` 입니다. DSP는 이 consent string을 파싱하여, 동의하지 않은 유저에 대해서는 세그먼트 기반 타겟팅을 비활성화해야 합니다.
+**기술적 구현**: 유저의 동의(Consent) 상태를 세그먼트 파이프라인 전체에 전파해야 합니다. OpenRTB 2.6에서는 TCF 2.0 consent string이 bid request의 `user.consent` 에 담기고 GDPR 적용 여부는 `regs.gdpr`(1 이면 적용)에 담깁니다. 2.6 전에는 둘 다 `ext` 아래에 있었습니다. DSP는 이 consent string을 파싱하여, 동의하지 않은 유저에 대해서는 세그먼트 기반 타겟팅을 비활성화해야 합니다.
 
 ```
 # TCF 2.0 Consent String 예시 (Base64 인코딩)
-user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+user.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 ```
 
 이 문자열을 디코딩하면, 어떤 벤더(Vendor)가 어떤 목적(Purpose)에 대해 동의를 받았는지 확인할 수 있습니다. Purpose 4 (개인화 광고)에 동의하지 않은 유저는 행동 세그먼트 기반 타겟팅에서 제외됩니다.
@@ -776,7 +776,7 @@ user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 
 | 플랫폼 | 최소 오디언스 크기 | 적용 대상 |
 |--------|-----------------|----------|
-| Google Ads | 1,000명 | Custom Audiences, Remarketing Lists |
+| Google Ads | 100명 | Custom Audiences, Remarketing Lists |
 | Meta Ads | 100명 | Custom Audiences |
 | DV360 | 100명 | First-Party Audiences |
 | 네이버 SA | 비공개 (추정 500+) | Custom Targeting |
@@ -797,7 +797,7 @@ $\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 
 
 전체 구조 비교는 [닫힌 생태계](post.html?id=walled-garden) 포스트에 있습니다. 세그멘테이션에 초점을 맞추면 차이가 더 선명해집니다.
 
-| 구분 | 열린 RTB | 닫힌 생태계 |
+| 구분 | 열린 RTB | 닫힌 생태계 (자사 지면) |
 |------|----------|--------------|
 | **세그먼트 출처** | DSP-side (외부 DMP, 자체 CDP) | 플랫폼 내 자사 데이터 |
 | **식별자** | 쿠키 / MAID (점점 제한적) | 로그인 ID (결정론적) |
@@ -808,7 +808,7 @@ $\epsilon$은 프라이버시 예산(Privacy Budget)으로, 작을수록 강한 
 | **세그먼트 활성화** | Bid Request에 segment ID 포함 | 플랫폼 내부 직접 매칭 |
 | **광고주 제어** | 높음 (직접 세그먼트 정의/구매) | 제한적 (플랫폼 제공 옵션만) |
 | **데이터 투명성** | 높음 (유저 레벨 로그 확인 가능) | 낮음 (집계 리포트만 제공) |
-| **Lookalike 시드** | 직접 업로드 (이메일 해시 목록) | 전환 픽셀 기반 자동 생성 |
+| **Lookalike 시드** | 직접 업로드 (이메일 해시 목록, 쿠키/MAID 로 매칭) | 직접 업로드 (이메일 해시 목록, 로그인 ID 로 매칭) 또는 전환 픽셀 기반 자동 생성 |
 
 **열린 RTB에서의 세그먼트 전달**: OpenRTB bid request에서 세그먼트 정보는 `user.data` 필드에 포함됩니다.
 
@@ -853,7 +853,7 @@ Redis Key: user_segments:{user_id}
 Redis Value (Set): {"high_value", "fashion_interest", "active_searcher"}
 ```
 
-**정방향 색인(Forward Index) (세그먼트 → Users)**: 세그먼트 크기 계산, Lookalike 시드 추출, 세그먼트 내보내기 시 사용합니다. 수백만 명의 유저를 포함하는 세그먼트는 일반적인 Set으로 저장하면 메모리 비용이 폭증합니다.
+**정방향 색인(Forward Index) (Segment → Users)**: 세그먼트 크기 계산, Lookalike 시드 추출, 세그먼트 내보내기 시 사용합니다. 수백만 명의 유저를 포함하는 세그먼트는 일반적인 Set으로 저장하면 메모리 비용이 폭증합니다.
 
 **Roaring Bitmap**: 정방향 색인의 효율적 구현에 Roaring Bitmap이 사용됩니다. 정수 집합을 압축 저장하며, AND/OR/XOR 같은 집합 연산을 매우 빠르게 수행합니다. 유저 ID를 정수로 매핑하면, 세그먼트 멤버십을 Roaring Bitmap으로 표현할 수 있습니다.
 
@@ -889,19 +889,19 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| **segment_id** | 고유 식별자 | `high_value_recent_30d` |
+| **segment_id** | 고유 식별자 | `high_value_recent` |
 | **name** | 사람이 읽는 이름 | 고가치 최근 구매자 (30일) |
 | **description** | 세그먼트 정의 설명 | 최근 30일 내 10만원+, 3회+ 구매 유저 |
 | **owner** | 담당 팀/개인 | marketing-analytics@company.com |
 | **type** | 세그먼트 유형 | 행동 기반 / RFM / ML / Lifecycle |
 | **pipeline** | 배치/스트리밍/하이브리드 | Batch (Spark SQL) |
-| **refresh_cadence** | 갱신 주기 | 매일 06:00 KST |
-| **source_tables** | 입력 데이터 소스 | transactions, user_profiles |
-| **downstream_consumers** | 사용처 | campaign_summer_2024, pCTR_model_v3 |
+| **refresh_cadence** | 갱신 주기 | 매일 06:00 UTC |
+| **source_tables** | 입력 데이터 소스 | transactions |
+| **downstream_consumers** | 사용처 | summer_crosssell_2024, seg_high_value_recent |
 | **created_at** | 생성일 | 2024-03-15 |
-| **last_refreshed** | 마지막 갱신 시각 | 2024-07-10 06:23:15 KST |
+| **last_refreshed** | 마지막 갱신 시각 | 2024-07-10 06:23:15 UTC |
 | **current_size** | 현재 세그먼트 크기 | 1,234,567 |
-| **min/max_size** | 크기 경고 범위 | 500,000 ~ 3,000,000 |
+| **min/max_size** | 크기 경고 범위 | 1,000 ~ 5,000,000 |
 
 이 카탈로그는 단순한 문서화를 넘어, **데이터 거버넌스**의 핵심 인프라입니다. 어떤 세그먼트가 어떤 데이터를 사용하고, 누가 관리하며, 어디에 소비되는지를 투명하게 추적합니다. 세그먼트를 삭제하거나 정의를 변경할 때, downstream 영향 분석(Impact Analysis)이 가능해집니다.
 
@@ -910,7 +910,7 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 세그먼트 시스템은 [Lookalike 모델링](post.html?id=lookalike-modeling)의 공급원입니다. 정확히는 **시드 오디언스(Seed Audience)**를 대는 쪽입니다. Lookalike 모델은 시드 오디언스와 유사한 유저를 찾아 오디언스를 확장하며, 시드의 품질이 Lookalike의 품질을 결정합니다.
 
 **시드 추출 요구사항**:
-1. **효율적 Export**: "Champions" 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 합니다. 정방향 색인(세그먼트 → Users)이 필수인 이유입니다.
+1. **효율적 Export**: "Champions" 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 합니다. 정방향 색인(Segment → Users)이 필수인 이유입니다.
 2. **적절한 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 과적합됩니다. 반대로 너무 크면(> 100만) 시드 자체가 너무 일반적이어서 유사 유저를 찾는 의미가 희석됩니다. 일반적으로 1만 ~ 10만이 최적 범위입니다.
 3. **시드 품질**: 전환 데이터가 풍부하고, 명확한 행동 패턴을 가진 세그먼트가 좋은 시드입니다. "Champions (R5-F5-M5)" 또는 "최근 30일 3회+ 구매자"가 대표적입니다.
 4. **시드 신선도**: 오래된 시드로 만든 Lookalike는 현재 유저 행동 패턴을 반영하지 못합니다. 시드 세그먼트의 갱신 주기와 Lookalike 모델 재학습 주기를 동기화해야 합니다.
@@ -939,7 +939,7 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 
 3. **피처 스토어 연동이 세그먼트의 실질적 가치를 결정한다.** 세그먼트를 만들었지만 pCTR 모델에 피처로 넣지 못하면, 그것은 리포팅 도구에 불과합니다. [피처 스토어](post.html?id=feature-store-serving)를 통해 10ms 이내에 세그먼트를 서빙하고, embedding으로 모델에 통합해야 입찰 결정에 실질적 영향을 미칩니다.
 
-4. **DMP → CDP 전환은 선택이 아닌 필수다.** Safari/Firefox의 외부 쿠키 차단과 GDPR/CCPA가 이를 강제합니다. 자사 자사 데이터를 중심으로 세그멘테이션 역량을 구축하지 못하면, 타겟팅 정밀도에서 구조적 열위에 놓입니다. [닫힌 생태계](post.html?id=walled-garden)의 자사 데이터 우위가 더욱 공고해지는 환경에서, 열린 RTB 참여자는 CDP 기반 세그먼트 역량이 생존의 조건입니다.
+4. **DMP → CDP 전환은 선택이 아닌 필수다.** Safari/Firefox의 외부 쿠키 차단과 GDPR/CCPA가 이를 강제합니다. 자사 데이터를 중심으로 세그멘테이션 역량을 구축하지 못하면, 타겟팅 정밀도에서 구조적 열위에 놓입니다. [닫힌 생태계](post.html?id=walled-garden)의 자사 데이터 우위가 더욱 공고해지는 환경에서, 열린 RTB 참여자는 CDP 기반 세그먼트 역량이 생존의 조건입니다.
 
 5. **세그먼트 건강성 모니터링(PSI, Overlap, P/O)은 구축만큼 중요하다.** 방치된 세그먼트는 시간이 지남에 따라 분포가 드리프트하고, pCTR 모델의 Calibration을 점진적으로 훼손합니다. 세그먼트 카탈로그, 자동화된 건강성 대시보드, 세그먼트별 P/O 모니터링을 함께 운영합니다.
 
@@ -955,5 +955,5 @@ Roaring Bitmap은 세그먼트 Overlap 분석(Jaccard 계산)에서 특히 유�
 - Segment (Twilio). "The CDP Report: Unifying Customer Data for Better Experiences." (2023).
 - McMahan, H.B., Holt, G., Sculley, D., et al. (2013). "Ad Click Prediction: a View from the Trenches." *Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*.
 - Dwork, C. (2006). "Differential Privacy." *Proceedings of the 33rd International Colloquium on Automata, Languages and Programming (ICALP)*.
-- Chamales, G. (2023). "Roaring Bitmaps: Implementation of an Optimized Software Library." *Software: Practice and Experience*.
+- Lemire, D., Kaser, O., Kurz, N., et al. (2018). "Roaring Bitmaps: Implementation of an Optimized Software Library." *Software: Practice and Experience*, 48(4), 867-895.
 - OpenRTB Specification v2.6. IAB Tech Lab. (2022).

@@ -26,7 +26,7 @@
 | **규칙 기반 (SQL)** | 이벤트 로그, 프로필 | 시간~일 (배치) | 중간 (조건 조합) | 매우 높음 | 낮음 |
 | **RFM Scoring** | 거래 데이터 | 일 1회 (배치) | 중간 (5×5×5 = 125셀) | 높음 | 낮음 |
 | **K-Means 클러스터링(K-Means Clustering)** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 높음 (K개 클러스터) | 중간 (라벨링 필요) | 중간 |
-| **GMM (확률로 나눠 넣기(Soft Assignment))** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 매우 높음 (확률적) | 낮음 (확률 분포) | 높음 |
+| **GMM (Soft Assignment)** | 유저 피처/임베딩 | 주 1회 (모델 재학습) | 매우 높음 (확률적) | 낮음 (확률 분포) | 높음 |
 | **Streaming (CEP)** | 실시간 이벤트 스트림 | 초~분 | 낮음 (단순 규칙) | 매우 높음 | 높음 (인프라) |
 
 RFM 은 세 기준을 각각 1~5점으로 매겨 5 × 5 × 5 = 125셀로 나누므로 세분화 수준이 「중간」에 머뭅니다. GMM 은 유저마다 클러스터별 확률을 주므로 세분화 수준은 「매우 높음」이지만 결과가 확률 분포라 해석 가능성은 「낮음」입니다. Streaming (CEP) 은 갱신 지연이 초~분으로 가장 짧고 해석 가능성도 「매우 높음」이지만 단순 규칙만 돌려 세분화 수준이 「낮음」이고 인프라 때문에 구현 복잡도가 「높음」으로 적혀 있습니다.
@@ -41,7 +41,7 @@ RFM 은 세 기준을 각각 1~5점으로 매겨 5 × 5 × 5 = 125셀로 나누�
 | **식별자** | 쿠키(Cookie) ID, MAID (비결정론적) | 로그인 ID, 이메일 해시 (결정론적) |
 | **데이터 지속성** | 90일 (쿠키 수명) | 무제한 (고객 동의 기반) |
 | **주요 용도** | 프로그래매틱 광고 타겟팅 | 전 채널 개인화 + 광고 |
-| **대표 서비스** | Lotame, Oracle BlueKai(2024년 사업 종료) | Treasure Data, 세그먼트(Segment) (Twilio), mParticle |
+| **대표 서비스** | Lotame, Oracle BlueKai(2024년 사업 종료) | Treasure Data, Segment (Twilio), mParticle |
 | **현재 추세** | 축소 (Safari, Firefox의 쿠키 차단) | 성장 (자사 데이터 중심) |
 
 식별자 줄의 쿠키 ID 와 MAID(휴대폰 운영체제가 광고용으로 주는 기기 ID)는 브라우저나 기기 하나를 가리키므로 폰과 PC 의 유저가 같은 사람인지는 확률로 맞춰야 해서 비결정론적입니다. 로그인 ID 와 이메일 해시(이메일 주소를 원래 값으로 되돌릴 수 없게 바꾼 값)는 사람 한 명을 가리키므로 결정론적입니다. 데이터 지속성 줄의 90일은 쿠키의 수명이라 DMP 의 기록은 그 기간까지만 이어집니다. CDP 의 데이터는 쿠키처럼 정해진 수명이 없어 고객이 동의한 동안 계속 이어집니다.
@@ -384,7 +384,7 @@ $$P(x) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$$
 2. **M-step (Maximization)**: $\gamma_{ik}$ 를 가중치로 삼아 $\pi_k$, $\mu_k$, $\Sigma_k$ 를 다시 계산합니다. 책임이 큰 유저일수록 그 클러스터의 평균과 공분산에 크게 반영됩니다.
 :::
 
-**확률로 나눠 넣기의 광고 활용**: GMM 이 내놓는 값은 유저마다 각 클러스터에 속할 확률을 모은 **확률 벡터**입니다. 유저 A 가 「패션」 클러스터에 70%, 「스포츠」 클러스터에 30% 확률로 할당되었다면 확률 벡터의 값 0.7 과 0.3 을 그대로 캠페인별 입찰 가중치로 쓸 수 있습니다:
+**Soft Assignment 의 광고 활용**: GMM 이 내놓는 값은 유저마다 각 클러스터에 속할 확률을 모은 **확률 벡터**입니다. 유저 A 가 「패션」 클러스터에 70%, 「스포츠」 클러스터에 30% 확률로 할당되었다면 확률 벡터의 값 0.7 과 0.3 을 그대로 캠페인별 입찰 가중치로 쓸 수 있습니다:
 - 패션 광고 캠페인에서는 유저 A 의 입찰 가중치를 0.7 로 둡니다.
 - 스포츠 광고 캠페인에서도 가중치 0.3 으로 입찰할 수 있습니다.
 - K-Means 였다면 유저 A 는 「패션」에만 들어가 스포츠 광고 기회를 놓칩니다.
@@ -411,7 +411,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 # 1단계: 유저 임베딩을 읽는다
-# Two-Tower User Tower 의 출력이다. 자기 임베딩 파일이 있어야 그대로 돌아간다. K 선택 기준과 라벨 붙이는 순서를 보는 게 이 코드의 목적이다.
+# Two-Tower User Tower 의 출력이다. 자기 임베딩 파일이 있어야 그대로 돌아간다.
 user_embeddings = np.load('user_embeddings.npy')  # shape: (N, 128)
 user_ids = np.load('user_ids.npy')                # shape: (N,)
 
@@ -695,7 +695,7 @@ PSI 는 세그먼트 안 유저의 **피처 분포**에도 적용합니다. 예�
 
 $$J(A, B) = \frac{|A \cap B|}{|A \cup B|}$$
 
-$J(A, B) > 0.5$ 이면 두 세그먼트가 많이 겹치는 상태라서 두 세그먼트를 합치거나 정의를 더 잘게 나누는 방안을 검토해야 합니다. 반대로 「구매자」 ⊃ 「고빈도 구매자」 ⊃ 「Champions」 처럼 세그먼트를 일부러 계층적으로 설계했다면 높은 Jaccard 가 정상입니다. 이때는 포함 관계(Containment)를 따로 측정합니다.
+$J(A, B) > 0.5$ 이면 두 세그먼트가 많이 겹치는 상태라서 두 세그먼트를 합치거나 정의를 더 잘게 나누는 방안을 검토해야 합니다. 반대로 「구매자」 ⊃ 「고빈도 구매자」 ⊃ 「Champions」 처럼 세그먼트를 일부러 계층적으로 설계했다면 하위 세그먼트가 상위 세그먼트 안에 모두 드는 것이 정상입니다. 이때는 포함 관계(Containment)를 따로 측정합니다.
 
 $$\text{Containment}(A, B) = \frac{|A \cap B|}{|A|}$$
 
@@ -707,10 +707,10 @@ Containment(A, B) 는 $A$ 의 유저 가운데 $B$ 에도 있는 유저의 비�
 
 | 메트릭 | 설명 | 경고 임계값 | 모니터링 주기 |
 |--------|------|-----------|-------------|
-| **세그먼트 Size** | 세그먼트 유저 수 | ±30% 이상 급변 | 일 1회 |
+| **Segment Size** | 세그먼트 유저 수 | ±30% 이상 급변 | 일 1회 |
 | **PSI** | 분포 안정성 지수 | > 0.25 | 주 1회 |
 | **Overlap (Jaccard)** | 세그먼트 간 중복도 | > 0.5 | 월 1회 |
-| **P/O Ratio** | 예측/실제 전환율 비 | ±20% 이상 괴리 | 일 1회 |
+| **P/O Ratio** | 예측/실제 CTR 비 | ±20% 이상 괴리 | 일 1회 |
 | **Coverage** | 전체 유저 중 세그먼트 할당 비율 | < 70% | 주 1회 |
 | **Freshness** | 마지막 갱신으로부터 경과 시간 | SLA 초과 | 실시간 |
 
@@ -792,11 +792,11 @@ graph TB
 
 Cross-device 는 같은 사람이 쓰는 여러 기기(폰, PC)를 한 사람으로 묶는 일입니다. DMP 는 쿠키끼리 확률로 맞춰 정확도가 60-70% 에 그치고 CDP 는 로그인으로 맞춰 95%+ 입니다.
 
-**CDP 의 가치**: 외부에서 세그먼트를 사 오던 「세그먼트 Buying」에서 자사 데이터를 통합해 더 정확하고 풍부한 세그먼트를 직접 구축하는 「세그먼트 Building」으로 바꾸는 데 있습니다.
+**CDP 의 가치**: 외부에서 세그먼트를 사 오던 「Segment Buying」에서 자사 데이터를 통합해 더 정확하고 풍부한 세그먼트를 직접 구축하는 「Segment Building」으로 바꾸는 데 있습니다.
 
 **대표 CDP 서비스**: 이 글이 드는 CDP 는 4개입니다.
 - **Treasure Data**: 기업용(엔터프라이즈) CDP 로 일본과 한국 시장에서 강합니다.
-- **세그먼트(Segment) (Twilio)**: 개발자가 쓰기 편한 CDP 로 API 를 먼저 설계했고(API-first) 300+ 개 서비스와 통합됩니다.
+- **Segment (Twilio)**: 개발자가 쓰기 편한 CDP 로 API 를 먼저 설계했고(API-first) 300+ 개 서비스와 통합됩니다.
 - **mParticle**: 모바일 앱 중심 CDP 로 앱에 넣은 SDK 로 데이터를 실시간 수집합니다.
 - **Adobe Real-Time CDP**: 마케팅 클라우드와 통합된 CDP 로 대기업이 중심 고객입니다.
 
@@ -812,11 +812,11 @@ Cross-device 는 같은 사람이 쓰는 여러 기기(폰, PC)를 한 사람으
 
 2. **Cross-service 데이터**: 네이버는 검색, 쇼핑, 뉴스, 블로그, 페이를, 카카오는 톡, 페이, 쇼핑, 지도를 연결합니다. 이렇게 결합한 데이터로는 외부 DMP 나 CDP 가 닿을 수 없는 수준의 세그멘테이션을 할 수 있습니다.
 
-3. **실시간 행동 신호**: 유저가 플랫폼 안에서 행동하는 순간 세그먼트에 반영합니다. 외부 CDP 는 이벤트를 모으고 세그먼트를 동기화하는 데 수분~수시간이 걸리지만 닫힌 생태계는 내부 시스템이라 사실상 실시간입니다.
+3. **실시간 행동 신호**: 유저가 플랫폼 안에서 한 행동은 초~분 안에 실시간 세그먼트(5절)에 반영됩니다. 외부 CDP 는 이벤트를 모으고 세그먼트를 동기화하는 데 수분~수시간이 걸리지만 닫힌 생태계는 내부 시스템이라 실시간 반영이 가능합니다. 관심사 같은 집계 세그먼트는 닫힌 생태계도 배치로 갱신합니다(11-2절).
 
-4. **Privacy-safe Targeting**: 유저 데이터가 플랫폼 밖으로 나가지 않고 광고주는 세그먼트를 직접 다루지 않은 채 플랫폼이 주는 타겟팅 옵션(연령, 관심사, Lookalike 등)을 고르므로 프라이버시 규제에 구조적으로 유리합니다.
+4. **Privacy-safe Targeting**: 유저 데이터가 플랫폼 밖으로 나가지 않고 광고주는 세그먼트의 회원 목록을 직접 다루지 않은 채 플랫폼이 주는 타겟팅 옵션(연령, 관심사, Lookalike 등)을 고르거나 고객 목록(이메일 해시)을 올리므로 프라이버시 규제에 구조적으로 유리합니다.
 
-**광고주의 딜레마**: 닫힌 생태계는 가장 정밀한 타겟팅을 주는 대신 광고주의 **통제권(Control)**에는 제한이 있습니다. 광고주는 세그먼트 정의를 직접 고칠 수 없고 유저 레벨 데이터를 꺼낼 수 없으며 안을 들여다볼 수 없는 플랫폼의 알고리즘(블랙박스)에 기대야 합니다. 열린 RTB 에서는 DSP 로 세그먼트를 직접 정의하고 입찰 전략을 완전히 통제할 수 있지만 데이터 품질은 닫힌 생태계에 미치지 못합니다.
+**광고주의 딜레마**: 닫힌 생태계는 가장 정밀한 타겟팅을 주는 대신 광고주의 **통제권(Control)**에는 제한이 있습니다. 광고주는 플랫폼이 만든 세그먼트의 정의를 직접 고칠 수 없고 유저 레벨 데이터를 꺼낼 수 없으며 안을 들여다볼 수 없는 플랫폼의 알고리즘(블랙박스)에 기대야 합니다. 열린 RTB 에서는 DSP 로 세그먼트를 직접 정의하고 입찰 전략을 완전히 통제할 수 있지만 데이터 품질은 닫힌 생태계에 미치지 못합니다.
 
 ---
 
@@ -837,13 +837,13 @@ Cross-device 는 같은 사람이 쓰는 여러 기기(폰, PC)를 한 사람으
 - **Opt-out 권리**: 유저는 자기 개인 정보를 팔지 말라고 거부할 수 있습니다. 외부 DMP 에 세그먼트 데이터를 공유하는 일도 「판매」에 해당할 수 있습니다.
 - **Do Not Sell**: CCPA 에서 opt-out 한 유저는 외부로 세그먼트를 공유하는 대상에서 뺍니다.
 
-**기술적 구현**: 유저의 동의(Consent) 상태를 세그먼트 파이프라인 전체에 전파해야 합니다. OpenRTB 2.6 에서는 TCF 2.0 consent string(유저가 어떤 벤더에게 어떤 목적의 처리를 허락했는지 담은 문자열)이 bid request 에 담기는데, 쓰는 필드는 `regs.ext.gdpr` 와 `user.ext.consent` 입니다. DSP 는 이 문자열을 파싱해 동의하지 않은 유저에게는 세그먼트 기반 타겟팅을 꺼야 합니다.
+**기술적 구현**: 유저의 동의(Consent) 상태를 세그먼트 파이프라인 전체에 전파해야 합니다. OpenRTB 2.6 에서는 TCF 2.0 consent string(유저가 어떤 벤더에게 어떤 목적의 처리를 허락했는지 담은 문자열)이 bid request 의 `user.consent` 필드에 담기고 GDPR 적용 여부는 `regs.gdpr` 필드(1 이면 적용)에 담깁니다. 2.6 전에는 두 필드 모두 `ext` 아래에 있었습니다. DSP 는 이 문자열을 파싱해 동의하지 않은 유저에게는 세그먼트 기반 타겟팅을 꺼야 합니다.
 
-아래는 `user.ext.consent` 필드에 담긴 문자열의 예로, Base64 로 인코딩되어 있습니다.
+아래는 `user.consent` 필드에 담긴 문자열의 예로, Base64 로 인코딩되어 있습니다.
 
 ```
 # TCF 2.0 Consent String 예시 (Base64 인코딩)
-user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+user.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 ```
 
 이 문자열을 디코딩하면 어떤 벤더(Vendor, 데이터를 처리하는 광고 회사)가 어떤 목적(Purpose)으로 동의를 받았는지 확인할 수 있습니다. Purpose 4(개인화 광고)에 동의하지 않은 유저는 행동 세그먼트 기반 타겟팅에서 빠집니다.
@@ -854,7 +854,7 @@ user.ext.consent: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
 
 | 플랫폼 | 최소 오디언스 크기 | 적용 대상 |
 |--------|-----------------|----------|
-| Google Ads | 1,000명 | Custom Audiences, Remarketing Lists |
+| Google Ads | 100명 | Custom Audiences, Remarketing Lists |
 | Meta Ads | 100명 | Custom Audiences |
 | DV360 | 100명 | First-Party Audiences |
 | 네이버 SA | 비공개 (추정 500+) | Custom Targeting |
@@ -879,7 +879,7 @@ $\epsilon$ 은 프라이버시 예산(Privacy Budget)입니다. 식에서 노이
 
 두 무대의 전체 구조 비교는 [닫힌 생태계](post.html?id=walled-garden) 편에 있습니다. 세그멘테이션에만 초점을 맞추면 두 무대의 차이가 더 선명해집니다.
 
-| 구분 | 열린 RTB | 닫힌 생태계 |
+| 구분 | 열린 RTB | 닫힌 생태계 (자사 지면) |
 |------|----------|--------------|
 | **세그먼트 출처** | DSP-side (외부 DMP, 자체 CDP) | 플랫폼 내 자사 데이터 |
 | **식별자** | 쿠키 / MAID (점점 제한적) | 로그인 ID (결정론적) |
@@ -890,7 +890,7 @@ $\epsilon$ 은 프라이버시 예산(Privacy Budget)입니다. 식에서 노이
 | **세그먼트 활성화** | Bid Request에 segment ID 포함 | 플랫폼 내부 직접 매칭 |
 | **광고주 제어** | 높음 (직접 세그먼트 정의/구매) | 제한적 (플랫폼 제공 옵션만) |
 | **데이터 투명성** | 높음 (유저 레벨 로그 확인 가능) | 낮음 (집계 리포트만 제공) |
-| **Lookalike 시드** | 직접 업로드 (이메일 해시 목록) | 전환 픽셀 기반 자동 생성 |
+| **Lookalike 시드** | 직접 업로드 (이메일 해시 목록, 쿠키/MAID 로 매칭) | 직접 업로드 (이메일 해시 목록, 로그인 ID 로 매칭) 또는 전환 픽셀 기반 자동 생성 |
 
 열린 RTB 의 세그먼트 출처는 DSP-side(외부 DMP, 자체 CDP)이고 식별자는 쿠키나 MAID 이며 세그먼트 활성화는 bid request 에 segment ID 를 담아서 합니다. 닫힌 생태계는 플랫폼 안의 자사 데이터로 세그먼트를 만들고 로그인 ID 로 플랫폼 내부에서 직접 매칭합니다. 광고주 제어와 데이터 투명성은 열린 RTB 가 높고 세그먼트 해상도와 Cross-device 매칭 정확도는 닫힌 생태계가 높습니다.
 
@@ -941,7 +941,7 @@ Redis Key: user_segments:{user_id}
 Redis Value (Set): {"high_value", "fashion_interest", "active_searcher"}
 ```
 
-**정방향 색인(Forward Index) (세그먼트 → Users)**: 세그먼트 크기를 계산하거나 Lookalike 시드를 추출하거나 세그먼트를 내보낼 때 씁니다. 그런데 유저가 수백만 명인 세그먼트를 일반 Set 으로 저장하면 메모리 비용이 급격히 늘어납니다.
+**정방향 색인(Forward Index) (Segment → Users)**: 세그먼트 크기를 계산하거나 Lookalike 시드를 추출하거나 세그먼트를 내보낼 때 씁니다. 그런데 유저가 수백만 명인 세그먼트를 일반 Set 으로 저장하면 메모리 비용이 급격히 늘어납니다.
 
 **Roaring Bitmap**: 그래서 정방향 색인은 Roaring Bitmap 으로 효율적으로 구현합니다. Roaring Bitmap 은 정수 집합을 압축해 저장하면서 AND/OR/XOR 같은 집합 연산을 매우 빠르게 하는 자료구조라서 유저 ID 를 정수로 매핑해 두면 세그먼트 하나의 멤버십을 Roaring Bitmap 하나로 나타낼 수 있습니다.
 
@@ -983,21 +983,21 @@ Jaccard 는 교집합 크기와 합집합 크기만 있으면 계산되므로, �
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| **segment_id** | 고유 식별자 | `high_value_recent_30d` |
+| **segment_id** | 고유 식별자 | `high_value_recent` |
 | **name** | 사람이 읽는 이름 | 고가치 최근 구매자 (30일) |
 | **description** | 세그먼트 정의 설명 | 최근 30일 내 10만원+, 3회+ 구매 유저 |
 | **owner** | 담당 팀/개인 | marketing-analytics@company.com |
 | **type** | 세그먼트 유형 | 행동 기반 / RFM / ML / Lifecycle |
 | **pipeline** | 배치/스트리밍/하이브리드 | Batch (Spark SQL) |
-| **refresh_cadence** | 갱신 주기 | 매일 06:00 KST |
-| **source_tables** | 입력 데이터 소스 | transactions, user_profiles |
-| **downstream_consumers** | 사용처 | campaign_summer_2024, pCTR_model_v3 |
+| **refresh_cadence** | 갱신 주기 | 매일 06:00 UTC |
+| **source_tables** | 입력 데이터 소스 | transactions |
+| **downstream_consumers** | 사용처 | summer_crosssell_2024, seg_high_value_recent |
 | **created_at** | 생성일 | 2024-03-15 |
-| **last_refreshed** | 마지막 갱신 시각 | 2024-07-10 06:23:15 KST |
+| **last_refreshed** | 마지막 갱신 시각 | 2024-07-10 06:23:15 UTC |
 | **current_size** | 현재 세그먼트 크기 | 1,234,567 |
-| **min/max_size** | 크기 경고 범위 | 500,000 ~ 3,000,000 |
+| **min/max_size** | 크기 경고 범위 | 1,000 ~ 5,000,000 |
 
-예시 칸을 이어 읽으면 `high_value_recent_30d` 는 marketing-analytics@company.com 이 관리하는 「고가치 최근 구매자 (30일)」 세그먼트입니다. Spark SQL 배치가 transactions 와 user_profiles 를 읽어 매일 06:00 KST 에 갱신하고 campaign_summer_2024 와 pCTR_model_v3 가 받아 씁니다. 현재 크기 1,234,567 은 크기 경고 범위 500,000 ~ 3,000,000 안에 있습니다.
+예시 칸을 이어 읽으면 `high_value_recent` 는 marketing-analytics@company.com 이 관리하는 「고가치 최근 구매자 (30일)」 세그먼트입니다. Spark SQL 배치가 transactions 를 읽어 매일 06:00 UTC 에 갱신하고 캠페인 summer_crosssell_2024 와 피처 스토어의 seg_high_value_recent 가 받아 씁니다. 현재 크기 1,234,567 은 크기 경고 범위 1,000 ~ 5,000,000 안에 있습니다.
 
 이 카탈로그는 단순한 문서를 넘어 **데이터 거버넌스**(데이터를 누가 어떻게 쓰는지 관리하는 체계)를 받치는 인프라입니다. 어떤 세그먼트가 어떤 데이터를 쓰고 누가 관리하며 어디에서 소비되는지 투명하게 추적할 수 있어서 세그먼트를 지우거나 정의를 바꿀 때 영향받는 downstream 을 미리 분석(Impact Analysis)할 수 있습니다.
 
@@ -1006,7 +1006,7 @@ Jaccard 는 교집합 크기와 합집합 크기만 있으면 계산되므로, �
 세그먼트 시스템은 [Lookalike 모델링](post.html?id=lookalike-modeling)에 **시드 오디언스(Seed Audience)**를 대 주는 공급원입니다. Lookalike 모델은 시드 오디언스와 닮은 유저를 찾아 오디언스를 넓히므로 시드의 품질이 Lookalike 결과의 품질을 결정합니다.
 
 **시드 추출 요구사항**: 좋은 시드를 대려면 세그먼트 시스템이 아래 네 가지를 갖춰야 합니다.
-1. **효율적 Export**: 「Champions」 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 하므로 11-1절의 정방향 색인(세그먼트 → Users)이 꼭 있어야 합니다.
+1. **효율적 Export**: 「Champions」 세그먼트의 전체 유저 목록을 빠르게 추출할 수 있어야 하므로 11-1절의 정방향 색인(Segment → Users)이 꼭 있어야 합니다.
 2. **알맞은 시드 크기**: 시드가 너무 작으면(< 1,000) Lookalike 모델이 시드에만 맞춰지는 과적합(학습 데이터에만 맞고 새 유저에는 맞지 않는 상태)이 생깁니다. 반대로 너무 크면(> 100만) 시드 자체가 너무 일반적이라 닮은 유저를 찾는 의미가 흐려집니다. 보통은 1만 ~ 10만 명이 가장 알맞은 범위입니다.
 3. **시드 품질**: 전환 데이터가 풍부하고 행동 패턴이 뚜렷한 세그먼트가 좋은 시드입니다. 「Champions (R5-F5-M5)」나 「최근 30일 3회+ 구매자」가 대표적입니다.
 4. **시드 신선도**: 오래된 시드로 만든 Lookalike 오디언스는 지금의 유저 행동 패턴을 반영하지 못하므로 시드 세그먼트의 갱신 주기와 Lookalike 모델의 재학습 주기를 맞춰야 합니다.
@@ -1051,5 +1051,5 @@ Jaccard 는 교집합 크기와 합집합 크기만 있으면 계산되므로, �
 - Segment (Twilio). "The CDP Report: Unifying Customer Data for Better Experiences." (2023).
 - McMahan, H.B., Holt, G., Sculley, D., et al. (2013). "Ad Click Prediction: a View from the Trenches." *Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*.
 - Dwork, C. (2006). "Differential Privacy." *Proceedings of the 33rd International Colloquium on Automata, Languages and Programming (ICALP)*.
-- Chamales, G. (2023). "Roaring Bitmaps: Implementation of an Optimized Software Library." *Software: Practice and Experience*.
+- Lemire, D., Kaser, O., Kurz, N., et al. (2018). "Roaring Bitmaps: Implementation of an Optimized Software Library." *Software: Practice and Experience*, 48(4), 867-895.
 - OpenRTB Specification v2.6. IAB Tech Lab. (2022).

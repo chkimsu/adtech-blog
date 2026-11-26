@@ -269,7 +269,7 @@ const GLOSSARY = [
   {
     term: 'HiveServer2',
     abbr: 'SQL 을 받는 서버',
-    body: '지훈 씨가 <strong>접속하는 서버</strong>. SQL 을 받아 계획을 세우고 실행 엔진에 넘긴다. 실제 계산은 Tez 나 Spark 가 한다.'
+    body: '지훈 씨가 <strong>접속하는 서버</strong>. SQL 을 받아 계획을 세우고 실행 엔진에 넘긴다. 실제 계산은 Tez 가 한다(Hive 3 까지는 Spark 도).'
   },
   {
     term: 'ZooKeeper',

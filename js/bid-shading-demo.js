@@ -230,7 +230,7 @@ function createDistChart() {
                     hidden: true    // 초기에는 숨김
                 },
                 {   // 3: True Value line
-                    label: 'True Value (pCTR × ConvValue)',
+                    label: 'True Value (pCTR × pCVR × ConvValue)',
                     data: [],
                     type: 'line',
                     borderColor: cssVar('--state-warn'),

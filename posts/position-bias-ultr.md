@@ -20,9 +20,9 @@
       <div class="chart-step-line"></div>
     </div>
     <div class="chart-step-content">
-      <div class="chart-step-title">눈길이 닿음(Examination) (관찰)</div>
+      <div class="chart-step-title">Examination (관찰)</div>
       <div class="chart-step-desc">유저가 해당 위치의 광고를 실제로 봤는가? 위치에만 의존하며, 광고 내용과 무관합니다.</div>
-      <span class="chart-step-badge blue">P(눈길이 닿다(examine) | position) -- 위치 효과</span>
+      <span class="chart-step-badge blue">P(examine | position) -- 위치 효과</span>
     </div>
   </div>
   <div class="chart-step">
@@ -32,7 +32,7 @@
     <div class="chart-step-content">
       <div class="chart-step-title">Click (클릭 결정)</div>
       <div class="chart-step-desc">광고를 본 유저가 클릭할 것인가? 광고 품질, 유저 관심사, 쿼리 관련성에 의존합니다.</div>
-      <span class="chart-step-badge pink">P(클릭(click) | 눈길이 닿다, ad, user, query) -- 진짜 품질</span>
+      <span class="chart-step-badge pink">P(click | examine, ad, user, query) -- 진짜 품질</span>
     </div>
   </div>
 </div>
@@ -41,9 +41,9 @@
 
 $$P(\text{click}) = \underbrace{P(\text{examine} | \text{position})}_{\text{Position Bias}} \times \underbrace{P(\text{click} | \text{examine}, \text{ad}, \text{user})}_{\text{True Relevance}}$$
 
-### 위치별 눈길이 닿음 확률 예시
+### 위치별 Examination 확률 예시
 
-| 위치 | 눈길이 닿음 확률 | 관측 CTR (동일 광고) | True Relevance |
+| 위치 | Examination 확률 | 관측 CTR (동일 광고) | True Relevance |
 |------|-----------------|---------------------|---------------|
 | 1위 | 100% | 5.0% | 5.0% |
 | 2위 | 75% | 3.75% | 5.0% |
@@ -80,7 +80,7 @@ $$P(C_k = 1) = P(E_k = 1) \times P(R_k = 1)$$
 - $E_k = 1$: 유저가 위치 $k$의 광고를 실제로 봤다는 뜻 (Examination)
 - $R_k = 1$: 그 광고가 유저의 의도에 실제로 관련 있다는 뜻 (Relevance)
 
-**PBM의 핵심 가정은 $E_k$가 오직 위치 $k$에만 의존한다는 것입니다.** 그 위에 무엇이 있었는지는 상관하지 않습니다. 유저가 그 전에 클릭했는지도 상관하지 않습니다. 이 덕분에 위치별 눈길이 닿음 확률 하나만 알면 충분합니다. 어떤 광고든 같은 값을 곱해 되돌릴 수 있습니다. 계산이 쉬워지는 대신 강한 가정을 깔고 가는 것입니다.
+**PBM의 핵심 가정은 $E_k$가 오직 위치 $k$에만 의존한다는 것입니다.** 그 위에 무엇이 있었는지는 상관하지 않습니다. 유저가 그 전에 클릭했는지도 상관하지 않습니다. 이 덕분에 위치별 Examination 확률 하나만 알면 충분합니다. 어떤 광고든 같은 값을 곱해 되돌릴 수 있습니다. 계산이 쉬워지는 대신 강한 가정을 깔고 가는 것입니다.
 
 이 가정은 실제로 자주 깨집니다. 대표적인 대안이 **Cascade Model**입니다. 여기서는 유저가 1위부터 순서대로 살펴본다고 가정합니다. 그리고 클릭하면 그 자리에서 멈춥니다. 그러면 위치 $k$를 볼 확률은 그 앞 위치들에서 아무것도 클릭하지 않았을 확률에 좌우됩니다.
 
@@ -93,9 +93,9 @@ $$P(E_k = 1) = \prod_{j < k} P(R_j = 0)$$
 
 ---
 
-## 2. Position Bias를 보정하지 않으면 생기는 문제
+## 2. 자리 편향을 보정하지 않으면 생기는 문제
 
-**Position Bias를 그대로 두면 모델은 틀린 것을 정답으로 배웁니다.** 1위 광고가 잘 눌리는 이유 중 얼마가 품질이고 얼마가 자리인지, 모델은 구별하지 못합니다.
+**자리 편향을 그대로 두면 모델은 틀린 것을 정답으로 배웁니다.** 1위 광고가 잘 눌리는 이유 중 얼마가 품질이고 얼마가 자리인지, 모델은 구별하지 못합니다.
 
 검색 결과 화면을 떠올려 봅시다. 맨 위 광고는 화면을 열면 바로 보입니다. 다섯 번째 광고는 스크롤을 내린 사람만 봅니다. 그래서 1위 광고가 제일 많이 눌렸다고 제일 좋은 광고라는 뜻은 아닙니다. 노출 로그에는 "봤는지"와 "좋았는지"가 뒤섞여 있는데, 모델은 이 둘을 나눌 방법이 없습니다.
 
@@ -164,14 +164,14 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
     <div class="chart-card-header">
       <div class="chart-card-icon yellow">A</div>
       <div>
-        <div class="chart-card-name">IPS (노출 확률의 역수로 가중(Inverse Propensity Scoring))</div>
+        <div class="chart-card-name">IPS (Inverse Propensity Scoring)</div>
         <div class="chart-card-subtitle">관측 확률의 역수로 가중.</div>
       </div>
     </div>
     <div class="chart-card-body">
       <div class="chart-card-row">
         <span class="chart-card-row-label">원리</span>
-        <span class="chart-card-row-value">클릭 데이터에 1/P(눈길이 닿다) 가중치.</span>
+        <span class="chart-card-row-value">클릭 데이터에 1/P(examine) 가중치.</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">장점</span>
@@ -191,8 +191,8 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
     <div class="chart-card-header">
       <div class="chart-card-icon green">B</div>
       <div>
-        <div class="chart-card-name">두 모델을 번갈아 학습하는 방법(Dual Learning Algorithm) (DLA)</div>
-        <div class="chart-card-subtitle">Relevance + 노출 확률(Propensity) 동시 학습.</div>
+        <div class="chart-card-name">Dual Learning Algorithm (DLA)</div>
+        <div class="chart-card-subtitle">Relevance + Propensity 동시 학습.</div>
       </div>
     </div>
     <div class="chart-card-body">
@@ -202,7 +202,7 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">장점</span>
-        <span class="chart-card-row-value">노출 확률을 별도 실험 없이 추정.</span>
+        <span class="chart-card-row-value">Propensity를 별도 실험 없이 추정.</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">단점</span>
@@ -225,7 +225,7 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
     <div class="chart-card-body">
       <div class="chart-card-row">
         <span class="chart-card-row-label">원리</span>
-        <span class="chart-card-row-value">눈길이 닿음을 잠재 변수로, EM으로 추정.</span>
+        <span class="chart-card-row-value">Examination을 잠재 변수로, EM으로 추정.</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">장점</span>
@@ -243,17 +243,17 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
   </div>
 </div>
 
-세 기법을 고르는 기준은 결국 **"노출 확률을 어디서 얻을 수 있나"** 한 가지로 정리됩니다.
+세 기법을 고르는 기준은 결국 **"Propensity를 어디서 얻을 수 있나"** 한 가지로 정리됩니다.
 
 순서를 섞는 실험을 돌릴 수 있다면 IPS가 제일 낫습니다. 확률을 직접 측정해서 넣기 때문에 이론적으로 편향이 사라집니다. 다만 실무에서 실험 기간은 늘 짧고, 그동안 좋은 광고를 아래에 내려 보내야 하니 눈에 보이는 손실이 생깁니다. 그리고 낮은 자리의 확률이 아주 작으면 그 역수가 커져서, 클릭 한 건이 수십 건처럼 세어지는 문제가 생깁니다(분산 폭발). 그래서 실무에서는 가중치에 상한을 두고 씁니다.
 
 실험을 못 돌리는 상황이라면 DLA나 Regression EM으로 넘어갑니다. 둘 다 로그만으로 확률과 관련도를 함께 추정합니다. DLA는 두 모델이 서로를 가르치게 하고, Regression EM은 확률 모델을 세운 뒤 반복해서 다듬습니다. 공짜라는 게 장점이고, 수렴이 느리고 엉뚱한 답에 갇힐 수 있다는 게 대가입니다.
 
-**현실적인 순서는 이렇습니다.** 작은 규모로 순서를 섞는 실험을 한 번 돌려 노출 확률의 대략적인 모양을 잡습니다. 그 값을 초기값으로 DLA를 돌려 계속 갱신합니다. 실험은 한 번만 하고, 이후의 변화는 로그가 따라잡게 하는 방식입니다.
+**현실적인 순서는 이렇습니다.** 작은 규모로 순서를 섞는 실험을 한 번 돌려 Propensity의 대략적인 모양을 잡습니다. 그 값을 초기값으로 DLA를 돌려 계속 갱신합니다. 실험은 한 번만 하고, 이후의 변화는 로그가 따라잡게 하는 방식입니다.
 
 ---
 
-## 4. IPS (노출 확률의 역수로 가중) 상세
+## 4. IPS (Inverse Propensity Scoring) 상세
 
 가장 널리 사용되는 ULTR 기법입니다.
 
@@ -264,7 +264,7 @@ Examination 추정치로 관측 CTR을 나누면 얘기가 완전히 달라집�
 $$\mathcal{L}_{\text{IPS}} = \sum_{i} \left[ w_i \cdot \ell(f(x_i), 1) + (1 - w_i) \cdot \ell(f(x_i), 0) \right], \quad w_i = \frac{c_i}{\hat{P}(\text{examine} | \text{pos}_i)}$$
 
 - $c_i$: 클릭 여부 (0 또는 1)
-- $\hat{P}(\text{examine} | \text{pos}_i)$: 위치 $\text{pos}_i$의 눈길이 닿음 확률 추정값
+- $\hat{P}(\text{examine} | \text{pos}_i)$: 위치 $\text{pos}_i$의 Examination 확률 추정값
 - $\ell(f, y)$: 예측 $f$ 와 정답 $y$ 사이의 손실 함수 (cross-entropy 등)
 - $f(x_i)$: 모델의 예측값
 
@@ -272,9 +272,9 @@ $$\mathcal{L}_{\text{IPS}} = \sum_{i} \left[ w_i \cdot \ell(f(x_i), 1) + (1 - w_
 
 **직관**: 5위에서 클릭이 발생했다고 합시다. 유저가 5위까지 볼 확률은 15%뿐입니다. 그래서 이 클릭은 $1/0.15 \approx 6.7$배의 가중치를 받습니다. "5위에서도 클릭했으니 진짜 좋은 광고"라는 신호를 증폭하는 것입니다.
 
-### 노출 확률 추정 방법
+### Propensity 추정 방법
 
-눈길이 닿음 확률 $P(\text{examine} | \text{position})$을 어떻게 구할 것인가?
+Examination 확률 $P(\text{examine} | \text{position})$을 어떻게 구할 것인가?
 
 | 방법 | 원리 | 장점 | 단점 |
 |------|------|------|------|
@@ -285,7 +285,7 @@ $$\mathcal{L}_{\text{IPS}} = \sum_{i} \left[ w_i \cdot \ell(f(x_i), 1) + (1 - w_
 
 ### 실전 예시: 2절의 표를 코드로 직접 계산하기
 
-2절에서 본 다섯 광고 표를 그대로 코드로 만들어 보겠습니다. 실험에서 눈길이 닿음 확률을 추정하는 부분까지 포함합니다.
+2절에서 본 다섯 광고 표를 그대로 코드로 만들어 보겠습니다. 실험에서 Examination 확률을 추정하는 부분까지 포함합니다.
 
 ```python
 # 하는 일: 위치만 바꿔 보여 준 프로브 광고로 위치마다 Examination 확률을 추정하고, 그 확률로 광고 5개의 관측 CTR 을 IPW 로 되돌려 진짜 순위에 가깝게 고친다.
@@ -370,13 +370,13 @@ print("보정 순위(IPW 적용 후)  :", " > ".join(corrected_rank))
 # 보정 순위(IPW 적용 후)  : D > C > A > B > E
 ```
 
-코드는 딱 세 단계입니다. 1단계는 같은 프로브 광고를 위치만 바꿔 보여줘서 눈길이 닿음 확률을 역산합니다. 2단계는 서로 다른 5개 광고가 각자 자기 자리에서 낸 관측 데이터를 만듭니다. 3단계는 관측 CTR을 추정 눈길이 닿음 확률로 나눠 보정 CTR을 얻습니다. 추정치가 정답(TRUE_EXAM)과 거의 일치하는 것도 확인할 수 있습니다. 2위는 실제 75%인데 추정 74.4%, 5위는 실제 15%인데 추정 16.4%입니다. 위치마다 노출이 5만 번이어도 5위는 클릭이 평균 375번 안팎이라, 클릭이 적은 아래 위치일수록 추정 오차가 커집니다.
+코드는 딱 세 단계입니다. 1단계는 같은 프로브 광고를 위치만 바꿔 보여줘서 Examination 확률을 역산합니다. 2단계는 서로 다른 5개 광고가 각자 자기 자리에서 낸 관측 데이터를 만듭니다. 3단계는 관측 CTR을 추정 Examination 확률로 나눠 보정 CTR을 얻습니다. 추정치가 정답(TRUE_EXAM)과 거의 일치하는 것도 확인할 수 있습니다. 2위는 실제 75%인데 추정 74.4%, 5위는 실제 15%인데 추정 16.4%입니다. 위치마다 노출이 5만 번이어도 5위는 클릭이 평균 375번 안팎이라, 클릭이 적은 아래 위치일수록 추정 오차가 커집니다.
 
 ### IPS의 분산 문제와 해결
 
 IPS의 최대 약점은 **높은 분산**입니다. 하위 위치의 가중치가 매우 커서 학습이 불안정해집니다:
 
-| 위치 | 노출 확률 | IPS 가중치 | 문제 |
+| 위치 | Propensity | IPS 가중치 | 문제 |
 |------|-----------|-----------|------|
 | 1위 | 1.0 | 1.0x | 안정 |
 | 3위 | 0.5 | 2.0x | 보통 |
@@ -393,9 +393,9 @@ IPS의 최대 약점은 **높은 분산**입니다. 하위 위치의 가중치�
 
 ---
 
-## 5. DLA (두 모델을 번갈아 학습하는 방법): 실험 없이 보정
+## 5. DLA (Dual Learning Algorithm): 실험 없이 보정
 
-IPS에는 전제가 하나 있습니다. **노출 확률(자리별로 볼 확률)을 이미 안다는 것.** 그런데 그걸 알려면 순서를 섞는 실험을 돌려야 하고, 실험은 돈이 듭니다.
+IPS에는 전제가 하나 있습니다. **Propensity(자리별로 볼 확률)를 이미 안다는 것.** 그런데 그걸 알려면 순서를 섞는 실험을 돌려야 하고, 실험은 돈이 듭니다.
 
 여기서 순환 문제가 생깁니다. 관련도를 제대로 배우려면 자리 효과를 걷어내야 합니다. 자리 효과를 측정하려면 관련도가 같은 광고끼리 비교해야 합니다. 둘 중 어느 것도 먼저 알 수 없습니다.
 
@@ -416,26 +416,26 @@ IPS에는 전제가 하나 있습니다. **노출 확률(자리별로 볼 확률
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">입력: 광고, 유저, 쿼리</div>
-          <div class="chart-arch-node-desc">P(클릭 | 눈길이 닿다, ad, user, query).</div>
+          <div class="chart-arch-node-desc">P(click | examine, ad, user, query).</div>
         </div>
         <div class="chart-arch-node">
-          <div class="chart-arch-node-name">가중치: 노출 확률 Model이 제공</div>
-          <div class="chart-arch-node-desc">1 / P(눈길이 닿다 | position).</div>
+          <div class="chart-arch-node-name">가중치: Propensity Model이 제공</div>
+          <div class="chart-arch-node-desc">1 / P(examine | position).</div>
         </div>
       </div>
     </div>
     <div class="chart-arch-section">
       <div class="chart-arch-section-header">
-        <span class="chart-arch-section-title blue">노출 확률 Model</span>
+        <span class="chart-arch-section-title blue">Propensity Model</span>
       </div>
       <div class="chart-arch-grid">
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">입력: 위치 (position)</div>
-          <div class="chart-arch-node-desc">P(눈길이 닿다 | position).</div>
+          <div class="chart-arch-node-desc">P(examine | position).</div>
         </div>
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">가중치: Relevance Model이 제공</div>
-          <div class="chart-arch-node-desc">1 / P(클릭 | 눈길이 닿다).</div>
+          <div class="chart-arch-node-desc">1 / P(click | examine).</div>
         </div>
       </div>
     </div>
@@ -447,12 +447,12 @@ IPS에는 전제가 하나 있습니다. **노출 확률(자리별로 볼 확률
     </div>
     <div class="chart-arch-grid">
       <div class="chart-arch-node">
-        <div class="chart-arch-node-name">1. Relevance 고정, 노출 확률 업데이트</div>
-        <div class="chart-arch-node-desc">현재 Relevance 추정값으로 노출 확률 학습.</div>
+        <div class="chart-arch-node-name">1. Relevance 고정, Propensity 업데이트</div>
+        <div class="chart-arch-node-desc">현재 Relevance 추정값으로 Propensity 학습.</div>
       </div>
       <div class="chart-arch-node">
-        <div class="chart-arch-node-name">2. 노출 확률 고정, Relevance 업데이트</div>
-        <div class="chart-arch-node-desc">현재 노출 확률 추정값으로 Relevance 학습 (IPS).</div>
+        <div class="chart-arch-node-name">2. Propensity 고정, Relevance 업데이트</div>
+        <div class="chart-arch-node-desc">현재 Propensity 추정값으로 Relevance 학습 (IPS).</div>
       </div>
       <div class="chart-arch-node">
         <div class="chart-arch-node-name">3. 반복 수렴</div>
@@ -462,7 +462,7 @@ IPS에는 전제가 하나 있습니다. **노출 확률(자리별로 볼 확률
   </div>
 </div>
 
-**핵심 통찰**: 먼저 봐야 누른다는 전제 에서는 클릭 확률이 두 확률의 곱입니다.
+**핵심 통찰**: 먼저 봐야 누른다는 전제에서는 클릭 확률이 두 확률의 곱입니다.
 
 $$P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$$
 
@@ -480,22 +480,22 @@ $$P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$$
 |---|---|---|
 | **자리 편향 심각도** | 낮음 (보통 1개 광고만 노출) | 높음 (검색: 3-5개, 피드: 연속 노출) |
 | **보정 필요성** | pCTR 정확도에 간접 영향 | 랭킹 공정성에 직접 영향 |
-| **노출 확률 추정** | 어려움 (위치가 거의 고정) | 가능 (다양한 위치에 노출) |
+| **Propensity 추정** | 어려움 (위치가 거의 고정) | 가능 (다양한 위치에 노출) |
 | **주요 활용** | Calibration 보정 | 랭킹 모델 학습 + 광고 품질 평가 |
 
-표의 차이는 결국 "내가 위치를 정하는가"로 나뉩니다. 그 질문의 답에 따라 눈길이 닿음 확률을 측정하는 방법 자체가 달라집니다. 두 무대를 각각 들여다봅시다.
+표의 차이는 결국 "내가 위치를 정하는가"로 나뉩니다. 그 질문의 답에 따라 Examination 확률을 측정하는 방법 자체가 달라집니다. 두 무대를 각각 들여다봅시다.
 
 ### 열린 RTB에서는 위치를 짐작만 한다 [무대: 열린 RTB]
 
 열린 RTB의 DSP는 자기 광고가 화면 어디에 실렸는지 정확히 알기 어렵습니다. 매체(퍼블리셔)가 슬롯 번호를 성실하게 넘겨주지 않는 경우가 흔하고, 넘겨주는 값도 매체마다 정의가 다릅니다. 그래서 실전에서는 위치를 직접 세는 대신 **뷰어빌리티(viewability)** 신호로 간접 추정합니다. 화면에 몇 초 동안 몇 퍼센트가 보였는지를 측정하는 IAB 표준 지표입니다. "1위였다"는 못 말해도 "50% 이상 1초 넘게 보였다"는 측정할 수 있습니다.
 
-이 간접 추정은 노출 확률 추정 정확도에 그대로 영향을 줍니다. 4절의 식에서 본 것처럼 IPS는 눈길이 닿음 확률 추정값의 역수를 가중치로 쓰므로, 이 추정이 틀리면 보정 자체가 틀어집니다. 그래서 열린 RTB의 자리 편향 보정은 랭킹 공정성보다 pCTR을 대략 맞추는 데 머무는 경우가 많습니다.
+이 간접 추정은 Propensity 추정 정확도에 그대로 영향을 줍니다. 4절의 식에서 본 것처럼 IPS는 Examination 확률 추정값의 역수를 가중치로 쓰므로, 이 추정이 틀리면 보정 자체가 틀어집니다. 그래서 열린 RTB의 자리 편향 보정은 랭킹 공정성보다 pCTR을 대략 맞추는 데 머무는 경우가 많습니다.
 
 ### 담장 안에서는 위치를 정확히 안다 [무대: 닫힌 생태계]
 
-네이버, 카카오, 구글처럼 자기 지면에 자기 광고를 싣는 닫힌 생태계는 사정이 다릅니다. 광고가 화면 몇 번째 자리에 실렸는지를 서빙 로그에 그대로 남깁니다. 위치 로그가 100% 정확하니, 4절의 프로브 광고 같은 노출 확률 추정 실험도 어렵지 않습니다.
+네이버, 카카오, 구글처럼 자기 지면에 자기 광고를 싣는 닫힌 생태계는 사정이 다릅니다. 광고가 화면 몇 번째 자리에 실렸는지를 서빙 로그에 그대로 남깁니다. 위치 로그가 100% 정확하니, 4절의 프로브 광고 같은 Propensity 추정 실험도 어렵지 않습니다.
 
-더 큰 이점은 **무작위 섞기(randomization)**입니다. 트래픽의 일부를 떼어 광고 순서를 일부러 뒤섞으면, 같은 광고가 여러 위치에 무작위로 노출됩니다. 4절의 파이썬 코드에서 "프로브 광고"로 눈길이 닿음 확률을 추정한 방식이 바로 이것입니다. 실험이라 매출 손실이 따르지만, 그만큼 편향을 직접 측정하는 가장 확실한 방법입니다. 그래서 닫힌 생태계에서는 자리 편향 보정이 랭킹 모델 학습에 그대로 들어갑니다. 4, 5절에서 다룬 IPS, DLA가 실제로 서빙 랭킹을 바꾸는 지점이 여기입니다.
+더 큰 이점은 **무작위 섞기(randomization)**입니다. 트래픽의 일부를 떼어 광고 순서를 일부러 뒤섞으면, 같은 광고가 여러 위치에 무작위로 노출됩니다. 4절의 파이썬 코드에서 "프로브 광고"로 Examination 확률을 추정한 방식이 바로 이것입니다. 실험이라 매출 손실이 따르지만, 그만큼 편향을 직접 측정하는 가장 확실한 방법입니다. 그래서 닫힌 생태계에서는 자리 편향 보정이 랭킹 모델 학습에 그대로 들어갑니다. 4, 5절에서 다룬 IPS, DLA가 실제로 서빙 랭킹을 바꾸는 지점이 여기입니다.
 
 ### 자리 편향 외에 보정해야 할 다른 Bias
 
@@ -540,11 +540,11 @@ $$P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$$
 
 1. **자리 편향은 "위치가 만드는 착각"입니다.** 1위 광고의 높은 CTR 중 상당 부분은 광고 품질이 아니라 위치 효과입니다. 보정하지 않으면 Rich-Get-Richer 강화 루프가 발생합니다.
 
-2. **먼저 봐야 누른다는 전제가 핵심 프레임워크입니다.** 관측 CTR = P(눈길이 닿다|position) x P(클릭|눈길이 닿다, ad). 이 분해를 통해 위치 효과와 광고 품질을 분리합니다.
+2. **먼저 봐야 누른다는 전제가 핵심 프레임워크입니다.** 관측 CTR = P(examine|position) x P(click|examine, ad). 이 분해를 통해 위치 효과와 광고 품질을 분리합니다.
 
-3. **IPS가 가장 실용적인 출발점입니다.** 노출 확률을 추정하고, 클릭에 역수 가중치를 부여합니다. 분산 문제는 Clipping이나 SNIPS로 대응합니다.
+3. **IPS가 가장 실용적인 출발점입니다.** Propensity를 추정하고, 클릭에 역수 가중치를 부여합니다. 분산 문제는 Clipping이나 SNIPS로 대응합니다.
 
-4. **DLA는 실험 없이 보정 가능합니다.** Relevance Model과 노출 확률 Model(그 자리에 있으면 볼 확률을 맞히는 모델)을 번갈아 학습시킵니다. 그래서 랜덤 실험 없이도 자리 편향을 추정합니다.
+4. **DLA는 실험 없이 보정 가능합니다.** Relevance Model과 Propensity Model(그 자리에 있으면 볼 확률을 맞히는 모델)을 번갈아 학습시킵니다. 그래서 랜덤 실험 없이도 자리 편향을 추정합니다.
 
 5. **광고 랭킹의 공정성이 곧 매출입니다.** 자리 편향을 보정하면 진짜 좋은 광고가 상위에 노출되고, 유저 클릭률과 광고주 전환율이 모두 올라갑니다. pCTR 모델의 정확도 → 랭킹 공정성 → 비즈니스 성과의 체인입니다.
 
@@ -554,7 +554,7 @@ $$P(\text{click}) = P(\text{examine}) \times P(\text{relevance})$$
 
 ## 더 깊이 보기
 
-- Position Bias 개념이 처음 나온 곳 → [Walled Garden: 담장 안의 광고 생태계](post.html?id=walled-garden)
+- 자리 편향 개념이 처음 나온 곳 → [Walled Garden: 담장 안의 광고 생태계](post.html?id=walled-garden)
 - 노출 자체가 편향돼 있는 문제(Sample Selection Bias) → [Negative Sampling & Bias](post.html?id=negative-sampling-bias)
 - pCTR 모델이 마주하는 또 다른 노출 편향 → [pCTR 예측 모델링](post.html?id=pctr-prediction)
 - 위치 편향을 직접 측정하는 무작위 실험 설계 → [RCT: 무작위 실험](post.html?id=rct-randomized-experiment)

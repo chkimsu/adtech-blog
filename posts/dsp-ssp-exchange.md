@@ -263,7 +263,7 @@ Magnite는 Google이 아니고, The Trade Desk도 Google이 아니다. 각자 �
 
 이 표를 읽는 요령은 '누구 편인가' 열부터 보는 것이다. 이름의 D(Demand, 수요)와 S(Supply, 공급)가 그대로 편을 가리킨다. **D로 시작하면 광고주 편, S로 시작하면 매체 편**이다. 이 구분이 익숙해지면 낯선 약어를 만나도 이름만 보고 대략 어느 편인지 짐작할 수 있다.
 
-다만 실무에서는 이 경계가 표처럼 깔끔하지만은 않다. Magnite, PubMatic은 SSP이면서 동시에 Exchange 기능도 갖고 있다. 그래서 아래 표에서도 Magnite는 SSP 줄과 광고 거래소 줄에 함께 나온다. 앞서 다룬 심화 박스(Ad Network vs Ad Exchange)가 힌트를 준다. 이런 겹침은 '재고 위험을 누가 지는가'라는 질문으로 풀어야 실제 구조가 보인다.
+다만 실무에서는 이 경계가 표처럼 깔끔하지만은 않다. Magnite, PubMatic은 SSP이면서 동시에 Exchange 기능도 갖고 있다. 그래서 아래 표에서도 Magnite는 SSP 줄과 광고 거래소 줄에 함께 나온다. 앞서 다룬 심화 박스(광고 네트워크 vs 광고 거래소)가 힌트를 준다. 이런 겹침은 '재고 위험을 누가 지는가'라는 질문으로 풀어야 실제 구조가 보인다.
 
 | 역할 | 누구 편 | 하는 일 | 실제 예시 | 왜 필요한가 |
 |---|---|---|---|---|
@@ -305,7 +305,7 @@ Magnite는 Google이 아니고, The Trade Desk도 Google이 아니다. 각자 �
 
 ## 더 깊이 보기
 
-- Ad Network와 Ad Exchange, 역사, 아키텍처까지 더 깊이 → [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange)
+- 광고 네트워크와 광고 거래소, 역사, 아키텍처까지 더 깊이 → [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange)
 - 요청부터 노출까지 기술 상세 → [광고 서빙 플로우](post.html?id=ad-serving-flow)
 - DSP는 왜 입찰가를 살짝 낮춰 부를까(Bid Shading) → [Bid Shading](post.html?id=bid-shading-censored)
 - 이겨도 왜 2등 값만 낼까(2등가 경매) → [2등 가격 경매](post.html?id=second-price-auction)

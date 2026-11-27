@@ -334,7 +334,7 @@ for name, rates in scenarios.items():
 
 ## 더 깊이 보기
 
-- Ad Network와 Ad Exchange, 역사, 아키텍처까지 더 깊이 → [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange)
+- 광고 네트워크와 광고 거래소, 역사, 아키텍처까지 더 깊이 → [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange)
 - 요청부터 노출까지 기술 상세 → [광고 서빙 플로우](post.html?id=ad-serving-flow)
 - DSP는 왜 입찰가를 살짝 낮춰 부를까(Bid Shading) → [Bid Shading](post.html?id=bid-shading-censored)
 - 이겨도 왜 2등 값만 낼까(2등가 경매) → [2등 가격 경매](post.html?id=second-price-auction)

@@ -206,7 +206,7 @@ assert predicted_winner != true_winner  # 이 예시는 낙찰자가 바뀌는 �
 | 모먼트에서 고르는 것 | 실제로 정하는 것 | 관련 개념 글 |
 |---|---|---|
 | 캠페인 목표(전환, 방문, 도달) | 무엇을 최적화할지 | [Auto-Bidding](post.html?id=auto-bidding-pacing) |
-| 게재 지면(톡, 다음, 스토리, 맵, 네트워크) | 인벤토리 선택 | [광고 네트워크(Ad Network) vs Exchange](post.html?id=ad-network-vs-exchange) |
+| 게재 지면(톡, 다음, 스토리, 맵, 네트워크) | 인벤토리 선택 | [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange) |
 | 오디언스(데모, 맞춤, 유사) | 누구에게 보여줄지 | [세그멘테이션](post.html?id=audience-segmentation) |
 | 입찰, 과금(CPC, CPM, CPA) | 얼마를 어떻게 낼지 | [eCPM 랭킹](post.html?id=ecpm-ranking) |
 

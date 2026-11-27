@@ -101,6 +101,7 @@ const EASY_POST_IDS = [
   'data-handoff-methods',
   'elasticsearch-hybrid-retrieval',
   'realtime-feature-pipeline',
+  'regression-discontinuity',
 ];
 
 // 처음부터 쉬운 판 말투로 쓴 글. 원래 글이 곧 쉬운 판이라 posts-easy 파일도, 판을 바꾸는 링크도 없다.

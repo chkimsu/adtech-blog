@@ -82,7 +82,7 @@
                             const b = show(before[fk]), af = show(after[fk]);
                             return `<tr><td class="mono">${fk}</td><td>${ko}</td><td class="num">${esc(b)}</td><td class="num${b !== af ? ' chg' : ''}">${esc(af)}</td></tr>`;
                         }).join('') + `</tbody></table></div>` +
-                        `<p>파란 글자가 바뀐 필드입니다. 같이 바뀌는 키도 있습니다. <code>${esc(r.viewers.key)}</code> Set 은 이 영상을 본 사용자 ${r.viewers.count}명, ` +
+                        `<p>파란 글자가 바뀐 필드입니다. 처리기가 함께 쓰는 키도 있습니다. <code>${esc(r.viewers.key)}</code> Set 은 이 영상을 본 사용자 ${r.viewers.count}명, ` +
                         `<code>${esc(r.rank.key)}</code> ZSet 은 영상별 누적 재생 초 순위, <code>dedupe:</code> 로 시작하는 String 은 TTL ${show(r.dedupe.ttl)}초짜리 중복 표시입니다.</p>`
                 },
                 {
@@ -184,7 +184,7 @@
         lanes.innerHTML = F[0].parts.map((p) =>
             `<div class="pr-lane"><b>p${p[0]}</b><div class="pr-bar"><span class="rd"></span><span class="ur"></span></div><span class="nums"></span></div>`).join('');
         const laneEls = [...lanes.children].map((d) => ({ rd: $('.rd', d), ur: $('.ur', d), nums: $('.nums', d) }));
-        const STATS = [['sent', '보낸 이벤트'], ['processed', '적용한 이벤트'], ['lag', 'lag, 안 읽은 메시지'], ['buffered', '처리기가 들고 있는 수'], ['watch', '영상 v11 누적 재생 초']];
+        const STATS = [['sent', '보낸 이벤트'], ['processed', '적용한 이벤트'], ['lag', 'lag, 아직 처리하지 않은 메시지'], ['buffered', '처리기가 들고 있는 수'], ['watch', '영상 v11 누적 재생 초']];
         stats.innerHTML = STATS.map(([k, ko]) => `<div class="pr-stat"><div class="k">${ko}</div><div class="v" data-k="${k}">-</div></div>`).join('');
         const statEl = Object.fromEntries(STATS.map(([k]) => [k, $(`[data-k="${k}"]`, stats)]));
 

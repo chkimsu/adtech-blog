@@ -4,7 +4,7 @@ pCTR 모델의 AUC가 0.85입니다. 팀원들과 자축하며 프로덕션에 �
 
 $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
-입찰의 근거가 되는 확률이 늘 같은 방향으로 틀리면 어떻게 될까요. 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **보정(Calibration)**(보정) 문제입니다.
+입찰의 근거가 되는 확률이 늘 같은 방향으로 틀리면 어떻게 될까요. 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **보정(Calibration)** 문제입니다.
 
 <a href="demo-calibration.html" class="btn-demo">보정 왜곡을 직접 슬라이더로 실험해보기 →</a>
 
@@ -22,7 +22,7 @@ $$\text{True Value} = pCTR \times \text{Conversion Value}$$
 
 ## 1. 순서 맞히기(Discrimination) vs 보정: 무엇이 다른가
 
-모델 평가에서 가장 흔한 혼동은 **순서 맞히기(순서를 맞히는 능력)**과 **보정**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
+모델 평가에서 가장 흔한 혼동은 **순서 맞히기**와 **보정**을 구분하지 못하는 것입니다. 이 둘은 완전히 다른 속성입니다.
 
 | 속성 | 순서 맞히기 (AUC) | 보정 |
 |------|---------------------|-------------|
@@ -230,7 +230,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 
 ### 시스템 전체로의 파급 효과
 
-Miscalibration은 하나의 모델 문제로 끝나지 않습니다. 광고 시스템의 모든 하류 컴포넌트가 pCTR 값을 **절대값으로** 사용하기 때문에, 오류가 연쇄적으로 전파됩니다.
+보정 어긋남(Miscalibration)은 하나의 모델 문제로 끝나지 않습니다. 광고 시스템의 모든 하류 컴포넌트가 pCTR 값을 **절대값으로** 사용하기 때문에, 오류가 연쇄적으로 전파됩니다.
 
 ```mermaid
 graph TD
@@ -255,7 +255,7 @@ graph TD
     style I fill:#8a6a3a,stroke:#8a6a3a,color:#fff
 ```
 
-핵심은 이것입니다. **AUC가 높은 모델의 보정 어긋남(Miscalibration)은 오히려 더 위험합니다.** AUC가 높으면 팀은 자신감을 갖고 배포합니다. 그런데 보정이 틀어져 있으면, 잘못된 확률값이 그 자신감을 타고 시스템 전체로 퍼집니다.
+핵심은 이것입니다. **AUC가 높은 모델의 보정 어긋남은 오히려 더 위험합니다.** AUC가 높으면 팀은 자신감을 갖고 배포합니다. 그런데 보정이 틀어져 있으면, 잘못된 확률값이 그 자신감을 타고 시스템 전체로 퍼집니다.
 
 ---
 
@@ -271,9 +271,9 @@ graph TD
 3. 점들을 찍어 연결한다
 
 **해석:**
-- **Perfect 보정**: 모든 점이 대각선에 딱 붙는다 (예측 = 실제)
-- **과대 예측**: 점들이 대각선보다 **아래쪽**에 앉는다 (예측 > 실제, 과대 예측)
-- **과소 예측**: 점들이 대각선보다 **위쪽**에 뜬다 (예측 < 실제, 과소 예측)
+- **Perfect Calibration**: 모든 점이 대각선에 딱 붙는다 (예측 = 실제)
+- **과대 예측**: 점들이 대각선보다 **아래쪽**에 앉는다 (예측 > 실제)
+- **과소 예측**: 점들이 대각선보다 **위쪽**에 뜬다 (예측 < 실제)
 
 | 패턴 | 대각선 대비 위치 | 의미 | 광고 임팩트 |
 |------|----------------|------|------------|
@@ -428,17 +428,17 @@ Murphy(1973)는 이 값이 세 조각으로 정확히 쪼개진다는 것을 보
 $$BS = \underbrace{\frac{1}{n}\sum_{k} n_k (p_k - \bar{y}_k)^2}_{\text{reliability}} - \underbrace{\frac{1}{n}\sum_{k} n_k (\bar{y}_k - \bar{y})^2}_{\text{resolution}} + \underbrace{\bar{y}(1 - \bar{y})}_{\text{uncertainty}}$$
 
 - **reliability**: 그룹의 예측값 $p_k$와 그 그룹의 실제 비율 $\bar{y}_k$의 차이입니다. 이게 곧 보정 오차입니다. 작을수록 좋습니다.
-- **resolution**: 그룹별 실제 비율이 전체 평균 $\bar{y}$에서 얼마나 벌어지는지입니다. 순서를 나누는 힘, 즉 Discrimination에 대응합니다. 클수록 좋으니 부호가 마이너스입니다.
+- **resolution**: 그룹별 실제 비율이 전체 평균 $\bar{y}$에서 얼마나 벌어지는지입니다. 순서를 나누는 힘, 즉 순서 맞히기에 대응합니다. 클수록 좋으니 부호가 마이너스입니다.
 - **uncertainty**: 데이터 자체의 분산입니다. 모델이 무엇을 하든 바뀌지 않습니다.
 
-여기서 한 가지가 분명해집니다. Discrimination과 Calibration은 한 지표 안에서 **서로 다른 항**으로 앉아 있습니다. 뒤섞여 있는 게 아닙니다. reliability만 줄이는 작업이 Post-hoc Calibration입니다. resolution을 키우는 작업이 피처, 모델 개선입니다. 6절에서 말하는 "먼저 AUC, 그다음 Calibration"이라는 순서의 수학적 근거가 바로 이 분해입니다.
+여기서 한 가지가 분명해집니다. 순서 맞히기와 보정은 한 지표 안에서 **서로 다른 항**으로 앉아 있습니다. 뒤섞여 있는 게 아닙니다. reliability만 줄이는 작업이 사후 보정입니다. resolution을 키우는 작업이 피처, 모델 개선입니다. 6절에서 말하는 "먼저 AUC, 그다음 보정"이라는 순서의 수학적 근거가 바로 이 분해입니다.
 :::
 
 ---
 
-## 4. Calibration 보정 기법
+## 4. 보정 기법
 
-모델 학습이 끝난 후, **Post-hoc Calibration** 기법으로 예측 확률을 보정할 수 있습니다. Platt, Isotonic, Temperature 세 기법의 원리는 같습니다. 모델의 raw output $f(x)$에 **단조 변환**(monotonic transformation)을 적용합니다. 순서는 그대로 두고, 값만 실제에 가깝게 당기는 변환입니다. 마지막의 Histogram Binning 은 bin별 실제 비율을 그대로 쓰므로 단조가 보장되지 않습니다.
+모델 학습이 끝난 후, **사후 보정** 기법으로 예측 확률을 보정할 수 있습니다. Platt, Isotonic, Temperature 세 기법의 원리는 같습니다. 모델의 raw output $f(x)$에 **단조 변환**(monotonic transformation)을 적용합니다. 순서는 그대로 두고, 값만 실제에 가깝게 당기는 변환입니다. 마지막의 Histogram Binning 은 bin별 실제 비율을 그대로 쓰므로 단조가 보장되지 않습니다.
 
 ### Platt Scaling
 
@@ -559,7 +559,7 @@ Histogram Binning은 예측 확률을 bin으로 나눈 후, 각 bin의 예측값
 | Temperature Scaling | 1 ($T$) | 낮음 | 매우 낮음 | 극히 낮음 (나눗셈 1회) | 높음 -- NN 모델에 특히 |
 | Histogram Binning | $M$ (bin 수) | 높음 | 높음 | 극히 낮음 (lookup) | 낮음 -- 불연속성 문제 |
 
-> 실무 권장: **Platt 보정(Platt Scaling)부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려합니다. Temperature 보정은 Deep Learning 모델이 과신할 때(확률을 0이나 1 쪽으로 치우치게 낼 때) 가장 먼저 시도할 기법입니다. 평균이 높은 과대 예측에는 Platt이나 P/O Ratio 보정을 씁니다.
+> 실무 권장: **Platt Scaling부터 시작합니다.** 대부분의 경우 충분히 효과적이고, 구현과 서빙이 단순합니다. Platt으로 부족한 경우(세그먼트별 편향 패턴이 복잡한 경우)에만 Isotonic Regression이나 세그먼트별 Platt을 고려합니다. Temperature Scaling은 Deep Learning 모델이 과신할 때(확률을 0이나 1 쪽으로 치우치게 낼 때) 가장 먼저 시도할 기법입니다. 평균이 높은 과대 예측에는 Platt이나 P/O Ratio 보정을 씁니다.
 
 ---
 
@@ -606,10 +606,10 @@ graph LR
 | 데이터셋 | 용도 | 비율 (예시) |
 |---------|------|-----------|
 | 학습 셋(Train Set) | 모델 $f(x)$ 학습 | 70% |
-| 보정 Set | 보정기 $g(\cdot)$ 학습 | 15% |
+| Calibration Set | 보정기 $g(\cdot)$ 학습 | 15% |
 | Test Set | 최종 평가 (AUC + ECE + P/O) | 15% |
 
-데이터가 부족하면 **Cross-Validation 보정**을 씁니다.
+데이터가 부족하면 **Cross-Validation Calibration**을 씁니다.
 
 1. 학습 셋을 K-fold로 나눈다
 2. 각 조각(fold)에서 K-1개 조각으로 모델 학습, 나머지 1개 조각에서 예측값 생성
@@ -619,7 +619,7 @@ graph LR
 
 ### 세그먼트별 보정
 
-3절의 P/O Ratio 표에서 확인했듯, Global 보정으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 보정기**를 운영합니다.
+3절의 P/O Ratio 표에서 확인했듯, Global Calibration으로는 세그먼트별 편향을 해결할 수 없습니다. 프로덕션에서는 **세그먼트별 보정기**를 운영합니다.
 
 **세그먼트 키 선정 기준:**
 
@@ -632,7 +632,7 @@ graph LR
 
 **구현 방식은 두 가지입니다:**
 
-**방식 1: 세그먼트별 Platt 보정**
+**방식 1: 세그먼트별 Platt Scaling**
 - 각 세그먼트에 대해 별도의 $(A_s, B_s)$를 학습
 - 장점: 세그먼트 특성에 맞는 정밀 보정
 - 단점: 세그먼트가 많으면 파라미터 관리 복잡, 데이터가 적은 세그먼트는 불안정
@@ -678,7 +678,7 @@ graph TD
 
 **Online Recalibration** 전략:
 - 최근 N시간(예: 6시간)의 데이터로 보정기 파라미터를 **온라인 갱신**
-- Platt 보정의 경우 $(A, B)$를 exponential moving average로 업데이트
+- Platt Scaling의 경우 $(A, B)$를 exponential moving average로 업데이트
 - P/O Ratio 보정의 경우, rolling P/O ratio를 직접 적용
 
 > 보정이 낡는 것(Calibration Drift)은 세상이 변해 모델이 낡는 것(Concept Drift)의 직접적인 결과입니다. Concept Drift와 모델 Staleness 문제는 [온라인 학습(Online Learning)](post.html?id=online-learning-delayed-feedback) 글에서 따로 다뤘습니다. 온라인 학습 파이프라인과 보정 모니터링은 붙어 있어야 합니다.
@@ -701,9 +701,9 @@ graph TD
 
 **실무 원칙:**
 
-> "먼저 AUC를 최대화하고, 그다음 보정을 맞춘다." 이 순서가 중요합니다. AUC(순서 맞히기)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, 보정은 사후 보정(Post-hoc Calibration)의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
+> "먼저 AUC를 최대화하고, 그다음 보정을 맞춘다." 이 순서가 중요합니다. AUC(순서 맞히기)는 모델 아키텍처, 피처, 학습 데이터의 영역이고, 보정은 사후 보정의 영역입니다. 두 문제를 분리하면 각각 독립적으로 최적화할 수 있습니다.
 
-단, **Calibration-aware 학습**이라는 접근도 있습니다. 교차 엔트로피 손실(Cross-entropy Loss) 자체에 보정을 유도하는 성질이 있습니다. 그래서 학습 과정에서 보정을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 교차 엔트로피 손실로 하고, 배포 전에 보정 Layer를 한 번 더 붙입니다. 이런 **이중 보정** 전략입니다.
+단, **Calibration-aware 학습**이라는 접근도 있습니다. 교차 엔트로피 손실(Cross-entropy Loss) 자체에 보정을 유도하는 성질이 있습니다. 그래서 학습 과정에서 보정을 함께 최적화하기도 합니다. Facebook 사례(He et al., 2014)는 이렇게 합니다. 학습은 교차 엔트로피 손실로 하고, 배포 전에 Calibration Layer를 한 번 더 붙입니다. 이런 **이중 보정** 전략입니다.
 
 ---
 
@@ -716,7 +716,7 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 - **Click Flooding**: 봇 트래픽이 클릭을 늘립니다. 관측 CTR이 실제보다 높게 잡히니, 측정된 P/O Ratio는 1보다 작아집니다(COPC는 1보다 커짐). 모델이 과소 예측하는 것처럼 보입니다.
 - **Delayed Label**: 전환이 늦게 도착해 학습 시점에는 음성으로 찍힙니다. 방향이 두 가지로 나뉘니 조심해야 합니다. 그 데이터로 학습한 모델은 확률을 낮게 보도록 배웁니다(진짜 과소 예측). 반면 아직 도착하지 않은 전환 때문에 관측값이 낮게 잡히면, 그 순간의 P/O Ratio는 1보다 크게 나옵니다(과대 예측처럼 보임). 라벨이 다 도착한 뒤에 다시 측정해야 합니다. 자세한 구조는 [pCVR 모델링](post.html?id=pcvr-modeling)에 있습니다.
 - **자리 편향(Position Bias)**: 상위 노출 광고의 클릭률이 실제보다 크게 잡힙니다. 그래서 위치별로 보정 오류가 달라집니다. 보정 방법은 [자리 편향 & ULTR](post.html?id=position-bias-ultr)에서 다룹니다.
-- **안 눌린 로그 줄이기(Negative Sampling)**: 무클릭 샘플을 버리고 학습하면 확률이 전부 위로 올라갑니다. 보정 없이 쓰면 심한 과대 예측이 됩니다. 되돌리는 공식은 [안 눌린 로그 줄이기 & Bias](post.html?id=negative-sampling-bias)에 있습니다.
+- **Negative Sampling**: 무클릭 샘플을 버리고 학습하면 확률이 전부 위로 올라갑니다. 보정 없이 쓰면 심한 과대 예측이 됩니다. 되돌리는 공식은 [Negative Sampling & Bias](post.html?id=negative-sampling-bias)에 있습니다.
 
 ### 함정 2: 학습 데이터와 서빙 데이터의 분포 차이
 
@@ -774,7 +774,7 @@ CTR 모델의 Label(클릭/비클릭)이 이미 편향되어 있으면, 모델�
 
 **3. P/O Ratio는 세그먼트별로 봐야 한다.** Global P/O Ratio만으로는 부족합니다. Exchange, Device, 시간대 등 핵심 세그먼트별로 쪼개서 모니터링해야 숨겨진 보정 어긋남을 발견할 수 있습니다.
 
-**4. Platt 보정부터 시작하면 된다.** 대부분의 실무 상황에서 Platt 보정이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입합니다.
+**4. Platt Scaling부터 시작하면 된다.** 대부분의 실무 상황에서 Platt Scaling이면 충분합니다. 복잡한 기법은 Platt으로 해결되지 않는 문제가 확인된 후에 도입합니다.
 
 **5. 보정은 일회성이 아니라 지속적 과정이다.** 시장은 끊임없이 변하고, 보정은 반드시 깨집니다. 실시간 모니터링과 자동 재보정 파이프라인이 프로덕션 필수 요소입니다.
 

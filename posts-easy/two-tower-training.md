@@ -456,7 +456,7 @@ triplet 손실은 회원과 정답 광고와 음성 광고를 한 세트로 묶�
 ## 더 깊이 보기
 
 - 후보 생성의 자리, 내적과 코사인의 차이, 근사 검색 색인 비교 → [Two-Tower Retrieval](post.html?id=two-tower-retrieval)
-- 음성 표본 뽑기가 만드는 편향의 전체 그림 → [Negative Sampling](post.html?id=negative-sampling-bias)
+- Negative Sampling 이 만드는 편향의 전체 그림 → [Negative Sampling](post.html?id=negative-sampling-bias)
 - 광고 번호마다 붙는 숫자 표를 어떻게 두고 나누나 → [대규모 임베딩 테이블 운영](post.html?id=embedding-table-ops)
 - 후보 500개를 받아 점수를 매기는 랭킹 모델 → [Deep CTR 모델](post.html?id=deep-ctr-models)
 - 그림 여덟 장을 한 페이지에서 → [Two-Tower 학습 그림 여덟 장](demo-two-tower-training.html)

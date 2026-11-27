@@ -288,7 +288,7 @@
                 <li><strong>컨텍스트 벡터 (x):</strong> 각 광고는 고정된 피처 벡터(예: 기술 점수, 패션 점수 등)를 갖습니다.</li>
                 <li><strong>가중치 벡터 (θ):</strong> 알고리즘이 각 광고에 대해 학습하는 믿음(belief)입니다. 클릭이 쌓일수록 정밀해집니다.</li>
                 <li><strong>광고 선택:</strong> 점수 = (예측 점수: xᵀθ) + (탐색 보너스: α × √(xᵀA⁻¹x)) 로 계산하여 가장 높은 광고를 추천합니다.</li>
-                <li><strong>모델 업데이트:</strong> 클릭 시 행렬 A와 벡터 b를 갱신하여 다음 추천을 더 정확하게 개선합니다.</li>
+                <li><strong>모델 업데이트:</strong> 클릭 여부와 상관없이 노출 결과(Click 또는 Ignore)가 들어올 때마다 행렬 A와 벡터 b를 갱신하여 다음 추천을 더 정확하게 개선합니다.</li>
             </ul>
         </div>
 
@@ -303,7 +303,7 @@
             <p>이 데모의 코드는 <code>this.A = []</code> 배열을 만들어 광고(Arm)마다 행렬 A 와 벡터 b 를 따로 둡니다.<br>
                 그래서 막대 4개는 서로의 데이터를 쓰지 않고 각자 점수를 계산합니다. 이름의 Disjoint 가 이 뜻입니다.</p>
             <ul>
-                <li><strong>Ad A 의 점수:</strong> Ad A 가 노출되고 클릭된 기록만 반영합니다.</li>
+                <li><strong>Ad A 의 점수:</strong> Ad A 의 노출과 클릭 기록만 반영합니다.</li>
                 <li><strong>Ad B 의 점수:</strong> Ad A 가 클릭되었는지와 상관없습니다.</li>
             </ul>
 
@@ -398,8 +398,8 @@
             <ul>
                 <li><strong>개인화 추천의 고전:</strong> Yahoo! 뉴스 추천에 적용되며 유명해진 알고리즘입니다.
                     광고에서는 "이 지면, 이 유저 세그먼트에 어떤 소재를 내보낼까"를 고르는 데 같은 구조를 씁니다.</li>
-                <li><strong>신규 광고 콜드 스타트 완화:</strong> 광고 ID가 아니라 피처의 가중치를 학습하므로,
-                    피처만 채워져 있으면 새 광고도 첫 노출부터 합리적인 점수로 출발합니다.</li>
+                <li><strong>신규 광고의 콜드 스타트:</strong> 이 데모 같은 Disjoint LinUCB는 광고마다 A와 b를 따로 두므로
+                    새 광고는 데이터 없이 예측 점수 0에 큰 탐색 보너스만 가진 채 출발합니다. 신규 광고가 잦은 지면에서는 광고끼리 공통 지식을 나눠 쓰는 Hybrid LinUCB로 확장합니다.</li>
                 <li><strong>탐색 강도 α의 운영:</strong> 트래픽이 많은 지면은 α를 낮춰 안정적으로, 데이터가 적은
                     신규 지면은 α를 높여 탐색 위주로 — 이 데모의 α 슬라이더가 실제 운영에서 돌리는 노브에 해당합니다.</li>
             </ul>
@@ -411,9 +411,9 @@
       <div class="demo-tldr-inner">
         <h3>이 데모에서 알게 된 3가지</h3>
         <ol>
-          <li><strong>Context Vector로 학습</strong> — 광고 ID가 아닌 피처(성별, 관심사, 시간대 등) 가중치를 학습하므로, 처음 보는 유저와 광고에도 일반화된다.</li>
+          <li><strong>Context Vector로 학습</strong> — 광고마다 피처(성별, 관심사, 시간대 등) 가중치를 학습하므로, 처음 보는 유저에도 일반화된다.</li>
           <li><strong>점수 = 예측(Exploitation) + 불확실성(Exploration)</strong> — θᵀx는 기댓값, √(xᵀA⁻¹x)는 불확실성 타원의 반지름. 둘의 합이 UCB 스코어다.</li>
-          <li><strong>Cold Start 거의 없음</strong> — 피처만 괜찮다면 새 광고도 처음부터 합리적 점수로 시작해, 개별 UCB1, TS를 크게 앞지른다.</li>
+          <li><strong>Cold Start는 남음</strong> — 광고마다 따로 배우는 Disjoint 구조라 새 광고는 데이터 없이 예측 점수 0에 큰 탐색 보너스만 가진 채 시작한다. 광고끼리 배운 것을 나누려면 Hybrid LinUCB로 확장한다.</li>
         </ol>
       </div>
     </section>

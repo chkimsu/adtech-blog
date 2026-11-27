@@ -1,7 +1,7 @@
-pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 합니다. 그런데 그 노출 로그는 **정확히 언제, 어디서, 어떤 필드로** 기록되었을까요? 요청(Request) 로그, candidate 로그, 클릭(click) 로그는 어떨까요? 광고 시스템에서 하나의 ad 요청(request)이 발생하면, 그 요청이 시스템을 통과하면서 **최소 10종의 로그**를 남깁니다. 이 글은 그 10개의 로그를 시간순으로 추적하여, 각 로그가 언제 기록되고 어떻게 ML 학습 데이터로 합류하는지 해부합니다.
+pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 합니다. 그런데 그 노출 로그는 **정확히 언제, 어디서, 어떤 필드로** 기록되었을까요? 요청(Request) 로그, 후보(candidate) 로그, 클릭(click) 로그는 어떨까요? 광고 시스템에서 하나의 광고 요청이 발생하면, 그 요청이 시스템을 통과하면서 **최소 10종의 로그**를 남깁니다. 이 글은 그 10개의 로그를 시간순으로 추적하여, 각 로그가 언제 기록되고 어떻게 ML 학습 데이터로 합류하는지 해부합니다.
 
 > [생태계 전체 지도](post.html?id=adtech-ecosystem-map)는 이걸 "피드백 루프" 한 줄로 요약합니다.
-> [광고 서빙 흐름(Ad Serving Flow)](post.html?id=ad-serving-flow)는 입찰 요청(Bid Request)부터 노출까지만 봅니다.
+> [광고 서빙 흐름(Ad Serving Flow)](post.html?id=ad-serving-flow)은 입찰 요청(Bid Request)부터 노출까지만 봅니다.
 > [피처 스토어(Feature Store)](post.html?id=feature-store-serving)는 이걸 "이벤트 로그"로 뭉뚱그립니다.
 > 이 글은 그 세 곳에서 모두 생략된 **로그 자체**를 파고듭니다.
 >
@@ -12,7 +12,7 @@ pCTR 모델을 학습시키려면 노출(impression) 로그(log)를 열어야 �
 
 ## 1. 전체 로그 파이프라인 조감도
 
-하나의 ad 요청은 시스템을 지나며 로그 10개를 남깁니다. 아래 그림이 그 시간순 흐름입니다.
+하나의 광고 요청은 시스템을 지나며 로그 10개를 남깁니다. 아래 그림이 그 시간순 흐름입니다.
 
 로그가 열 개나 되는 이유는 단순합니다. 요청을 받고, 후보를 고르고, 값을 매기고, 입찰하고, 경매 결과를 듣고, 광고를 띄우고, 클릭을 받고, 며칠 뒤 전환을 받습니다. 단계마다 "그때 무슨 일이 있었나"를 남겨야 나중에 되짚을 수 있습니다. 한 단계라도 안 남기면 그 구간은 영원히 캄캄해집니다.
 
@@ -72,9 +72,9 @@ sequenceDiagram
 
 ### 10개 로그 요약
 
-| # | 로그(Log) | 트리거 시점 | 기록 주체 | 요청 대비 지연 | 주요 소비자 |
+| # | 로그 | 트리거 시점 | 기록 주체 | 요청 대비 지연 | 주요 소비자 |
 |---|-----|-----------|----------|-------------|-----------|
-| ① | **요청 로그(Request Log)** | 입찰 요청 수신 즉시 | DSP 입찰 서버(DSP Bidder) | 0ms | QPS 모니터링, 잇는 키(JOIN key) |
+| ① | **요청 로그(Request Log)** | 입찰 요청 수신 즉시 | DSP 입찰 서버(DSP Bidder) | 0ms | QPS 모니터링, JOIN key |
 | ② | **후보 로그(Candidate Log)** | 후보 생성, 필터 완료 | 랭킹 파이프라인(Ranking Pipeline) | ~1-2ms | 후보 생성(Retrieval) recall 분석 |
 | ③ | **피처 로그(Feature Log)** | 피처 벡터(Feature Vector) 조합 완료 | 피처 게이트웨이(Feature Gateway) | ~2-3ms | 학습과 서빙의 피처 어긋남(Training-Serving Skew) 감지 |
 | ④ | **모델 점수 로그(Model Score Log)** | 모델 추론 완료 | 모델 서버(Model Server) | ~5-8ms | Calibration 모니터링 |
@@ -172,7 +172,7 @@ sequenceDiagram
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| `request_id` | 이 요청의 고유 식별자 — **모든 후속 로그의 잇는 키** | `req-a1b2c3d4` |
+| `request_id` | 이 요청의 고유 식별자 — **모든 후속 로그의 JOIN key** | `req-a1b2c3d4` |
 | `timestamp` | 수신 시각 (ms 정밀도) | `2026-04-12T09:31:22.417Z` |
 | `user_id` / `device_id` | 유저 식별자 (3rd-party cookie 또는 ADID/IDFA) | `did-xyz789` |
 | `publisher_id` | 매체 식별자 | `pub-news-kr` |
@@ -184,7 +184,7 @@ sequenceDiagram
 
 **다운스트림 활용**:
 - **QPS(초당 요청 수) 모니터링**: 초당 요청 로그 수 = 시스템 부하
-- **전체 로그 체인의 잇는 키**: `request_id`가 이후 모든 로그를 관통
+- **전체 로그 체인의 JOIN key**: `request_id`가 이후 모든 로그를 관통
 - **예산 페이싱(Budget Pacing) 분모**: 전체 요청 수 대비 입찰 비율 계산
 - **트래픽 분석**: Exchange별, 매체별, 시간대별 트래픽 분포
 
@@ -194,13 +194,13 @@ sequenceDiagram
 
 **언제 기록되는가**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. 후보 생성과 앞단 랭킹이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
 
-**누가 기록하는가**: DSP 랭킹 파이프라인(DSP Ranking Pipeline) (후보 생성 + 앞단 랭킹 모듈)
+**누가 기록하는가**: DSP 랭킹 파이프라인 (후보 생성 + 앞단 랭킹 모듈)
 
 **핵심 필드**:
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| `request_id` | 요청 로그와 잇기 | `req-a1b2c3d4` |
+| `request_id` | 요청 로그와 JOIN | `req-a1b2c3d4` |
 | `stage` | 파이프라인 단계 | `retrieval`, `pre_ranking`, `ranking` |
 | `candidates_in` | 이 단계 진입 후보 수 | `3,200` |
 | `candidates_out` | 이 단계 통과 후보 수 | `200` |
@@ -222,14 +222,14 @@ sequenceDiagram
 - **SDK 방식**: 모바일 앱 내 광고 SDK가 광고 렌더링 완료를 감지하고 이벤트를 전송
 - **Viewability 기준**: IAB 표준 — 광고 영역의 50% 이상이 1초 이상 (영상은 2초) 화면에 노출
 
-**누가 기록하는가**: Client-side SDK 또는 픽셀 트래커(Tracker) → DSP의 노출(Impression) Tracking 서버
+**누가 기록하는가**: Client-side SDK 또는 픽셀 트래커 → DSP의 Impression Tracking Server
 
 **핵심 필드**:
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| `impression_id` | 이 노출의 고유 식별자 — 클릭과 전환 로그(Click/Conversion Log)의 잇는 키 | `imp-e5f6g7h8` |
-| `request_id` | 요청 로그와 잇기 | `req-a1b2c3d4` |
+| `impression_id` | 이 노출의 고유 식별자 — 클릭과 전환 로그의 JOIN key | `imp-e5f6g7h8` |
+| `request_id` | 요청 로그와 JOIN | `req-a1b2c3d4` |
 | `user_id` | 유저 식별자 | `did-xyz789` |
 | `ad_id` / `campaign_id` | 노출된 광고와 캠페인 | `ad-001`, `camp-42` |
 | `creative_id` | 어떤 소재가 노출되었는지 | `cr-banner-v3` |
@@ -239,12 +239,12 @@ sequenceDiagram
 | `exchange_id` | 어떤 Exchange를 통해 낙찰되었는지 | `google-adx` |
 
 **다운스트림 활용**:
-- **pCTR 학습 데이터의 한 행**: 노출 1건 = 학습 샘플 1건. 클릭(Click)이 있으면 y=1, 없으면 y=0
+- **pCTR 학습 데이터의 한 행**: 노출 1건 = 학습 샘플 1건. 클릭이 있으면 y=1, 없으면 y=0
 - **CTR 계산의 분모**: CTR = 클릭 수 / 노출 수
 - **Frequency Cap**: 이 유저에게 이 광고가 몇 번 노출되었는지 카운팅
 - **CPM 과금**: 노출 기반 과금 모델의 과금 트리거
 
-> [안 눌린 로그를 줄여 생기는 편향(Negative Sampling Bias) 포스트](post.html?id=negative-sampling-bias)에서 다룬 문제가 여기서 시작됩니다. 노출 로그의 **모든 행은 "이전 모델이 노출하기로 결정한 광고"에서만 생성**됩니다. 노출되지 않은 광고가 클릭되었을지는 영원히 알 수 없습니다. 이것이 Selection Bias의 근원입니다.
+> [Negative Sampling Bias 포스트](post.html?id=negative-sampling-bias)에서 다룬 문제가 여기서 시작됩니다. 노출 로그의 **모든 행은 "이전 모델이 노출하기로 결정한 광고"에서만 생성**됩니다. 노출되지 않은 광고가 클릭되었을지는 영원히 알 수 없습니다. 이것이 Selection Bias의 근원입니다.
 
 **중요한 구분**: 노출 로그 ≠ 요청 로그. 요청이 100건이면 그 중 낙찰+실제노출된 건만 노출 로그에 남습니다 (낙찰률(Win Rate)에 따라 10~30건). 나머지 70~90건의 요청은 입찰하지 않았거나 패찰했거나 낙찰 뒤 노출되지 못해 노출을 남기지 않습니다.
 
@@ -253,7 +253,7 @@ sequenceDiagram
 **언제 기록되는가**: 유저가 광고를 **클릭하는 순간**. 노출 후 수 초~수 분 이내에 발생합니다.
 
 **기록 방식**:
-- **Redirect 방식**: 유저 클릭 → DSP의 클릭 Tracking URL로 redirect → 로그 기록 → 광고주 랜딩 페이지로 최종 redirect
+- **Redirect 방식**: 유저 클릭 → DSP의 Click Tracking URL로 redirect → 로그 기록 → 광고주 랜딩 페이지로 최종 redirect
 - **JS Event 방식**: 광고 내 JavaScript가 클릭 이벤트를 감지하여 비동기로 클릭 트래커에 전송
 
 **누가 기록하는가**: DSP 클릭 트래커 (Redirect 서버 또는 Client-side Event Collector)
@@ -263,21 +263,21 @@ sequenceDiagram
 | 필드 | 설명 | 예시 |
 |------|------|------|
 | `click_id` | 이 클릭의 고유 식별자 | `clk-i9j0k1l2` |
-| `impression_id` | 노출 로그와 잇기 | `imp-e5f6g7h8` |
-| `request_id` | 요청 로그와 잇기 | `req-a1b2c3d4` |
+| `impression_id` | 노출 로그와 JOIN | `imp-e5f6g7h8` |
+| `request_id` | 요청 로그와 JOIN | `req-a1b2c3d4` |
 | `user_id` | 유저 식별자 | `did-xyz789` |
 | `ad_id` | 클릭된 광고 | `ad-001` |
 | `timestamp` | 클릭 시각 | `2026-04-12T09:31:25.891Z` |
 | `time_since_impression_ms` | 노출 후 클릭까지 경과 시간 | `3474` (약 3.5초) |
-| `is_valid` | 이상 탐지(Fraud Detection) 결과 | `true` |
+| `is_valid` | Fraud Detection 결과 | `true` |
 
 **다운스트림 활용**:
-- **pCTR 학습 라벨**: 노출 로그와 잇기했을 때, 클릭이 있으면 y=1 (positive sample)
+- **pCTR 학습 라벨**: 노출 로그와 JOIN했을 때, 클릭이 있으면 y=1 (positive sample)
 - **CPC 과금 트리거**: 클릭 기반 과금 모델에서 과금 발생
-- **이상 탐지 입력**: 비정상적으로 빠른 클릭(< 100ms), 동일 IP 반복 클릭 등 탐지
-- **pCVR 학습의 입력 조건**: pCVR 모델은 "클릭한 유저 중 전환한 비율"을 예측하므로, Click Log가 pCVR의 샘플 기준
+- **Fraud Detection 입력**: 비정상적으로 빠른 클릭(< 100ms), 동일 IP 반복 클릭 등 탐지
+- **pCVR 학습의 입력 조건**: pCVR 모델은 "클릭한 유저 중 전환한 비율"을 예측하므로, 클릭 로그가 pCVR의 샘플 기준
 
-### 2.5 Conversion Log — 가장 늦게 도착하는 가장 중요한 라벨
+### 2.5 전환 로그 — 가장 늦게 도착하는 가장 중요한 라벨
 
 **언제 기록되는가**: 유저가 광고주 사이트에서 **전환 이벤트**(구매, 가입, 앱 설치 등)를 완료한 시점. 클릭 후 **수 시간~수 일** 지연됩니다.
 
@@ -293,8 +293,8 @@ sequenceDiagram
 | 필드 | 설명 | 예시 |
 |------|------|------|
 | `conversion_id` | 이 전환의 고유 식별자 | `conv-m3n4o5p6` |
-| `click_id` | Click Log와 JOIN | `clk-i9j0k1l2` |
-| `impression_id` | Impression Log와 JOIN (view-through attribution 시) | `imp-e5f6g7h8` |
+| `click_id` | 클릭 로그와 JOIN | `clk-i9j0k1l2` |
+| `impression_id` | 노출 로그와 JOIN (view-through attribution 시) | `imp-e5f6g7h8` |
 | `user_id` | 유저 식별자 | `did-xyz789` |
 | `conversion_type` | 전환 종류 | `purchase`, `signup`, `install` |
 | `conversion_value` | 전환 금액 | `$49.99` |
@@ -302,7 +302,7 @@ sequenceDiagram
 | `attribution_window` | 귀속 윈도우 | `7d_click`, `1d_view` |
 
 **다운스트림 활용**:
-- **pCVR 학습 라벨**: Click Log와 JOIN하여, 전환이 있으면 y=1
+- **pCVR 학습 라벨**: 클릭 로그와 JOIN하여, 전환이 있으면 y=1
 - **CPA 과금**: 전환 기반 과금 모델의 과금 트리거
 - **ROAS 계산**: Return on Ad Spend = conversion_value 합 / 광고비 합
 - **광고주 리포팅**: 캠페인별 전환 수, 전환 가치 집계
@@ -316,7 +316,7 @@ sequenceDiagram
 **언제 기록되는가**: 광고 거래소가 경매 결과를 DSP에 통보하는 시점. 입찰 응답 전송 후 **수십 ms** 이내.
 
 **기록 방식**:
-- **낙찰(Win) Notice (nurl)**: DSP가 낙찰되면 Exchange가 DSP의 낙찰 Notice URL을 호출. 이때 낙찰가(실제 지불 가격)가 포함
+- **낙찰 통지(Win Notice, nurl)**: DSP가 낙찰되면 Exchange가 DSP의 낙찰 통지 URL을 호출. 이때 낙찰가(실제 지불 가격)가 포함
 - **패찰 통지(Loss Notice)**: 일부 Exchange(OpenRTB 2.5+)는 패찰 시에도 통보. 단, 낙찰가는 미공개
 
 **누가 기록하는가**: 광고 거래소 → DSP 입찰 서버 (낙찰/패찰 통지 수신 모듈)
@@ -325,7 +325,7 @@ sequenceDiagram
 
 | 필드 | 설명 | 예시 |
 |------|------|------|
-| `request_id` | 요청 로그와 잇기 | `req-a1b2c3d4` |
+| `request_id` | 요청 로그와 JOIN | `req-a1b2c3d4` |
 | `result` | 경매 결과 | `win` / `loss` |
 | `bid_price` | DSP가 제출한 입찰가 | `$1.20` |
 | `win_price` | 실제 지불 가격 (win 시에만) | `$0.83` |
@@ -345,7 +345,7 @@ sequenceDiagram
 
 ## 3. 모델이 남기는 로그(ML Pipeline Logs)
 
-Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML Pipeline) 로그는 **"모델 내부 상태"**를 기록합니다. 유저에게는 보이지 않지만, 모델의 품질 관리와 디버깅에 필수적인 로그들입니다:
+핵심 로그 여섯이 "유저 행동"을 기록한다면, 모델 파이프라인(ML Pipeline) 로그는 **"모델 내부 상태"**를 기록합니다. 유저에게는 보이지 않지만, 모델의 품질 관리와 디버깅에 필수적인 로그들입니다:
 
 <div class="chart-cards">
   <div class="chart-card">
@@ -402,7 +402,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML P
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">활용</span>
-        <span class="chart-card-row-value">학습과 서빙의 피처 어긋남 감지, 피처(Feature) Drift 모니터링</span>
+        <span class="chart-card-row-value">학습과 서빙의 피처 어긋남 감지, Feature Drift 모니터링</span>
       </div>
     </div>
     <div class="chart-card-tags">
@@ -480,7 +480,7 @@ Core 6 로그가 "유저 행동"을 기록한다면, 모델 파이프라인(ML P
 
 ---
 
-## 4. 로그 간 잇기 관계: request_id가 잇는 체인
+## 4. 로그 간 JOIN 관계: request_id가 잇는 체인
 
 10개 로그는 독립적으로 존재하지 않습니다. **`request_id`를 중심으로 한 체인**으로 연결됩니다:
 
@@ -513,7 +513,7 @@ graph LR
   style CONV fill:#8f6231,stroke:#8f6231,color:#fff
 ```
 
-핵심 잇는 키 체인: `request_id` → `impression_id` → `click_id` → `conversion_id`. 이 체인이 끊어지면 학습 데이터를 만들 수 없습니다.
+핵심 JOIN key 체인: `request_id` → `impression_id` → `click_id` → `conversion_id`. 이 체인이 끊어지면 학습 데이터를 만들 수 없습니다.
 
 ### pCTR 학습 데이터 구성 예시
 
@@ -546,7 +546,7 @@ training_data = (
 )
 ```
 
-> 이 잇기 구조에는 함정이 하나 있습니다. 노출 로그를 기준으로 학습 데이터를 만들면 Class Imbalance 문제가 생깁니다. CTR이 1%라면 y=0이 99%, y=1이 1%입니다. 이 불균형을 어떻게 다루는지는 [안 눌린 로그를 줄여 생기는 편향 포스트](post.html?id=negative-sampling-bias)에서 다룹니다.
+> 이 JOIN 구조에는 함정이 하나 있습니다. 노출 로그를 기준으로 학습 데이터를 만들면 Class Imbalance 문제가 생깁니다. CTR이 1%라면 y=0이 99%, y=1이 1%입니다. 이 불균형을 어떻게 다루는지는 [Negative Sampling Bias 포스트](post.html?id=negative-sampling-bias)에서 다룹니다.
 
 ---
 
@@ -579,11 +579,11 @@ training_data = (
   <div class="chart-timeline-legend">
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(75,192,192,0.7);"></div>
-      <span><strong>실시간 (0~10ms)</strong> &mdash; DSP 내부에서 자체 기록. 요청, 후보(Candidate), 피처, Score, Bid</span>
+      <span><strong>실시간 (0~10ms)</strong> &mdash; DSP 내부에서 자체 기록. 요청, 후보, 피처, 모델 점수, 입찰</span>
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(54,162,235,0.7);"></div>
-      <span><strong>준실시간 (~100ms-1s)</strong> &mdash; 외부 통신 필요. 낙찰/패찰(Loss) (Exchange 통보), 노출 (픽셀 발화)</span>
+      <span><strong>준실시간 (~100ms-1s)</strong> &mdash; 외부 통신 필요. 낙찰/패찰 (Exchange 통보), 노출 (픽셀 발화)</span>
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(255,159,64,0.7);"></div>
@@ -591,7 +591,7 @@ training_data = (
     </div>
     <div class="chart-timeline-legend-item">
       <div class="chart-timeline-legend-dot" style="background:rgba(255,99,132,0.7);"></div>
-      <span><strong>고지연 (수 시간~수 일)</strong> &mdash; 외부 시스템 의존. 전환(Conversion), Attribution</span>
+      <span><strong>고지연 (수 시간~수 일)</strong> &mdash; 외부 시스템 의존. 전환, 어트리뷰션</span>
     </div>
   </div>
 </div>
@@ -823,7 +823,7 @@ class BidLog:
 
 ## 7. 로그가 ML 모델을 만든다 — 학습 데이터 관점
 
-모든 ML 모델의 학습 데이터는 **로그의 잇기**로 만들어집니다:
+모든 ML 모델의 학습 데이터는 **로그의 JOIN**으로 만들어집니다:
 
 <div class="chart-layer">
   <div class="chart-layer-title">RAW LOGS (수집)</div>
@@ -834,8 +834,8 @@ class BidLog:
         <span class="chart-layer-item green">요청</span>
         <span class="chart-layer-item green">후보</span>
         <span class="chart-layer-item green">피처</span>
-        <span class="chart-layer-item green">Score</span>
-        <span class="chart-layer-item green">Bid</span>
+        <span class="chart-layer-item green">모델 점수</span>
+        <span class="chart-layer-item green">입찰</span>
       </div>
     </div>
     <div class="chart-layer-group">
@@ -845,18 +845,18 @@ class BidLog:
         <span class="chart-layer-item blue">노출</span>
         <span class="chart-layer-item orange">클릭</span>
         <span class="chart-layer-item pink">전환</span>
-        <span class="chart-layer-item pink">Attribution</span>
+        <span class="chart-layer-item pink">어트리뷰션</span>
       </div>
     </div>
   </div>
-  <div class="chart-layer-arrow">&#8595; 잇기 &amp; Label Generation</div>
+  <div class="chart-layer-arrow">&#8595; JOIN &amp; Label Generation</div>
   <div class="chart-layer-title">학습 데이터셋 (ETL)</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
       <div class="chart-layer-group-label">pCTR 학습 데이터</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item blue">노출</span>
-        <span class="chart-layer-item cyan">LEFT 잇기 클릭</span>
+        <span class="chart-layer-item cyan">LEFT JOIN 클릭</span>
         <span class="chart-layer-item green">+ 피처 로그</span>
       </div>
     </div>
@@ -864,7 +864,7 @@ class BidLog:
       <div class="chart-layer-group-label">pCVR 학습 데이터</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item orange">클릭</span>
-        <span class="chart-layer-item cyan">LEFT 잇기 전환</span>
+        <span class="chart-layer-item cyan">LEFT JOIN 전환</span>
         <span class="chart-layer-item green">+ 피처 로그</span>
       </div>
     </div>
@@ -872,7 +872,7 @@ class BidLog:
       <div class="chart-layer-group-label">Bid Shading 학습 데이터</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item green">입찰 로그</span>
-        <span class="chart-layer-item cyan">잇기 낙찰/패찰</span>
+        <span class="chart-layer-item cyan">JOIN 낙찰/패찰</span>
       </div>
     </div>
   </div>
@@ -880,9 +880,9 @@ class BidLog:
   <div class="chart-layer-title">MODEL TRAINING</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">pCTR 모델(Model)</div>
+      <div class="chart-layer-group-label">pCTR 모델</div>
       <div class="chart-layer-items">
-        <span class="chart-layer-item pink">DeepFM(X=feature, y=클릭)</span>
+        <span class="chart-layer-item pink">DeepFM(X=feature, y=click)</span>
       </div>
     </div>
     <div class="chart-layer-group">
@@ -913,7 +913,7 @@ class BidLog:
 - **Bid Shading 학습 데이터** = 입찰 로그 `JOIN` 낙찰과 패찰 로그 (on request_id)
 - **[Calibration](post.html?id=calibration)** = 모델 점수 로그의 predicted pCTR vs 노출+클릭에서 계산한 actual CTR
 
-로그의 품질이 곧 모델의 품질입니다. 노출이 중복 기록되면 CTR이 과소추정되고, 클릭 fraud가 섞이면 pCTR이 과대추정됩니다. 로그 파이프라인의 신뢰성이 모델 성능의 **상한선**을 결정합니다.
+로그의 품질이 곧 모델의 품질입니다. 노출이 중복 기록되면 CTR이 과소추정되고, Click fraud가 섞이면 pCTR이 과대추정됩니다. 로그 파이프라인의 신뢰성이 모델 성능의 **상한선**을 결정합니다.
 
 ---
 
@@ -959,7 +959,7 @@ class BidLog:
     <div class="chart-card-header">
       <div class="chart-card-icon pink">!</div>
       <div>
-        <div class="chart-card-name">어트리뷰션 창(Attribution Window) 오설정</div>
+        <div class="chart-card-name">어트리뷰션 윈도우(Attribution Window) 오설정</div>
         <div class="chart-card-subtitle">가짜 음성 발생</div>
       </div>
     </div>
@@ -1110,11 +1110,11 @@ print(f"Request→Impression 전환율: {win_rate_approx:.2%}")  # 보통: 10-30
 
 2. **`request_id`가 체인의 출발점입니다.** 요청부터 클릭까지는 이 키 하나로 잇고, 전환은 click_id 나 impression_id 로 이어 붙입니다. 이 키가 누락되면 JOIN이 불가능하고, 학습 데이터를 만들 수 없습니다.
 
-3. **시간축을 항상 의식해야 합니다.** Request Log는 0ms, Conversion Log는 수 일 후. 이 시간 차이가 [Delayed Feedback](post.html?id=online-learning-delayed-feedback) 문제의 근원입니다.
+3. **시간축을 항상 의식해야 합니다.** 요청 로그는 0ms, 전환 로그는 수 일 후. 이 시간 차이가 [지연 피드백](post.html?id=online-learning-delayed-feedback) 문제의 근원입니다.
 
-4. **기록되지 않은 것은 존재하지 않습니다.** Candidate Log를 남기지 않으면 Retrieval 단계의 recall을 평가할 방법이 없습니다. Feature Log를 남기지 않으면 [Training-Serving Skew](post.html?id=feature-store-serving)를 감지할 수 없습니다.
+4. **기록되지 않은 것은 존재하지 않습니다.** 후보 로그를 남기지 않으면 후보 생성 단계의 recall을 평가할 방법이 없습니다. 피처 로그를 남기지 않으면 [학습과 서빙의 피처 어긋남](post.html?id=feature-store-serving)을 감지할 수 없습니다.
 
-5. **로그 품질 = 모델 품질.** Impression 중복, Click fraud, Conversion 누락은 모두 학습 라벨을 오염시킵니다. 로그 파이프라인의 신뢰성이 모델 성능의 상한선을 결정합니다.
+5. **로그 품질 = 모델 품질.** 노출 중복, Click fraud, 전환 누락은 모두 학습 라벨을 오염시킵니다. 로그 파이프라인의 신뢰성이 모델 성능의 상한선을 결정합니다.
 
 > 이 글에서 다룬 로그 파이프라인은 광고 ML 시스템의 **데이터 기반(data foundation)**입니다. 그 위에 세 층이 올라갑니다.
 >

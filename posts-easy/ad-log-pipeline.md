@@ -119,7 +119,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">후보 로그 — 후보 깔때기</div>
-      <div class="chart-step-desc">후보 생성 → 앞단 랭킹(Pre-Ranking) 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
+      <div class="chart-step-desc">후보 생성 → Pre-Ranking 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
       <span class="chart-step-badge green">랭킹 파이프라인, ~2ms</span>
     </div>
   </div>
@@ -207,9 +207,9 @@ sequenceDiagram
 
 **후보 로그는 광고 수천 개가 단계를 지나며 수백 개로 줄어드는 깔때기에서 단계마다 들어온 후보 수, 남은 후보 수, 탈락 사유를 남깁니다.**
 
-**기록 시점**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정되는 순간**입니다. 단계별 랭킹 파이프라인은 가벼운 단계로 후보를 먼저 크게 줄이고 무거운 모델은 남은 후보에만 쓰는 구조입니다. 첫 단계인 후보 생성(Retrieval)이 전체 광고 풀에서 광고 수천 개를 꺼내면 다음 단계인 앞단 랭킹(Pre-Ranking)이 그 가운데 수백 개만 남깁니다. 두 단계가 끝나는 요청 뒤 ~1-2ms 지점에서 후보 로그가 기록됩니다.
+**기록 시점**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정되는 순간**입니다. 단계별 랭킹 파이프라인은 가벼운 단계로 후보를 먼저 크게 줄이고 무거운 모델은 남은 후보에만 쓰는 구조입니다. 첫 단계인 후보 생성(Retrieval)이 전체 광고 풀에서 광고 수천 개를 꺼내면 다음 단계인 Pre-Ranking 이 그 가운데 수백 개만 남깁니다. 두 단계가 끝나는 요청 뒤 ~1-2ms 지점에서 후보 로그가 기록됩니다.
 
-**기록 주체**: DSP 랭킹 파이프라인의 후보 생성 모듈과 앞단 랭킹 모듈입니다.
+**기록 주체**: DSP 랭킹 파이프라인의 후보 생성 모듈과 Pre-Ranking 모듈입니다.
 
 **주요 필드**:
 
@@ -229,7 +229,7 @@ sequenceDiagram
 
 - **후보 생성 Recall 분석**: Recall 은 찾아야 할 것 가운데 실제로 찾아낸 비율입니다. 여기서는 최종적으로 낙찰된 광고가 맨 처음 후보 생성 단계의 후보 목록에 들어 있었는지를 확인합니다.
 - **Funnel Dropout 분석**: 단계마다 후보의 몇 %가 탈락하는지를 세어 보면 필터 조건이 지나치게 공격적이지는 않은지 알 수 있습니다.
-- **앞단 랭킹 ↔ Ranking 일관성**: 앞단 랭킹에서 상위권이던 광고가 마지막 Ranking 단계(무거운 모델로 최종 순서를 정하는 단계)에서도 상위권에 남는지를 봅니다.
+- **Pre-Ranking ↔ Ranking 일관성**: Pre-Ranking 에서 상위권이던 광고가 마지막 Ranking 단계(무거운 모델로 최종 순서를 정하는 단계)에서도 상위권에 남는지를 봅니다.
 
 > 후보 로그는 교과서 대부분이 다루지 않는 로그이지만 **실무에서는 모델을 개선할 첫 단서가 이 로그에 있습니다.** 좋은 광고가 왜 노출되지 않았는지를 따질 때 그 답을 찾는 일도 후보 로그의 `filter_reasons` 를 여는 데서 시작합니다.
 

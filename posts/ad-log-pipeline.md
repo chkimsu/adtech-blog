@@ -111,7 +111,7 @@ sequenceDiagram
     </div>
     <div class="chart-step-content">
       <div class="chart-step-title">후보 로그 — 후보 깔때기</div>
-      <div class="chart-step-desc">후보 생성 → 앞단 랭킹(Pre-Ranking) 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
+      <div class="chart-step-desc">후보 생성 → Pre-Ranking 직후(~1-2ms). 상위 N개 후보가 확정된 시점입니다. 각 단계에서 몇 개가 탈락했는지 추적합니다.</div>
       <span class="chart-step-badge green">랭킹 파이프라인, ~2ms</span>
     </div>
   </div>
@@ -192,9 +192,9 @@ sequenceDiagram
 
 ### 2.2 후보 로그 — 후보 깔때기의 기록
 
-**언제 기록되는가**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. 후보 생성과 앞단 랭킹이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
+**언제 기록되는가**: [단계별 랭킹 파이프라인(Multi-Stage Ranking Pipeline)](post.html?id=model-serving-architecture)에서 **상위 후보가 확정된 시점**입니다. 후보 생성과 Pre-Ranking이 끝나는 ~1-2ms 지점입니다. 전체 광고 풀에서 수천 개를 꺼내고, 그 중 수백 개로 줄이는 과정이 끝나는 순간입니다.
 
-**누가 기록하는가**: DSP 랭킹 파이프라인 (후보 생성 + 앞단 랭킹 모듈)
+**누가 기록하는가**: DSP 랭킹 파이프라인 (후보 생성 + Pre-Ranking 모듈)
 
 **핵심 필드**:
 
@@ -211,7 +211,7 @@ sequenceDiagram
 **다운스트림 활용**:
 - **후보 생성 Recall 분석**: 최종 낙찰 광고가 후보 생성 단계에서 후보에 포함되었는가?
 - **Funnel Dropout 분석**: 어떤 단계에서 몇 %가 탈락하는가? 필터 조건이 너무 공격적이지 않은가?
-- **앞단 랭킹 ↔ Ranking 일관성**: 앞단 랭킹에서 상위권이었던 광고가 Ranking에서도 상위권인가?
+- **Pre-Ranking ↔ Ranking 일관성**: Pre-Ranking에서 상위권이었던 광고가 Ranking에서도 상위권인가?
 
 > 이 로그는 대부분의 교과서에서 언급되지 않지만, **실무에서 모델 개선의 첫 단서는 여기에 있습니다.** "왜 이 좋은 광고가 노출되지 않았는가?"라는 질문의 답은 후보 로그의 `filter_reasons`에서 시작합니다.
 

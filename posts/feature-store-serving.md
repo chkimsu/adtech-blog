@@ -10,7 +10,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 > - 장애 대응만 → 7절
 
 ---
-## 1. 피처(Feature) Serving 전체 조감도
+## 1. Feature Serving 전체 조감도
 
 모델이 "이 사람이 이 광고를 누를 확률"을 계산하려면 재료가 필요합니다. 나이, 관심사, 어제 뭘 봤는지, 지금 몇 시인지 같은 것들입니다. 이 재료를 **피처(feature)** 라고 부릅니다.
 
@@ -23,7 +23,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 <a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
-모델을 돌리는 쪽 이야기는 [모델(Model) Serving Architecture](post.html?id=model-serving-architecture)에 있습니다. 여기는 **재료를 꺼내오는 쪽**입니다. 재료가 만들어지기 전 단계, 즉 로그가 흘러오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에 있습니다.
+모델을 돌리는 쪽 이야기는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)에 있습니다. 여기는 **재료를 꺼내오는 쪽**입니다. 재료가 만들어지기 전 단계, 즉 로그가 흘러오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline)에 있습니다.
 
 먼저 전체 경로를 봅니다. 광고 ML 시스템에서 피처가 흐르는 전체 경로입니다.
 
@@ -66,21 +66,21 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   <div class="chart-layer-title">FEATURE PIPELINES</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline) (수 시간)</div>
+      <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline, 수 시간)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item yellow">Spark / Hive</span>
         <span class="chart-layer-item yellow">집계, 통계, 임베딩</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">스트리밍 파이프라인(Streaming Pipeline) (수 분)</div>
+      <div class="chart-layer-group-label">스트리밍 파이프라인(Streaming Pipeline, 수 분)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item orange">Flink / Kafka</span>
         <span class="chart-layer-item orange">윈도우 집계</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">실시간(Real-Time) (요청 시점)</div>
+      <div class="chart-layer-group-label">실시간(Real-Time, 요청 시점)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item green">Application 내부</span>
         <span class="chart-layer-item green">파싱, 변환</span>
@@ -99,14 +99,14 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">오프라인 저장소(Offline Store) (학습용)</div>
+      <div class="chart-layer-group-label">오프라인 저장소(Offline Store, 학습용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item blue">S3 / Hive</span>
         <span class="chart-layer-item blue">Point-in-Time</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">온라인 저장소(Online Store) (서빙용)</div>
+      <div class="chart-layer-group-label">온라인 저장소(Online Store, 서빙용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item cyan">Redis</span>
         <span class="chart-layer-item cyan">DynamoDB</span>
@@ -144,7 +144,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
   </div>
 </div>
 
-핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(배치(Batch) / 스트리밍(Streaming) / 실시간)이 하나의 피처 스토어로 합류합니다. 그리고 서빙 시점에 이들이 단일 피처 벡터(모델에 넣는 숫자 목록)로 조합됩니다.
+핵심은 두 가지입니다. **세 갈래의 피처 파이프라인**(배치 / 스트리밍 / 실시간)이 하나의 피처 스토어로 합류합니다. 그리고 서빙 시점에 이들이 단일 피처 벡터(모델에 넣는 숫자 목록)로 조합됩니다.
 
 ### 광고 요청 1건에 필요한 피처 분류
 
@@ -167,13 +167,13 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
     <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">DSP 내부 처리 타임라인</span>
     <span style="font-size:0.75rem; color:var(--text-muted);">목표: ~10ms 이내</span>
   </div>
-  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. 입찰 요청 수신 &rarr; 피처 Gateway</div>
+  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. 입찰 요청 수신 &rarr; Feature Gateway</div>
   <div class="chart-timeline-bar">
     <div class="chart-timeline-segment blue" style="width:12%;">유저 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment cyan" style="width:14%;">광고 피처 N개<br/>1ms</div>
     <div class="chart-timeline-segment purple" style="width:8%;">지면 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment green" style="width:4%;">컨텍스트<br/>0.1ms</div>
-    <div class="chart-timeline-segment orange" style="width:8%;">벡터(Vector) 조합<br/>0.5ms</div>
+    <div class="chart-timeline-segment orange" style="width:8%;">벡터 조합<br/>0.5ms</div>
     <div class="chart-timeline-segment pink" style="width:38%;">모델 추론 (pCTR, pCVR)<br/>2-5ms</div>
     <div class="chart-timeline-segment" style="width:16%; background:rgba(176,38,255,0.5);">Bid Logic<br/>1ms</div>
   </div>
@@ -234,7 +234,7 @@ pCTR 모델의 AUC를 0.01 올리려고 몇 주를 씁니다. 그런데 **100ms 
 
 ### 실전 예시: Redis에서 피처 조회하기
 
-실제 입찰 요청이 도착했을 때 피처 Gateway가 수행하는 Redis 명령입니다:
+실제 입찰 요청이 도착했을 때 Feature Gateway가 수행하는 Redis 명령입니다:
 
 ```bash
 # 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
@@ -298,7 +298,7 @@ feature_vector = {
 
 ---
 
-## 3. 오프라인(Offline) vs Near-Real-Time vs 실시간 피처 파이프라인(Pipeline) [무대: 공통]
+## 3. 오프라인 vs Near-Real-Time vs 실시간 피처 파이프라인 [무대: 공통]
 
 피처를 하나의 파이프라인으로 다 만들면 안 될까요? 안 됩니다. **피처마다 "언제까지 신선해야 하는가"가 다르기 때문입니다.**
 
@@ -635,7 +635,7 @@ flowchart LR
     <div class="chart-card-body">
       <div class="chart-card-row">
         <span class="chart-card-row-label">배치 피처</span>
-        <span class="chart-card-row-value">오프라인 저장소 (S3/Hive) → 그 시점으로 되돌려 잇기(Point-in-Time Join)</span>
+        <span class="chart-card-row-value">오프라인 저장소 (S3/Hive) → Point-in-Time Join</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">스트리밍 피처</span>
@@ -694,7 +694,7 @@ flowchart LR
 
 | 피처 | 파이프라인 | 수집 소스 | 저장 위치 | 학습 시 읽는 곳 | 추론 시 읽는 곳 | 갱신 주기 |
 |------|-----------|----------|----------|---------------|---------------|----------|
-| 유저 7일 CTR | **배치** | Click/Impression 로그 | 오프라인: S3, 온라인(Online): Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
+| 유저 7일 CTR | **배치** | Click/Impression 로그 | 오프라인: S3, 온라인: Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
 | 유저 임베딩 (128d) | **배치** | 유저 행동 로그 전체 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점 스냅샷) | Redis `user:{id}` | 일 1회 |
 | 광고 과거 CTR | **배치** | Impression/Click 로그 | 오프라인: S3, 온라인: Redis | S3 (Point-in-Time Join) | Redis `ad:{id}` | 1시간~일 1회 |
 | 소재 임베딩 (64d) | **배치** | 광고 소재 이미지/텍스트 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점) | Redis `ad:{id}` | 소재 변경 시 |
@@ -752,7 +752,7 @@ flowchart LR
         </div>
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">학습 데이터셋</div>
-          <div class="chart-arch-node-desc">Label + 피처 잇기(Join)</div>
+          <div class="chart-arch-node-desc">Label + Feature Join</div>
         </div>
       </div>
     </div>
@@ -817,7 +817,7 @@ flowchart LR
 
 **피처 명세 목록**: 피처 스토어의 "카탈로그"입니다. 모든 피처의 이름, 타입, 차원, 생성 파이프라인, 담당 팀을 중앙에서 관리합니다. 새 피처를 등록하면 스키마 검증이 자동으로 파이프라인에 적용됩니다.
 
-**오프라인 저장소**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때는 **그 시점으로 되돌려 잇기**가 핵심입니다. "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
+**오프라인 저장소**: Hive나 S3에 시간축(timestamp)과 함께 피처를 저장합니다. 학습 데이터를 만들 때는 **Point-in-Time Join**이 핵심입니다. "이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가"를 정확히 복원해야 합니다. 미래 데이터가 섞이면 data leakage가 발생합니다.
 
 **온라인 저장소**: Redis나 DynamoDB에 최신 피처 값을 Key-Value로 저장합니다. 서빙 시 `HGETALL user:U98712` 한 번으로 그 유저의 배치 피처 전체를 가져옵니다. p99 레이턴시 1ms 이내가 목표입니다.
 
@@ -843,7 +843,7 @@ user_ctr = clicks_7d / max(impressions_7d, 1)  # 0으로 나누기 방지
 | **시간 어긋남** | 학습 시 미래 데이터 포함 (data leakage) | 오프라인 AUC 높지만 온라인 성능 낮음 |
 | **분포 어긋남** | 학습 데이터와 서빙 데이터의 분포 차이 | 입력 분포가 벗어나면 예측 신뢰도 하락 |
 
-피처 스토어는 **피처 정의를 한 곳에서 관리**해 로직 어긋남을 막습니다. 시간 어긋남은 **그 시점으로 되돌려 잇기**로 막습니다. 분포 어긋남은 막을 수 없어 모니터링으로 감지합니다.
+피처 스토어는 **피처 정의를 한 곳에서 관리**해 로직 어긋남을 막습니다. 시간 어긋남은 **Point-in-Time Join**으로 막습니다. 분포 어긋남은 막을 수 없어 모니터링으로 감지합니다.
 
 #### 숫자로 보는 기준 시점 어긋남 — 하루 지난 값을 쓰면 얼마가 어긋나나
 
@@ -946,7 +946,7 @@ u01, u04, u09부터 봅니다. 오늘 클릭이 없어서 어긋남이 **0**입�
 
 이게 신선한 피처를 위해 스트리밍 인프라를 세우는 이유입니다. 비용을 쓰는 대가로 이 왜곡을 줄입니다.
 
-:::deep 더 깊이 — 그 시점으로 되돌려 잇기: 미래를 몰래 훔쳐보지 않는 법
+:::deep 더 깊이 — Point-in-Time Join: 미래를 몰래 훔쳐보지 않는 법
 
 학습 데이터를 만들 때 가장 흔한 사고가 여기서 납니다. "8월 1일 클릭"에 "8월 3일 시점의 피처"를 붙이는 것입니다. 그러면 오프라인 성능은 근사하게 나오고 실서빙에서 크게 떨어집니다. 모델이 미래를 본 채로 시험을 치른 것이기 때문입니다. 아래는 그걸 막는 조인 방법입니다.
 
@@ -992,7 +992,7 @@ LEFT JOIN feature_latest f ON e.user_id = f.user_id
 ```
 :::
 
-### 실전 예시: Online Store 데이터 구조
+### 실전 예시: 온라인 저장소 데이터 구조
 
 Redis에서 피처를 저장하는 실제 Key-Value 구조입니다:
 
@@ -1120,7 +1120,7 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 | **배치 파이프라인 지연** | 피처가 점점 stale | 모델 정확도 서서히 저하 | Freshness 모니터링 + 알림 |
 | **스트리밍 파이프라인 장애** | 실시간 피처 갱신 중단 | 최근 행동 미반영 → 개인화 품질 하락 | 배치 피처로 자동 폴백 |
 | **특정 피처 null 급증** | 파이프라인 버그/스키마 변경 | 모델 입력 오류 → 비정상 예측 | null 비율 모니터링 + 임계치 알림 |
-| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | 피처 Drift 감지 (PSI, KL Divergence) |
+| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | Feature Drift 감지 (PSI, KL Divergence) |
 
 ### Fallback 전략 계층
 
@@ -1174,7 +1174,7 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 각 계층으로 갈수록 예측 품질은 떨어지지만, **입찰 자체를 중단하는 것보다는 낫습니다**. 피처 스토어 설계 시 모든 피처에 대해 기본값을 정의해두는 것이 안전합니다.
 
-### 피처 Drift 모니터링
+### Feature Drift 모니터링
 
 프로덕션에서 피처 분포가 변하면 모델 성능이 저하됩니다. 주요 감지 지표:
 
@@ -1193,10 +1193,10 @@ Batch 피처와 Streaming 피처를 **별도 Key**로 분리하는 이유: Strea
 
 2. **병렬 조회가 레이턴시의 핵심입니다.** 10ms 예산 안에서 유저/광고/지면 피처를 순차적으로 가져오면 조회에만 약 2ms가 들어 병렬 조회보다 추론에 쓸 시간이 1ms 줄어듭니다. 병렬 조회와 local caching으로 I/O를 최소화합니다.
 
-3. **학습과 서빙의 피처 어긋남은 피처 스토어가 해결합니다.** 학습과 서빙에서 같은 피처 정의를 사용하도록 피처 명세 목록으로 중앙 관리합니다. 그 시점으로 되돌려 잇기로 data leakage를 방지합니다.
+3. **학습과 서빙의 피처 어긋남은 피처 스토어가 해결합니다.** 학습과 서빙에서 같은 피처 정의를 사용하도록 피처 명세 목록으로 중앙 관리합니다. Point-in-Time Join으로 data leakage를 방지합니다.
 
 4. **Freshness는 무조건 높을수록 좋지 않다.** 피처별 최적 갱신 주기가 다릅니다. 인프라 복잡도와 비용 대비 성능 개선 효과를 따져서 차등 설정합니다.
 
-5. **장애 대비는 설계 단계에서 합니다.** 온라인 저장소 장애 시 로컬 캐시 → 기본값 → Degraded 모델로 이어지는 fallback 계층을 미리 구축합니다. 피처 Drift 모니터링으로 조기 감지합니다.
+5. **장애 대비는 설계 단계에서 합니다.** 온라인 저장소 장애 시 로컬 캐시 → 기본값 → Degraded Model로 이어지는 fallback 계층을 미리 구축합니다. Feature Drift 모니터링으로 조기 감지합니다.
 
-> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 내부의 "피처 스토어" 노드 하나를 확대한 것입니다. 그 피처를 받아 실제로 모델을 돌리는 쪽은 [모델 Serving Architecture](post.html?id=model-serving-architecture)에서 다룹니다.
+> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 내부의 "피처 스토어" 노드 하나를 확대한 것입니다. 그 피처를 받아 실제로 모델을 돌리는 쪽은 [모델 서빙 아키텍처](post.html?id=model-serving-architecture)에서 다룹니다.

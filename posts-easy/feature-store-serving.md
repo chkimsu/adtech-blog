@@ -25,7 +25,7 @@
 <a class="demo-embed-open" href="demo-serving-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
-모델을 돌리는 서버 이야기는 [모델(Model) Serving Architecture](post.html?id=model-serving-architecture) 편에 있습니다. 여기서는 그 모델에 넣을 **재료를 꺼내 오는 과정**을 봅니다. 재료가 만들어지기 전에 로그가 들어오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline) 편에서 볼 수 있습니다.
+모델을 돌리는 서버 이야기는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 편에 있습니다. 여기서는 그 모델에 넣을 **재료를 꺼내 오는 과정**을 봅니다. 재료가 만들어지기 전에 로그가 들어오는 파이프라인은 [광고 로그 파이프라인](post.html?id=ad-log-pipeline) 편에서 볼 수 있습니다.
 
 아래 그림은 광고 ML 시스템에서 피처가 지나가는 전체 경로를 위에서 아래로 4층으로 나눠 그립니다.
 
@@ -68,21 +68,21 @@
   <div class="chart-layer-title">FEATURE PIPELINES</div>
   <div class="chart-layer-row">
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline) (수 시간)</div>
+      <div class="chart-layer-group-label">배치 파이프라인(Batch Pipeline, 수 시간)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item yellow">Spark / Hive</span>
         <span class="chart-layer-item yellow">집계, 통계, 임베딩</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">스트리밍 파이프라인(Streaming Pipeline) (수 분)</div>
+      <div class="chart-layer-group-label">스트리밍 파이프라인(Streaming Pipeline, 수 분)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item orange">Flink / Kafka</span>
         <span class="chart-layer-item orange">윈도우 집계</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">실시간(Real-Time) (요청 시점)</div>
+      <div class="chart-layer-group-label">실시간(Real-Time, 요청 시점)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item green">Application 내부</span>
         <span class="chart-layer-item green">파싱, 변환</span>
@@ -101,14 +101,14 @@
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">오프라인 저장소(Offline Store) (학습용)</div>
+      <div class="chart-layer-group-label">오프라인 저장소(Offline Store, 학습용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item blue">S3 / Hive</span>
         <span class="chart-layer-item blue">Point-in-Time</span>
       </div>
     </div>
     <div class="chart-layer-group">
-      <div class="chart-layer-group-label">온라인 저장소(Online Store) (서빙용)</div>
+      <div class="chart-layer-group-label">온라인 저장소(Online Store, 서빙용)</div>
       <div class="chart-layer-items">
         <span class="chart-layer-item cyan">Redis</span>
         <span class="chart-layer-item cyan">DynamoDB</span>
@@ -183,13 +183,13 @@
     <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">DSP 내부 처리 타임라인</span>
     <span style="font-size:0.75rem; color:var(--text-muted);">목표: ~10ms 이내</span>
   </div>
-  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. 입찰 요청 수신 &rarr; 피처 Gateway</div>
+  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">1. 입찰 요청 수신 &rarr; Feature Gateway</div>
   <div class="chart-timeline-bar">
     <div class="chart-timeline-segment blue" style="width:12%;">유저 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment cyan" style="width:14%;">광고 피처 N개<br/>1ms</div>
     <div class="chart-timeline-segment purple" style="width:8%;">지면 피처<br/>0.5ms</div>
     <div class="chart-timeline-segment green" style="width:4%;">컨텍스트<br/>0.1ms</div>
-    <div class="chart-timeline-segment orange" style="width:8%;">벡터(Vector) 조합<br/>0.5ms</div>
+    <div class="chart-timeline-segment orange" style="width:8%;">벡터 조합<br/>0.5ms</div>
     <div class="chart-timeline-segment pink" style="width:38%;">모델 추론 (pCTR, pCVR)<br/>2-5ms</div>
     <div class="chart-timeline-segment" style="width:16%; background:rgba(176,38,255,0.5);">Bid Logic<br/>1ms</div>
   </div>
@@ -256,7 +256,7 @@
 
 ### 실전 예시: Redis 에서 피처를 조회하는 명령
 
-아래는 입찰 요청(유저 `U98712`, 후보 광고 A001, A002, A003, 지면 S50)이 도착했을 때 피처 Gateway(요청을 받아 피처를 모아 주는 서버)가 Redis 에 보내는 명령입니다. HGETALL 은 해시(Hash, 키 하나에 필드와 값의 쌍을 여러 개 담는 Redis 자료형)에서 그 키의 필드를 모두 읽는 명령입니다. 후보 광고 3개는 Pipeline(명령 여러 개를 모아 한 번에 보내는 방식)으로 한꺼번에 조회합니다.
+아래는 입찰 요청(유저 `U98712`, 후보 광고 A001, A002, A003, 지면 S50)이 도착했을 때 Feature Gateway(요청을 받아 피처를 모아 주는 서버)가 Redis 에 보내는 명령입니다. HGETALL 은 해시(Hash, 키 하나에 필드와 값의 쌍을 여러 개 담는 Redis 자료형)에서 그 키의 필드를 모두 읽는 명령입니다. 후보 광고 3개는 Pipeline(명령 여러 개를 모아 한 번에 보내는 방식)으로 한꺼번에 조회합니다.
 
 ```bash
 # 1. Bid Request 수신: user_id=U98712, ad_candidates=[A001, A002, A003], slot=S50
@@ -530,7 +530,7 @@ flowchart LR
     style 소비 stroke:#b0442c
 ```
 
-그림에서 오프라인 저장소(S3/Hive)는 피처 값을 시각과 함께 시간축 스냅샷(시점마다 찍어 둔 값)으로 쌓고 온라인 저장소(Redis)는 최신 값만 둡니다. 그래서 배치 피처는 학습과 추론이 **같은 피처 정의**를 쓰면서도 읽는 저장소가 다릅니다. 학습은 과거 그 시점의 값을 복원해야 하므로 오프라인 저장소를 읽습니다. 추론은 지금 값이 필요하므로 온라인 저장소를 읽습니다. 오프라인 저장소의 값을 온라인 저장소로 복사해 맞추는 작업을 Materialization 이라고 부르며 이 그림에서는 하루에 한 번 실행됩니다. 그림의 학습 칸에 있는 Point-in-Time Join 은 노출이나 클릭이 일어난 그 시점의 피처 값을 찾아 붙이는 조인입니다. 이 글은 이 조인을 「그 시점으로 되돌려 잇기」라고 부르며 5절에서 자세히 봅니다.
+그림에서 오프라인 저장소(S3/Hive)는 피처 값을 시각과 함께 시간축 스냅샷(시점마다 찍어 둔 값)으로 쌓고 온라인 저장소(Redis)는 최신 값만 둡니다. 그래서 배치 피처는 학습과 추론이 **같은 피처 정의**를 쓰면서도 읽는 저장소가 다릅니다. 학습은 과거 그 시점의 값을 복원해야 하므로 오프라인 저장소를 읽습니다. 추론은 지금 값이 필요하므로 온라인 저장소를 읽습니다. 오프라인 저장소의 값을 온라인 저장소로 복사해 맞추는 작업을 Materialization 이라고 부르며 이 그림에서는 하루에 한 번 실행됩니다. 그림의 학습 칸에 있는 Point-in-Time Join 은 노출이나 클릭이 일어난 그 시점의 피처 값을 찾아 붙이는 조인입니다. 이 조인은 5절에서 자세히 봅니다.
 
 카드에서는 정의가 하나뿐인 피처(유저 7일 CTR)를 학습은 오프라인 저장소에서, 서빙은 온라인 저장소에서 읽는 자리를 보면 됩니다.
 
@@ -689,7 +689,7 @@ flowchart LR
     <div class="chart-card-body">
       <div class="chart-card-row">
         <span class="chart-card-row-label">배치 피처</span>
-        <span class="chart-card-row-value">오프라인 저장소 (S3/Hive) → 그 시점으로 되돌려 잇기(Point-in-Time Join)</span>
+        <span class="chart-card-row-value">오프라인 저장소 (S3/Hive) → Point-in-Time Join</span>
       </div>
       <div class="chart-card-row">
         <span class="chart-card-row-label">스트리밍 피처</span>
@@ -750,7 +750,7 @@ flowchart LR
 
 | 피처 | 파이프라인 | 수집 소스 | 저장 위치 | 학습 시 읽는 곳 | 추론 시 읽는 곳 | 갱신 주기 |
 |------|-----------|----------|----------|---------------|---------------|----------|
-| 유저 7일 CTR | **배치** | Click/Impression 로그 | 오프라인: S3, 온라인(Online): Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
+| 유저 7일 CTR | **배치** | Click/Impression 로그 | 오프라인: S3, 온라인: Redis | S3 (Point-in-Time Join) | Redis `user:{id}` | 일 1회 |
 | 유저 임베딩 (128d) | **배치** | 유저 행동 로그 전체 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점 스냅샷) | Redis `user:{id}` | 일 1회 |
 | 광고 과거 CTR | **배치** | Impression/Click 로그 | 오프라인: S3, 온라인: Redis | S3 (Point-in-Time Join) | Redis `ad:{id}` | 1시간~일 1회 |
 | 소재 임베딩 (64d) | **배치** | 광고 소재 이미지/텍스트 | 오프라인: S3, 온라인: Redis | S3 (모델 학습 시점) | Redis `ad:{id}` | 소재 변경 시 |
@@ -767,7 +767,7 @@ flowchart LR
 
 ## 5. 피처 스토어 아키텍처의 구성
 
-**피처 스토어는 피처 명세 목록, 오프라인 저장소, 온라인 저장소, Materialization 으로 이루어집니다. 피처 정의를 한 곳에서 관리해 학습과 서빙의 계산 로직이 달라지는 것을 막고 그 시점으로 되돌려 잇기로 학습에 미래 데이터가 섞이는 것을 막지만 학습 때와 서빙 때의 데이터 분포 차이는 막을 수 없어 모니터링으로 감지합니다.**
+**피처 스토어는 피처 명세 목록, 오프라인 저장소, 온라인 저장소, Materialization 으로 이루어집니다. 피처 정의를 한 곳에서 관리해 학습과 서빙의 계산 로직이 달라지는 것을 막고 Point-in-Time Join 으로 학습에 미래 데이터가 섞이는 것을 막지만 학습 때와 서빙 때의 데이터 분포 차이는 막을 수 없어 모니터링으로 감지합니다.**
 
 피처 스토어는 값을 넣어 두는 단순한 저장소가 아니라 **학습과 서빙에서 같은 피처를 보장**하는 시스템입니다. 아래 그림은 그 구성을 위에서부터 그립니다. 맨 위에 중앙 메타데이터인 피처 명세 목록이 있고 그 아래에 학습용 오프라인 저장소와 서빙용 온라인 저장소가 나란히 있습니다. Materialization 은 두 저장소의 값을 맞추는 동기화 단계입니다. 맨 아래의 소비자는 모델 학습, 모델 서빙, 분석과 디버깅이며 각자 필요한 저장소를 읽습니다.
 
@@ -810,7 +810,7 @@ flowchart LR
         </div>
         <div class="chart-arch-node">
           <div class="chart-arch-node-name">학습 데이터셋</div>
-          <div class="chart-arch-node-desc">Label + 피처 잇기(Join)</div>
+          <div class="chart-arch-node-desc">Label + Feature Join</div>
         </div>
       </div>
     </div>
@@ -875,7 +875,7 @@ flowchart LR
 
 **피처 명세 목록**은 피처 스토어의 카탈로그(무엇이 어디에 있는지 적은 목록)입니다. 모든 피처의 이름, 타입, 차원, 만드는 파이프라인, 담당 팀을 한곳에서 관리합니다. 새 피처를 등록하면 스키마(이름, 타입, 차원 같은 모양의 정의) 검증이 파이프라인에 자동으로 적용됩니다. 그림의 버전 관리(v1 → v2 마이그레이션)는 피처 정의가 바뀔 때의 버전을, Data Lineage 는 피처가 어떤 원본에서 어떤 변환을 거쳐 나왔는지를, 오너십은 담당 팀과 담당자와 SLA(서비스 수준 약속)를 적어 둡니다.
 
-**오프라인 저장소**는 Hive 나 S3 에 피처를 시각(timestamp)과 함께 저장합니다. 학습 데이터를 만들 때는 「이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가」를 정확히 복원해야 하므로 **그 시점으로 되돌려 잇기**가 꼭 필요합니다. 미래 데이터가 섞이면 data leakage 가 생깁니다.
+**오프라인 저장소**는 Hive 나 S3 에 피처를 시각(timestamp)과 함께 저장합니다. 학습 데이터를 만들 때는 「이 유저가 이 광고를 본 시점에 피처 값이 무엇이었는가」를 정확히 복원해야 하므로 **Point-in-Time Join** 이 꼭 필요합니다. 미래 데이터가 섞이면 data leakage 가 생깁니다.
 
 **온라인 저장소**는 Redis 나 DynamoDB 에 최신 피처 값을 Key-Value 로 저장합니다. 서빙 때 `HGETALL user:U98712` 한 번으로 그 유저의 배치 피처 전체를 가져옵니다. 목표는 p99 레이턴시(거의 모든 요청이 이 시간 안에 끝나는 기준) 1ms 이내입니다. 그림의 온라인 저장소 칸에 있는 로컬 캐시(Local Cache)는 자주 쓰는(Hot) 피처를 서빙 서버 안에 복사해 두는 캐시이고 7절의 장애 대응에서 다시 나옵니다.
 
@@ -903,7 +903,7 @@ user_ctr = clicks_7d / max(impressions_7d, 1)  # 0으로 나누기 방지
 
 로직 어긋남은 학습과 서빙의 코드가 언어나 로직이 달라 같은 입력에 다른 피처 값이 나오는 경우라서 모델 성능이 떨어집니다. 시간 어긋남은 학습 데이터에 미래 데이터가 섞인(data leakage) 경우라서 오프라인 AUC 는 높은데 온라인 성능은 낮게 나옵니다. 분포 어긋남은 학습 데이터와 서빙 데이터의 분포가 다른 경우로, 입력 분포가 학습 때를 벗어나면 예측을 믿기 어려워집니다.
 
-피처 스토어는 **피처 정의를 한 곳에서 관리**해 학습과 서빙이 같은 계산을 쓰게 하므로 로직 어긋남을 막습니다. 시간 어긋남은 **그 시점으로 되돌려 잇기**로 막습니다. 분포 어긋남은 막을 수 없어 7절의 피처 Drift 모니터링으로 감지합니다.
+피처 스토어는 **피처 정의를 한 곳에서 관리**해 학습과 서빙이 같은 계산을 쓰게 하므로 로직 어긋남을 막습니다. 시간 어긋남은 **Point-in-Time Join** 으로 막습니다. 분포 어긋남은 막을 수 없어 7절의 Feature Drift 모니터링으로 감지합니다.
 
 #### 숫자로 보는 기준 시점 어긋남 — 하루 지난 값을 쓸 때 달라지는 pCTR 과 입찰가
 
@@ -1008,7 +1008,7 @@ u01, u04, u09 는 오늘 클릭이 0 이라 배치값과 실제값이 같으므�
 
 스트리밍 인프라는 피처를 신선하게 유지해 이 왜곡을 줄이므로 비용을 치르고서라도 구성합니다.
 
-:::deep 더 깊이 — 그 시점으로 되돌려 잇기(Point-in-Time Join)로 미래 데이터를 막는 조인
+:::deep 더 깊이 — Point-in-Time Join, 미래 데이터를 막는 조인
 
 학습 데이터를 만들 때 가장 흔한 사고는 「8월 1일 클릭」에 「8월 3일 시점의 피처」를 붙이는 일입니다. 이렇게 만든 데이터로 학습한 모델은 미래를 본 채로 시험을 치르므로 오프라인 성능은 근사하게 나오지만 실제 서빙에서는 크게 떨어집니다. 그래서 학습 데이터에는 「이 유저가 이 광고를 본 **그 시점**의 피처」를 정확히 복원해 붙여야 합니다. 미래 데이터가 섞이면 data leakage 입니다.
 
@@ -1194,9 +1194,9 @@ TTL: 피처 갱신 주기의 2배 (안전 마진)
 | **배치 파이프라인 지연** | 피처가 점점 stale | 모델 정확도 서서히 저하 | Freshness 모니터링 + 알림 |
 | **스트리밍 파이프라인 장애** | 실시간 피처 갱신 중단 | 최근 행동 미반영 → 개인화 품질 하락 | 배치 피처로 자동 폴백 |
 | **특정 피처 null 급증** | 파이프라인 버그/스키마 변경 | 모델 입력 오류 → 비정상 예측 | null 비율 모니터링 + 임계치 알림 |
-| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | 피처 Drift 감지 (PSI, KL Divergence) |
+| **피처 값 분포 이상** | 업스트림 데이터 변경 | 예측값 편향 → 과대/과소 입찰 | Feature Drift 감지 (PSI, KL Divergence) |
 
-표의 6가지 장애 가운데 모든 입찰을 멈추는 장애(Fallback 이 없을 때)는 온라인 저장소 전체 장애 하나입니다. 나머지 5가지는 입찰을 멈추지는 않지만 입찰 타임아웃이 늘어 Win Rate(입찰 가운데 낙찰한 비율)가 떨어지거나 모델 정확도와 개인화 품질이 떨어지거나 예측이 비정상이 되거나 한쪽으로 치우칩니다. 대응 칸의 Multi-AZ 복제는 데이터센터 구역(AZ, Availability Zone) 여러 곳에 복제본을 두는 방식입니다. 핫 스탠바이는 바로 넘겨받을 수 있게 켜 둔 예비 서버를 말합니다. 타임아웃 설정과 기본값(Default Value) 폴백은 정한 시간 안에 응답이 없으면 더 기다리지 않고 미리 정한 기본값을 쓰는 방식입니다. PSI 와 KL Divergence 는 두 분포가 얼마나 다른지 나타내는 지표이며 PSI 는 아래 피처 Drift 모니터링에서 다시 봅니다.
+표의 6가지 장애 가운데 모든 입찰을 멈추는 장애(Fallback 이 없을 때)는 온라인 저장소 전체 장애 하나입니다. 나머지 5가지는 입찰을 멈추지는 않지만 입찰 타임아웃이 늘어 Win Rate(입찰 가운데 낙찰한 비율)가 떨어지거나 모델 정확도와 개인화 품질이 떨어지거나 예측이 비정상이 되거나 한쪽으로 치우칩니다. 대응 칸의 Multi-AZ 복제는 데이터센터 구역(AZ, Availability Zone) 여러 곳에 복제본을 두는 방식입니다. 핫 스탠바이는 바로 넘겨받을 수 있게 켜 둔 예비 서버를 말합니다. 타임아웃 설정과 기본값(Default Value) 폴백은 정한 시간 안에 응답이 없으면 더 기다리지 않고 미리 정한 기본값을 쓰는 방식입니다. PSI 와 KL Divergence 는 두 분포가 얼마나 다른지 나타내는 지표이며 PSI 는 아래 Feature Drift 모니터링에서 다시 봅니다.
 
 ### Fallback 전략 계층
 
@@ -1252,9 +1252,9 @@ TTL: 피처 갱신 주기의 2배 (안전 마진)
 
 아래 계층으로 내려갈수록 예측 품질은 떨어지지만 **입찰 자체를 멈추는 것보다는 낫습니다**. 2단계의 로컬 캐시는 5절에서 본 서빙 서버 안의 캐시입니다. 4단계의 Degraded Model 은 받지 못한 피처를 빼고 추론하는 모델입니다. 기본값이 없으면 3단계를 쓸 수 없어 예측 품질이 크게 떨어지는 4단계로 내려가므로 피처 스토어를 설계할 때 모든 피처에 기본값을 정해 두는 편이 안전합니다.
 
-### 피처 Drift 모니터링
+### Feature Drift 모니터링
 
-프로덕션에서 피처의 분포가 학습 때와 달라지는 일을 피처 Drift 라고 합니다. 피처 분포가 변하면 모델 성능이 떨어지므로 아래 지표로 변화를 감지합니다. 표의 알림 기준은 예시입니다.
+프로덕션에서 피처의 분포가 학습 때와 달라지는 일을 Feature Drift 라고 합니다. 피처 분포가 변하면 모델 성능이 떨어지므로 아래 지표로 변화를 감지합니다. 표의 알림 기준은 예시입니다.
 
 | 지표 | 설명 | 알림 기준 (예시) |
 |------|------|----------------|
@@ -1273,10 +1273,10 @@ PSI 는 학습 데이터와 서빙 데이터의 분포를 구간별로 비교해
 
 2. **레이턴시는 병렬 조회로 줄입니다.** 10ms 예산 안에서 유저, 광고, 지면 피처를 하나씩 차례로 가져오면 조회에만 약 2ms 가 들어 병렬로 가져올 때보다 추론에 쓸 시간이 1ms 줄어들므로 병렬 조회와 로컬 캐시(local caching)로 I/O 를 최소화합니다.
 
-3. **학습과 서빙의 피처 어긋남은 피처 스토어가 해결합니다.** 피처 명세 목록으로 피처 정의를 중앙에서 관리해 학습과 서빙이 같은 정의를 쓰게 합니다. 그 시점으로 되돌려 잇기로 data leakage 를 막습니다.
+3. **학습과 서빙의 피처 어긋남은 피처 스토어가 해결합니다.** 피처 명세 목록으로 피처 정의를 중앙에서 관리해 학습과 서빙이 같은 정의를 쓰게 합니다. Point-in-Time Join 으로 data leakage 를 막습니다.
 
 4. **신선도(Freshness)는 높을수록 무조건 좋지는 않습니다.** 피처마다 알맞은 갱신 주기가 다르므로 인프라 복잡도와 비용에 비해 성능이 얼마나 나아지는지 따져 주기를 피처마다 다르게 정합니다.
 
-5. **장애 대비는 설계 단계에서 합니다.** 온라인 저장소 장애에 대비해 로컬 캐시 → 기본값 → Degraded 모델로 이어지는 fallback 계층을 미리 만들어 둡니다. 피처 Drift 모니터링으로는 문제를 일찍 감지합니다.
+5. **장애 대비는 설계 단계에서 합니다.** 온라인 저장소 장애에 대비해 로컬 캐시 → 기본값 → Degraded Model 로 이어지는 fallback 계층을 미리 만들어 둡니다. Feature Drift 모니터링으로는 문제를 일찍 감지합니다.
 
-> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 안에 있는 「피처 스토어」 노드 하나를 크게 펼쳐 보았습니다. 그 피처를 받아 모델을 실제로 돌리는 서버는 [모델 Serving Architecture](post.html?id=model-serving-architecture) 편에서 다룹니다.
+> 이 글은 [광고 기술 생태계 전체 지도](post.html?id=adtech-ecosystem-map)에서 DSP 안에 있는 「피처 스토어」 노드 하나를 크게 펼쳐 보았습니다. 그 피처를 받아 모델을 실제로 돌리는 서버는 [모델 서빙 아키텍처](post.html?id=model-serving-architecture) 편에서 다룹니다.

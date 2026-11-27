@@ -294,7 +294,7 @@ CPM 의 M 은 라틴어로 1,000 을 뜻하는 mille(밀레)입니다. CPM 은 C
 - 위치 편향을 제거하는 법: [Position Bias](post.html?id=position-bias-ultr)
 - 탐색/활용의 근본 딜레마: [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
 - 밴딧 알고리즘 계보: [멀티암드 밴딧](post.html?id=mab-summary)
-- 수백만 후보를 10ms에 줄이는 Retrieval: [Two-Tower Model](post.html?id=two-tower-retrieval)
+- 수백만 후보를 10ms에 줄이는 후보 생성: [Two-Tower Model](post.html?id=two-tower-retrieval)
 
 ---
 
@@ -420,11 +420,11 @@ Behavioral 과 Retargeting 은 둘 다 유저의 지난 행동을 보지만 Reta
 | 나는 이런 사람 | 추천 순서 |
 |---|---|
 | **광고 기술 자체가 처음** | ① [생태계 지도](post.html?id=adtech-ecosystem-map) → ② [Ad Serving Flow](post.html?id=ad-serving-flow) → ③ [eCPM과 랭킹](post.html?id=ecpm-ranking) |
-| **입찰/경매가 궁금** | ① [광고 네트워크(Ad Network) vs Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
+| **입찰/경매가 궁금** | ① [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
 | **ML 모델링이 궁금** | ① [Deep CTR 모델 진화](post.html?id=deep-ctr-models) → ② [Calibration](post.html?id=calibration) → ③ [Multi-Task Learning](post.html?id=multi-task-learning) → ④ [Position Bias](post.html?id=position-bias-ultr) |
 | **밴딧/탐색이 궁금** | ① [Exploration vs Exploitation](post.html?id=exploration-exploitation) → ② [MAB 치트시트](post.html?id=mab-summary) → ③ [UCB vs TS](post.html?id=ucb-vs-ts) → ④ [LinUCB](post.html?id=disjoint-linucb) |
 | **인프라/서빙이 궁금** | ① [Feature Store](post.html?id=feature-store-serving) → ② [모델 서빙 아키텍처](post.html?id=model-serving-architecture) → ③ [Two-Tower 후보 생성](post.html?id=two-tower-retrieval) → ④ [로그 파이프라인](post.html?id=ad-log-pipeline) |
-| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [닫힌 생태계(Walled Garden)](post.html?id=walled-garden) |
+| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [Walled Garden](post.html?id=walled-garden) |
 
 경로 중간에 낯선 용어가 나와도 대부분 그 글 안에서 다시 설명하므로 걱정하지 않아도 됩니다.
 

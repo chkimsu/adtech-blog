@@ -91,7 +91,7 @@ flowchart LR
 
 1. 사용자가 앱을 연다.
 2. 매체의 SDK가 SSP에 "광고 하나 필요"라고 요청.
-3. SSP가 광고 거래소에 "입찰 요청(Bid Request)"를 던진다.
+3. SSP가 광고 거래소에 "입찰 요청(Bid Request)"을 던진다.
 4. Exchange가 연결된 수백 개의 DSP에게 "이 유저에게 얼마 낼래?"를 물어본다.
 5. DSP가 내부 ML 모델로 값을 계산해 답을 돌려준다 — **100ms 안에**.
 6. 가장 높은 값을 쓴 DSP가 승자. 승자의 소재가 사용자 화면에 뜬다.
@@ -256,7 +256,7 @@ CPM의 M은 라틴어로 1,000을 뜻하는 mille(밀레)입니다. Cost Per Mil
 - 위치 편향을 제거하는 법: [Position Bias](post.html?id=position-bias-ultr)
 - 탐색/활용의 근본 딜레마: [탐색과 활용(Exploration & Exploitation)](post.html?id=exploration-exploitation)
 - 밴딧 알고리즘 계보: [멀티암드 밴딧](post.html?id=mab-summary)
-- 수백만 후보를 10ms에 줄이는 Retrieval: [Two-Tower Model](post.html?id=two-tower-retrieval)
+- 수백만 후보를 10ms에 줄이는 후보 생성: [Two-Tower Model](post.html?id=two-tower-retrieval)
 
 ---
 
@@ -336,7 +336,7 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 광고 ML 시스템을 현실에서 돌리려면 **데이터, 모델, 서빙**이 유기적으로 맞물려야 합니다.
 
 - **피처 스토어(Feature Store)**: 오프라인 배치 피처(어제의 CTR 등)와 스트리밍 피처(방금 클릭)가 한 곳에서 조회되도록 정리.
-- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않습니다. 단계별 랭킹(Multi-Stage Ranking), Embedding Lookup 최적화, GPU/CPU 혼합 추론.
+- **Real-Time Serving**: 모델 추론이 100ms 안에 끝나야 경매를 놓치지 않습니다. 다단 랭킹, Embedding Lookup 최적화, GPU/CPU 혼합 추론.
 - **Online Learning**: 유저 행동은 매일 바뀌므로 모델도 주기적으로(혹은 스트리밍으로) 업데이트해야 합니다. Delayed Feedback(전환까지 며칠 걸림) 처리는 이 블로그의 단골 주제입니다.
 
 ### 더 깊이 보기
@@ -359,11 +359,11 @@ pCTR 모델을 학습하려면 **"누가 무엇을 언제 봤고, 무엇을 눌�
 | 나는 이런 사람 | 추천 순서 |
 |---|---|
 | **광고 기술 자체가 처음** | ① [생태계 지도](post.html?id=adtech-ecosystem-map) → ② [Ad Serving Flow](post.html?id=ad-serving-flow) → ③ [eCPM과 랭킹](post.html?id=ecpm-ranking) |
-| **입찰/경매가 궁금** | ① [광고 네트워크(Ad Network) vs Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
+| **입찰/경매가 궁금** | ① [Ad Network vs Ad Exchange](post.html?id=ad-network-vs-exchange) → ② [Bid Shading](post.html?id=bid-shading-censored) → ③ [Auto-Bidding & Pacing](post.html?id=auto-bidding-pacing) |
 | **ML 모델링이 궁금** | ① [Deep CTR 모델 진화](post.html?id=deep-ctr-models) → ② [Calibration](post.html?id=calibration) → ③ [Multi-Task Learning](post.html?id=multi-task-learning) → ④ [Position Bias](post.html?id=position-bias-ultr) |
 | **밴딧/탐색이 궁금** | ① [Exploration vs Exploitation](post.html?id=exploration-exploitation) → ② [MAB 치트시트](post.html?id=mab-summary) → ③ [UCB vs TS](post.html?id=ucb-vs-ts) → ④ [LinUCB](post.html?id=disjoint-linucb) |
 | **인프라/서빙이 궁금** | ① [Feature Store](post.html?id=feature-store-serving) → ② [모델 서빙 아키텍처](post.html?id=model-serving-architecture) → ③ [Two-Tower 후보 생성](post.html?id=two-tower-retrieval) → ④ [로그 파이프라인](post.html?id=ad-log-pipeline) |
-| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [닫힌 생태계(Walled Garden)](post.html?id=walled-garden) |
+| **타겟팅이 궁금** | ① [타겟팅 기초](post.html?id=targeting-basics) → ② [오디언스 세그멘테이션](post.html?id=audience-segmentation) → ③ [Lookalike Modeling](post.html?id=lookalike-modeling) → ④ [Walled Garden](post.html?id=walled-garden) |
 
 경로 중간에 낯선 용어가 나와도 괜찮습니다. 대부분 그 글 안에서 다시 설명됩니다.
 

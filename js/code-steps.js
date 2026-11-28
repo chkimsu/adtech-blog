@@ -321,7 +321,7 @@
     return `<div class="cb-oln" data-ln="${line}" style="--ind:${ind}" data-wl="${w.wl}" data-ww="${w.ww}"><span class="cb-src">${esc(t.slice(ind)) || ' '}</span></div>`;
   }
 
-  // 묶음 맨 앞과 맨 끝의 빈 줄은 그리지 않는다(검사는 그대로 비교한다). 그릴 줄의 [처음, 끝) 을 돌려준다.
+  // 출력 그룹(뜻 줄 하나와 그 아래 찍힌 줄) 맨 앞과 맨 끝의 빈 줄은 그리지 않는다(검사는 그대로 비교한다). 그릴 줄의 [처음, 끝) 을 돌려준다.
   function trimBlank(ls) {
     let a = 0, b = ls.length;
     while (a < b && !ls[a].trim()) a++;

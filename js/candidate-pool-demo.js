@@ -30,7 +30,7 @@
         });
         return s;
     }
-    // 묶음 바탕 (눌린 판) + 작은 라벨
+    // 구역 바탕 (눌린 판) + 작은 라벨
     function zone(x, y, w, h, label) {
         return `<rect class="zone" x="${x}" y="${y}" width="${w}" height="${h}"/>` + (label ? T(x + 12, y + 16, label, 'lbl zone') : '');
     }

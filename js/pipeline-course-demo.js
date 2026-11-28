@@ -135,7 +135,7 @@
     $('plc-route-direct').dataset.tone = stopKafkaOn ? 'bad' : 'idle';
     $('plc-route-file').dataset.tone = stopKafkaOn ? 'good' : 'idle';
     // 시간만 보이면 그 시간이 어디서 나왔는지 안 보이므로 용량(capacity)을 앞에 같이 둔다.
-    // 이 절의 논점이 「512MB 로 10.9분」 대 「100GB 로 237시간」의 대비다.
+    // 이 절의 논점이 「512MB 로 10.9분」 대 「100GB 로 113시간」의 대비다.
     // 버튼 뒤에 숨기면 안 눌러 본 독자는 논점을 못 본다. 값은 늘 보이고,
     // 버튼은 「그래서 그 다음 어떻게 되나」를 연다.
     $('plc-route-direct-stat').textContent = direct.capacity + ' → ' + direct.mins + '분';

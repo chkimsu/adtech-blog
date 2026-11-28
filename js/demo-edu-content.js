@@ -1271,7 +1271,7 @@ window.DEMO_EDU = {
                 if (el.dataset.eduSaid === on) return '';
                 el.dataset.eduSaid = on;
                 return on === '1'
-                    ? '수집 에이전트를 멈췄습니다. 앞단(앱, 수집 서버)은 아무 영향을 안 받고 <strong>로컬 파일만 찹니다</strong>. 100GB면 61.7시간을 버팁니다.'
+                    ? '수집 에이전트를 멈췄습니다. 앞단(앱, 수집 서버)은 아무 영향을 안 받고 <strong>로컬 파일만 찹니다</strong>. 100GB면 113시간을 버팁니다.'
                     : '에이전트를 다시 켰습니다. 쌓인 것을 따라잡는 동안에도 새 줄은 초당 2,665건씩 들어옵니다.';
             },
             '#lh-stop-kafka-label': ({ el }) => {
@@ -1279,7 +1279,7 @@ window.DEMO_EDU = {
                 if (el.dataset.eduSaid === on) return '';
                 el.dataset.eduSaid = on;
                 return on === '1'
-                    ? 'Kafka를 멈췄습니다. 에이전트가 보낼 곳이 없어 <strong>파일에 그대로 쌓입니다</strong>. 프로세스 안 producer로 직행했다면 메모리 512MB로 10.4분을 버팁니다.'
+                    ? 'Kafka를 멈췄습니다. 에이전트가 보낼 곳이 없어 <strong>파일에 그대로 쌓입니다</strong>. 프로세스 안 producer로 직행했다면 메모리 512MB로 10.9분을 버팁니다.'
                     : 'Kafka를 다시 켰습니다.';
             },
             '#lh-batch': ({ value, prev }) => `SDK가 한 번에 보내는 건수를 <strong>${prev} → ${value}건</strong>으로 바꿨습니다. 늘리면 요청 수가 줄지만 앱이 죽을 때 잃는 것이 그만큼 늘어납니다. 클릭만 이 값과 무관하게 즉시 갑니다.`,
@@ -2188,16 +2188,16 @@ window.DEMO_EDU = {
                     return c[0] === 'sdk'
                         ? '수집을 <strong>SDK 직행</strong>으로 바꿨습니다. 도달이 1,112 ms 에서 <strong>426 ms</strong> 로 줄어 ' +
                           '대시보드 마감 2,000 ms 에서 남는 예산이 888 ms 에서 1,574 ms 가 됩니다. ' +
-                          '대신 버퍼를 끄면 버틸 것이 메모리 큐뿐이라 10.4분입니다.'
+                          '대신 버퍼를 끄면 버틸 것이 메모리 큐뿐이라 10.9분입니다.'
                         : '수집을 <strong>에이전트 tail</strong> 로 바꿨습니다. 도달이 426 ms 에서 <strong>1,112 ms</strong> 로 늘어 ' +
-                          '남는 예산이 888 ms 로 줍니다. 대신 버퍼가 없어도 로컬 파일이 61.7시간 버팁니다.';
+                          '남는 예산이 888 ms 로 줍니다. 대신 버퍼가 없어도 로컬 파일이 113시간 버팁니다.';
                 }
                 if (c[1] !== p[1]) {
                     return c[1] === 'buf'
                         ? 'Kafka 를 세웠습니다. 한 번 쓰고 여럿이 읽는 자리가 생겨 <strong>유통 층을 고를 수 있게</strong> 됩니다. ' +
                           '처리 잡이 멈춰도 <strong>168시간</strong>까지 offset 을 들고 있어 되감아 읽습니다.'
                         : '버퍼를 껐습니다. 읽어 갈 topic 이 없어 <strong>유통 층이 같이 잠깁니다</strong>. ' +
-                          '버티는 시간이 168시간에서 <strong>' + (c[0] === 'sdk' ? '10.4분' : '61.7시간') + '</strong>으로 떨어집니다' +
+                          '버티는 시간이 168시간에서 <strong>' + (c[0] === 'sdk' ? '10.9분' : '113시간') + '</strong>으로 떨어집니다' +
                           (c[0] === 'sdk' ? ' — 사람이 붙는 30분보다 짧아 알아채기 전에 샙니다.' : '.');
                 }
                 if (c[2] !== p[2]) {
@@ -2287,7 +2287,7 @@ window.DEMO_EDU = {
                 el: '#pb-f-buf',
                 title: '버퍼를 꺼 봅니다',
                 body: 'Kafka 를 끄면 유통 층이 <strong>같이 잠깁니다</strong> — 읽어 갈 topic 이 없습니다. ' +
-                    '버티는 시간도 168시간에서 61.7시간으로 떨어집니다.',
+                    '버티는 시간도 168시간에서 113시간으로 떨어집니다.',
                 waitFor: 'click'
             },
             {

@@ -135,7 +135,7 @@ eq('그 줄의 줄바꿈을 접으면 110 B(byteObject)와 맞는다',
    S.byteLen(M.textAt('sdk').replace(/\n[ \t]*/, ' ')), D.val.byteObject);
 
 console.log('\n1절 — Kafka 가 멈췄을 때 어디에 얼마나 버티나');
-eq('파일 경유는 100GB 로 237시간', M.holdTime('file').hours, D.val.fileHours);
+eq('파일 경유는 100GB 로 113시간', M.holdTime('file').hours, D.val.fileHours);
 eq('직행은 512MB 로 10.9분',       M.holdTime('direct').mins, D.val.directMins);
 eq('파일 경유는 파일에 쌓인다',      M.holdTime('file').where, '로컬 파일');
 eq('직행은 서버 메모리에 쌓인다',    M.holdTime('direct').where, '서버 메모리');

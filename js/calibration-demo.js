@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  const V = 10;            // 전환 1건의 가치(추상 단위). 입찰가 = 확률 × V
+  const V = 10;            // 클릭 1회당 기대 전환 가치(추상 단위, pCVR × 전환 1건의 가치). 입찰가 = 확률 × V
   const N = 21;            // 곡선 해상도 (예측확률 0..1 을 20등분)
   const xs = Array.from({ length: N }, (_, i) => i / (N - 1));
 

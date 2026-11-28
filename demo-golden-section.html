@@ -381,7 +381,7 @@
                     <div class="slider-group">
                         <label>True Value (V) <span id="val-V">$5.0</span></label>
                         <input type="range" id="slider-V" min="1" max="10" step="0.1" value="5">
-                        <div class="slider-hint">광고의 진짜 가치 = pCTR &times; Conversion Value. 이 금액을 초과하면 손해</div>
+                        <div class="slider-hint">광고의 진짜 가치 = pCTR &times; Conversion Value(클릭 한 번의 기대 전환 가치). 이 금액을 초과하면 손해</div>
                     </div>
                     <div class="slider-group">
                         <label>Market &mu; <span id="val-mu">0.80</span></label>
@@ -606,7 +606,8 @@
             <h3>True Value (V)</h3>
             <p>
                 <strong>pCTR &times; Conversion Value</strong>로 계산되는 광고의 진짜 가치입니다.
-                예를 들어 pCTR = 5%, 전환 가치 = 100달러이면 V = 5.00달러입니다.
+                여기서 Conversion Value 는 클릭 한 번이 가져오는 기대 전환 가치(pCVR × 전환 1건의 가치)입니다.
+                예를 들어 pCTR = 5%, 클릭당 기대 전환 가치 = 100달러이면 V = 5.00달러입니다.
                 V가 시장 가격보다 훨씬 높으면 최적 입찰가도 높아지고 (여유가 있으므로), V가 시장 가격에 가까우면
                 아주 정밀한 shading이 필요합니다.
             </p>

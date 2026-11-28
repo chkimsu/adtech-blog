@@ -3291,7 +3291,7 @@ window.DEMO_EDU = {
         explain: {
             '.tg-card': ({ el }) => {
                 switch (el.dataset.card) {
-                    case 'abarms': return '헷갈리는 것은 <strong>왜 더 잘 맞히는 모델이 지나</strong>입니다. 예측이 높아지면 입찰가도 높아져 노출 하나를 더 비싸게 삽니다. 같은 예산으로 살 수 있는 양이 줄어, 저녁 값진 시간 전에 돈이 끝납니다.';
+                    case 'abarms': return '헷갈리는 것은 <strong>왜 더 잘 맞히는 모델이 지나</strong>입니다. 예측이 높아지면 입찰가도 높아져 노출 하나를 더 비싸게 삽니다. 같은 예산으로 살 수 있는 양이 줄어 A 가 18시까지 사는 오후 시간(가치 1.0~1.5)을 B 는 사지 못합니다.';
                     case 'confound': return '헷갈리는 것은 <strong>층을 나누는 일이 무엇을 하나</strong>입니다. 원래 비슷한 사람끼리만 비교하게 만듭니다. 층 안에서는 노출 여부가 거의 무작위에 가까워져, 남은 차이가 광고 효과에 가깝습니다.';
                     default: return '';
                 }

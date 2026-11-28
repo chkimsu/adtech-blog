@@ -267,7 +267,7 @@ for label, imps, clicks in [("A/B", imps_ab, clicks_ab), ("밴딧", imps_bd, cli
 
 이 표에서 "전체 평균 1등"만 믿고 소재B 하나만 모든 지면에 튼다면, PC 상단 배너에서는 계속 손해를 본다. A/B도 밴딧도 이 손해를 못 잡아낸다. 둘 다 "지면"이라는 정보를 애초에 안 보기 때문이다. 트래픽을 어떻게 나누든, 나누는 기준이 "전체"뿐이라는 한계는 그대로다.
 
-이 지면, 유저 정보를 **맥락(context)**이라 부른다. 맥락별로 다른 승자를 학습하는 밴딧을 **Contextual Bandit**이라 부른다. 맥락을 피처로 어떻게 넣고 학습하는지는 이 글의 범위를 넘는다. [UCB 계열](post.html?id=ucb-family)이 LinUCB 로 확장하는 과정을 다룬다. [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)이 점수 구성을 시각적으로 뜯어본다.
+이 지면, 유저 정보를 **맥락(context)**이라 부른다. 맥락별로 다른 승자를 학습하는 밴딧을 **Contextual Bandit**이라 부른다. 맥락을 피처로 어떻게 넣고 학습하는지는 이 글의 범위를 넘는다. [UCB 계열](post.html?id=ucb-family)이 LinUCB 로 확장하는 과정을 다룬다. [Disjoint LinUCB: 광고마다 계수를 따로 배우면 무엇이 달라지나](post.html?id=disjoint-linucb)가 점수 구성을 시각적으로 뜯어본다.
 
 ---
 

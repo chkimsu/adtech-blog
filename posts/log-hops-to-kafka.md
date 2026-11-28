@@ -75,11 +75,11 @@ X-Timezone: 540
 
 **수집 서버 안의 데이터는 텍스트 한 줄이고 타입이 없습니다. `9931` 은 숫자가 아니라 글자 넷입니다.**
 
-수집 서버는 nginx 입니다. 요청을 받으면 이 형식대로 한 줄을 적게 해 뒀습니다.
+수집 서버는 nginx 입니다. 요청을 받으면 이 형식대로 한 줄을 적게 해 뒀습니다. `escape=none` 은 요청 본문 안의 따옴표를 `\x22` 로 바꾸지 않고 그대로 둡니다.
 
 ```text
-log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
-                   '$request_time "$http_user_agent" $request_body';
+log_format collect escape=none '$remote_addr $time_iso8601 $request_method $uri $status '
+                               '$request_time "$http_user_agent" $request_body';
 ```
 
 2절의 요청이 들어오면 파일 끝에 이 줄이 붙습니다.

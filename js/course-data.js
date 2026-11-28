@@ -133,7 +133,7 @@
     finalLine:     v('{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","campaign_id":5502,"advertiser_id":311,"cost":182.4,"media":"A앱","client_ip":"121.130.8.24","device":"iPhone","os":"iOS 19.2","event_time":"2026-08-16T16:48:21+09:00","ingest_time":"2026-08-16T16:48:22.104+09:00","status":204,"latency_ms":2}', L),
     impLine:       v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786864101}', K),
     labelLine:     v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","bid":182.4,"y":1}', K),
-    logFormat:     v("log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '\n                   '$request_time \"$http_user_agent\" $request_body';", L),
+    logFormat:     v("log_format collect escape=none '$remote_addr $time_iso8601 $request_method $uri $status '\n                               '$request_time \"$http_user_agent\" $request_body';", L),
   };
 
   // 값만 꺼내 쓰는 지름길 — 화면 코드는 이쪽을 쓴다

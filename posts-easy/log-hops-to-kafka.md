@@ -81,11 +81,11 @@ X-Timezone: 540
 
 2절의 요청이 수집 서버에 닿으면 이벤트는 처음으로 서버의 파일에 한 줄로 적히는데, 이 줄에 적힌 값은 아직 숫자로 쓸 수 없는 글자일 뿐입니다.
 
-수집 서버로는 nginx(널리 쓰는 웹서버 프로그램)를 쓰고 요청을 받을 때마다 아래 `log_format` 설정에 적은 형식대로 파일에 한 줄을 적게 해 두었습니다. `log_format` 은 로그 한 줄에 어떤 값을 어떤 순서로 적을지 정하는 nginx 설정이며 `$` 로 시작하는 낱말은 요청마다 nginx 가 값을 채워 넣는 변수입니다.
+수집 서버로는 nginx(널리 쓰는 웹서버 프로그램)를 쓰고 요청을 받을 때마다 아래 `log_format` 설정에 적은 형식대로 파일에 한 줄을 적게 해 두었습니다. `log_format` 은 로그 한 줄에 어떤 값을 어떤 순서로 적을지 정하는 nginx 설정이며 `$` 로 시작하는 낱말은 요청마다 nginx 가 값을 채워 넣는 변수입니다. 형식 이름 `collect` 뒤의 `escape=none` 은 요청 본문 안의 따옴표를 nginx 가 `\x22` 로 바꾸지 않고 그대로 적게 하는 설정입니다.
 
 ```text
-log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
-                   '$request_time "$http_user_agent" $request_body';
+log_format collect escape=none '$remote_addr $time_iso8601 $request_method $uri $status '
+                               '$request_time "$http_user_agent" $request_body';
 ```
 
 2절의 요청이 들어오면 이 형식에 따라 파일 끝에 아래 줄이 붙습니다.

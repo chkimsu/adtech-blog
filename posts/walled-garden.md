@@ -285,7 +285,7 @@ graph TB
 
         subgraph OPEN["Open RTB 연동"]
             GFA["외부 디스플레이<br/>(GFA, 카카오 비즈보드 네트워크)"]
-            HB["Header Bidding<br/>(외부 수요 유입)"]
+            HB["외부 DSP 입찰 (RTB)<br/>(외부 수요 유입)"]
         end
 
         subgraph Unified["통합 데이터 플랫폼"]

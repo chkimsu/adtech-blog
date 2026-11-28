@@ -456,12 +456,12 @@ def library_user(ids, head):
 
 
 def library_batches(ids):
-    """id 목록을 차례대로 LIBRARY_BATCH 개씩 나눈다. 마지막 묶음은 더 적을 수 있다."""
+    """id 목록을 차례대로 LIBRARY_BATCH 개씩 나눈다. 마지막 배치는 더 적을 수 있다."""
     return [ids[i:i + LIBRARY_BATCH] for i in range(0, len(ids), LIBRARY_BATCH)]
 
 
 def library_prompts_voters():
-    """키워드 120개를 id 차례로 20개씩 6묶음. 맨 위 temperature 0 이 투표자 A(run 1), repeat_subset 의 0.7 이 투표자 B(run 2)다."""
+    """키워드 120개를 id 차례로 20개씩 배치 6개로. 맨 위 temperature 0 이 투표자 A(run 1), repeat_subset 의 0.7 이 투표자 B(run 2)다."""
     items = [{'id': 'b%d' % n, 'user': library_user(ids, '키워드')}
              for n, ids in enumerate(library_batches([k[0] for k in KEYWORDS]), 1)]
     return {'system': LIBRARY_SYSTEM_FILTER, 'think': 'off', 'repeat': 1,
@@ -493,7 +493,7 @@ def library_record(slug, spec, runs):
 
 
 def library_votes():
-    """-voters 기록에서 묶음마다 (id 목록, 투표자 A 의 읽은 답, 투표자 B 의 읽은 답). 답 전체를 읽지 못하면 None 이다."""
+    """-voters 기록에서 배치마다 (id 목록, 투표자 A 의 읽은 답, 투표자 B 의 읽은 답). 답 전체를 읽지 못하면 None 이다."""
     spec = library_prompts_voters()
     out = library_record(LIBRARY_VOTERS, spec, (1, 2))
     return [(ids, read_decisions(out[it['id'], 1], ids), read_decisions(out[it['id'], 2], ids))
@@ -537,7 +537,7 @@ def library_kept():
 
 
 def library_prompts_groups():
-    """투표와 심판을 거쳐 남긴 키워드를 한 번에 주고 묶음과 이름을 받는다. thinking 은 끈다."""
+    """투표와 심판을 거쳐 남긴 키워드를 한 번에 주고 그룹과 이름을 받는다. thinking 은 끈다."""
     return {'system': LIBRARY_SYSTEM_GROUPS, 'think': 'off', 'repeat': 1,
             'items': [{'id': 'groups', 'user': library_user(library_kept(), '남은 키워드')}]}
 

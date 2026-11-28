@@ -243,7 +243,7 @@
       if (!out.groups.length) err(outAt, '출력 표시 아래에 뜻 줄과 찍힌 줄이 없습니다');
       for (const gg of out.groups) {
         if (!gg.lines.length) err(gg.from, '뜻 줄 아래에 찍힌 줄이 없습니다');
-        else if (!gg.lines.some(t => t.trim())) err(gg.from, '뜻 줄 아래에 빈 줄만 있습니다. 빈 줄은 앞이나 뒤 묶음에 붙입니다');
+        else if (!gg.lines.some(t => t.trim())) err(gg.from, '뜻 줄 아래에 빈 줄만 있습니다. 빈 줄은 앞이나 뒤 그룹에 붙입니다');
         if (steps.length && gg.n !== null && !steps.includes(gg.n)) err(gg.from, `${gg.n}단계가 이 블록에 없습니다`);
         if (!steps.length && gg.n !== null) err(gg.from, '단계 없는 블록의 뜻 줄에는 번호를 붙이지 않습니다');
       }

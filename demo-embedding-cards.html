@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>임베딩 카드 네 장 — Ad Tech Blog</title>
-  <meta name="description" content="상품 이름 한 줄이 숫자 384개가 되고 가까운 상품을 찾기까지를 카드 네 장으로 봅니다. 장난감 임베딩, 코사인, 3,000건 전수 검색, 해시 묶음의 근사 검색입니다. 상품 이름은 가상 데이터입니다.">
+  <meta name="description" content="상품 이름 한 줄이 숫자 384개가 되고 가까운 상품을 찾기까지를 카드 네 장으로 봅니다. 장난감 임베딩, 코사인, 3,000건 전수 검색, 해시 버킷의 근사 검색입니다. 상품 이름은 가상 데이터입니다.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -30,7 +30,7 @@
   <main>
     <section class="tg-hero">
       <h1>임베딩 카드 네 장</h1>
-      <p>지훈 씨가 상품 이름 한 줄이 숫자 384개가 되는 것을 처음 본 길을 카드 네 장으로 봅니다. 글자 두 개 조각을 384칸에 더하는 장난감 임베딩, 두 벡터의 각과 코사인, 3,000건 전수 검색, 해시 묶음만 보는 근사 검색입니다. 상품 3,000건은 이름 틀에 낱말을 끼운 가상 데이터입니다.</p>
+      <p>지훈 씨가 상품 이름 한 줄이 숫자 384개가 되는 것을 처음 본 길을 카드 네 장으로 봅니다. 글자 두 개 조각을 384칸에 더하는 장난감 임베딩, 두 벡터의 각과 코사인, 3,000건 전수 검색, 해시 버킷만 보는 근사 검색입니다. 상품 3,000건은 이름 틀에 낱말을 끼운 가상 데이터입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 코드가 하는 일</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 검색어</span>
@@ -49,8 +49,8 @@
         <p class="tg-cap">코사인은 각이 0 이면 <b>1</b>, 직각이면 <b>0</b>, 정반대면 <b>-1</b> 입니다.</p></section>
       <section class="tg-card" data-card="bruteforce"><h2>BRUTE FORCE</h2><p class="tg-k">상품 3,000건 전수 검색과 해시 충돌</p><p class="tg-easy"><b>쉽게 말하면</b> 상품마다 코사인을 한 번씩 다 측정해서 큰 순서로 정렬합니다. 다른 조각이 같은 칸을 쓰면 엉뚱한 상품이 올라옵니다.</p><div class="tg-fig" id="ev-bruteforce"></div>
         <p class="tg-cap">검색어 하나에 거리 계산 <b>3,000번</b>, 곱셈 <b>1,152,000번</b>입니다.</p></section>
-      <section class="tg-card" data-card="ann"><h2>ANN</h2><p class="tg-k">해시 묶음만 보는 근사 검색과 재현율</p><p class="tg-easy"><b>쉽게 말하면</b> 상품을 해시 묶음에 나눠 두고 검색어 근처의 묶음만 측정합니다. 덜 측정하는 대신 10위 점수 이상인 상품을 일부 놓칩니다.</p><div class="tg-fig" id="ev-ann"></div>
-        <p class="tg-cap">이웃 묶음까지 보면 거리 계산 <b>142~254번</b>에 재현율@10 <b>0.7~0.9</b> 입니다.</p></section>
+      <section class="tg-card" data-card="ann"><h2>ANN</h2><p class="tg-k">해시 버킷만 보는 근사 검색과 재현율</p><p class="tg-easy"><b>쉽게 말하면</b> 상품을 해시 버킷에 나눠 두고 검색어 근처의 버킷만 측정합니다. 덜 측정하는 대신 10위 점수 이상인 상품을 일부 놓칩니다.</p><div class="tg-fig" id="ev-ann"></div>
+        <p class="tg-cap">이웃 버킷까지 보면 거리 계산 <b>142~254번</b>에 재현율@10 <b>0.7~0.9</b> 입니다.</p></section>
     </div>
 
     <section class="tg-real">

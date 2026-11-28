@@ -316,7 +316,7 @@ print(f"보정 후   p = {p:.4%}")
 # 보정 후   p = 1.7341%
 ```
 
-이 보정이 없으면 pCTR이 체계적으로 과대추정됩니다. True Value = pCTR x Conversion Value도 함께 과대 계산됩니다. 결국 입찰가가 비정상적으로 높아집니다. He et al. (2014)은 Facebook 광고 시스템에서 이 보정을 적용한 사례를 보고했습니다. 보정이 제대로 도는지 확인하는 도구는 P/O Ratio입니다. 지표의 정의와 읽는 법은 [Calibration](post.html?id=calibration)에 있습니다.
+이 보정이 없으면 pCTR이 체계적으로 과대추정됩니다. True Value = pCTR x pCVR x Conversion Value도 함께 과대 계산됩니다. 결국 입찰가가 비정상적으로 높아집니다. He et al. (2014)은 Facebook 광고 시스템에서 이 보정을 적용한 사례를 보고했습니다. 보정이 제대로 도는지 확인하는 도구는 P/O Ratio입니다. 지표의 정의와 읽는 법은 [Calibration](post.html?id=calibration)에 있습니다.
 
 > Negative Downsampling은 학습 효율을 위해 거의 필수입니다. 하지만 **Log-odds Correction 없이 쓰면 Calibration을 파괴합니다.** 이 보정은 서빙 파이프라인에 반드시 포함되어야 합니다.
 

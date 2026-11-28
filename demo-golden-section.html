@@ -636,8 +636,8 @@
                 RTB에서는 <strong>수십억 건/일</strong>의 bid request마다 최적 입찰가를 실시간으로 계산해야 합니다.
                 Distribution Network가 시장 분포 파라미터 (&mu;, &sigma;)를 출력하면,
                 Golden Section Search가 <strong>~20회의 CDF 평가</strong>만으로 b*를 찾습니다.
-                전체 Bid Shading 모듈의 레이턴시가 <strong>10ms 이내</strong>에 완료되며,
-                이는 Grid Search로는 불가능한 속도입니다.
+                평가 횟수가 적어 bid request 마다 돌려도 계산 부담이 작습니다.
+                같은 정밀도를 Grid Search 로 얻으려면 평가가 훨씬 많이 필요합니다.
             </p>
 
             <h2>실험해볼 시나리오</h2>

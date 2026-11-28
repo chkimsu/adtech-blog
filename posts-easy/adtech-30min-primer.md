@@ -439,7 +439,7 @@ Behavioral 과 Retargeting 은 둘 다 유저의 지난 행동을 보지만 Reta
 5. 랭킹은 **후보 생성(Retrieval) → Ranking(정밀 스코어링)** 의 2단계입니다. CTR 모델은 LR 에서 DIN, DIEN(유저 행동 속에서 변해 가는 관심을 읽는 구조)까지 발전했습니다.
 6. 모델의 AUC 가 아무리 높아도 **Calibration** 이 맞지 않으면 돈을 잃습니다.
 7. 새 광고와 새 유저는 **탐색-활용 딜레마**에 놓이므로 밴딧 알고리즘으로 학습 데이터를 일부러 만듭니다.
-8. 측정은 **CTR, CVR, ROAS** 같은 지표와 **Attribution(공로 배분)** 으로 합니다. iOS ATT 이후 개별 추적이 어려워지면서 **SKAdNetwork** 같은 집계 방식으로 바뀌는 중입니다. 2025년에는 Chrome 이 Privacy Sandbox 의 광고 기능을 끝내겠다고 발표했습니다.
+8. 측정은 **CTR, CVR, ROAS** 같은 지표와 **Attribution(공로 배분)** 으로 합니다. iOS ATT 이후 개별 추적이 어려워지면서 **SKAdNetwork** 처럼 사용자 식별자 없이 결과만 알려 주는 방식으로 바뀌는 중입니다. 2025년에는 Chrome 이 Privacy Sandbox 의 광고 기능을 끝내겠다고 발표했습니다.
 9. 타겟팅 방식은 **Demographic, Behavioral, Contextual, Retargeting** 의 네 가지로 나뉩니다. 1st-party 데이터와 Lookalike 는 갈수록 중요해지고 있습니다.
 10. 지금까지 본 모든 일은 **Feature Store + Real-Time Serving + Online Learning** 으로 이뤄진 인프라 위에서 돌아갑니다.
 

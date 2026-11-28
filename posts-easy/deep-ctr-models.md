@@ -8,7 +8,7 @@
 
 광고 시스템의 계산은 모두 pCTR 에서 시작하므로 이 확률이 틀리면 그 뒤의 계산도 전부 틀립니다.
 
-- 최적 입찰가는 참 가치(True Value, 노출 한 번이 광고주에게 주는 가치)에서 계산하는데, 참 가치는 pCTR 에 전환 가치를 곱한 값이라 pCTR 이 틀리면 입찰가도 틀립니다 → [Bid Shading](post.html?id=bid-shading-censored)
+- 최적 입찰가는 참 가치(True Value, 노출 한 번이 광고주에게 주는 가치)에서 계산하는데, 참 가치는 pCTR 에 pCVR(클릭한 뒤 전환할 확률의 예측값)과 전환 가치(전환 한 건의 가치)를 곱한 값이라 pCTR 이 틀리면 입찰가도 틀립니다 → [Bid Shading](post.html?id=bid-shading-censored)
 - 하루 수십만 번의 입찰에 예산을 나눠 쓰려면 입찰 기회마다 그 기회의 가치가 얼마인지 알아야 합니다 → [Auto-Bidding](post.html?id=auto-bidding-pacing)
 - 어느 단계에 어떤 모델을 둘지는 정확도를 얻는 만큼 지연을 내주는 맞교환입니다 → [모델 서빙 아키텍처](post.html?id=model-serving-architecture)
 
@@ -1180,7 +1180,7 @@ Bid Request 는 광고 자리가 하나 생길 때마다 거래소가 DSP 에 �
 
 4. **프로덕션에서는 모델 복잡도와 서빙 레이턴시의 균형이 전부입니다.** 아무리 정확한 모델도 10ms 안에 돌지 못하면 쓸 수 없으므로, Multi-Stage Ranking 에서 단계마다 알맞은 모델을 두고 Distillation 과 Quantization 으로 가볍게 만들어야 합니다.
 
-5. **모델 구조는 수단이고 최종 목표는 정확한 pCTR 입니다.** 정확한 pCTR 이 정확한 참 가치로, 정확한 참 가치가 효율적인 [Bid Shading](post.html?id=bid-shading-censored) 으로, 다시 최적의 [Auto-Bidding](post.html?id=auto-bidding-pacing) 으로 이어집니다. 참 가치 $V = pCTR \times \text{ConvValue}$ 는 pCTR 에 전환 가치(ConvValue)를 곱한 값입니다. 모델은 이 파이프라인의 한 부분입니다.
+5. **모델 구조는 수단이고 최종 목표는 정확한 pCTR 입니다.** 정확한 pCTR 이 정확한 참 가치로, 정확한 참 가치가 효율적인 [Bid Shading](post.html?id=bid-shading-censored) 으로, 다시 최적의 [Auto-Bidding](post.html?id=auto-bidding-pacing) 으로 이어집니다. 참 가치 $V = pCTR \times pCVR \times \text{ConvValue}$ 는 pCTR 에 pCVR 과 전환 가치(ConvValue)를 곱한 값입니다. 모델은 이 파이프라인의 한 부분입니다.
 
 ---
 

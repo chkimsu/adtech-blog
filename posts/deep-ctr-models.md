@@ -1105,7 +1105,7 @@ CTR 예측 모델의 진화에서 핵심 5가지를 정리합니다:
 
 4. **프로덕션에서는 모델 복잡도와 서빙 레이턴시의 균형이 전부다.** 아무리 정확한 모델도 10ms 안에 돌지 못하면 쓸모없습니다. Multi-Stage Ranking에서 각 단계에 적합한 모델을 배치하고, Distillation과 Quantization으로 경량화해야 합니다.
 
-5. **모델 아키텍처는 수단이고, 최종 목표는 정확한 pCTR이다.** 정확한 pCTR → 정확한 참 가치 → 효율적 [Bid Shading](post.html?id=bid-shading-censored) → 최적 [Auto-Bidding](post.html?id=auto-bidding-pacing). 참 가치는 $V = pCTR \times \text{ConvValue}$입니다. 모델은 이 파이프라인의 한 조각입니다.
+5. **모델 아키텍처는 수단이고, 최종 목표는 정확한 pCTR이다.** 정확한 pCTR → 정확한 참 가치 → 효율적 [Bid Shading](post.html?id=bid-shading-censored) → 최적 [Auto-Bidding](post.html?id=auto-bidding-pacing). 참 가치는 $V = pCTR \times pCVR \times \text{ConvValue}$입니다. 모델은 이 파이프라인의 한 조각입니다.
 
 ---
 

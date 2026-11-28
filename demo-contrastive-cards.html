@@ -30,7 +30,7 @@
   <main>
     <section class="tg-hero">
       <h1>contrastive 학습 카드 네 장</h1>
-      <p>같이 클릭된 낱말 쌍으로 23주째의 장난감 임베딩을 고치는 과정을 한 장씩 봅니다. 묶음 10개와 양성 쌍 200개, 배치 하나의 10×10 점수표, 학습 전과 뒤의 recall@5, 온도 셋입니다. 낱말 50개와 양성 쌍은 설명을 위해 만든 가상 값입니다.</p>
+      <p>같이 클릭된 낱말 쌍으로 23주째의 장난감 임베딩을 고치는 과정을 한 장씩 봅니다. 카테고리 10개와 양성 쌍 200개, 배치 하나의 10×10 점수표, 학습 전과 뒤의 recall@5, 온도 셋입니다. 낱말 50개와 양성 쌍은 설명을 위해 만든 가상 값입니다.</p>
       <div class="tg-legend">
         <span class="tg-chip"><i class="a"></i>파랑 = 낱말과 양성 쌍</span>
         <span class="tg-chip"><i class="b"></i>벽돌색 = 배치의 점수표</span>
@@ -43,8 +43,8 @@
     <div class="tg-host"></div>
 
     <div class="tg-grid">
-      <section class="tg-card" data-card="pairs"><h2>POSITIVE PAIRS</h2><p class="tg-k">묶음 10개와 양성 쌍 200개</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 묶음의 두 낱말을 같이 클릭된 짝으로 보고, 그 짝들로 숫자를 고칩니다. 일부 짝은 떼어 두고 시험에만 씁니다.</p><div class="tg-fig" id="ib-pairs"></div>
-        <p class="tg-cap">묶음 안의 짝 100개 가운데 <b>90개</b>는 겹친 칸이 0 입니다. 학습 <b>160쌍</b>, 검증 <b>40쌍</b>입니다.</p></section>
+      <section class="tg-card" data-card="pairs"><h2>POSITIVE PAIRS</h2><p class="tg-k">카테고리 10개와 양성 쌍 200개</p><p class="tg-easy"><b>쉽게 말하면</b> 같은 카테고리의 두 낱말을 같이 클릭된 짝으로 보고, 그 짝들로 숫자를 고칩니다. 일부 짝은 떼어 두고 시험에만 씁니다.</p><div class="tg-fig" id="ib-pairs"></div>
+        <p class="tg-cap">카테고리 안의 짝 100개 가운데 <b>90개</b>는 겹친 칸이 0 입니다. 학습 <b>160쌍</b>, 검증 <b>40쌍</b>입니다.</p></section>
       <section class="tg-card" data-card="batch"><h2>IN-BATCH</h2><p class="tg-k">배치 하나의 10×10 점수표</p><p class="tg-easy"><b>쉽게 말하면</b> 짝 10개를 한 번에 놓고, 줄마다 자기 짝을 나머지 아홉보다 높게 고르게 합니다.</p><div class="tg-fig" id="ib-batch"></div>
         <p class="tg-cap">대각선 <b>10칸</b>이 정답이고 나머지 <b>90칸</b>이 음성입니다. 점수를 <b>0.05</b> 로 나눠 줄마다 소프트맥스를 겁니다.</p></section>
       <section class="tg-card" data-card="recall"><h2>RECALL@5</h2><p class="tg-k">학습 전과 뒤</p><p class="tg-easy"><b>쉽게 말하면</b> 떼어 둔 짝의 상대가 가까운 낱말 다섯 안에 드는지 셉니다. 학습 전에는 40쌍 가운데 4쌍이었습니다.</p><div class="tg-fig" id="ib-recall"></div>
@@ -56,7 +56,7 @@
     <section class="tg-real">
       <h2>현업에서는 이렇게 씁니다</h2>
       <ul>
-        <li><b>임베딩을 쌍으로 고칠 때는</b> 세 가지를 봅니다. 배치에 같은 묶음이 두 번 들지 않는지, 검증 쌍을 양쪽 방향으로 떼었는지, 온도를 검증 쌍으로 골랐는지입니다.</li>
+        <li><b>임베딩을 쌍으로 고칠 때는</b> 세 가지를 봅니다. 배치에 같은 카테고리가 두 번 들지 않는지, 검증 쌍을 양쪽 방향으로 떼었는지, 온도를 검증 쌍으로 골랐는지입니다.</li>
         <li><b>카드를 누르면</b> 위 해설 칸에 그 자리에서 헷갈리는 것 하나가 더 나옵니다.</li>
         <li><b>글로 이어 읽으려면</b> <a href="post.html?id=embedding-model-finetuning">임베딩 모델 파인튜닝</a> 편에 이 카드들이 절마다 들어 있습니다. 같은 손실을 회원과 광고에 쓴 글은 <a href="post.html?id=two-tower-training">Two-Tower 학습</a> 편입니다.</li>
       </ul>

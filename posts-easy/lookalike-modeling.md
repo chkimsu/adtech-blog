@@ -474,7 +474,8 @@ y = np.array([1] * len(seed_features) + [0] * n_neg)
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
 # 2단계: XGBoost 를 학습한다
-# 50라운드마다 검증 AUC 를 찍고, 20라운드 동안 나아지지 않으면 멈춘다. 돌리는 방식에 따라 마지막 줄이 [82] 로 찍히기도 하지만 학습은 83번째 라운드까지 간다.
+# 20라운드 동안 검증 AUC 가 나아지지 않으면 멈춘다. 0번째와 50번째 라운드, 그리고 멈춘 라운드의 검증 AUC 를 찍는다.
+# 가장 좋은 AUC 가 두 라운드에서 거의 같아 멈추는 라운드가 실행마다 82번째나 83번째로 달라질 수 있으므로 번호 대신 값만 찍는다.
 dtrain = xgb.DMatrix(X_train, label=y_train)
 dval = xgb.DMatrix(X_val, label=y_val)
 
@@ -488,13 +489,19 @@ params = {
     'colsample_bytree': 0.8,
 }
 
+evals_result = {}
 model = xgb.train(
     params, dtrain,
     num_boost_round=200,
     evals=[(dval, 'val')],
     early_stopping_rounds=20,
-    verbose_eval=50
+    evals_result=evals_result,
+    verbose_eval=False
 )
+val_auc = evals_result['val']['auc']  # 라운드마다 기록된 검증 AUC
+print(f"[0]\tval-auc:{val_auc[0]:.5f}")
+print(f"[50]\tval-auc:{val_auc[50]:.5f}")
+print(f"멈춘 라운드\tval-auc:{val_auc[-1]:.5f}")
 
 # 3단계: 전체 유저를 점수 매긴다
 all_features = np.vstack([seed_features, population_features])  # 앞 3,000행이 Seed
@@ -511,16 +518,16 @@ print(f"AUC: {roc_auc_score(y_val, model.predict(dval)):.4f}")
 print(f"Lookalike top propensity: {propensity_scores[lookalike_indices[0]]:.4f}")
 
 # 출력:
-# 2단계 뜻: 검증 AUC 는 0번째 라운드 0.82460 에서 50번째 0.93412 로 오르고, 학습은 83번째 라운드 0.93408 에서 멈춘다.
+# 2단계 뜻: 검증 AUC 는 0번째 라운드 0.82460 에서 50번째 0.93412 로 오르고 가장 좋았던 라운드 뒤로 20라운드 동안 나아지지 않아 0.93408 에서 멈춘다.
 # [0]	val-auc:0.82460
 # [50]	val-auc:0.93412
-# [83]	val-auc:0.93408
+# 멈춘 라운드	val-auc:0.93408
 # 4단계 뜻: 검증 AUC 는 0.9341 이고, Seed 를 뺀 맨 위 유저의 성향 점수는 0.9910 이다.
 # AUC: 0.9341
 # Lookalike top propensity: 0.9910
 ```
 
-찍힌 값을 보면 검증 AUC 는 0번째 라운드 0.82460 에서 50번째 라운드 0.93412 로 오르고 83번째 라운드 0.93408 에서 학습이 멈춥니다. 코드는 20라운드 동안 검증 AUC 가 나아지지 않으면 멈추게(`early_stopping_rounds=20`) 했으므로, 83번째 라운드에서 멈춘 학습은 그 앞 20라운드 동안 더 나아지지 않았고 200라운드를 다 채우지 않았습니다. 최종 검증 AUC 는 0.9341 이고 시드를 뺀 맨 위 유저의 성향 점수는 0.9910 입니다. AUC 0.9341 은 아래 코드 설명의 두 기준 사이에 있습니다. 0.8 이상이라 모델이 시드와 시드 아닌 사람을 잘 구분하고 0.95 보다 낮아 오히려 의심해야 하는 수준까지는 가지 않습니다.
+찍힌 값을 보면 검증 AUC 는 0번째 라운드 0.82460 에서 50번째 라운드 0.93412 로 오르고 0.93408 에서 학습이 멈춥니다. 코드는 20라운드 동안 검증 AUC 가 나아지지 않으면 멈추게(`early_stopping_rounds=20`) 했으므로 학습은 가장 좋았던 라운드 뒤로 20라운드 동안 더 나아지지 않아 멈췄고 200라운드를 다 채우지 않았습니다. 멈춘 라운드는 실행마다 82번째나 83번째로 하나 달라질 수 있어 코드는 번호 없이 값만 찍습니다. 최종 검증 AUC 는 0.9341 이고 시드를 뺀 맨 위 유저의 성향 점수는 0.9910 입니다. AUC 0.9341 은 아래 코드 설명의 두 기준 사이에 있습니다. 0.8 이상이라 모델이 시드와 시드 아닌 사람을 잘 구분하고 0.95 보다 낮아 오히려 의심해야 하는 수준까지는 가지 않습니다.
 
 **코드 설명**:
 1. 시드(Positive)가 Negative 의 1/10 뿐인 클래스 불균형을 `scale_pos_weight` 로 보정합니다. 코드는 이 값을 Negative 수를 시드 수로 나눈 10 으로 넣어 시드 한 명에 10배 가중치를 줍니다.

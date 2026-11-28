@@ -667,7 +667,7 @@ for n in (1, 4, 24):
 | [UCB1 Demo](demo-ucb1.html) | 광고 선택 (Ad Ranking) | 새 광고의 pCTR을 아직 모를 때, 탐색과 활용의 균형 |
 | [Thompson Sampling](demo-ts.html) | 광고 선택 (확률적 접근) | pCTR의 **불확실성**을 분포로 표현하여 자연스러운 탐색 |
 | [LinUCB](demo-linucb.html) | 개인화 광고 선택 | **유저 Feature**를 활용한 pCTR 예측의 기초 원리 |
-| [RTB Auction](demo-rtb.html) | 광고 거래소 경매 | pCTR × ConvValue가 입찰가로 변환되는 과정 |
+| [RTB Auction](demo-rtb.html) | 광고 거래소 경매 | pCTR × pCVR × ConvValue가 입찰가로 변환되는 과정 |
 | [Bid Landscape](demo-bid-landscape.html) | 입찰 전략 분석 | pCTR 정확도가 최적 입찰가에 미치는 영향 |
 | [Bid Shading](demo-bid-shading.html) | 입찰 최적화 + 숨겨진 데이터 | 1st Price에서 Shading이 필수인 이유 + 관측 불가 문제 |
 

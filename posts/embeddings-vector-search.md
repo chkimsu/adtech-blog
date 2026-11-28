@@ -359,7 +359,7 @@ for near, label in ((False, '같은 버킷만'), (True, '이웃 버킷까지')):
 | 이웃 버킷까지 | 스니커즈 | 142번 | 4.7% | 0.9 |
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-embedding-cards.html?embed=1&card=ann" height="480" loading="lazy" title="해시 묶음만 보는 근사 검색과 재현율"></iframe>
+<iframe class="demo-embed" src="demo-embedding-cards.html?embed=1&card=ann" height="480" loading="lazy" title="해시 버킷만 보는 근사 검색과 재현율"></iframe>
 <a class="demo-embed-open" href="demo-embedding-cards.html" target="_blank" rel="noopener">↗ 카드 네 장 전체로 열기</a>
 </div>
 

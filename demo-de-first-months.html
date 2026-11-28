@@ -112,7 +112,7 @@
 
     <div class="dm-grid">
       <section class="dm-card" data-card="map"><h2>MAP</h2><p class="dm-k">저장소는 네 층</p>
-        <p class="dm-easy"><b>쉽게 말하면</b> 이 저장소는 「매일 몇 시에 어디서 데이터를 가져와 어떤 표로 만들어 어디에 놓나」를 코드로 적어 둔 곳입니다. 가져오는 것, 표로 만드는 것, 클러스터에 말을 거는 부품, 들어오는 대로 처리하는 것이 각각 폴더 하나입니다.</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 이 저장소는 「매일 몇 시에 어디서 데이터를 가져와 어떤 표로 만들어 어디에 놓나」를 코드로 적어 둔 곳입니다. 가져오는 것, 표로 만드는 것, 클러스터에 말을 거는 부품, 들어오는 대로 처리하는 것이 각각 한 층입니다.</p>
         <div class="dm-fig" id="dm-map"></div>
         <p class="dm-cap">파일 수가 가장 많은 층은 <b>SQL 모델</b>입니다. 실제 로직이 거기 있고, 파이썬 DAG 는 언제 어떤 순서로 돌리나만 적습니다.</p></section>
       <section class="dm-card" data-card="extract"><h2>EXTRACT</h2><p class="dm-k">첫 달, 수급 DAG 한 장</p>
@@ -128,7 +128,7 @@
         <div class="dm-fig" id="dm-operator"></div>
         <p class="dm-cap">이 팀은 오퍼레이터를 <b>열 개 넘게 직접 만들었습니다</b>. 새로 온 사람의 넷째 달 커밋이 여기 몰립니다. 남이 만든 부품 위에서 쓰다가 부품 자체를 고치는 쪽으로 올라간 달입니다.</p></section>
       <section class="dm-card" data-card="flink"><h2>STREAMING</h2><p class="dm-k">들어오는 대로 받아 묶는 잡</p>
-        <p class="dm-easy"><b>쉽게 말하면</b> 배치는 하루 한 번 표를 만들지만, 이 잡은 로그가 들어오는 대로 받아 10초 기다렸다가 같은 재생 건끼리 묶어 내보냅니다. 늦게 온 로그는 10분까지 받아 차이만 다시 내보냅니다.</p>
+        <p class="dm-easy"><b>쉽게 말하면</b> 배치는 하루 한 번 표를 만들지만, 이 잡은 로그가 들어오는 대로 받아 10초 기다렸다가 같은 재생 건끼리 묶어 내보냅니다. 늦게 온 로그는 10분까지 받아 묶은 결과를 다시 내보냅니다.</p>
         <div class="dm-fig" id="dm-flink"></div>
         <p class="dm-cap">원천 저장소에서 읽어 오는 표준 커넥터가 없어서 <b>Java 클래스를 처음부터 직접 만들었습니다</b>. 새로 온 사람의 가장 깊은 코드가 여기 있고, 그 달 커밋은 거의 전부 이 폴더였습니다.</p></section>
       <section class="dm-card" data-card="ship"><h2>SHIP</h2><p class="dm-k">코드가 서버에 닿는 길</p>

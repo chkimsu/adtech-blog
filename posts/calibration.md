@@ -2,7 +2,7 @@ pCTR 모델의 AUC가 0.85입니다. 팀원들과 자축하며 프로덕션에 �
 
 답은 간단합니다. **AUC는 "순서(ranking)"만 평가합니다.** 확률값 자체가 맞는지는 보지 않습니다. 그런데 광고 시스템은 pCTR 값을 입찰가 계산에 그대로 씁니다.
 
-$$\text{True Value} = pCTR \times \text{Conversion Value}$$
+$$\text{True Value} = pCTR \times pCVR \times \text{Conversion Value}$$
 
 입찰의 근거가 되는 확률이 늘 같은 방향으로 틀리면 어떻게 될까요. 순서를 잘 맞춰도 돈을 잃습니다. 이것이 **보정(Calibration)** 문제입니다.
 
@@ -52,13 +52,13 @@ pCTR을 실제보다 높게 예측하면, 참 가치가 과대 계산되고, 입
 | 항목 | 실제 | 모델 예측 |
 |------|------|----------|
 | CTR | 1% | 3% (3배 과대) |
-| 전환 가치(Conversion Value) | `$10` | `$10` |
+| 클릭당 기대 전환 가치(pCVR × Conversion Value) | `$10` | `$10` |
 | 참 가치 | `$0.10` | `$0.30` |
 | 입찰가 (Bid Shading 후) | `~$0.07` | `~$0.21` |
 
 결과:
 - 경매에서 **자주 이기지만**, 실제 CTR은 1%이므로 전환이 기대의 1/3
-- 광고주 CPA가 3배 상승 (참 가치 그대로 입찰한다고 보면 목표 `$10` → 실제 `$30`)
+- 광고주 CPA가 3배 상승 (참 가치 그대로 입찰한다고 보면 클릭당 비용 `$10` → `$30`)
 - 광고주 이탈, 플랫폼 신뢰도 하락
 
 ### 과소 예측(Under-prediction) 시나리오
@@ -68,7 +68,7 @@ pCTR을 실제보다 낮게 예측하면, 참 가치가 과소 계산되고, 입
 | 항목 | 실제 | 모델 예측 |
 |------|------|----------|
 | CTR | 3% | 1% (3배 과소) |
-| 전환 가치 | `$10` | `$10` |
+| 클릭당 기대 전환 가치 | `$10` | `$10` |
 | 참 가치 | `$0.30` | `$0.10` |
 | 입찰가 (Bid Shading 후) | `~$0.21` | `~$0.07` |
 
@@ -234,7 +234,7 @@ print(f"하루 {DAILY_IMPRESSIONS:,}회 노출이면 {gap / IMPRESSIONS * DAILY_
 
 ```mermaid
 graph TD
-    A["pCTR Miscalibration<br/>예측 확률 != 실제 확률"] --> B["True Value 왜곡<br/>V = pCTR x ConvValue"]
+    A["pCTR Miscalibration<br/>예측 확률 != 실제 확률"] --> B["True Value 왜곡<br/>V = pCTR x pCVR x ConvValue"]
     B --> C["Bid Shading 최적점 이동<br/>잘못된 V 기반으로 b* 계산"]
     B --> D["eCPM Ranking 왜곡<br/>잘못된 순위로 광고 선택"]
     C --> E["Win Rate 비정상<br/>Over: 너무 높음 / Under: 너무 낮음"]

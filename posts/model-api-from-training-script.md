@@ -23,7 +23,7 @@
 > - 담장 안과 열린 RTB → 8절
 > - 이 블로그의 서빙 글 여덟 편을 읽는 순서 → 9절
 
-이 글의 시간과 대수는 전부 설명을 위한 가상 값입니다. 모델 서버 12대, 모델 호출 예산 8ms, 후보 800건을 한 텐서로 넣어 3.0ms 는 [추론 서버](post.html?id=inference-server) 편의 값입니다. 요청 전체 예산 12ms 는 [게이트웨이와 Ingress](post.html?id=gateway-ingress-router) 편이 정한 값입니다. 하루 노출 2억 2,800만 건과 초당 2,639건은 [엔지니어링 기초 트랙](post.html?id=api-basics)의 표준값입니다. 요청 하나의 CPU 시간 6ms 와 피처 조회 2ms 는 이 글에서 새로 둔 가정입니다.
+이 글의 시간과 대수는 전부 설명을 위한 가상 값입니다. 모델 서버 12대, 모델 호출 예산 8ms, 후보 800건을 한 텐서로 넣어 3.0ms 는 [추론 서버](post.html?id=inference-server) 편의 값입니다. 요청 전체 예산 12ms 는 [게이트웨이와 Ingress](post.html?id=gateway-ingress-router) 편에서 가져왔습니다. 그 편의 12ms 는 매체가 요청을 보내고 답을 받기까지의 왕복 전체이고 그 안에서 bidder 몫은 10ms 입니다. 이 글은 서버 안의 구간을 보려고 12ms 전체를 서버 안에서 나눈다고 단순하게 봅니다. 하루 노출 2억 2,800만 건과 초당 2,639건은 [엔지니어링 기초 트랙](post.html?id=api-basics)의 표준값입니다. 요청 하나의 CPU 시간 6ms 와 피처 조회 2ms 는 이 글에서 새로 둔 가정입니다.
 
 ---
 
@@ -120,7 +120,7 @@ print("서버를 내렸다. 학습 스크립트였다면 여기까지 오기 전
 
 **요청 전체 예산이 12ms 이면 그 안을 구간마다 나눠 적어 둡니다. 모델 호출 8ms, 피처 조회 2ms, 후보 조회 1ms, 게이트웨이와 응답 조립 1ms 입니다. 구간마다 예산이 있어야 어디가 넘겼는지 알 수 있습니다.**
 
-[게이트웨이와 Ingress](post.html?id=gateway-ingress-router) 편에서 입찰 요청 하나의 예산을 12ms 로 정했습니다. 그 12ms 는 서버 코드 한 곳이 다 쓰는 것이 아닙니다. [Ad Serving Flow](post.html?id=ad-serving-flow) 편의 여덟 걸음이 나눠 씁니다. 이 팀의 배분은 아래 표와 같습니다. 모델 호출 8ms 는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편의 값이고 나머지는 이 글의 가정입니다.
+[게이트웨이와 Ingress](post.html?id=gateway-ingress-router) 편에서 매체가 입찰 요청 하나의 답을 기다려 주는 왕복 시간을 12ms 로 정했습니다. 이 글은 그 12ms 를 서버 안에서 나눈다고 단순하게 봅니다. 그 12ms 는 서버 코드 한 곳이 다 쓰는 것이 아닙니다. [Ad Serving Flow](post.html?id=ad-serving-flow) 편의 여덟 걸음이 나눠 씁니다. 이 팀의 배분은 아래 표와 같습니다. 모델 호출 8ms 는 [서빙 지연과 처리량](post.html?id=serving-latency-throughput) 편의 값이고 나머지는 이 글의 가정입니다.
 
 | 구간 | 예산 | 하는 일 | 넘기면 |
 |---|---|---|---|

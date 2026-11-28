@@ -1494,7 +1494,7 @@ const posts = [
     id: 'kubernetes-networking',
     world: 'na',
     title: '쿠버네티스 네트워킹: Pod, Service, Ingress 가 각각 무엇을 하나',
-    excerpt: '사용자의 요청 한 건이 쿠버네티스 클러스터 안에서 어떻게 앱까지 도착할까? 앱이 도는 \'집\' Pod, 그 집들을 안정적으로 이어주는 \'길\' Service, 도시 밖에서 들어오는 입구 \'성문\' Ingress — 이 세 가지가 어떻게 협력하는지 비유와 트래픽 흐름 도식으로 풀어낸다. Pod는 왜 자꾸 바뀌고(ephemeral), 그래서 왜 안정적 주소(Service)와 입구(Ingress)가 필요한지까지.',
+    excerpt: '사용자의 요청 한 건이 쿠버네티스 클러스터 안에서 어떻게 앱까지 도착할까? 앱이 도는 Pod, 바뀌는 Pod 앞의 고정 주소 Service, 클러스터 밖에서 들어오는 입구 Ingress — 이 세 가지가 어떻게 협력하는지 트래픽 흐름 도식과 가상 계산으로 풀어낸다. Pod는 왜 자꾸 바뀌고(ephemeral), 그래서 왜 안정적 주소(Service)와 입구(Ingress)가 필요한지까지.',
     date: '2026-06-07',
     categories: ['Software Engineering'],
     tags: ['Kubernetes', 'Networking', 'DevOps', 'System Design', '입문'],

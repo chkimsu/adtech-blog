@@ -1303,7 +1303,7 @@ window.DEMO_EDU = {
                 if (host.dataset.eduSaid === i) return '';
                 host.dataset.eduSaid = i;
                 return [
-                    '<strong>1번 앱 SDK</strong>입니다. 만드는 것은 85 B 뿐이고 <strong>누가, 어디서, 어느 캠페인, 얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
+                    '<strong>1번 앱 SDK</strong>입니다. 만드는 것은 85 B 뿐이고 <strong>어떤 기기, 어디서, 어느 캠페인, 얼마</strong>가 다 빠져 있습니다. 그 넷이 뒤에서 하나씩 붙습니다.',
                     '<strong>2번 웹서버</strong>입니다. 98 B 가 앞에 붙어 183 B 가 됐습니다. 붙은 것은 전부 <strong>받는 쪽만 아는 값</strong>입니다 — 앱은 자기 요청이 204 를 받았는지 보내는 시점에 모릅니다.',
                     '<strong>3번 수집 에이전트</strong>입니다. 여기가 처음 <strong>가지러 가는</strong> 자리입니다. 원문은 message 필드에 한 글자도 안 바뀌고 들어가고, 붙는 것은 envelope 필드 셋뿐입니다.',
                     '<strong>4번 변환기</strong>입니다. 크기는 37 B <strong>줄었는데</strong> 필드가 5개에서 15개가 됐습니다. 바이트로는 줄어든 자리에서 가장 큰 일이 일어납니다.',

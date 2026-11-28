@@ -151,7 +151,7 @@
     {
       key: 'app', label: '앱 SDK', sub: '광고 탭',
       recv: 'make', recvLabel: '만듭니다',
-      did: '화면에서 일어난 일에 이름을 붙입니다. 여기 없는 것이 넷입니다 — 누가, 어디서, 어느 캠페인, 얼마.',
+      did: '화면에서 일어난 일에 이름을 붙입니다. 여기 없는 것이 넷입니다 — 어떤 기기, 어디서, 어느 캠페인, 얼마.',
       inTitle: '화면에서 일어난 일', outTitle: '서버로 보낸 것',
       before: TAP, after: APP_OUT,
       inBytes: null, outBytes: b(APP_JSON), outFields: 5,

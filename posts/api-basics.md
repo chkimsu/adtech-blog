@@ -323,7 +323,7 @@ Content-Type: application/json
 **② 이벤트 로그 — 앱이 본문에 담아 보내야만 남습니다. 우리가 코드로 꺼내 적습니다.**
 
 ```json
-{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786002501234,"app_ver":"3.2.1"}
+{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786866501234,"app_ver":"3.2.1"}
 ```
 
 같은 사건인데 적힌 내용이 전혀 다릅니다.

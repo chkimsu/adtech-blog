@@ -38,7 +38,7 @@
 이 줄을 만드는 것은 `bidder` 입니다. 응찰을 계산한 그 프로세스 안에서만 알 수 있는 값이 있기 때문입니다.
 
 ```json
-{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786000101}
+{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786864101}
 ```
 
 **입찰 요청 하나는 12 밀리초 안에 답해야 합니다.** [로드밸런서, Ingress, API Gateway](post.html?id=gateway-ingress-router) 편에서 정한 그 예산이고, 넘긴 응답은 매체가 버립니다. 이 제약이 아래 셋을 전부 정합니다.

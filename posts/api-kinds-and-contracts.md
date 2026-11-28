@@ -222,7 +222,7 @@ Host: api.example.com
 Content-Type: application/json
 Idempotency-Key: O-00042
 
-{"click_id":"ck-8f21","order_id":"O-00042","value":39000,"ts":1786002501}
+{"click_id":"ck-8f21","order_id":"O-00042","value":39000,"ts":1786866501}
 ```
 
 헤더 이름이 `Idempotency-Key` 인 것은 이 약속을 부르는 말이 멱등성이기 때문입니다. **이름은 몰라도 됩니다.** 하는 일은 위의 한 줄이 전부이고, 실무에서는 "요청 번호 붙였어요?"로 통합니다.

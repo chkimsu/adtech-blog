@@ -32,7 +32,7 @@
 
 ```text
 ClickEvent(event="click", ad_id=9931, slot="main_top", req_id="r-8f21",
-           ts=1786002501234, tz=540, sdk="3.2.1")
+           ts=1786866501234, tz=540, sdk="3.2.1")
 ```
 
 `ts` 는 밀리초 단위로 16:48:21.234 입니다. `tz=540` 은 이 기기의 시간대가 UTC+9 라는 뜻이고, `req_id` 는 이 광고를 내려 준 요청에 붙은 번호입니다. **`req_id` 가 이 글에서 가장 오래 따라다니는 값입니다** — 노출 줄과 클릭 줄을 나중에 이어 붙이는 키가 이것입니다.
@@ -58,7 +58,7 @@ Content-Type: application/json
 User-Agent: AdSDK/3.2.1 (iPhone; iOS 19.2)
 X-Timezone: 540
 
-{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}
+{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786866501234}
 ```
 
 **본문은 85바이트로 1절의 객체 110바이트보다 25바이트 작은데 대부분이 `tz` 와 `sdk` 가 빠진 몫입니다.** 두 값은 한 세션 동안 안 바뀌니 이벤트마다 되풀이해 담을 이유가 없어 요청 헤더로 올렸습니다. `sdk` 는 위 `User-Agent` 의 `AdSDK/3.2.1` 이 그대로 그 값입니다.
@@ -85,7 +85,7 @@ log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '
 2절의 요청이 들어오면 파일 끝에 이 줄이 붙습니다.
 
 ```text
-121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}
+121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786866501234}
 ```
 
 183바이트입니다. 뒤쪽 중괄호 85바이트는 2절의 요청 본문 그대로입니다. 앞의 98바이트가 서버가 붙인 것인데, 보낸 IP, 받은 시각, 메서드, 경로, 상태 코드, 처리 시간, 앱 이름표 일곱입니다. `$time_iso8601` 이 서버 시계로 측정한 시각인데 값이 초까지만 있습니다. 밀리초가 필요하면 `$msec` 를 형식에 더해야 합니다.
@@ -152,7 +152,7 @@ flowchart LR
 에이전트는 수집 서버와 같은 인스턴스에 뜬 별도 프로세스입니다. 파일 끝을 계속 따라가다 새 줄이 붙으면 읽어서 변환기로 보냅니다. 3절의 줄을 읽어 envelope 에 담으면 346바이트가 됩니다. envelope 은 원문을 그대로 감싸고 읽은 시각, 기계 이름, 파일 위치를 덧붙인 JSON 입니다.
 
 ```json
-{"@timestamp":"2026-08-16T07:48:22.104Z","host":{"name":"web-03"},"log":{"file":{"path":"/var/log/nginx/event.log"},"offset":88213},"message":"121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 \"AdSDK/3.2.1 (iPhone; iOS 19.2)\" {\"event\":\"click\",\"ad_id\":9931,\"slot\":\"main_top\",\"req_id\":\"r-8f21\",\"ts\":1786002501234}"}
+{"@timestamp":"2026-08-16T07:48:22.104Z","host":{"name":"web-03"},"log":{"file":{"path":"/var/log/nginx/event.log"},"offset":88213},"message":"121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 \"AdSDK/3.2.1 (iPhone; iOS 19.2)\" {\"event\":\"click\",\"ad_id\":9931,\"slot\":\"main_top\",\"req_id\":\"r-8f21\",\"ts\":1786866501234}"}
 ```
 
 **원문이 `message` 필드에 문자열 그대로 들어가 있습니다.** 에이전트는 `e` 배열을 나누는 것 말고는 내용을 해석하지 않습니다. 해석하려면 로그 형식을 알아야 하고, 그러면 형식이 바뀔 때마다 에이전트를 고쳐야 하기 때문입니다.
@@ -162,7 +162,7 @@ flowchart LR
 우리 클릭은 한 줄에 한 건이라 안 쪼개집니다. 노출은 다릅니다. 이 클릭의 광고가 화면에 뜬 16시 08분의 요청은 이렇게 남았습니다.
 
 ```text
-121.130.8.24 2026-08-16T16:08:26+09:00 POST /v1/events 204 0.004 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"imp","e":[{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","ts":1786000101118},{"req_id":"r-9d55","ad_id":8820,"slot":"feed_2","ts":1786000101173},{"req_id":"r-4a17","ad_id":7715,"slot":"feed_7","ts":1786000101241},{"req_id":"r-2e93","ad_id":6604,"slot":"feed_12","ts":1786000101305}]}
+121.130.8.24 2026-08-16T16:08:26+09:00 POST /v1/events 204 0.004 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"imp","e":[{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","ts":1786864101118},{"req_id":"r-9d55","ad_id":8820,"slot":"feed_2","ts":1786864101173},{"req_id":"r-4a17","ad_id":7715,"slot":"feed_7","ts":1786864101241},{"req_id":"r-2e93","ad_id":6604,"slot":"feed_12","ts":1786864101305}]}
 ```
 
 `e` 배열에 노출 4건이 들어 있고, 줄 전체는 394바이트입니다. **첫 건의 `req_id` 가 `r-8f21` 입니다** — 40분 뒤에 눌리는 그 노출입니다. 나머지 셋은 같은 화면의 다른 지면이라 `req_id` 가 다릅니다. `req_id` 는 광고 요청 하나에 하나씩 붙는 번호이고 지면마다 요청이 따로 나가기 때문입니다.

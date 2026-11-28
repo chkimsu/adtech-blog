@@ -42,15 +42,15 @@
   var LAST = HOPS.length - 1;
 
   // 글 3절·5절이 적어 둔 문자열 그대로. 바이트는 여기서 세어 쓴다.
-  var CLICK_HEAD = '10.2.31.7 2026-08-06T16:48:21+09:00 POST /v1/e 204 0.002 "MyApp/3.2.1 (iPhone; iOS 19.2)" ';
-  var CLICK_BODY = '{"t":"clk","rid":"r-8f21","ad":9931,"s":"main_top","ts":1786002501234,"seq":47}';
-  var IMP_HEAD = '10.2.31.7 2026-08-06T16:08:26+09:00 POST /v1/e 204 0.004 "MyApp/3.2.1 (iPhone; iOS 19.2)" ';
+  var CLICK_HEAD = '10.2.31.7 2026-08-16T16:48:21+09:00 POST /v1/e 204 0.002 "MyApp/3.2.1 (iPhone; iOS 19.2)" ';
+  var CLICK_BODY = '{"t":"clk","rid":"r-8f21","ad":9931,"s":"main_top","ts":1786866501234,"seq":47}';
+  var IMP_HEAD = '10.2.31.7 2026-08-16T16:08:26+09:00 POST /v1/e 204 0.004 "MyApp/3.2.1 (iPhone; iOS 19.2)" ';
   // 글 5절의 노출 배치 한 줄에 실제로 들어 있던 네 건. 배치를 늘리면 이 넷을 돌려 쓴다.
   var IMP_ELS = [
-    '{"rid":"r-8f21","ad":9931,"s":"main_top","ts":1786000101118,"seq":11}',
-    '{"rid":"r-9d55","ad":8820,"s":"feed_2","ts":1786000101173,"seq":12}',
-    '{"rid":"r-4a17","ad":7715,"s":"feed_7","ts":1786000101241,"seq":13}',
-    '{"rid":"r-2e93","ad":6604,"s":"feed_12","ts":1786000101305,"seq":14}'
+    '{"rid":"r-8f21","ad":9931,"s":"main_top","ts":1786864101118,"seq":11}',
+    '{"rid":"r-9d55","ad":8820,"s":"feed_2","ts":1786864101173,"seq":12}',
+    '{"rid":"r-4a17","ad":7715,"s":"feed_7","ts":1786864101241,"seq":13}',
+    '{"rid":"r-2e93","ad":6604,"s":"feed_12","ts":1786864101305,"seq":14}'
   ];
   // 액세스 로그 줄에서 서버가 앞에 붙이는 부분. 90 B 다(글 3절).
   // 에이전트가 배치를 건별로 쪼개면 이 90 B 가 건마다 다시 붙는다.
@@ -435,11 +435,11 @@
       switch (key) {
         case 'sdk':
           return 'ClickEvent(t="clk", rid="r-8f21", ad=9931, s="main_top",\n' +
-            '           ts=1786002501234, seq=47, tz=540, sdk="3.2.1")';
+            '           ts=1786866501234, seq=47, tz=540, sdk="3.2.1")';
         case 'collector':
           return CLICK_HEAD + '\n' + CLICK_BODY;
         case 'agent':
-          return '{"remote":"10.2.31.7","ts":"2026-08-06T16:48:21+09:00",\n' +
+          return '{"remote":"10.2.31.7","ts":"2026-08-16T16:48:21+09:00",\n' +
             ' "method":"POST","uri":"/v1/e","status":"204","rt":"0.002",\n' +
             ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
             ' "body":"{\\"t\\":\\"clk\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}';
@@ -449,8 +449,8 @@
           return '{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top",\n' +
             ' "seq":47,"app_ver":"3.2.1","device":"iPhone","os":"iOS","os_ver":"19.2",\n' +
             ' "region":"KR-11","campaign_id":5502,"advertiser_id":311,"media":"A앱",\n' +
-            ' "event_ts":1786002501234,"collect_ts":1786002501402,\n' +
-            ' "process_ts":1786002502310,"schema":"click.v3"}';
+            ' "event_ts":1786866501234,"collect_ts":1786866501402,\n' +
+            ' "process_ts":1786866502310,"schema":"click.v3"}';
         case 'kafka':
           return 'topic ' + topic + ', partition 5, offset 8412\n' +
             'key   b\'r-8f21\'                                   6 B\n' +
@@ -458,7 +458,7 @@
         default:
           return 'ConsumerRecord(\n' +
             '    topic=\'' + topic + '\', partition=5, offset=8412,\n' +
-            '    timestamp=1786002502310, timestamp_type=0,\n' +
+            '    timestamp=1786866502310, timestamp_type=0,\n' +
             '    key=b\'r-8f21\',\n' +
             '    value=b\'{"req_id":"r-8f21","event":"click",…}\',\n' +
             '    serialized_value_size=308,\n)';
@@ -468,13 +468,13 @@
     switch (key) {
       case 'sdk':
         return 'ImpEvent(t="imp", rid="r-8f21", ad=9931, s="main_top",\n' +
-          '         ts=1786000101118, seq=11, tz=540, sdk="3.2.1")' +
+          '         ts=1786864101118, seq=11, tz=540, sdk="3.2.1")' +
           (n > 1 ? '\n… 큐에 같은 모양으로 ' + (n - 1) + '건 더 …' : '');
       case 'collector':
         return IMP_HEAD + '\n{"t":"imp","e":[\n  ' + IMP_ELS[0] + (n > 1 ? ',' : '') + more + ']}';
       case 'agent':
         return (n > 1 ? n + '건으로 나뉜 뒤 첫 건 —\n' : '쪼갤 것이 없어 한 건 그대로 —\n') +
-          '{"remote":"10.2.31.7","ts":"2026-08-06T16:08:26+09:00",\n' +
+          '{"remote":"10.2.31.7","ts":"2026-08-16T16:08:26+09:00",\n' +
           ' "method":"POST","uri":"/v1/e","status":"204","rt":"0.004",\n' +
           ' "agent":"MyApp/3.2.1 (iPhone; iOS 19.2)",\n' +
           ' "body":"{\\"t\\":\\"imp\\",\\"rid\\":\\"r-8f21\\",\\"ad\\":9931,…}"}';
@@ -483,8 +483,8 @@
         return '{"req_id":"r-8f21","event":"impression_confirm","ad_id":9931,\n' +
           ' "slot":"main_top","seq":11,"app_ver":"3.2.1","device":"iPhone",\n' +
           ' "os":"iOS","os_ver":"19.2","region":"KR-11","campaign_id":5502,\n' +
-          ' "advertiser_id":311,"media":"A앱","event_ts":1786000101118,\n' +
-          ' "collect_ts":1786000106402,"process_ts":1786000107310,"schema":"impression.confirm.v1"}' +
+          ' "advertiser_id":311,"media":"A앱","event_ts":1786864101118,\n' +
+          ' "collect_ts":1786864106402,"process_ts":1786864107310,"schema":"impression.confirm.v1"}' +
           (n > 1 ? '\n… 같은 모양으로 ' + n + '건 …' : '');
       case 'kafka':
         return 'topic ' + topic + ', partition 5, offset 8412\n' +

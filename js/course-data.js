@@ -116,22 +116,22 @@
 
     // --- 실물 줄 (값 자체가 근거다) ---
     accessLineStd: v('10.2.31.7 - - [16/Aug/2026:16:48:21 +0900] "POST /v1/events HTTP/1.1" 204 0 "-" "AdSDK/3.2.1" 0.002', A),
-    eventLine:     v('{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786002501234,"app_ver":"3.2.1"}', A),
+    eventLine:     v('{"req_id":"r-8f21","event":"click","ad_id":9931,"slot":"main_top","event_ts":1786866501234,"app_ver":"3.2.1"}', A),
     // 앱 안에서 만들어진 객체 그 자체 — posts/log-hops-to-kafka.md 1절의
     // ClickEvent(...) 리터럴이다(글의 2줄 원문 그대로, 121바이트). 줄바꿈과
     // 그 들여쓰기를 공백 하나로 접으면 정확히 110바이트가 되어 byteObject 와
     // 맞는다(scripts/test-course-logic.js 가 그 접음을 확인한다). eventLine
     // (api-basics.md, 우리 코드가 남기는 이벤트 로그)과는 출처 글도 필드도
     // 다르다 — 이쪽은 tz·sdk 가 있고 event_ts·app_ver 는 없다.
-    appObjectLine: v('ClickEvent(event="click", ad_id=9931, slot="main_top", req_id="r-8f21",\n           ts=1786002501234, tz=540, sdk="3.2.1")', L),
-    collectLine:   v('121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}', L),
+    appObjectLine: v('ClickEvent(event="click", ad_id=9931, slot="main_top", req_id="r-8f21",\n           ts=1786866501234, tz=540, sdk="3.2.1")', L),
+    collectLine:   v('121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 "AdSDK/3.2.1 (iPhone; iOS 19.2)" {"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786866501234}', L),
     // Filebeat envelope 실물. collectLine 이 message 필드에 그대로 들어간 형태이고,
     // 이 줄 전체가 posts/log-hops-to-kafka.md 154행에 있다 — 346바이트로
     // FACTS.byteEnvelope 와도 맞는다. js/pipeline-course-model.js 가 조각을
     // 손으로 짜맞추지 않고 이 값을 그대로 쓴다.
-    filebeatEnvelope: v('{"@timestamp":"2026-08-16T07:48:22.104Z","host":{"name":"web-03"},"log":{"file":{"path":"/var/log/nginx/event.log"},"offset":88213},"message":"121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 \\"AdSDK/3.2.1 (iPhone; iOS 19.2)\\" {\\"event\\":\\"click\\",\\"ad_id\\":9931,\\"slot\\":\\"main_top\\",\\"req_id\\":\\"r-8f21\\",\\"ts\\":1786002501234}"}', L),
+    filebeatEnvelope: v('{"@timestamp":"2026-08-16T07:48:22.104Z","host":{"name":"web-03"},"log":{"file":{"path":"/var/log/nginx/event.log"},"offset":88213},"message":"121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 \\"AdSDK/3.2.1 (iPhone; iOS 19.2)\\" {\\"event\\":\\"click\\",\\"ad_id\\":9931,\\"slot\\":\\"main_top\\",\\"req_id\\":\\"r-8f21\\",\\"ts\\":1786866501234}"}', L),
     finalLine:     v('{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","campaign_id":5502,"advertiser_id":311,"cost":182.4,"media":"A앱","client_ip":"121.130.8.24","device":"iPhone","os":"iOS 19.2","event_time":"2026-08-16T16:48:21+09:00","ingest_time":"2026-08-16T16:48:22.104+09:00","status":204,"latency_ms":2}', L),
-    impLine:       v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786000101}', K),
+    impLine:       v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","pctr":0.0213,"bid":182.4,"ts":1786864101}', K),
     labelLine:     v('{"req_id":"r-8f21","ad_id":9931,"slot":"main_top","media":"A앱","bid":182.4,"y":1}', K),
     logFormat:     v("log_format collect '$remote_addr $time_iso8601 $request_method $uri $status '\n                   '$request_time \"$http_user_agent\" $request_body';", L),
   };

@@ -29,7 +29,7 @@
     return new TextEncoder().encode(s).length;
   }
 
-  var APP_JSON = '{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786002501234}';
+  var APP_JSON = '{"event":"click","ad_id":9931,"slot":"main_top","req_id":"r-8f21","ts":1786866501234}';
   var NGINX_PREFIX = '121.130.8.24 2026-08-16T16:48:21+09:00 POST /v1/events 204 0.002 ' +
     '"AdSDK/3.2.1 (iPhone; iOS 19.2)" ';
   var NGINX_LINE = NGINX_PREFIX + APP_JSON;
@@ -57,7 +57,7 @@
     L('+', 'ad_id', '9931', '어떤 광고인가'),
     L('+', 'slot', 'main_top', '어느 자리인가'),
     L('+', 'req_id', 'r-8f21', '어느 광고 요청에서 나왔나'),
-    L('+', 'ts', '1786002501234', '폰 시계가 말하는 시각 — 못 믿습니다')
+    L('+', 'ts', '1786866501234', '폰 시계가 말하는 시각 — 못 믿습니다')
   ];
 
   var NGINX_OUT = [

@@ -223,7 +223,7 @@ const GLOSSARY = [
   },
   {
     term: 'Feature Vector',
-    abbr: '모델에 넣는 숫자 묶음',
+    abbr: '모델에 넣는 숫자 줄',
     body: '한 요청에 대해 모아 온 피처를 <strong>정해진 순서의 숫자 줄</strong>로 만든 것. 이 줄의 자리가 학습과 서빙에서 어긋나면 모델이 조용히 틀린다.'
   },
   {
@@ -501,7 +501,7 @@ const GLOSSARY = [
   {
     term: 'Semantic ID',
     abbr: 'Semantic ID',
-    body: '상품의 내용 벡터에서 만드는 <strong>짧은 코드 묶음</strong>. 비슷한 상품이 앞자리 코드를 나눠 갖게 만들고, 생성 모델이 이 코드를 한 자리씩 생성해 후보를 꺼내는 방법을 생성형 검색이라고 부른다.'
+    body: '상품의 내용 벡터에서 만드는 <strong>짧은 코드 튜플</strong>. 비슷한 상품이 앞자리 코드를 나눠 갖게 만들고, 생성 모델이 이 코드를 한 자리씩 생성해 후보를 꺼내는 방법을 생성형 검색이라고 부른다.'
   },
   {
     term: '훅',
@@ -531,7 +531,7 @@ const GLOSSARY = [
   {
     term: 'GRPO',
     abbr: 'Group Relative Policy Optimization',
-    body: '같은 프롬프트로 답을 여럿 뽑아 <strong>묶음의 보상 평균을 기준으로 이점을 세는</strong> 강화학습. 묶음 평균이 대신하는 것은 PPO 의 가치 모델이고, 답마다의 보상은 여전히 보상 모델이 매긴다.'
+    body: '같은 프롬프트로 답을 여럿 뽑아 <strong>그룹의 보상 평균을 기준으로 이점을 세는</strong> 강화학습. 그룹 평균이 대신하는 것은 PPO 의 가치 모델이고, 답마다의 보상은 여전히 보상 모델이 매긴다.'
   },
   {
     term: '보상 모델',
@@ -556,7 +556,7 @@ const GLOSSARY = [
   {
     term: 'contrastive 학습',
     abbr: 'Contrastive Learning',
-    body: '가까워야 할 쌍은 <strong>당기고 아닌 쌍은 밀어</strong> 벡터를 배우는 방법. 임베딩 모델 파인튜닝 편은 같은 묶음의 두 낱말을 양성 쌍으로 두고, 배치 안의 다른 쌍의 짝을 음성으로 썼다.'
+    body: '가까워야 할 쌍은 <strong>당기고 아닌 쌍은 밀어</strong> 벡터를 배우는 방법. 임베딩 모델 파인튜닝 편은 같은 카테고리의 두 낱말을 양성 쌍으로 두고, 배치 안의 다른 쌍의 짝을 음성으로 썼다.'
   },
   {
     term: 'in-batch negatives',

@@ -67,7 +67,7 @@
 두 이름을 나눠 부르면 세그먼트는 조건 한 벌이고 오디언스는 그 조건에 걸린 사람 목록입니다. 317 은 「러닝에 관심 있는 회원」을 모은 사람 목록의 번호이고 그 목록에 든 회원의 프로필마다 317 이 하나씩 적힙니다. 아래 그림의 표는 한 줄이 목록 하나이고 그 줄에는 회원 ID 가 하나도 없습니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-pool-map.html?embed=1&fig=2" height="300" loading="lazy" title="세그먼트 번호는 사람 묶음 하나의 번호"></iframe>
+<iframe class="demo-embed" src="demo-pool-map.html?embed=1&fig=2" height="300" loading="lazy" title="세그먼트 번호는 사람 목록 하나의 번호"></iframe>
 <a class="demo-embed-open" href="demo-pool-map.html" target="_blank" rel="noopener">↗ 그림 여섯 장 전체로 열기</a>
 </div>
 

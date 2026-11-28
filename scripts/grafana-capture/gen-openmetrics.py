@@ -164,7 +164,7 @@ def main():
             f.write(ln)
 
     with open(a.out, "w") as f:
-        fam(f, "pctr_infer_duration_seconds 모델 호출에 걸린 시간",
+        fam(f, "pctr_infer_duration_seconds 모델 서버 체류 시간",
             "pctr_infer_duration_seconds histogram",
             [f'pctr_infer_duration_seconds_bucket{{instance="{i}",le="{e}"}} {v} {ts}\n'
              for i, e, v, ts in rows_b]

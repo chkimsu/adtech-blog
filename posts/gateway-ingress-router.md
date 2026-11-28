@@ -62,7 +62,7 @@ bidders:
 
 얼마나 사라지는지 세어 보겠습니다. 하루에 배포를 4번 하고, 한 번 배포할 때 프로세스가 없는 시간이 20초이고, 이 매체가 초당 3,000건을 보냅니다. 곱하면 **하루 24만 건**입니다.
 
-이 요청들은 우리가 응찰조차 못 한 건이라 매출로도 안 잡히고, **우리 쪽 에러 로그에도 안 남습니다.** 로그를 남길 프로세스가 그 순간 떠 있지 않기 때문입니다. 매체 리포트에만 "응답률이 낮은 DSP"로 조용히 기록됩니다. 앞 글 9절에서 본 "서버 로그에 아예 없는 요청"이 여기서도 그대로입니다.
+이 요청들은 우리가 응찰조차 못 한 건이라 매출로도 안 잡히고, **우리 쪽 에러 로그에도 안 남습니다.** 로그를 남길 프로세스가 그 순간 떠 있지 않기 때문입니다. 매체 리포트에만 "응답률이 낮은 DSP"로 조용히 기록됩니다. [API 기초](post.html?id=api-basics) 편 9절에서 본 "서버 로그에 아예 없는 요청"이 여기서도 그대로입니다.
 
 배포를 조심히 하면 되지 않느냐고 물을 수 있습니다. 그런데 배포를 멈춰도 서버는 죽습니다. 디스크가 차거나, 커널이 패닉을 내거나, 앞단 스위치가 재시작합니다. **이때 매체가 대신 부를 주소가 없다는 것이 문제입니다.** 설정 파일에 적힌 주소가 하나뿐이기 때문입니다. 그래서 서버를 여러 대로 늘리는 것 말고는 답이 없습니다.
 
@@ -70,7 +70,7 @@ bidders:
 
 **서버를 3대로 늘리면 한 대가 죽어도 서비스는 삽니다. 대신 "매체가 어느 주소를 불러야 하나"라는 문제가 새로 생깁니다.**
 
-`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 세 대에 띄웠다고 하겠습니다. 이제 배포는 한 대씩 돌아가며 하면 되고, 한 대를 내리는 동안 나머지 두 대가 요청을 받습니다. 1절에서 하루 24만 건을 날리던 20초가 없어집니다.
+`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 세 대에 띄웠다고 하겠습니다. 이제 배포는 한 대씩 돌아가며 하면 되고, 한 대를 내리는 동안 나머지 두 대가 요청을 받습니다. 1절에서 하루 24만 건을 날리던 20초가 대부분 없어집니다.
 
 대신 배포 중에는 남은 2대가 3대 몫을 받습니다. 평소 서버당 1,000건이던 것이 그동안 1,500건이 됩니다. **그래서 3대라는 숫자는 평소가 아니라 이 순간을 기준으로 잡습니다.** 평소에 딱 맞게 잡으면 배포할 때마다 지연이 튑니다.
 
@@ -136,7 +136,7 @@ bidders:
 
 검사 주기만큼 중요한 것이 이것입니다. 프로세스가 살아 있기만 하면 200을 주는 구현이 가장 흔합니다. 그런데 이러면 `bidder` 가 떠 있지만 모델 저장소를 못 읽는 상태를 못 잡습니다. 그 서버는 계속 대상에 남아 요청을 받으면서, 계속 빈 응답을 냅니다.
 
-반대로 `/healthz` 안에서 의존하는 것을 전부 확인하면 다른 사고가 납니다. 모델 저장소가 3초 흔들리면 3대가 동시에 실패를 답하고, 그러면 세 대가 한꺼번에 빠져 대상 그룹에 한 대도 안 남습니다.
+반대로 `/healthz` 안에서 의존하는 것을 전부 확인하면 다른 사고가 납니다. 모델 저장소가 12초 넘게 흔들리면 3대가 동시에 실패를 답하고 그러면 세 대가 한꺼번에 빠져 대상 그룹에 한 대도 안 남습니다.
 
 **선은 이 자리에 긋습니다.** 나 하나만 빠지면 해결되는 것은 `/healthz` 에서 봅니다 — 모델 파일 적재 여부, 스레드풀 고갈, 로컬 디스크입니다. 모두가 같이 쓰는 것은 보지 않습니다 — 공용 저장소, 공용 DB 입니다. 뒤엣것이 죽으면 남은 서버도 똑같이 못 하니, 빼 봐야 보낼 곳이 없기 때문입니다.
 
@@ -171,7 +171,7 @@ bidders:
 대신 매체 설정을 한 번 더 고쳐야 합니다. Ingress 는 요청 헤더에 담긴 호스트 이름을 보고 규칙을 고르기 때문입니다. 그래서 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고, 사내 DNS 에 그 이름을 같은 IP 로 등록합니다. **이 부탁은 이번이 마지막입니다.** 서비스는 앞으로도 늘겠지만 이름은 하나로 끝납니다. 선배가 지훈 씨에게 알려 준 그 주소가 이것입니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 로드밸런서를 부르고, 그 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 나눠 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 로드밸런서를 부르고, 그 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 둘로 요청을 나눠 보내는 구조. pctr 과 feature-store 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -200,23 +200,21 @@ bidders:
 <text x="422.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
 <text x="250" y="318" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
 <line x1="180" y1="208" x2="77.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<line x1="250" y1="208" x2="307.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 <line x1="320" y1="208" x2="422.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나입니다. 로드밸런서는 2절에서 하던 일을 그대로 하고, 화살표는 pctr 에 닿지 않습니다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">새로 칠해진 칸은 Ingress 하나입니다. 로드밸런서는 2절에서 하던 일을 그대로 하고 화살표는 pctr 과 feature-store 에 닿지 않습니다.</figcaption>
 </figure>
 
 규칙표는 실제로 이런 모양입니다.
 
 ```yaml
-# Ingress 규칙 — 이 네 줄 다 pathType 은 Prefix 입니다.
+# Ingress 규칙 — 이 세 줄 다 pathType 은 Prefix 입니다.
 rules:
   - host: ads.example.com
     http:
       paths:
         - path: /v1/bid      →  bidder-service:8080
         - path: /v1/track    →  log-collector:8080
-        - path: /v1/feature  →  feature-store:8080
   - host: admin.example.com
     http:
       paths:
@@ -224,7 +222,7 @@ rules:
 # 맞는 줄이 하나도 없으면 404 입니다.
 ```
 
-서비스는 넷인데 `ads.example.com` 아래 줄은 셋입니다. `pctr` 은 매체가 아니라 `bidder` 가 부르니 규칙표에 없습니다. **규칙표는 클러스터 바깥에서 들어오는 요청만 다룹니다.**
+서비스는 넷인데 `ads.example.com` 아래 줄은 둘입니다. `pctr` 과 `feature-store` 는 매체가 아니라 `bidder` 가 부르니 규칙표에 없습니다. **규칙표는 클러스터 바깥에서 들어오는 요청만 다룹니다.**
 
 **규칙표에서 이기는 것은 위치가 아니라 길이입니다.** 가장 길게 맞는 줄이 이깁니다. 그래서 짧은 경로를 새로 추가할 때는 그 아래로 무엇이 딸려 들어오는지부터 세어 봐야 합니다.
 
@@ -241,7 +239,7 @@ rules:
 | 어디서 쓰는 말인가 | 무엇을 가리키나 | 실제 이름 |
 |---|---|---|
 | 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx, traefik) |
-| OpenShift | 규칙표에 해당하는 자체 리소스 | `Route` 오브젝트 |
+| OpenShift | `Route` 오브젝트(규칙표에 해당하는 자체 리소스)를 실제로 실행하는 프로세스 | OpenShift router (HAProxy) |
 | 앱 코드 안 | 들어온 경로를 함수에 연결하는 것 | `@app.route("/v1/bid")` |
 
 셋이 하는 일은 같습니다. 경로를 보고 어디로 보낼지 정합니다. 다른 것은 **어느 층에서 도느냐**입니다. 그런데 셋이 세 층은 아닙니다. 1, 2행은 같은 층이고 플랫폼만 다릅니다 — 쿠버네티스를 쓰면 1행, OpenShift 를 쓰면 2행이지 둘을 같이 지나가지 않습니다. 3행만 다른 층입니다.
@@ -271,7 +269,7 @@ rules:
 
 - **매체별 인증키 확인** — 요청을 누가 보냈는지 규칙표가 모릅니다.
 - **초당 호출 제한** — 매체를 구분 못 하니 500과 8,000을 따로 걸 수 없습니다.
-- **v1, v2 분기** — 버전은 `x-api-version` 헤더로 오는데 규칙표는 헤더를 안 봅니다.
+- **v1, v2 분기** — 버전은 `x-api-version` 헤더로 오는데 규칙표는 호스트 말고는 헤더를 안 봅니다.
 - **응답 형식 변환** — v1 매체는 옛 필드 이름을 기대하는데 `bidder` 는 v2 형식만 만듭니다.
 
 **API Gateway** 가 Ingress 뒤에 서서 이 넷을 맡습니다. 규칙표와 다른 점은 헤더 조건과 정책 칸입니다.
@@ -292,6 +290,8 @@ routes:
     match: { host: ads.example.com, path: /v1/bid }
     target: bidder-service:8080
 ```
+
+`common` 의 `auth` 줄은 API 키를 쓰는 매체의 경우입니다. 서명을 쓰는 B웹과 토큰을 쓰는 D앱은 같은 자리에서 각자의 방식으로 확인합니다.
 
 버전을 경로로 나눌 수도 있습니다. `/v2/bid` 를 새로 파면 되는데, 그러면 v2 를 쓰는 매체 전부에 주소를 고쳐 달라고 해야 합니다. 3절에서 그 부탁은 이번이 마지막이라고 했습니다. **그래서 경로는 `/v1/bid` 로 두고, 옛 버전을 쓰는 매체만 헤더로 알립니다.**
 
@@ -325,7 +325,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 
 ## 5. 완성된 지도
 
-**네 절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 됩니다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 엽니다.**
+**2~4절에서 하나씩 생긴 칸을 한 줄에 놓으면 순서가 그대로 경계가 됩니다. 왼쪽 칸일수록 요청의 겉만 보고, 오른쪽으로 갈수록 안을 엽니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 로드밸런서, Ingress, API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
@@ -350,7 +350,6 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 <rect x="334" y="20" width="160" height="250" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
 <text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스</text>
 <line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
-<line x1="150" y1="262" x2="330" y2="185" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <line x1="150" y1="276" x2="330" y2="227" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="346" y="54" width="136" height="62" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="74" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
@@ -364,7 +363,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 <text x="414" y="231" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
 <text x="414" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">지훈 씨 API 가 여기입니다</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽 넷이 이 글에서 하나씩 켜진 부품입니다. 지훈 씨가 만든 클릭 수집 API 는 오른쪽 맨 아래 칸에 있습니다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽에서 매체 아래 셋이 이 글에서 하나씩 켜진 부품입니다. 지훈 씨가 만든 클릭 수집 API 는 오른쪽 맨 아래 칸에 있습니다.</figcaption>
 </figure>
 
 | 부품 | 어디서 도나 | 무엇을 보고 나누나 | 없으면 사람이 관리할 것 |
@@ -410,7 +409,7 @@ Gateway 가 그것까지 물어보게 만들 수는 있습니다. 그러면 홉�
 
 다른 곳은 정책입니다. 규칙표에는 그 요청을 누가 보냈는지 적을 칸이 없고, Gateway 에는 인증, 쿼터, 타임아웃, 응답 변환이 설정 항목으로 있습니다. **그래서 바뀌는 이유가 다릅니다** — 규칙표는 서비스가 늘 때, Gateway 는 매체가 늘 때 바뀝니다.
 
-다만 경계가 고정된 것은 아닙니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API 는 헤더 조건을 규격 안에 갖고 있습니다. 4절에서 구현체마다 다르게 밀어 넣던 것이 표준이 된 것입니다.
+다만 경계가 고정된 것은 아닙니다. 쿠버네티스가 Ingress 다음으로 내놓은 Gateway API 는 헤더 조건을 규격 안에 갖고 있습니다. 4절의 헤더 조건처럼 구현체마다 다르게 밀어 넣던 것이 표준이 되었습니다.
 
 **"로드밸런서가 있으면 Ingress 는 필요 없나."**
 

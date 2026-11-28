@@ -62,7 +62,7 @@ bidders:
 
 멈춘 동안 사라지는 요청이 얼마나 되는지 이 글의 값으로 세어 보겠습니다. 하루에 배포를 4번 하고 한 번 배포할 때마다 프로세스가 떠 있지 않은 시간이 20초이며 이 매체가 초당 3,000건을 보낸다면, 4번 × 20초 × 초당 3,000건으로 **하루 24만 건**이 사라집니다.
 
-이 24만 건은 우리가 응찰(입찰 요청에 답을 보내 입찰에 참여하는 일)조차 하지 못한 요청이라 매출로도 잡히지 않습니다. 그 순간에는 로그를 남길 `bidder` 프로세스가 떠 있지 않으므로 이 요청들은 **우리 쪽 에러 로그에도 남지 않고** 매체 리포트에만 우리가 "응답률이 낮은 DSP" 로 조용히 기록됩니다. 서버에 닿지 못해 서버 로그에 한 줄도 남지 않은 요청이 여기서도 똑같이 생기는데, 앞 글 9절에서 본 "서버 로그에 아예 없는 요청" 이 바로 이런 요청입니다.
+이 24만 건은 우리가 응찰(입찰 요청에 답을 보내 입찰에 참여하는 일)조차 하지 못한 요청이라 매출로도 잡히지 않습니다. 그 순간에는 로그를 남길 `bidder` 프로세스가 떠 있지 않으므로 이 요청들은 **우리 쪽 에러 로그에도 남지 않고** 매체 리포트에만 우리가 "응답률이 낮은 DSP" 로 조용히 기록됩니다. 서버에 닿지 못해 서버 로그에 한 줄도 남지 않은 요청이 여기서도 똑같이 생기는데, [API 기초](post.html?id=api-basics) 편 9절에서 본 "서버 로그에 아예 없는 요청" 이 바로 이런 요청입니다.
 
 배포를 조심해서 하면 되지 않느냐고 물을 수 있습니다. 하지만 배포를 아예 멈춰도 서버는 죽습니다. 디스크가 가득 차거나, 커널(운영체제의 중심 프로그램)이 복구할 수 없는 오류로 멈추는 패닉을 내거나, 서버 앞단의 네트워크 스위치가 재시작하는 일은 배포와 상관없이 일어납니다. 매체 설정 파일에는 주소가 하나만 적혀 있으므로 **서버가 이렇게 죽으면 매체에는 대신 부를 주소가 없습니다.** 그래서 이 문제는 서버를 여러 대로 늘려야만 풀립니다.
 
@@ -70,7 +70,7 @@ bidders:
 
 **서버를 3대로 늘리면 한 대가 죽어도 서비스는 계속 돌아갑니다. 그 대신 매체가 3대 가운데 어느 주소를 불러야 하느냐는 문제가 새로 생깁니다.**
 
-`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 의 서버 3대에 띄웠다고 하겠습니다. 이제 배포는 한 대씩 차례로 하면 되는데, 한 대를 내리는 동안 나머지 2대가 요청을 받으므로 1절에서 하루 24만 건을 잃게 만들던 배포 중의 20초가 없어집니다.
+`bidder` 를 `10.0.3.14`, `10.0.3.15`, `10.0.3.16` 의 서버 3대에 띄웠다고 하겠습니다. 이제 배포는 한 대씩 차례로 하면 되는데, 한 대를 내리는 동안 나머지 2대가 요청을 받으므로 1절에서 하루 24만 건을 잃게 만들던 배포 중의 20초가 대부분 없어집니다.
 
 대신 배포하는 동안에는 남은 2대가 3대 몫을 나눠 받습니다. 매체가 보내는 초당 3,000건을 평소에는 3대가 1,000건씩 받지만 한 대가 빠진 동안에는 2대가 1,500건씩 받아야 하므로, **서버 대수 3대는 평소가 아니라 배포 중인 이 순간을 기준으로 정합니다.** 평소 부하에 딱 맞춰 대수를 정하면 배포할 때마다 남은 서버가 받는 몫이 늘어 응답 지연이 갑자기 커집니다.
 
@@ -138,7 +138,7 @@ bidders:
 
 헬스체크에서는 검사 주기와 함께 `/healthz` 가 무엇을 확인한 뒤 200 을 답할지도 정해야 합니다. 가장 흔한 구현은 프로세스가 떠 있기만 하면 200 을 답하는 방식인데, 이렇게 하면 `bidder` 프로세스는 떠 있지만 모델 저장소(모델 파일을 보관하는 곳)를 읽지 못하는 상태를 잡지 못합니다. 그런 서버는 헬스체크를 계속 통과하므로 대상에 남아 요청을 받으면서 계속 빈 응답을 냅니다.
 
-반대로 `/healthz` 안에서 `bidder` 가 의존하는 것을 전부 확인하면 다른 사고가 납니다. 3대가 함께 쓰는 모델 저장소가 3초 동안 불안정하면 3대가 동시에 실패를 답하므로 한꺼번에 대상에서 빠져 대상 그룹에 한 대도 남지 않습니다.
+반대로 `/healthz` 안에서 `bidder` 가 의존하는 것을 전부 확인하면 다른 사고가 납니다. 3대가 함께 쓰는 모델 저장소가 12초 넘게 불안정하면 3대가 동시에 실패를 답하므로 한꺼번에 대상에서 빠져 대상 그룹에 한 대도 남지 않습니다.
 
 **`/healthz` 가 확인할 것과 확인하지 않을 것의 선은 아래 기준으로 긋습니다.** 그 서버 하나만 대상에서 빠지면 해결되는 문제는 `/healthz` 에서 확인합니다. 모델 파일을 읽어 들였는지(적재 여부), 요청을 처리할 스레드를 미리 만들어 둔 스레드풀이 모두 사용 중이라 바닥났는지(고갈), 로컬 디스크에 문제가 없는지가 여기에 듭니다. 반대로 공용 저장소나 공용 DB 처럼 모든 서버가 함께 쓰는 것이 죽으면 남은 서버도 똑같이 일을 못 해서 문제가 생긴 서버를 대상에서 빼 봐야 요청을 대신 보낼 곳이 없으므로, 공용 저장소와 공용 DB 는 `/healthz` 에서 확인하지 않습니다.
 
@@ -173,7 +173,7 @@ bidders:
 그 대신 매체 설정을 한 번 더 고쳐야 합니다. 요청 헤더는 요청에 함께 담아 보내는 이름과 값의 쌍입니다. Ingress 는 요청 헤더에 담긴 호스트 이름, 곧 요청이 부른 `ads.example.com` 같은 이름을 보고 규칙을 고르기 때문에 매체가 IP 대신 이름으로 불러야 합니다. 그래서 매체 설정의 `10.0.9.7` 을 `ads.example.com` 으로 바꾸고 사내 DNS 에는 이 이름이 같은 IP 인 `10.0.9.7` 을 가리키도록 등록합니다. 서비스는 앞으로도 늘겠지만 매체가 부르는 이름은 `ads.example.com` 하나로 끝나므로, **매체에 설정을 고쳐 달라는 부탁은 이번이 마지막입니다.** 도입에서 선배가 지훈 씨에게 알려 준 주소가 바로 이 이름입니다.
 
 <figure style="text-align:center; margin:2rem 0;">
-<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 로드밸런서를 부르고, 그 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 셋으로 요청을 나눠 보내는 구조. pctr 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
+<svg viewBox="0 0 500 332" role="img" aria-label="매체가 이름 하나로 로드밸런서를 부르고, 그 뒤에 놓인 Ingress가 쪼갠 서비스 넷 중 둘로 요청을 나눠 보내는 구조. pctr 과 feature-store 칸에는 화살표가 닿지 않는다." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
 <defs>
 <marker id="gw3-arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" style="fill:var(--accent-primary)"/></marker>
 </defs>
@@ -202,23 +202,21 @@ bidders:
 <text x="422.5" y="285" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
 <text x="250" y="318" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스 4개</text>
 <line x1="180" y1="208" x2="77.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
-<line x1="250" y1="208" x2="307.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 <line x1="320" y1="208" x2="422.5" y2="256" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw3-arr)"/>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">이번 절에서 새로 생긴 칸은 Ingress 하나입니다. 로드밸런서는 2절에서 하던 일을 그대로 합니다. pctr 은 매체가 아니라 bidder 가 부르는 서비스라 Ingress 에서 나온 화살표가 닿지 않습니다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">이번 절에서 새로 생긴 칸은 Ingress 하나입니다. 로드밸런서는 2절에서 하던 일을 그대로 합니다. pctr 과 feature-store 는 매체가 아니라 bidder 가 부르는 서비스라 Ingress 에서 나온 화살표가 닿지 않습니다.</figcaption>
 </figure>
 
 Ingress 규칙표가 실제로 어떻게 생겼는지 아래 설정으로 보겠습니다. 호스트 아래에 경로가 한 줄에 하나씩 있고 화살표 오른쪽에 그 경로의 요청을 받을 서비스가 적혀 있습니다.
 
 ```yaml
-# Ingress 규칙 — 이 네 줄 다 pathType 은 Prefix 입니다.
+# Ingress 규칙 — 이 세 줄 다 pathType 은 Prefix 입니다.
 rules:
   - host: ads.example.com
     http:
       paths:
         - path: /v1/bid      →  bidder-service:8080
         - path: /v1/track    →  log-collector:8080
-        - path: /v1/feature  →  feature-store:8080
   - host: admin.example.com
     http:
       paths:
@@ -226,7 +224,7 @@ rules:
 # 맞는 줄이 하나도 없으면 404 입니다.
 ```
 
-설정을 보면 서비스는 4개인데 `ads.example.com` 아래 줄은 3개뿐입니다. **규칙표는 클러스터 바깥에서 들어오는 요청만 다룹니다.** `pctr` 은 매체가 아니라 클러스터 안의 `bidder` 가 부르는 서비스라 규칙표에 없습니다. 호스트가 `admin.example.com` 인 요청은 경로가 무엇이든 `/` 줄에 맞아 `admin-service` 로 갑니다. 맨 아래 주석대로 맞는 줄이 하나도 없는 요청은 404(요청한 주소를 찾을 수 없다는 HTTP 응답 코드)를 받습니다.
+설정을 보면 서비스는 4개인데 `ads.example.com` 아래 줄은 2개뿐입니다. **규칙표는 클러스터 바깥에서 들어오는 요청만 다룹니다.** `pctr` 과 `feature-store` 는 매체가 아니라 클러스터 안의 `bidder` 가 부르는 서비스라 규칙표에 없습니다. 호스트가 `admin.example.com` 인 요청은 경로가 무엇이든 `/` 줄에 맞아 `admin-service` 로 갑니다. 맨 아래 주석대로 맞는 줄이 하나도 없는 요청은 404(요청한 주소를 찾을 수 없다는 HTTP 응답 코드)를 받습니다.
 
 **요청 하나에 맞는 줄이 여러 개면 규칙표에서 위에 적힌 줄이 아니라 경로가 가장 길게 맞는 줄이 이깁니다.** 그래서 짧은 경로를 새로 추가할 때는 그 경로 아래로 어떤 요청이 딸려 들어오는지부터 세어 봐야 합니다.
 
@@ -243,7 +241,7 @@ rules:
 | 어디서 쓰는 말인가 | 무엇을 가리키나 | 실제 이름 |
 |---|---|---|
 | 쿠버네티스 | 규칙표를 실제로 실행하는 프로세스 | Ingress Controller (nginx, traefik) |
-| OpenShift | 규칙표에 해당하는 자체 리소스 | `Route` 오브젝트 |
+| OpenShift | `Route` 오브젝트(규칙표에 해당하는 자체 리소스)를 실제로 실행하는 프로세스 | OpenShift router (HAProxy) |
 | 앱 코드 안 | 들어온 경로를 함수에 연결하는 것 | `@app.route("/v1/bid")` |
 
 표의 3가지는 모두 경로를 보고 요청을 어디로 보낼지 정한다는 점에서 하는 일이 같고 **어느 층에서 도느냐**만 다릅니다. 그렇다고 3가지가 각각 다른 층에 있지는 않습니다. 1, 2행은 같은 층에서 플랫폼만 다릅니다. 쿠버네티스를 쓰면 1행, OpenShift(쿠버네티스를 바탕으로 만든 플랫폼)를 쓰면 2행이므로 요청 하나가 1행과 2행을 함께 지나가지 않습니다. 앱 코드 안의 3행만 다른 층입니다.
@@ -273,7 +271,7 @@ rules:
 
 - **매체별 인증키 확인** — 규칙표는 요청을 어느 매체가 보냈는지 모르므로 매체마다 받은 인증키가 맞는지 확인할 수 없습니다.
 - **초당 호출 제한** — 매체를 구분하지 못하므로 C제휴의 초당 500건과 B웹의 초당 8,000건 같은 한도를 매체마다 따로 걸 수 없습니다.
-- **v1, v2 분기** — 매체가 쓰는 버전은 `x-api-version` 헤더에 담겨 오는데 규칙표는 헤더를 보지 않으므로 버전에 따라 요청을 나누지 못합니다.
+- **v1, v2 분기** — 매체가 쓰는 버전은 `x-api-version` 헤더에 담겨 오는데 규칙표는 호스트 이름 말고는 헤더를 보지 않으므로 버전에 따라 요청을 나누지 못합니다.
 - **응답 형식 변환** — v1 을 쓰는 매체는 응답에서 옛 필드 이름(응답에 담긴 값마다 붙은 이름)을 기대하지만 `bidder` 는 v2 형식의 응답만 만듭니다. 규칙표에는 응답을 바꿔 줄 칸도 없습니다.
 
 **API Gateway** 는 Ingress 뒤에 놓여 이 4가지를 맡는 부품입니다. Ingress 규칙표와 비교하면 칸이 2가지 더 있습니다. 하나는 요청을 어느 라우트(어떤 요청을 어느 서비스로 보낼지 적은 규칙 하나)로 보낼지 정할 때 헤더까지 보는 조건입니다. 다른 하나는 인증, 호출 제한, 타임아웃처럼 요청마다 적용하는 규칙인 정책(policy)입니다. 아래 설정에서는 `match` 줄에 헤더 조건이, `common` 과 `policies` 아래에 정책이 있습니다.
@@ -295,7 +293,7 @@ routes:
     target: bidder-service:8080
 ```
 
-설정을 위에서부터 읽어 보면, 모든 요청은 주석대로 먼저 `common` 의 정책 3가지를 지납니다. `auth` 는 `x-media-key` 헤더에 담긴 API 키를 확인하도록 적혀 있습니다. `ratelimit` 은 매체(`media_id`)마다 따로 세어 위 표의 초당 허용 값까지만 요청을 받습니다. `timeout` 은 `bidder` 의 답을 10ms 까지만 기다립니다. 그다음 `x-api-version` 헤더에 `"1"` 을 담아 보낸 요청은 `bid-v1` 라우트로 가는데, 이 라우트는 요청을 `bidder-service` 에 넘긴 뒤 `bidder` 가 만든 v2 형식의 응답을 `v2_to_v1` 변환으로 옛 필드 이름으로 되돌려 줍니다. 버전 헤더가 없는 요청은 기본값인 `bid-v2` 라우트로 가서 v2 형식의 응답을 그대로 받습니다.
+설정을 위에서부터 읽어 보면, 모든 요청은 주석대로 먼저 `common` 의 정책 3가지를 지납니다. `auth` 는 `x-media-key` 헤더에 담긴 API 키를 확인하도록 적혀 있습니다. 이 줄은 위 표에서 인증 방식이 API 키인 매체의 경우입니다. 서명을 쓰는 B웹과 토큰을 쓰는 D앱의 요청은 같은 `auth` 자리에서 각자의 방식으로 확인합니다. `ratelimit` 은 매체(`media_id`)마다 따로 세어 위 표의 초당 허용 값까지만 요청을 받습니다. `timeout` 은 `bidder` 의 답을 10ms 까지만 기다립니다. 그다음 `x-api-version` 헤더에 `"1"` 을 담아 보낸 요청은 `bid-v1` 라우트로 가는데, 이 라우트는 요청을 `bidder-service` 에 넘긴 뒤 `bidder` 가 만든 v2 형식의 응답을 `v2_to_v1` 변환으로 옛 필드 이름으로 되돌려 줍니다. 버전 헤더가 없는 요청은 기본값인 `bid-v2` 라우트로 가서 v2 형식의 응답을 그대로 받습니다.
 
 버전은 `/v2/bid` 같은 경로를 새로 만들어 나눌 수도 있지만 그러면 v2 를 쓰는 매체 모두에 주소를 고쳐 달라고 부탁해야 합니다. 3절에서 매체에 설정을 고쳐 달라는 부탁은 그때가 마지막이라고 했으므로, **경로는 `/v1/bid` 그대로 두고 옛 버전 v1 을 쓰는 매체만 헤더로 버전을 알리게 합니다.**
 
@@ -329,7 +327,7 @@ Ingress 와 API Gateway 가 맡는 일의 경계를 표로 나란히 놓으면 �
 
 ## 5. 매체에서 서비스까지 이어진 전체 경로
 
-**1~4절을 거치며 하나씩 생긴 칸을 요청이 지나는 순서대로 한 줄에 놓으면 생긴 순서가 그대로 부품 사이의 경계가 됩니다. 요청이 먼저 지나는 칸일수록 요청의 겉(IP 와 포트)만 보는 반면 뒤에 있는 칸일수록 요청 안(경로, 헤더, 인증키)을 열어 봅니다.**
+**2~4절에서 하나씩 생긴 칸 3개를 요청이 지나는 순서대로 한 줄에 놓으면 생긴 순서가 그대로 부품 사이의 경계가 됩니다. 요청이 먼저 지나는 칸일수록 요청의 겉(IP 와 포트)만 보는 반면 뒤에 있는 칸일수록 요청 안(경로, 헤더, 인증키)을 열어 봅니다.**
 
 <figure style="text-align:center; margin:2rem 0;">
 <svg viewBox="0 0 500 298" role="img" aria-label="매체에서 시작해 로드밸런서, Ingress, API Gateway를 지나 서비스에 이르는 전체 경로와, 각 부품이 무엇을 보고 나누는지." style="width:100%; max-width:500px; height:auto; font-family:var(--font-sans)">
@@ -354,7 +352,6 @@ Ingress 와 API Gateway 가 맡는 일의 경계를 표로 나란히 놓으면 �
 <rect x="334" y="20" width="160" height="250" rx="10" style="fill:none; stroke:var(--text-muted); stroke-width:1.3; stroke-dasharray:6 4"/>
 <text x="414" y="42" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">쪼갠 서비스</text>
 <line x1="150" y1="248" x2="330" y2="85" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
-<line x1="150" y1="262" x2="330" y2="185" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <line x1="150" y1="276" x2="330" y2="227" style="stroke:var(--accent-primary); stroke-width:2" marker-end="url(#gw5-arr)"/>
 <rect x="346" y="54" width="136" height="62" rx="9" style="fill:var(--bg-secondary); stroke:var(--border-color); stroke-width:1.5"/>
 <text x="414" y="74" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">bidder</text>
@@ -368,7 +365,7 @@ Ingress 와 API Gateway 가 맡는 일의 경계를 표로 나란히 놓으면 �
 <text x="414" y="231" text-anchor="middle" style="font-size:12.5px; fill:var(--text-primary)">log-collector</text>
 <text x="414" y="262" text-anchor="middle" style="font-size:12.5px; fill:var(--text-muted)">지훈 씨 API 가 여기입니다</text>
 </svg>
-<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽 넷이 이 글에서 하나씩 켜진 부품입니다. 지훈 씨가 만든 클릭 수집 API 는 오른쪽 맨 아래 칸에 있습니다.</figcaption>
+<figcaption style="margin-top:0.75rem; font-size:0.9rem; color:var(--text-muted)">왼쪽에서 매체 아래 칸 3개가 이 글에서 하나씩 켜진 부품입니다. 지훈 씨가 만든 클릭 수집 API 는 오른쪽 맨 아래 칸에 있습니다.</figcaption>
 </figure>
 
 그림의 부품을 어디서 도는지, 무엇을 보고 나누는지, 없으면 사람이 무엇을 관리해야 하는지로 비교하면 아래 표와 같습니다.

@@ -161,7 +161,7 @@
       '</div>';
   }
 
-  // 화살표는 뒤따르는 칸과 한 묶음(.rp-link)으로 싼다.
+  // 화살표는 뒤따르는 칸과 함께 요소 하나(.rp-link)로 감싼다.
   // 줄바꿈이 일어나도 화살표만 줄 끝에 덩그러니 남지 않게 하기 위해서다.
   function linked(box, dead) {
     return '<div class="rp-link">' +

@@ -1,19 +1,19 @@
 모델 팀 31주째 월요일, 서연 씨가 지훈 씨에게 부탁을 하나 보냈습니다. 캠페인 화면에서 보여 줄 사람을 번호가 아니라 이름으로 고르고 싶다는 부탁입니다. 「러닝」, 「캠핑」처럼 회원이 실제로 찾아본 말에서 나온 이름이면 좋겠다고 했습니다.
 
-선배는 검색 기록에 쌓인 검색어 120개로 시작하라고 했습니다. 쓸 말과 뺄 말을 모델에게 두 번 묻고, 두 답이 다른 말만 더 오래 생각하게 해서 다시 묻습니다. 남은 말은 모델이 묶어 이름을 붙이고, 묶음마다 회원이 몇 명인지는 코드가 셉니다.
+선배는 검색 기록에 쌓인 검색어 120개로 시작하라고 했습니다. 쓸 말과 뺄 말을 모델에게 두 번 묻고, 두 답이 다른 말만 더 오래 생각하게 해서 다시 묻습니다. 남은 말은 모델이 묶어 이름을 붙이고, 그룹마다 회원이 몇 명인지는 코드가 셉니다.
 
 **검색어 120개 가운데 무엇을 빼고, 남은 말을 어떻게 묶어야 광고주가 고를 수 있는 이름이 될까요?**
 
 검색 키워드를 거르고 묶어 이름을 붙인 오디언스 목록을 관심사 사전이라고 부릅니다. 사전의 이름 하나가 서연 씨의 하루 300만 원이 쓰일 사람을 정합니다. 건강 검색어가 섞이거나 회원이 너무 적은 이름이 들어가면, 그 이름을 고른 캠페인은 쓸 수 없는 명단에 돈을 씁니다.
 
-> **한 줄 요약:** 29주째부터 쓴 키워드 120개를 qwen3.5:27b 에 20개씩 주고, 남길지 거를지를 두 번 물었습니다. temperature 0 과 0.7 로 받은 두 답은 116개에서 keep 이 같았습니다. 다른 4개만 thinking 을 켠 심판이 다시 보았습니다. 최종 결정은 정답과 112개가 맞았고, health 6개는 두 투표가 모두 걸렀습니다. 틀린 8개 가운데 7개는 두 투표가 같은 답을 내서 심판에게 가지 않은 키워드입니다. 투표와 심판에 615.3초가 걸렸고, 심판이 120개를 다 본다면 7,452.8초로 어림됩니다. 다만 키워드당 값은 두 답의 keep 이 다른 4개, 곧 판단이 어려운 키워드에서 측정한 것이라 어림이 높을 수 있습니다. 남은 94개는 모델이 묶음 9개로 나누고 영어 이름을 붙였습니다. 절반을 넘는 묶음도, 20명이 안 되는 묶음도 없어서 코드의 두 규칙은 아무것도 바꾸지 않았습니다. 가장 큰 오디언스는 버너, 토너, 번역기를 묶은 office_supplies 795명입니다. 그 가운데 713명은 noise 인 번역기를 검색한 회원입니다.
+> **한 줄 요약:** 29주째부터 쓴 키워드 120개를 qwen3.5:27b 에 20개씩 주고, 남길지 거를지를 두 번 물었습니다. temperature 0 과 0.7 로 받은 두 답은 116개에서 keep 이 같았습니다. 다른 4개만 thinking 을 켠 심판이 다시 보았습니다. 최종 결정은 정답과 112개가 맞았고, health 6개는 두 투표가 모두 걸렀습니다. 틀린 8개 가운데 7개는 두 투표가 같은 답을 내서 심판에게 가지 않은 키워드입니다. 투표와 심판에 615.3초가 걸렸고, 심판이 120개를 다 본다면 7,452.8초로 어림됩니다. 다만 키워드당 값은 두 답의 keep 이 다른 4개, 곧 판단이 어려운 키워드에서 측정한 것이라 어림이 높을 수 있습니다. 남은 94개는 모델이 그룹 9개로 나누고 영어 이름을 붙였습니다. 절반을 넘는 그룹도, 20명이 안 되는 그룹도 없어서 코드의 두 규칙은 아무것도 바꾸지 않았습니다. 가장 큰 오디언스는 버너, 토너, 번역기를 묶은 office_supplies 795명입니다. 그 가운데 713명은 noise 인 번역기를 검색한 회원입니다.
 
 > **골라 읽는 법** — 절이 6개입니다. 절마다 표나 코드나 카드가 있어 그것만 보고 넘어가도 됩니다.
 >
 > - 키워드 120개가 지나는 다섯 단계와 맡는 쪽 → 1절
 > - 두 번 묻는 투표와 두 답이 같았던 키워드 → 2절
 > - 답이 다른 키워드만 보는 심판, 최종 결정과 비용 → 3절
-> - 모델이 붙인 묶음과 이름, 코드의 나누기 규칙 → 4절
+> - 모델이 만든 그룹과 이름, 코드의 나누기 규칙 → 4절
 > - 최소 크기 20명과 최종 사전 → 5절
 > - 담장 안과 열린 RTB 에서 달라지는 것 → 6절
 
@@ -35,10 +35,10 @@
 
 | 단계 | 맡는 쪽 | 들어가는 것 | 나오는 것 |
 |---|---|---|---|
-| 1 거르기 | 모델 투표 둘, thinking 끔 | 키워드 120개를 20개씩 6묶음 | 키워드마다 keep 두 개. 116개가 같다 |
+| 1 거르기 | 모델 투표 둘, thinking 끔 | 키워드 120개를 20개씩 나눈 배치 6개 | 키워드마다 keep 두 개. 116개가 같다 |
 | 2 심판 | 모델, thinking 켬 | 두 답의 keep 이 다른 4개 | 4개의 keep. 최종 남김 94개 |
-| 3 묶기 | 모델, thinking 끔 | 남긴 키워드 94개 | 묶음 9개와 영어 이름. 빠진 키워드 4개 |
-| 4 다시 나누기와 합치기 | 코드 | 묶음 9개 | 절반을 넘으면 둘로, 20명 미만은 이웃에. 바뀐 묶음 0개 |
+| 3 묶기 | 모델, thinking 끔 | 남긴 키워드 94개 | 그룹 9개와 영어 이름. 빠진 키워드 4개 |
+| 4 다시 나누기와 합치기 | 코드 | 그룹 9개 | 절반을 넘으면 둘로, 20명 미만은 이웃에. 바뀐 그룹 0개 |
 | 5 최소 크기 | 코드, 회원 수 | 회원 2,000명의 30일 검색 기록 | 20명 이상인 오디언스 9개와 1,400만 명 기준 크기 |
 
 <div class="demo-embed-wrap">
@@ -48,18 +48,18 @@
 
 ## 2. 거르기는 두 번 묻고 같으면 그대로 둡니다
 
-**키워드 120개를 20개씩 6묶음으로 나눠, 같은 시스템 메시지를 temperature 0 과 0.7 로 한 번씩 보냈습니다. 답 12개가 모두 스키마대로 읽혔고, 두 답의 keep 은 116개에서 같았습니다. 같은 116개 가운데 7개는 두 답이 함께 틀렸습니다.**
+**키워드 120개를 20개씩 배치 6개로 나눠, 같은 시스템 메시지를 temperature 0 과 0.7 로 한 번씩 보냈습니다. 답 12개가 모두 스키마대로 읽혔고, 두 답의 keep 은 116개에서 같았습니다. 같은 116개 가운데 7개는 두 답이 함께 틀렸습니다.**
 
 시스템 메시지는 키워드마다 keep 과 reason_code 를 적게 했습니다. keep 은 남기면 true, 거르면 false 이고, reason_code 는 그 까닭을 넷 가운데 하나로 적습니다. commercial_interest 는 사거나 쓰려는 관심이 보이는 말이라 남깁니다. sensitive_health 는 건강 정보, no_commercial_intent 는 상업 의도가 없는 말이라 거릅니다. too_broad 는 관심사 하나를 가리키기에 너무 넓은 말이라 거릅니다. 정답은 health 와 noise 만 거르니, 정답이 남김인 키워드를 too_broad 로 거른 답은 구조상 틀린 답이 됩니다. 시스템 메시지 전문은 끝의 더 깊이 보기에 있습니다.
 
-투표자 A 는 temperature 0 으로, 투표자 B 는 같은 묶음을 temperature 0.7 로 한 번 더 받았습니다. temperature 와 seed 가 답을 얼마나 흔드는지는 27주째 [비용, 캐시, 비결정성](post.html?id=llm-cost-cache-nondeterminism) 편에서 보았습니다. 투표자 B 는 seed 9 로 뽑은 temperature 0.7 이라, 답이 흔들리는 키워드에서 투표자 A 와 다른 답을 낼 수 있습니다. 두 답이 같으면 그대로 쓰고, 다르면 그 키워드만 더 비싼 심판에게 넘깁니다.
+투표자 A 는 temperature 0 으로, 투표자 B 는 같은 배치를 temperature 0.7 로 한 번 더 받았습니다. temperature 와 seed 가 답을 얼마나 흔드는지는 27주째 [비용, 캐시, 비결정성](post.html?id=llm-cost-cache-nondeterminism) 편에서 보았습니다. 투표자 B 는 seed 9 로 뽑은 temperature 0.7 이라, 답이 흔들리는 키워드에서 투표자 A 와 다른 답을 낼 수 있습니다. 두 답이 같으면 그대로 쓰고, 다르면 그 키워드만 더 비싼 심판에게 넘깁니다.
 
 Wang 외(2022)의 Self-Consistency 는 같은 문제에서 여러 풀이를 뽑고 가장 일관된 답을 고릅니다. 이 글은 두 번만 묻기 때문에 다수결 대신 두 답이 같은지만 보고, 다르면 셋째 답을 심판에게서 받습니다. 두 답이 같은지는 keep 으로만 봅니다. keep 이 같고 reason_code 만 다르면 심판에게 보내지 않고 투표자 A 의 코드를 씁니다. 거르는 결정은 keep 이고, 코드는 그 결정의 설명이기 때문입니다.
 
-읽지 못한 답도 심판에게 갑니다. 한 묶음의 답을 스키마대로 읽지 못하면 그 묶음 20개가 모두 갑니다. 읽은 답에서 id 하나가 빠지거나 두 번 나오면 그 키워드 하나만 갑니다. 읽는 법은 22주째 [구조화 출력](post.html?id=structured-output) 편과 같습니다. 블록의 읽는 함수는 생성기가 심판에게 보낼 키워드를 정할 때 쓰는 함수를 글자 그대로 옮긴 것입니다.
+읽지 못한 답도 심판에게 갑니다. 한 배치의 답을 스키마대로 읽지 못하면 그 배치의 키워드 20개가 모두 갑니다. 읽은 답에서 id 하나가 빠지거나 두 번 나오면 그 키워드 하나만 갑니다. 읽는 법은 22주째 [구조화 출력](post.html?id=structured-output) 편과 같습니다. 블록의 읽는 함수는 생성기가 심판에게 보낼 키워드를 정할 때 쓰는 함수를 글자 그대로 옮긴 것입니다.
 
 ```python
-# 하는 일: 키워드 120개를 20개씩 6묶음으로 두 번 물은 기록 12개를 읽고, 두 투표의 keep 이 같은 키워드와 다른 키워드, 읽지 못한 답을 센다.
+# 하는 일: 키워드 120개를 20개씩 배치 6개로 나눠 두 번 물은 기록 12개를 읽고, 두 투표의 keep 이 같은 키워드와 다른 키워드, 읽지 못한 답을 센다.
 # 기록 data/llm-records/interest-audience-library-voters.json 에서 옮김
 import json
 from collections import Counter
@@ -67,7 +67,7 @@ from collections import Counter
 # 1단계: 키워드 사전과 정답을 둔다
 # KEYWORDS 는 scripts/gen-ads-data.py 의 리터럴을 글자 그대로 옮겼다. (id, 검색어, 주제, 전략, 하루 검색 수) 이고 값은 모두 가상이다.
 # 정답은 주제로 정한다. health 는 민감한 정보라서, noise 는 상업 의도가 없어서 거르고, 나머지 여덟 주제는 남긴다.
-# 투표 묶음은 id 차례로 20개씩이다. b1 은 k001~k020, b6 은 k101~k120 이다.
+# 투표 배치는 id 차례로 20개씩이다. b1 은 k001~k020, b6 은 k101~k120 이다.
 KEYWORDS = [
     ("k001", "러닝화", "running", "direct", 52000), ("k002", "감성카페", "cafe", "none", 3200), ("k003", "유모차", "parenting", "none", 8600),
     ("k004", "맞춤법검사기", "noise", "none", 12000), ("k005", "게임패드", "game", "none", 3100), ("k006", "조깅화", "running", "direct", 3300),
@@ -114,11 +114,11 @@ INFO = {kid: (text, topic, daily) for kid, text, topic, strategy, daily in KEYWO
 GOLD_KEEP = {kid: topic not in ('health', 'noise') for kid, (text, topic, daily) in INFO.items()}
 BATCHES = [[k[0] for k in KEYWORDS[i:i + 20]] for i in range(0, len(KEYWORDS), 20)]
 topic_n = Counter(topic for text, topic, daily in INFO.values())
-print(f'사전 {len(INFO)}개를 {len(BATCHES)}묶음으로: 정답이 남김인 키워드 {sum(GOLD_KEEP.values())}개, '
+print(f'사전 {len(INFO)}개를 배치 {len(BATCHES)}개로: 정답이 남김인 키워드 {sum(GOLD_KEEP.values())}개, '
       f'거름인 키워드 {len(INFO) - sum(GOLD_KEEP.values())}개 (health {topic_n["health"]}, noise {topic_n["noise"]})')
 
 # 2단계: 기록을 두고 답을 읽는다
-# 키 b1 은 temperature 0 으로 물은 투표자 A, b1|off|2 는 같은 묶음을 temperature 0.7 로 다시 물은 투표자 B 다.
+# 키 b1 은 temperature 0 으로 물은 투표자 A, b1|off|2 는 같은 배치를 temperature 0.7 로 다시 물은 투표자 B 다.
 # USAGE 의 네 값은 입력 토큰, 출력 토큰, 걸린 ms, thinking 글자 수다. 뒤 블록이 RECORD 와 USAGE 를 다시 쓰므로 R_VOTE, U_VOTE 로 옮겨 둔다.
 # REASON_CODES 와 read_decisions 는 생성기가 심판에 보낼 키워드를 정할 때 쓰는 것을 글자 그대로 옮겼다.
 RECORD = {"b1": "{\"decisions\": [{\"id\": \"k001\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k002\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k003\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k004\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k005\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k006\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k007\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k008\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k009\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k010\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k011\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k012\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k013\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k014\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k015\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k016\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k017\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k018\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k019\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k020\", \"keep\": false, \"reason_code\": \"too_broad\"}]}", "b1|off|2": "{\"decisions\": [{\"id\": \"k001\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k002\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k003\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k004\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k005\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k006\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k007\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k008\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k009\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k010\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k011\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k012\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k013\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k014\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k015\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k016\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k017\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k018\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k019\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k020\", \"keep\": false, \"reason_code\": \"too_broad\"}]}", "b2": "{\"decisions\": [{\"id\": \"k021\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k022\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k023\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k024\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k025\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k026\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k027\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k028\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k029\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k030\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k031\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k032\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k033\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k034\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k035\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k036\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k037\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k038\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k039\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k040\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b2|off|2": "{\"decisions\": [{\"id\": \"k021\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k022\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k023\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k024\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k025\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k026\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k027\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k028\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k029\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k030\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k031\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k032\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k033\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k034\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k035\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k036\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k037\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k038\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k039\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k040\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b3": "{\"decisions\": [{\"id\": \"k041\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k042\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k043\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k044\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k045\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k046\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k047\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k048\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k049\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k050\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k051\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k052\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k053\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k054\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k055\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k056\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k057\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k058\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k059\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k060\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}", "b3|off|2": "{\"decisions\": [{\"id\": \"k041\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k042\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k043\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k044\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k045\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k046\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k047\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k048\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k049\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k050\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k051\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k052\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k053\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k054\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k055\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k056\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k057\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k058\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k059\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k060\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}", "b4": "{\"decisions\": [{\"id\": \"k061\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k062\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k063\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k064\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k065\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k066\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k067\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k068\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k069\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k070\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k071\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k072\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k073\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k074\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k075\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k076\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k077\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k078\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k079\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k080\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b4|off|2": "{\"decisions\": [{\"id\": \"k061\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k062\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k063\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k064\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k065\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k066\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k067\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k068\", \"keep\": false, \"reason_code\": \"sensitive_health\"}, {\"id\": \"k069\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k070\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k071\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k072\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k073\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k074\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k075\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k076\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k077\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k078\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k079\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k080\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b5": "{\"decisions\": [{\"id\": \"k081\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k082\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k083\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k084\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k085\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k086\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k087\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k088\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k089\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k090\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k091\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k092\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k093\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k094\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k095\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k096\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k097\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k098\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k099\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k100\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b5|off|2": "{\"decisions\": [{\"id\": \"k081\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k082\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k083\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k084\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k085\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k086\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k087\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k088\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k089\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k090\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k091\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k092\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k093\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k094\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k095\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k096\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k097\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k098\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k099\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k100\", \"keep\": false, \"reason_code\": \"sensitive_health\"}]}", "b6": "{\"decisions\": [{\"id\": \"k101\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k102\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k103\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k104\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k105\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k106\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k107\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k108\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k109\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k110\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k111\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k112\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k113\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k114\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k115\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k116\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k117\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k118\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k119\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k120\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}", "b6|off|2": "{\"decisions\": [{\"id\": \"k101\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k102\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k103\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k104\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k105\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k106\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k107\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k108\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k109\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k110\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k111\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k112\", \"keep\": false, \"reason_code\": \"too_broad\"}, {\"id\": \"k113\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k114\", \"keep\": false, \"reason_code\": \"no_commercial_intent\"}, {\"id\": \"k115\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k116\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k117\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k118\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k119\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k120\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}"}
@@ -186,8 +186,8 @@ for i in agreed_wrong:
 
 # 출력:
 # 1단계 뜻: 정답은 주제로 정해 남김 100개, 거름 20개다.
-# 사전 120개를 6묶음으로: 정답이 남김인 키워드 100개, 거름인 키워드 20개 (health 6, noise 14)
-# 2단계 뜻: 답 12개가 모두 스키마대로 읽혀 묶음마다 20개를 다 읽었다.
+# 사전 120개를 배치 6개로: 정답이 남김인 키워드 100개, 거름인 키워드 20개 (health 6, noise 14)
+# 2단계 뜻: 답 12개가 모두 스키마대로 읽혀 배치마다 20개를 다 읽었다.
 # b1: 투표자 A 20/20 읽음, 투표자 B 20/20 읽음
 # b2: 투표자 A 20/20 읽음, 투표자 B 20/20 읽음
 # b3: 투표자 A 20/20 읽음, 투표자 B 20/20 읽음
@@ -216,12 +216,12 @@ for i in agreed_wrong:
 #   k112 운동화 (running): 거름 too_broad
 ```
 
-답 12개는 모두 스키마대로 읽혔고, 묶음마다 20개를 다 읽었습니다. 두 답의 keep 은 116개에서 같았고, 그 가운데 지도와 달력 2개는 reason_code 만 달랐습니다. 투표자 A 는 no_commercial_intent, 투표자 B 는 too_broad 로 거른 것입니다. keep 이 다른 키워드는 마라토너, 새벽러닝, 번역기, 러닝크루 4개였고, 읽지 못한 키워드는 없었습니다.
+답 12개는 모두 스키마대로 읽혔고, 배치마다 20개를 다 읽었습니다. 두 답의 keep 은 116개에서 같았고, 그 가운데 지도와 달력 2개는 reason_code 만 달랐습니다. 투표자 A 는 no_commercial_intent, 투표자 B 는 too_broad 로 거른 것입니다. keep 이 다른 키워드는 마라토너, 새벽러닝, 번역기, 러닝크루 4개였고, 읽지 못한 키워드는 없었습니다.
 
 두 투표자는 따로 보면 각각 111개가 맞았고, health 6개는 둘 다 sensitive_health 로 걸렀습니다. 그런데 두 답이 같은 116개 가운데 7개가 정답과 달랐습니다. 운동화와 런솔은 둘 다 too_broad 로 걸렀습니다. 카페추천, 10km완주, 가계부앱, 쿠션팩트, 마라톤완주는 둘 다 no_commercial_intent 로 걸렀습니다. 이 7개는 두 답이 같아서 심판에게 가지 않습니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=vote" height="480" loading="lazy" title="같은 묶음을 temperature 0 과 0.7 로 두 번 묻고 keep 이 같은지 보는 투표"></iframe>
+<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=vote" height="480" loading="lazy" title="같은 배치를 temperature 0 과 0.7 로 두 번 묻고 keep 이 같은지 보는 투표"></iframe>
 <a class="demo-embed-open" href="demo-interest-library-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
@@ -229,7 +229,7 @@ for i in agreed_wrong:
 
 **심판은 투표와 같은 시스템 메시지를 thinking 을 켜고 받아, 다른 답 4개를 한 번에 보았습니다. 넷 모두 남긴다고 답해 셋은 정답과 맞았고, noise 인 번역기는 틀렸습니다. 최종 결정은 정답과 112개가 맞아, 투표자 하나만 쓸 때의 111개보다 하나 많았습니다.**
 
-심판의 프롬프트는 생성기가 voters 기록을 읽어 씁니다. 두 답의 keep 이 다르거나 읽지 못한 키워드를 id 차례로 20개씩 묶는데, 이번에는 4개라 묶음 하나였습니다. 시스템 메시지는 투표와 글자까지 같고, thinking 을 켜고 temperature 0 으로 보냈습니다. thinking 은 모델이 답 앞에 풀이 토큰을 먼저 쓰는 설정이고, 20주째 [LLM 모델 고르기](post.html?id=llm-model-selection) 편에서 보았습니다. `gen-ads-data.py --check` 는 voters 기록에서 심판 프롬프트를 다시 만들어 파일과 대조합니다.
+심판의 프롬프트는 생성기가 voters 기록을 읽어 씁니다. 두 답의 keep 이 다르거나 읽지 못한 키워드를 id 차례로 20개씩 묶는데, 이번에는 4개라 배치 하나였습니다. 시스템 메시지는 투표와 글자까지 같고, thinking 을 켜고 temperature 0 으로 보냈습니다. thinking 은 모델이 답 앞에 풀이 토큰을 먼저 쓰는 설정이고, 20주째 [LLM 모델 고르기](post.html?id=llm-model-selection) 편에서 보았습니다. `gen-ads-data.py --check` 는 voters 기록에서 심판 프롬프트를 다시 만들어 파일과 대조합니다.
 
 Chen 외(2023)의 FrugalGPT 는 이런 순서를 LLM cascade 라고 부릅니다. 질의를 LLM 목록에 차례로 보내고, 앞 모델의 답이 믿을 만하면 거기서 멈춥니다. 앞의 몇 모델이 싸고 믿을 만한 답을 내면 질의 비용이 크게 준다고 적었습니다. 그 논문은 답이 믿을 만한지를 학습한 점수 함수로 정하고, 이 글은 두 투표의 keep 이 같은지로 정합니다.
 
@@ -241,7 +241,7 @@ Chen 외(2023)의 FrugalGPT 는 이런 순서를 LLM cascade 라고 부릅니다
 # 기록 data/llm-records/interest-audience-library-referee.json 에서 옮김
 
 # 1단계: 기록을 두고 심판의 답을 읽는다
-# 심판에게는 앞 블록의 CONTESTED 를 id 차례로 20개씩 묶어 보냈다. 묶음 id 는 r1, r2… 이고 thinking 을 켜서 키가 r1|on|1 꼴이다.
+# 심판에게는 앞 블록의 CONTESTED 를 id 차례로 20개씩 묶어 보냈다. 배치 id 는 r1, r2… 이고 thinking 을 켜서 키가 r1|on|1 꼴이다.
 # 시스템 메시지는 투표와 같아서 심판의 답도 read_decisions 로 읽는다.
 RECORD = {"r1|on|1": "{\"decisions\": [{\"id\": \"k038\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k063\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k069\", \"keep\": true, \"reason_code\": \"commercial_interest\"}, {\"id\": \"k101\", \"keep\": true, \"reason_code\": \"commercial_interest\"}]}"}
 USAGE = {"r1|on|1": [353, 3792, 248426, 14067]}
@@ -287,7 +287,7 @@ print(f'틀린 키워드 {len(wrong)}개: 두 투표가 같았던 것 {sum(i not
 # 4단계: 비용을 비교한다
 # 투표 12번과 심판의 출력 토큰과 시간을 USAGE 에서 더한다. 시간은 이 맥에서 기록한 값이다.
 # 심판 하나로 120개를 다 보는 기록은 받지 않았다. 그래서 「심판이 키워드 하나에 쓴 출력 토큰과 시간 × 120」으로 어림한다.
-# 키워드 하나에 드는 값이 묶음의 크기와 상관없이 같다는 가정이다.
+# 키워드 하나에 드는 값이 배치 크기와 상관없이 같다는 가정이다.
 # 키워드 하나의 값은 두 답의 keep 이 다른 4개에서 측정한다. 판단이 어려운 키워드라 120개 전체의 값보다 클 수 있다.
 def total(usage):
     rows = list(usage.values())
@@ -347,19 +347,19 @@ print(f'심판 하나로 120개 어림: 키워드당 {per_out:,.0f} 토큰, {per
 
 ## 4. 묶고 이름을 붙이는 것은 LLM, 다시 나누고 합치는 것은 코드입니다
 
-**남은 94개를 한 번에 주자 모델은 묶음 9개에 영어 이름을 붙였고, 키워드 4개는 어느 묶음에도 넣지 않았습니다. 8개 묶음은 정답 주제 하나로만 이루어졌고, office_supplies 하나에 버너, 토너, 번역기가 섞였습니다. 절반을 넘는 묶음이 없어서 코드는 나누지 않았습니다.**
+**남은 94개를 한 번에 주자 모델은 그룹 9개에 영어 이름을 붙였고, 키워드 4개는 어느 그룹에도 넣지 않았습니다. 8개 그룹은 정답 주제 하나로만 이루어졌고, office_supplies 하나에 버너, 토너, 번역기가 섞였습니다. 절반을 넘는 그룹이 없어서 코드는 나누지 않았습니다.**
 
-묶기의 시스템 메시지는 남은 키워드를 관심사 오디언스로 묶고, 묶음마다 이름을 붙이게 했습니다. 한 묶음은 광고주가 고르는 관심사 하나이고, 이름은 영어 snake_case 로 받았습니다. snake_case 는 running_gear 처럼 소문자 낱말을 밑줄로 잇는 이름 꼴입니다. 키워드는 모두 한 묶음에 한 번씩 넣게 했고, thinking 은 껐습니다.
+묶기의 시스템 메시지는 남은 키워드를 관심사 오디언스로 묶고, 그룹마다 이름을 붙이게 했습니다. 한 그룹은 광고주가 고르는 관심사 하나이고, 이름은 영어 snake_case 로 받았습니다. snake_case 는 running_gear 처럼 소문자 낱말을 밑줄로 잇는 이름 꼴입니다. 키워드는 모두 한 그룹에 한 번씩 넣게 했고, thinking 은 껐습니다.
 
 Wan 외(2024)의 TnT-LLM 은 LLM 이 라벨 체계를 여러 단계에 걸쳐 만들고 다듬게 합니다. 그다음 LLM 이 붙인 라벨로 가벼운 분류 모델을 학습시켜 많은 글에 씁니다. 이 글은 묶기를 한 번만 묻고, 다듬는 일 가운데 크기에 관한 것은 코드에 맡깁니다. 크기는 회원 수로 세야 하고, 같은 답에는 늘 같은 결과가 나와야 하기 때문입니다.
 
-코드는 먼저 답을 읽습니다. 남긴 키워드가 아닌 id 는 빼고, 두 묶음에 든 id 는 처음 나온 묶음에만 둡니다. 어느 묶음에도 없는 키워드는 사전에 넣지 않고 따로 적습니다. 묶음의 회원 수는 그 묶음의 키워드를 한 번 이상 검색한 회원 수이고, 생성기가 만든 30일 검색 기록 전체에서 셉니다. 순도는 묶음에서 가장 많은 정답 주제의 몫입니다.
+코드는 먼저 답을 읽습니다. 남긴 키워드가 아닌 id 는 빼고, 두 그룹에 든 id 는 처음 나온 그룹에만 둡니다. 어느 그룹에도 없는 키워드는 사전에 넣지 않고 따로 적습니다. 그룹의 회원 수는 그 그룹의 키워드를 한 번 이상 검색한 회원 수이고, 생성기가 만든 30일 검색 기록 전체에서 셉니다. 순도는 그룹에서 가장 많은 정답 주제의 몫입니다.
 
-코드의 규칙은 둘입니다. 한 묶음이 남은 키워드의 절반을 넘으면, 정답과 상관없이 둘로 나눕니다. 키워드를 하루 검색 수 차례로 정렬해 앞 절반에는 이름 끝에 _head, 나머지에는 _tail 을 붙입니다. head 는 검색 수가 많은 쪽, tail 은 적은 쪽입니다. 회원이 20명이 안 되는 묶음은 회원이 가장 많이 겹치는 묶음에 합치고, 겹치는 회원이 없으면 버립니다. 차례와 동점을 정하는 법은 더 깊이 보기에 있습니다.
+코드의 규칙은 둘입니다. 한 그룹이 남은 키워드의 절반을 넘으면, 정답과 상관없이 둘로 나눕니다. 키워드를 하루 검색 수 차례로 정렬해 앞 절반에는 이름 끝에 _head, 나머지에는 _tail 을 붙입니다. head 는 검색 수가 많은 쪽, tail 은 적은 쪽입니다. 회원이 20명이 안 되는 그룹은 회원이 가장 많이 겹치는 그룹에 합치고, 겹치는 회원이 없으면 버립니다. 차례와 동점을 정하는 법은 더 깊이 보기에 있습니다.
 
 ```python
 # (앞 블록에 이어서 돌린다.)
-# 하는 일: 묶기 기록을 읽어 묶음마다 회원 수와 정답 주제 순도를 세고, 코드의 두 규칙(절반을 넘으면 나누기, 20명 미만은 합치거나 버리기)을 거쳐 최종 사전을 만든다.
+# 하는 일: 묶기 기록을 읽어 그룹마다 회원 수와 정답 주제 순도를 세고, 코드의 두 규칙(절반을 넘으면 나누기, 20명 미만은 합치거나 버리기)을 거쳐 최종 사전을 만든다.
 # 기록 data/llm-records/interest-audience-library-groups.json 에서 옮김
 import random
 import re
@@ -517,10 +517,10 @@ members = extend(make_members(2000))
 SEARCHERS = {kid: {n for n, m in enumerate(members) if kid in m['searches']} for kid in INFO}
 print(f'회원 {len(members):,}명, 30일 검색 {sum(sum(m["searches"].values()) for m in members):,}번')
 
-# 2단계: 묶기 답을 읽고 묶음마다 센다
-# 답은 groups 목록이고 묶음마다 영어 snake_case 이름과 id 목록이 있다. 꼴이 다르면 None 이다.
-# 남긴 키워드가 아닌 id 는 빼고, 두 번 나온 id 는 처음 나온 묶음에만 둔다. 어느 묶음에도 없는 키워드는 사전에 넣지 않는다.
-# 회원 수는 그 묶음의 키워드를 30일 동안 한 번 이상 검색한 회원 수다. 순도는 가장 많은 정답 주제가 묶음에서 차지하는 몫이다.
+# 2단계: 묶기 답을 읽고 그룹마다 센다
+# 답은 groups 목록이고 그룹마다 영어 snake_case 이름과 id 목록이 있다. 꼴이 다르면 None 이다.
+# 남긴 키워드가 아닌 id 는 빼고, 두 번 나온 id 는 처음 나온 그룹에만 둔다. 어느 그룹에도 없는 키워드는 사전에 넣지 않는다.
+# 회원 수는 그 그룹의 키워드를 30일 동안 한 번 이상 검색한 회원 수다. 순도는 가장 많은 정답 주제가 그룹에서 차지하는 몫이다.
 RECORD = {"groups": "{\"groups\": [{\"name\": \"running_gear\", \"ids\": [\"k001\", \"k006\", \"k010\", \"k011\", \"k013\", \"k017\", \"k019\", \"k029\", \"k031\", \"k036\", \"k038\", \"k041\", \"k045\", \"k046\", \"k048\", \"k060\", \"k063\", \"k066\", \"k072\", \"k079\", \"k081\", \"k082\", \"k084\", \"k095\", \"k101\", \"k102\", \"k105\", \"k106\", \"k107\", \"k109\", \"k115\", \"k116\", \"k119\"]}, {\"name\": \"gaming_hardware\", \"ids\": [\"k005\", \"k016\", \"k027\", \"k053\", \"k076\", \"k088\", \"k117\"]}, {\"name\": \"camping_outdoor\", \"ids\": [\"k022\", \"k026\", \"k035\", \"k051\", \"k064\", \"k070\", \"k075\", \"k111\", \"k120\"]}, {\"name\": \"coffee_bakery\", \"ids\": [\"k002\", \"k018\", \"k025\", \"k033\", \"k039\", \"k065\", \"k108\"]}, {\"name\": \"travel_booking\", \"ids\": [\"k008\", \"k015\", \"k023\", \"k050\", \"k057\", \"k061\", \"k098\", \"k103\", \"k104\", \"k118\"]}, {\"name\": \"baby_care\", \"ids\": [\"k003\", \"k078\", \"k083\", \"k089\", \"k096\", \"k099\", \"k110\", \"k113\"]}, {\"name\": \"beauty_skincare\", \"ids\": [\"k024\", \"k032\", \"k052\", \"k085\", \"k090\", \"k092\"]}, {\"name\": \"finance_investment\", \"ids\": [\"k028\", \"k042\", \"k047\", \"k049\", \"k054\", \"k058\", \"k093\"]}, {\"name\": \"office_supplies\", \"ids\": [\"k021\", \"k056\", \"k069\"]}]}"}
 
 NAME = re.compile(r'^[a-z][a-z0-9_]*$')
@@ -554,7 +554,7 @@ def purity(ids):
 
 
 raw = read_groups(RECORD['groups'])
-GROUPS, placed = {}, set()     # 이름 → 남긴 키워드의 id 목록. 이름이 같으면 한 묶음이다
+GROUPS, placed = {}, set()     # 이름 → 남긴 키워드의 id 목록. 이름이 같으면 한 그룹이다
 outside = repeated = 0
 for name, ids in raw or []:
     for i in ids:
@@ -566,8 +566,8 @@ for name, ids in raw or []:
             GROUPS.setdefault(name, []).append(i)
             placed.add(i)
 missing = [i for i in KEPT if i not in placed]
-print(f'묶음 {len(GROUPS)}개, 묶음에 든 키워드 {len(placed)}/{len(KEPT)}개, 남긴 목록 밖 id {outside}개, 두 번 나온 id {repeated}개')
-print(f'어느 묶음에도 없는 키워드 {len(missing)}개: ' + ', '.join(INFO[i][0] for i in missing))
+print(f'그룹 {len(GROUPS)}개, 그룹에 든 키워드 {len(placed)}/{len(KEPT)}개, 남긴 목록 밖 id {outside}개, 두 번 나온 id {repeated}개')
+print(f'어느 그룹에도 없는 키워드 {len(missing)}개: ' + ', '.join(INFO[i][0] for i in missing))
 for name, ids in GROUPS.items():
     topic, n = purity(ids)
     line = f'  {name}: 키워드 {len(ids)}개, 회원 {len(audience(ids))}명, 순도 {n}/{len(ids)} {topic}'
@@ -575,9 +575,9 @@ for name, ids in GROUPS.items():
         line += ' (' + ', '.join(f'{INFO[i][0]} {INFO[i][1]} {len(SEARCHERS[i])}명' for i in ids) + ')'
     print(line)
 
-# 3단계: 남긴 키워드의 절반을 넘는 묶음을 나눈다
+# 3단계: 남긴 키워드의 절반을 넘는 그룹을 나눈다
 # 정답과 상관없이 크기만 본다. 하루 검색 수가 많은 차례로 정렬해 앞 절반(홀수면 하나 더)을 <이름>_head,
-# 나머지를 <이름>_tail 로 둔다. 절반을 넘는 묶음이 없을 때까지 되풀이한다.
+# 나머지를 <이름>_tail 로 둔다. 절반을 넘는 그룹이 없을 때까지 되풀이한다.
 def split(ids):
     ranked = sorted(ids, key=lambda i: (-INFO[i][2], i))
     half = (len(ranked) + 1) // 2
@@ -597,15 +597,15 @@ def resplit(groups, limit):
 limit = len(KEPT) / 2
 largest = max(GROUPS, key=lambda g: len(GROUPS[g]))
 SPLIT = resplit(dict(GROUPS), limit)
-print(f'절반 기준 {limit:g}개: 나눈 묶음 {len(SPLIT) - len(GROUPS)}개. 가장 큰 묶음은 {largest} {len(GROUPS[largest])}개')
+print(f'절반 기준 {limit:g}개: 나눈 그룹 {len(SPLIT) - len(GROUPS)}개. 가장 큰 그룹은 {largest} {len(GROUPS[largest])}개')
 head, tail = split(GROUPS[largest])
 for part, ids in (('_head', head), ('_tail', tail)):
     print(f'  {largest} 를 나눈다면 {largest}{part}: 키워드 {len(ids)}개, 회원 {len(audience(ids))}명, '
           + ', '.join(INFO[i][0] for i in ids[:4]) + ' …')
 
-# 4단계: 20명 미만인 묶음을 합치거나 버린다
-# 회원이 가장 적은 묶음부터 하나씩 본다. 회원이 가장 많이 겹치는 묶음(이웃)에 합치고, 겹치는 회원이 없으면 버린다.
-# 겹친 수가 같으면 회원이 많은 묶음, 그다음 이름 차례로 고른다. 20명 미만인 묶음이 없을 때까지 되풀이한다.
+# 4단계: 20명 미만인 그룹을 합치거나 버린다
+# 회원이 가장 적은 그룹부터 하나씩 본다. 회원이 가장 많이 겹치는 그룹(이웃)에 합치고, 겹치는 회원이 없으면 버린다.
+# 겹친 수가 같으면 회원이 많은 그룹, 그다음 이름 차례로 고른다. 20명 미만인 그룹이 없을 때까지 되풀이한다.
 MIN_SIZE = 20                  # 표본 2,000명의 1%, 1,400만 명이면 14만 명이다
 
 
@@ -634,8 +634,8 @@ def apply_min_size(groups):
 
 LIBRARY, log = apply_min_size(dict(SPLIT))
 smallest = min(SPLIT, key=lambda g: len(audience(SPLIT[g])))
-print(f'최소 크기 {MIN_SIZE}명: 합치거나 버린 묶음 {len(log)}개' + (' (' + ', '.join(log) + ')' if log else '')
-      + f'. 가장 작은 묶음은 {smallest} {len(audience(SPLIT[smallest]))}명')
+print(f'최소 크기 {MIN_SIZE}명: 합치거나 버린 그룹 {len(log)}개' + (' (' + ', '.join(log) + ')' if log else '')
+      + f'. 가장 작은 그룹은 {smallest} {len(audience(SPLIT[smallest]))}명')
 print(f'  {smallest} 를 합친다면 회원이 겹치는 차례: ' + ', '.join(f'{h} {n}명' for n, h in neighbors(SPLIT, smallest)[:3]))
 
 # 5단계: 최종 사전을 찍는다
@@ -648,9 +648,9 @@ print(f'오디언스 {len(LIBRARY)}개, 하나라도 든 회원 {len(audience([i
 # 출력:
 # 1단계 뜻: 회원 2,000명에게 30일 검색 20,783번이 붙는다.
 # 회원 2,000명, 30일 검색 20,783번
-# 2단계 뜻: 묶음 9개 가운데 8개는 주제 하나이고, office_supplies 는 번역기를 검색한 713명 때문에 가장 크다.
-# 묶음 9개, 묶음에 든 키워드 90/94개, 남긴 목록 밖 id 0개, 두 번 나온 id 0개
-# 어느 묶음에도 없는 키워드 4개: 스포츠선글라스, 보드게임, 무릎보호대, 스포츠워치
+# 2단계 뜻: 그룹 9개 가운데 8개는 주제 하나이고, office_supplies 는 번역기를 검색한 713명 때문에 가장 크다.
+# 그룹 9개, 그룹에 든 키워드 90/94개, 남긴 목록 밖 id 0개, 두 번 나온 id 0개
+# 어느 그룹에도 없는 키워드 4개: 스포츠선글라스, 보드게임, 무릎보호대, 스포츠워치
 #   running_gear: 키워드 33개, 회원 271명, 순도 33/33 running
 #   gaming_hardware: 키워드 7개, 회원 206명, 순도 7/7 game
 #   camping_outdoor: 키워드 9개, 회원 384명, 순도 9/9 camping
@@ -660,12 +660,12 @@ print(f'오디언스 {len(LIBRARY)}개, 하나라도 든 회원 {len(audience([i
 #   beauty_skincare: 키워드 6개, 회원 235명, 순도 6/6 beauty
 #   finance_investment: 키워드 7개, 회원 246명, 순도 7/7 finance
 #   office_supplies: 키워드 3개, 회원 795명, 순도 1/3 camping (버너 camping 78명, 토너 beauty 68명, 번역기 noise 713명)
-# 3단계 뜻: 가장 큰 묶음이 33개라 절반 47개를 넘지 않아 나누지 않는다.
-# 절반 기준 47개: 나눈 묶음 0개. 가장 큰 묶음은 running_gear 33개
+# 3단계 뜻: 가장 큰 그룹이 33개라 절반 47개를 넘지 않아 나누지 않는다.
+# 절반 기준 47개: 나눈 그룹 0개. 가장 큰 그룹은 running_gear 33개
 #   running_gear 를 나눈다면 running_gear_head: 키워드 17개, 회원 245명, 러닝화, 워킹화, 런닝화, 스포츠웨어 …
 #   running_gear 를 나눈다면 running_gear_tail: 키워드 16개, 회원 67명, 숲결러닝화, 런닝슈즈, 마라토너, 입문용러닝화 …
 # 4단계 뜻: 가장 작은 baby_care 도 158명이라 합치지 않지만, 합쳤다면 육아와 상관없는 office_supplies 로 간다.
-# 최소 크기 20명: 합치거나 버린 묶음 0개. 가장 작은 묶음은 baby_care 158명
+# 최소 크기 20명: 합치거나 버린 그룹 0개. 가장 작은 그룹은 baby_care 158명
 #   baby_care 를 합친다면 회원이 겹치는 차례: office_supplies 62명, coffee_bakery 47명, travel_booking 31명
 # 5단계 뜻: 최종 사전은 오디언스 9개이고, 1,400만 명 기준으로 1,106,000명에서 5,565,000명이다.
 # office_supplies: 키워드 3개, 회원 795명, 1,400만 명이면 5,565,000명
@@ -680,26 +680,26 @@ print(f'오디언스 {len(LIBRARY)}개, 하나라도 든 회원 {len(audience([i
 # 오디언스 9개, 하나라도 든 회원 1,706명
 ```
 
-모델은 묶음 9개를 냈고, 남긴 94개 가운데 90개를 넣었습니다. 스포츠선글라스, 보드게임, 무릎보호대, 스포츠워치 4개는 어느 묶음에도 없어 사전에 들어가지 않습니다. 시스템 메시지가 모두 넣으라고 적었어도, 빠진 키워드는 답을 세어 봐야 압니다. 9개 가운데 8개는 정답 주제 하나로만 이루어졌습니다. running_gear 는 러닝 키워드 33개, travel_booking 은 여행 키워드 10개입니다.
+모델은 그룹 9개를 냈고, 남긴 94개 가운데 90개를 넣었습니다. 스포츠선글라스, 보드게임, 무릎보호대, 스포츠워치 4개는 어느 그룹에도 없어 사전에 들어가지 않습니다. 시스템 메시지가 모두 넣으라고 적었어도, 빠진 키워드는 답을 세어 봐야 압니다. 9개 가운데 8개는 정답 주제 하나로만 이루어졌습니다. running_gear 는 러닝 키워드 33개, travel_booking 은 여행 키워드 10개입니다.
 
-office_supplies 는 버너, 토너, 번역기 3개이고, 정답 주제가 camping, beauty, noise 로 모두 다릅니다. 토너는 사무용품으로도 읽히는 말이지만 이 사전에서는 화장품입니다. 회원은 795명으로 9개 가운데 가장 많고, 그 가운데 713명이 번역기를 검색한 회원입니다. 가장 큰 묶음 running_gear 는 33개라 절반인 47개를 넘지 않아 나누지 않았습니다. 나눴다면 head 17개는 러닝화, 워킹화처럼 검색이 많은 말로 245명이 됩니다. tail 16개는 숲결러닝화, 런닝슈즈처럼 검색이 적은 말로 67명입니다.
+office_supplies 는 버너, 토너, 번역기 3개이고, 정답 주제가 camping, beauty, noise 로 모두 다릅니다. 토너는 사무용품으로도 읽히는 말이지만 이 사전에서는 화장품입니다. 회원은 795명으로 9개 가운데 가장 많고, 그 가운데 713명이 번역기를 검색한 회원입니다. 가장 큰 그룹 running_gear 는 33개라 절반인 47개를 넘지 않아 나누지 않았습니다. 나눴다면 head 17개는 러닝화, 워킹화처럼 검색이 많은 말로 245명이 됩니다. tail 16개는 숲결러닝화, 런닝슈즈처럼 검색이 적은 말로 67명입니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=group" height="480" loading="lazy" title="모델이 붙인 묶음 아홉과 이름, 회원 수, 정답 주제 순도, 나누기 규칙"></iframe>
+<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=group" height="480" loading="lazy" title="모델이 만든 그룹 아홉과 이름, 회원 수, 정답 주제 순도, 나누기 규칙"></iframe>
 <a class="demo-embed-open" href="demo-interest-library-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
 ## 5. 최소 크기 아래는 오디언스가 아닙니다
 
-**최소 크기는 표본 2,000명의 1%인 20명이고, 회원 1,400만 명으로 늘리면 14만 명입니다. 가장 작은 baby_care 도 158명이라 합치거나 버린 묶음은 없었습니다. 최종 사전은 오디언스 9개이고, 회원 1,706명이 하나 이상에 들었습니다.**
+**최소 크기는 표본 2,000명의 1%인 20명이고, 회원 1,400만 명으로 늘리면 14만 명입니다. 가장 작은 baby_care 도 158명이라 합치거나 버린 그룹은 없었습니다. 최종 사전은 오디언스 9개이고, 회원 1,706명이 하나 이상에 들었습니다.**
 
-이름이 있어도 회원이 너무 적으면 오디언스로 쓰기 어렵습니다. 하루 300만 원을 쓰려면 보여 줄 사람이 그만큼 있어야 합니다. 구매 1건에 2만 원을 거는 캠페인은 사람이 적으면 결과를 비교할 전환도 적습니다. 몇 사람만 든 묶음은 그 사람들이 무엇을 검색했는지 알려 주기도 합니다. 그래서 사전에 올리기 전에 회원 수로 아래 끝을 둡니다.
+이름이 있어도 회원이 너무 적으면 오디언스로 쓰기 어렵습니다. 하루 300만 원을 쓰려면 보여 줄 사람이 그만큼 있어야 합니다. 구매 1건에 2만 원을 거는 캠페인은 사람이 적으면 결과를 비교할 전환도 적습니다. 몇 사람만 든 그룹은 그 사람들이 무엇을 검색했는지 알려 주기도 합니다. 그래서 사전에 올리기 전에 회원 수로 아래 끝을 둡니다.
 
 이 글의 아래 끝은 20명입니다. 표본 2,000명의 1%이고, 회원 1,400만 명으로 늘리면 14만 명입니다. [Lookalike 기초](post.html?id=lookalike-basics) 편에서 유사타겟 1% 가 회원 1,400만 명의 14만 명이었던 것과 같은 크기입니다. 표본의 회원 한 명이 회원 1,400만 명 가운데 7,000명을 대신하므로, 회원 수에 7,000 을 곱해 늘립니다.
 
-이 기록에서는 20명이 안 되는 묶음이 없었습니다. 가장 작은 baby_care 도 158명이라, 규칙은 아무것도 합치거나 버리지 않았습니다. 다만 합쳤다면 어디로 갔을지 보면 규칙의 약한 곳이 보입니다. baby_care 와 회원이 가장 많이 겹치는 묶음은 office_supplies 로 62명입니다. 그다음이 coffee_bakery 47명, travel_booking 31명입니다. 회원 겹침으로 고른 이웃은 뜻이 가까운 묶음보다 회원이 많은 묶음 쪽으로 가기 쉽습니다. 육아와 상관없는 office_supplies 가 그 예입니다.
+이 기록에서는 20명이 안 되는 그룹이 없었습니다. 가장 작은 baby_care 도 158명이라, 규칙은 아무것도 합치거나 버리지 않았습니다. 다만 합쳤다면 어디로 갔을지 보면 규칙의 약한 곳이 보입니다. baby_care 와 회원이 가장 많이 겹치는 그룹은 office_supplies 로 62명입니다. 그다음이 coffee_bakery 47명, travel_booking 31명입니다. 회원 겹침으로 고른 이웃은 뜻이 가까운 그룹보다 회원이 많은 그룹 쪽으로 가기 쉽습니다. 육아와 상관없는 office_supplies 가 그 예입니다.
 
-최종 사전은 모델이 낸 묶음 9개 그대로입니다. 아래 표는 4절 블록의 5단계가 찍은 값이고, 1,400만 명 칸은 회원 수에 7,000 을 곱한 값입니다. 한 회원이 여러 오디언스에 들 수 있어 회원 수를 더하면 2,000명을 넘고, 하나 이상에 든 회원은 1,706명입니다.
+최종 사전은 모델이 낸 그룹 9개 그대로입니다. 아래 표는 4절 블록의 5단계가 찍은 값이고, 1,400만 명 칸은 회원 수에 7,000 을 곱한 값입니다. 한 회원이 여러 오디언스에 들 수 있어 회원 수를 더하면 2,000명을 넘고, 하나 이상에 든 회원은 1,706명입니다.
 
 | 오디언스 | 키워드 | 회원(2,000명 가운데) | 1,400만 명이면 |
 |---|---|---|---|
@@ -716,7 +716,7 @@ office_supplies 는 버너, 토너, 번역기 3개이고, 정답 주제가 campi
 서연 씨에게 바로 쓸모 있는 이름은 running_gear 입니다. 러닝 키워드 33개를 묶어 1,400만 명 기준 1,897,000명이고, 세그먼트 317 의 160만 명과 비슷한 크기입니다. 다만 세그먼트 317 은 행동 조건으로 만든 목록입니다. running_gear 는 키워드를 한 번 이상 검색한 회원이라 들어오는 사람이 다릅니다. 가장 큰 office_supplies 는 크기만 보면 가장 쓸 만해 보입니다. 하지만 795명 가운데 713명은 거르기에서 빠졌어야 할 번역기를 검색한 회원입니다.
 
 <div class="demo-embed-wrap">
-<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=size" height="480" loading="lazy" title="최소 크기 20명과 묶음마다의 회원 수, 1,400만 명으로 늘린 최종 사전"></iframe>
+<iframe class="demo-embed" src="demo-interest-library-cards.html?embed=1&card=size" height="480" loading="lazy" title="최소 크기 20명과 그룹별 회원 수, 1,400만 명으로 늘린 최종 사전"></iframe>
 <a class="demo-embed-open" href="demo-interest-library-cards.html" target="_blank" rel="noopener">↗ 카드 다섯 장 전체로 열기</a>
 </div>
 
@@ -728,7 +728,7 @@ office_supplies 는 버너, 토너, 번역기 3개이고, 정답 주제가 campi
 
 ### 담장 안에서는 회원의 검색어로 사전을 만들고 회원 번호로 셉니다 [무대: 닫힌 생태계]
 
-검색창을 가진 플랫폼은 회원이 쓴 검색어를 회원 번호와 함께 남깁니다. 그래서 이 글처럼 검색 기록에서 키워드를 뽑고, 묶음마다 검색한 회원을 번호로 셀 수 있습니다. 사전의 이름은 캠페인 화면에서 세그먼트 번호처럼 고르는 항목이 됩니다. 새 검색어가 쌓이면 사전을 다시 만들고, 그때도 두 답이 다른 키워드만 심판에게 보내면 심판 비용은 다른 답의 수만큼만 듭니다.
+검색창을 가진 플랫폼은 회원이 쓴 검색어를 회원 번호와 함께 남깁니다. 그래서 이 글처럼 검색 기록에서 키워드를 뽑고, 그룹마다 검색한 회원을 번호로 셀 수 있습니다. 사전의 이름은 캠페인 화면에서 세그먼트 번호처럼 고르는 항목이 됩니다. 새 검색어가 쌓이면 사전을 다시 만들고, 그때도 두 답이 다른 키워드만 심판에게 보내면 심판 비용은 다른 답의 수만큼만 듭니다.
 
 건강 키워드는 묶기 전에 빠져야 합니다. 건강은 사람을 고르는 데 쓰지 않는 민감한 정보이고, 30주째 편이 그 정책 문서와 함께 적었습니다. 이 기록에서는 두 투표가 health 6개를 모두 걸렀지만, 다시 물어도 그렇다는 보장은 없습니다. 그래서 모델의 거르기 뒤에도 30주째의 policy_filter 같은 코드 거르기를 한 번 더 두는 것이 안전합니다.
 
@@ -750,20 +750,20 @@ office_supplies 는 버너, 토너, 번역기 3개이고, 정답 주제가 campi
 | 자리 | 무엇을 하나 | 이 기록의 숫자 |
 |---|---|---|
 | 투표자 A | temperature 0, thinking 끔으로 20개씩 묻는다 | 맞음 111/120 |
-| 투표자 B | 같은 묶음을 temperature 0.7 로 묻는다 | 맞음 111/120 |
+| 투표자 B | 같은 배치를 temperature 0.7 로 묻는다 | 맞음 111/120 |
 | 두 답 비교 | keep 이 같으면 그대로, 다르면 심판에게 | 같음 116개, 코드만 다름 2개, 심판행 4개 |
 | 심판 | 같은 시스템 메시지를 thinking 을 켜고 받는다 | 4개 가운데 3개 맞음, 248.4초 |
 | 최종 거르기 | 투표와 심판을 합친다 | 맞음 112/120, 남김 94개, 615.3초 |
 | 심판 하나로 120개 | 키워드당 값 × 120 으로 어림한다 | 7,452.8초 |
-| 묶기 | 모델이 묶고 영어 이름을 붙인다 | 묶음 9개, 빠진 키워드 4개 |
-| 나누기와 합치기 | 절반을 넘으면 나누고 20명 미만은 합친다 | 바뀐 묶음 0개 |
+| 묶기 | 모델이 묶고 영어 이름을 붙인다 | 그룹 9개, 빠진 키워드 4개 |
+| 나누기와 합치기 | 절반을 넘으면 나누고 20명 미만은 합친다 | 바뀐 그룹 0개 |
 | 최종 사전 | 회원 수와 1,400만 명 기준 크기 | 오디언스 9개, 회원 1,706명 |
 
 ## 헷갈리기 쉬운 점
 
 - **투표자 둘이 같은 모델이면 같은 실수를 같이 합니다.** 두 답이 같은 116개 가운데 7개가 정답과 달랐습니다. temperature 를 0.7 로 올려도 운동화와 런솔은 두 번 다 too_broad 였습니다. 두 답이 같다는 것은 맞았다는 뜻이 아니라, 이 모델이 그 키워드에서 흔들리지 않았다는 뜻입니다. 같은 실수를 잡으려면 다른 모델이나 사람이 표본을 따로 봅니다.
 - **심판 비용은 다른 답의 비율이 정합니다.** 120개 가운데 4개만 달라 심판을 한 번 불렀고, 투표와 심판에 615.3초가 걸렸습니다. 키워드당 심판 값이 같다면 다른 답이 늘수록 심판 시간도 그만큼 늘어납니다. 모두 다르면 7,452.8초 어림에 다가가니, 투표자의 설정을 바꿀 때는 맞은 수와 함께 다른 답의 수를 봅니다.
-- **이름은 LLM 이 붙여도 크기는 회원 수로 셉니다.** 모델은 키워드만 보고 회원을 보지 못하니, 묶음의 크기는 코드가 검색 기록에서 셉니다. 거꾸로 코드는 크기만 셀 뿐 이름이 맞는지는 모릅니다. office_supplies 는 키워드 3개로 795명이 되었고, 그 가운데 713명이 noise 인 번역기를 검색한 회원이었습니다. 이름과 키워드 목록은 사람이 함께 읽습니다.
+- **이름은 LLM 이 붙여도 크기는 회원 수로 셉니다.** 모델은 키워드만 보고 회원을 보지 못하니, 그룹의 크기는 코드가 검색 기록에서 셉니다. 거꾸로 코드는 크기만 셀 뿐 이름이 맞는지는 모릅니다. office_supplies 는 키워드 3개로 795명이 되었고, 그 가운데 713명이 noise 인 번역기를 검색한 회원이었습니다. 이름과 키워드 목록은 사람이 함께 읽습니다.
 
 ## 더 깊이 보기
 
@@ -792,19 +792,19 @@ too_broad: 너무 넓어서 관심사 하나를 가리키지 못하는 검색어
 {"groups": [{"name": "<영어 snake_case>", "ids": ["<id>", "<id>"]}]}
 ```
 
-투표의 규칙은 넷입니다. 첫째, 두 투표의 keep 이 같으면 그 답을 쓰고, reason_code 만 다르면 투표자 A 의 코드를 씁니다. 둘째, keep 이 다르면 심판에게 보냅니다. 셋째, 한 묶음의 답을 스키마대로 읽지 못하면 그 묶음 20개를 모두 심판에게 보냅니다. 넷째, 읽은 답에서 빠진 id 와 두 번 나온 id 는 그 키워드 하나만 심판에게 보냅니다. 심판의 답이 최종 결정이고, 심판의 답도 읽지 못한 키워드는 거릅니다.
+투표의 규칙은 넷입니다. 첫째, 두 투표의 keep 이 같으면 그 답을 쓰고, reason_code 만 다르면 투표자 A 의 코드를 씁니다. 둘째, keep 이 다르면 심판에게 보냅니다. 셋째, 한 배치의 답을 스키마대로 읽지 못하면 그 배치의 키워드 20개를 모두 심판에게 보냅니다. 넷째, 읽은 답에서 빠진 id 와 두 번 나온 id 는 그 키워드 하나만 심판에게 보냅니다. 심판의 답이 최종 결정이고, 심판의 답도 읽지 못한 키워드는 거릅니다.
 :::
 
 :::deep 다시 나누기와 합치기 규칙
 코드의 두 규칙을 차례대로 적습니다. 둘 다 정답을 보지 않고, 같은 묶기 답에는 늘 같은 사전이 나옵니다.
 
-다시 나누기는 남긴 키워드 수의 절반을 넘는 묶음을 찾습니다. 이 기록에서는 94개의 절반인 47개입니다. 그런 묶음은 키워드를 하루 검색 수가 많은 차례로 정렬하고, 검색 수가 같으면 id 차례로 둡니다. 앞 절반(홀수면 하나 더)은 이름 끝에 _head, 나머지는 _tail 을 붙여 두 묶음으로 바꿉니다. 나눈 뒤에도 절반을 넘는 묶음이 있으면 되풀이합니다. 이름은 코드가 붙여서 뜻을 담지 않으니, 뜻이 있는 이름이 필요하면 나눈 묶음을 모델이나 사람에게 다시 보냅니다.
+다시 나누기는 남긴 키워드 수의 절반을 넘는 그룹을 찾습니다. 이 기록에서는 94개의 절반인 47개입니다. 그런 그룹은 키워드를 하루 검색 수가 많은 차례로 정렬하고, 검색 수가 같으면 id 차례로 둡니다. 앞 절반(홀수면 하나 더)은 이름 끝에 _head, 나머지는 _tail 을 붙여 두 그룹으로 바꿉니다. 나눈 뒤에도 절반을 넘는 그룹이 있으면 되풀이합니다. 이름은 코드가 붙여서 뜻을 담지 않으니, 뜻이 있는 이름이 필요하면 나눈 그룹을 모델이나 사람에게 다시 보냅니다.
 
-합치기와 버리기는 나누기를 마친 묶음에서 회원이 20명 미만인 묶음을 찾습니다. 회원이 가장 적은 묶음부터, 같으면 이름 차례로 하나씩 봅니다. 그 묶음과 겹치는 회원이 가장 많은 묶음에 키워드를 옮기고, 받는 쪽의 이름을 그대로 씁니다. 겹친 수가 같으면 회원이 많은 묶음, 그다음 이름 차례로 고릅니다. 겹치는 회원이 없으면 그 묶음을 버립니다. 20명 미만인 묶음이 없을 때까지 되풀이하고, 남은 묶음이 사전이 됩니다.
+합치기와 버리기는 나누기를 마친 그룹에서 회원이 20명 미만인 그룹을 찾습니다. 회원이 가장 적은 그룹부터, 같으면 이름 차례로 하나씩 봅니다. 그 그룹과 겹치는 회원이 가장 많은 그룹에 키워드를 옮기고, 받는 쪽의 이름을 그대로 씁니다. 겹친 수가 같으면 회원이 많은 그룹, 그다음 이름 차례로 고릅니다. 겹치는 회원이 없으면 그 그룹을 버립니다. 20명 미만인 그룹이 없을 때까지 되풀이하고, 남은 그룹이 사전이 됩니다.
 :::
 
 :::deep 기록한 방법과 이 기록으로 말할 수 없는 것
-세 기록은 2026-11-07 에 차례로 받았습니다. 투표 12번을 먼저 받고, 생성기가 그 기록에서 심판 프롬프트를 썼습니다. 심판을 받은 뒤 생성기가 두 기록으로 남긴 키워드를 정해 묶기 프롬프트를 썼고, 묶기를 받았습니다. 앞 기록을 다시 받으면 뒤 프롬프트와 뒤 기록도 다시 받습니다. thinking 을 켠 심판은 시간 초과 없이 한 번에 받아, 묶음을 반으로 나눠 다시 보낼 일이 없었습니다.
+세 기록은 2026-11-07 에 차례로 받았습니다. 투표 12번을 먼저 받고, 생성기가 그 기록에서 심판 프롬프트를 썼습니다. 심판을 받은 뒤 생성기가 두 기록으로 남긴 키워드를 정해 묶기 프롬프트를 썼고, 묶기를 받았습니다. 앞 기록을 다시 받으면 뒤 프롬프트와 뒤 기록도 다시 받습니다. thinking 을 켠 심판은 시간 초과 없이 한 번에 받아, 배치를 반으로 나눠 다시 보낼 일이 없었습니다.
 
 시스템 메시지를 고쳐 다시 기록하지 않은 까닭도 적어 둡니다. 이 블로그는 temperature 0 의 기준 답이 스키마대로 읽히지 않을 때만 프롬프트를 고칩니다. 투표자 A 의 답 6개, 심판의 답, 묶기의 답이 모두 읽혔습니다. 운동화를 거른 답이나 office_supplies 를 보고 시스템 메시지를 고치면, 정답을 보고 고친 프롬프트가 됩니다.
 
